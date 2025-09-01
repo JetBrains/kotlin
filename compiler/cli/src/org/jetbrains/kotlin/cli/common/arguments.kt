@@ -32,8 +32,10 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
-    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, arguments.dumpArgumentsDir)
-    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, System.getenv("KOTLIN_DUMP_MODEL").takeUnless { it.isNullOrEmpty() })
+
+    val modelDumpDir = (arguments.dumpArgumentsDir ?: System.getenv("KOTLIN_DUMP_MODEL"))?.takeIf { it.isNotEmpty() && File(it).let { it.isDirectory && it.canWrite() } }
+
+    putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, modelDumpDir)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))

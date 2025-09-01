@@ -82,7 +82,7 @@ object CommonConfigurationKeys {
     val PARALLEL_BACKEND_THREADS = CompilerConfigurationKey.create<Int>("Run codegen phase in parallel with N threads")
 
     @JvmField
-    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compiler arguments")
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compilation model")
 
     @JvmField
     val INCREMENTAL_COMPILATION = CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")

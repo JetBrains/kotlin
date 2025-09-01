@@ -328,9 +328,9 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xdump-model"
+        name = "XXdump-model"
         compilerName = "dumpArgumentsDir"
-        description = "Don't even try to use it.".asReleaseDependent()
+        description = "Dump compilation model to specified directory for use in modularized tests.".asReleaseDependent()
         valueDescription = "<dir>".asReleaseDependent()
         valueType = StringType.defaultNull
 
