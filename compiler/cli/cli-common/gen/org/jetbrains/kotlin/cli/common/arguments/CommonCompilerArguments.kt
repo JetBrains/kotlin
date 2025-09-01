@@ -308,9 +308,9 @@ Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20
         }
 
     @Argument(
-        value = "-Xdump-model",
+        value = "-XXdump-model",
         valueDescription = "<dir>",
-        description = "Don't even try to use it.",
+        description = "Dump compilation model to specified directory for use in modularized tests.",
     )
     var dumpArgumentsDir: String? = null
         set(value) {

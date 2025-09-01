@@ -1798,11 +1798,11 @@
                         }
                     },
                     {
-                        "name": "Xdump-model",
+                        "name": "XXdump-model",
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Don't even try to use it.",
+                            "current": "Dump compilation model to specified directory for use in modularized tests.",
                             "valueInVersions": []
                         },
                         "delimiter": null,
