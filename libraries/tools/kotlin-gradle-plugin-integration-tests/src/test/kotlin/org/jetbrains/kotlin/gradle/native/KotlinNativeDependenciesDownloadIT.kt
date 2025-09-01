@@ -179,4 +179,60 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Test kotlin native should be installed for commonizer task")
+    @GradleTest
+    fun kotlinNativeInstallForCommonixerTas(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+//            include(
+//                project("empty", gradleVersion) {
+//                    addKgpToBuildScriptCompilationClasspath()
+//                    buildScriptInjection {
+//                        project.applyMultiplatform {
+//                            linuxArm64()
+//                            macosX64()
+//                            macosArm64()
+//                            iosArm64()
+//                            iosX64()
+//                            iosSimulatorArm64()
+////                            androidNativeX64()
+////                            androidNativeX86()
+////                            androidNativeArm64()
+////                            androidNativeArm32()
+//
+//                            sourceSets.commonMain.get().compileSource("class SomeClass")
+//                        }
+//                    }
+//                },
+//                "includedProject"
+//            )
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    macosX64()
+                    macosArm64()
+                    iosArm64()
+                    iosX64()
+                    iosSimulatorArm64()
+                    androidNativeX64()
+                    androidNativeX86()
+                    androidNativeArm64()
+                    androidNativeArm32()
+                    sourceSets.commonMain.dependencies {
+//                        implementation(project(":includedProject"))
+                        sourceSets.commonMain.get().compileSource("class Main")
+                    }
+                }
+            }
+
+            build(
+                "commonizeCInterop", "-Pkotlin.mpp.enableCInteropCommonization=true",
+                buildOptions = defaultBuildOptions
+            ) {
+                assertOutputContainsExactlyTimes("Moving Kotlin/Native")
+                println(output)
+            }
+        }
+    }
 }

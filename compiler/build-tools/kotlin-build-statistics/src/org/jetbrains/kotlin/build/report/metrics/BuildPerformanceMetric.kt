@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-sealed class BuildPerformanceMetric private constructor(
+sealed class BuildPerformanceMetric constructor(
     parent: BuildPerformanceMetric?,
     readableString: String,
     val type: ValueType,
@@ -35,288 +35,294 @@ sealed class BuildPerformanceMetric private constructor(
     ) : BuildPerformanceMetric(parent, readableString, type, name)
 }
 
+sealed class JpsBuildPerformanceMetric(parent: JpsBuildPerformanceMetric? = null, readableString: String, type: ValueType, name: String) :
+    BuildPerformanceMetric(parent, readableString, type, name)
 
-object DAEMON_GC_TIME : BuildPerformanceMetric(
+
+object DAEMON_GC_TIME : JpsBuildPerformanceMetric(
     readableString = "Time spent in GC",
     type = ValueType.NANOSECONDS,
     name = "DAEMON_GC_TIME"
 )
 
-object DAEMON_GC_COUNT : BuildPerformanceMetric(
+object DAEMON_GC_COUNT : JpsBuildPerformanceMetric(
     readableString = "Count of GC",
     type = ValueType.NUMBER,
     name = "DAEMON_GC_COUNT"
 )
 
-object COMPILE_ITERATION : BuildPerformanceMetric(
+object JPS_COMPILE_ITERATION : JpsBuildPerformanceMetric(
     readableString = "Total compiler iteration",
     type = ValueType.NUMBER,
     name = "COMPILE_ITERATION"
 )
 
-val IC_COMPILE_ITERATION = COMPILE_ITERATION.createChild(
+object JPS_IC_COMPILE_ITERATION : JpsBuildPerformanceMetric(
+    parent = JPS_COMPILE_ITERATION,
     readableString = "Total kotlin compiler iteration",
     type = ValueType.NUMBER,
     name = "IC_COMPILE_ITERATION"
 )
 
-val SOURCE_LINES_NUMBER = COMPILE_ITERATION.createChild(
+object JPS_SOURCE_LINES_NUMBER : JpsBuildPerformanceMetric(
+    parent = JPS_COMPILE_ITERATION,
     readableString = "Number of lines analyzed",
     type = ValueType.NUMBER,
     name = "SOURCE_LINES_NUMBER"
 )
 
-val ANALYSIS_LPS = COMPILE_ITERATION.createChild(
+object JPS_ANALYSIS_LPS : JpsBuildPerformanceMetric(
+    parent = JPS_COMPILE_ITERATION,
     readableString = "Analysis lines per second",
     type = ValueType.NUMBER,
     name = "ANALYSIS_LPS"
 )
 
-val CODE_GENERATION_LPS = COMPILE_ITERATION.createChild(
+object JPS_CODE_GENERATION_LPS : JpsBuildPerformanceMetric(
+    parent = JPS_COMPILE_ITERATION,
     readableString = "Code generation lines per second",
     type = ValueType.NUMBER,
     name = "CODE_GENERATION_LPS"
 )
 
-val jpsBuildPerformanceValues = listOf(
-    DAEMON_GC_TIME,
-    DAEMON_GC_COUNT,
-    COMPILE_ITERATION,
-    IC_COMPILE_ITERATION,
-    SOURCE_LINES_NUMBER,
-    ANALYSIS_LPS,
-    CODE_GENERATION_LPS
+sealed class GradleBuildPerformanceMetric(parent: GradleBuildPerformanceMetric? = null, readableString: String, type: ValueType, name: String) :
+    BuildPerformanceMetric(parent, readableString, type, name)
+
+object COMPILE_ITERATION : GradleBuildPerformanceMetric(
+    readableString = "Total compiler iteration",
+    type = ValueType.NUMBER,
+    name = "COMPILE_ITERATION"
 )
 
-object CACHE_DIRECTORY_SIZE : BuildPerformanceMetric(
+object IC_COMPILE_ITERATION : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
+    readableString = "Total kotlin compiler iteration",
+    type = ValueType.NUMBER,
+    name = "IC_COMPILE_ITERATION"
+)
+
+object SOURCE_LINES_NUMBER : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
+    readableString = "Number of lines analyzed",
+    type = ValueType.NUMBER,
+    name = "SOURCE_LINES_NUMBER"
+)
+
+object ANALYSIS_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
+    readableString = "Analysis lines per second",
+    type = ValueType.NUMBER,
+    name = "ANALYSIS_LPS"
+)
+
+object CODE_GENERATION_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
+    readableString = "Code generation lines per second",
+    type = ValueType.NUMBER,
+    name = "CODE_GENERATION_LPS"
+)
+object CACHE_DIRECTORY_SIZE : GradleBuildPerformanceMetric(
     readableString = "Total size of the cache directory",
     type = ValueType.BYTES,
     name = "CACHE_DIRECTORY_SIZE"
 )
 
-val LOOKUP_SIZE = CACHE_DIRECTORY_SIZE.createChild(
+object LOOKUP_SIZE : GradleBuildPerformanceMetric(
+    parent = CACHE_DIRECTORY_SIZE,
     readableString = "Lookups size",
     type = ValueType.BYTES,
     name = "LOOKUP_SIZE"
 )
 
-val SNAPSHOT_SIZE = CACHE_DIRECTORY_SIZE.createChild(
+object SNAPSHOT_SIZE : GradleBuildPerformanceMetric(
+    parent = CACHE_DIRECTORY_SIZE,
     readableString = "ABI snapshot size",
     type = ValueType.BYTES,
     name = "SNAPSHOT_SIZE"
 )
 
-object BUNDLE_SIZE : BuildPerformanceMetric(
+object BUNDLE_SIZE : GradleBuildPerformanceMetric(
     readableString = "Total size of the final bundle",
     type = ValueType.BYTES,
     name = "BUNDLE_SIZE"
 )
 
-object DAEMON_INCREASED_MEMORY : BuildPerformanceMetric(
+object DAEMON_INCREASED_MEMORY : GradleBuildPerformanceMetric(
     readableString = "Increase memory usage",
     type = ValueType.BYTES,
     name = "DAEMON_INCREASED_MEMORY"
 )
 
-object DAEMON_MEMORY_USAGE : BuildPerformanceMetric(
+object DAEMON_MEMORY_USAGE : GradleBuildPerformanceMetric(
     readableString = "Total memory usage at the end of build",
     type = ValueType.BYTES,
     name = "DAEMON_MEMORY_USAGE"
 )
 
-val TRANSLATION_TO_IR_LPS = COMPILE_ITERATION.createChild(
+object TRANSLATION_TO_IR_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
     readableString = "Translation to IR lines per second",
     type = ValueType.NUMBER,
     name = "TRANSLATION_TO_IR_LPS"
 )
 
-val IR_PRE_LOWERING_LPS = COMPILE_ITERATION.createChild(
+object IR_PRE_LOWERING_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
     readableString = "IR pre-lowering lines per second",
     type = ValueType.NUMBER,
     name = "IR_PRE_LOWERING_LPS"
 )
 
-val IR_SERIALIZATION_LPS = COMPILE_ITERATION.createChild(
+object IR_SERIALIZATION_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
     readableString = "IR serialization lines per second",
     type = ValueType.NUMBER,
     name = "IR_SERIALIZATION_LPS"
 )
 
-val KLIB_WRITING_LPS = COMPILE_ITERATION.createChild(
+object KLIB_WRITING_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
     readableString = "KLib Writing lines per second",
     type = ValueType.NUMBER,
     name = "KLIB_WRITING_LPS"
 )
 
-val IR_LOWERING_LPS = COMPILE_ITERATION.createChild(
+object IR_LOWERING_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
     readableString = "IR Lowering lines per second",
     type = ValueType.NUMBER,
     name = "IR_LOWERING_LPS"
 )
 
-val BACKEND_LPS = COMPILE_ITERATION.createChild(
+object BACKEND_LPS : GradleBuildPerformanceMetric(
+    parent = COMPILE_ITERATION,
     readableString = "Backend lines per second",
     type = ValueType.NUMBER,
     name = "BACKEND_LPS"
 )
 
 // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
-object CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT : BuildPerformanceMetric(
+object CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT : GradleBuildPerformanceMetric(
     readableString = "Number of times 'ClasspathEntrySnapshotTransform' ran",
     type = ValueType.NUMBER,
     name = "CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT"
 )
 
-val JAR_CLASSPATH_ENTRY_SIZE = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT.createChild(
+object JAR_CLASSPATH_ENTRY_SIZE : GradleBuildPerformanceMetric(
+    parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT,
     readableString = "Size of jar classpath entry",
     type = ValueType.BYTES,
     name = "JAR_CLASSPATH_ENTRY_SIZE"
 )
 
-val JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT.createChild(
+object JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE : GradleBuildPerformanceMetric(
+    parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT,
     readableString = "Size of jar classpath entry's snapshot",
     type = ValueType.BYTES,
     name = "JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE"
 )
 
-val DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT.createChild(
+object DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE : GradleBuildPerformanceMetric(
+    parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT,
     readableString = "Size of directory classpath entry's snapshot",
     type = ValueType.BYTES,
     name = "DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE"
 )
 
-object COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT : BuildPerformanceMetric(
+object COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT : GradleBuildPerformanceMetric(
     readableString = "Number of times classpath changes are computed",
     type = ValueType.NUMBER,
     name = "COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT"
 )
 
-object SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT : BuildPerformanceMetric(
+object SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT : GradleBuildPerformanceMetric(
     readableString = "Number of times classpath snapshot is shrunk and saved after compilation",
     type = ValueType.NUMBER,
     name = "SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT"
 )
 
-val CLASSPATH_ENTRY_COUNT = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT.createChild(
+object CLASSPATH_ENTRY_COUNT : GradleBuildPerformanceMetric(
+    parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
     readableString = "Number of classpath entries",
     type = ValueType.NUMBER,
     name = "CLASSPATH_ENTRY_COUNT"
 )
 
-val CLASSPATH_SNAPSHOT_SIZE = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT.createChild(
+object CLASSPATH_SNAPSHOT_SIZE : GradleBuildPerformanceMetric(
+    parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
     readableString = "Size of classpath snapshot",
     type = ValueType.BYTES,
     name = "CLASSPATH_SNAPSHOT_SIZE"
 )
 
-val SHRUNK_CLASSPATH_SNAPSHOT_SIZE = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT.createChild(
+object SHRUNK_CLASSPATH_SNAPSHOT_SIZE : GradleBuildPerformanceMetric(
+    parent = SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
     readableString = "Size of shrunk classpath snapshot",
     type = ValueType.BYTES,
     name = "SHRUNK_CLASSPATH_SNAPSHOT_SIZE"
 )
 
-object LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT : BuildPerformanceMetric(
+object LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT : GradleBuildPerformanceMetric(
     readableString = "Number of times classpath snapshot is loaded",
     type = ValueType.NUMBER,
     name = "LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT"
 )
 
-val LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS = LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT.createChild(
+object LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS : GradleBuildPerformanceMetric(
+    parent = LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
     readableString = "Number of cache hits when loading classpath entry snapshots",
     type = ValueType.NUMBER,
     name = "LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS"
 )
 
-val LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES = LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT.createChild(
+object LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES : GradleBuildPerformanceMetric(
+    parent = LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
     readableString = "Number of cache misses when loading classpath entry snapshots",
     type = ValueType.NUMBER,
     name = "LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES"
 )
 
 //time metrics
-object START_TASK_ACTION_EXECUTION : BuildPerformanceMetric(
+object START_TASK_ACTION_EXECUTION : GradleBuildPerformanceMetric(
     readableString = "Start time of task action",
     type = ValueType.TIME,
     name = "START_TASK_ACTION_EXECUTION"
 )
 
-object FINISH_KOTLIN_DAEMON_EXECUTION : BuildPerformanceMetric(
+object FINISH_KOTLIN_DAEMON_EXECUTION : GradleBuildPerformanceMetric(
     readableString = "Finish time of kotlin daemon execution",
     type = ValueType.TIME,
     name = "FINISH_KOTLIN_DAEMON_EXECUTION"
 )
 
-object CALL_KOTLIN_DAEMON : BuildPerformanceMetric(
+object CALL_KOTLIN_DAEMON : GradleBuildPerformanceMetric(
     readableString = "Finish gradle part of task execution",
     type = ValueType.NANOSECONDS,
     name = "CALL_KOTLIN_DAEMON"
 )
 
-object CALL_WORKER : BuildPerformanceMetric(
+object CALL_WORKER : GradleBuildPerformanceMetric(
     readableString = "Worker submit time",
     type = ValueType.NANOSECONDS,
     name = "CALL_WORKER"
 )
 
-object START_WORKER_EXECUTION : BuildPerformanceMetric(
+object START_WORKER_EXECUTION : GradleBuildPerformanceMetric(
     readableString = "Start time of worker execution",
     type = ValueType.NANOSECONDS,
     name = "START_WORKER_EXECUTION"
 )
 
-object START_KOTLIN_DAEMON_EXECUTION : BuildPerformanceMetric(
+object START_KOTLIN_DAEMON_EXECUTION : GradleBuildPerformanceMetric(
     readableString = "Start time of kotlin daemon task execution",
     type = ValueType.NANOSECONDS,
     name = "START_KOTLIN_DAEMON_EXECUTION"
 )
 
-val gradlePerformanceMetrics = listOf(
-    CACHE_DIRECTORY_SIZE,
-    LOOKUP_SIZE,
-    SNAPSHOT_SIZE,
-    BUNDLE_SIZE,
-    DAEMON_INCREASED_MEMORY,
-    DAEMON_MEMORY_USAGE,
-    DAEMON_GC_TIME,
-    DAEMON_GC_COUNT,
-    COMPILE_ITERATION,
-    SOURCE_LINES_NUMBER,
-    ANALYSIS_LPS,
-    CODE_GENERATION_LPS,
-    TRANSLATION_TO_IR_LPS,
-    IR_PRE_LOWERING_LPS,
-    IR_SERIALIZATION_LPS,
-    KLIB_WRITING_LPS,
-    IR_LOWERING_LPS,
-    BACKEND_LPS,
-    CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT,
-    JAR_CLASSPATH_ENTRY_SIZE,
-    JAR_CLASSPATH_ENTRY_SNAPSHOT_SIZE,
-    DIRECTORY_CLASSPATH_ENTRY_SNAPSHOT_SIZE,
-    COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT,
-    SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
-    CLASSPATH_ENTRY_COUNT,
-    CLASSPATH_SNAPSHOT_SIZE,
-    SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
-    LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT,
-    LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS,
-    LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES,
-    START_TASK_ACTION_EXECUTION,
-    FINISH_KOTLIN_DAEMON_EXECUTION,
-    CALL_KOTLIN_DAEMON,
-    CALL_WORKER,
-    START_WORKER_EXECUTION,
-    START_KOTLIN_DAEMON_EXECUTION
-)
-
-sealed class ValueType {
-    object BYTES : ValueType()
-    object NUMBER : ValueType()
-    object NANOSECONDS : ValueType()
-    object MILLISECONDS : ValueType()
-    object TIME : ValueType()
-
-    companion object {
-        val values = listOf(BYTES, NUMBER, NANOSECONDS, MILLISECONDS, TIME)
-    }
+enum class ValueType {
+    BYTES,
+    NUMBER,
+    NANOSECONDS,
+    MILLISECONDS,
+    TIME
 }

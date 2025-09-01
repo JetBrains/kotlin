@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.report
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.getAllMetricsByType
 import org.jetbrains.kotlin.gradle.internal.build.metrics.BuildOperationData
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData

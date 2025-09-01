@@ -5,23 +5,23 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
-object DoNothingBuildMetricsReporter : BuildMetricsReporter {
-    override fun startMeasure(time: BuildTimeMetric) {
+object DoNothingBuildMetricsReporter : BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> {
+    override fun startMeasure(time: GradleBuildTimeMetric) {
     }
 
-    override fun endMeasure(time: BuildTimeMetric) {
+    override fun endMeasure(time: GradleBuildTimeMetric) {
     }
 
-    override fun addTimeMetricNs(time: BuildTimeMetric, durationNs: Long) {
+    override fun addTimeMetricNs(time: GradleBuildTimeMetric, durationNs: Long) {
     }
 
-    override fun addDynamicTimeMetricNs(time: String, parent: BuildTimeMetric, durationNs: Long) {
+    override fun addDynamicTimeMetricNs(time: String, parent: GradleBuildTimeMetric, durationNs: Long) {
     }
 
-    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
+    override fun addMetric(metric: GradleBuildPerformanceMetric, value: Long) {
     }
 
-    override fun addTimeMetric(metric: BuildPerformanceMetric) {
+    override fun addTimeMetric(metric: GradleBuildPerformanceMetric) {
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -36,12 +36,12 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun endGcMetric(name: String, value: GcMetric) {
     }
 
-    override fun getMetrics(): BuildMetrics =
+    override fun getMetrics(): BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric> =
         BuildMetrics(
             BuildTimes(),
             BuildPerformanceMetrics(),
             BuildAttributes()
         )
 
-    override fun addMetrics(metrics: BuildMetrics) {}
+    override fun addMetrics(metrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>) {}
 }

@@ -28,7 +28,7 @@ internal class GradleCompilerRunnerWithWorkers(
     taskProvider: GradleCompileTaskProvider,
     jdkToolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetrics: BuildMetricsReporter,
+    buildMetrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
     private val workerExecutor: WorkerExecutor,
     fusMetricsConsumer: StatisticsValuesConsumer?,
 ) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics, fusMetricsConsumer) {
@@ -96,6 +96,6 @@ internal class GradleCompilerRunnerWithWorkers(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val metricsReporter: Property<BuildMetricsReporter>
+        val metricsReporter: Property<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>>
     }
 }

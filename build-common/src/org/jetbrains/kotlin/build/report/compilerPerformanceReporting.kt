@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.build.report
 
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.util.*
 
-fun BuildReporter.reportPerformanceData(moduleStats: UnitStats) {
+fun BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>.reportPerformanceData(moduleStats: UnitStats) {
     if (moduleStats.linesCount > 0) {
         addMetric(SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
     }
 
-    fun reportLps(lpsMetrics: BuildPerformanceMetric, time: Time) {
+    fun reportLps(lpsMetrics: GradleBuildPerformanceMetric, time: Time) {
         if (time != Time.ZERO) {
             addMetric(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong())
         }

@@ -909,10 +909,10 @@ class BuildReportsIT : KGPBaseTest() {
                 assertTrue { jsonReportFile.exists() }
                 val jsonReport = readJsonReport(jsonReportFile)
                 val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
-                assertContains(bulidTimesKeys, GradleBuildTime.NATIVE_IN_PROCESS)
+                assertContains(bulidTimesKeys, NATIVE_IN_PROCESS)
 
                 val dynamicBuildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
-                    .filter { it.parent == GradleBuildTime.IR_LOWERING }
+                    .filter { it.parent == IR_LOWERING }
                     .map { it.name }
                 val expectedDynamicBuildTimesNames = listOf(
                     "ValidateIrBeforeLowering",
@@ -950,7 +950,7 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReport = readJsonReport(jsonReportFile)
                 assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = COMPILER_PERFORMANCE.allChildrenMetrics()
+                val compilerMetrics = allBuildTimeMetricsMap[COMPILER_PERFORMANCE] ?: emptyList()
                 val reportedCompilerMetrics =
                     jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
@@ -969,7 +969,7 @@ class BuildReportsIT : KGPBaseTest() {
                 assertTrue {
                     // LLVM passes must have been reported
                     jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
-                        DynamicBuildTimeKey("llvm-default.AlwaysInlinerPass", GradleBuildTime.BACKEND)
+                        DynamicBuildTimeKey("llvm-default.AlwaysInlinerPass", BACKEND)
                     )
                 }
             }

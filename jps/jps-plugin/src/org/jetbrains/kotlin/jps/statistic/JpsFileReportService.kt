@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.jps.statistic
 
+import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.JpsBuildTimeMetric
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.file.Printer
 import org.jetbrains.kotlin.build.report.statistics.file.ReadableFileReportService
@@ -16,8 +18,8 @@ internal class JpsFileReportService(
     projectName: String,
     printMetrics: Boolean,
     private val changedFileListPerLimit: Int?
-) : ReadableFileReportService(buildReportDir, projectName, printMetrics) {
-    override fun printCustomTaskMetrics(statisticsData: CompileStatisticsData, printer: Printer) {
+) : ReadableFileReportService<JpsBuildTimeMetric, JpsBuildPerformanceMetric>(buildReportDir, projectName, printMetrics) {
+    override fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<JpsBuildTimeMetric, JpsBuildPerformanceMetric>, printer: Printer) {
         val changedFiles = statisticsData.getChanges().let { changes ->
             changedFileListPerLimit?.let { changes.subList(0, min(it, changes.size)) } ?: changes
         }

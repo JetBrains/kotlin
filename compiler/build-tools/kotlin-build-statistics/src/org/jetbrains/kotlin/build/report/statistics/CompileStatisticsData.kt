@@ -15,8 +15,8 @@ import java.util.*
 //Sensitive data. This object is used directly for statistic via http
 internal val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
 
-interface CompileStatisticsData {
-    fun getVersion(): Int = 5
+interface CompileStatisticsData<B : BuildTimeMetric, P : BuildPerformanceMetric> {
+    fun getVersion(): Int = 4
     fun getProjectName(): String?
     fun getLabel(): String?
     fun getTaskName(): String
@@ -35,9 +35,9 @@ interface CompileStatisticsData {
     fun getNonIncrementalAttributes(): Set<BuildAttribute>
 
     //TODO think about it,time in milliseconds
-    fun getBuildTimesMetrics(): Map<BuildTimeMetric, Long>
+    fun getBuildTimesMetrics(): Map<B, Long>
     fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long>
-    fun getPerformanceMetrics(): Map<BuildPerformanceMetric, Long>
+    fun getPerformanceMetrics(): Map<P, Long>
     fun getGcTimeMetrics(): Map<String, Long>?
     fun getGcCountMetrics(): Map<String, Long>?
     fun getType(): String = BuildDataType.TASK_DATA.name

@@ -26,7 +26,7 @@ data class BuildOperationRecordImpl(
     override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long, // Measured by System.currentTimeMillis(),
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics,
+    override val buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
     override val didWork: Boolean,
     override val skipMessage: String?,
     override val icLogLines: List<String>,
