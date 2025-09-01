@@ -12,22 +12,17 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isSubclassOf
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.ConditionChecker.processBranch
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -436,8 +431,8 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         session: FirSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
-        val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session) ?: return
-        val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
+        val allSubclasses = subjectType.toClassSymbol(session)?.collectAllSubclasses(session) ?: return
+        val checkedSubclasses = mutableSetOf<FirClassSymbol<*>>()
         val info = Info(allSubclasses, checkedSubclasses, session)
 
         if (session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) {
@@ -446,16 +441,24 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             }
         }
         whenExpression.accept(ConditionChecker, info)
-        (allSubclasses - checkedSubclasses).mapNotNullTo(destination) {
-            when (it) {
-                is FirClassSymbol<*> -> WhenMissingCase.IsTypeCheckIsMissing(
-                    it.classId,
-                    it.fir.classKind.isSingleton,
-                    it.ownTypeParameterSymbols.size
-                )
-                is FirEnumEntrySymbol -> WhenMissingCase.EnumCheckIsMissing(it.callableId)
-                else -> null
-            }
+        val notCheckedSubclasses = allSubclasses - checkedSubclasses
+        val (notCheckedEnumClasses, notCheckedRegularClasses) = notCheckedSubclasses.partition { it.isEnumClass }
+
+        for (notCheckedEnumClasses in notCheckedEnumClasses) {
+            WhenOnEnumExhaustivenessChecker.computeMissingCases(
+                whenExpression,
+                notCheckedEnumClasses.defaultType(),
+                session,
+                destination
+            )
+        }
+
+        for (notCheckedRegularClasses in notCheckedRegularClasses) {
+            destination += WhenMissingCase.IsTypeCheckIsMissing(
+                notCheckedRegularClasses.classId,
+                notCheckedRegularClasses.fir.classKind.isSingleton,
+                notCheckedRegularClasses.ownTypeParameterSymbols.size
+            )
         }
     }
 
@@ -467,14 +470,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 is DfaType.Cone -> knownNonType.type.toSymbol(data.session)
                 is DfaType.Symbol -> knownNonType.symbol
                 else -> null
-            }
-            processBranch(symbol ?: continue, isNegated = false, data)
+            } as? FirClassSymbol<*> ?: continue
+            processBranch(symbol, isNegated = false, data)
         }
     }
 
     private class Info(
-        val allSubclasses: Set<FirBasedSymbol<*>>,
-        val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
+        val allSubclasses: Set<FirClassSymbol<*>>,
+        val checkedSubclasses: MutableSet<FirClassSymbol<*>>,
         val session: FirSession
     )
 
@@ -485,20 +488,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> true
                 else -> return
             }
-            val symbol = when (val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression()) {
-                is FirResolvedQualifier -> {
-                    val firClass = (argument.symbol as? FirRegularClassSymbol)?.fir
-                    if (firClass?.classKind == ClassKind.OBJECT) {
-                        firClass.symbol
-                    } else {
-                        firClass?.companionObjectSymbol
-                    }
-                }
-                else -> {
-                    @OptIn(UnsafeExpressionUtility::class)
-                    argument.toResolvedCallableSymbolUnsafe()?.takeIf { it.fir is FirEnumEntry }
-                }
+            val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
+            val firClass = (argument.symbol as? FirRegularClassSymbol)?.fir
+            val symbol = if (firClass?.classKind == ClassKind.OBJECT) {
+                firClass.symbol
+            } else {
+                firClass?.companionObjectSymbol
             } ?: return
+
             processBranch(symbol, isNegated, data)
         }
 
@@ -508,11 +505,11 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 FirOperation.NOT_IS -> true
                 else -> return
             }
-            val symbol = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(data.session).toSymbol(data.session) ?: return
+            val symbol = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(data.session).toClassSymbol(data.session) ?: return
             processBranch(symbol, isNegated, data)
         }
 
-        fun processBranch(symbolToCheck: FirBasedSymbol<*>, isNegated: Boolean, info: Info) {
+        fun processBranch(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, info: Info) {
             val subclassesOfType = symbolToCheck.collectAllSubclasses(info.session)
             val supertypesWhichAreSealedInheritors = symbolToCheck.collectAllSuperclasses(info.session, info)
             if (subclassesOfType.none { it in info.allSubclasses } && supertypesWhichAreSealedInheritors.isEmpty()) {
@@ -526,12 +523,12 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
     }
 
-    private fun FirBasedSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirBasedSymbol<*>> {
-        return mutableSetOf<FirBasedSymbol<*>>().apply { collectAllSubclassesTo(this, session) }
+    private fun FirClassSymbol<*>.collectAllSubclasses(session: FirSession): Set<FirClassSymbol<*>> {
+        return mutableSetOf<FirClassSymbol<*>>().apply { collectAllSubclassesTo(this, session) }
     }
 
-    private fun FirBasedSymbol<*>.collectAllSubclassesTo(
-        destination: MutableSet<FirBasedSymbol<*>>,
+    private fun FirClassSymbol<*>.collectAllSubclassesTo(
+        destination: MutableSet<FirClassSymbol<*>>,
         session: FirSession,
         visited: MutableSet<FirRegularClassSymbol> = mutableSetOf(),
     ) {
@@ -551,12 +548,11 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                     symbol?.collectAllSubclassesTo(destination, session, visited)
                 }
             }
-            fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries(session).mapTo(destination) { it.symbol }
             else -> destination.add(this)
         }
     }
 
-    private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, info: Info): Set<FirBasedSymbol<*>> {
+    private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, info: Info): Set<FirClassSymbol<*>> {
         if (this !is FirClassSymbol<*>) return emptySet()
         if (this !in info.allSubclasses) return emptySet()
         val lookupTag = this.toLookupTag()
