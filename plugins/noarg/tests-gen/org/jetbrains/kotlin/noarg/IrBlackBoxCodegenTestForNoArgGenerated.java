@@ -24,6 +24,12 @@ public class IrBlackBoxCodegenTestForNoArgGenerated extends AbstractIrBlackBoxCo
   }
 
   @Test
+  @TestMetadata("constructorCallFromJava.kt")
+  public void testConstructorCallFromJava() {
+    runTest("plugins/noarg/testData/box/constructorCallFromJava.kt");
+  }
+
+  @Test
   @TestMetadata("initializers.kt")
   public void testInitializers() {
     runTest("plugins/noarg/testData/box/initializers.kt");
