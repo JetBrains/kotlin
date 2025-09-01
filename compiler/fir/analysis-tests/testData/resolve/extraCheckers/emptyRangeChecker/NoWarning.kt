@@ -29,5 +29,9 @@ fun until() {
     if (v in -5 until -4) { }
 }
 
+fun rangeUntil() {
+    for (i in 0..<1) {}
+}
+
 /* GENERATED_FIR_TAGS: forLoop, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration,
 rangeExpression */

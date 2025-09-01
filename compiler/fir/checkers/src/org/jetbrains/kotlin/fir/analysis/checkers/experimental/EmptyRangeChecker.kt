@@ -29,7 +29,7 @@ object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             "downTo" -> {
                 right > left
             }
-            "until" -> {
+            "until", "rangeUntil" -> {
                 left >= right
             }
             else -> false

@@ -28,5 +28,11 @@ fun until() {
     if (v in <!EMPTY_RANGE!>-5 until -5<!>) { }
 }
 
+fun rangeUntil() {
+    for (i in <!EMPTY_RANGE!>0..<-1<!>) {}
+
+    for (i in <!EMPTY_RANGE!>2..<2<!>) {}
+}
+
 /* GENERATED_FIR_TAGS: forLoop, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration,
 rangeExpression */
