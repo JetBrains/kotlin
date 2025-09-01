@@ -9,14 +9,22 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.perfManager
+import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelinePhase.transformFirToIr
 import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelinePhase.compileModulesToAnalyzedFirWithLightTree
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase.serializeFirKlib
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -132,10 +140,16 @@ abstract class FirWasmAbstractInvalidationTest(
             throw AssertionError("The following errors occurred compiling test:\n$messages")
         }
 
+        val transformedResult = PhaseEngine(
+            configuration.phaseConfig ?: PhaseConfig(),
+            PhaserState(),
+            WasmPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, diagnosticsReporter),
+        ).runPreSerializationLoweringPhases(fir2IrActualizedResult, wasmLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
+
         serializeFirKlib(
             moduleStructure = moduleStructure,
             firOutputs = analyzedOutput.output,
-            fir2IrActualizedResult = fir2IrActualizedResult,
+            fir2IrActualizedResult = transformedResult,
             outputKlibPath = outputKlibFile.absolutePath,
             nopack = false,
             diagnosticsReporter = diagnosticsReporter,

@@ -49,15 +49,33 @@ public class FirWasmInvalidationWithPLTestGenerated extends AbstractFirWasmInval
   }
 
   @Test
+  @TestMetadata("removeFunctionFromBlockWithCrossModuleInliner")
+  public void testRemoveFunctionFromBlockWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromBlockWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("removeFunctionFromChainCall")
   public void testRemoveFunctionFromChainCall() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCall/");
   }
 
   @Test
+  @TestMetadata("removeFunctionFromChainCallWithCrossModuleInliner")
+  public void testRemoveFunctionFromChainCallWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromChainCallWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("removeFunctionFromElvis")
   public void testRemoveFunctionFromElvis() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvis/");
+  }
+
+  @Test
+  @TestMetadata("removeFunctionFromElvisWithCrossModuleInliner")
+  public void testRemoveFunctionFromElvisWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeFunctionFromElvisWithCrossModuleInliner/");
   }
 
   @Test
@@ -70,5 +88,11 @@ public class FirWasmInvalidationWithPLTestGenerated extends AbstractFirWasmInval
   @TestMetadata("removeInlineFunction")
   public void testRemoveInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("removeInlineFunctionWithCrossModuleInliner")
+  public void testRemoveInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidationWithPL/removeInlineFunctionWithCrossModuleInliner/");
   }
 }
