@@ -7,7 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.GsonBuilder
+import com.google.gson.*
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -17,10 +18,10 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
+import java.lang.reflect.Type
 
 /**
  * Configuration options used to generate [webpack](https://webpack.js.org/)
@@ -64,10 +65,10 @@ data class KotlinWebpackConfig(
 ) : WebpackRulesDsl {
 
     val entryInput: String?
-        get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeOrAbsolute(npmProjectDir) }
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeTo(npmProjectDir)?.invariantSeparatorsPath }
 
     val outputPathInput: String?
-        get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeOrAbsolute(npmProjectDir) }
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeTo(npmProjectDir)?.invariantSeparatorsPath }
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
@@ -148,10 +149,28 @@ data class KotlinWebpackConfig(
             val changeOrigin: Boolean? = null,
         ) : Serializable
 
+        @JsonAdapter(Static.StaticSerializer::class)
         data class Static(
             val directory: String,
             val watch: Boolean = false,
-        )
+        ) {
+            internal object StaticSerializer : JsonSerializer<Static> {
+                override fun serialize(
+                    src: Static,
+                    typeOfSrc: Type,
+                    context: JsonSerializationContext,
+                ): JsonElement {
+                    val obj = JsonObject()
+                    obj.addProperty(
+                        "directory",
+                        src.directory.quoteRawJs()
+                    )
+                    obj.addProperty("watch", src.watch)
+                    return obj
+                }
+            }
+
+        }
     }
 
     @Suppress("unused")
@@ -235,7 +254,7 @@ data class KotlinWebpackConfig(
         if (devServer != null) {
 
             appendLine("// dev server")
-            appendLine("config.devServer = ${json(devServer!!)};")
+            appendLine("config.devServer = ${json(devServer!!).unquoteRawJs()};")
             appendLine()
         }
 
@@ -375,4 +394,14 @@ data class KotlinWebpackConfig(
     private fun json(obj: Any) = StringWriter().also {
         GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
     }.toString()
+}
+
+internal fun String.quoteRawJs(): String {
+    return "__RAW_JS__($this)__"
+}
+
+private fun String.unquoteRawJs(): String {
+    return replace("\"__RAW_JS__\\((.*?)\\)__\"".toRegex()) { match ->
+        "require('path').resolve(__dirname, \"" + match.groupValues[1] + "\")"
+    }
 }
