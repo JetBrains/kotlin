@@ -451,6 +451,8 @@ enum class LanguageFeature(
     AllowCallingJavaOpenSealedClassConstructor(sinceVersion = KOTLIN_2_3, "KT-78879"),
     ImprovedExhaustivenessChecksIn23(sinceVersion = KOTLIN_2_3, "KT-80602"),
 
+    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_3, forcesPreReleaseBinaries = false, issue = "KT-79717"),
+
     // 2.4
 
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
@@ -546,7 +548,6 @@ enum class LanguageFeature(
 
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-79717"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     NestedTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-45285"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
