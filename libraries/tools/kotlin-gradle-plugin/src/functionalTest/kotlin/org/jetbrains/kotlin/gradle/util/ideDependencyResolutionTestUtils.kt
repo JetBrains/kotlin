@@ -42,7 +42,6 @@ fun legacyStdlibJdkDependencies(version: String = "1.8.0") = listOf(
  */
 fun provisionKotlinNativeDistribution() {
     val project = buildProjectWithMPP {
-        if (project.nativeProperties.actualNativeHomeDirectory.get().exists()) return@buildProjectWithMPP
 
         // For CI
         repositories.mavenLocal()
