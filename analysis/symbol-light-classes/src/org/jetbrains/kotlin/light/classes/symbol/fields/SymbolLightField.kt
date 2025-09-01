@@ -44,7 +44,7 @@ internal abstract class SymbolLightField protected constructor(
         return this
     }
 
-    override fun toString(): String = "KtLightField:$name"
+    override fun toString(): String = this::class.java.simpleName
 
     override fun getTypeElement(): PsiTypeElement? = null
 
