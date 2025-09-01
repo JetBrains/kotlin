@@ -5,21 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.snapshots
 
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.FIND_REFERENCED_CLASSES
-import org.jetbrains.kotlin.build.report.metrics.FIND_TRANSITIVELY_REFERENCED_CLASSES
-import org.jetbrains.kotlin.build.report.metrics.GET_LOOKUP_SYMBOLS
-import org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT
-import org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_LOAD_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT_AGAINST_PREVIOUS_LOOKUPS
-import org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_REMOVE_DUPLICATE_CLASSES
-import org.jetbrains.kotlin.build.report.metrics.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT
-import org.jetbrains.kotlin.build.report.metrics.LOAD_CURRENT_CLASSPATH_SNAPSHOT
-import org.jetbrains.kotlin.build.report.metrics.LOAD_SHRUNK_PREVIOUS_CLASSPATH_SNAPSHOT
-import org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_LOAD_CURRENT_CLASSPATH_SNAPSHOT
-import org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_REMOVE_DUPLICATE_CLASSES
-import org.jetbrains.kotlin.build.report.metrics.NON_INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT
-import org.jetbrains.kotlin.build.report.metrics.REMOVE_DUPLICATE_CLASSES
-import org.jetbrains.kotlin.build.report.metrics.SHRINK_CURRENT_CLASSPATH_SNAPSHOT
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.LookupStorage
@@ -107,10 +93,10 @@ internal class LazyClasspathSnapshot(
 }
 
 internal sealed interface LazySnapshotLoadingMetrics {
-    val loadClasspathSnapshotTag: BuildTimeMetric
-    val removeDuplicateClassesTag: BuildTimeMetric
-    val calculateShrunkClasspathTag: BuildTimeMetric
-    val loadShrunkClasspathTag: BuildTimeMetric
+    val loadClasspathSnapshotTag: GradleBuildTimeMetric
+    val removeDuplicateClassesTag: GradleBuildTimeMetric
+    val calculateShrunkClasspathTag: GradleBuildTimeMetric
+    val loadShrunkClasspathTag: GradleBuildTimeMetric
 
     object OnClasspathDiffComputation : LazySnapshotLoadingMetrics {
         override val loadClasspathSnapshotTag = LOAD_CURRENT_CLASSPATH_SNAPSHOT

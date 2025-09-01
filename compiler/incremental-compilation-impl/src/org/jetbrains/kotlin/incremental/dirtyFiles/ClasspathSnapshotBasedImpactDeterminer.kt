@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASSPATH_CHANGES
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASSPATH_CHANGES_EXECUTION_COUNT
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -28,7 +26,7 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
     private val classpathChanges: ClasspathChanges,
 
     private val lazyClasspathSnapshot: LazyClasspathSnapshot,
-    private val reporter: BuildReporter,
+    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
 ) : ImpactedFilesDeterminer {
 
     override fun determineChangedAndImpactedSymbols(): ChangesEither {

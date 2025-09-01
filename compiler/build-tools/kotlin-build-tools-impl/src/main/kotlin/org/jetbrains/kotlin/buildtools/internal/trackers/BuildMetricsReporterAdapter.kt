@@ -11,46 +11,46 @@ import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl.Companion.METRICS_COLLECTOR
 
 internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCollector) :
-    BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> {
-    private val myBuildTimeStartNs = HashMap<GradleBuildTime, Long>()
+    BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> {
+    private val myBuildTimeStartNs = HashMap<GradleBuildTimeMetric, Long>()
     private val myGcPerformance = HashMap<String, GcMetric>()
 
-    override fun startMeasure(time: GradleBuildTime) {
+    override fun startMeasure(time: GradleBuildTimeMetric) {
         if (time in myBuildTimeStartNs) {
             error("$time was restarted before it finished")
         }
         myBuildTimeStartNs[time] = System.nanoTime()
     }
 
-    override fun endMeasure(time: GradleBuildTime) {
+    override fun endMeasure(time: GradleBuildTimeMetric) {
         val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
         val durationNs = System.nanoTime() - startNs
-        collector.collectMetric(time.getReadableString(), BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
+        collector.collectMetric(time.readableString, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
-    override fun addTimeMetricNs(time: GradleBuildTime, durationNs: Long) {
-        collector.collectMetric(time.getReadableString(), BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
+    override fun addTimeMetricNs(time: GradleBuildTimeMetric, durationNs: Long) {
+        collector.collectMetric(time.readableString, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
     override fun addDynamicTimeMetricNs(
         time: String,
-        parent: GradleBuildTime,
+        parent: GradleBuildTimeMetric,
         durationNs: Long,
     ) {
         collector.collectMetric(time, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
     override fun addMetric(metric: GradleBuildPerformanceMetric, value: Long) {
-        collector.collectMetric(metric.getReadableString(), metric.getType().toMetricsReporterType(), value)
+        collector.collectMetric(metric.readableString, metric.type.toMetricsReporterType(), value)
     }
 
     override fun addTimeMetric(metric: GradleBuildPerformanceMetric) {
-        val time = when (metric.getType()) {
+        val time = when (metric.type) {
             ValueType.NANOSECONDS -> System.nanoTime()
             ValueType.MILLISECONDS, ValueType.TIME -> System.currentTimeMillis()
-            else -> error("Unable to add time metric for '${metric.getType()}' type")
+            else -> error("Unable to add time metric for '${metric.type}' type")
         }
-        collector.collectMetric(metric.getReadableString(), metric.getType().toMetricsReporterType(), time)
+        collector.collectMetric(metric.readableString, metric.type.toMetricsReporterType(), time)
     }
 
     override fun addGcMetric(metric: String, value: GcMetric) {
@@ -74,11 +74,11 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
         collector.collectMetric(attribute.readableString, BuildMetricsCollector.ValueType.ATTRIBUTE, 1)
     }
 
-    override fun getMetrics(): BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric> {
+    override fun getMetrics(): BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric> {
         error("Not supported")
     }
 
-    override fun addMetrics(metrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) {
+    override fun addMetrics(metrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>) {
         metrics.buildAttributes.asMap().forEach { (attribute, value) ->
             repeat(value) { addAttribute(attribute) }
         }
@@ -104,7 +104,7 @@ private fun ValueType.toMetricsReporterType(): BuildMetricsCollector.ValueType {
     }
 }
 
-internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> =
+internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> =
     this[METRICS_COLLECTOR]?.let { BuildMetricsReporterAdapter(it) } ?: if (this[BuildOperationImpl.XX_KGP_METRICS_COLLECTOR]) {
         BuildMetricsReporterImpl()
     } else {

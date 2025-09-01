@@ -11,26 +11,13 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.build.report.metrics.BACKEND
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.CODE_ANALYSIS
-import org.jetbrains.kotlin.build.report.metrics.COMPILER_INITIALIZATION
-import org.jetbrains.kotlin.build.report.metrics.IR_LOWERING
-import org.jetbrains.kotlin.build.report.metrics.IR_PRE_LOWERING
-import org.jetbrains.kotlin.build.report.metrics.IR_SERIALIZATION
-import org.jetbrains.kotlin.build.report.metrics.KLIB_WRITING
-import org.jetbrains.kotlin.build.report.metrics.NATIVE_IN_EXECUTOR
-import org.jetbrains.kotlin.build.report.metrics.NATIVE_IN_PROCESS
-import org.jetbrains.kotlin.build.report.metrics.RUN_COMPILATION_IN_WORKER
-import org.jetbrains.kotlin.build.report.metrics.RUN_ENTRY_POINT
-import org.jetbrains.kotlin.build.report.metrics.TRANSLATION_TO_IR
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
 import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.argumentAnnotation
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
-import org.jetbrains.kotlin.daemon.common.CompilationPerformanceMetrics
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
@@ -53,7 +40,7 @@ import java.util.*
 import javax.inject.Inject
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
-    private val metricsReporterProvider: Provider<BuildMetricsReporter>,
+    private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>>,
     private val classLoadersCachingBuildServiceProvider: Provider<ClassLoadersCachingBuildService>,
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
@@ -303,7 +290,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     )
 
 
-    internal fun BuildMetricsReporter.parseCompilerMetricsFromFile(
+    internal fun BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(
         jsonFile: File,
     ) {
         if (!jsonFile.isFile()) return

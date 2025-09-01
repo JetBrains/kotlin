@@ -166,4 +166,10 @@ class MppTestsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Native download for commonized task")
+    @GradleTest
+    fun testNativeDownloadForCommonizedTask() {
+
+    }
 }

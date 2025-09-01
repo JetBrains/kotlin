@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_ANDROID_LAYOUTS
-import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES
-import org.jetbrains.kotlin.build.report.metrics.IC_DETECT_REMOVED_CLASSES
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -33,7 +31,7 @@ internal class JvmSourcesToCompileCalculator(
     private val kotlinSourceFilesExtensions: Set<String>,
     private val javaInteropCoordinator: JavaInteropCoordinator,
     private val dirtyFilesProvider: DirtyFilesProvider,
-    private val reporter: BuildReporter,
+    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
 ) {
 
     private fun calculateSourcesToCompileImpl(

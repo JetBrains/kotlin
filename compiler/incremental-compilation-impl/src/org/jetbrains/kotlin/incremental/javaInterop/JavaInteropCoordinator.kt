@@ -14,6 +14,8 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -33,7 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import java.io.File
 
 private class CoarseJavaInteropCoordinator(
-    reporter: BuildReporter,
+    reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
     messageCollector: MessageCollector,
 ) : JavaInteropCoordinator(messageCollector) {
     private val javaFilesProcessor =
@@ -59,7 +61,7 @@ private class CoarseJavaInteropCoordinator(
 }
 
 private class PreciseJavaInteropCoordinator(
-    private val reporter: BuildReporter,
+    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
     messageCollector: MessageCollector,
 ) : JavaInteropCoordinator(messageCollector) {
     private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
@@ -175,7 +177,7 @@ internal sealed class JavaInteropCoordinator(
     companion object {
         fun getImplementation(
             usePreciseJavaTracking: Boolean,
-            reporter: BuildReporter,
+            reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
             messageCollector: MessageCollector,
         ): JavaInteropCoordinator {
             return if (usePreciseJavaTracking) {

@@ -10,6 +10,8 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import java.io.File
 
 internal interface TaskWithLocalState : Task {
@@ -17,7 +19,7 @@ internal interface TaskWithLocalState : Task {
     val localStateDirectories: ConfigurableFileCollection
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter>
+    val metrics: Property<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>>
 }
 
 internal fun TaskWithLocalState.allOutputFiles(): List<File> =

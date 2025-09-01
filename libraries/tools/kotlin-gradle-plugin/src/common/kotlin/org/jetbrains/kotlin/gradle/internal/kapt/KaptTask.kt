@@ -14,6 +14,8 @@ import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
@@ -102,7 +104,7 @@ abstract class KaptTask @Inject constructor(
     var useBuildCache: Boolean = false
 
     @get:Internal
-    override val metrics: Property<BuildMetricsReporter> = project.objects
+    override val metrics: Property<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     @get:Input

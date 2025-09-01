@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.lang.management.ManagementFactory
 
-interface BuildMetricsReporter {
-    fun startMeasure(time: BuildTimeMetric)
-    fun endMeasure(time: BuildTimeMetric)
-    fun addTimeMetricNs(time: BuildTimeMetric, durationNs: Long)
-    fun addDynamicTimeMetricNs(time: String, parent: BuildTimeMetric, durationNs: Long)
+interface BuildMetricsReporter<B : BuildTimeMetric, P : BuildPerformanceMetric> {
+    fun startMeasure(time: B)
+    fun endMeasure(time: B)
+    fun addTimeMetricNs(time: B, durationNs: Long)
+    fun addDynamicTimeMetricNs(time: String, parent: B, durationNs: Long)
 
     @Deprecated("Use addTimeMetricNs instead", ReplaceWith("addTimeMetricNs(time, durationNs)"))
-    fun addTimeMetricMs(time: BuildTimeMetric, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
+    fun addTimeMetricMs(time: B, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
 
-    fun addMetric(metric: BuildPerformanceMetric, value: Long)
-    fun addTimeMetric(metric: BuildPerformanceMetric)
+    fun addMetric(metric: P, value: Long)
+    fun addTimeMetric(metric: P)
 
     //Change metric to enum if possible
     fun addGcMetric(metric: String, value: GcMetric)
@@ -26,11 +26,11 @@ interface BuildMetricsReporter {
 
     fun addAttribute(attribute: BuildAttribute)
 
-    fun getMetrics(): BuildMetrics
-    fun addMetrics(metrics: BuildMetrics)
+    fun getMetrics(): BuildMetrics<B, P>
+    fun addMetrics(metrics: BuildMetrics<B, P>)
 }
 
-inline fun <T> BuildMetricsReporter.measure(time: BuildTimeMetric, fn: () -> T): T {
+inline fun <B : BuildTimeMetric, P : BuildPerformanceMetric, T> BuildMetricsReporter<B, P>.measure(time: B, fn: () -> T): T {
     startMeasure(time)
     try {
         return fn()
@@ -40,13 +40,13 @@ inline fun <T> BuildMetricsReporter.measure(time: BuildTimeMetric, fn: () -> T):
 }
 
 
-fun BuildMetricsReporter.startMeasureGc() {
+fun <B : BuildTimeMetric, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.startMeasureGc() {
     ManagementFactory.getGarbageCollectorMXBeans().forEach {
         startGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }
 }
 
-fun BuildMetricsReporter.endMeasureGc() {
+fun <B : BuildTimeMetric, P : BuildPerformanceMetric> BuildMetricsReporter<B, P>.endMeasureGc() {
     ManagementFactory.getGarbageCollectorMXBeans().forEach {
         endGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }

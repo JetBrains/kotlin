@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.LOAD_CONTENTS_OF_CLASSES
-import org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_INLINED_CLASSES
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassListSnapshotterWithInlinedClassSupport.ClassDescriptorForProcessing
 import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
@@ -52,7 +50,7 @@ internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
 private class InstanceBasedSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
-    private val metrics: BuildMetricsReporter,
+    private val metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
 ) {
 
     private val knownClassUsages = HashMap<JvmClassName, Set<JvmClassName>>()
@@ -174,7 +172,7 @@ private class PrefixBasedSnapshotter(
 internal class InlinedClassSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
-    private val metrics: BuildMetricsReporter,
+    private val metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
 ): ClassMultiHashProvider {
     private val instanceBasedSnapshotter = InstanceBasedSnapshotter(classNameToClassFileMap, classFileToDescriptorMap, metrics)
     private val prefixBasedSnapshotter = PrefixBasedSnapshotter(classNameToClassFileMap)

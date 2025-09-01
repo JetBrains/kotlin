@@ -110,14 +110,14 @@ internal object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildTimeMetric]s as different callers may want to
-     * record different [BuildTimeMetric]s (because the [BuildTimeMetric.parent]s are different).
+     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildTime]s as different callers may want to
+     * record different [BuildTime]s (because the [BuildTime.parent]s are different).
      */
     class MetricsReporter(
-        private val metrics: BuildMetricsReporter? = null,
-        private val getLookupSymbols: BuildTimeMetric? = null,
-        private val findReferencedClasses: BuildTimeMetric? = null,
-        private val findTransitivelyReferencedClasses: BuildTimeMetric? = null
+        private val metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>? = null,
+        private val getLookupSymbols: GradleBuildTimeMetric? = null,
+        private val findReferencedClasses: GradleBuildTimeMetric? = null,
+        private val findTransitivelyReferencedClasses: GradleBuildTimeMetric? = null
     ) {
         fun <T> getLookupSymbols(fn: () -> T) = metrics?.measure(getLookupSymbols!!, fn) ?: fn()
         fun <T> findReferencedClasses(fn: () -> T) = metrics?.measure(findReferencedClasses!!, fn) ?: fn()

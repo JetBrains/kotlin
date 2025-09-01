@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.internal.compilerRunner.native
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 
 internal fun ObjectFactory.KotlinNativeCInteropRunner(
-    metricsReporter: Provider<BuildMetricsReporter>,
+    metricsReporter: Provider<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,

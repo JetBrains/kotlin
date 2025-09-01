@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.CLEAN_BACKUP_STASH
-import org.jetbrains.kotlin.build.report.metrics.PRECISE_BACKUP_OUTPUT
-import org.jetbrains.kotlin.build.report.metrics.RESTORE_OUTPUT_FROM_BACKUP
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.incremental.storage.InMemoryStorageInterface
@@ -165,7 +163,7 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
  * In the case of an unsuccessful compilation [stashDir] is also removed, but the backed-up files restored to their origin location.
  */
 class RecoverableCompilationTransaction(
-    private val reporter: BuildReporter,
+    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
     private val stashDir: Path,
 ) : CompilationTransaction, BaseCompilationTransaction() {
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()
