@@ -3239,12 +3239,6 @@ public class FirPsiBlackBoxInlineCodegenTestGenerated extends AbstractFirPsiBlac
     }
 
     @Test
-    @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt")
-    public void testLocalDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib() {
-      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt");
-    }
-
-    @Test
     @TestMetadata("localFunInLambda.kt")
     public void testLocalFunInLambda() {
       runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.kt");
