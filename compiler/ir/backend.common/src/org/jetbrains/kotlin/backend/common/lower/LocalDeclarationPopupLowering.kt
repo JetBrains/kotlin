@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.util.transformInPlace
 
@@ -43,7 +44,10 @@ open class LocalDeclarationPopupLowering(
                 // While it is still used in Kotlin/JVM.
                 declaration.getter.transformStatement(this)
                 declaration.setter?.transformStatement(this)
-                return declaration.delegate.transformStatement(this)
+
+                val delegate = declaration.delegate
+                requireNotNull(delegate) { "Local delegated property ${declaration.render()} has no delegate" }
+                return delegate.transformStatement(this)
             }
 
             override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {

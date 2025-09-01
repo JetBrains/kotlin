@@ -195,22 +195,23 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     private fun IrPropertyReference.getReceiverParameterOrNull(): IrValueParameter? = getter?.owner?.getReceiverParameterOrNull()
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-        val delegate = declaration.delegate.initializer
-        if (delegate !is IrPropertyReference ||
+        val delegate = declaration.delegate
+        val delegateInitializer = delegate?.initializer
+        if (delegateInitializer !is IrPropertyReference ||
             !declaration.getter.returnsResultOfStdlibCall ||
             declaration.setter?.returnsResultOfStdlibCall == false
         ) return super.visitLocalDelegatedProperty(declaration)
 
         // Variables are cheap, so optimizing them out is not really necessary.
-        val receiver = delegate.getReceiverOrNull()?.let { receiver ->
-            with(declaration.delegate) { buildVariable(parent, startOffset, endOffset, origin, name, receiver.type) }.apply {
+        val receiver = delegateInitializer.getReceiverOrNull()?.let { receiver ->
+            with(delegate) { buildVariable(parent, startOffset, endOffset, origin, name, receiver.type) }.apply {
                 initializer = receiver.transform(this@PropertyReferenceDelegationTransformer, null)
             }
         }
         // TODO: just like in `PropertyReferenceLowering`, probably better to inline the getter/setter rather than
         //       generate them as local functions.
-        val getter = declaration.getter.apply { body = accessorBody(delegate, receiver) }
-        val setter = declaration.setter?.apply { body = accessorBody(delegate, receiver) }
+        val getter = declaration.getter.apply { body = accessorBody(delegateInitializer, receiver) }
+        val setter = declaration.setter?.apply { body = accessorBody(delegateInitializer, receiver) }
         val statements = listOfNotNull(receiver, getter, setter)
         return statements.singleOrNull()
             ?: IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType, null, statements)

@@ -65,7 +65,7 @@ class LocalDelegatedPropertiesLowering(private val context: CommonBackendContext
         ).apply {
             statements.add(declaration.getter)
             statements.addIfNotNull(declaration.setter)
-            statements.add(declaration.delegate)
+            statements.addIfNotNull(declaration.delegate)
         }
     }
 }
