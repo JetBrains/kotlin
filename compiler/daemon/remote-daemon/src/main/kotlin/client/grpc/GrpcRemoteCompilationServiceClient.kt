@@ -6,6 +6,7 @@
 package client.grpc
 
 import client.core.BasicHTTPAuthClient
+import com.google.protobuf.Empty
 import common.RemoteCompilationService
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
@@ -48,7 +49,7 @@ class GrpcRemoteCompilationServiceClient(
     }
 
     override suspend fun cleanup() {
-        // TODO: atm we do not care
+        stub.cleanup(Empty.getDefaultInstance())
     }
 
     override fun close() {

@@ -50,6 +50,9 @@ class GrpcRemoteCompilationServerImpl(
 
     override fun start(block: Boolean) {
         server.start()
+        if (block) {
+            server.awaitTermination()
+        }
     }
 
     override fun stop() {
