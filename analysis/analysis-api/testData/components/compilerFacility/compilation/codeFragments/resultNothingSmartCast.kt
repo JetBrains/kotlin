@@ -7,8 +7,8 @@ fun main() {
     var str: String? = null
     str = "not null"
     println(str)
-    str = null
-    <caret_context>println(str)
+    <caret_context>str = null
+    println(str)
 }
 
 
