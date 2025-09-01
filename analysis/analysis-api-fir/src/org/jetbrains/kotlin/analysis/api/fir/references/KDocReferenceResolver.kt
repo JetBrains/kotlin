@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.yieldIfNotNull
@@ -72,6 +73,18 @@ internal object KDocReferenceResolver {
         containedTagSectionIfSubject: KDocKnownTag?
     ): Set<KaSymbol> {
         with(analysisSession) {
+            if (KotlinKDocResolutionStrategyProviderService
+                    .getService(useSiteModule.project)
+                    ?.shouldUseExperimentalStrategy() != true
+            ) {
+                return ClassicKDocReferenceResolver.resolveKdocFqName(
+                    analysisSession,
+                    selectedFqName,
+                    fullFqName,
+                    contextElement
+                ).toSet()
+            }
+
             val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
             val fullSymbolsResolved =
                 resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
