@@ -9,13 +9,20 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 
 abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
     override fun getRangeInElement(): TextRange = element.getNameTextRange()
 
     override fun canRename(): Boolean = true
 
-    override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).singleOrNull()?.element
+    override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).let { resolvedResults ->
+        if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() == true) {
+            resolvedResults.singleOrNull()
+        } else {
+            resolvedResults.firstOrNull()
+        }
+    }?.element
 
     override fun getCanonicalText(): String = element.getNameText()
 

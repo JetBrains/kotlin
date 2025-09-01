@@ -41,6 +41,25 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.utils.KaFirStopWorldCacheCleaner"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirKDocResolutionStrategyProviderService"
+    />
+
+    <registryKey
+        defaultValue="false"
+        description="Enable experimental KDoc resolution strategy"
+        key="kotlin.analysis.experimentalKDocResolution"
+        restartRequired="false"
+    />
+
+    <registryKey
+        defaultValue="true"
+        description="Consider lexical scopes in the experimental KDoc resolution strategy"
+        key="kotlin.analysis.resolveKDocWithLexicalScopes"
+        restartRequired="false"
+    />
+
     <registryKey
         defaultValue="true"
         description="Perform cache clean-up when running out of RAM"

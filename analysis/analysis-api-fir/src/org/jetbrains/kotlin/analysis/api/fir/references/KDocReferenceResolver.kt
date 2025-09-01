@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.canBeReferencedAsExtensionOn
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getContextElementOrSelf
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getLongestExistingPackageScope
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
@@ -22,21 +21,22 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeSimpleConstraintSystemImpl
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeSimpleConstraintSystemImpl
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
@@ -81,6 +81,18 @@ internal object KDocReferenceResolver {
         containedTagSectionIfSubject: KDocKnownTag?
     ): Set<KaSymbol> {
         with(analysisSession) {
+            if (KotlinKDocResolutionStrategyProviderService
+                    .getService(useSiteModule.project)
+                    ?.shouldUseExperimentalStrategy() != true
+            ) {
+                return ClassicKDocReferenceResolver.resolveKdocFqName(
+                    analysisSession,
+                    selectedFqName,
+                    fullFqName,
+                    contextElement
+                ).toSet()
+            }
+
             val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
             val fullSymbolsResolved =
                 resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
@@ -227,7 +239,15 @@ internal object KDocReferenceResolver {
         val containingFile = contextElement.containingKtFile
         val scopeContext = containingFile.scopeContext(contextElement)
         val scopeContextScopes = scopeContext.scopes.map { it.scope }
-        val lexicalScopes = getLexicalScopesForPosition(contextElement)
+        val lexicalScopes =
+            if (KotlinKDocResolutionStrategyProviderService
+                    .getService(useSiteModule.project)
+                    ?.shouldUseLexicalScopesDuringResolution() == true
+            ) {
+                getLexicalScopesForPosition(contextElement)
+            } else {
+                emptyList()
+            }
 
         val allScopesPossiblyContainingName = sequence {
             yieldAll(lexicalScopes.mapNotNull { getNestedScopePossiblyContainingShortName(fqName, it) })
