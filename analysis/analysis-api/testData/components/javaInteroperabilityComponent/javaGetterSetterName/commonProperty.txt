@@ -1,0 +1,2 @@
+Getter name: getX
+Setter name: null

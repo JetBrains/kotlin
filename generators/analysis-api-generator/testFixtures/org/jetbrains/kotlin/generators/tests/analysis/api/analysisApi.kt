@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inherit
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractExpressionTypeAsPsiTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractJavaGetterSetterNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
@@ -493,6 +494,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractPsiTypeAsKaTypeTest>(filter = frontendIs(FrontendKind.Fir)) {
             model(it, "asKaType")
+        }
+
+        test<AbstractJavaGetterSetterNameTest> {
+            model(it, "javaGetterSetterName")
         }
     }
 
