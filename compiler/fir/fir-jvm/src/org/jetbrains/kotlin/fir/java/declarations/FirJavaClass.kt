@@ -93,6 +93,8 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         copy
     }
 
+    val isRecord: Boolean = javaClass?.isRecord ?: false
+
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
