@@ -1,4 +1,6 @@
-// IGNORE_NATIVE: target=ios_simulator_arm64
+// IGNORE_NATIVE: targetFamily=IOS
+// IGNORE_NATIVE: targetFamily=TVOS
+// IGNORE_NATIVE: targetFamily=WATCHOS
 // KIND: STANDALONE
 // MODULE: Main
 // FILE: coroutines.kt
