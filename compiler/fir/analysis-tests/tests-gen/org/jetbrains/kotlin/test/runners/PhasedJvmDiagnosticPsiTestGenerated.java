@@ -11581,6 +11581,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("privateFinalSetterOnOpenDelegatedVar.kt")
+      public void testPrivateFinalSetterOnOpenDelegatedVar() {
+        runTest("compiler/testData/diagnostics/tests/delegatedProperty/privateFinalSetterOnOpenDelegatedVar.kt");
+      }
+
+      @Test
       @TestMetadata("propertyDefferedType.kt")
       public void testPropertyDefferedType() {
         runTest("compiler/testData/diagnostics/tests/delegatedProperty/propertyDefferedType.kt");
