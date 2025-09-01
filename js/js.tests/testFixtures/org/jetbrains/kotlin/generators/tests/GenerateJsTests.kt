@@ -67,22 +67,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
-            testClass<AbstractJsIrInvalidationPerFileTest>(annotations = listOf(*legacyFrontend())) {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-
-            testClass<AbstractJsIrInvalidationPerModuleTest>(annotations = listOf(*legacyFrontend())) {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-
-            testClass<AbstractJsIrES6InvalidationPerFileTest>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
-            }
-
-            testClass<AbstractJsIrES6InvalidationPerModuleTest>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
-            }
-
             testClass<AbstractJsFirInvalidationPerFileTest> {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
@@ -97,14 +81,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsFirES6InvalidationPerModuleTest>(annotations = listOf(*es6())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
-            }
-
-            testClass<AbstractJsIrInvalidationPerFileWithPLTest>(annotations = listOf(*legacyFrontend())) {
-                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-
-            testClass<AbstractJsIrInvalidationPerModuleWithPLTest>(annotations = listOf(*legacyFrontend())) {
-                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
             testClass<AbstractJsFirInvalidationPerFileWithPLTest> {
