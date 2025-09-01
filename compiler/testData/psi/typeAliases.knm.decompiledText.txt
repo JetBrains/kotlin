@@ -41,7 +41,7 @@
       public final class OrderA public constructor() {
       }
 
-      public typealias B = (() -> kotlin.Unit /* from: dependency.A */) -> kotlin.Unit
+      public typealias B = (dependency.A) -> kotlin.Unit
 
       @test.Ann private typealias Parametrized<E, F> = kotlin.collections.Map<E, F>
   }

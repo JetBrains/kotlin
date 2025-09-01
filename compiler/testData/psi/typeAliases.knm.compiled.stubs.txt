@@ -281,14 +281,10 @@
               VALUE_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
-                    FUNCTION_TYPE
-                      abbreviatedType: dependency.A
-                      VALUE_PARAMETER_LIST
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION[referencedName=kotlin]
-                          REFERENCE_EXPRESSION[referencedName=Unit]
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=dependency]
+                      REFERENCE_EXPRESSION[referencedName=A]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
