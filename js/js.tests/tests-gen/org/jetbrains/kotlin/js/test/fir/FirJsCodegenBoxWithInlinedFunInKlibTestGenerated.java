@@ -46368,6 +46368,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       }
 
       @Test
+      @TestMetadata("kt78537.kt")
+      public void testKt78537() {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt78537.kt");
+      }
+
+      @Test
       @TestMetadata("propertyIntrinsic.kt")
       public void testPropertyIntrinsic() {
         runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
