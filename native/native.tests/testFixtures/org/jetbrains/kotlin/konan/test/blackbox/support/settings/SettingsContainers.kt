@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.MacAbi
 import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -70,9 +71,15 @@ val Settings.configurables: Configurables
         val propertyOverrides = buildMap {
             // Development variant of LLVM is used to have utilities like FileCheck
             put("llvmHome.${HostManager.hostName}", "\$llvm.${HostManager.hostName}.dev")
-            if (get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.macabi) == true) {
+
+            val macabi = get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.macabi)
+            if (macabi != null) {
                 // The same as in KonanConfig. See the motivation there.
-                put("targetTriple.ios_arm64", "arm64-apple-ios-macabi")
+                val arch = when (macabi) {
+                    MacAbi.X64 -> "x86_64"
+                    MacAbi.ARM64 -> "arm64"
+                }
+                put("targetTriple.ios_arm64", "$arch-apple-ios-macabi")
                 put("targetSysRoot.ios_arm64", "\$targetSysRoot.macos_arm64")
             }
         }
