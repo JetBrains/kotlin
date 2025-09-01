@@ -74,6 +74,18 @@ public class Fe10IdeNormalAnalysisSourceModuleJavaGetterSetterNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("dotName.kt")
+  public void testDotName() {
+    run("dotName.kt");
+  }
+
+  @Test
+  @TestMetadata("escapedName.kt")
+  public void testEscapedName() {
+    run("escapedName.kt");
+  }
+
+  @Test
   @TestMetadata("immutableProperty.kt")
   public void testImmutableProperty() {
     run("immutableProperty.kt");
@@ -101,6 +113,12 @@ public class Fe10IdeNormalAnalysisSourceModuleJavaGetterSetterNameTestGenerated 
   @TestMetadata("mutableProperty.kt")
   public void testMutableProperty() {
     run("mutableProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("noName.kt")
+  public void testNoName() {
+    run("noName.kt");
   }
 
   @Test
