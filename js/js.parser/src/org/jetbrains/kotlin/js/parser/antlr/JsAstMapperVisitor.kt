@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsDoWhile
 import org.jetbrains.kotlin.js.backend.ast.JsEmpty
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFor
+import org.jetbrains.kotlin.js.backend.ast.JsForIn
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsIf
 import org.jetbrains.kotlin.js.backend.ast.JsNode
@@ -137,8 +138,9 @@ class JsAstMapperVisitor(
         val originalId = ctx.assignable().identifier()?.text
             ?: TODO("Only identifier parameters are supported yet")
         val id = scopeContext.localNameFor(originalId)
+        val initialization = ctx.singleExpression()?.let { visit<JsExpression>(it) }
 
-        return JsVars.JsVar(id).applyLocation(fileName, ctx)
+        return JsVars.JsVar(id, initialization).applyLocation(fileName, ctx)
     }
 
     override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsStatement? {
@@ -186,16 +188,33 @@ class JsAstMapperVisitor(
         return when {
             initSequence != null -> JsFor(initSequence, condition, increment, body)
             initDeclaration != null -> JsFor(initDeclaration, condition, increment, body)
-            else -> TODO("Invalid for statement: ${ctx.text}")
+            else -> TODO("Invalid 'for' statement: ${ctx.text}")
         }
     }
 
     override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext): JsNode? {
-        TODO("Not yet implemented")
+        val unnamedExpression = ctx.singleExpression()?.let { visit<JsExpression>(it) }
+        val namedDeclaration = ctx.singleVariableDeclaration()?.let { visit<JsVars.JsVar>(it) }
+        val inTargetExpression = ctx.expressionSequence()?.let { visit<JsExpression>(it) }
+
+        val bodyStatement = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
+
+        return when {
+            unnamedExpression != null -> JsForIn().apply {
+                iterExpression = unnamedExpression
+                objectExpression = inTargetExpression
+                body = bodyStatement
+            }
+            namedDeclaration != null -> JsForIn(namedDeclaration.name).apply {
+                iterExpression = namedDeclaration.initExpression
+                body = bodyStatement
+            }
+            else -> TODO("Invalid 'for .. in' statement: ${ctx.text}")
+        }
     }
 
     override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsNode? {
-        TODO("for .. of is not supported yet")
+        TODO("'for .. of' is not supported yet")
     }
 
     override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode? {

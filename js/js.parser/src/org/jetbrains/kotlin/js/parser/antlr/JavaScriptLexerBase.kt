@@ -56,7 +56,7 @@ abstract class JavaScriptLexerBase(input: CharStream?) : Lexer(input) {
     }
 
     fun isInTemplateString(): Boolean {
-        return !templateDepthStack.isEmpty() && templateDepthStack.peek() == currentDepth
+        return templateDepthStack.isNotEmpty() && templateDepthStack.peek() == currentDepth
     }
 
     /**
