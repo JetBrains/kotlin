@@ -535,6 +535,16 @@ class _KDocLexer implements FlexLexer {
     this((java.io.Reader)null);
   }
 
+  /**
+   * It should be used by default instead of `yybegin` except in cases where manual handling of `consecutiveLineBreakCount` is needed.
+   * For instance, although the leading asterisk switches to the ` CONTENTS_BEGINNING ` state, it shouldn't affect `consecutiveLineBreakCount`
+   * because it's a special char that's invisible from the point of view of the plain Markdown parser.
+   */
+  private void yybeginAndUpdate(int newState) {
+    consecutiveLineBreakCount = newState == LINE_BEGINNING || newState == CODE_BLOCK_LINE_BEGINNING ? consecutiveLineBreakCount + 1 : 0;
+    yybegin(newState);
+  }
+
   private boolean isLastToken() {
     return zzMarkedPos == zzBuffer.length();
   }
@@ -796,16 +806,14 @@ class _KDocLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
+            { lastBlockType = BlockType.Paragraph;
               return TokenType.BAD_CHARACTER;
             }
           // fall through
           case 23: break;
           case 2:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
-              yybegin(CONTENTS);
+            { lastBlockType = BlockType.Paragraph;
+              yybeginAndUpdate(CONTENTS);
               return KDocTokens.TEXT;
             }
           // fall through
@@ -816,24 +824,21 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 25: break;
           case 4:
-            { consecutiveLineBreakCount++;
-              yybegin(LINE_BEGINNING);
+            { yybeginAndUpdate(LINE_BEGINNING);
               return TokenType.WHITE_SPACE;
             }
           // fall through
           case 26: break;
           case 5:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
-              yybegin(CONTENTS);
+            { lastBlockType = BlockType.Paragraph;
+              yybeginAndUpdate(CONTENTS);
               return KDocTokens.KDOC_LPAR;
             }
           // fall through
           case 27: break;
           case 6:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
-              yybegin(CONTENTS);
+            { lastBlockType = BlockType.Paragraph;
+              yybeginAndUpdate(CONTENTS);
               return KDocTokens.KDOC_RPAR;
             }
           // fall through
@@ -862,33 +867,26 @@ class _KDocLexer implements FlexLexer {
                   return KDocTokens.CODE_BLOCK_TEXT;
               }
 
-              if (state != CONTENTS_BEGINNING) {
-                  yybegin(CONTENTS);
-              }
+              yybegin(yystate() == CONTENTS_BEGINNING ? CONTENTS_BEGINNING : CONTENTS);
 
               return KDocTokens.TEXT;  // internal white space
             }
           // fall through
           case 30: break;
           case 9:
-            { consecutiveLineBreakCount = 0;
-              yybegin(CONTENTS);
+            { yybeginAndUpdate(CONTENTS);
               return KDocTokens.TEXT;
             }
           // fall through
           case 31: break;
           case 10:
-            { consecutiveLineBreakCount = 0;
-              yybegin(TAG_TEXT_BEGINNING);
+            { yybeginAndUpdate(TAG_TEXT_BEGINNING);
               return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
           case 32: break;
           case 11:
-            { consecutiveLineBreakCount = 0;
-              if (yystate() != INDENTED_CODE_BLOCK) {
-                  yybegin(CODE_BLOCK);
-              }
+            { yybeginAndUpdate(yystate() == INDENTED_CODE_BLOCK ? INDENTED_CODE_BLOCK : CODE_BLOCK);
               return KDocTokens.CODE_BLOCK_TEXT;
             }
           // fall through
@@ -899,8 +897,7 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 34: break;
           case 13:
-            { consecutiveLineBreakCount++;
-              yybegin(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
+            { yybeginAndUpdate(yystate() == INDENTED_CODE_BLOCK ? LINE_BEGINNING : CODE_BLOCK_LINE_BEGINNING);
               return TokenType.WHITE_SPACE;
             }
           // fall through
@@ -912,46 +909,41 @@ class _KDocLexer implements FlexLexer {
           // fall through
           case 36: break;
           case 15:
-            { consecutiveLineBreakCount = 0;
-              if (isLastToken()) return KDocTokens.END;
+            { if (isLastToken()) return KDocTokens.END;
               else return KDocTokens.TEXT;
             }
           // fall through
           case 37: break;
           case 16:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
-              yybegin(CONTENTS);
+            { lastBlockType = BlockType.Paragraph;
+              yybeginAndUpdate(CONTENTS);
               return KDocTokens.MARKDOWN_ESCAPED_CHAR;
             }
           // fall through
           case 38: break;
           case 17:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
+            { lastBlockType = BlockType.Paragraph;
               KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
-              yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
+              yybeginAndUpdate(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
               return KDocTokens.TAG_NAME;
             }
           // fall through
           case 39: break;
           case 18:
-            { yybegin(CONTENTS_BEGINNING);
+            { yybeginAndUpdate(CONTENTS_BEGINNING);
               return KDocTokens.START;
             }
           // fall through
           case 40: break;
           case 19:
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Code;
-              yybegin(CODE_BLOCK_LINE_BEGINNING);
+            { lastBlockType = BlockType.Code;
+              yybeginAndUpdate(CODE_BLOCK_LINE_BEGINNING);
               return KDocTokens.TEXT;
             }
           // fall through
           case 41: break;
           case 20:
-            { consecutiveLineBreakCount = 0;
-              yybegin(CONTENTS);
+            { yybeginAndUpdate(CONTENTS);
               return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
@@ -960,9 +952,8 @@ class _KDocLexer implements FlexLexer {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzMarkedPos, -1);
-            { consecutiveLineBreakCount = 0;
-              lastBlockType = BlockType.Paragraph;
-              yybegin(CONTENTS);
+            { lastBlockType = BlockType.Paragraph;
+              yybeginAndUpdate(CONTENTS);
               return KDocTokens.MARKDOWN_LINK;
             }
           // fall through
@@ -971,9 +962,8 @@ class _KDocLexer implements FlexLexer {
             // lookahead expression with fixed base length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL, zzStartRead, 3);
-            { consecutiveLineBreakCount = 0;
-              // Code fence end
-              yybegin(CONTENTS);
+            { // Code fence end
+              yybeginAndUpdate(CONTENTS);
               return KDocTokens.TEXT;
             }
           // fall through
