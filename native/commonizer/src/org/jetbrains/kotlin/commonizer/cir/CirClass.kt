@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 interface CirClass : CirClassifier, CirContainingClass, AnyClass {
     var companion: CirName? // null means no companion object
     val isCompanion: Boolean
-    val isValue: Boolean
     val isInner: Boolean
     val hasEnumEntries: Boolean
     val supertypes: List<CirType>

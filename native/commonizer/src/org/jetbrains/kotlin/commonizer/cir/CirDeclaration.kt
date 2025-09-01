@@ -55,7 +55,10 @@ interface CirMaybeCallableMemberOfClass {
 interface CirContainingClass : CirHasModality {
     val kind: ClassKind
     val isData: Boolean
+    val isValue: Boolean
 }
+
+val CirContainingClass.isDataOrValue: Boolean get() = isData || isValue
 
 interface CirHasTypeParameters {
     val typeParameters: List<CirTypeParameter>
