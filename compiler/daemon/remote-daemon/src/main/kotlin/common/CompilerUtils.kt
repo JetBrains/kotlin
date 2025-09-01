@@ -86,11 +86,11 @@ object CompilerUtils {
                 // THIS IS JUST A WORKAROUND, because we use a compiler from Kotlin project and the older libraries are not compatible
                 // with the current Kotlin compiler
                 if (clientPath.contains("kotlin-scripting-compiler-impl-embeddable")) {
-                    "/Users/michal.svec/Desktop/kotlin/plugins/scripting/scripting-compiler-impl-embeddable/build/libs/kotlin-scripting-compiler-impl-embeddable-2.3.255-SNAPSHOT.jar"
+                    File("src/main/kotlin/server/libsworkaround/kotlin-scripting-compiler-impl-embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else if (clientPath.contains("kotlin-scripting-compiler-embeddable")) {
-                    "/Users/michal.svec/Desktop/kotlin/plugins/scripting/scripting-compiler-embeddable/build/libs/kotlin-scripting-compiler-embeddable-2.3.255-SNAPSHOT.jar"
+                    File("src/main/kotlin/server/libsworkaround/kotlin-scripting-compiler-embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else if (clientPath.contains("kotlin-serialization-compiler-plugin-embeddable")) {
-                    "/Users/michal.svec/Desktop/kotlin/plugins/kotlinx-serialization/kotlinx-serialization.embeddable/build/libs/kotlinx-serialization-compiler-plugin.embeddable-2.3.255-SNAPSHOT.jar"
+                    File("src/main/kotlin/server/libsworkaround/kotlinx-serialization-compiler-plugin.embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else {
                     clientPath
                 }
