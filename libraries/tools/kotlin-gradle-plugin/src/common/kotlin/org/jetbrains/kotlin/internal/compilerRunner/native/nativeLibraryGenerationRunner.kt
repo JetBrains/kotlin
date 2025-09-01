@@ -10,6 +10,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
 
 internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
-    metricsReporter: Provider<BuildMetricsReporter>,
+    metricsReporter: Provider<BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     useXcodeMessageStyle: Provider<Boolean>,
     classpath: FileCollection,

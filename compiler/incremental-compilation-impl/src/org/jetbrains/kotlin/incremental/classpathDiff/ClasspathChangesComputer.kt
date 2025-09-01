@@ -8,12 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CHANGED_AND_IMPACTED_SET
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASS_CHANGES
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_IMPACTED_SET
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_KOTLIN_CLASS_CHANGES
-import org.jetbrains.kotlin.build.report.metrics.COMPUTE_JAVA_CLASS_CHANGES
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
@@ -130,7 +125,7 @@ internal object ClasspathChangesComputer {
     private fun computeClassChanges(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>,
-        metrics: BuildMetricsReporter
+        metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>
     ): ProgramSymbolSet {
         val (currentKotlinClassSnapshots, currentJavaClassSnapshots) = currentClassSnapshots.partition { it is KotlinClassSnapshot }
         val (previousKotlinClassSnapshots, previousJavaClassSnapshots) = previousClassSnapshots.partition { it is KotlinClassSnapshot }

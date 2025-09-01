@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS
-import org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES
-import org.jetbrains.kotlin.build.report.metrics.LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader

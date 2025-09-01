@@ -21,8 +21,8 @@ internal class GradleCompilationResults(
     ) {
 
     var icLogLines: List<String> = emptyList()
-    private val buildMetricsReporter = BuildMetricsReporterImpl()
-    val buildMetrics: BuildMetrics
+    private val buildMetricsReporter = BuildMetricsReporterImpl<GradleBuildTimeMetric, GradleBuildPerformanceMetric>()
+    val buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>
         get() = buildMetricsReporter.getMetrics()
 
     @Throws(RemoteException::class)
@@ -47,7 +47,7 @@ internal class GradleCompilationResults(
             }
             CompilationResultCategory.BUILD_METRICS.code -> {
                 @Suppress("UNCHECKED_CAST")
-                (value as? BuildMetrics)?.let { buildMetricsReporter.addMetrics(it) }
+                (value as? BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>)?.let { buildMetricsReporter.addMetrics(it) }
             }
         }
     }

@@ -36,7 +36,7 @@ internal sealed interface ClassListSnapshotter {
 internal class PlainClassListSnapshotter(
     private val classes: List<ClassFileWithContentsProvider>,
     private val settings: ClasspathEntrySnapshotter.Settings,
-    private val metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+    private val metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
 ) : ClassListSnapshotter {
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
     private val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
@@ -98,7 +98,7 @@ internal class PlainClassListSnapshotter(
 internal class ClassListSnapshotterWithInlinedClassSupport(
     private val classes: List<ClassFileWithContentsProvider>,
     private val settings: ClasspathEntrySnapshotter.Settings,
-    private val metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+    private val metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
 ) : ClassListSnapshotter {
 
     private val classNameToClassFileMap = classes.associateByTo(

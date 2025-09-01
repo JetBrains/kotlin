@@ -24,21 +24,13 @@ sealed class BuildTime<T : BuildTime<T>>(open val parent: T?, val readableString
      * mutable collection and thus shares the same thread-safety limitations.
      */
     fun children(): List<T> = children
-
-    fun allChildrenMetrics(): Set<T> {
-        val result = mutableSetOf<T>()
-        fun addChildren(metric: T) {
-            result.add(metric)
-            metric.children().forEach { addChildren(it) }
-        }
-        children().forEach { addChildren(it) }
-        return result
-    }
-
-    //TODO do we need to add child manually???
 }
 
 fun <T : BuildTime<T>> getAllMetricsByType(buildTimeClass: KClass<T>): List<T> =
     buildTimeClass.sealedSubclasses.mapNotNull { it.objectInstance }.flatMap { it.children() + it }
 
+
+
 fun getAllMetrics() = BuildTime::class.sealedSubclasses.mapNotNull { it.objectInstance }.flatMap { it.children() + it }
+
+val allBuildTimeMetricsMap = getAllMetricsByType(BuildTimeMetric::class).groupBy { it.parent }
