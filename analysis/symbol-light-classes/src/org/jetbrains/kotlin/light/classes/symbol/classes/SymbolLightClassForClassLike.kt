@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParam
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -38,6 +37,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     manager: PsiManager,
 ) : SymbolLightClassBase(ktModule, manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+    @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
         ktModule: KaModule,
         classSymbol: SType,
@@ -62,7 +62,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         classSymbolPointer.withSymbol(ktModule, action)
 
     /**
-     * Psi-based [org.jetbrains.kotlin.psi.KtClassOrObject.isTopLevel] is needed to properly handle classes inside scripts
+     * Psi-based [KtClassOrObject.isTopLevel] is needed to properly handle classes inside scripts
      * as they are treated as nested.
      */
     override val isTopLevel: Boolean
@@ -152,8 +152,6 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun isEnum(): Boolean = classKind() == KaClassKind.ENUM_CLASS
 
     override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classSymbolPointer.isValid(ktModule)
-
-    override fun toString() = "${this::class.java.simpleName}:${classOrObjectDeclaration?.getDebugText()}"
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType

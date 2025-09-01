@@ -62,7 +62,7 @@ internal class SymbolLightTypeParameterList(
 
     override fun getTypeParameterIndex(typeParameter: PsiTypeParameter?): Int = _typeParameters.indexOf(typeParameter)
 
-    override fun toString(): String = "SymbolLightTypeParameterList"
+    override fun toString(): String = this::class.simpleName.orEmpty()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

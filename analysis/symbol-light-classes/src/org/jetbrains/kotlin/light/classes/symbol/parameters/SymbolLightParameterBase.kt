@@ -56,7 +56,7 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
         }
     }
 
-    override fun toString(): String = "${this::class.simpleName}:$name"
+    override fun toString(): String = this::class.simpleName.orEmpty()
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         basicIsEquivalentTo(this, another as? PsiParameter) || isOriginEquivalentTo(another)

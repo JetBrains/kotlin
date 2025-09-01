@@ -50,8 +50,6 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun hashCode(): Int = enumConstant.hashCode()
 
-    override fun toString(): String = "SymbolLightClassForEnumEntry:$name"
-
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
     }

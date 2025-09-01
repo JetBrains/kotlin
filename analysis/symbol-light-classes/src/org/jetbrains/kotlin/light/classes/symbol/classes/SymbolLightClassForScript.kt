@@ -108,8 +108,6 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun hashCode(): Int = script.hashCode()
 
-    override fun toString(): String = "${SymbolLightClassForScript::class.java.simpleName}:${script.fqName}"
-
     override fun getNameIdentifier(): PsiIdentifier? = null
 
     override fun getContainingClass(): PsiClass? = null

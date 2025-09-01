@@ -99,8 +99,6 @@ class KtLightMethodForDecompiledDeclaration(
 
     override fun clone(): Any = this
 
-    override fun toString(): String = "${this.javaClass.simpleName} of $funParent"
-
     override fun isValid(): Boolean = parent.isValid
 
     override fun getOriginalElement() = funDelegate
