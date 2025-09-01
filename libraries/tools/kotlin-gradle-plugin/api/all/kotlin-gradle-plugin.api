@@ -5928,7 +5928,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanHome ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
-	public final fun getKonanVersion ()Ljava/lang/String;
 	public final fun getLibraries ()Lorg/gradle/api/file/FileCollection;
 	public final fun getLibraryVersion ()Ljava/lang/String;
 	public final fun getLinkerOpts ()Ljava/util/List;
