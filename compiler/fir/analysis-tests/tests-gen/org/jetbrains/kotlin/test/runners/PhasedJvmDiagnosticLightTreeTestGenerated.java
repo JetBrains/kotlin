@@ -52873,6 +52873,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("deprecatedResolutionOfAnonymousObject.kt")
+      public void testDeprecatedResolutionOfAnonymousObject() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/deprecatedResolutionOfAnonymousObject.kt");
+      }
+
+      @Test
       @TestMetadata("dslMarkerPropagation.kt")
       public void testDslMarkerPropagation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/dslMarkerPropagation.kt");
