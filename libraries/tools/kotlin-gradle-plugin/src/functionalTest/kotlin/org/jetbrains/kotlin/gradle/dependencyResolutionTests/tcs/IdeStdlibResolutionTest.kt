@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import kotlin.io.path.Path
 
 class IdeStdlibResolutionTest {
@@ -40,9 +41,9 @@ class IdeStdlibResolutionTest {
     }
 
     private fun dumpKonanDirContents() {
-        val konanDir = Path(System.getProperty("user.home")).resolve(".konan").toFile()
-        System.err.println("Contents of ${konanDir.absolutePath}:")
-        konanDir.listFiles { it.startsWith("kotlin-native-prebuilt-") }?.forEach { file -> System.err.println("  $file") }
+        val konanDir = Path(System.getProperty("user.home")).resolve(".konan").toFile().listFiles { file: File -> file.name.startsWith("kotlin-native-prebuilt-") }.firstOrNull()
+        System.err.println("Contents of ${konanDir?.absolutePath ?: "<no konan dir found>"}:")
+        konanDir?.listFiles()?.forEach { file -> System.err.println("  ${file.path}") }
     }
 
     @Test

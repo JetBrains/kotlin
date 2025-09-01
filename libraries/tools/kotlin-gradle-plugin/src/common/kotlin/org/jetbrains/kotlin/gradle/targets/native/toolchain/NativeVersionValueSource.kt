@@ -130,8 +130,8 @@ internal abstract class NativeVersionValueSource :
         ) {
             logger.info("Moving Kotlin/Native bundle from tmp directory $fromDirectory to ${toDirectory.absolutePath}")
             if (!toDirectory.list().isNullOrEmpty()) {
-                logger.warn("Contents of ${toDirectory.absolutePath}:")
-                toDirectory.listFiles { it.startsWith("kotlin-native-prebuilt-") }?.forEach { file -> logger.warn("  $file") }
+                logger.warn("Contents of ${toDirectory.absolutePath}/kotlin-native-prebuilt:")
+                toDirectory.listFiles { file: File -> file.name.startsWith("kotlin-native-prebuilt-") }?.firstOrNull()?.listFiles()?.forEach { file -> logger.warn("  $file") }
                 logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
             }
 
