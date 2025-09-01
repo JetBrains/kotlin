@@ -414,6 +414,7 @@ enum class LanguageFeature(
     CapturedTypeApproximationReworked(KOTLIN_2_2, "KT-79451"),
 
     // 2.3
+    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_3, forcesPreReleaseBinaries = false, issue = "KT-79717"),
 
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-47289"),
     ForbidImplementationByDelegationWithDifferentGenericSignature(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-72140"),
@@ -564,7 +565,6 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     CollectionLiterals(sinceVersion = null, testOnly = true, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-79717"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
