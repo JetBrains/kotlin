@@ -1,5 +1,5 @@
 // KT-70987
-// MODULE_KIND: COMMON_JS
+// JS_MODULE_KIND: COMMON_JS
 
 // FILE: api.kt
 package api

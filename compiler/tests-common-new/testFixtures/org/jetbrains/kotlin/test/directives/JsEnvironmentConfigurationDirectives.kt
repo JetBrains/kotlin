@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 // TODO fill up all descriptions
 object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
-    val MODULE_KIND by enumDirective<ModuleKind>(
+    val JS_MODULE_KIND by enumDirective<ModuleKind>(
         description = "Specifies kind of js module",
         applicability = DirectiveApplicability.Module
     )

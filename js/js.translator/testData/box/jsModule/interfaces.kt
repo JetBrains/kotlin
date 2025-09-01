@@ -1,4 +1,4 @@
-// MODULE_KIND: COMMON_JS
+// JS_MODULE_KIND: COMMON_JS
 // FILE: bar.kt
 @file:JsModule("lib")
 @file:JsQualifier("foo")

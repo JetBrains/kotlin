@@ -1,4 +1,4 @@
-// MODULE_KIND: UMD
+// JS_MODULE_KIND: UMD
 package foo
 
 @JsModule("lib-foo")

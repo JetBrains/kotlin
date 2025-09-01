@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.MODULE_KIND
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_MODULE_KIND
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
@@ -147,9 +147,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.outputDir = getKlibArtifactFile(testServices, module.name)
 
         val registeredDirectives = module.directives
-        val moduleKinds = registeredDirectives[MODULE_KIND]
+        val moduleKinds = registeredDirectives[JS_MODULE_KIND]
         val moduleKind = when (moduleKinds.size) {
-            0 -> testServices.moduleStructure.allDirectives[MODULE_KIND].singleOrNull()
+            0 -> testServices.moduleStructure.allDirectives[JS_MODULE_KIND].singleOrNull()
                 ?: if (JsEnvironmentConfigurationDirectives.ES_MODULES in registeredDirectives) ModuleKind.ES else ModuleKind.PLAIN
             1 -> moduleKinds.single()
             else -> error("Too many module kinds passed ${moduleKinds.joinToArrayString()}")

@@ -1,7 +1,7 @@
 // NO_COMMON_FILES
 
 // MODULE: lib
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: a.kt
 @file:JsModule("foo")
 
@@ -17,7 +17,7 @@ external fun barF(): String
 fun dummyF() = "dummy"
 
 // MODULE: main(lib)
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: main.kt
 
 fun box(): String {

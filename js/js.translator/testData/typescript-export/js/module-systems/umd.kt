@@ -2,7 +2,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
-// MODULE_KIND: UMD
+// JS_MODULE_KIND: UMD
 // FILE: umd.kt
 
 package foo

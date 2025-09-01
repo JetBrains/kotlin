@@ -1,4 +1,4 @@
-// MODULE_KIND: UMD
+// JS_MODULE_KIND: UMD
 // NO_JS_MODULE_SYSTEM
 
 @JsModule("lib")

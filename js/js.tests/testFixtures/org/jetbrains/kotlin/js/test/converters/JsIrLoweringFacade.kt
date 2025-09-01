@@ -147,7 +147,7 @@ class JsIrLoweringFacade(
         val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val isEsModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives ||
-                module.directives[JsEnvironmentConfigurationDirectives.MODULE_KIND].contains(ModuleKind.ES)
+                module.directives[JsEnvironmentConfigurationDirectives.JS_MODULE_KIND].contains(ModuleKind.ES)
 
         val outputFile =
             File(
@@ -266,7 +266,7 @@ class JsIrLoweringFacade(
 }
 
 val RegisteredDirectives.moduleKind: ModuleKind
-    get() = get(JsEnvironmentConfigurationDirectives.MODULE_KIND).singleOrNull()
+    get() = get(JsEnvironmentConfigurationDirectives.JS_MODULE_KIND).singleOrNull()
         ?: if (contains(JsEnvironmentConfigurationDirectives.ES_MODULES)) ModuleKind.ES else ModuleKind.PLAIN
 
 val TestModule.kind: ModuleKind

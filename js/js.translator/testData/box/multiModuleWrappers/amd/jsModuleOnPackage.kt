@@ -1,5 +1,5 @@
 // MODULE: lib
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: lib.kt
 @file:JsModule("native-lib")
 package foo
@@ -23,7 +23,7 @@ external val bar: Int = definedExternally
 external var mbar: Int = definedExternally
 
 // MODULE: main(lib)
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: main.kt
 package foo
 
