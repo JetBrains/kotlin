@@ -453,6 +453,8 @@ enum class LanguageFeature(
     // Also remove org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.isInsideAssignmentRhs with this one
     EqualityConstraintForOperatorsUnderAssignments(KOTLIN_2_3, "KT-77008"),
 
+    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = KOTLIN_2_3, forcesPreReleaseBinaries = false, issue = "KT-79717"),
+
     // 2.4
 
     AnnotationsInMetadata(KOTLIN_2_4, "KT-75736"),
@@ -592,8 +594,7 @@ enum class LanguageFeature(
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     CollectionLiterals(sinceVersion = null, testOnly = true, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = false, issue = "KT-79717"),
-    IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
+    IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
