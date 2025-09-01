@@ -7,6 +7,7 @@ package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.internal.throwIrLinkageError
+import kotlin.internal.throwUnsupportedOperationException
 import kotlin.reflect.KProperty
 
 @UsedFromCompilerGeneratedCode

@@ -79,20 +79,6 @@ internal fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
-// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUninitializedPropertyAccessException` instead
-@UsedFromCompilerGeneratedCode
-@PublishedApi
-internal fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
-    kotlin.internal.throwUninitializedPropertyAccessException(propertyName)
-}
-
-// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUnsupportedOperationException` instead
-@UsedFromCompilerGeneratedCode
-@PublishedApi
-internal fun ThrowUnsupportedOperationException(message: String): Nothing {
-    kotlin.internal.throwUnsupportedOperationException(message)
-}
-
 @ExportForCppRuntime
 internal fun ThrowIllegalArgumentException() : Nothing {
     throw IllegalArgumentException()

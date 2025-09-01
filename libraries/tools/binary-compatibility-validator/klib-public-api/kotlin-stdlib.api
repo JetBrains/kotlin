@@ -12826,12 +12826,6 @@ final fun kotlin.native.internal/ThrowNullPointerException(): kotlin/Nothing // 
 final fun kotlin.native.internal/ThrowTypeCastException(kotlin/Any, kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowTypeCastException|ThrowTypeCastException(kotlin.Any;kotlin.String){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowUninitializedPropertyAccessException|ThrowUninitializedPropertyAccessException(kotlin.String){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowUnsupportedOperationException|ThrowUnsupportedOperationException(kotlin.String){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/areEqualByValue(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/areEqualByValue|areEqualByValue(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
