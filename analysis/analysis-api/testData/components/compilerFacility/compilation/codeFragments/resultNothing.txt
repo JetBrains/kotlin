@@ -18,8 +18,8 @@ public final class CodeFragment {
     MAXLOCALS = 1
 
   // access flags 0x19
-  public final static run()Ljava/lang/Void;
-  @Lorg/jetbrains/annotations/NotNull;() // invisible
+  public final static run()Ljava/lang/Object;
+  @Lorg/jetbrains/annotations/Nullable;() // invisible
    L0
     LINENUMBER 24 L0
     INVOKESTATIC ContextKt.call ()Ljava/lang/Void;
