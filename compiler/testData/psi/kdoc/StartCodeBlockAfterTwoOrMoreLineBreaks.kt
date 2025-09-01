@@ -30,3 +30,18 @@
  *    Code Block 2 (not well-formed)
  * Next text
  */
+
+// ISSUE: KT-79783
+
+/**
+ * - Test [Number]
+ *     - Test [String]
+ */
+class X
+
+/**
+ * The instructions are coming from three different places:
+ * - **A**:
+ *     - Source: [org.company.A], parameterized instructions
+ *     - Completed with variables from the [C] by the [D] when invoking `.doIt()`
+ */

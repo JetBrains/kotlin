@@ -102,3 +102,77 @@ KtFile: StartCodeBlockAfterTwoOrMoreLineBreaks.kt
       PsiElement(KDOC_TEXT)(' Next text')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
+  PsiWhiteSpace('\n\n')
+  PsiComment(EOL_COMMENT)('// ISSUE: KT-79783')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' - Test ')
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('Number')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)('     - Test ')
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('String')
+          PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('X')
+  PsiWhiteSpace('\n\n')
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' The instructions are coming from three different places:')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' - **A**:')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)('     - Source: ')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          KDOC_NAME
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('org')
+            PsiElement(DOT)('.')
+            PsiElement(IDENTIFIER)('company')
+          PsiElement(DOT)('.')
+          PsiElement(IDENTIFIER)('A')
+        PsiElement(RBRACKET)(']')
+      PsiElement(KDOC_TEXT)(', parameterized instructions')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)('     - Completed with variables from the ')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          PsiElement(IDENTIFIER)('C')
+        PsiElement(RBRACKET)(']')
+      PsiElement(KDOC_TEXT)(' by the ')
+      KDOC_MARKDOWN_LINK
+        PsiElement(LBRACKET)('[')
+        KDOC_NAME
+          PsiElement(IDENTIFIER)('D')
+        PsiElement(RBRACKET)(']')
+      PsiElement(KDOC_TEXT)(' when invoking `.doIt')
+      PsiElement(KDOC_LPAR)('(')
+      PsiElement(KDOC_RPAR)(')')
+      PsiElement(KDOC_TEXT)('`')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
