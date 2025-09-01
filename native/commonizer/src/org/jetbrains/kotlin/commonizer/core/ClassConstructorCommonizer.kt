@@ -53,6 +53,7 @@ class ClassConstructorCommonizer(
             override val modality get() = Modality.FINAL
             override val kind get() = ClassKind.CLASS
             override val isData get() = false
+            override val isValue: Boolean get() = false
         }
     }
 }

@@ -43,7 +43,7 @@ class FunctionOrPropertyBaseCommonizer(
         }
 
         // synthesized members of data classes should not be commonized
-        if (values.any { value -> value.kind == SYNTHESIZED && value.containingClass?.isData == true }) {
+        if (values.any { value -> value.kind == SYNTHESIZED && value.containingClass?.isDataOrValue == true }) {
             return null
         }
 
