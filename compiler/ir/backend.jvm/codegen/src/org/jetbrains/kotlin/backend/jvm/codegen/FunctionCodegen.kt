@@ -236,6 +236,9 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     private fun IrFunction.isDeprecatedHidden(): Boolean {
+        // see KT-80649
+        if (isAnnotatedWithJavaLangDeprecated) return false
+
         val mightBeDeprecated = if (this is IrSimpleFunction) {
             allOverridden(true).any {
                 it.isAnnotatedWithDeprecated || it.correspondingPropertySymbol?.owner?.isAnnotatedWithDeprecated == true

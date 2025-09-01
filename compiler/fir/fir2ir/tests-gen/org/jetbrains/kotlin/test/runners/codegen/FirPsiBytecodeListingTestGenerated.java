@@ -1230,6 +1230,12 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
     }
 
     @Test
+    @TestMetadata("hiddenWithJavaDeprecation.kt")
+    public void testHiddenWithJavaDeprecation() {
+      runTest("compiler/testData/codegen/bytecodeListing/deprecated/hiddenWithJavaDeprecation.kt");
+    }
+
+    @Test
     @TestMetadata("inheritingDeprecation.kt")
     public void testInheritingDeprecation() {
       runTest("compiler/testData/codegen/bytecodeListing/deprecated/inheritingDeprecation.kt");
