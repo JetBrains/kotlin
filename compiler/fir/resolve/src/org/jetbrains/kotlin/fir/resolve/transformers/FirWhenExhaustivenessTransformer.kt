@@ -438,14 +438,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
     ) {
         val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session) ?: return
         val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
-        val flags = Flags(allSubclasses, checkedSubclasses, session)
+        val info = Info(allSubclasses, checkedSubclasses, session)
 
         if (session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) {
             whenExpression.subjectVariable?.initializer?.let { initializer ->
-                inferVariantsFromSubjectSmartCast(initializer, flags)
+                inferVariantsFromSubjectSmartCast(initializer, info)
             }
         }
-        whenExpression.accept(ConditionChecker, flags)
+        whenExpression.accept(ConditionChecker, info)
         (allSubclasses - checkedSubclasses).mapNotNullTo(destination) {
             when (it) {
                 is FirClassSymbol<*> -> WhenMissingCase.IsTypeCheckIsMissing(
@@ -459,13 +459,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
     }
 
-    private class Flags(
-        val allSubclasses: Set<FirBasedSymbol<*>>,
-        val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
-        val session: FirSession
-    )
-
-    private fun inferVariantsFromSubjectSmartCast(subject: FirExpression, data: Flags) {
+    private fun inferVariantsFromSubjectSmartCast(subject: FirExpression, data: Info) {
         if (subject !is FirSmartCastExpression) return
 
         for (knownNonType in subject.lowerTypesFromSmartCast) {
@@ -478,8 +472,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
     }
 
-    private object ConditionChecker : AbstractConditionChecker<Flags>() {
-        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
+    private class Info(
+        val allSubclasses: Set<FirBasedSymbol<*>>,
+        val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
+        val session: FirSession
+    )
+
+    private object ConditionChecker : AbstractConditionChecker<Info>() {
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Info) {
             val isNegated = when (equalityOperatorCall.operation) {
                 FirOperation.EQ, FirOperation.IDENTITY -> false
                 FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> true
@@ -502,7 +502,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             processBranch(symbol, isNegated, data)
         }
 
-        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Flags) {
+        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Info) {
             val isNegated = when (typeOperatorCall.operation) {
                 FirOperation.IS -> false
                 FirOperation.NOT_IS -> true
@@ -512,17 +512,17 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             processBranch(symbol, isNegated, data)
         }
 
-        fun processBranch(symbolToCheck: FirBasedSymbol<*>, isNegated: Boolean, flags: Flags) {
-            val subclassesOfType = symbolToCheck.collectAllSubclasses(flags.session)
-            val supertypesWhichAreSealedInheritors = symbolToCheck.collectAllSuperclasses(flags.session, flags)
-            if (subclassesOfType.none { it in flags.allSubclasses } && supertypesWhichAreSealedInheritors.isEmpty()) {
+        fun processBranch(symbolToCheck: FirBasedSymbol<*>, isNegated: Boolean, info: Info) {
+            val subclassesOfType = symbolToCheck.collectAllSubclasses(info.session)
+            val supertypesWhichAreSealedInheritors = symbolToCheck.collectAllSuperclasses(info.session, info)
+            if (subclassesOfType.none { it in info.allSubclasses } && supertypesWhichAreSealedInheritors.isEmpty()) {
                 return
             }
             val checkedSubclasses = when {
-                isNegated -> flags.allSubclasses - subclassesOfType
+                isNegated -> info.allSubclasses - subclassesOfType
                 else -> subclassesOfType + supertypesWhichAreSealedInheritors
             }
-            flags.checkedSubclasses.addAll(checkedSubclasses)
+            info.checkedSubclasses.addAll(checkedSubclasses)
         }
     }
 
@@ -556,11 +556,11 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
     }
 
-    private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, flags: Flags): Set<FirBasedSymbol<*>> {
+    private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, info: Info): Set<FirBasedSymbol<*>> {
         if (this !is FirClassSymbol<*>) return emptySet()
-        if (this !in flags.allSubclasses) return emptySet()
+        if (this !in info.allSubclasses) return emptySet()
         val lookupTag = this.toLookupTag()
-        return flags.allSubclasses.filterIsInstance<FirRegularClassSymbol>().filterTo(mutableSetOf()) {
+        return info.allSubclasses.filterIsInstance<FirRegularClassSymbol>().filterTo(mutableSetOf()) {
             it.isSubclassOf(lookupTag, session, isStrict = true, lookupInterfaces = true)
         }
     }
