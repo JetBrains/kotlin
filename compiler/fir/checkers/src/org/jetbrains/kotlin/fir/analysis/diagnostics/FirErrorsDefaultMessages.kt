@@ -2419,19 +2419,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             RETURN_TYPE_MISMATCH_ON_OVERRIDE,
             "Return type of ''{0}'' is not a subtype of the return type of the overridden member {1}.",
-            DECLARATION_NAME,
+            SYMBOL,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )
         map.put(
             PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
             "Type of ''{0}'' is not a subtype of overridden property {1}.",
-            DECLARATION_NAME,
+            SYMBOL,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )
         map.put(
             VAR_TYPE_MISMATCH_ON_OVERRIDE,
             "Type of ''{0}'' doesn''t match the type of the overridden ''var'' property {1}.",
-            DECLARATION_NAME,
+            SYMBOL,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )
 
