@@ -1,0 +1,33 @@
+// class version 52.0 (52)
+// access flags 0x31
+public final class CodeFragment {
+
+  // compiled from: fragment.kt
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48)
+
+  // access flags 0x1
+  public <init>()V
+   L0
+    ALOAD 0
+    INVOKESPECIAL java/lang/Object.<init> ()V
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x19
+  public final static run()Ljava/lang/Void;
+  @Lorg/jetbrains/annotations/NotNull;() // invisible
+   L0
+    LINENUMBER 24 L0
+    INVOKESTATIC ContextKt.call ()Ljava/lang/Void;
+    POP
+    NEW kotlin/KotlinNothingValueException
+    DUP
+    INVOKESPECIAL kotlin/KotlinNothingValueException.<init> ()V
+    ATHROW
+    MAXSTACK = 2
+    MAXLOCALS = 0
+}
