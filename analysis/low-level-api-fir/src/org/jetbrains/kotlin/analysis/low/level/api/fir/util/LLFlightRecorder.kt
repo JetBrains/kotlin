@@ -7,10 +7,20 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import jdk.jfr.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -52,6 +62,7 @@ object LLFlightRecorder {
             path = path(target.designation)
             hash = System.identityHashCode(target.target)
             phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            moduleKind = computeModuleKind(target.target)
             begin()
         }
     }
@@ -71,6 +82,7 @@ object LLFlightRecorder {
             path = name(file)
             hash = System.identityHashCode(file)
             phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            moduleKind = computeModuleKind(file)
             begin()
         }
     }
@@ -117,6 +129,7 @@ object LLFlightRecorder {
             path = path(designation)
             hash = System.identityHashCode(designation.target)
             phase = PHASE_COMPACT_NAMES[requestedPhase.ordinal]
+            moduleKind = computeModuleKind(designation.target)
             withMembers = withCallableMembers
             commit()
         }
@@ -213,6 +226,22 @@ object LLFlightRecorder {
     }
 }
 
+private fun computeModuleKind(target: FirElementWithResolveState): Byte {
+    val moduleData = target.moduleData as LLFirModuleData
+    return when (moduleData.ktModule) {
+        is KaSourceModule -> 0
+        is KaDanglingFileModule -> 1
+        is KaNotUnderContentRootModule -> 2
+        is KaScriptModule -> 3
+        is KaScriptDependencyModule -> 4
+        is KaLibraryFallbackDependenciesModule -> 5
+        is KaLibraryModule -> 6
+        is KaLibrarySourceModule -> 7
+        is KaBuiltinsModule -> 8
+        else -> -1
+    }
+}
+
 /**
  *                  !!!
  * When adding or removing phases, use unused numbers.
@@ -267,6 +296,10 @@ private class LLPhaseEvent : Event(), ILLPhaseEvent {
     var phase: Byte = -1
 
     @JvmField
+    @Label("Module kind")
+    var moduleKind: Byte = -1
+
+    @JvmField
     @Label("Failure reason (1 – cancellation, 2 – unknown exception, 0 – successful analysis)")
     var result: Byte = -1
 
@@ -319,6 +352,10 @@ private class LLReadyPhaseEvent : Event() {
     @JvmField
     @Label("Declaration identity hash")
     var hash: Int = -1
+
+    @JvmField
+    @Label("Module kind")
+    var moduleKind: Byte = -1
 
     @JvmField
     @Label("Phase")
