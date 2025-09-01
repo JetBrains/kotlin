@@ -449,6 +449,7 @@ enum class LanguageFeature(
     IrRichCallableReferencesInKlibs(sinceVersion = KOTLIN_2_3, "KT-72734"), // KT-72734, KT-74384, KT-74392
 
     AllowCallingJavaOpenSealedClassConstructor(sinceVersion = KOTLIN_2_3, "KT-78879"),
+    ImprovedExhaustivenessChecksIn23(sinceVersion = KOTLIN_2_3, "KT-80602"),
 
     // 2.4
 
