@@ -1319,7 +1319,7 @@ class IrSourcePrinterVisitor(
         print(declaration.name)
         print(" by ")
         bracedBlock {
-            declaration.delegate.acceptVoid(this)
+            declaration.delegate?.acceptVoid(this)
             declaration.getter.scoped { it.printPropertyAccessor() }
             declaration.setter?.scoped { it.printPropertyAccessor(isSetter = true) }
         }

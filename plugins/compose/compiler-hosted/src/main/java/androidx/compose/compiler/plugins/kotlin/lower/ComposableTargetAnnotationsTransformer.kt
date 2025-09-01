@@ -216,7 +216,7 @@ class ComposableTargetAnnotationsTransformer(
         if (declaration.type.isOrHasComposableLambda) {
             // Find the inference variable for the delegate which should have been created
             // when visiting the delegate node. If not, then ignore this declaration
-            val variable = variableDeclarations[declaration.delegate.symbol] ?: return result
+            val variable = variableDeclarations[declaration.delegate?.symbol ?: return result] ?: return result
 
             // Allow the variable to be found from the getter as this is what is used to access
             // the variable, not the delegate directly.
