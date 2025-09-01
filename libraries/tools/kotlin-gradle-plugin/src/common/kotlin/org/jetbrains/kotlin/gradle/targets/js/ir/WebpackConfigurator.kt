@@ -185,12 +185,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                                     )
                                 )
                             ).apply {
-                                static(distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile))
-                                static(resourcesDir.normalize().relativeOrAbsolute(dir.asFile))
+                                static(distDirectory.asFile.normalize().relativeTo(dir.asFile).invariantSeparatorsPath)
+                                static(resourcesDir.normalize().relativeTo(dir.asFile).invariantSeparatorsPath)
 
                                 if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
                                     static(
-                                        rootDir.normalize().relativeOrAbsolute(dir.asFile)
+                                        rootDir.normalize().relativeTo(dir.asFile).invariantSeparatorsPath
                                     )
                                 }
                             }
