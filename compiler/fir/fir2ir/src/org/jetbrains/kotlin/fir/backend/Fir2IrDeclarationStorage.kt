@@ -1039,7 +1039,9 @@ class Fir2IrDeclarationStorage(
         val symbols = createLocalDelegatedPropertySymbols(property)
         val irProperty = callablesGenerator.createIrLocalDelegatedProperty(property, irParent, symbols)
         val symbol = irProperty.symbol
-        delegateVariableForPropertyCache[symbol] = irProperty.delegate.symbol
+        val irDelegate = irProperty.delegate
+        requireNotNull(irDelegate) { "Local delegated property ${irProperty.render()} has no delegate" }
+        delegateVariableForPropertyCache[symbol] = irDelegate.symbol
         getterForPropertyCache[symbol] = irProperty.getter.symbol
         irProperty.setter?.let { setterForPropertyCache[symbol] = it.symbol }
         localStorage.putDelegatedProperty(property, symbol)

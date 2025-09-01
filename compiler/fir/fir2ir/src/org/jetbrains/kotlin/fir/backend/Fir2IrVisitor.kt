@@ -532,7 +532,9 @@ class Fir2IrVisitor(
         val delegate = variable.delegate
         if (delegate != null) {
             val irProperty = declarationStorage.createAndCacheIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
-            irProperty.delegate.initializer = convertToIrExpression(delegate, isDelegate = true)
+            val irDelegate = irProperty.delegate
+            requireNotNull(irDelegate) { "Local delegated property ${irProperty.render()} has no delegate" }
+            irDelegate.initializer = convertToIrExpression(delegate, isDelegate = true)
             conversionScope.withFunction(irProperty.getter) {
                 memberGenerator.convertFunctionContent(irProperty.getter, variable.getter, null)
             }

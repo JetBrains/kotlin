@@ -834,8 +834,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
                     NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
                     isVar = false, isConst = false, isLateinit = false
-                )
-                delegate.parent = irParent
+                ).also {
+                    it.parent = irParent
+                }
                 getter = createIrPropertyAccessor(
                     property.getter, property, this, symbols.getterSymbol, type, irParent, false,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset
