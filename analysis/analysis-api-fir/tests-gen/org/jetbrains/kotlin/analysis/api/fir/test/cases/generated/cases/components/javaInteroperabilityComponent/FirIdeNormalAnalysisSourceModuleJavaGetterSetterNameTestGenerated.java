@@ -70,6 +70,18 @@ public class FirIdeNormalAnalysisSourceModuleJavaGetterSetterNameTestGenerated e
   }
 
   @Test
+  @TestMetadata("dotName.kt")
+  public void testDotName() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/javaGetterSetterName/dotName.kt");
+  }
+
+  @Test
+  @TestMetadata("escapedName.kt")
+  public void testEscapedName() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/javaGetterSetterName/escapedName.kt");
+  }
+
+  @Test
   @TestMetadata("immutableProperty.kt")
   public void testImmutableProperty() {
     runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/javaGetterSetterName/immutableProperty.kt");
@@ -97,6 +109,12 @@ public class FirIdeNormalAnalysisSourceModuleJavaGetterSetterNameTestGenerated e
   @TestMetadata("mutableProperty.kt")
   public void testMutableProperty() {
     runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/javaGetterSetterName/mutableProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("noName.kt")
+  public void testNoName() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/javaGetterSetterName/noName.kt");
   }
 
   @Test
