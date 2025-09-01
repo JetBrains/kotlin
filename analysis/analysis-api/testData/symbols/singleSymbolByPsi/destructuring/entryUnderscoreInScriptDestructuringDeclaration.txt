@@ -64,8 +64,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
   deprecationStatus: null
-  javaGetterName: Could not render due to java.lang.IllegalStateException: not identifier: <unused var>
-
+  javaGetterName: <no name provided>
   javaSetterName: null
   isInline: false
   importableFqName: <unused var>

@@ -1,2 +1,2 @@
-Getter name: get<no name provided>
-Setter name: set<no name provided>
+Getter name: <no name provided>
+Setter name: <no name provided>
