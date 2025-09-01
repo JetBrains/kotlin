@@ -229,6 +229,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecatedInClass.kt");
   }
 
+  @TestMetadata("HiddenDeprecatedInClassWithJavaLangDeprecated.kt")
+  public void testHiddenDeprecatedInClassWithJavaLangDeprecated() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecatedInClassWithJavaLangDeprecated.kt");
+  }
+
   @TestMetadata("InheritingInterfaceDefaultImpls.kt")
   public void testInheritingInterfaceDefaultImpls() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InheritingInterfaceDefaultImpls.kt");

@@ -54,7 +54,11 @@ private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(annotationClassId: Cl
 internal fun KaSession.isHiddenByDeprecation(
     symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-): Boolean = symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
+): Boolean {
+    return symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN &&
+            // see KT-80649
+            !symbol.annotations.contains(JvmStandardClassIds.Annotations.Java.Deprecated)
+}
 
 internal fun KaSession.isHiddenOrSynthetic(
     symbol: KaAnnotatedSymbol,

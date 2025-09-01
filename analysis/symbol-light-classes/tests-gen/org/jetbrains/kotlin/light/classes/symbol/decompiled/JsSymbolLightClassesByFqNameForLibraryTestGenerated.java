@@ -265,6 +265,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("HiddenDeprecatedInClassWithJavaLangDeprecated.kt")
+  public void testHiddenDeprecatedInClassWithJavaLangDeprecated() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecatedInClassWithJavaLangDeprecated.kt");
+  }
+
+  @Test
   @TestMetadata("InheritingInterfaceDefaultImpls.kt")
   public void testInheritingInterfaceDefaultImpls() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InheritingInterfaceDefaultImpls.kt");
