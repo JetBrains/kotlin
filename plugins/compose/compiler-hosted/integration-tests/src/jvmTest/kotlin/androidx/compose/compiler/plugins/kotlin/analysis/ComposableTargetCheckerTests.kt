@@ -544,6 +544,25 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
         """
     )
 
+    @Test
+    fun differentApplierInContainingFunction() = check(
+        """
+        import androidx.compose.runtime.*
+
+        @Composable @ComposableTarget("Ui") fun Ui() {}
+
+        interface View {
+            fun setContent(content: @Composable () -> Unit) {}
+        }
+
+        @Composable
+        @ComposableTarget("NotUi")
+        fun Test(view: View) {
+            view.setContent { Ui() }
+        }
+        """
+    )
+
     private fun firEnd() = if (useFir) "<!>" else ""
     private fun psiEnd() = if (!useFir) "<!>" else ""
     private fun firMisStart() = if (useFir) "<!COMPOSE_APPLIER_CALL_MISMATCH!>" else ""

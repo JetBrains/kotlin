@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.Assert.assertEquals
@@ -26,7 +27,9 @@ import java.io.File
 
 abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     protected fun check(
+        @Language("kotlin")
         expectedText: String,
+        @Language("kotlin")
         commonText: String? = null,
         ignoreParseErrors: Boolean = false,
         additionalPaths: List<File> = emptyList(),

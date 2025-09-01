@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.*
@@ -157,7 +158,7 @@ fun FirCallableSymbol<*>.parameters(): List<FirValueParameterSymbol> =
 context(session: FirSession)
 private fun FirCallableSymbol<*>.fileScopeTarget(): Item? {
     fun findFileScope(element: FirElement): Item? =
-        (element as? FirAnnotationContainer)?.compositionTarget()?.let { Token(it) } ?: element.parent?.let { findFileScope(it) }
+        (element as? FirFile)?.compositionTarget()?.let { Token(it) } ?: element.parent?.let { findFileScope(it) }
     return findFileScope(fir)
 }
 
