@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
@@ -42,6 +43,10 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
     }
 
     fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean {
+        assertFalse(PYTHON_EXCEPTION_HEADER in output) {
+            "Unhandled python exception in debugger: ${output.substring(output.indexOf(PYTHON_EXCEPTION_HEADER))}"
+        }
+
         val blocks = output.split(LLDB_OUTPUT_SEPARATOR).filterNot(String::isBlank)
 
         val meaningfulBlocks = if (nativeTargets.testTarget == nativeTargets.hostTarget) {
@@ -131,6 +136,8 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
         private val SPEC_BLOCK_SEPARATOR = "(?=^>)".toRegex(RegexOption.MULTILINE)
 
         private val LINE_WILDCARD = """\s*\[\.\.]\s*""".toRegex()
+
+        private const val PYTHON_EXCEPTION_HEADER = "Traceback (most recent call last):"
 
         fun parse(lldbSpec: String): LLDBSessionSpec = LLDBSessionSpec(
             lldbSpec.split(SPEC_BLOCK_SEPARATOR)
