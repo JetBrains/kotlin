@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 
@@ -21,15 +22,38 @@ interface KotlinBuiltInStubVersionOffsetProvider {
 
     companion object {
         fun getVersionOffset(): Int =
-            ApplicationManager.getApplication().getService(KotlinBuiltInStubVersionOffsetProvider::class.java)?.getVersionOffset() ?: 0
+            ApplicationManager.getApplication()
+                .serviceOrNull<KotlinBuiltInStubVersionOffsetProvider>()
+                ?.getVersionOffset()
+                ?: 0
     }
 }
 
-interface KotlinBuiltInDecompilationInterceptor {
+internal interface KotlinBuiltInDecompilationInterceptor {
     fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata?
 
     companion object {
         fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata? =
-            ApplicationManager.getApplication().getService(KotlinBuiltInDecompilationInterceptor::class.java)?.readFile(bytes, file)
+            ApplicationManager.getApplication()
+                .serviceOrNull<KotlinBuiltInDecompilationInterceptor>()
+                ?.readFile(bytes, file)
+    }
+}
+
+/**
+ * Decompiles .kotlin_builtins files that belong to the kotlin-stdlib from the plugin classpath without class filtering.
+ * The decompiled classes from these files are used in the symbol provider for built-ins in all modules, including non-JVM.
+ * For common modules in particular, the lack of these classes leads to unresolved code, as the declarations are not published
+ * in .kotlin_metadata files of kotlin-stdlib-common.
+ * See [BuiltInDefinitionFile].
+ */
+private class K2KotlinBuiltInDecompilationInterceptor : KotlinBuiltInDecompilationInterceptor {
+    override fun readFile(
+        bytes: ByteArray,
+        file: VirtualFile,
+    ): KotlinMetadataStubBuilder.FileWithMetadata? = if (file in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()) {
+        BuiltInDefinitionFile.read(bytes, file, filterOutClassesExistingAsClassFiles = false)
+    } else {
+        null
     }
 }

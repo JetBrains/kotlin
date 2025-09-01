@@ -39,6 +39,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.utils.KaFirStopWorldCacheCleaner"
     />
 
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompilationInterceptor"
+        serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.K2KotlinBuiltInDecompilationInterceptor"
+    />
+
     <registryKey
         defaultValue="true"
         description="Perform cache clean-up when running out of RAM"
