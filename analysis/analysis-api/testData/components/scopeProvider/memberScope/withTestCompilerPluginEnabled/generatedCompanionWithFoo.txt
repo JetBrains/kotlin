@@ -218,7 +218,7 @@ KaConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PRIVATE
-  getContainingFileSymbol: null
+  getContainingFileSymbol: KaFileSymbol(generatedCompanionWithFoo.kt)
   getContainingJvmClassName: test.WithGeneratedCompanion.Companion
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

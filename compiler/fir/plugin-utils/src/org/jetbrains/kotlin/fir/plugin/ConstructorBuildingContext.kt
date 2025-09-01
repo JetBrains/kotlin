@@ -46,6 +46,7 @@ public class ConstructorBuildingContext(
         requireNotNull(owner)
         val init: FirAbstractConstructorBuilder.() -> Unit = {
             symbol = FirConstructorSymbol(owner.classId)
+            source = getSourceForFirDeclaration()
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
