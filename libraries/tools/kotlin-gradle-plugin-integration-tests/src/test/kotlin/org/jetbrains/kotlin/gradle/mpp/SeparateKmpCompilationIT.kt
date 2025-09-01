@@ -243,6 +243,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:compileNativeMainKotlinMetadata",
                     ":library:exportCommonSourceSetsMetadataLocationsForMetadataApiElements",
                     ":library:exportRootPublicationCoordinatesForMetadataApiElements",
+                    ":library:exportCrossCompilationMetadataForLinuxArm64ApiElements",
+                    ":library:exportCrossCompilationMetadataForLinuxX64ApiElements",
                     ":library:generateProjectStructureMetadata",
                     ":library:generateSourceIn_commonMain_0",
                     ":library:generateSourceIn_jsMain_2",
