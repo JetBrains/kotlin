@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-80461
 
 sealed interface Base1
@@ -12,7 +12,7 @@ abstract class Impl13 : DoubleDerived3, Base1
 abstract class Impl23 : Base2, Derived3
 class DerivedImpl23 : Impl23(), Base3
 
-fun foo(x: Base3): String? = <!NO_ELSE_IN_WHEN!>when<!> (x) {
+fun foo(x: Base3): String? = when (x) {
     is Impl13 -> null
     is Base2 -> null
 }

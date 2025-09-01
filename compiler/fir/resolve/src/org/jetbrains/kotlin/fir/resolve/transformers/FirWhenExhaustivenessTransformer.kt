@@ -509,7 +509,39 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             processBranch(symbol, isNegated, data)
         }
 
-        fun processBranch(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, info: Info) {
+        fun processBranch(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, data: Info) {
+            if (data.session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn23)) {
+                processBranchUsingSubtyping(symbolToCheck, isNegated, data)
+            } else {
+                processBranchUsingSealedInheritors(symbolToCheck, isNegated, data)
+            }
+        }
+
+        private fun processBranchUsingSubtyping(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, data: Info) {
+            val predicate: (FirClassSymbol<*>) -> Boolean = {
+                it.isSubclassOf(
+                    symbolToCheck.toLookupTag(),
+                    data.session,
+                    isStrict = false,
+                    lookupInterfaces = true
+                )
+            }
+
+            val subclassesCheckedByTheBranch = when (isNegated) {
+                // `<subj> is Type`, `<subj> == Type` branches
+                false -> data.allSubclasses.filter(predicate)
+
+                // `<subj> !is Type`, `<subj> != Type` branches
+                true -> data.allSubclasses.filterNot(predicate)
+            }
+
+            // subclassesCheckedByTheBranch
+            data.checkedSubclasses.addAll(subclassesCheckedByTheBranch)
+        }
+
+        // ----- all functions below should be removed together with the `ImprovedExhaustivenessChecker` language feature -----
+
+        private fun processBranchUsingSealedInheritors(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, info: Info) {
             val subclassesOfType = symbolToCheck.collectAllSubclasses(info.session)
             val supertypesWhichAreSealedInheritors = symbolToCheck.collectAllSuperclasses(info.session, info)
             if (subclassesOfType.none { it in info.allSubclasses } && supertypesWhichAreSealedInheritors.isEmpty()) {
@@ -520,6 +552,15 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 else -> subclassesOfType + supertypesWhichAreSealedInheritors
             }
             info.checkedSubclasses.addAll(checkedSubclasses)
+        }
+
+        private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, info: Info): Set<FirClassSymbol<*>> {
+            if (this !is FirClassSymbol<*>) return emptySet()
+            if (this !in info.allSubclasses) return emptySet()
+            val lookupTag = this.toLookupTag()
+            return info.allSubclasses.filterIsInstance<FirRegularClassSymbol>().filterTo(mutableSetOf()) {
+                it.isSubclassOf(lookupTag, session, isStrict = true, lookupInterfaces = true)
+            }
         }
     }
 
@@ -549,15 +590,6 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 }
             }
             else -> destination.add(this)
-        }
-    }
-
-    private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, info: Info): Set<FirClassSymbol<*>> {
-        if (this !is FirClassSymbol<*>) return emptySet()
-        if (this !in info.allSubclasses) return emptySet()
-        val lookupTag = this.toLookupTag()
-        return info.allSubclasses.filterIsInstance<FirRegularClassSymbol>().filterTo(mutableSetOf()) {
-            it.isSubclassOf(lookupTag, session, isStrict = true, lookupInterfaces = true)
         }
     }
 }

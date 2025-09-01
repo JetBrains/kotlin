@@ -32,7 +32,7 @@ fun testIsInWhenWithSubject(instance: SealedClass): String {
         is IndirectSealedInheritor -> instance.prop1
         !is SealedInheritor2 -> "100"
         <!USELESS_IS_CHECK!>!is SealedSealedInheritor1<!> -> "100"
-        else -> "100"
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "100"
     }
 }
 
