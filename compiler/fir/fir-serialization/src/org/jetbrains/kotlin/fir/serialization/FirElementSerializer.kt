@@ -849,7 +849,7 @@ class FirElementSerializer private constructor(
 
         val underlyingType = typeAlias.expandedConeType!!
         if (useTypeTable()) {
-            builder.underlyingTypeId = local.typeId(underlyingType)
+            builder.underlyingTypeId = local.typeId(underlyingType, abbreviationOnly = true)
         } else {
             builder.setUnderlyingType(local.typeProto(underlyingType, abbreviationOnly = true))
         }
@@ -1030,7 +1030,8 @@ class FirElementSerializer private constructor(
         return typeId(typeRef.coneType, toSuper)
     }
 
-    fun typeId(type: ConeKotlinType, toSuper: Boolean = false): Int = typeTable[typeProto(type, toSuper)]
+    fun typeId(type: ConeKotlinType, toSuper: Boolean = false, abbreviationOnly: Boolean = false): Int =
+        typeTable[typeProto(type, toSuper, abbreviationOnly = abbreviationOnly)]
 
     private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
         return typeProto(typeRef.coneType, toSuper, correspondingTypeRef = typeRef)
@@ -1301,7 +1302,7 @@ class FirElementSerializer private constructor(
             }
 
             if (useTypeTable()) {
-                builder.typeId = typeId(typeProjection.type)
+                builder.typeId = typeId(typeProjection.type, abbreviationOnly = abbreviationOnly)
             } else {
                 builder.setType(typeProto(typeProjection.type, abbreviationOnly = abbreviationOnly))
             }

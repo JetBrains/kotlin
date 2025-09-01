@@ -9,31 +9,31 @@ public typealias EntryAlias = kotlin.collections.Map.Entry<kotlin.String, kotlin
 
 public typealias FunctionAlias = (kotlin.String) -> kotlin.Int
 
-public typealias NestedStringAlias = kotlin.String /* from: test.StringAlias */
+public typealias NestedStringAlias = test.StringAlias
 
-public typealias NestedFunctionAlias = (kotlin.String) -> kotlin.Int /* from: test.FunctionAlias */
+public typealias NestedFunctionAlias = test.FunctionAlias
 
 public typealias ParameterizedListAlias<A> = kotlin.collections.List<A>
 
-public typealias NestedListAliasWithTypeArgument = kotlin.collections.List<kotlin.String> /* from: test.ParameterizedListAlias<kotlin.String> */
+public typealias NestedListAliasWithTypeArgument = test.ParameterizedListAlias<kotlin.String>
 
-public typealias NestedListAliasWithAliasTypeArgument = kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */
+public typealias NestedListAliasWithAliasTypeArgument = test.ParameterizedListAlias<test.StringAlias>
 
-public typealias NestedListAliasWithNestedAliasTypeArgument = kotlin.collections.List<kotlin.String /* from: test.NestedStringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.NestedStringAlias */> */
+public typealias NestedListAliasWithNestedAliasTypeArgument = test.ParameterizedListAlias<test.NestedStringAlias>
 
-public typealias NestedParameterizedListAlias<A> = kotlin.collections.List<kotlin.collections.List<A> /* from: test.ParameterizedListAlias<A> */> /* from: test.ParameterizedListAlias<kotlin.collections.List<A> /* from: test.ParameterizedListAlias<A> */> */
+public typealias NestedParameterizedListAlias<A> = test.ParameterizedListAlias<test.ParameterizedListAlias<A>>
 
 public typealias NullableStringAlias = kotlin.String?
 
-public typealias NestedNullableStringAlias = kotlin.String? /* from: test.NullableStringAlias */
+public typealias NestedNullableStringAlias = test.NullableStringAlias
 
-public typealias NullableNestedStringAlias = kotlin.String? /* from: test.StringAlias? */
+public typealias NullableNestedStringAlias = test.StringAlias?
 
 public typealias NullableFunctionAlias = ((kotlin.String) -> kotlin.Int)?
 
-public typealias NestedNullableFunctionAlias = ((kotlin.String) -> kotlin.Int)? /* from: test.NullableFunctionAlias */
+public typealias NestedNullableFunctionAlias = test.NullableFunctionAlias
 
-public typealias NullableNestedFunctionAlias = ((kotlin.String) -> kotlin.Int)? /* from: test.FunctionAlias? */
+public typealias NullableNestedFunctionAlias = test.FunctionAlias?
 
 public final class TypeAliasExpansion public constructor() {
     public final val functionAlias: (kotlin.String) -> kotlin.Int /* from: test.FunctionAlias */ /* compiled code */
