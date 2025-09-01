@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
+import com.google.gson.annotations.SerializedName
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -110,10 +111,26 @@ data class KotlinWebpackConfig(
         var open: Any = true,
         var port: Int? = null,
         var proxy: MutableList<Proxy>? = null,
-        var static: MutableList<out Any>? = null,
+        @Transient
+        @Deprecated("Use 'static' fun instead")
+        var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null,
     ) : Serializable {
+
+        fun static(directory: String, watch: Boolean = false) {
+            mutableStatic.add(Static(directory, watch))
+        }
+
+        val statics: List<Static>
+            get() = mutableStatic.toList().filterIsInstance<Static>()
+
+        @Suppress("DEPRECATION")
+        @SerializedName("static")
+        private val mutableStatic: MutableList<Any> = mutableListOf<Any>().also {
+            it.addAll(static.orEmpty())
+        }
+
         data class Client(
             var overlay: Any, /* Overlay | Boolean */
         ) : Serializable {
