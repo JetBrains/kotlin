@@ -548,6 +548,7 @@ enum class LanguageFeature(
     CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_5, "KT-86042"),
 
     ForbidValueClassRecursionViaTypeParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-85848"),
+    IrCrossModuleInlinerBeforeKlibSerialization(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-71896"),
 
     // 2.6
 
@@ -647,7 +648,6 @@ enum class LanguageFeature(
         }
     },
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
-    IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809", enabledInLatestLVTests = true),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, issue = "KT-16768", enabledInLatestLVTests = true),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
