@@ -526,6 +526,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassProperty,
                 hasJvmNameAnnotation = hasJvmNameAnnotation,
                 isSuspend = false,
+                isOverridable = accessor.isOverridable()
             )
 
             if (!generationResult.isAnyMethodRequired) return

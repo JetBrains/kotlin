@@ -1,11 +1,4 @@
 public abstract interface BaseInterface /* one.BaseInterface*/ {
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.Nullable() one.MyValueClass getPropertyWithValueClassParameter();//  getPropertyWithValueClassParameter()
-
-  @kotlin.jvm.JvmExposeBoxed()
-  public abstract void functionWithValueClassParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.MyValueClass);//  functionWithValueClassParameter(@org.jetbrains.annotations.NotNull() one.MyValueClass)
-
   public abstract void regularFunction();//  regularFunction()
 
   class DefaultImpls ...

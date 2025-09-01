@@ -827,6 +827,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("defaultInInterface.kt")
+      public void testDefaultInInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/defaultInInterface.kt");
+      }
+
+      @Test
       @TestMetadata("extensionVariable.kt")
       public void testExtensionVariable() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/extensionVariable.kt");
@@ -932,6 +938,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("noArg4.kt")
       public void testNoArg4() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg4.kt");
+      }
+
+      @Test
+      @TestMetadata("openClass.kt")
+      public void testOpenClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/openClass.kt");
       }
 
       @Test

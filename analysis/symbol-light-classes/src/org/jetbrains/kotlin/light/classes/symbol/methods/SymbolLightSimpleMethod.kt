@@ -270,6 +270,7 @@ internal class SymbolLightSimpleMethod private constructor(
                     !functionSymbol.isOverride
 
             val isSuspend = functionSymbol.isSuspend
+            val isOverridable = functionSymbol.isOverridable()
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
                 methodIndexBase = methodIndex,
@@ -287,6 +288,7 @@ internal class SymbolLightSimpleMethod private constructor(
                     isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassFunction,
                     hasJvmNameAnnotation = hasJvmNameAnnotation,
                     isSuspend = isSuspend,
+                    isOverridable = isOverridable
                 )
 
                 if (generationResult.isBoxedMethodRequired) {

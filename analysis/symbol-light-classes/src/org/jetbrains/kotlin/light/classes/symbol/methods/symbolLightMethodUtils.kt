@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -78,6 +81,7 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
  * @param hasValueClassInReturnType Whether the method's return type is a value class.
  * @param isAffectedByValueClass Whether the method's name is mangled due to value classes, or the method is declared inside a value class and not materialized.
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
+ * @param isOverridable Whether the method can be overridden.
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
@@ -86,6 +90,7 @@ internal fun methodGeneration(
     isAffectedByValueClass: Boolean,
     hasJvmNameAnnotation: Boolean,
     isSuspend: Boolean,
+    isOverridable: Boolean,
 ): MethodGenerationResult {
     var isBoxedAccessorRequired = false
     var isRegularAccessorRequired = false
@@ -109,6 +114,9 @@ internal fun methodGeneration(
             // Suspend function -> no boxed methods can be auto-generated
             isSuspend -> false
 
+            // In interface or in open class -> no boxed methods can be auto-generated. @JvmName problem
+            isOverridable -> false
+
             // No JvmName -> the default method has a mangled name, so the boxed method can be generated
             !hasJvmNameAnnotation -> true
 
@@ -125,3 +133,6 @@ internal fun methodGeneration(
         isBoxedMethodRequired = isBoxedAccessorRequired,
     )
 }
+
+internal fun KaDeclarationSymbol.isOverridable(): Boolean =
+    visibility != KaSymbolVisibility.PRIVATE && modality != KaSymbolModality.FINAL
