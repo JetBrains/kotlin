@@ -134,6 +134,15 @@ fun main(args: Array<String>) {
             testClass<AbstractFirWasmJsSteppingTest> {
                 model("debug/stepping")
             }
+            testClass<AbstractFirWasmJsSteppingWithInlinedFunInKlibTest> {
+                model("debug/stepping")
+            }
+            testClass<AbstractFirWasmJsSteppingSplitTest> {
+                model("debug/stepping")
+            }
+            testClass<AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest> {
+                model("debug/stepping")
+            }
         }
         testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportTest> {

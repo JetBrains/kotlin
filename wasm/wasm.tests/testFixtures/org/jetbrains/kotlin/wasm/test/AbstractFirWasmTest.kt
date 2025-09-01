@@ -179,9 +179,11 @@ open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
     "js.translator/firBox"
 )
 
-open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
+open class AbstractFirWasmJsSteppingTest(
+    testGroupOutputDirPrefix: String = "debug/stepping/firBox"
+) : AbstractFirWasmJsTest(
     "compiler/testData/debug/stepping/",
-    "debug/stepping/firBox"
+    testGroupOutputDirPrefix
 ) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
@@ -195,6 +197,60 @@ open class AbstractFirWasmJsSteppingTest : AbstractFirWasmJsTest(
                 +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
                 +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
             }
+        }
+    }
+}
+
+open class AbstractFirWasmJsSteppingWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix: String = "debug/firSteppingWithInlinedFunInKlib/"
+) : AbstractFirWasmJsSteppingTest(
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
+            }
+        }
+    }
+}
+
+open class AbstractFirWasmJsSteppingSplitTest : AbstractFirWasmJsSteppingTest(
+    testGroupOutputDirPrefix = "debug/firSteppingSplit/"
+) {
+    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
+        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            @OptIn(TestInfrastructureInternals::class)
+            useModuleStructureTransformers(
+                ::SplittingModuleTransformerForBoxTests
+            )
+            useMetaTestConfigurators(::SplittingTestConfigurator)
+        }
+    }
+}
+
+open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirWasmJsSteppingWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix = "debug/firSteppingSplit/"
+) {
+    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
+        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            @OptIn(TestInfrastructureInternals::class)
+            useModuleStructureTransformers(
+                ::SplittingModuleTransformerForBoxTests
+            )
+            useMetaTestConfigurators(::SplittingTestConfigurator)
         }
     }
 }
