@@ -99,6 +99,7 @@ license/third_party/mocha-teamcity-reporter_LICENSE.txt
 license/third_party/okhttp_license.txt
 license/third_party/opentelemetry_license.txt
 license/third_party/power_assert_license.txt
+license/third_party/protobuf_license.txt
 license/third_party/prototype_license.txt
 license/third_party/rhino_LICENSE.txt
 license/third_party/scala_license.txt
