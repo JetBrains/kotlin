@@ -8,5 +8,4 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 error: -XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization requires -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization. Enable the intra-module inliner as well to avoid inconsistent configuration.
-warning: following manually enabled features will force generation of pre-release binaries: IrCrossModuleInlinerBeforeKlibSerialization
 COMPILATION_ERROR
