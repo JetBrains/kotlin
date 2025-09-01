@@ -17,8 +17,8 @@ import com.intellij.psi.stubs.PsiFileStub
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractStubBuilderTest
 
 abstract class AbstractByDecompiledPsiStubBuilderTest : AbstractStubBuilderTest() {
-    override fun setUp() {
-        super.setUp()
+    override fun initializeEnvironment() {
+        super.initializeEnvironment()
 
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(JavaClassFileType.INSTANCE, ClassFileViewProviderFactory())
 
@@ -26,11 +26,10 @@ abstract class AbstractByDecompiledPsiStubBuilderTest : AbstractStubBuilderTest(
             registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST, testRootDisposable)
             registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST, testRootDisposable)
         }
-
     }
 
     override fun getStubToTest(classFile: VirtualFile): PsiFileStub<*> {
-        val decompiledFile = PsiManager.getInstance(project).findFile(classFile)
+        val decompiledFile = PsiManager.getInstance(environment!!.project).findFile(classFile)
             ?: error("No decompiled file was found for $classFile")
         return (decompiledFile as PsiFileImpl).calcStubTree().root
     }

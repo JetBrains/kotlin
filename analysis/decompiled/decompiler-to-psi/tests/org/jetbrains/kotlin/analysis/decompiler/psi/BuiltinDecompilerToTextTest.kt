@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.decompiler.psi
 import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.util.indexing.FileContentImpl
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.BinaryFileStubBuilders
+import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractDecompiledClassTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.idea.KotlinLanguage.INSTANCE
@@ -26,6 +26,7 @@ import kotlin.streams.asSequence
 
 class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
     fun testBuiltinDecompilationToText() {
+        initializeEnvironment()
         val decompiledBuiltInKtFiles = loadBuiltIns()
         val testDataPath = Paths.get(TEST_DATA_PATH)
         for (file in decompiledBuiltInKtFiles) {
@@ -58,7 +59,7 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
     }
 
     private fun loadBuiltIns(): Collection<KtFile> {
-        val psiManager = PsiManager.getInstance(project)
+        val psiManager = PsiManager.getInstance(environment!!.project)
         val builtInDecompiler = KotlinBuiltInDecompiler()
         return BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles().mapNotNull { virtualFile ->
             createKtFileStub(psiManager, builtInDecompiler, virtualFile)
@@ -75,9 +76,9 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
         return psiFile as KtFile?
     }
 
-    override fun setUp() {
-        super.setUp()
-        val applicationEnvironment = environment.projectEnvironment.environment
+    override fun initializeEnvironment() {
+        super.initializeEnvironment()
+        val applicationEnvironment = environment!!.projectEnvironment.environment
         val application = applicationEnvironment.application
         if (application.getService(BuiltinsVirtualFileProvider::class.java) == null) {
             application.registerService(

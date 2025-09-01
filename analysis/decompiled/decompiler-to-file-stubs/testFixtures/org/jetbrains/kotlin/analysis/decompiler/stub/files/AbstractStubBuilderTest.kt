@@ -19,6 +19,7 @@ abstract class AbstractStubBuilderTest : AbstractDecompiledClassTest() {
     open fun skipBinaryStubOnlyTest(): Boolean = false
 
     fun runTest(testDirectory: String) {
+        initializeEnvironment()
         val testDirectoryPath = Paths.get(testDirectory)
         val testData = TestData.createFromDirectory(testDirectoryPath)
         if (skipBinaryStubOnlyTest() && testData.containsDirective("BINARY_STUB_ONLY_TEST")) return
