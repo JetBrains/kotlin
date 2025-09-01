@@ -15,16 +15,19 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 
 @FirBuilderDsl
 class FirDelegateFieldReferenceBuilder {
     var source: KtSourceElement? = null
+    var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     lateinit var resolvedSymbol: FirDelegateFieldSymbol
 
     fun build(): FirDelegateFieldReference {
         return FirDelegateFieldReferenceImpl(
             source,
+            resolvedSymbolOrigin,
             resolvedSymbol,
         )
     }

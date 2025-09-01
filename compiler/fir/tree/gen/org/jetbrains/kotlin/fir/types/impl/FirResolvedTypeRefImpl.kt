@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -27,6 +28,7 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val coneType: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
 ) : FirResolvedTypeRef() {
     override val customRenderer: Boolean
         get() = false
@@ -47,5 +49,9 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        resolvedSymbolOrigin = newResolvedSymbolOrigin
     }
 }

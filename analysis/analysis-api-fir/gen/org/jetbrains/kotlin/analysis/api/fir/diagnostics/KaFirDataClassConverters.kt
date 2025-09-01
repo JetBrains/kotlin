@@ -2510,6 +2510,16 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY) { firDiagnostic ->
+        ContextSensitiveResolutionAmbiguityImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_CONTEXT_ARGUMENT) { firDiagnostic ->
         NoContextArgumentImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

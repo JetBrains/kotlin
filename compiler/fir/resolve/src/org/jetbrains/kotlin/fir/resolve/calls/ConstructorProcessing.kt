@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.toResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeCandidate
@@ -92,7 +93,7 @@ private fun FirScope.getFirstClassifierOrNull(
         val classifierDeclaration = symbol.fir
         if (classifierDeclaration is FirClassLikeDeclaration) {
             if (constructorFilter.accepts(classifierDeclaration)) {
-                collector.processCandidate(symbol, substitutor)
+                collector.processCandidate(symbol, substitutor, this@getFirstClassifierOrNull.toResolvedSymbolOrigin())
             }
         }
     }

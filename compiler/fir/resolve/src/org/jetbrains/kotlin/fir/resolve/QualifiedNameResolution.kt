@@ -48,6 +48,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
             qualifiedAccess = qualifiedAccess,
             packageFqName = FqName.ROOT,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+            resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified
         )
     }
 
@@ -145,7 +146,9 @@ fun FirResolvedQualifier.continueQualifier(
 
 private fun FirScope.getUnambiguousCandidate(name: Name, components: BodyResolveComponents): FirTypeCandidateCollector.TypeCandidate? {
     val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
-    processClassifiersByName(name, collector::processCandidate)
+    processClassifiersByName(name) {
+        collector.processCandidate(it, null, this@getUnambiguousCandidate.toResolvedSymbolOrigin())
+    }
     return collector.getResult().resolvedCandidateOrNull()
 }
 
@@ -161,13 +164,14 @@ private fun FqName.continueQualifierInPackage(
             qualifiedAccess = qualifiedAccess,
             packageFqName = childFqName,
             nonFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+            resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified,
         )
     }
 
     val classId = ClassId.topLevel(childFqName)
     val symbol = components.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
     val collector = FirTypeCandidateCollector(components.session, components.file, components.containingDeclarations)
-    collector.processCandidate(symbol)
+    collector.processCandidate(symbol, resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified)
     val candidate = collector.getResult().resolvedCandidateOrNull()
 
     val nonFatalDiagnostics = extractNonFatalDiagnostics(
@@ -220,6 +224,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
     extraTypeArguments: List<FirTypeProjection>? = null,
     candidate: FirTypeCandidateCollector.TypeCandidate? = null,
     explicitParent: FirResolvedQualifier? = null,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
 ): QualifierResolutionResult {
     return QualifierResolutionResult(
         buildResolvedQualifierForClass(
@@ -232,6 +237,7 @@ private fun BodyResolveComponents.buildResolvedQualifierResult(
             nonFatalDiagnostics = nonFatalDiagnostics.orEmpty(),
             annotations = qualifiedAccess.annotations,
             explicitParent = explicitParent,
+            resolvedSymbolOrigin = candidate?.resolvedSymbolOrigin ?: resolvedSymbolOrigin,
         ),
         candidate?.applicability ?: CandidateApplicability.RESOLVED,
     )

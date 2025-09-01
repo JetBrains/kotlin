@@ -93,9 +93,7 @@ object FirDiagnosticRenderers {
     /**
      * Adds a line break before the list, then prints one symbol per line.
      */
-    val SYMBOLS_ON_NEXT_LINES = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
-        symbols.joinToString(separator = "\n", prefix = "\n", transform = SYMBOL::render)
-    }
+    val SYMBOLS_ON_NEXT_LINES = CommonRenderers.onNextLines(SYMBOL)
 
     /**
      * Prepends [singular] or [plural] depending on the elements count.
@@ -141,10 +139,14 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val CALLABLE_FQ_NAME = Renderer { symbol: FirCallableSymbol<*> ->
+        val origin = symbol.containingClassLookupTag()?.classId?.asFqNameString()
+        SYMBOL.render(symbol) + origin?.let { ", defined in $it" }.orEmpty()
+    }
+
     val CALLABLES_FQ_NAMES = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
         override fun render(obj: Collection<FirCallableSymbol<*>>) = "\n" + obj.joinToString("\n") { symbol ->
-            val origin = symbol.containingClassLookupTag()?.classId?.asFqNameString()
-            INDENTATION_UNIT + SYMBOL.render(symbol) + origin?.let { ", defined in $it" }.orEmpty()
+            INDENTATION_UNIT + CALLABLE_FQ_NAME.render(symbol)
         } + "\n"
     }
 
@@ -203,8 +205,8 @@ object FirDiagnosticRenderers {
         "Enum entry '$name'"
     }
 
-    val RENDER_CLASS_OR_OBJECT_NAME_QUOTED = Renderer { firClassLike: FirClassLikeSymbol<*> ->
-        val name = firClassLike.classId.relativeClassName.shortName().asString()
+    fun RENDER_CLASS_OR_OBJECT(quoted: Boolean, name: (ClassId) -> String) = Renderer { firClassLike: FirClassLikeSymbol<*> ->
+        val name = name(firClassLike.classId)
         val prefix = when (firClassLike) {
             is FirTypeAliasSymbol -> "typealias"
             is FirRegularClassSymbol -> {
@@ -219,12 +221,23 @@ object FirDiagnosticRenderers {
             }
             else -> AssertionError("Unexpected class: $firClassLike")
         }
-        "$prefix '$name'"
+        if (quoted) "$prefix '$name'" else "$prefix $name"
     }
+
+    val RENDER_CLASS_OR_OBJECT_NAME_QUOTED =
+        RENDER_CLASS_OR_OBJECT(quoted = true) { classId -> classId.relativeClassName.shortName().asString() }
 
     val RENDER_TYPE = ContextDependentRenderer { t: ConeKotlinType, ctx ->
         // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
         ctx[ADAPTIVE_RENDERED_TYPES].getValue(t)
+    }
+
+    val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirCallableSymbol<*> -> CALLABLE_FQ_NAME.render(symbol)
+            is FirClassLikeSymbol<*> -> RENDER_CLASS_OR_OBJECT(quoted = false) { classId -> classId.asFqNameString() }.render(symbol)
+            else -> return@Renderer "???"
+        }
     }
 
     private val ADAPTIVE_RENDERED_TYPES: RenderingContext.Key<Map<ConeKotlinType, String>> =

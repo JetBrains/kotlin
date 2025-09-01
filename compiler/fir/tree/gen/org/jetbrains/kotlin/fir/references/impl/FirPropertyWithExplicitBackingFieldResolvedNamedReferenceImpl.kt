@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -21,6 +22,7 @@ internal class FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     override val hasVisibleBackingField: Boolean,
 ) : FirPropertyWithExplicitBackingFieldResolvedNamedReference() {
 
@@ -28,5 +30,9 @@ internal class FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl {
         return this
+    }
+
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        resolvedSymbolOrigin = newResolvedSymbolOrigin
     }
 }

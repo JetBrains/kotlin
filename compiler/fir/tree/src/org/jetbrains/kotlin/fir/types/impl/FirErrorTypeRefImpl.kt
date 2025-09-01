@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -29,6 +30,7 @@ internal class FirErrorTypeRefImpl(
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
     override var partiallyResolvedTypeRef: FirTypeRef? = null,
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
 ) : FirErrorTypeRef() {
     override val customRenderer: Boolean
         get() = false
@@ -58,5 +60,9 @@ internal class FirErrorTypeRefImpl(
         partiallyResolvedTypeRef = partiallyResolvedTypeRef?.transform(transformer, data)
         transformChildren(transformer, data)
         return this
+    }
+
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        resolvedSymbolOrigin = newResolvedSymbolOrigin
     }
 }

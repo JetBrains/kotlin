@@ -492,6 +492,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY: KtDiagnosticFactory2<String, Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory2("DELEGATE_SPECIAL_FUNCTION_AMBIGUITY", ERROR, SourceElementPositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD, KtExpression::class, getRendererFactory())
     val COMPILER_REQUIRED_ANNOTATION_AMBIGUITY: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("COMPILER_REQUIRED_ANNOTATION_AMBIGUITY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val AMBIGUOUS_FUNCTION_TYPE_KIND: KtDiagnosticFactory1<Collection<FunctionTypeKind>> = KtDiagnosticFactory1("AMBIGUOUS_FUNCTION_TYPE_KIND", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY: KtDiagnosticFactory2<FirBasedSymbol<*>, Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory2("CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Context parameters resolution
     val NO_CONTEXT_ARGUMENT: KtDiagnosticFactory1<FirValueParameterSymbol> = KtDiagnosticFactory1("NO_CONTEXT_ARGUMENT", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())

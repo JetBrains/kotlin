@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedErrorReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -24,6 +25,7 @@ class FirResolvedErrorReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     lateinit var diagnostic: ConeDiagnostic
 
     fun build(): FirResolvedErrorReference {
@@ -31,6 +33,7 @@ class FirResolvedErrorReferenceBuilder {
             source,
             name,
             resolvedSymbol,
+            resolvedSymbolOrigin,
             diagnostic,
         )
     }

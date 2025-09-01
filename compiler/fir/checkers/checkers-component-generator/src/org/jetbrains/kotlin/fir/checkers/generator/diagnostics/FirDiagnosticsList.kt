@@ -829,6 +829,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val AMBIGUOUS_FUNCTION_TYPE_KIND by error<PsiElement> {
             parameter<Collection<FunctionTypeKind>>("kinds")
         }
+
+        val CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY by error<KtElement> {
+            parameter<FirBasedSymbol<*>>("resolvedCandidate")
+            parameter<Collection<FirBasedSymbol<*>>>("contextSensitiveCandidates")
+        }
     }
 
     val CONTEXT_PARAMETERS_RESOLUTION by object : DiagnosticGroup("Context parameters resolution") {

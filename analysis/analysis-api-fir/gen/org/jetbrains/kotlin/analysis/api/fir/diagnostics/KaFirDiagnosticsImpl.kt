@@ -2132,6 +2132,13 @@ internal class AmbiguousFunctionTypeKindImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousFunctionTypeKind
 
+internal class ContextSensitiveResolutionAmbiguityImpl(
+    override val resolvedCandidate: KaSymbol,
+    override val contextSensitiveCandidates: List<KaSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextSensitiveResolutionAmbiguity
+
 internal class NoContextArgumentImpl(
     override val symbol: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,

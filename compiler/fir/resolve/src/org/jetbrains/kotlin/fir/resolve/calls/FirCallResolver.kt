@@ -365,10 +365,10 @@ class FirCallResolver(
             expectedCallKind = if (functionCallExpected) CallKind.Function else null
         )
 
-        val referencedSymbol = when (nameReference) {
-            is FirResolvedNamedReference -> nameReference.resolvedSymbol
-            is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
-            else -> null
+        val (referencedSymbol, resolvedSymbolOrigin) = when (nameReference) {
+            is FirResolvedNamedReference -> nameReference.resolvedSymbol to nameReference.resolvedSymbolOrigin
+            is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol to nameReference.candidate.originScope?.toResolvedSymbolOrigin()
+            else -> null to null
         }
 
         val diagnostic = when (nameReference) {
@@ -406,7 +406,8 @@ class FirCallResolver(
                         nonFatalDiagnosticFromExpressionWithExtra,
                         session
                     ),
-                    annotations = qualifiedAccess.annotations
+                    annotations = qualifiedAccess.annotations,
+                    resolvedSymbolOrigin = resolvedSymbolOrigin,
                 )
             }
             is FirTypeParameterSymbol if referencedSymbol.fir.isReified && diagnostic == null -> {
@@ -871,6 +872,7 @@ class FirCallResolver(
             return buildBackingFieldReference {
                 this.source = source
                 resolvedSymbol = coneSymbol
+                resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
             }
         }
         if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
@@ -879,6 +881,7 @@ class FirCallResolver(
                 this.name = name
                 this.resolvedSymbol = candidate.symbol
                 hasVisibleBackingField = candidate.hasVisibleBackingField
+                resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
             }.build()
         }
         /*
@@ -906,6 +909,7 @@ class FirCallResolver(
                 this.source = source
                 this.name = name
                 resolvedSymbol = coneSymbol
+                resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
             }
         }
         return FirNamedReferenceWithCandidate(source, name, candidate)

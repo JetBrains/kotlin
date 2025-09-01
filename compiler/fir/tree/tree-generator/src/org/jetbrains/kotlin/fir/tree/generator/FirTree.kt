@@ -1004,6 +1004,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("canBeValue", boolean, withReplace = true)
         +field("isFullyQualified", boolean)
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
+        +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
         +typeArguments {
             withTransform = true
         }
@@ -1090,6 +1091,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(namedReference)
 
         +referencedSymbol("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+        +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
     }
 
     val propertyWithExplicitBackingFieldResolvedNamedReference: Element by element(Reference) {
@@ -1150,6 +1152,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("coneType", coneKotlinTypeType)
         +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
+        +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
     }
 
     val unresolvedTypeRef: Element by sealedElement(TypeRefElement) {

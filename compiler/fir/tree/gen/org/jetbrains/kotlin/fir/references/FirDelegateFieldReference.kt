@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirDelegateFieldReference : FirResolvedNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
+    abstract override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract override val resolvedSymbol: FirDelegateFieldSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -29,4 +31,6 @@ abstract class FirDelegateFieldReference : FirResolvedNamedReference() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformDelegateFieldReference(this, data) as E
+
+    abstract override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 }

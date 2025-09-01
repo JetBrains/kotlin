@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 package test
 
@@ -30,7 +30,7 @@ class Container {
         val FIRST = test.Sample.THIRD
         return when (s) {
             FIRST -> 3
-            SECOND -> 2
+            <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>SECOND<!> -> 2
             test.Sample.FIRST -> 1
             else -> 0
         }

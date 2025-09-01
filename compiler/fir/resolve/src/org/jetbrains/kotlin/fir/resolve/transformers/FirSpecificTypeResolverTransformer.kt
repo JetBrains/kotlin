@@ -74,8 +74,8 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
-        val (resolvedType, diagnostic) = resolveType(typeRef, data, expandTypeAliases)
-        return transformType(typeRef, resolvedType, diagnostic, data)
+        val (resolvedType, diagnostic, isContextSensitiveResolved) = resolveType(typeRef, data, expandTypeAliases)
+        return transformType(typeRef, resolvedType, diagnostic, data, isContextSensitiveResolved)
     }
 
     @OptIn(PrivateForInline::class)
@@ -129,6 +129,7 @@ class FirSpecificTypeResolverTransformer(
         resolvedType: ConeKotlinType,
         diagnostic: ConeDiagnostic?,
         configuration: TypeResolutionConfiguration,
+        resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     ): FirResolvedTypeRef {
         return when {
             resolvedType is ConeErrorType -> {
@@ -143,6 +144,7 @@ class FirSpecificTypeResolverTransformer(
                     coneType = resolvedType
                     annotations += typeRef.annotations
                     delegatedTypeRef = typeRef
+                    this.resolvedSymbolOrigin = resolvedSymbolOrigin
                 }
             }
         }

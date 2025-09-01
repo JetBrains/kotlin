@@ -28,8 +28,14 @@ import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -336,6 +342,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     diagnostic: ConeDiagnostic? = null,
     nonFatalDiagnostics: List<ConeDiagnostic> = emptyList(),
     annotations: List<FirAnnotation> = emptyList(),
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
 ): FirResolvedQualifier {
     return buildResolvedQualifierForClass(
         symbol,
@@ -347,6 +354,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         nonFatalDiagnostics,
         annotations,
         explicitParent,
+        resolvedSymbolOrigin,
     )
 }
 
@@ -359,7 +367,8 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     diagnostic: ConeDiagnostic?,
     nonFatalDiagnostics: List<ConeDiagnostic>?,
     annotations: List<FirAnnotation>,
-    explicitParent: FirResolvedQualifier?
+    explicitParent: FirResolvedQualifier?,
+    resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
 ): FirResolvedQualifier {
     val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
         FirResolvedQualifierBuilder()
@@ -386,6 +395,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
         this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
+        this.resolvedSymbolOrigin = resolvedSymbolOrigin
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
@@ -840,4 +850,12 @@ fun FirQualifiedAccessExpression.replaceExplicitReceiverIfNecessary(dispatchRece
     ) {
         replaceExplicitReceiver(dispatchReceiver)
     }
+}
+
+fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
+    is FirDefaultStarImportingScope, is FirDefaultSimpleImportingScope -> FirResolvedSymbolOrigin.DefaultImport
+    is FirAbstractStarImportingScope -> FirResolvedSymbolOrigin.StarImport
+    is FirPackageMemberScope -> FirResolvedSymbolOrigin.Package
+    is FirAbstractSimpleImportingScope -> FirResolvedSymbolOrigin.ExplicitImport
+    else -> null
 }

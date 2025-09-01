@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -23,12 +24,14 @@ class FirResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
 
     fun build(): FirResolvedNamedReference {
         return FirResolvedNamedReferenceImpl(
             source,
             name,
             resolvedSymbol,
+            resolvedSymbolOrigin,
         )
     }
 

@@ -2864,6 +2864,40 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Ambiguity {
+        @Test
+        public void testAllFilesPresentInAmbiguity() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("companion.kt")
+        public void testCompanion() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/companion.kt");
+        }
+
+        @Test
+        @TestMetadata("local.kt")
+        public void testLocal() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/local.kt");
+        }
+
+        @Test
+        @TestMetadata("samePackage.kt")
+        public void testSamePackage() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/samePackage.kt");
+        }
+
+        @Test
+        @TestMetadata("starImport.kt")
+        public void testStarImport() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity/starImport.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition")
       @TestDataPath("$PROJECT_ROOT")
       public class CallArgumentPosition {

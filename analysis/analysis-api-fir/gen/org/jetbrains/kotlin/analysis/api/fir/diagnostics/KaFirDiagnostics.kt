@@ -1779,6 +1779,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val kinds: List<FunctionTypeKind>
     }
 
+    interface ContextSensitiveResolutionAmbiguity : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ContextSensitiveResolutionAmbiguity::class
+        val resolvedCandidate: KaSymbol
+        val contextSensitiveCandidates: List<KaSymbol>
+    }
+
     interface NoContextArgument : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NoContextArgument::class
         val symbol: KaSymbol

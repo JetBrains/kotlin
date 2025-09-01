@@ -85,6 +85,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     resolvedSymbol,
                     // We don't allow inner classes capturing outer type parameters
                     ConeSubstitutor.Empty,
+                    FirResolvedSymbolOrigin.ContextSensitive,
                 )
             }
 
@@ -102,7 +103,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
 
                 if (resolvedSymbol != null) {
-                    collector.processCandidate(resolvedSymbol, substitutorFromScope)
+                    collector.processCandidate(resolvedSymbol, substitutorFromScope, scope.toResolvedSymbolOrigin())
                 }
             }
 
@@ -119,7 +120,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         if (collector.applicability != CandidateApplicability.RESOLVED) {
             val symbol = qualifierResolver.resolveFullyQualifiedSymbol(qualifier)
             if (symbol != null) {
-                collector.processCandidate(symbol, null)
+                collector.processCandidate(symbol, null, resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified)
             }
         }
 
@@ -397,7 +398,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
+                val potentiallyResolvedCandidate = result.resolvedCandidateOrNull()
+                val resolvedTypeSymbol = potentiallyResolvedCandidate?.symbol
                 // We can expand typealiases from dependencies right away, as it won't depend on us back,
                 // so there will be no problems with recursion.
                 // In the ideal world, this should also work with some source dependencies as the only case
@@ -415,7 +417,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                     else -> resolvedType
                 }
-                FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
+
+                FirTypeResolutionResult(
+                    resolvedExpandedType,
+                    potentiallyResolvedCandidate?.diagnostic,
+                    potentiallyResolvedCandidate?.resolvedSymbolOrigin
+                )
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {
