@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -71,6 +72,11 @@ open class ConeTypeRendererForReadability(
             builder.append(it.replace("^", nullabilityMarker))
             return
         }
+
         super.renderConstructor(constructor, nullabilityMarker)
+    }
+
+    override fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String, suffix: String): String {
+        return diagnostic.readableDescriptionAsTypeConstructor
     }
 }

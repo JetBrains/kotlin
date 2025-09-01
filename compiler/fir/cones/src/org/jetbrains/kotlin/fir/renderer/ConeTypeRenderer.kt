@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -149,7 +150,7 @@ open class ConeTypeRenderer(
                 }
             }
 
-            is ConeClassLikeErrorLookupTag -> builder.append("ERROR CLASS: ${constructor.diagnostic.reason}")
+            is ConeClassLikeErrorLookupTag -> builder.append(renderDiagnostic(constructor.diagnostic, prefix = "ERROR CLASS: "))
 
             is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
             is ConeClassifierLookupTag -> builder.append(constructor.name.asString())
@@ -163,6 +164,10 @@ open class ConeTypeRenderer(
             )
         }
         builder.append(nullabilityMarker)
+    }
+
+    open fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String = "", suffix: String = ""): String {
+        return "$prefix${diagnostic.reason}$suffix"
     }
 
     private fun ConeClassLikeType.renderTypeArguments() {

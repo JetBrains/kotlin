@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 interface ConeDiagnostic {
     val reason: String
+
+    val readableDescriptionAsTypeConstructor: String get() = reason
 }
 
 /**

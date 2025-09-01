@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         super<R|kotlin/Any|>()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun doo(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(RAW_FIR)] fun doo(): <ERROR TYPE REF: Recursive implicit type> {
                         ^doo R|util/foo|()
                     }
 
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         ^foo R|util/bar|()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun baz(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(RAW_FIR)] fun baz(): <ERROR TYPE REF: Recursive implicit type> {
                         ^baz R|util/foo|()
                     }
 
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         super<R|kotlin/Any|>()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun doo(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(RAW_FIR)] fun doo(): <ERROR TYPE REF: Recursive implicit type> {
                         ^doo R|util/foo|()
                     }
 
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         ^foo R|util/bar|()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun baz(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(RAW_FIR)] fun baz(): <ERROR TYPE REF: Recursive implicit type> {
                         ^baz R|util/foo|()
                     }
 
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         super<R|kotlin/Any|>()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun doo(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(RAW_FIR)] fun doo(): <ERROR TYPE REF: Recursive implicit type> {
                         ^doo R|util/foo|()
                     }
 
@@ -374,7 +374,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         ^foo R|util/bar|()
                     }
 
-                    public final [ResolvedTo(RAW_FIR)] fun baz(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(RAW_FIR)] fun baz(): <ERROR TYPE REF: Recursive implicit type> {
                         ^baz R|util/foo|()
                     }
 
@@ -417,7 +417,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         super<R|kotlin/Any|>()
                     }
 
-                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): <ERROR TYPE REF: Recursive implicit type> {
                         ^doo R|util/foo|()
                     }
 
@@ -425,7 +425,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionImplicitBodyScript.k
                         ^foo R|util/bar|()
                     }
 
-                    public final [ResolvedTo(BODY_RESOLVE)] fun baz(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(BODY_RESOLVE)] fun baz(): <ERROR TYPE REF: Recursive implicit type> {
                         ^baz R|util/foo|()
                     }
 
@@ -470,7 +470,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionImplicitBodyScr
                         super<R|kotlin/Any|>()
                     }
 
-                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(BODY_RESOLVE)] fun doo(): <ERROR TYPE REF: Recursive implicit type> {
                         ^doo R|util/foo|()
                     }
 
@@ -478,7 +478,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionImplicitBodyScr
                         ^foo R|util/bar|()
                     }
 
-                    public final [ResolvedTo(BODY_RESOLVE)] fun baz(): <ERROR TYPE REF: cycle> {
+                    public final [ResolvedTo(BODY_RESOLVE)] fun baz(): <ERROR TYPE REF: Recursive implicit type> {
                         ^baz R|util/foo|()
                     }
 

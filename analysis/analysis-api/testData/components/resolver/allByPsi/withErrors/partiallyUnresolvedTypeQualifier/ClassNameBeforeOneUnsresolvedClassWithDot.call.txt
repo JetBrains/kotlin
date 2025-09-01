@@ -161,7 +161,7 @@ KtCallExpression(144,181): 'take {'
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Incomplete user type, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<Incomplete user type, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
 
 KtNameReferenceExpression(144,148): 'take'
   KaErrorCallInfo:
@@ -202,7 +202,7 @@ KtNameReferenceExpression(144,148): 'take'
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<ERROR CLASS: Incomplete user type, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Function1<Incomplete user type, Unit>', but 'Function1<uninferred T (of fun <T> take), Unit>' was expected.>
 
 KtLambdaArgument(149,181): '{'
   null
