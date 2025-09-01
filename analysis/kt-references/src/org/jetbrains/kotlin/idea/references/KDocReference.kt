@@ -11,21 +11,28 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 
 abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(element) {
     override fun getRangeInElement(): TextRange = element.getNameTextRange()
 
     override fun canRename(): Boolean = true
 
-    /**
-     * It's important to use [singleOrNull] instead of [firstOrNull] here
-     * to get a drop-down menu in the IDE for KDoc references with multiple resolved results.
-     * In cases when [resolve] returns `null`,
-     * IDE will use [multiResolve] instead and show all the found results.
-     * Otherwise, when some element is returned from [resolve],
-     * the IDE considers it to be the primary result and just shows it as-is.
-     */
-    override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).singleOrNull()?.element
+    override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).let { resolvedResults ->
+        if (KotlinKDocResolutionStrategyProviderService.getService(element.project)?.shouldUseExperimentalStrategy() == true) {
+            /**
+             * It's important to use [singleOrNull] instead of [firstOrNull] here
+             * to get a drop-down menu in the IDE for KDoc references with multiple resolved results.
+             * In cases when [resolve] returns `null`,
+             * IDE will use [multiResolve] instead and show all the found results.
+             * Otherwise, when some element is returned from [resolve],
+             * the IDE considers it to be the primary result and just shows it as-is.
+             */
+            resolvedResults.singleOrNull()
+        } else {
+            resolvedResults.firstOrNull()
+        }
+    }?.element
 
     override fun getCanonicalText(): String = element.getNameText()
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -464,6 +465,12 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
             configurator.prepareFilesInModule(ktTestModule, testServices)
         }
+
+        /**
+         * This is required to enable the updated KDoc resolver in AA tests.
+         * See KT-76607
+         */
+        Registry.get("kotlin.analysis.experimentalKDocResolution").setValue(true)
     }
 
     private fun isDependentModeDisabledForTheTest(): Boolean =
