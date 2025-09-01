@@ -34,4 +34,10 @@ public class DiagnosticsTestForNoArgGenerated extends AbstractDiagnosticsTestFor
   public void testNoNoargCtorInSuperclass() {
     runTest("plugins/noarg/testData/diagnostics/noNoargCtorInSuperclass.kt");
   }
+
+  @Test
+  @TestMetadata("noargConstructorIsHidden.kt")
+  public void testNoargConstructorIsHidden() {
+    runTest("plugins/noarg/testData/diagnostics/noargConstructorIsHidden.kt");
+  }
 }
