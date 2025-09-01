@@ -245,6 +245,16 @@ public interface JavaScriptParserListener extends ParseTreeListener {
 	 */
 	void exitVariableDeclarationList(JavaScriptParser.VariableDeclarationListContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaScriptParser#singleVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleVariableDeclaration(JavaScriptParser.SingleVariableDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaScriptParser#singleVariableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleVariableDeclaration(JavaScriptParser.SingleVariableDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaScriptParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 */

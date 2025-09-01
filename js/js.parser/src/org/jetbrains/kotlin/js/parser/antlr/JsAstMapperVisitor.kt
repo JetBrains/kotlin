@@ -129,6 +129,10 @@ class JsAstMapperVisitor(
         }
     }
 
+    override fun visitSingleVariableDeclaration(ctx: JavaScriptParser.SingleVariableDeclarationContext): JsVars.JsVar {
+        return visit<JsVars.JsVar>(ctx.variableDeclaration())
+    }
+
     override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext): JsVars.JsVar {
         val originalId = ctx.assignable().identifier()?.text
             ?: TODO("Only identifier parameters are supported yet")

@@ -154,6 +154,12 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableDeclarationList(JavaScriptParser.VariableDeclarationListContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link JavaScriptParser#singleVariableDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSingleVariableDeclaration(JavaScriptParser.SingleVariableDeclarationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link JavaScriptParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
