@@ -32,22 +32,24 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.io.path.readText
 
-abstract class AbstractDecompiledClassTest : KotlinTestWithEnvironment() {
+abstract class AbstractDecompiledClassTest : KotlinTestWithEnvironmentManagement() {
     protected open val useK2ToCompileCode: Boolean = false
+    protected var environment: KotlinCoreEnvironment? = null
 
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
+    protected open fun initializeEnvironment() {
+        environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
             ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
             ConfigurationKind.JDK_NO_RUNTIME
-        )
+        ).also {
+            with(it.projectEnvironment.environment) {
+                registerApplicationServices()
+            }
+        }
     }
 
-    override fun setUp() {
-        super.setUp()
-
-        with(environment.projectEnvironment.environment) {
-            registerApplicationServices()
-        }
+    override fun tearDown() {
+        environment = null
+        super.tearDown()
     }
 
     private fun CoreApplicationEnvironment.registerApplicationServices() {
@@ -70,6 +72,9 @@ abstract class AbstractDecompiledClassTest : KotlinTestWithEnvironment() {
             src = testData.directory.toFile(),
             extraOptions = extraOptions,
         ).toPath()
+
+        initializeEnvironment()
+
         return findClassFileByName(
             library, testData.jvmFileName
         )
@@ -86,7 +91,7 @@ abstract class AbstractDecompiledClassTest : KotlinTestWithEnvironment() {
     }
 
     private fun findClassFileByName(library: Path, className: String): VirtualFile {
-        val jarFileSystem = environment.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+        val jarFileSystem = environment!!.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
         val root = jarFileSystem.refreshAndFindFileByPath(library.absolutePathString() + "!/")!!
         val files = mutableSetOf<VirtualFile>()
         VfsUtilCore.iterateChildrenRecursively(
