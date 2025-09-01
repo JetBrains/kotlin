@@ -16,7 +16,7 @@ fun test() {
     val b2 = B<C>()
     val b3 = B<<!UPPER_BOUND_VIOLATED!>Any?<!>>()
     val b4 = B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>>()<!UNRESOLVED_REFERENCE!>NL<!><!SYNTAX!><<!>Int<!SYNTAX!><!SYNTAX!>><!>()<!>NumberPhile<!SYNTAX!><!>
-    val b5 = B<<!UPPER_BOUND_VIOLATED!>B<<!UNRESOLVED_REFERENCE!>UnexistingType<!>><!>>()
+    val b5 = B<<!UPPER_BOUND_VIOLATED("A; B<Unresolved qualified name: UnexistingType>")!>B<<!UNRESOLVED_REFERENCE("UnexistingType")!>UnexistingType<!>><!>>()
     fest<<!UPPER_BOUND_VIOLATED!>Boolean<!>>()
     fest<C>()
     fest<HHH>()

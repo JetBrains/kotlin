@@ -269,7 +269,7 @@ open class ReturnTypeCalculatorWithJump(
 
 
     protected fun recursionInImplicitTypeRef(): FirErrorTypeRef = buildErrorTypeRef {
-        diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)
+        diagnostic = ConeSimpleDiagnostic("Recursive implicit type", DiagnosticKind.RecursionInImplicitTypes)
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {

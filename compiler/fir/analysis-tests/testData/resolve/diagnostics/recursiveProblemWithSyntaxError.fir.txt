@@ -2,7 +2,7 @@ FILE: recursiveProblemWithSyntaxError.kt
     public final val foo: <ERROR TYPE REF: Unresolved name: bar> = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)bar@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: bar> <inline=NoInline>  {
         ^ <Unresolved name: bar>#
     }
-    .R|SubstitutionOverride<kotlin/Function0.invoke: <ERROR TYPE REF: Unresolved name: bar>><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(ERROR_EXPR(Argument is absent)).<Unresolved name: bar>#(<Call has no callee>#(ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)<L> = <Call has no callee>@fun <anonymous>(): <ERROR TYPE REF: cycle> <inline=NoInline>  {
+    .R|SubstitutionOverride<kotlin/Function0.invoke: <ERROR TYPE REF: Unresolved name: bar>><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(ERROR_EXPR(Argument is absent)).<Unresolved name: bar>#(<Call has no callee>#(ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)<L> = <Call has no callee>@fun <anonymous>(): <ERROR TYPE REF: Recursive implicit type> <inline=NoInline>  {
         ^ R|/foo|
     }
     ))
