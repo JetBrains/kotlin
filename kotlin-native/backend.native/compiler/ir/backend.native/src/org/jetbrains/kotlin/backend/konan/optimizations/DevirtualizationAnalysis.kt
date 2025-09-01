@@ -539,6 +539,23 @@ internal object DevirtualizationAnalysis {
                 node.priority = index
             }
 
+            fun checkOrder(a: Node, b: Node) {
+                require(a.priority < b.priority) {
+                    "Edge (${a.id} -> ${b.id}) contradicts topological order"
+                }
+            }
+
+            for (i in topologicalOrder.indices) {
+                val node = topologicalOrder[i]
+                directEdges.forEachEdge(node.id) { d ->
+                    checkOrder(node, constraintGraph.nodes[d])
+                }
+                reversedEdges.forEachEdge(node.id) { r ->
+                    checkOrder(constraintGraph.nodes[r], node)
+                }
+            }
+
+
             val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
             for (node in topologicalOrder) {
                 node.directCastEdges
