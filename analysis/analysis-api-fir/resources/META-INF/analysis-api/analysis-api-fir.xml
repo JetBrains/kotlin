@@ -44,6 +44,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.K2KotlinBuiltInDecompilationInterceptor"
     />
 
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInStubVersionOffsetProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.K2KotlinBuiltInStubVersionOffsetProvider"
+    />
+
     <registryKey
         defaultValue="true"
         description="Perform cache clean-up when running out of RAM"
