@@ -46,8 +46,8 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
 ): Configuration {
     configurations.findResolvable(compilation.cInteropDependencyConfigurationName)?.let { return it }
 
-    val compileOnlyConfiguration = configurations.getByName(compilation.compileOnlyConfigurationName)
-    val implementationConfiguration = configurations.getByName(compilation.implementationConfigurationName)
+    val compileOnlyConfiguration = configurations.getByName(compilation.legacyCompileOnlyConfigurationName)
+    val implementationConfiguration = configurations.getByName(compilation.legacyImplementationConfigurationName)
 
     return configurations.createResolvable(compilation.cInteropDependencyConfigurationName).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)

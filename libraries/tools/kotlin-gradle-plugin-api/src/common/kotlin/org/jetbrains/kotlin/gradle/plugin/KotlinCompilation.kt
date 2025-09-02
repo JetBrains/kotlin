@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -347,6 +346,48 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
      */
     val disambiguatedName
         get() = target.disambiguationClassifier + name.replaceFirstChar { it.titlecase(getDefault()) }
+
+    @Deprecated(
+        "Declaring dependencies on Compilation level is deprecated, please declare on related source set",
+        ReplaceWith("defaultSourceSet.dependencies"),
+        level = DeprecationLevel.WARNING
+    )
+    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit)
+
+    @Deprecated(
+        "Declaring dependencies on Compilation level is deprecated, please declare on related source set",
+        ReplaceWith("defaultSourceSet.dependencies"),
+        level = DeprecationLevel.WARNING
+    )
+    override fun dependencies(configure: Action<KotlinDependencyHandler>)
+
+    @Deprecated(
+        "Accessing apiConfigurationName on Compilation level is deprecated, please use default source set instead",
+        ReplaceWith("defaultSourceSet.apiConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
+    override val apiConfigurationName: String
+
+    @Deprecated(
+        "Accessing implementationConfigurationName on Compilation level is deprecated, please use default source set instead",
+        ReplaceWith("defaultSourceSet.implementationConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
+    override val implementationConfigurationName: String
+
+    @Deprecated(
+        "Accessing compileOnlyConfigurationName on Compilation level is deprecated, please use default source set instead",
+        ReplaceWith("defaultSourceSet.compileOnlyConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
+    override val compileOnlyConfigurationName: String
+
+    @Deprecated(
+        "Accessing runtimeOnlyConfigurationName on Compilation level is deprecated, please use default source set instead",
+        ReplaceWith("defaultSourceSet.runtimeOnlyConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
+    override val runtimeOnlyConfigurationName: String
 }
 
 /**

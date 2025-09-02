@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyApiConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyImplementationConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyRuntimeOnlyConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.applyKotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -41,7 +44,6 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.tooling.includeKotlinToolingMetadataInApk
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.io.ObjectInputStream
@@ -348,11 +350,11 @@ internal class AndroidProjectHandler(
 
         // KT-29476, the Android *Elements configurations need Kotlin MPP dependencies:
         if (project.configurations.findByName(apiElementsConfigurationName) != null) {
-            project.addExtendsFromRelation(apiElementsConfigurationName, compilation.apiConfigurationName)
+            project.addExtendsFromRelation(apiElementsConfigurationName, compilation.legacyApiConfigurationName)
         }
         if (project.configurations.findByName(runtimeElementsConfigurationName) != null) {
-            project.addExtendsFromRelation(runtimeElementsConfigurationName, compilation.implementationConfigurationName)
-            project.addExtendsFromRelation(runtimeElementsConfigurationName, compilation.runtimeOnlyConfigurationName)
+            project.addExtendsFromRelation(runtimeElementsConfigurationName, compilation.legacyImplementationConfigurationName)
+            project.addExtendsFromRelation(runtimeElementsConfigurationName, compilation.legacyRuntimeOnlyConfigurationName)
         }
 
         listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->

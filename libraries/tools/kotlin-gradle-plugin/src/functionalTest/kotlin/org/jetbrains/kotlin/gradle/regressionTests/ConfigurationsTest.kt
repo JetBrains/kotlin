@@ -195,6 +195,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             kotlin {
                 js()
                 targets.withType<KotlinJsIrTarget> {
+                    @Suppress("DEPRECATION")
                     compilations.getByName("main").dependencies {
                         api("test:compilation-dependency")
                     }

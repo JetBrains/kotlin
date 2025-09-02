@@ -10,18 +10,16 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.SourceSet
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.jetbrains.kotlin.gradle.plugin.KOTLIN_DSL_NAME
-import org.jetbrains.kotlin.gradle.plugin.KOTLIN_JS_DSL_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.addExtension
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyApiConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyCompileOnlyConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyImplementationConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyRuntimeOnlyConfigurationName
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.copyAttributesTo
 
@@ -112,18 +110,18 @@ internal fun setupDependenciesCrossInclusionForJava(
     val project = compilation.project
 
     listOfNotNull(
-        compilation.apiConfigurationName,
-        compilation.implementationConfigurationName,
-        compilation.compileOnlyConfigurationName,
+        compilation.legacyApiConfigurationName,
+        compilation.legacyImplementationConfigurationName,
+        compilation.legacyCompileOnlyConfigurationName,
         compilation.internal.configurations.deprecatedCompileConfiguration?.name,
     ).forEach { configurationName ->
         project.addExtendsFromRelation(javaSourceSet.compileClasspathConfigurationName, configurationName)
     }
 
     listOfNotNull(
-        compilation.apiConfigurationName,
-        compilation.implementationConfigurationName,
-        compilation.runtimeOnlyConfigurationName,
+        compilation.legacyApiConfigurationName,
+        compilation.legacyImplementationConfigurationName,
+        compilation.legacyRuntimeOnlyConfigurationName,
         compilation.internal.configurations.deprecatedRuntimeConfiguration?.name,
     ).forEach { configurationName ->
         project.addExtendsFromRelation(javaSourceSet.runtimeClasspathConfigurationName, configurationName)

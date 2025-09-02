@@ -916,8 +916,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun attributes (Lorg/gradle/api/Action;)V
 	public abstract fun defaultSourceSet (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun defaultSourceSet (Lorg/gradle/api/Action;)V
+	public abstract fun dependencies (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun dependencies (Lorg/gradle/api/Action;)V
 	public abstract fun getAllAssociatedCompilations ()Ljava/util/Set;
 	public abstract fun getAllKotlinSourceSets ()Ljava/util/Set;
+	public abstract fun getApiConfigurationName ()Ljava/lang/String;
 	public abstract synthetic fun getAssociateWith ()Ljava/util/List;
 	public abstract fun getAssociatedCompilations ()Ljava/util/Set;
 	public abstract fun getCompilationName ()Ljava/lang/String;
@@ -927,11 +930,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
 	public abstract fun getCompileKotlinTaskName ()Ljava/lang/String;
 	public abstract fun getCompileKotlinTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getCompileOnlyConfigurationName ()Ljava/lang/String;
 	public abstract fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public abstract fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
 	public abstract fun getDefaultSourceSetName ()Ljava/lang/String;
 	public abstract fun getDisambiguatedName ()Ljava/lang/String;
+	public abstract fun getImplementationConfigurationName ()Ljava/lang/String;
 	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
 	public abstract fun getKotlinSourceSets ()Ljava/util/Set;
 	public abstract fun getName ()Ljava/lang/String;
@@ -939,6 +944,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public abstract fun getRuntimeDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getRuntimeDependencyFiles ()Lorg/gradle/api/file/FileCollection;
+	public abstract fun getRuntimeOnlyConfigurationName ()Ljava/lang/String;
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public abstract fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun kotlinOptions (Lorg/gradle/api/Action;)V

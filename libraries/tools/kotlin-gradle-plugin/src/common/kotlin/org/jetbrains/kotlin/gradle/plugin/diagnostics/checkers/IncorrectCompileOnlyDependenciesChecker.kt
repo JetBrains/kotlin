@@ -9,7 +9,9 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IncorrectCompileOnlyDependencyWarning.CompilationDependenciesPair
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.IncorrectCompileOnlyDependenciesChecker.isProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyCompileOnlyConfigurationName
 
 /**
  * Verify that if a dependency is declared as `compileOnly`, in non-JVM targets it is also exposed as an `api` element.
@@ -64,7 +66,7 @@ internal object IncorrectCompileOnlyDependenciesChecker : KotlinGradleProjectChe
 
         return compilationsIncompatibleWithCompileOnly.map { compilation ->
             val compileOnlyDependencies = project.configurations
-                .findByName(compilation.compileOnlyConfigurationName)
+                .findByName(compilation.legacyCompileOnlyConfigurationName)
                 ?.allDependencies
                 .orEmpty()
 

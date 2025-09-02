@@ -10,7 +10,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyApiConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyCompileOnlyConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyImplementationConfigurationName
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyRuntimeOnlyConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.utils.API
 import org.jetbrains.kotlin.gradle.utils.COMPILE_ONLY
@@ -46,9 +49,9 @@ internal fun Project.compilationDependencyConfigurationByScope(
 ): Configuration =
     project.configurations.getByName(
         when (scope) {
-            API_SCOPE -> compilation.apiConfigurationName
-            IMPLEMENTATION_SCOPE -> compilation.implementationConfigurationName
-            COMPILE_ONLY_SCOPE -> compilation.compileOnlyConfigurationName
-            RUNTIME_ONLY_SCOPE -> compilation.runtimeOnlyConfigurationName
+            API_SCOPE -> compilation.legacyApiConfigurationName
+            IMPLEMENTATION_SCOPE -> compilation.legacyImplementationConfigurationName
+            COMPILE_ONLY_SCOPE -> compilation.legacyCompileOnlyConfigurationName
+            RUNTIME_ONLY_SCOPE -> compilation.legacyRuntimeOnlyConfigurationName
         }
     )

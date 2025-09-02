@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyImplementationConfigurationName
 
 /**
  * Kotlin/Multiplatform requires all dependencies to be available at compile time.
@@ -21,6 +22,6 @@ internal val NativeForwardImplementationToApiElementsSideEffect = KotlinTargetSi
     configurations.getByName(target.apiElementsConfigurationName).apply {
         //  K/N and K/JS IR compiler doesn't divide libraries into implementation and api ones. So we need to add implementation
         // dependencies into the outgoing configuration.
-        extendsFrom(configurations.getByName(mainCompilation.implementationConfigurationName))
+        extendsFrom(configurations.getByName(mainCompilation.legacyImplementationConfigurationName))
     }
 }

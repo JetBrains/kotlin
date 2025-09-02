@@ -579,14 +579,14 @@ class JvmBinariesDslTest {
         ) {
             kotlin {
                 jvm {
-                    compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).dependencies {
-                        implementation(project(":lib"))
-                    }
                     binaries {
                         executable(KotlinCompilation.TEST_COMPILATION_NAME) {
                             mainClass.set("foo.MainKt")
                         }
                     }
+                }
+                sourceSets.jvmTest.dependencies {
+                    implementation(project(":lib"))
                 }
             }
         }

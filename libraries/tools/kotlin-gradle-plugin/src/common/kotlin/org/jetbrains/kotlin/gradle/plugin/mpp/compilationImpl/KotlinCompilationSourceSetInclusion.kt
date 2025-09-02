@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
-import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
@@ -42,24 +41,24 @@ internal class KotlinCompilationSourceSetInclusion(
         // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
         // old Java & Android projects:
         compilation.project.addExtendsFromRelation(
-            compilation.apiConfigurationName,
+            compilation.legacyApiConfigurationName,
             sourceSet.apiConfigurationName,
             forced = false
         )
 
         compilation.project.addExtendsFromRelation(
-            compilation.implementationConfigurationName,
+            compilation.legacyImplementationConfigurationName,
             sourceSet.implementationConfigurationName,
             forced = false
         )
         compilation.project.addExtendsFromRelation(
-            compilation.compileOnlyConfigurationName,
+            compilation.legacyCompileOnlyConfigurationName,
             sourceSet.compileOnlyConfigurationName,
             forced = false
         )
 
         compilation.project.addExtendsFromRelation(
-            compilation.runtimeOnlyConfigurationName,
+            compilation.legacyRuntimeOnlyConfigurationName,
             sourceSet.runtimeOnlyConfigurationName,
             forced = false
         )

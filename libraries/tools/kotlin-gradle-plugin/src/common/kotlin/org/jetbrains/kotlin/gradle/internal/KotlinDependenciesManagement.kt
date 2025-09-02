@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.legacyApiConfigurationName
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
@@ -99,7 +100,7 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
             @Suppress("DEPRECATION_ERROR") // KT-64273
             (it as? org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
-            (it as? KotlinWithJavaCompilation<*, *>)?.apiConfigurationName
+            (it as? KotlinWithJavaCompilation<*, *>)?.legacyApiConfigurationName
         ).forEach { configurationName ->
             project.configurations.getByName(configurationName).apply {
                 exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common"))
