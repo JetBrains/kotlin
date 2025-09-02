@@ -24,7 +24,6 @@ const val IMPLEMENTATION = "implementation"
 const val API = "api"
 const val RUNTIME_ONLY = "runtimeOnly"
 const val RUNTIME = "runtime"
-internal const val INTRANSITIVE = "intransitive"
 private val gradleVersionWithNewApi = GradleVersion.version("8.4")
 
 internal fun ConfigurationContainer.createResolvable(

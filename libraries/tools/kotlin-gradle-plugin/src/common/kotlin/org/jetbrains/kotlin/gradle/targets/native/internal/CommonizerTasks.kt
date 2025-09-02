@@ -44,9 +44,6 @@ internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
         ?: false
 }
 
-internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
-    get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
-
 internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
     get() = PropertiesProvider(this).mppEnableOptimisticNumberCommonization
 
