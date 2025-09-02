@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.runners
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor.SuppressionChecker
-import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -57,7 +57,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         configureIrHandlersStep {
             useHandlers(
                 ::IrDiagnosticsHandler,
-                ::NoFir2IrCompilationErrorsHandler,
+                ::NoIrCompilationErrorsHandler,
             )
         }
 

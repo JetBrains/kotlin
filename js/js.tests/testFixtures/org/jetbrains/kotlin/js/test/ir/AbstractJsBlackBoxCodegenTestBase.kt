@@ -306,12 +306,12 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
 
     configureIrHandlersStep {
         useHandlers(::FirJsKlibAbiDumpBeforeInliningSavingHandler)
-        useHandlers(::NoFir2IrCompilationErrorsHandler)
+        useHandlers(::NoIrCompilationErrorsHandler)
         useHandlers(::IrMangledNameAndSignatureDumpHandler)
     }
 
     configureLoweredIrHandlersStep {
-        useHandlers(::NoFir2IrCompilationErrorsHandler)
+        useHandlers(::NoIrCompilationErrorsHandler)
     }
 
     configureKlibArtifactsHandlersStep {

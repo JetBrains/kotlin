@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 /**
- * Fails FIR2IR phase if there are some diagnostics from, for example, IR actualization.
+ * Fails FIR2IR or Pre-serialization phases if there are some error diagnostics from, for example, IR actualization or IrInlineDeclarationChecker.
  */
-class NoFir2IrCompilationErrorsHandler(testServices: TestServices) : BackendInputHandler<IrBackendInput>(
+class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHandler<IrBackendInput>(
     testServices,
     BackendKinds.IrBackend,
     // Must go on, because we may have multiple modules emitting IR diagnostics, and we want

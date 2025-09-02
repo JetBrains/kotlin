@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.JsKlibInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoFir2IrCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonClassicFrontendHandlersForCodegenTest
@@ -104,12 +104,12 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 
         facadeStep(frontendToBackendConverter)
         irHandlersStep {
-            useHandlers(::NoFir2IrCompilationErrorsHandler)
+            useHandlers(::NoIrCompilationErrorsHandler)
         }
 
         facadeStep(::WasmPreSerializationLoweringFacade)
         loweredIrHandlersStep {
-            useHandlers(::NoFir2IrCompilationErrorsHandler)
+            useHandlers(::NoIrCompilationErrorsHandler)
         }
 
         loweredIrHandlersStep()
