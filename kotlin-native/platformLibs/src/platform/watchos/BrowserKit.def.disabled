@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.BrowserKit
+
+modules = BrowserKit
+compilerOpts = -framework BrowserKit
+linkerOpts = -framework BrowserKit
+#Disabled: Not officially available for watchos
