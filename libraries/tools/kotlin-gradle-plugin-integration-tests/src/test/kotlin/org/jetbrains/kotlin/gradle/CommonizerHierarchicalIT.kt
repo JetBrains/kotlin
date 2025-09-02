@@ -111,22 +111,8 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Platform dependencies on leaf source sets")
-    @GradleTest
-    fun testPlatformDependenciesOnLeafSourceSets(gradleVersion: GradleVersion) {
-        nativeProject("commonizeHierarchicallyPlatformDependencies", gradleVersion) {
-            build(":checkPlatformDependencies") {
-                val klibPlatform = "${File.separator}klib${File.separator}platform${File.separator}".replace("\\", "\\\\")
-
-                assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksExecuted(":checkLinuxX64MainPlatformDependencies")
-                assertTasksExecuted(":checkLinuxArm64MainPlatformDependencies")
-                assertOutputContains(Regex(""".*linuxX64Main.*$klibPlatform.*[Pp]osix.*"""))
-                assertOutputContains(Regex(""".*linuxArm64Main.*$klibPlatform.*[Pp]osix.*"""))
-            }
-        }
-    }
-
+    // FIXME: Does "testCommonizationOfNonPlatformShouldWorkOnlyForSupportedTargets" have the same coverage as
+    // "commonizeHierarchicallyPlatformDependencies"? Do we need to add a separate test with only 2 targets one of which is unsupported?
 
     @DisplayName("jvm subproject should not have commonization task")
     @GradleTest
