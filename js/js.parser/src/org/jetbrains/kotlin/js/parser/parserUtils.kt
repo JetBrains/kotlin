@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.Reader
 import java.io.StringReader
 
+@Deprecated(
+    "Old gwt-based JS parser is deprecated. Use JsAntlrParser.parse instead.",
+    ReplaceWith("JsAntlrParser.parse(code, reporter, scope, fileName)")
+)
 fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: String): List<JsStatement>? {
     val insideFunction = scope is JsFunctionScope
     val node = parse(code, CodePosition(0, 0), 0, reporter, insideFunction, Parser::parse)
@@ -30,6 +34,10 @@ fun parse(code: String, reporter: ErrorReporter, scope: JsScope, fileName: Strin
     }
 }
 
+@Deprecated(
+    "Old gwt-based JS parser is deprecated. Use JsAntlrParser.parseExpressionOrStatement instead.",
+    ReplaceWith("JsAntlrParser.parseExpressionOrStatement(code, reporter, scope, startPosition, fileName)")
+)
 fun parseExpressionOrStatement(
         code: String,
         reporter: ErrorReporter, scope: JsScope,
@@ -66,6 +74,10 @@ fun parseExpressionOrStatement(
     }
 }
 
+@Deprecated(
+    "Old gwt-based JS parser is deprecated. Use JsAntlrParser.parseFunction instead.",
+    ReplaceWith("JsAntlrParser.parseFunction(code, fileName, position, offset, reporter, scope)")
+)
 fun parseFunction(code: String, fileName: String, position: CodePosition, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction? {
     val rootNode = parse(code, position, offset, reporter, insideFunction = false) {
         addListener(FunctionParsingObserver())
