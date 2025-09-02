@@ -3500,6 +3500,100 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BlockTags {
+      @Test
+      public void testAllFilesPresentInBlockTags() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("allTagSectionsRequiringSubjects.kt")
+      public void testAllTagSectionsRequiringSubjects() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/allTagSectionsRequiringSubjects.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorBlockTag.kt")
+      public void testConstructorBlockTag() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/constructorBlockTag.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorParameterInDifferentPlaces.kt")
+      public void testConstructorParameterInDifferentPlaces() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/constructorParameterInDifferentPlaces.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecatedProperties.kt")
+      public void testDeprecatedProperties() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/deprecatedProperties.kt");
+      }
+
+      @Test
+      @TestMetadata("longNameInTagSections.kt")
+      public void testLongNameInTagSections() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/longNameInTagSections.kt");
+      }
+
+      @Test
+      @TestMetadata("overridePropertyInPrimaryConstructor.kt")
+      public void testOverridePropertyInPrimaryConstructor() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/overridePropertyInPrimaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("paramBlockOnFunction.kt")
+      public void testParamBlockOnFunction() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/paramBlockOnFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("paramBlockTag.kt")
+      public void testParamBlockTag() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/paramBlockTag.kt");
+      }
+
+      @Test
+      @TestMetadata("paramTagWithRegularParameter.kt")
+      public void testParamTagWithRegularParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/paramTagWithRegularParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("prioritiesWithSameNames.kt")
+      public void testPrioritiesWithSameNames() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/prioritiesWithSameNames.kt");
+      }
+
+      @Test
+      @TestMetadata("receiverReferenceAsSubject.kt")
+      public void testReceiverReferenceAsSubject() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/receiverReferenceAsSubject.kt");
+      }
+
+      @Test
+      @TestMetadata("throwsAndException.kt")
+      public void testThrowsAndException() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/throwsAndException.kt");
+      }
+
+      @Test
+      @TestMetadata("throwsTag.kt")
+      public void testThrowsTag() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/throwsTag.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameters.kt")
+      public void testTypeParameters() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/typeParameters.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/companionObject")
     @TestDataPath("$PROJECT_ROOT")
     public class CompanionObject {

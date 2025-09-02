@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(14,18): 'A.BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) class BB
+
+<caret_2>:
+  KDocName(32,36): 'A.BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) class BB
+
+<caret_3>:
+  KDocName(48,52): 'A.BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) class BB
+
+<caret_4>:
+  KDocName(67,71): 'A.BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) class BB

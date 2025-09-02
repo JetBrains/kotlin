@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(14,18): 'this'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        extension receiver with type kotlin.Int
+
+<caret_2>:
+  KDocName(32,36): 'this'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        extension receiver with type kotlin.Int

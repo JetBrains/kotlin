@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(18,32): 'conPropWarning'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        conPropWarning: kotlin.Int
+
+<caret_2>:
+  KDocName(48,60): 'conPropError'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        conPropError: kotlin.Int
+
+<caret_3>:
+  KDocName(76,89): 'conPropHidden'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        conPropHidden: kotlin.Int
+
+<caret_4>:
+  KDocName(105,116): 'propWarning'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in AA) val propWarning: kotlin.Int
+
+<caret_5>:
+  KDocName(132,141): 'propError'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in AA) val propError: kotlin.Int
+
+<caret_6>:
+  KDocName(157,167): 'propHidden'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)

@@ -1,0 +1,71 @@
+<caret_1>:
+  KDocName(8,10): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: foo) TT
+        1: TT: kotlin.String
+
+<caret_2>:
+  KDocName(23,25): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: foo) TT
+        1: TT: kotlin.String
+
+<caret_3>:
+  KDocName(68,70): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: A) TT
+        1: TT: kotlin.String
+
+<caret_4>:
+  KDocName(73,75): 'RR'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: A) RR
+        1: RR: kotlin.Int
+
+<caret_5>:
+  KDocName(88,90): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: A) TT
+        1: TT: kotlin.String
+
+<caret_6>:
+  KDocName(93,95): 'RR'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: A) RR
+        1: RR: kotlin.Int
+
+<caret_7>:
+  KDocName(111,113): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: A) TT
+        1: TT: kotlin.String
+
+<caret_8>:
+  KDocName(116,118): 'RR'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in <local>: A) RR
+        1: RR: kotlin.Int

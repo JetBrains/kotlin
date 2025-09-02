@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(25,27): 'AA'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(29,31): 'AA'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(47,49): 'AA'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(51,53): 'AA'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(66,75): 'Exception'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(77,86): 'Exception'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(102,111): 'Exception'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(113,122): 'Exception'
+    NO_CANDIDATES

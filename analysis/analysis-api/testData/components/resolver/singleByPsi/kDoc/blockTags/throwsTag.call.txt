@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(15,21): 'String'
+    null
+
+<caret_2>:
+  KDocName(36,42): 'String'
+    null
+
+<caret_3>:
+  KDocName(54,75): 'IllegalStateException'
+    null
+
+<caret_4>:
+  KDocName(90,111): 'IllegalStateException'
+    null
+
+<caret_5>:
+  KDocName(123,134): 'MyException'
+    null
+
+<caret_6>:
+  KDocName(149,160): 'MyException'
+    null
+
+<caret_7>:
+  KDocName(172,183): 'MyThrowable'
+    null
+
+<caret_8>:
+  KDocName(198,209): 'MyThrowable'
+    null
