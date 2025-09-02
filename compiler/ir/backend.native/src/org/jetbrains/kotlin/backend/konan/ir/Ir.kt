@@ -69,6 +69,7 @@ private object ClassIds {
     val kTypeProjectionList = "KTypeProjectionList".internalClassId
     val nativePtr = "NativePtr".internalClassId
     val functionAdapter = "FunctionAdapter".internalClassId
+    val defaultConstructorMarker = "DefaultConstructorMarker".internalClassId
 
     // Interop classes
     private val String.interopClassId get() = ClassId(InteropFqNames.packageName, Name.identifier(this))
@@ -619,6 +620,8 @@ class KonanSymbols(
     }
 
     override val functionAdapter = ClassIds.functionAdapter.classSymbol()
+
+    override val defaultConstructorMarker = ClassIds.defaultConstructorMarker.classSymbol()
 
     val kFunctionImpl = ClassIds.kFunctionImpl.classSymbol()
     val kFunctionDescription = ClassIds.kFunctionDescription.classSymbol()

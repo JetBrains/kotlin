@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     protected val symbolFinder = irBuiltIns.symbolFinder
@@ -108,7 +107,6 @@ interface PreSerializationSymbols {
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
-    val defaultConstructorMarker: IrClassSymbol
     val syntheticConstructorMarker: IrClassSymbol
     val coroutineContextGetter: IrSimpleFunctionSymbol
     val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
@@ -160,7 +158,6 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         const val THROW_UNSUPPORTED_OPERATION_NAME = "throwUnsupportedOperationException"
         const val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
         const val COROUTINE_CONTEXT_NAME = "coroutineContext"
-        const val DEFAULT_CONSTRUCTOR_MARKET_NAME = "DefaultConstructorMarker"
 
         private val kotlinInternalPackageFqn = FqName.fromSegments(listOf("kotlin", "internal"))
         private val String.internalCallableId: CallableId
@@ -189,8 +186,6 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
     val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol
 
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
-        override val defaultConstructorMarker: IrClassSymbol = ClassIds.defaultConstructorMarker.classSymbol()
-
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
@@ -212,7 +207,6 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
             private object ClassIds {
                 private val String.baseJsClassId: ClassId
                     get() = ClassId(StandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
-                val defaultConstructorMarker: ClassId = PreSerializationKlibSymbols.DEFAULT_CONSTRUCTOR_MARKET_NAME.baseJsClassId
                 val JsOutlinedFunction: ClassId = "JsOutlinedFunction".baseJsClassId
             }
         }
@@ -221,8 +215,6 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
 
 interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
-        override val defaultConstructorMarker: IrClassSymbol = ClassIds.defaultConstructorMarker.classSymbol()
-
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
@@ -238,12 +230,6 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
                 val suspendCoroutineUninterceptedOrReturn: CallableId = COROUTINE_SUSPEND_OR_RETURN_NAME.internalCallableId
                 val coroutineGetContext: CallableId = PreSerializationKlibSymbols.GET_COROUTINE_CONTEXT_NAME.internalCallableId
             }
-
-            private object ClassIds {
-                private val String.internalClassId: ClassId
-                    get() = ClassId(wasmInternalFqName, Name.identifier(this))
-                val defaultConstructorMarker: ClassId = PreSerializationKlibSymbols.DEFAULT_CONSTRUCTOR_MARKET_NAME.internalClassId
-            }
         }
     }
 }
@@ -255,7 +241,6 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
 
-        override val defaultConstructorMarker: IrClassSymbol = ClassIds.defaultConstructorMarker.classSymbol()
         override val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol =
             CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
@@ -284,14 +269,6 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                     get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
                 val asserts: CallableId = "assert".builtInsCallableId
                 val isAssertionArgumentEvaluationEnabled: CallableId = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
-            }
-
-            private object ClassIds {
-                // Internal classes
-                private val String.internalClassId: ClassId
-                    get() = ClassId(kotlinNativeInternalPackageName, Name.identifier(this))
-                val defaultConstructorMarker: ClassId =
-                    PreSerializationKlibSymbols.DEFAULT_CONSTRUCTOR_MARKET_NAME.internalClassId
             }
         }
     }

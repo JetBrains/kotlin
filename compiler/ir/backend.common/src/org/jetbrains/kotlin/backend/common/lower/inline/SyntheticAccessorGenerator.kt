@@ -436,7 +436,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
-            oldExpression.arguments + createAccessorMarkerArgument(accessorSymbol.owner.parameters.last().origin)
+            oldExpression.arguments + createAccessorMarkerArgument()
         } else {
             oldExpression.arguments
         }
@@ -475,14 +475,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         )
     }
 
-    fun createAccessorMarkerArgument(origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER): IrConst {
-        val symbol = when (origin) {
-            IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER -> context.symbols.defaultConstructorMarker
-            IrDeclarationOrigin.SYNTHETIC_CONSTRUCTOR_MARKER -> context.symbols.syntheticConstructorMarker
-            else -> error("Unexpected origin '$origin' when creating accessor marker argument.")
-        }
-        return IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.defaultType.makeNullable())
-    }
+    abstract fun createAccessorMarkerArgument(): IrConst
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].

@@ -131,6 +131,8 @@ class WasmSymbols(
 
     override val functionAdapter = getInternalWasmClass("FunctionAdapter")
 
+    override val defaultConstructorMarker: IrClassSymbol = getInternalWasmClass("DefaultConstructorMarker")
+
     val wasmUnreachable = getInternalWasmFunction("wasm_unreachable")
 
     val voidClass = getIrClass(FqName("kotlin.wasm.internal.Void"))

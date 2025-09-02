@@ -80,6 +80,8 @@ class JsSymbols(
 
     override val functionAdapter = symbolFinder.topLevelClass(BASE_JS_PACKAGE, "FunctionAdapter")
 
+    override val defaultConstructorMarker = symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
+
     override fun functionN(n: Int): IrClassSymbol {
         return stageController.withInitialIr { super.functionN(n) }
     }

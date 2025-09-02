@@ -202,6 +202,8 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
 
     abstract val functionAdapter: IrClassSymbol
 
+    abstract val defaultConstructorMarker: IrClassSymbol
+
     open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol?
         get() = null
 

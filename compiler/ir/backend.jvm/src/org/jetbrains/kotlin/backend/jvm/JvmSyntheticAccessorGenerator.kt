@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -137,6 +139,9 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         contribute(JvmAbi.setterName(field.name.asString()))
         contributeFieldAccessorSuffix(field, superQualifierSymbol)
     }
+
+    override fun createAccessorMarkerArgument(): IrConst =
+        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.defaultConstructorMarker.defaultType.makeNullable())
 
     /**
      * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
