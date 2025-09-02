@@ -22,7 +22,7 @@ const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
 const val KLIB_METADATA_FOLDER_NAME = "linkdata"
 const val KLIB_IR_FOLDER_NAME = "ir"
-const val KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME = "ir_of_inlineable_functions"
+const val KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME = "ir_inlinable_functions"
 
 /**
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
@@ -81,7 +81,7 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     // Those may be read and inlined on the first stage of compilation, without the need to read the main, much bigger,
     // "ir" directory (see KT-75794).
     val irOfInlineableFunsDir
-        get() = File(componentDir, KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME)
+        get() = File(componentDir, KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME)
     val irDeclarationsOfInlineableFuns
         get() = File(irOfInlineableFunsDir, IR_DECLARATIONS_FILE_NAME)
     val irTypesOfInlineableFuns

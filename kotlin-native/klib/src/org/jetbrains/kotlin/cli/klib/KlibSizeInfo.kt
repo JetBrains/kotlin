@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.konan.library.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.KLIB_IR_FOLDER_NAME
-import org.jetbrains.kotlin.library.KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME
+import org.jetbrains.kotlin.library.KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME
 import org.jetbrains.kotlin.library.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -64,7 +64,7 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
     return topLevelEntries.map { topLevelEntry ->
         when (val topLevelEntryName = topLevelEntry.name) {
             KLIB_IR_FOLDER_NAME -> buildIrElement(name = "IR (main)", topLevelEntry)
-            KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME -> buildIrElement(name = "IR (inlinable functions)", topLevelEntry)
+            KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME -> buildIrElement(name = "IR (inlinable functions)", topLevelEntry)
             KLIB_METADATA_FOLDER_NAME -> buildElement(name = "Metadata", topLevelEntry)
             KLIB_TARGETS_FOLDER_NAME -> buildElement(name = "Native-specific binary data", topLevelEntry)
             KLIB_MANIFEST_FILE_NAME -> buildElement(name = "Manifest file", topLevelEntry)
