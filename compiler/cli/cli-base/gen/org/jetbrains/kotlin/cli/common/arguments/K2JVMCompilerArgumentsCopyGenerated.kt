@@ -30,6 +30,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.enhancedCoroutinesDebugging = from.enhancedCoroutinesDebugging
     to.expression = from.expression
     to.friendPaths = from.friendPaths.copyOf()
+    to.generatePsiMapping = from.generatePsiMapping
     to.ignoredAnnotationsForBridges = from.ignoredAnnotationsForBridges.copyOf()
     to.includeRuntime = from.includeRuntime
     to.indyAllowAnnotatedLambdas = from.indyAllowAnnotatedLambdas

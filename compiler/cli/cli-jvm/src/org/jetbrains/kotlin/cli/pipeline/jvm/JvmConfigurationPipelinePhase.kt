@@ -182,6 +182,8 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
             )
             module.configureFromArgs(arguments)
 
+            put(JVMConfigurationKeys.GENERATE_PSI_MAPPING, arguments.generatePsiMapping)
+
             ModuleChunk(listOf(module))
         }
     }

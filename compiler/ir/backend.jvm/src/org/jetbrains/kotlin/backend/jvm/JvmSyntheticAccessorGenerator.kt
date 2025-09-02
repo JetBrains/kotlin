@@ -190,6 +190,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
                     declaration.annotations = emptyList()
                     declaration.parameters.forEach { it.annotations = emptyList() }
                 }
+                accessor.offsetSourceForPSIMapping = declaration
             }
         }
 

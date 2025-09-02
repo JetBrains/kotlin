@@ -111,5 +111,6 @@ fun IrFactory.createDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrS
         dispatchReceiverParameter?.type = irClass.defaultType
         annotations = fakeOverride.annotations
         copyCorrespondingPropertyFrom(fakeOverride)
+        offsetSourceForPSIMapping = fakeOverride
     }
 }

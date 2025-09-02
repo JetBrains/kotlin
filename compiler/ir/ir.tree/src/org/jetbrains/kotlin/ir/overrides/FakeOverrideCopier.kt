@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.util.copyAnnotations
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.offsetSourceForPSIMapping
 
 internal class FakeOverrideCopier(
     private val valueParameters: MutableMap<IrValueParameterSymbol, IrValueParameterSymbol>,
@@ -52,6 +53,7 @@ internal class FakeOverrideCopier(
             }
             parameters = declaration.parameters.map { copyValueParameter(it, this) }
             returnType = typeRemapper.remapType(declaration.returnType)
+            offsetSourceForPSIMapping = declaration
         }
     }
 

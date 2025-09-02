@@ -170,6 +170,10 @@ object JVMConfigurationKeys {
     @JvmField
     val USE_JAVA_DIRECT = CompilerConfigurationKey.create<Boolean>("USE_JAVA_DIRECT")
 
+    // Generate PSIMappingMetadata annotation with psi-to-bytecode mapping
+    @JvmField
+    val GENERATE_PSI_MAPPING = CompilerConfigurationKey.create<Boolean>("GENERATE_PSI_MAPPING")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -351,4 +355,8 @@ var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
 var CompilerConfiguration.useJavaDirect: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_JAVA_DIRECT)
     set(value) { put(JVMConfigurationKeys.USE_JAVA_DIRECT, value) }
+
+var CompilerConfiguration.generatePsiMapping: Boolean
+    get() = getBoolean(JVMConfigurationKeys.GENERATE_PSI_MAPPING)
+    set(value) { put(JVMConfigurationKeys.GENERATE_PSI_MAPPING, value) }
 

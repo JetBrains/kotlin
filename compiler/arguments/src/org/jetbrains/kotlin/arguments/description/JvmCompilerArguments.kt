@@ -991,4 +991,14 @@ The default value is 'inline'.""",
             introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
+
+    compilerArgument {
+        name = "Xgenerate-psi-mapping"
+        description = "Generate PSIMappingMetadata annotation with psi-to-bytecode mapping".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

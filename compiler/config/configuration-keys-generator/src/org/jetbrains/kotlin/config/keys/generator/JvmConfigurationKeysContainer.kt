@@ -59,4 +59,5 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val IC_METADATA_TRACKER by key<ICJvmMetadataTracker>("Tracks generated in-module JVM metadata for KMP JVM IC", throwOnNull = false)
     val USE_METADATA_ON_INCREMENTAL_CLASSPATH by key<Boolean>("Use fragment metadata found on the compilation classpath to perform incremental compilation")
     val USE_JAVA_DIRECT by key<Boolean>("Use java-direct as frontend Java facade")
+    val GENERATE_PSI_MAPPING by key<Boolean>("Generate PSIMappingMetadata annotation with psi-to-bytecode mapping")
 }

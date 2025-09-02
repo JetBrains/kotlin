@@ -444,3 +444,5 @@ tailrec fun getSinglePropertyReference(expression: IrExpression?, expectedReturn
         else -> null
     }
 }
+
+var IrElement.offsetSourceForPSIMapping: IrElement? by irAttribute(copyByDefault = false)
