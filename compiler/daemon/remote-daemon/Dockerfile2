@@ -1,10 +1,17 @@
-#docker build --progress=plain -f compiler/daemon/remote-daemon/Dockerfile2 -t kotlin-remote-daemon-workaround .
-FROM --platform=linux/amd64 eclipse-temurin:21-jdk
+# build for local testing:
+# docker build --platform=linux/amd64 -t kotlin-daemon:latest -f compiler/daemon/remote-daemon/Dockerfile2 .
+# build for pushing to regsitry:
+# docker buildx build --platform linux/amd64,linux/arm64 --progress=plain -f compiler/daemon/remote-daemon/Dockerfile2 -t registry.jetbrains.team/p/kotlin-build-tools/remote-kotlin-daemon-containers/kotlin-remote-daemon-workaround:latest --push .
+FROM eclipse-temurin:21-jdk
 
 COPY compiler/daemon/remote-daemon/build/install/kotlin-remote-daemon /kotlin/compiler/daemon/remote-daemon/build/install/kotlin-remote-daemon
 COPY compiler/daemon/remote-daemon/src/main/kotlin/server/auth/auth.json /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/auth/auth.json
 COPY compiler/daemon/remote-daemon/src/main/kotlin/server/auth/uuid.json /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/auth/uuid.json
 WORKDIR /kotlin/compiler/daemon/remote-daemon
+
+RUN mkdir -p /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server \
+    && chmod -R 777 /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server
+
 EXPOSE 8000
 ENTRYPOINT ["/kotlin/compiler/daemon/remote-daemon/build/install/kotlin-remote-daemon/bin/kotlin-remote-daemon"]
 CMD []
