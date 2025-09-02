@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.SystemExtensions
+
+modules = SystemExtensions
+compilerOpts = -framework SystemExtensions
+linkerOpts = -framework SystemExtensions
+#Disabled: Not officially available for ios

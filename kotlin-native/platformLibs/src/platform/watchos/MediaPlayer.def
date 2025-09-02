@@ -1,4 +1,4 @@
-depends = AVFAudio AVFoundation CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation ImageIO QuartzCore Security UniformTypeIdentifiers darwin posix
+depends = AVFAudio AVFoundation CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreText CoreVideo Foundation ImageIO QuartzCore Security Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications darwin posix
 language = Objective-C
 package = platform.MediaPlayer
 modules = MediaPlayer

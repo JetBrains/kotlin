@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._PermissionKit_UIKit
+
+modules = _PermissionKit_UIKit
+compilerOpts = -framework _PermissionKit_UIKit
+linkerOpts = -framework _PermissionKit_UIKit
+#Disabled: Unavailable

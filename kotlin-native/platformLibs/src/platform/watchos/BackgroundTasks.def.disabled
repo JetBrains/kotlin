@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.BackgroundTasks
+
+modules = BackgroundTasks
+compilerOpts = -framework BackgroundTasks
+linkerOpts = -framework BackgroundTasks
+#Disabled: Not officially available for watchos

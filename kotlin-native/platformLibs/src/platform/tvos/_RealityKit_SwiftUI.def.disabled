@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._RealityKit_SwiftUI
+
+modules = _RealityKit_SwiftUI
+compilerOpts = -framework _RealityKit_SwiftUI
+linkerOpts = -framework _RealityKit_SwiftUI
+#Disabled: Unavailable

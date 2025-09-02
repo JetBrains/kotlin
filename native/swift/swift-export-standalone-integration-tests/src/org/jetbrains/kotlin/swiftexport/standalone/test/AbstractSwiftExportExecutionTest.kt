@@ -37,10 +37,9 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
     @BeforeEach
-    fun checkHost() {
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
-        // TODO: KT-75530
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
+    fun turnOffAllExecutionTests() {
+        // TODO: KT-81345 Temporary turned off Swift Export execution tests
+        Assumptions.assumeTrue(false)
     }
 
     override fun runCompiledTest(
@@ -76,6 +75,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ): TestExecutable {
+        // todo: KT-81344 Swift Export Execution tests uses 2 different xcode installlation
         val swiftExtraOpts = swiftModules.flatMap {
             listOf(
                 "-I", it.rootDir.absolutePath,

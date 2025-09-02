@@ -183,6 +183,15 @@ open class StubsBuildingContextImpl(
             return false
         }
 
+        // todo: KT-81145 strictEnums in cinterop should be transitive
+        val predefinedGlobalStrictEnums = setOf(
+                "UINavigationItemSearchBarPlacement",
+                "UIBarButtonItemStyle",
+        )
+        if (predefinedGlobalStrictEnums.contains(name)) {
+            return true
+        }
+
         // Let the simple heuristic decide:
         return !this.constants.any { it.isExplicitlyDefined }
     }
