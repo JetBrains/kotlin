@@ -158,6 +158,9 @@ object JVMConfigurationKeys {
     @JvmField
     val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
+    @JvmField
+    val GENERATE_PSI_MAPPING = CompilerConfigurationKey.create<Boolean>("Generate PSIMappingMetadata annotation with psi-to-bytecode mapping")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -347,4 +350,8 @@ var CompilerConfiguration.expressionToEvaluate: String?
 var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
     get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
     set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.generatePsiMapping: Boolean
+    get() = getBoolean(JVMConfigurationKeys.GENERATE_PSI_MAPPING)
+    set(value) { put(JVMConfigurationKeys.GENERATE_PSI_MAPPING, value) }
 

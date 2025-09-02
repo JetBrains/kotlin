@@ -806,5 +806,15 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<String?> =
         JvmCompilerArgument("X_WHEN_EXPRESSIONS", KotlinVersion(2, 2, 20))
+
+    /**
+     * Generate PSIMappingMetadata annotation with psi-to-bytecode mapping
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_GENERATE_PSI_MAPPING: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_GENERATE_PSI_MAPPING", KotlinVersion(2, 3, 0))
   }
 }

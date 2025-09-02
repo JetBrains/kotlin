@@ -115,4 +115,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         else JvmWhenGenerationScheme.INLINE
 
     val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
+
+    val generatePsiMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.GENERATE_PSI_MAPPING)
 }

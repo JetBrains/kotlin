@@ -360,3 +360,5 @@ fun IrClass.selectSAMOverriddenFunctionOrNull(): IrSimpleFunction? {
 
 fun IrClass.selectSAMOverriddenFunction(): IrSimpleFunction = selectSAMOverriddenFunctionOrNull()
     ?: error("${render()} should have a single abstract method to be a type of function reference")
+
+var IrElement.offsetSourceForPSIMapping: IrElement? by irAttribute(copyByDefault = false)

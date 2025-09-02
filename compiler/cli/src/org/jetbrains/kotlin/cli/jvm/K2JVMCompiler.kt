@@ -302,6 +302,8 @@ fun CompilerConfiguration.configureModuleChunk(
         )
         module.configureFromArgs(arguments)
 
+        put(JVMConfigurationKeys.GENERATE_PSI_MAPPING, arguments.generatePsiMapping)
+
         ModuleChunk(listOf(module))
     }
 }
