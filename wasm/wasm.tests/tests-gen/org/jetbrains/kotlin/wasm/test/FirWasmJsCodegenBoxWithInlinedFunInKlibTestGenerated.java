@@ -18557,6 +18557,18 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("liftThroughFunObjectLambda.kt")
+        public void testLiftThroughFunObjectLambda() {
+          runTest("compiler/testData/codegen/box/functions/localFunctions/liftThroughFunObjectLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("liftThroughFunObjectLambdaWithInlinedFunInKlib.kt")
+        public void testLiftThroughFunObjectLambdaWithInlinedFunInKlib() {
+          runTest("compiler/testData/codegen/box/functions/localFunctions/liftThroughFunObjectLambdaWithInlinedFunInKlib.kt");
+        }
+
+        @Test
         @TestMetadata("localExtensionOnNullableParameter.kt")
         public void testLocalExtensionOnNullableParameter() {
           runTest("compiler/testData/codegen/box/functions/localFunctions/localExtensionOnNullableParameter.kt");
