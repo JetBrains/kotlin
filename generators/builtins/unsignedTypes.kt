@@ -408,7 +408,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println(" */")
             out.println("@SinceKotlin(\"1.5\")")
             out.println("@kotlin.internal.InlineOnly")
-            // TODO: Enable once a bootstrapped compiler is available KT-51065
+            // TODO, KT-80646: Enable once a bootstrapped compiler is available
             // out.println("@kotlin.internal.IntrinsicConstEvaluation")
             out.print("public inline fun $otherSigned.to$className(): $className = ")
             out.println(when {
@@ -436,7 +436,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             )
             out.println("@SinceKotlin(\"1.5\")")
             out.println("@kotlin.internal.InlineOnly")
-            // TODO: Enable once a bootstrapped compiler is available KT-51065
+            // TODO, KT-80646: Enable once a bootstrapped compiler is available
             // out.println("@kotlin.internal.IntrinsicConstEvaluation")
             out.print("public inline fun $otherName.to$className(): $className = ")
             out.println("${otherName.lowercase()}To$className(this)")
