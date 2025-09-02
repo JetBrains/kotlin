@@ -10,9 +10,6 @@ import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -45,21 +42,21 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
         This is an agreed upon convention: 'test' is able to see all dependencies declared for 'main'
         As described in 1b: It needs to be taken care of, that the dependencies are ordered after the output of 'main'
         */
-        project.dependencies.add(auxiliary.compileOnlyConfigurationName, main.output.classesDirs)
-        project.dependencies.add(auxiliary.runtimeOnlyConfigurationName, main.output.allOutputs)
+        project.dependencies.add(auxiliary.legacyCompileOnlyConfigurationName, main.output.classesDirs)
+        project.dependencies.add(auxiliary.legacyRuntimeOnlyConfigurationName, main.output.allOutputs)
 
         // Adding classes that could be produced into non-default destination for JVM target
         // Check KotlinSourceSetProcessor for details
         project.dependencies.add(
-            auxiliary.implementationConfigurationName,
+            auxiliary.legacyImplementationConfigurationName,
             project.filesProvider { main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile }
         )
 
         // Adding declared dependencies
-        auxiliary.apiConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.apiConfigurationName)
-        auxiliary.implementationConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.implementationConfigurationName)
-        auxiliary.compileOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.compileOnlyConfigurationName)
-        auxiliary.runtimeOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.runtimeOnlyConfigurationName)
+        auxiliary.legacyApiConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.legacyApiConfigurationName)
+        auxiliary.legacyImplementationConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.legacyImplementationConfigurationName)
+        auxiliary.legacyCompileOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.legacyCompileOnlyConfigurationName)
+        auxiliary.legacyRuntimeOnlyConfigurationName.addAllDependenciesFromOtherConfigurations(project, main.legacyRuntimeOnlyConfigurationName)
     }
 }
 
@@ -67,8 +64,8 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         auxiliary.compileDependencyFiles += main.output.classesDirs
 
-        target.project.configurations.named(auxiliary.implementationConfigurationName).configure { configuration ->
-            configuration.extendsFrom(target.project.configurations.findByName(main.implementationConfigurationName))
+        target.project.configurations.named(auxiliary.legacyImplementationConfigurationName).configure { configuration ->
+            configuration.extendsFrom(target.project.configurations.findByName(main.legacyImplementationConfigurationName))
         }
     }
 }
@@ -108,8 +105,8 @@ internal object KotlinAndroidCompilationAssociator : KotlinCompilationAssociator
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         auxiliary.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             target.project,
-            main.apiConfigurationName,
-            main.implementationConfigurationName,
+            main.legacyApiConfigurationName,
+            main.legacyImplementationConfigurationName,
         )
     }
 }

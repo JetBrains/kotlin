@@ -22,6 +22,7 @@ class KotlinJvmFunctionalTest {
             kotlinExtension.apply {
                 val jvmTarget = this.targets.singleOrNull() ?: error("Expected single target for Kotlin JVM extension")
 
+                @Suppress("DEPRECATION")
                 jvmTarget.compilations.getByName("main").dependencies {
                     api(files())
                     implementation(files())
@@ -29,6 +30,7 @@ class KotlinJvmFunctionalTest {
                     runtimeOnly(files())
                 }
 
+                @Suppress("DEPRECATION")
                 jvmTarget.compilations.getByName("test").dependencies {
                     api(files())
                     implementation(files())

@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.configureKotlinConventions
 import org.jetbrains.kotlin.gradle.targets.jvm.kotlinSourceSetDslName
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.addSecondaryOutgoingJvmClassesVariant
+import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
@@ -151,7 +153,7 @@ internal abstract class AbstractKotlinPlugin(
                 project.configurations.apply {
                     val apiElementsConfiguration = getByName(kotlinTarget.apiElementsConfigurationName)
                     val mainCompilation = kotlinTarget.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                    val compilationApiConfiguration = getByName(mainCompilation.apiConfigurationName)
+                    val compilationApiConfiguration = getByName(mainCompilation.legacyApiConfigurationName)
                     apiElementsConfiguration.extendsFrom(compilationApiConfiguration)
                 }
             }
