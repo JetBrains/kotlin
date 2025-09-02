@@ -417,7 +417,7 @@ class GroupAnalysisCompilerTest(
                     .mapNotNull { file ->
                         classInfoFromBytecode(lambdaKeyCache, ErrorReporter.Default, file.asByteArray()).takeIf {
                             it.fileName == "Test.kt" && it.methods.isNotEmpty()
-                        }?.render()
+                        }?.render(lambdaKeyCache)
                     }.joinToString(separator = "\n")
                 p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX)
             }
