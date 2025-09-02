@@ -100,15 +100,35 @@ internal class KotlinCompilationImpl(
 
     //region Dependency Configuration Management
 
+    @Deprecated(
+        "Accessing apiConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.apiConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val apiConfigurationName: String
         get() = configurations.apiConfiguration.name
 
+    @Deprecated(
+        "Accessing implementationConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.implementationConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val implementationConfigurationName: String
         get() = configurations.implementationConfiguration.name
 
+    @Deprecated(
+        "Accessing compileOnlyConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.compileOnlyConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val compileOnlyConfigurationName: String
         get() = configurations.compileOnlyConfiguration.name
 
+    @Deprecated(
+        "Accessing runtimeOnlyConfigurationName on Compilation level is deprecated, please use default source set instead",
+        replaceWith = ReplaceWith("defaultSourceSet.runtimeOnlyConfigurationName"),
+        level = DeprecationLevel.WARNING
+    )
     override val runtimeOnlyConfigurationName: String
         get() = configurations.runtimeOnlyConfiguration.name
 
@@ -122,10 +142,20 @@ internal class KotlinCompilationImpl(
 
     override var runtimeDependencyFiles: FileCollection? = configurations.runtimeDependencyConfiguration
 
+    @Deprecated(
+        "Declaring dependencies on Compilation level is deprecated, please declare on related source set",
+        replaceWith = ReplaceWith("defaultSourceSet.dependencies"),
+        level = DeprecationLevel.WARNING
+    )
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
         HasKotlinDependencies(project, configurations).dependencies(configure)
     }
 
+    @Deprecated(
+        "Declaring dependencies on Compilation level is deprecated, please declare on related source set",
+        replaceWith = ReplaceWith("defaultSourceSet.dependencies"),
+        level = DeprecationLevel.WARNING
+    )
     override fun dependencies(configure: Action<KotlinDependencyHandler>) {
         HasKotlinDependencies(project, configurations).dependencies(configure)
     }
