@@ -51,6 +51,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             propertyName = "kotlin.compiler.keepIncrementalCompilationCachesInMemory",
             details = "Backups of compilation outputs using the non-precise method have been deprecated and phased out. Incremental cache changes are now kept in memory until a successful compilation result, which is more efficient."
         ), // since 2.3.0
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
+            details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
+        ),
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
