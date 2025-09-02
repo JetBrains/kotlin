@@ -7,22 +7,14 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
-import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorParameterName
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.*
+import org.jetbrains.kotlin.objcexport.mangling.unifyName
 
 internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbol, baseMethodBridge: MethodBridge): List<ObjCParameter> {
-    fun unifyName(initialName: String, usedNames: Set<String>): String {
-        var unique = initialName.toValidObjCSwiftIdentifier()
-        while (unique in usedNames || unique in cKeywords) {
-            unique += "_"
-        }
-        return unique
-    }
-
     val valueParametersAssociated = valueParametersAssociated(baseMethodBridge, symbol)
     val parameters = mutableListOf<ObjCParameter>()
     val usedNames = mutableSetOf<String>()
