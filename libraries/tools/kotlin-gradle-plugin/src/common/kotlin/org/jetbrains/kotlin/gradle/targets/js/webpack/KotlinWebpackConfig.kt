@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.*
-import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -112,24 +111,44 @@ data class KotlinWebpackConfig(
         var open: Any = true,
         var port: Int? = null,
         var proxy: MutableList<Proxy>? = null,
-        @Transient
         @Deprecated("Use 'static' fun instead")
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null,
     ) : Serializable {
 
+        internal val mutableStatics: MutableList<Static> = mutableListOf()
+
         fun static(directory: String, watch: Boolean = false) {
-            mutableStatic.add(Static(directory, watch))
+            mutableStatics.add(Static(directory, watch))
         }
 
         val statics: List<Static>
-            get() = mutableStatic.toList().filterIsInstance<Static>()
+            get() = mutableStatics.toList()
 
         @Suppress("DEPRECATION")
-        @SerializedName("static")
-        private val mutableStatic: MutableList<Any> = mutableListOf<Any>().also {
-            it.addAll(static.orEmpty())
+        @get:SerializedName("static")
+        internal val actualStatic: List<Any>?
+            get() {
+                return buildList {
+                    addAll(static.orEmpty())
+                    addAll(mutableStatics)
+                }.takeIf { it.isNotEmpty() }
+            }
+
+        internal object DevServerAdapter : JsonSerializer<DevServer> {
+            override fun serialize(
+                src: DevServer,
+                typeOfSrc: Type,
+                ctx: JsonSerializationContext,
+            ): JsonElement {
+                val obj = GsonBuilder().create()
+                    .toJsonTree(src, typeOfSrc).asJsonObject
+                obj.remove("static")
+                obj.remove("mutableStatics")
+                obj.add("static", ctx.serialize(src.actualStatic))
+                return obj
+            }
         }
 
         data class Client(
@@ -149,7 +168,6 @@ data class KotlinWebpackConfig(
             val changeOrigin: Boolean? = null,
         ) : Serializable
 
-        @JsonAdapter(Static.StaticSerializer::class)
         data class Static(
             val directory: String,
             val watch: Boolean = false,
@@ -392,7 +410,12 @@ data class KotlinWebpackConfig(
     }
 
     private fun json(obj: Any) = StringWriter().also {
-        GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
+        GsonBuilder()
+            .registerTypeAdapter(DevServer::class.java, DevServer.DevServerAdapter)
+            .registerTypeAdapter(DevServer.Static::class.java, DevServer.Static.StaticSerializer)
+            .setPrettyPrinting()
+            .create()
+            .toJson(obj, it)
     }.toString()
 }
 
