@@ -1,0 +1,35 @@
+<caret_1>:
+  KDocName(8,10): 'AA'
+    KDocReference:
+      0: (in ROOT) class AA(abc: kotlin.String)
+      1: (in AA) constructor(abc: kotlin.String)
+
+<caret_2>:
+  KDocName(29,32): 'abc'
+    KDocReference:
+      0: abc: kotlin.String
+      1: (in AA) var abc: kotlin.String
+
+<caret_3>:
+  KDocName(62,64): 'AA'
+    KDocReference:
+      0: (in ROOT) class AA(abc: kotlin.String)
+      1: (in AA) constructor(abc: kotlin.String)
+
+<caret_4>:
+  KDocName(66,68): 'AA'
+    KDocReference:
+      0: (in ROOT) class AA(abc: kotlin.String)
+      1: (in AA) constructor(abc: kotlin.String)
+
+<caret_5>:
+  KDocName(101,104): 'abc'
+    KDocReference:
+      0: abc: kotlin.String
+      1: (in AA) var abc: kotlin.String
+
+<caret_6>:
+  KDocName(106,109): 'abc'
+    KDocReference:
+      0: abc: kotlin.String
+      1: (in AA) var abc: kotlin.String

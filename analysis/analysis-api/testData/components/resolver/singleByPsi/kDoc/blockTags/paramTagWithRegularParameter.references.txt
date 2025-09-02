@@ -1,0 +1,3 @@
+KDocName(15,18): 'foo'
+  KDocReference:
+    foo: kotlin.Int

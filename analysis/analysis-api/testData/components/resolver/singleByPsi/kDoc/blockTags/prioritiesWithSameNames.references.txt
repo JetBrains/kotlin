@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(8,11): 'Abc'
+    KDocReference:
+      0: (in ROOT) class Abc(Abc: kotlin.String)
+      1: (in Abc) constructor(Abc: kotlin.String)
+      2: Abc: kotlin.String
+      3: (in Abc) var Abc: kotlin.String
+
+<caret_2>:
+  KDocName(46,49): 'Abc'
+    KDocReference:
+      0: (in ROOT) class Abc(Abc: kotlin.String)
+      1: (in Abc) constructor(Abc: kotlin.String)
+      2: Abc: kotlin.String
+      3: (in Abc) var Abc: kotlin.String
+
+<caret_3>:
+  KDocName(82,85): 'Abc'
+    KDocReference:
+      0: (in ROOT) class Abc(Abc: kotlin.String)
+      1: (in Abc) constructor(Abc: kotlin.String)
+      2: Abc: kotlin.String
+      3: (in Abc) var Abc: kotlin.String
+
+<caret_4>:
+  KDocName(87,90): 'Abc'
+    KDocReference:
+      0: (in ROOT) class Abc(Abc: kotlin.String)
+      1: (in Abc) constructor(Abc: kotlin.String)
+      2: Abc: kotlin.String
+      3: (in Abc) var Abc: kotlin.String
+
+<caret_5>:
+  KDocName(124,127): 'Abc'
+    KDocReference:
+      0: (in ROOT) class Abc(Abc: kotlin.String)
+      1: (in Abc) constructor(Abc: kotlin.String)
+      2: Abc: kotlin.String
+      3: (in Abc) var Abc: kotlin.String
+
+<caret_6>:
+  KDocName(129,132): 'Abc'
+    KDocReference:
+      0: (in ROOT) class Abc(Abc: kotlin.String)
+      1: (in Abc) constructor(Abc: kotlin.String)
+      2: Abc: kotlin.String
+      3: (in Abc) var Abc: kotlin.String
