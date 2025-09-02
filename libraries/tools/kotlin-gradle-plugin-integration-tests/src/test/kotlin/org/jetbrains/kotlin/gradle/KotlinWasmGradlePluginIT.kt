@@ -587,6 +587,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                         commonWebpackConfig {
                             it.outputFileName = "check.js"
                             it.devServer = (it.devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                                @Suppress("DEPRECATION")
                                 static = (static ?: mutableListOf()).apply {
                                     add("bar")
                                 }
