@@ -50,18 +50,24 @@ class RemoteCompilationClient(
 
     companion object {
 
-        fun getClient(implType: RemoteCompilationServiceImplType, port: Int, logging: Boolean = false): RemoteCompilationClient{
+        fun getClient(
+            implType: RemoteCompilationServiceImplType,
+            host: String = "localhost",
+            port: Int,
+            logging: Boolean = false
+        ): RemoteCompilationClient {
             val clientImpl = when (implType) {
                 RemoteCompilationServiceImplType.KOTLINX_RPC -> {
                     // TODO logging
                     @OptIn(ExperimentalSerializationApi::class)
                     KotlinxRpcRemoteCompilationServiceClient(
+                        host,
                         port,
                         serialization = { cbor() }
                     )
                 }
                 RemoteCompilationServiceImplType.GRPC -> {
-                    GrpcRemoteCompilationServiceClient(port, logging)
+                    GrpcRemoteCompilationServiceClient(host, port, logging)
                 }
             }
             return RemoteCompilationClient(clientImpl)

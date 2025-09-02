@@ -80,7 +80,7 @@ suspend fun main() {
     val port = 8000
     val implType = RemoteCompilationServiceImplType.GRPC
 //    val server = RemoteCompilationServer.getServer(implType, port)
-    val client = RemoteCompilationClient.getClient(implType, port)
+    val client = RemoteCompilationClient.getClient(implType, "localhost", port)
 
 //    server.start(block = false)
     val benchmark = Benchmark()

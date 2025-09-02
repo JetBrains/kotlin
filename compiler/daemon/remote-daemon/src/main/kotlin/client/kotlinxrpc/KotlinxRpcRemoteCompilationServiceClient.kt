@@ -15,8 +15,9 @@ import model.CompileRequest
 import model.CompileResponse
 
 class KotlinxRpcRemoteCompilationServiceClient(
-    val port: Int,
-    val serialization: KrpcSerialFormatConfiguration.() -> Unit
+    private val host: String = "localhost",
+    private val port: Int,
+    private val serialization: KrpcSerialFormatConfiguration.() -> Unit
 ) : RemoteCompilationService {
 
     val ktorClient = HttpClient {
@@ -27,7 +28,7 @@ class KotlinxRpcRemoteCompilationServiceClient(
 
     val client: KtorRpcClient = ktorClient.rpc {
         url {
-            host = "localhost"
+            host = this@KotlinxRpcRemoteCompilationServiceClient.host
             port = this@KotlinxRpcRemoteCompilationServiceClient.port
             encodedPath = "compile"
         }
