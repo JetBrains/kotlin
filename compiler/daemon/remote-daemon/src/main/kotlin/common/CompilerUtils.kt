@@ -97,6 +97,9 @@ object CompilerUtils {
             }
             map[X_PLUGIN_ARG] = remotePlugins
         }
+        // TODO: this is just a workaround
+        // compiler will infer JDK from a $JAVA_HOME
+        map.remove(JDK_HOME_ARG)
         return map
     }
 
