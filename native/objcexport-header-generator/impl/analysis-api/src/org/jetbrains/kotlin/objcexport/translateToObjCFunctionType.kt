@@ -19,14 +19,7 @@ internal fun ObjCExportContext.translateToObjCFunctionType(type: KaType, returns
             else translateToObjCReferenceType(returnType)
         },
         parameters = listOfNotNull(type.receiverType).plus(type.parameterTypes).map { parameterType ->
-            val name = if (this@translateToObjCFunctionType.exportSession.configuration.objcExportBlockExplicitParameterNames) {
-                val parameterName = parameterType.getValueFromParameterNameAnnotation()?.asString() ?: ""
-                val mangledName = unifyName(parameterName, usedNames)
-                usedNames += mangledName
-                mangledName
-            } else {
-                ""
-            }
+            val name = blockParameterName(parameterType, usedNames)
             ObjCParameter(
                 name,
                 null,
@@ -36,6 +29,16 @@ internal fun ObjCExportContext.translateToObjCFunctionType(type: KaType, returns
         }
     )
     return analysisSession.withNullabilityOf(objCBlockPointerType, type)
+}
+
+private fun ObjCExportContext.blockParameterName(parameterType: KaType, usedNames: MutableSet<String>): String {
+    return if (this.exportSession.configuration.objcExportBlockExplicitParameterNames) {
+        val parameterName = parameterType.getValueFromParameterNameAnnotation()?.asString()
+            ?: return ""
+        val mangledName = unifyName(parameterName, usedNames)
+        usedNames += mangledName
+        mangledName
+    } else ""
 }
 
 /**

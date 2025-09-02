@@ -998,15 +998,7 @@ class ObjCExportTranslatorImpl(
                 mapReferenceType(functionType.getReturnTypeFromFunctionType(), objCExportScope)
             },
             parameterTypes.map {
-                val uniqueName = when (objcExportBlockExplicitParameterNames) {
-                    true -> {
-                        val parameterName = it.extractParameterNameFromFunctionTypeArgument()?.asString() ?: ""
-                        val name = unifyName(parameterName, usedNames)
-                        usedNames += name
-                        name
-                    }
-                    else -> ""
-                }
+                val uniqueName = blockParameterName(it, usedNames)
                 ObjCParameter(
                     uniqueName,
                     null,
@@ -1014,6 +1006,16 @@ class ObjCExportTranslatorImpl(
                 )
             }
         )
+    }
+
+    private fun blockParameterName(parameterType: KotlinType, usedNames: MutableSet<String>): String {
+        return if (objcExportBlockExplicitParameterNames) {
+            val parameterName = parameterType.extractParameterNameFromFunctionTypeArgument()?.asString()
+                ?: return ""
+            val name = unifyName(parameterName, usedNames)
+            usedNames += name
+            name
+        } else ""
     }
 
     private fun mapFunctionType(
