@@ -119,6 +119,19 @@ public expect annotation class JsExport() {
     @SinceKotlin("1.8")
     @OptionalExpectation
     public annotation class Ignore()
+
+    /*
+    * The annotation notifies that the exported declaration should be exported as `default` on the JS platform.
+    * It means that for ES modules the annotated declaration will be available under the `default` export.
+    * For CommonJS, UMD, and plain modules the annotated declaration will be available by the name `default`.
+    * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+    */
+    @ExperimentalJsExport
+    @Retention(AnnotationRetention.BINARY)
+    @Target(CLASS, PROPERTY, FUNCTION)
+    @SinceKotlin("2.3")
+    @OptionalExpectation
+    public annotation class Default()
 }
 
 
