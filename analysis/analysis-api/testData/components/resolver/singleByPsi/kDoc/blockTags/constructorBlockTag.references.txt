@@ -7,7 +7,7 @@
 <caret_2>:
   KDocName(29,32): 'abc'
     KDocReference:
-      abc: kotlin.String
+      (in AA) var abc: kotlin.String
 
 <caret_3>:
   KDocName(69,71): 'AA'
@@ -18,7 +18,7 @@
 <caret_4>:
   KDocName(96,99): 'abc'
     KDocReference:
-      abc: kotlin.String
+      (in AA) var abc: kotlin.String
 
 <caret_5>:
   KDocName(169,171): 'AA'

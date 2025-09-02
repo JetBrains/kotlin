@@ -11,7 +11,7 @@
 <caret_3>:
   KDocName(43,46): 'abc'
     KDocReference:
-      abc: kotlin.Int
+      Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(65,68): 'abc'

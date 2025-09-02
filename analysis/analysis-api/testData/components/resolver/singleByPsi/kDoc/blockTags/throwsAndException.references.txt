@@ -1,7 +1,7 @@
 <caret_1>:
   KDocName(25,27): 'AA'
     KDocReference:
-      (in ROOT) class AA
+      Nothing (Unresolved reference)
 
 <caret_2>:
   KDocName(29,31): 'AA'
@@ -11,7 +11,7 @@
 <caret_3>:
   KDocName(47,49): 'AA'
     KDocReference:
-      (in ROOT) class AA
+      Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(51,53): 'AA'

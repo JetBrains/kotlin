@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -1557,10 +1558,25 @@ private class KDocQualifiersToShortenCollector(
 
             val contextElement = owner ?: kDocName.containingKtFile
             // There we have to calculate the resolution results for FQN and short name to then ensure that these sets of symbols are the same
+
+            val containedTagSectionIfSubject = kDocName.getStrictParentOfType<KDocLink>()?.getTagIfSubject()?.knownTag
+
             val resolvedSymbolsByShortName =
-                KDocReferenceResolver.resolveKdocFqName(useSiteSession, shortFqName, shortFqName, contextElement)
+                KDocReferenceResolver.resolveKdocFqName(
+                    useSiteSession,
+                    shortFqName,
+                    shortFqName,
+                    contextElement,
+                    containedTagSectionIfSubject
+                )
             val resolvedSymbolsByFQN =
-                KDocReferenceResolver.resolveKdocFqName(useSiteSession, fqName, fqName, contextElement)
+                KDocReferenceResolver.resolveKdocFqName(
+                    useSiteSession,
+                    fqName,
+                    fqName,
+                    contextElement,
+                    containedTagSectionIfSubject
+                )
 
             // Shortening lead to another set of symbols being available, so we cannot shorten the KDoc
             if (resolvedSymbolsByShortName != resolvedSymbolsByFQN) return false
