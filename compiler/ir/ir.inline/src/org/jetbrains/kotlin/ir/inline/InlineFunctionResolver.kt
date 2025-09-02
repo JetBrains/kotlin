@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 
 /**
  * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions)
@@ -91,10 +92,22 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
+
+        val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
+        if (realOwner.isExcludedFromFirstStageInlining()) return null
+
         if (declarationMaybeFromOtherModule.body != null || declarationMaybeFromOtherModule !is IrSimpleFunction) {
             return declarationMaybeFromOtherModule
         }
         if (inlineMode != InlineMode.ALL_INLINE_FUNCTIONS) return null
         return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
+    }
+
+    private fun IrFunction.isExcludedFromFirstStageInlining(): Boolean {
+        val excludedFromFirstStageInliningName = FqName("kotlin.internal.ExcludedFromFirstStageInlining")
+        if (hasAnnotation(excludedFromFirstStageInliningName)) return true
+        val propertySymbol = (this as? IrSimpleFunction)?.correspondingPropertySymbol ?: return false
+        if (!propertySymbol.isBound) return false
+        return propertySymbol.owner.hasAnnotation(excludedFromFirstStageInliningName)
     }
 }
