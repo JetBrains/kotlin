@@ -163,7 +163,10 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         if (!fir2IrExtensions.shouldGenerateDelegatedMember(delegateTargetFromBaseType)) return
 
         when (overridableMember) {
-            is IrSimpleFunction -> overridableMember.updateDeclarationHeader()
+            is IrSimpleFunction -> {
+                overridableMember.updateDeclarationHeader()
+                overridableMember.offsetSourceForPSIMapping = delegateTargetFromBaseType
+            }
             is IrProperty -> {
                 overridableMember.updateDeclarationHeader()
                 overridableMember.getter?.updateDeclarationHeader()

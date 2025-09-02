@@ -186,6 +186,16 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
+        value = "-Xgenerate-psi-mapping",
+        description = "Generate PSIMappingMetadata annotation with psi-to-bytecode mapping",
+    )
+    var generatePsiMapping: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xgenerate-strict-metadata-version",
         description = "Generate metadata with strict version semantics (see the KDoc entry on 'Metadata.extraInt').",
     )

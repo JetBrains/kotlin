@@ -76,6 +76,12 @@ public class AsmUtil {
 
     public static final String LOCAL_FUNCTION_VARIABLE_PREFIX = "$fun$";
 
+    public static final String PSI_MAPPING_HEADER = "#PSI_MAPPING";
+
+    public static final String PSI_MAPPING_VERSION = "1.0";
+
+    public static int UTF_8_CONSTANT_MAX_LEN = 65535;
+
     private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
     private static final ImmutableMap<Type, Type> primitiveTypeByBoxedType;
 

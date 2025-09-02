@@ -265,6 +265,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_FRIEND_PATHS", KotlinReleaseVersion(1, 2, 70))
 
     /**
+     * Generate PSIMappingMetadata annotation with psi-to-bytecode mapping
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_GENERATE_PSI_MAPPING: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_GENERATE_PSI_MAPPING", KotlinReleaseVersion(2, 3, 0))
+
+    /**
      * Generate metadata with strict version semantics (see the KDoc entry on 'Metadata.extraInt').
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

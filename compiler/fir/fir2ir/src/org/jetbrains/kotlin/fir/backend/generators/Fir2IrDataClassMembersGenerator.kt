@@ -261,6 +261,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                         val valueParameter = constructorParameters[index - 1]
                         val irProperty = irDataClassMembersGenerator.getProperty(valueParameter)
                         irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
+                        irFunction.offsetSourceForPSIMapping = irProperty
                     }
                 }
             }

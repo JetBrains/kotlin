@@ -119,5 +119,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
 
+    val generatePsiMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.GENERATE_PSI_MAPPING)
+
     val implicitJvmExposeBoxed: Boolean = languageVersionSettings.getFlag(JvmAnalysisFlags.implicitJvmExposeBoxed)
 }
