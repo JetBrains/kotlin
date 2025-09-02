@@ -42,7 +42,6 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
 
         irModule.accept(IrInlineCallGraphBuilder(callGraph), null)
         traverseCallGraph(callGraph, irDiagnosticReporter, callsInInlineCycle)
-        irModule.accept(IrInlineCallCycleRemover(callsInInlineCycle), null)
     }
 
     private fun traverseCallGraph(
@@ -124,15 +123,4 @@ internal class IrInlineCallGraphBuilder(
 
         callGraph.getOrPut(callerNode) { mutableSetOf() }.addAll(callNodes)
     }
-}
-
-class IrInlineCallCycleRemover(private val callsInInlineCycle: MutableSet<IrCall>) : IrElementTransformerVoid() {
-    override fun visitCall(expression: IrCall): IrExpression =
-        if (expression in callsInInlineCycle) IrErrorCallExpressionImpl(
-            startOffset = expression.startOffset,
-            endOffset = expression.endOffset,
-            type = expression.type,
-            description = "'${expression.render()}' is a part of an inline call cycle"
-        )
-        else super.visitCall(expression)
 }
