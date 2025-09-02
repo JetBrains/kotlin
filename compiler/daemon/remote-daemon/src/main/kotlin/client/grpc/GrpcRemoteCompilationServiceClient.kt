@@ -21,11 +21,12 @@ import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
 class GrpcRemoteCompilationServiceClient(
+    private val host: String,
     private val port: Int,
     private val logging: Boolean = false,
     private val channel: ManagedChannel
     = ManagedChannelBuilder
-        .forAddress("localhost", port)
+        .forAddress(host, port)
         .usePlaintext()
         .let { builder ->
             if (logging) builder.intercept(RemoteClientInterceptor()) else builder
