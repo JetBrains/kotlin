@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.TaskInstantiationTrackingBuildService
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
+import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
@@ -178,8 +179,8 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                 options = buildOptions.copy(freeArgs = listOf(projectDependencyMode))
             ) {
                 it.assertProjectDependencyMode()
-                it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertNoCompileTasksExecuted()
+                it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
                 assertP2SourceSetDependencies()
             }
 
@@ -188,8 +189,8 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                 options = buildOptions.copy(freeArgs = listOf(projectDependencyMode))
             ) {
                 it.assertProjectDependencyMode()
-                it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertNoCompileTasksExecuted()
+                it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
                 assertP3SourceSetDependencies()
             }
         }
@@ -217,8 +218,8 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                 options = buildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
             ) {
                 it.assertRepositoryDependencyMode()
-                it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertNoCompileTasksExecuted()
+                it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
                 assertP2SourceSetDependencies()
             }
 
@@ -227,8 +228,8 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                 options = buildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
             ) {
                 it.assertRepositoryDependencyMode()
-                it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertNoCompileTasksExecuted()
+                it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
                 assertP3SourceSetDependencies()
             }
         }

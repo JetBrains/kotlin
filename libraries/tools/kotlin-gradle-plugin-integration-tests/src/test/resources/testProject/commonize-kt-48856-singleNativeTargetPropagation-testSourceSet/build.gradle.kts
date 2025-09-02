@@ -31,17 +31,4 @@ kotlin {
     val platformTest by sourceSets.getting
     val nativeTest = sourceSets.create("nativeTest")
     platformTest.dependsOn(nativeTest)
-
-    tasks.create("listNativeTestDependencies") {
-        nativeTest as DefaultKotlinSourceSet
-        val nativeTestMetadataFiles = configurations[nativeTest.intransitiveMetadataConfigurationName]!!
-            .incoming.artifacts.artifactFiles
-        dependsOn(nativeTestMetadataFiles)
-
-        doFirst {
-            nativeTestMetadataFiles.forEach { dependencyFile ->
-                logger.quiet("Dependency: ${dependencyFile.path}")
-            }
-        }
-    }
 }
