@@ -27,24 +27,17 @@ import java.util.concurrent.*
 typealias ProgressCallback = (url: String, currentBytes: Long, totalBytes: Long) -> Unit
 
 class DependencyDownloader(
-        var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
-        var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS,
-        customProgressCallback: ProgressCallback? = null
+    var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
+    var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS,
+    private val progressCallback: ProgressCallback,
 ) {
+    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor { r ->
+        val thread = Thread(r)
+        thread.name = "konan-dependency-downloader"
+        thread.isDaemon = true
 
-    private val progressCallback = customProgressCallback ?: TODO()/* { url, currentBytes, totalBytes ->
-        print("\nDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
-    }*/
-
-    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor(object : ThreadFactory {
-        override fun newThread(r: Runnable?): Thread {
-            val thread = Thread(r)
-            thread.name = "konan-dependency-downloader"
-            thread.isDaemon = true
-
-            return thread
-      }
-    }))
+        thread
+    })
 
     enum class ReplacingMode {
         /** Redownload the file and replace the existing one. */
@@ -209,19 +202,6 @@ class DependencyDownloader(
         println("Done.")
         return destination
     }
-
-    private val Long.humanReadable: String
-        get() {
-            if (this < 0) {
-                return "-"
-            }
-            if (this < 1024) {
-                return "$this bytes"
-            }
-            val exp = (Math.log(this.toDouble()) / Math.log(1024.0)).toInt()
-            val prefix = "kMGTPE"[exp-1]
-            return "%.1f %siB".format(this / Math.pow(1024.0, exp.toDouble()), prefix)
-        }
 
     companion object {
         const val DEFAULT_MAX_ATTEMPTS = 10
