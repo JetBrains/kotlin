@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.js.parser.antlr
 
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
+import com.google.gwt.dev.js.rhino.JavaScriptException
+import com.google.gwt.dev.js.rhino.TokenStream
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
@@ -27,7 +29,6 @@ object JsAntlrParser {
         val statements = parser.statementList()
         val jsStatements = statements.statement().map {
             mapper.mapStatement(it)
-                ?: throw Exception("unexpected null statement")
         }
 
         return jsStatements
@@ -40,7 +41,31 @@ object JsAntlrParser {
         startPosition: CodePosition,
         fileName: String
     ): List<JsStatement>? {
-        TODO()
+        val parser = initializeParser(fileName, code, 0, startPosition, reporter)
+        val accumulatingReporter = AccumulatingReporter()
+        val mapper = JsAstMapper(scope, fileName)
+        val expr = try {
+            val expression = parser.singleExpression()
+            if (parser.currentToken.type != TokenStream.EOF) {
+                accumulatingReporter.hasErrors = true
+            }
+            expression
+        } catch (_: JavaScriptException) {
+            null
+        }
+
+        return if (!accumulatingReporter.hasErrors) {
+            for (warning in accumulatingReporter.warnings) {
+                reporter.warning(warning.message, warning.startPosition, warning.endPosition)
+            }
+            val jsExpr = expr?.let { mapper.mapExpression(it) }
+            jsExpr?.makeStmt()?.let(::listOf)
+        } else {
+            val statements = parser.statementList()
+            statements.statement().map {
+                mapper.mapStatement(it)
+            }
+        }
     }
 
     fun parseFunction(
@@ -80,5 +105,20 @@ object JsAntlrParser {
             removeErrorListeners()
             addErrorListener(errorReporter)
         }
+    }
+
+    private class AccumulatingReporter : ErrorReporter {
+        var hasErrors = false
+        val warnings = mutableListOf<Warning>()
+
+        override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
+            warnings += Warning(message, startPosition, endPosition)
+        }
+
+        override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
+            hasErrors = true
+        }
+
+        class Warning(val message: String, val startPosition: CodePosition, val endPosition: CodePosition)
     }
 }

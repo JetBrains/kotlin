@@ -10,7 +10,7 @@ import com.google.gwt.dev.js.parserExceptions.JsParserException
 import org.antlr.v4.runtime.ParserRuleContext
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class JsAstMapper(private val scope: JsScope, private val fileName: String) {
+class JsAstMapper(scope: JsScope, private val fileName: String) {
     companion object {
         private fun createParserException(message: String, ctx: ParserRuleContext): JsParserException {
             return JsParserException("Parser encountered internal error: $message", ctx.startPosition)
@@ -19,25 +19,32 @@ class JsAstMapper(private val scope: JsScope, private val fileName: String) {
 
     private val scopeContext = ScopeContext(scope)
 
-    public fun mapStatement(statement: ParserRuleContext): JsStatement? {
-        TODO("mapStatement")
+    fun mapStatement(statement: ParserRuleContext): JsStatement {
+        val jsStatement = map(statement)
+        if (jsStatement !is JsStatement)
+            throw createParserException("Expecting a statement", statement)
+
+        return jsStatement
     }
 
-    public fun mapFunction(function: ParserRuleContext): JsFunction? {
-        TODO("mapFunction")
+    fun mapFunction(function: ParserRuleContext): JsFunction {
+        val jsFunction = map(function)
+        if (jsFunction !is JsFunction)
+            throw createParserException("Expecting a function", function)
+
+        return jsFunction
     }
 
-    public fun mapExpression(expression: ParserRuleContext): JsExpression {
-        val targetExpr = map(expression)
-        if (targetExpr !is JsExpression)
+    fun mapExpression(expression: ParserRuleContext): JsExpression {
+        val jsExpression = map(expression)
+        if (jsExpression !is JsExpression)
             throw createParserException("Expecting an expression", expression)
 
-        return targetExpr
+        return jsExpression
     }
 
-    private fun map(node: ParserRuleContext): JsNode {
-        return mapWithoutLocation(node).applyLocation(fileName, node)
-    }
+    private fun map(node: ParserRuleContext) =
+        mapWithoutLocation(node).applyLocation(fileName, node)
 
     private fun mapWithoutLocation(node: ParserRuleContext): JsNode {
         val visitor = JsAstMapperVisitor(fileName, scopeContext)
