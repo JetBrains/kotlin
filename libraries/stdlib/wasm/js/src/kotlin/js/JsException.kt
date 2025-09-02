@@ -6,53 +6,52 @@
 package kotlin.js
 
 import kotlin.wasm.internal.ExternalInterfaceType
-import kotlin.wasm.internal.ManagedExternref
-
-@OptIn(ExperimentalWasmJsInterop::class)
-private val stackPlaceHolder: ExternalInterfaceType = js("''")
 
 /**
  * A wrapper for an exception thrown by a JavaScript code.
  * All exceptions thrown by JS code are signalled to Wasm code as `JsException`.
  *
- * @property thrownValue value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
- * */
+ * @param thrownValue value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
+ */
 @ExperimentalWasmJsInterop
-public actual class JsException internal constructor(@ManagedExternref public val thrownValue: JsAny?) : Throwable(null, null, null) {
-    private var _message: String? = null
-    override val message: String?
-        get() {
-            var value = _message
-            if (value == null) {
-                value = if (thrownValue is JsError) thrownValue.message else "Exception was thrown while running JavaScript code"
-                _message = value
-            }
-            return value
-        }
-
-    @ManagedExternref
-    private var _jsStack: ExternalInterfaceType? = null
-
-    override val jsStack: ExternalInterfaceType
-        get() {
-            var value = _jsStack
-            if (value == null) {
-                value = if (thrownValue is JsError) thrownValue.stack else stackPlaceHolder
-                _jsStack = value
-            }
-            return value
-        }
+public actual class JsException internal constructor(thrownValue: JsAny?) :
+    Throwable(
+        message = getJsErrorMessage(thrownValue),
+        cause = null,
+        jsError = toJsError(thrownValue),
+        overwriteJsErrorName = thrownValue !is JsError) {
+    internal val thrownValueIsJsError: Boolean = thrownValue is JsError
 }
 
 @ExperimentalWasmJsInterop
-public actual val JsException.thrownValue: JsAny? get() = this.thrownValue
+public actual val JsException.thrownValue: JsAny? get() = if (thrownValueIsJsError) jsError else jsError.cause
 
 @OptIn(ExperimentalWasmJsInterop::class)
 @JsName("Error")
 internal external class JsError : JsAny {
-    val message: String
+    val message: String?
     var name: String
     val stack: ExternalInterfaceType
-    val cause: JsError?
+    val cause: JsAny?
     var kotlinException: JsReference<Throwable>?
+}
+
+internal const val DEFAULT_JS_EXCEPTION_MESSAGE = "Exception was thrown while running JavaScript code"
+
+@OptIn(ExperimentalWasmJsInterop::class)
+internal fun toJsError(thrownValue: JsAny?): JsError {
+    return (thrownValue as? JsError) ?: createPlaceholderJsError(DEFAULT_JS_EXCEPTION_MESSAGE, thrownValue)
+}
+
+@OptIn(ExperimentalWasmJsInterop::class)
+internal fun createPlaceholderJsError(message: String?, cause: JsAny?): JsError =
+    setPlaceholderStack(createJsError(message, cause))
+
+@OptIn(ExperimentalWasmJsInterop::class)
+internal fun setPlaceholderStack(jsError: JsError): JsError =
+    js("Object.assign(jsError, { stack: '' })")
+
+@OptIn(ExperimentalWasmJsInterop::class)
+internal fun getJsErrorMessage(thrownValue: JsAny?): String {
+    return (thrownValue as? JsError)?.message ?: DEFAULT_JS_EXCEPTION_MESSAGE
 }
