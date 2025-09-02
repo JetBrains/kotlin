@@ -49,7 +49,7 @@ public:
     public:
         ThreadData(MutatorAssists& owner, mm::ThreadData& thread) noexcept : owner_(owner), thread_(thread) {}
 
-        void safePoint() noexcept;
+        void safePoint(bool critical) noexcept;
 
         std::pair<Epoch, bool> startedWaiting(std::memory_order ordering) const noexcept {
             auto value = startedWaiting_.load(ordering);

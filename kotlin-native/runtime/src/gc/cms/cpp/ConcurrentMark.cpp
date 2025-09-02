@@ -42,7 +42,7 @@ void gc::mark::ConcurrentMark::ThreadData::ensureFlushActionExecuted() noexcept 
     flushAction_->ensureExecuted([this] { markQueue()->forceFlush(); });
 }
 
-void gc::mark::ConcurrentMark::ThreadData::onSafePoint() noexcept {
+void gc::mark::ConcurrentMark::ThreadData::onSafePoint(bool critical) noexcept {
     FlushActionActivator::doIfActive([this] { ensureFlushActionExecuted(); });
 }
 

@@ -74,7 +74,7 @@ public:
     void safePoint() noexcept {
         if (!mm::test_support::safePointsAreActive()) return;
         auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-        getMutator(*threadData).assists().safePoint();
+        getMutator(*threadData).assists().safePoint(false);
     }
 
 private:

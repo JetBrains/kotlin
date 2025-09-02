@@ -33,7 +33,7 @@ public:
 
         Impl& impl() noexcept { return *impl_; }
 
-        void safePoint() noexcept;
+        void safePoint(bool critical) noexcept;
 
     private:
         std::unique_ptr<Impl> impl_;

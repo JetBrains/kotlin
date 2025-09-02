@@ -71,7 +71,7 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionAtMarkTermination) {
                 safePoint(threadData);
             }
 
-            threadData.gc().impl().mark_.onSafePoint();
+            threadData.gc().impl().mark_.onSafePoint(false);
 
             auto weakReferee = weaks[i]->get();
             (*roots[i])->field2 = weakReferee;

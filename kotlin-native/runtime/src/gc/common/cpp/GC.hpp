@@ -44,7 +44,7 @@ public:
 
         void OnSuspendForGC() noexcept;
 
-        void safePoint() noexcept;
+        void safePoint(bool critical) noexcept;
 
         void onThreadRegistration() noexcept;
 

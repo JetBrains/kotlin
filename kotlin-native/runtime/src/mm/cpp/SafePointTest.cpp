@@ -112,7 +112,7 @@ public:
 
     testing::MockFunction<void(mm::ThreadData&)>& mockSafePoint() noexcept { return mockSafePoint_; }
 
-    static void action(mm::ThreadData& thread) noexcept { instance_->mockSafePoint_.Call(thread); }
+    static void action(mm::ThreadData& thread, bool critical) noexcept { instance_->mockSafePoint_.Call(thread); }
 
 private:
     static SafePointActionTest* instance_;

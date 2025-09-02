@@ -6,6 +6,7 @@
 #include "ThreadData.hpp"
 #include "ThreadSuspension.hpp"
 
+#include <atomic>
 #include <condition_variable>
 
 #include "CallsChecker.hpp"
@@ -24,6 +25,7 @@ namespace {
 } // namespace
 
 std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionRequestReason = nullptr;
+std::atomic<bool> mm::internal::gSuspensionRequestIsCritical = false;
 
 PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
     : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
@@ -47,7 +49,7 @@ PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() n
     resumed = true;
 }
 
-kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState) noexcept {
+kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState, bool critical) noexcept {
     ThreadState oldState = state_.exchange(newState);
     if (oldState == ThreadState::kNative && newState == ThreadState::kRunnable) {
         // Must use already acquired `ThreadData` because TLS may be in invalid state e.g. during thread detach.
@@ -58,18 +60,19 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
         // or would have changed `internal::gSuspensionRequested` (with seq_cst),
         // so, loading SP here, or checking `internal::gSuspensionRequested` in
         // `suspendIfRequested` is enough.
-        safePoint(threadData_, std::memory_order_seq_cst);
+        safePoint(threadData_, critical, std::memory_order_seq_cst);
     }
     return oldState;
 }
 
-NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
-    if (IsThreadSuspensionRequested()) {
+NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested(bool critical) noexcept {
+    if (IsThreadSuspensionRequested(critical)) {
         auto pauseHandle = pauseMutationInScope(internal::gSuspensionRequestReason.load(std::memory_order_relaxed));
 
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionRequestMutex);
-        gSuspensionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
+        // Only sleep for so long as the critical session is concerned.
+        gSuspensionCondVar.wait(lock, [critical]() { return !IsThreadSuspensionRequested(critical); });
 
         // Must return to running state under the lock.
         pauseHandle.resume();
@@ -110,6 +113,7 @@ bool kotlin::mm::TryRequestThreadsSuspension(internal::SuspensionReason reason) 
         }
         gSafePointActivator = mm::SafePointActivator();
         internal::gSuspensionRequestReason.store(reason);
+        RuntimeAssert(!internal::gSuspensionRequestIsCritical.load(std::memory_order_relaxed), "gSuspensionRequestIsCritical is set");
     }
 
     return true;
@@ -119,6 +123,14 @@ void kotlin::mm::WaitForThreadsSuspension() noexcept {
     auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
     auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? threadRegistry.CurrentThreadData() : nullptr;
     // Spin waiting for threads to suspend. Ignore Native threads.
+    threadRegistry.waitAllThreads([currentThread](mm::ThreadData& thread) noexcept {
+        return &thread == currentThread || thread.suspensionData().suspendedOrNative();
+    });
+
+    // Enter critical suspension reason
+    internal::gSuspensionRequestIsCritical.store(true, std::memory_order_relaxed);
+
+    // Need to wait for the threads again to make sure critical region is respected. Ignore Native threads.
     threadRegistry.waitAllThreads([currentThread](mm::ThreadData& thread) noexcept {
         return &thread == currentThread || thread.suspensionData().suspendedOrNative();
     });
@@ -134,6 +146,7 @@ void kotlin::mm::ResumeThreads() noexcept {
     // https://en.cppreference.com/w/cpp/thread/condition_variable
     {
         std::unique_lock lock(gSuspensionRequestMutex);
+        internal::gSuspensionRequestIsCritical.store(false, std::memory_order_relaxed);
         internal::gSuspensionRequestReason.store(nullptr);
     }
     gSuspensionCondVar.notify_all();

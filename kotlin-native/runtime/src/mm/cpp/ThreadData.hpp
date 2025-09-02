@@ -49,7 +49,7 @@ public:
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
-    ThreadState setState(ThreadState state) noexcept { return suspensionData_.setState(state); }
+    ThreadState setState(ThreadState state, bool critical) noexcept { return suspensionData_.setState(state, critical); }
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 

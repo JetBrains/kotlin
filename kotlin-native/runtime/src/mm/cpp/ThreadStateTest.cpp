@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-#include <thread>
-
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
@@ -257,14 +255,14 @@ TEST(ThreadStateDeathTest, StateSwitchCorrectness) {
     mm::ThreadData threadData(0);
 
     // Allowed state switches: runnable <-> native
-    threadData.setState(ThreadState::kRunnable);
+    threadData.setState(ThreadState::kRunnable, false);
     ASSERT_EQ(threadData.state(), ThreadState::kRunnable);
     EXPECT_DEATH(SwitchThreadState(&threadData, ThreadState::kRunnable),
                  "runtime assert: Illegal thread state switch. Old state: RUNNABLE. New state: RUNNABLE");
     // Each EXPECT_NO_DEATH is executed in a fork process, so the global state of the test is not affected.
     EXPECT_NO_DEATH(SwitchThreadState(&threadData, ThreadState::kNative));
 
-    threadData.setState(ThreadState::kNative);
+    threadData.setState(ThreadState::kNative, false);
     ASSERT_EQ(threadData.state(), ThreadState::kNative);
     EXPECT_NO_DEATH(SwitchThreadState(&threadData, ThreadState::kRunnable));
     EXPECT_DEATH(SwitchThreadState(&threadData, ThreadState::kNative),

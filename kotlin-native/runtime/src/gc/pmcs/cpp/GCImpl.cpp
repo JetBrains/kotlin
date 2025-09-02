@@ -29,8 +29,8 @@ void gc::GC::ThreadData::OnSuspendForGC() noexcept {
     impl_->markDispatcher_.onSuspendForGC();
 }
 
-void gc::GC::ThreadData::safePoint() noexcept {
-    impl_->barriers_.onSafePoint();
+void gc::GC::ThreadData::safePoint(bool critical) noexcept {
+    impl_->barriers_.onSafePoint(critical);
 }
 
 void gc::GC::ThreadData::onThreadRegistration() noexcept {

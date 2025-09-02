@@ -34,12 +34,12 @@ TEST(AggressiveSchedulerTest, TriggerGCOnUniqueSafePoint) {
 
         EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(0));
         for (int i = 0; i < 10; i++) {
-            scheduler.safePoint();
+            scheduler.safePoint(false);
         }
         testing::Mock::VerifyAndClearExpectations(&scheduleGC);
 
         EXPECT_CALL(scheduleGC, Call()).WillOnce(testing::Return(1));
-        scheduler.safePoint();
+        scheduler.safePoint(false);
         testing::Mock::VerifyAndClearExpectations(&scheduleGC);
     }();
 }

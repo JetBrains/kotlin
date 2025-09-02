@@ -33,6 +33,11 @@ PERFORMANCE_INLINE ThreadState kotlin::SwitchThreadState(MemoryState* thread, Th
     return SwitchThreadState(thread->GetThreadData(), newState, reentrant);
 }
 
+PERFORMANCE_INLINE ThreadState kotlin::SwitchThreadStateRunnableCritical(MemoryState* thread) noexcept {
+    RuntimeAssert(thread != nullptr, "thread must not be nullptr");
+    return SwitchThreadState(thread->GetThreadData(), ThreadState::kRunnable, false, true);
+}
+
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {
     // Avoid redundant read in GetThreadData if runtime asserts are disabled.
     if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {

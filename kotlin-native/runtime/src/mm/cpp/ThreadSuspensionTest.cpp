@@ -118,7 +118,7 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
                 waitUntilCanStart(i);
 
                 EXPECT_FALSE(suspensionData.suspendedOrNative());
-                suspensionData.suspendIfRequested();
+                suspensionData.suspendIfRequested(false);
                 EXPECT_FALSE(suspensionData.suspendedOrNative());
            }
         });
@@ -212,7 +212,7 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspendExclusive) {
                 mm::ResumeThreads();
             } else {
                 EXPECT_TRUE(mm::IsThreadSuspensionRequested());
-                currentThreadData->suspensionData().suspendIfRequested();
+                currentThreadData->suspensionData().suspendIfRequested(false);
             }
         });
     }

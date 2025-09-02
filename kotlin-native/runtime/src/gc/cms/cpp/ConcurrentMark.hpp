@@ -99,7 +99,7 @@ public:
         ThreadData(ConcurrentMark& mark, mm::ThreadData& threadData) noexcept : threadData_(threadData) {}
 
         auto& markQueue() noexcept { return markQueue_; }
-        void onSafePoint() noexcept;
+        void onSafePoint(bool critical) noexcept;
         void onSuspendForGC() noexcept;
 
         bool tryLockRootSet() noexcept;
@@ -131,7 +131,7 @@ public:
     auto weakReadProtector() noexcept {
         auto markTerminationGuard = std::shared_lock{markTerminationMutex_, std::defer_lock};
         while (!markTerminationGuard.try_lock()) {
-            mm::safePoint();
+            mm::safePoint(true);
         }
         return markTerminationGuard;
     }

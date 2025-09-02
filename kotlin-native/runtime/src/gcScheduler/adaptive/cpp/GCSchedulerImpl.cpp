@@ -8,7 +8,6 @@
 #include "GlobalData.hpp"
 #include "Memory.h"
 #include "Logging.hpp"
-#include "Porting.h"
 
 using namespace kotlin;
 
@@ -29,8 +28,8 @@ gcScheduler::GCScheduler::GCScheduler() noexcept : impl_(std::make_unique<Impl>(
 
 gcScheduler::GCScheduler::~GCScheduler() = default;
 
-PERFORMANCE_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {
-    impl().mutatorAssists().safePoint();
+PERFORMANCE_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint(bool critical) noexcept {
+    impl().mutatorAssists().safePoint(critical);
 }
 
 void gcScheduler::GCScheduler::schedule() noexcept {

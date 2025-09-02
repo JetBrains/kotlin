@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <atomic>
 #include <optional>
 
 #include "Memory.h"
@@ -17,7 +16,7 @@ namespace kotlin::gc {
 class BarriersThreadData : private Pinned {
 public:
     void onThreadRegistration() noexcept;
-    void onSafePoint() noexcept;
+    void onSafePoint(bool critical) noexcept;
     
     void startMarkingNewObjects(GCHandle gcHandle) noexcept;
     void stopMarkingNewObjects() noexcept;

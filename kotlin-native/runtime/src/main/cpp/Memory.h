@@ -352,6 +352,8 @@ inline ThreadState GetThreadState() noexcept {
 // Switches the state of the given thread to `newState` and returns the previous thread state.
 ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
 
+ThreadState SwitchThreadStateRunnableCritical(MemoryState* thread) noexcept;
+
 // Asserts that the given thread is in the given state.
 void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
 void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;

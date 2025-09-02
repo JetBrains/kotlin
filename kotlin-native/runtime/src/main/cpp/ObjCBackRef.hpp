@@ -10,6 +10,7 @@
 #include "ExternalRCRef.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
+#include "Runtime.h"
 #include "Utils.hpp"
 #include "concurrent/Mutex.hpp"
 
@@ -21,6 +22,21 @@ namespace kotlin::mm {
 //
 // See also: [OwningExternalRCRef]
 class ObjCBackRef : private Pinned {
+    class CriticalThreadStateGuard : private Pinned {
+    public:
+        CriticalThreadStateGuard() noexcept {
+            Kotlin_initRuntimeIfNeeded();
+            thread_ = GetMemoryState();
+            oldState_ = SwitchThreadStateRunnableCritical(thread_);
+        }
+
+        ~CriticalThreadStateGuard() { SwitchThreadState(thread_, oldState_); }
+
+    private:
+        MemoryState* thread_;
+        ThreadState oldState_;
+    };
+
 public:
     ObjCBackRef() noexcept = default;
     ObjCBackRef(std::nullptr_t) noexcept {}
@@ -94,7 +110,7 @@ public:
             // That means `dealloc` is running in parallel, so cannot possibly retain
             return false;
         }
-        CalledFromNativeGuard threadStateGuard;
+        CriticalThreadStateGuard threadStateGuard;
         // In objc export if ObjCClass is objc_setAssociatedObject with KtClass
         // calling [KtClass _tryRetain] inside [ObjCClass dealloc] will lead to
         // this->tryRetain() being called after this->~ObjCBackRef()

@@ -20,7 +20,7 @@ gcScheduler::GCScheduler::GCScheduler() noexcept : impl_(std::make_unique<Impl>(
 
 gcScheduler::GCScheduler::~GCScheduler() = default;
 
-ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {}
+ALWAYS_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint(bool critical) noexcept {}
 
 void gcScheduler::GCScheduler::schedule() noexcept {
     RuntimeLogInfo({kTagGC}, "Scheduling GC manually");

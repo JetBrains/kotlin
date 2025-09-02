@@ -12,7 +12,11 @@
 
 using namespace kotlin;
 
-void gcScheduler::internal::MutatorAssists::ThreadData::safePoint() noexcept {
+void gcScheduler::internal::MutatorAssists::ThreadData::safePoint(bool critical) noexcept {
+    if (critical) {
+        // Critical safe points should avoid waiting whenever possible.
+        return;
+    }
     Epoch epoch = owner_.assistsEpoch_.load(std::memory_order_acquire);
     auto noNeedToWait = [this, epoch] { return owner_.completedEpoch_.load(std::memory_order_acquire) >= epoch; };
     if (noNeedToWait()) return;

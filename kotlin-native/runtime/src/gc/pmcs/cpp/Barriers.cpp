@@ -5,7 +5,6 @@
 
 #include "Barriers.hpp"
 
-#include <algorithm>
 #include <atomic>
 
 #include "GCImpl.hpp"
@@ -61,7 +60,7 @@ void gc::BarriersThreadData::onThreadRegistration() noexcept {
     }
 }
 
-ALWAYS_INLINE void gc::BarriersThreadData::onSafePoint() noexcept {}
+ALWAYS_INLINE void gc::BarriersThreadData::onSafePoint(bool critical) noexcept {}
 
 void gc::BarriersThreadData::startMarkingNewObjects(gc::GCHandle gcHandle) noexcept {
     RuntimeAssert(weakRefBarrier.load(std::memory_order_relaxed) != nullptr, "New allocations marking may only be requested by weak ref barriers");

@@ -20,13 +20,19 @@ namespace internal {
 
 using SuspensionReason = const char*;
 extern std::atomic<SuspensionReason> gSuspensionRequestReason;
+extern std::atomic<bool> gSuspensionRequestIsCritical;
 
 } // namespace internal
 
-inline bool IsThreadSuspensionRequested() noexcept {
+inline bool IsThreadSuspensionRequested(bool critical = false) noexcept {
     // Must use seq_cst ordering for synchronization with GC
     // in native->runnable transition.
-    return internal::gSuspensionRequestReason.load();
+    auto reason = internal::gSuspensionRequestReason.load();
+    if (reason == nullptr)
+        return false;
+    if (!critical)
+        return true;
+    return internal::gSuspensionRequestIsCritical.load(std::memory_order_relaxed);
 }
 
 class ThreadSuspensionData : private Pinned {
@@ -36,6 +42,7 @@ private:
         explicit MutatorPauseHandle(const char* reason, ThreadData& threadData) noexcept;
         ~MutatorPauseHandle() noexcept;
         void resume() noexcept;
+
     private:
         const char* reason_;
         ThreadData& threadData_;
@@ -44,18 +51,19 @@ private:
     };
 
 public:
-    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept : state_(initialState), threadData_(threadData) {}
+    explicit ThreadSuspensionData(ThreadState initialState, mm::ThreadData& threadData) noexcept :
+        state_(initialState), threadData_(threadData) {}
 
     ~ThreadSuspensionData() = default;
 
     ThreadState state() noexcept { return state_; }
 
-    ThreadState setState(ThreadState newState) noexcept;
+    ThreadState setState(ThreadState newState, bool critical) noexcept;
     ThreadState setStateNoSafePoint(ThreadState newState) noexcept { return state_.exchange(newState, std::memory_order_acq_rel); }
 
     bool suspendedOrNative() noexcept { return state() == kotlin::ThreadState::kNative; }
 
-    void suspendIfRequested() noexcept;
+    void suspendIfRequested(bool critical) noexcept;
 
     void requestThreadsSuspension(const char* reason) noexcept;
 

@@ -24,8 +24,8 @@ void gc::GC::ThreadData::OnSuspendForGC() noexcept {
     impl_->mark_.onSuspendForGC();
 }
 
-void gc::GC::ThreadData::safePoint() noexcept {
-    impl_->mark_.onSafePoint();
+void gc::GC::ThreadData::safePoint(bool critical) noexcept {
+    impl_->mark_.onSafePoint(critical);
 }
 
 void gc::GC::ThreadData::onThreadRegistration() noexcept {

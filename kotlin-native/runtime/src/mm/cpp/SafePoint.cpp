@@ -29,7 +29,7 @@ namespace {
 
 [[clang::no_destroy]] std::mutex safePointActionMutex;
 int64_t activeCount = 0;
-std::atomic<void (*)(mm::ThreadData&)> safePointAction = nullptr;
+std::atomic<void (*)(mm::ThreadData&, bool)> safePointAction = nullptr;
 
 #if KONAN_SUPPORTS_SIGNPOSTS
 
@@ -61,7 +61,7 @@ public:
 };
 #endif
 
-void safePointActionImpl(mm::ThreadData& threadData) noexcept {
+void safePointActionImpl(mm::ThreadData& threadData, bool critical) noexcept {
     static thread_local bool recursion = false;
     RuntimeAssert(!recursion, "Recursive safepoint");
     AutoReset guard(&recursion, true);
@@ -70,25 +70,25 @@ void safePointActionImpl(mm::ThreadData& threadData) noexcept {
     if (compiler::enableSafepointSignposts()) {
         signpost.emplace(threadData);
     }
-    threadData.gcScheduler().safePoint();
-    threadData.gc().safePoint();
-    threadData.suspensionData().suspendIfRequested();
+    threadData.gcScheduler().safePoint(critical);
+    threadData.gc().safePoint(critical);
+    threadData.suspensionData().suspendIfRequested(critical);
 }
 
-ALWAYS_INLINE void slowPathImpl(mm::ThreadData& threadData) noexcept {
+ALWAYS_INLINE void slowPathImpl(mm::ThreadData& threadData, bool critical) noexcept {
     // reread an action to avoid register pollution outside the function
     auto action = safePointAction.load(std::memory_order_seq_cst);
     if (action != nullptr) {
-        action(threadData);
+        action(threadData, critical);
     }
 }
 
-NO_INLINE void slowPath() noexcept {
-    slowPathImpl(*mm::ThreadRegistry::Instance().CurrentThreadData());
+NO_INLINE void slowPath(bool critical) noexcept {
+    slowPathImpl(*mm::ThreadRegistry::Instance().CurrentThreadData(), critical);
 }
 
-NO_INLINE void slowPath(mm::ThreadData& threadData) noexcept {
-    slowPathImpl(threadData);
+NO_INLINE void slowPath(mm::ThreadData& threadData, bool critical) noexcept {
+    slowPathImpl(threadData, critical);
 }
 
 void incrementActiveCount() noexcept {
@@ -125,19 +125,19 @@ mm::SafePointActivator::~SafePointActivator() {
     }
 }
 
-PERFORMANCE_INLINE void mm::safePoint(std::memory_order fastPathOrder) noexcept {
+PERFORMANCE_INLINE void mm::safePoint(bool critical, std::memory_order fastPathOrder) noexcept {
     AssertThreadState(ThreadState::kRunnable);
     auto action = safePointAction.load(fastPathOrder);
     if (__builtin_expect(action != nullptr, false)) {
-        slowPath();
+        slowPath(critical);
     }
 }
 
-PERFORMANCE_INLINE void mm::safePoint(mm::ThreadData& threadData, std::memory_order fastPathOrder) noexcept {
+PERFORMANCE_INLINE void mm::safePoint(mm::ThreadData& threadData, bool critical, std::memory_order fastPathOrder) noexcept {
     AssertThreadState(&threadData, ThreadState::kRunnable);
     auto action = safePointAction.load(fastPathOrder);
     if (__builtin_expect(action != nullptr, false)) {
-        slowPath(threadData);
+        slowPath(threadData, critical);
     }
 }
 
@@ -145,6 +145,6 @@ bool mm::test_support::safePointsAreActive() noexcept {
     return safePointAction.load(std::memory_order_seq_cst) != nullptr;
 }
 
-void mm::test_support::setSafePointAction(void (*action)(mm::ThreadData&)) noexcept {
+void mm::test_support::setSafePointAction(void (*action)(mm::ThreadData&, bool)) noexcept {
     safePointAction.store(action, std::memory_order_seq_cst);
 }

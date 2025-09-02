@@ -37,8 +37,8 @@ private:
     bool active_;
 };
 
-void safePoint(std::memory_order fastPathOrder = std::memory_order_relaxed) noexcept;
-void safePoint(ThreadData& threadData, std::memory_order fastPathOrder = std::memory_order_relaxed) noexcept;
+void safePoint(bool critical = false, std::memory_order fastPathOrder = std::memory_order_relaxed) noexcept;
+void safePoint(ThreadData& threadData, bool critical = false, std::memory_order fastPathOrder = std::memory_order_relaxed) noexcept;
 
 /**
  * A helper class template to implement custom safe point action activators.
@@ -93,7 +93,7 @@ ExtraSafePointActionActivator<Impl>::~ExtraSafePointActionActivator() noexcept {
 namespace test_support {
 
 bool safePointsAreActive() noexcept;
-void setSafePointAction(void (*action)(mm::ThreadData&)) noexcept;
+void setSafePointAction(void (*action)(mm::ThreadData&, bool)) noexcept;
 
 } // namespace test_support
 

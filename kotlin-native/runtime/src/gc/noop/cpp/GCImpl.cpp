@@ -19,7 +19,7 @@ gc::GC::ThreadData::~ThreadData() = default;
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
 
-void gc::GC::ThreadData::safePoint() noexcept {}
+void gc::GC::ThreadData::safePoint(bool critical) noexcept {}
 
 void gc::GC::ThreadData::onThreadRegistration() noexcept {}
 

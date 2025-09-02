@@ -53,7 +53,7 @@ public:
         auto boundary = heapGrowthController_.boundaryForHeapSize(bytes);
         switch (boundary) {
             case HeapGrowthController::MemoryBoundary::kNone:
-                safePoint();
+                safePoint(false);
                 return;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 scheduleGC_.scheduleNextEpochIfNotInProgress(ScheduleReason::byAllocation(bytes));
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    void safePoint() noexcept {
+    void safePoint(bool critical) noexcept {
         if (safePointTracker_.registerCurrentSafePoint(1)) {
             scheduleGC_.scheduleNextEpoch(ScheduleReason::bySafePoint());
         }

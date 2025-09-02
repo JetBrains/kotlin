@@ -29,9 +29,9 @@ gcScheduler::GCScheduler::GCScheduler() noexcept : impl_(std::make_unique<Impl>(
 
 gcScheduler::GCScheduler::~GCScheduler() = default;
 
-PERFORMANCE_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint() noexcept {
-    impl().mutatorAssists().safePoint();
-    impl().scheduler().safePoint();
+PERFORMANCE_INLINE void gcScheduler::GCScheduler::ThreadData::safePoint(bool critical) noexcept {
+    impl().mutatorAssists().safePoint(critical);
+    impl().scheduler().safePoint(critical);
 }
 
 void gcScheduler::GCScheduler::schedule() noexcept {
