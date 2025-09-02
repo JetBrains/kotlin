@@ -318,6 +318,23 @@ internal sealed class Bridge(
     open class AsNSNumber(
         swiftType: SirType,
     ) : AsObjCBridged(swiftType, CType.NSNumber) {
+        override val inKotlinSources = if (swiftType.isChar) {
+            object : ValueConversion {
+                // Surprisingly enough, `NSNumber(value: 0 as Swift.Unicode.UTF16.CodeUnit)` produces "i" encoding, as CFNumber internally
+                // promotes `UInt16` (which `UTF16.CodeUnit` is) to the closest fitting signed integer storage (C int).
+                // -[NSNumber toKotlin] then produces Int box when crossing bridge,
+                // which doesn't pass strict cast checks near interpretObjCPointer
+                override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
+                    "interpretObjCPointer<Int>($valueExpression).toChar()"
+
+                override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                    "$valueExpression.objcPtr()"
+            }
+        } else {
+            super.inKotlinSources
+        }
+
+
         override val inSwiftSources = object : NilableIdentityValueConversion {
             override fun renderNil(): String = super@AsNSNumber.inSwiftSources.renderNil()
 

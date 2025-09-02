@@ -146,7 +146,7 @@ public fun __root___primitive_in__TypesOfArguments__Swift_Optional_Swift_Bool__S
     val __arg9 = if (arg9 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<ULong>(arg9)
     val __arg10 = if (arg10 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Float>(arg10)
     val __arg11 = if (arg11 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Double>(arg11)
-    val __arg12 = if (arg12 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Char>(arg12)
+    val __arg12 = if (arg12 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(arg12).toChar()
     primitive_in(__arg1, __arg2, __arg3, __arg4, __arg5, __arg6, __arg7, __arg8, __arg9, __arg10, __arg11, __arg12)
 }
 
