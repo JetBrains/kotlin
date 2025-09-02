@@ -136,3 +136,7 @@ internal annotation class JvmBuiltin
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class SuppressBytecodeGeneration
+
+@Target(AnnotationTarget.CLASS)
+@PublishedApi
+internal annotation class PSIMappingMetadata(val mappingParts: Array<String>)

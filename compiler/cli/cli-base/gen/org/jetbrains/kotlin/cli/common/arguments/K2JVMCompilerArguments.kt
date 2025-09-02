@@ -839,6 +839,16 @@ The default value is 'inline'.""",
             field = value
         }
 
+    @Argument(
+        value = "-Xgenerate-psi-mapping",
+        description = "Generate PSIMappingMetadata annotation with psi-to-bytecode mapping",
+    )
+    var generatePsiMapping: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @get:Transient
     @field:kotlin.jvm.Transient
     override val configurator: CommonCompilerArgumentsConfigurator = K2JVMCompilerArgumentsConfigurator()

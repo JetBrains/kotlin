@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCED_COROUTINES_DEBUGGING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_FRIEND_PATHS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_GENERATE_PSI_MAPPING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_GENERATE_STRICT_METADATA_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_INDY_ALLOW_ANNOTATED_LAMBDAS
@@ -222,19 +223,20 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     if (X_VALUE_CLASSES in this) { arguments.valueClasses = get(X_VALUE_CLASSES)}
     if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)}
-    if (D in this) { arguments.destination = get(D)}
-    if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
-    if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
-    if (JAVA_PARAMETERS in this) { arguments.javaParameters = get(JAVA_PARAMETERS)}
-    if (JDK_HOME in this) { try { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow() } catch(e: ClassCastException) { arguments.applyJdkHome(get(JDK_HOME)) }}
-    if (JVM_DEFAULT in this) { arguments.jvmDefaultStable = get(JVM_DEFAULT)}
-    if (JVM_TARGET in this) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue}
-    if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
-    if (NO_JDK in this) { arguments.noJdk = get(NO_JDK)}
-    if (NO_REFLECT in this) { arguments.noReflect = get(NO_REFLECT)}
-    if (NO_STDLIB in this) { arguments.noStdlib = get(NO_STDLIB)}
-    if (SCRIPT_TEMPLATES in this) { arguments.scriptTemplates = get(SCRIPT_TEMPLATES)}
+      if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)}
+      if (D in this) { arguments.destination = get(D)}
+      if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
+      if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
+      if (JAVA_PARAMETERS in this) { arguments.javaParameters = get(JAVA_PARAMETERS)}
+      if (JDK_HOME in this) { try { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow() } catch(e: ClassCastException) { arguments.applyJdkHome(get(JDK_HOME)) }}
+      if (JVM_DEFAULT in this) { arguments.jvmDefaultStable = get(JVM_DEFAULT)}
+      if (JVM_TARGET in this) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue}
+      if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
+      if (NO_JDK in this) { arguments.noJdk = get(NO_JDK)}
+      if (NO_REFLECT in this) { arguments.noReflect = get(NO_REFLECT)}
+      if (NO_STDLIB in this) { arguments.noStdlib = get(NO_STDLIB)}
+      if (SCRIPT_TEMPLATES in this) { arguments.scriptTemplates = get(SCRIPT_TEMPLATES)}
+      if (X_GENERATE_PSI_MAPPING in this) { arguments.generatePsiMapping = get(X_GENERATE_PSI_MAPPING)}
     arguments.internalArguments = parseCommandLineArguments<K2JVMCompilerArguments>(internalArguments.toList()).internalArguments
     return arguments
   }
@@ -321,7 +323,9 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[NO_REFLECT] = arguments.noReflect } catch (_: NoSuchMethodError) {  }
     try { this[NO_STDLIB] = arguments.noStdlib } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT_TEMPLATES] = arguments.scriptTemplates } catch (_: NoSuchMethodError) {  }
-    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
+      try { this[X_GENERATE_PSI_MAPPING] = arguments.generatePsiMapping } catch (_: NoSuchMethodError) {  }
+
+      internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   override fun applyArgumentStrings(arguments: List<String>) {
@@ -557,5 +561,8 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
     public val SCRIPT_TEMPLATES: JvmCompilerArgument<Array<String>?> =
         JvmCompilerArgument("SCRIPT_TEMPLATES")
+
+      public val X_GENERATE_PSI_MAPPING: JvmCompilerArgument<Boolean> =
+          JvmCompilerArgument("X_GENERATE_PSI_MAPPING")
   }
 }

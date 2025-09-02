@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapSupertype
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_INTERNAL_FQ_NAME
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FrameMapBase
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
@@ -377,3 +380,6 @@ internal fun IrFunctionAccessExpression.isGenericCallWithCallersSingleTypeParame
     val callerTypeParam = caller.typeParameters.singleOrNull() ?: return false
     return calleeTypeArg.name == callerTypeParam.name && calleeTypeArg.parent.kotlinFqName == callerTypeParam.parent.kotlinFqName
 }
+
+val PSI_MAPPING_METADATA_ASM_TYPE: Type = KOTLIN_INTERNAL_FQ_NAME
+    .child(Name.identifier("PSIMappingMetadata")).topLevelClassAsmType()

@@ -124,6 +124,9 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
                         "Supported modes: ${JvmWhenGenerationScheme.entries.joinToString { it.description }}"
             )
         }
+
+        val generatePsiMapping = arguments.generatePsiMapping
+        put(JVMConfigurationKeys.GENERATE_PSI_MAPPING, generatePsiMapping)
     }
 
     if (arguments.valueClasses) {
