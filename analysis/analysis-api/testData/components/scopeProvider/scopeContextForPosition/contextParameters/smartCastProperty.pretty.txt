@@ -42,12 +42,12 @@ scopes:
       sun
     classifiers: 0
     callables: 3
-      context(c@kotlin.Any)
-      val foo: kotlin.Unit
-        get()
       context(`<unused var>`@kotlin.Int)
       fun bar()
       fun bar()
+      context(c@kotlin.Any)
+      val foo: kotlin.Unit
+        get()
     constructors: 0
 
   DefaultSimpleImportingScope, index = 6

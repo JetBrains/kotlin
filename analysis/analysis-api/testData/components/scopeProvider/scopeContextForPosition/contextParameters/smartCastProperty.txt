@@ -81,6 +81,97 @@ scopes:
         origin: SOURCE
     classifiers: 0
     callables: 3
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: /bar
+        compilerVisibility: Public
+        contextParameters: [
+          KaContextParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <unused var>
+            origin: SOURCE
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Int
+            visibility: PUBLIC
+        ]
+        contextReceivers: [
+          KaContextReceiver:
+            label: <unused var>
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Int
+        ]
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: bar
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: /bar
+        compilerVisibility: Public
+        contextParameters: []
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: bar
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
       KaKotlinPropertySymbol:
         annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
@@ -182,97 +273,6 @@ scopes:
           type: kotlin/Unit
         setter: null
         typeParameters: []
-        visibility: PUBLIC
-      KaNamedFunctionSymbol:
-        annotations: []
-        callableId: /bar
-        compilerVisibility: Public
-        contextParameters: [
-          KaContextParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Public
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <unused var>
-            origin: SOURCE
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: kotlin/Int
-            visibility: PUBLIC
-        ]
-        contextReceivers: [
-          KaContextReceiver:
-            label: <unused var>
-            type: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: kotlin/Int
-        ]
-        contractEffects: []
-        hasStableParameterNames: true
-        isActual: false
-        isBuiltinFunctionInvoke: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        isTailRec: false
-        location: TOP_LEVEL
-        modality: FINAL
-        name: bar
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/Unit
-        typeParameters: []
-        valueParameters: []
-        visibility: PUBLIC
-      KaNamedFunctionSymbol:
-        annotations: []
-        callableId: /bar
-        compilerVisibility: Public
-        contextParameters: []
-        contextReceivers: []
-        contractEffects: []
-        hasStableParameterNames: true
-        isActual: false
-        isBuiltinFunctionInvoke: false
-        isExpect: false
-        isExtension: false
-        isExternal: false
-        isInfix: false
-        isInline: false
-        isOperator: false
-        isOverride: false
-        isStatic: false
-        isSuspend: false
-        isTailRec: false
-        location: TOP_LEVEL
-        modality: FINAL
-        name: bar
-        origin: SOURCE
-        receiverParameter: null
-        returnType: KaUsualClassType:
-          annotations: []
-          typeArguments: []
-          type: kotlin/Unit
-        typeParameters: []
-        valueParameters: []
         visibility: PUBLIC
     constructors: 0
 

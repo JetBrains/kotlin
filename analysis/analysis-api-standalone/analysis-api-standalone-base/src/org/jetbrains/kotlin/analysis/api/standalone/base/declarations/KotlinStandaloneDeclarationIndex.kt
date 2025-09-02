@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -13,10 +15,14 @@ internal interface KotlinStandaloneDeclarationIndex {
     val facadeFileMap: Map<FqName, Set<KtFile>>
     val multiFileClassPartMap: Map<FqName, Set<KtFile>>
     val scriptMap: Map<FqName, Set<KtScript>>
-    val classMap: Map<FqName, Set<KtClassOrObject>>
-    val typeAliasMap: Map<FqName, Set<KtTypeAlias>>
-    val topLevelFunctionMap: Map<FqName, Set<KtNamedFunction>>
-    val topLevelPropertyMap: Map<FqName, Set<KtProperty>>
+
+    val classesByClassId: Map<ClassId, Set<KtClassOrObject>>
+    val typeAliasesByClassId: Map<ClassId, Set<KtTypeAlias>>
+    val topLevelFunctionsByCallableId: Map<CallableId, Set<KtNamedFunction>>
+    val topLevelPropertiesByCallableId: Map<CallableId, Set<KtProperty>>
+
+    val classLikeDeclarationsByPackage: Map<FqName, Set<KtClassLikeDeclaration>>
+    val topLevelCallablesByPackage: Map<FqName, Set<KtCallableDeclaration>>
 
     /**
      * Allows quickly finding [KtClassOrObject]s which have a given simple name as a supertype. The map may contain local classes as well.

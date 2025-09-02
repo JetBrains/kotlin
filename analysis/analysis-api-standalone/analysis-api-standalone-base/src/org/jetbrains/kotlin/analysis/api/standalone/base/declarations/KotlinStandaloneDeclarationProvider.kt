@@ -42,27 +42,24 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
-        index.classMap[classId.packageFqName]
-            ?.filter { ktClassOrObject ->
-                ktClassOrObject.getClassId() == classId && ktClassOrObject.inScope
-            }
+        index.classesByClassId[classId]
+            ?.filter { it.inScope }
             ?: emptyList()
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
-        index.typeAliasMap[classId.packageFqName]
-            ?.filter { ktTypeAlias ->
-                ktTypeAlias.getClassId() == classId && ktTypeAlias.inScope
-            }
+        index.typeAliasesByClassId[classId]
+            ?.filter { it.inScope }
             ?: emptyList()
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
-        val classifiers = index.classMap[packageFqName].orEmpty() + index.typeAliasMap[packageFqName].orEmpty()
-        return classifiers.filter { it.inScope }
+        val classifiers = index.classLikeDeclarationsByPackage[packageFqName].orEmpty()
+        return classifiers
+            .filter { it.inScope }
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
-        val callables = index.topLevelPropertyMap[packageFqName].orEmpty() + index.topLevelFunctionMap[packageFqName].orEmpty()
+        val callables = index.topLevelCallablesByPackage[packageFqName].orEmpty()
         return callables
             .filter { it.inScope }
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
@@ -113,10 +110,8 @@ class KotlinStandaloneDeclarationProvider internal constructor(
         get() = KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin == KotlinDeserializedDeclarationsOrigin.STUBS
 
     private fun computePackageSetFromIndex(): Set<String> = buildSet {
-        addPackageNamesInScope(index.classMap)
-        addPackageNamesInScope(index.typeAliasMap)
-        addPackageNamesInScope(index.topLevelPropertyMap)
-        addPackageNamesInScope(index.topLevelFunctionMap)
+        addPackageNamesInScope(index.classLikeDeclarationsByPackage)
+        addPackageNamesInScope(index.topLevelCallablesByPackage)
     }
 
     private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, Set<T>>) {
@@ -171,17 +166,13 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
-        index.topLevelPropertyMap[callableId.packageName]
-            ?.filter { ktProperty ->
-                ktProperty.nameAsName == callableId.callableName && ktProperty.inScope
-            }
+        index.topLevelPropertiesByCallableId[callableId]
+            ?.filter { it.inScope }
             ?: emptyList()
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
-        index.topLevelFunctionMap[callableId.packageName]
-            ?.filter { ktNamedFunction ->
-                ktNamedFunction.nameAsName == callableId.callableName && ktNamedFunction.inScope
-            }
+        index.topLevelFunctionsByCallableId[callableId]
+            ?.filter { it.inScope }
             ?: emptyList()
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = buildSet {
@@ -250,7 +241,7 @@ class KotlinStandaloneDeclarationProviderFactory(
         return indexData.fakeKtFiles
     }
 
-    fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
+    fun getAllKtClasses(): List<KtClassOrObject> = index.classesByClassId.values.flattenTo(mutableListOf())
 
     fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
         index.classesBySupertypeName[baseClassName].orEmpty()

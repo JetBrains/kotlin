@@ -91,6 +91,44 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
   isInline: false
 
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/doFoo
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: doFoo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(Foo.kt)
+  getContainingJvmClassName: test.FooKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -183,6 +221,44 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/internalDoFoo
+  compilerVisibility: Internal
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: internalDoFoo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: INTERNAL
+  getContainingFileSymbol: KaFileSymbol(Foo.kt)
+  getContainingJvmClassName: test.FooKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -277,6 +353,44 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
   isInline: false
 
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/privateDoFoo
+  compilerVisibility: Private
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: privateDoFoo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PRIVATE
+  getContainingFileSymbol: KaFileSymbol(Foo.kt)
+  getContainingJvmClassName: test.FooKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -369,6 +483,44 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/doBar
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: doBar
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(Bar.kt)
+  getContainingJvmClassName: test.BarKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
 
 KaKotlinPropertySymbol:
   annotations: []
@@ -463,6 +615,44 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
   isInline: false
 
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/internalDoBar
+  compilerVisibility: Internal
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: internalDoBar
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: INTERNAL
+  getContainingFileSymbol: KaFileSymbol(Bar.kt)
+  getContainingJvmClassName: test.BarKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
 KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
@@ -555,196 +745,6 @@ KaKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
   isInline: false
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: test/doFoo
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: TOP_LEVEL
-  modality: FINAL
-  name: doFoo
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(Foo.kt)
-  getContainingJvmClassName: test.FooKt
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: test/internalDoFoo
-  compilerVisibility: Internal
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: TOP_LEVEL
-  modality: FINAL
-  name: internalDoFoo
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: INTERNAL
-  getContainingFileSymbol: KaFileSymbol(Foo.kt)
-  getContainingJvmClassName: test.FooKt
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: test/privateDoFoo
-  compilerVisibility: Private
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: TOP_LEVEL
-  modality: FINAL
-  name: privateDoFoo
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: PRIVATE
-  getContainingFileSymbol: KaFileSymbol(Foo.kt)
-  getContainingJvmClassName: test.FooKt
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: test/doBar
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: TOP_LEVEL
-  modality: FINAL
-  name: doBar
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(Bar.kt)
-  getContainingJvmClassName: test.BarKt
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: test/internalDoBar
-  compilerVisibility: Internal
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: TOP_LEVEL
-  modality: FINAL
-  name: internalDoBar
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: INTERNAL
-  getContainingFileSymbol: KaFileSymbol(Bar.kt)
-  getContainingJvmClassName: test.BarKt
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
 
 KaNamedFunctionSymbol:
   annotations: []
