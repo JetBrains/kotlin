@@ -43,11 +43,12 @@ class K2MultiplatformStructureTest {
     fun `test - configureK2Multiplatform - then parse arguments`() {
         val structure = project.objects.newInstance<K2MultiplatformStructure>()
         structure.refinesEdges.set(listOf(RefinesEdge("a", "b"), RefinesEdge("b", "c")))
+        val emptyFileCollection = project.files()
         structure.fragments.set(
             listOf(
-                Fragment("a", project.files("a.kt"), project.objects.fileCollection()),
-                Fragment("b", project.files("b.kt"), project.objects.fileCollection()),
-                Fragment("c", project.files(), project.objects.fileCollection())
+                Fragment("a", project.files("a.kt"), emptyFileCollection, emptyFileCollection),
+                Fragment("b", project.files("b.kt"), emptyFileCollection, emptyFileCollection),
+                Fragment("c", project.files(), emptyFileCollection, emptyFileCollection)
             )
         )
         structure.defaultFragmentName.set("a")
