@@ -36,9 +36,6 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
 
     addDependsOnClosureConfigurationsTo(configuration)
 
-    // needed for old IDEs
-    configureLegacyMetadataDependenciesConfigurations(configuration)
-
     configuration
 }
 
@@ -70,26 +67,6 @@ private val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Conf
         project.configurations.getByName(implementationConfigurationName),
         project.configurations.getByName(compileOnlyConfigurationName),
     )
-
-/**
-Older IDEs still rely on resolving the metadata configurations explicitly.
-Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
-
-the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
-relies on dependencies being added explicitly by the Kotlin Gradle Plugin
- */
-private fun InternalKotlinSourceSet.configureLegacyMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
-    @Suppress("DEPRECATION_ERROR")
-    listOf(
-        apiMetadataConfigurationName,
-        implementationMetadataConfigurationName,
-        compileOnlyMetadataConfigurationName
-    ).forEach { configurationName ->
-        val configuration = project.configurations.getByName(configurationName)
-        configuration.extendsFrom(resolvableMetadataConfiguration)
-        configuration.shouldResolveConsistentlyWith(resolvableMetadataConfiguration)
-    }
-}
 
 internal fun Configuration.configureMetadataDependenciesAttribute(project: Project): Configuration = apply {
     if (project.multiplatformExtensionOrNull != null) {

@@ -22,10 +22,6 @@ import java.io.File
 internal fun Project.setupCInteropPropagatedDependencies() {
     val kotlin = this.multiplatformExtensionOrNull ?: return
 
-    kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
-        addIntransitiveMetadataDependencyIfPossible(
-            sourceSet, getPropagatedCInteropDependenciesOrEmpty(sourceSet)
-        )
     }
 }
 
