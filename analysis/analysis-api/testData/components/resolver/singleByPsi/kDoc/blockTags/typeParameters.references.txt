@@ -4,8 +4,8 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in <local>: foo) TT
-        1: TT: kotlin.String
+        0: TT: kotlin.String
+        1: (in <local>: foo) TT
 
 <caret_2>:
   KDocName(23,25): 'TT'
@@ -13,8 +13,8 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in <local>: foo) TT
-        1: TT: kotlin.String
+        0: TT: kotlin.String
+        1: (in <local>: foo) TT
 
 <caret_3>:
   KDocName(68,70): 'TT'
@@ -32,7 +32,7 @@
       usesContextSensitiveResolution: false
       symbols:
         0: (in <local>: A) RR
-        1: RR: kotlin.Int
+        1: (in A) val RR: kotlin.Int
 
 <caret_5>:
   KDocName(88,90): 'TT'
@@ -50,7 +50,7 @@
       usesContextSensitiveResolution: false
       symbols:
         0: (in <local>: A) RR
-        1: RR: kotlin.Int
+        1: (in A) val RR: kotlin.Int
 
 <caret_7>:
   KDocName(111,113): 'TT'
@@ -58,8 +58,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in <local>: A) TT
-        1: TT: kotlin.String
+        Nothing (Unresolved reference)
 
 <caret_8>:
   KDocName(116,118): 'RR'
@@ -68,4 +67,4 @@
       usesContextSensitiveResolution: false
       symbols:
         0: (in <local>: A) RR
-        1: RR: kotlin.Int
+        1: (in A) val RR: kotlin.Int

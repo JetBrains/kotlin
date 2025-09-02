@@ -13,8 +13,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in ROOT) fun abc(abc: kotlin.Int)
-        1: abc: kotlin.Int
+        abc: kotlin.Int
 
 <caret_3>:
   KDocName(46,49): 'abc'
