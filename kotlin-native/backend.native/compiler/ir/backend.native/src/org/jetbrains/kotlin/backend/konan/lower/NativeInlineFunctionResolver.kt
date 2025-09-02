@@ -34,11 +34,6 @@ internal class NativeInlineFunctionResolver(
 
         if (function.isExternal && function.body == null) return null
         if (function.body != null) {
-            // TODO this `if` check can be dropped after KT-72441
-            if (function.wasLowered != true) {
-                lower(function)
-                function.wasLowered = true
-            }
             return function
         }
 
