@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
+import org.jetbrains.kotlin.analysis.api.components.defaultType
 import org.jetbrains.kotlin.analysis.api.components.deprecationStatus
+import org.jetbrains.kotlin.analysis.api.components.isSubtypeOf
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getLongestExistingPackageScope
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getNestedScopePossiblyContainingShortName
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
@@ -17,13 +19,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
@@ -63,6 +70,8 @@ internal object KDocReferenceResolver {
      * @param selectedFqName the selected fully qualified name of the KDoc
      * @param fullFqName the whole fully qualified name of the KDoc
      * @param contextElement the context element in which the KDoc is defined
+     * @param containedTagSectionIfSubject the containing KDoc tag section if the link is the subject of this section
+     *        (e.g., `@param` or `@property`).
      *
      * @return the set of [KaSymbol](s) resolved from the fully qualified name
      *         based on the selected FqName and context element
@@ -72,17 +81,26 @@ internal object KDocReferenceResolver {
         selectedFqName: FqName,
         fullFqName: FqName,
         contextElement: KtElement,
+        containedTagSectionIfSubject: KDocKnownTag?
     ): Set<KaSymbol> {
         with(analysisSession) {
             //ensure file context is provided for "non-physical" code as well
             val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
                 ?: contextElement
             val fullSymbolsResolved =
-                resolveKdocFqName(fullFqName, contextDeclarationOrSelf)
-            if (selectedFqName == fullFqName) return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
+                resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
+            if (selectedFqName == fullFqName) {
+                return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
+            }
             if (fullSymbolsResolved.isEmpty()) {
                 val parentFqName = fullFqName.parent()
-                return resolveKdocFqName(analysisSession, selectedFqName, fullFqName = parentFqName, contextDeclarationOrSelf)
+                return resolveKdocFqName(
+                    analysisSession,
+                    selectedFqName = selectedFqName,
+                    fullFqName = parentFqName,
+                    contextElement = contextDeclarationOrSelf,
+                    containedTagSectionIfSubject = null
+                )
             }
             val goBackSteps = fullFqName.pathSegments().size - selectedFqName.pathSegments().size
             check(goBackSteps > 0) {
@@ -170,13 +188,14 @@ internal object KDocReferenceResolver {
      */
     private fun KaSession.resolveKdocFqName(
         fqName: FqName,
-        contextElement: KtElement
+        contextElement: KtElement,
+        containedTagSectionIfSubject: KDocKnownTag?
     ): List<ResolveResult> {
-        handleContextDeclarations(fqName, contextElement)?.let { return it }
+        handleContextDeclarations(fqName, contextElement, containedTagSectionIfSubject)?.let { return it }
 
         val visibleResolutionScopes = getVisibleScopes(contextElement)
 
-        return findSymbolsInScopes(fqName, contextElement, visibleResolutionScopes)
+        return findSymbolsInScopes(fqName, contextElement, visibleResolutionScopes, containedTagSectionIfSubject)
     }
 
     /**
@@ -185,19 +204,72 @@ internal object KDocReferenceResolver {
      */
     private fun KaSession.handleContextDeclarations(
         fqName: FqName,
-        contextElement: KtElement
+        contextElement: KtElement,
+        containedTagSectionIfSubject: KDocKnownTag?
     ): List<ResolveResult>? {
+        if (containedTagSectionIfSubject.isThrowableExpected()) {
+            return null
+        }
+
+        if (!fqName.isOneSegmentFQN() &&
+            (containedTagSectionIfSubject == KDocKnownTag.PARAM ||
+                    containedTagSectionIfSubject == KDocKnownTag.PROPERTY)
+        ) {
+            /**
+             * If the name has more than one segment, and it's contained in `@param` or `@property`, then
+             * it shouldn't be resolved. These tags are only intended for the short name search in context declarations.
+             */
+            return emptyList()
+        }
+
         if (fqName.isOneSegmentFQN()) {
             val shortName = fqName.shortName()
+
+            /**
+             * Extension receivers should not be used as tag section subjects,
+             * as there is a dedicated `@receiver` tag for such cases.
+             */
+            if (containedTagSectionIfSubject != null && shortName.asString() == KtTokens.THIS_KEYWORD.value) {
+                return emptyList()
+            }
 
             // Search for symbols by `this` qualifier
             getExtensionReceiverSymbolByThisQualifier(shortName, contextElement).ifNotEmpty { return this.toResolveResults() }
 
+            /**
+             * `@property` tag subjects should be resolvable to all properties from the context class:
+             * both body properties and properties from the primary constructor.
+             */
+            if (containedTagSectionIfSubject == KDocKnownTag.PROPERTY) {
+                val containingClass = contextElement as? KtClassOrObject ?: return emptyList()
+                val propertySymbol = containingClass.classSymbol?.combinedMemberScope?.callables(shortName)
+                    ?.getNonHiddenDeclarations()
+                    ?.firstIsInstanceOrNull<KaPropertySymbol>()
+
+                return listOfNotNull(propertySymbol).toResolveResults()
+            }
+
+            val contextDeclarationHandlingMode = if (containedTagSectionIfSubject == KDocKnownTag.PARAM) {
+                ContextDeclarationHandlingMode.ParameterSymbolsForPropertyParameters
+            } else {
+                ContextDeclarationHandlingMode.PropertySymbolsForPropertyParameters
+            }
+
             // Search for symbols from the context declaration
-            getSymbolsFromDeclaration(
+            val symbolsFromSelf = getSymbolsFromContextDeclaration(
                 shortName,
                 contextElement,
-            ).getNonHiddenDeclarations().ifNotEmpty { return this.toResolveResults() }
+                contextDeclarationHandlingMode,
+            ).getNonHiddenDeclarations()
+
+            when (containedTagSectionIfSubject) {
+                KDocKnownTag.PARAM -> return symbolsFromSelf.filter { symbol ->
+                    symbol is KaValueParameterSymbol ||
+                            symbol is KaContextParameterSymbol ||
+                            symbol is KaTypeParameterSymbol
+                }.toResolveResults()
+                else -> symbolsFromSelf.ifNotEmpty { return this.toResolveResults() }
+            }
         }
 
         return null
@@ -220,39 +292,103 @@ internal object KDocReferenceResolver {
         return emptyList()
     }
 
-    private fun KaSession.getSymbolsFromDeclaration(name: Name, owner: KtElement): List<KaSymbol> = buildList {
-        if (owner is KtNamedDeclaration) {
-            if (owner.nameAsName == name) {
-                add(owner.symbol)
-            }
+    /**
+     * Retrieves suitable symbols from [contextElement] in the following order:
+     *
+     * When the context declaration is a class:
+     * 1. The class itself
+     * 2. Class type parameters
+     * 3. Primary constructor
+     * 4. Primary constructor properties
+     * 5. Primary constructor value parameters
+     *
+     * When the context declaration is a function, property, or secondary constructor:
+     * 1. The declaration itself
+     * 2. Value parameters
+     * 3. Context parameters
+     * 4. Type parameters
+     *
+     * Otherwise, only the context declaration itself is considered.
+     */
+    private fun KaSession.getSymbolsFromContextDeclaration(
+        name: Name,
+        contextElement: KtElement,
+        contextDeclarationHandlingMode: ContextDeclarationHandlingMode,
+    ): List<KaSymbol> = buildList {
+        if (contextElement !is KtDeclaration) {
+            return@buildList
         }
 
-        (owner as? KtModifierListOwner)?.modifierList?.contextParameterLists?.flatMap { it.contextParameters }
-            ?.forEach { contextParameter ->
+        fun collectParametersAndProperties(declaration: KtDeclaration) {
+            if (declaration is KtCallableDeclaration) {
+                for (valueParameter in declaration.valueParameters) {
+                    val valueParameterName = valueParameter.nameAsName
+
+                    if (valueParameterName != name) {
+                        continue
+                    }
+
+                    when (declaration) {
+                        is KtPrimaryConstructor -> {
+                            if (valueParameter.isPropertyParameter() &&
+                                contextDeclarationHandlingMode == ContextDeclarationHandlingMode.PropertySymbolsForPropertyParameters
+                            ) {
+                                val classParameterProperty =
+                                    declaration.containingClass()?.classSymbol?.declaredMemberScope?.callables?.firstOrNull { callable ->
+                                        callable is KaPropertySymbol && callable.isFromPrimaryConstructor && callable.name == name
+                                    }
+                                addIfNotNull(classParameterProperty)
+                            } else {
+                                add(valueParameter.symbol)
+                            }
+                        }
+                        else -> add(valueParameter.symbol)
+                    }
+                }
+            }
+
+            declaration.modifierList?.contextParameterLists?.flatMap { it.contextParameters }?.forEach { contextParameter ->
                 if (contextParameter.nameAsName == name) {
                     add(contextParameter.symbol)
                 }
             }
 
-        if (owner is KtTypeParameterListOwner) {
-            for (typeParameter in owner.typeParameters) {
-                if (typeParameter.nameAsName == name) {
-                    add(typeParameter.symbol)
+            if (declaration is KtTypeParameterListOwner) {
+                for (typeParameter in declaration.typeParameters) {
+                    if (typeParameter.nameAsName == name) {
+                        add(typeParameter.symbol)
+                    }
                 }
             }
         }
 
-        if (owner is KtCallableDeclaration) {
-            for (typeParameter in owner.valueParameters) {
-                if (typeParameter.nameAsName == name) {
-                    add(typeParameter.symbol)
-                }
-            }
+        if ((contextElement as? KtNamedDeclaration)?.nameAsName == name) {
+            add(contextElement.symbol)
         }
 
-        if (owner is KtClassOrObject) {
-            owner.primaryConstructor?.let { addAll(getSymbolsFromDeclaration(name, it)) }
+        collectParametersAndProperties(contextElement)
+
+        if (contextElement is KtClassOrObject) {
+            val primaryConstructor = contextElement.primaryConstructor ?: return@buildList
+
+            if (contextElement.nameAsName == name) {
+                addIfNotNull(primaryConstructor.symbol)
+            }
+
+            collectParametersAndProperties(primaryConstructor)
         }
+    }
+
+    private enum class ContextDeclarationHandlingMode {
+        /**
+         * Used to collect parameter symbols for properties from primary constructors
+         */
+        ParameterSymbolsForPropertyParameters,
+
+        /**
+         * Used to collect property symbols for properties from primary constructors
+         */
+        PropertySymbolsForPropertyParameters
     }
 
     /**
@@ -283,7 +419,8 @@ internal object KDocReferenceResolver {
     private fun KaSession.findSymbolsInScopes(
         fqName: FqName,
         contextElement: KtElement,
-        visibleResolutionScopes: List<KaScope>
+        visibleResolutionScopes: List<KaScope>,
+        containedTagSectionIfSubject: KDocKnownTag?
     ): List<ResolveResult> {
         val shortName = fqName.shortName()
 
@@ -292,9 +429,25 @@ internal object KDocReferenceResolver {
             yieldIfNotNull(getLongestExistingPackageScope(fqName))
         }
 
+        if (containedTagSectionIfSubject.isThrowableExpected()) {
+            allScopesPossiblyContainingName.forEach { currentScope ->
+                currentScope.classifiers(shortName).toSet()
+                    .getNonHiddenDeclarations()
+                    .getThrowableSymbols()
+                    .ifNotEmpty { return this.toResolveResults() }
+
+                // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
+                AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement).getThrowableSymbols()
+                    .ifNotEmpty { return this.toResolveResults() }
+            }
+
+            return emptyList()
+        }
+
         allScopesPossiblyContainingName.forEach { currentScope ->
             // Search for classifiers
-            currentScope.classifiers(shortName).toSet().getNonHiddenDeclarations().ifNotEmpty { return this.toResolveResults() }
+            currentScope.classifiers(shortName).toSet()
+                .getNonHiddenDeclarations().ifNotEmpty { return this.toResolveResults() }
 
             val allCallables = currentScope.callables(shortName).toSet().getNonHiddenDeclarations()
 
@@ -328,6 +481,18 @@ internal object KDocReferenceResolver {
 
         return emptyList()
     }
+
+    /**
+     * When the link is a subject of [KDocKnownTag.EXCEPTION] or [KDocKnownTag.THROWS],
+     * it's only allowed to be resolved to [Throwable] classes.
+     */
+    private fun KDocKnownTag?.isThrowableExpected(): Boolean = this == KDocKnownTag.EXCEPTION || this == KDocKnownTag.THROWS
+
+    context(session: KaSession)
+    private fun Iterable<KaSymbol>.getThrowableSymbols(): List<KaClassLikeSymbol> =
+        this.filterIsInstance<KaClassLikeSymbol>().filter { symbol ->
+            symbol.defaultType.isSubtypeOf(session.builtinTypes.throwable)
+        }
 
     /**
      * Calculates the longest existing package name for the given [fqName] and then performs scope reduction algorithm.

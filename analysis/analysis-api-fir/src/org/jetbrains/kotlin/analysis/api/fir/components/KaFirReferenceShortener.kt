@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
+import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
@@ -1560,20 +1561,24 @@ private class KDocQualifiersToShortenCollector(
 
             val contextElement = owner ?: kDocName.containingKtFile
             // There we have to calculate the resolution results for FQN and short name to then ensure that these sets of symbols are the same
+
+            val containedTagSectionIfSubject = kDocName.getTagIfSubject()?.knownTag
+
             val resolvedSymbolsByShortName =
                 KDocReferenceResolver.resolveKdocFqName(
                     useSiteSession,
                     selectedFqName = shortFqName,
                     fullFqName = shortFqName,
-                    contextElement
+                    contextElement,
+                    containedTagSectionIfSubject
                 )
-
             val resolvedSymbolsByFQN =
                 KDocReferenceResolver.resolveKdocFqName(
                     useSiteSession,
                     selectedFqName = fqName,
                     fullFqName = fqName,
-                    contextElement
+                    contextElement,
+                    containedTagSectionIfSubject
                 )
 
             if (resolvedSymbolsByShortName != resolvedSymbolsByFQN) {

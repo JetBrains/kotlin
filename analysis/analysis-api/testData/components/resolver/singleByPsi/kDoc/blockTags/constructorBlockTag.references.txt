@@ -13,7 +13,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        abc: kotlin.String
+        (in AA) var abc: kotlin.String
 
 <caret_3>:
   KDocName(69,71): 'AA'
@@ -30,7 +30,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        abc: kotlin.String
+        (in AA) var abc: kotlin.String
 
 <caret_5>:
   KDocName(162,164): 'AA'

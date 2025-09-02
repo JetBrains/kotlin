@@ -4,7 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        xx: kotlin.Int
+        (in B) override val xx: kotlin.Int
 
 <caret_2>:
   KDocName(56,58): 'xx'
@@ -20,4 +20,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        xx: kotlin.Int
+        (in B) override val xx: kotlin.Int

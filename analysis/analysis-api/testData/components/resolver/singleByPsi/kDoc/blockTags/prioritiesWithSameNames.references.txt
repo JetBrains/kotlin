@@ -6,7 +6,7 @@
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) constructor(Abc: kotlin.String)
-        2: Abc: kotlin.String
+        2: (in Abc) var Abc: kotlin.String
 
 <caret_2>:
   KDocName(46,49): 'Abc'
@@ -16,7 +16,7 @@
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) constructor(Abc: kotlin.String)
-        2: Abc: kotlin.String
+        2: (in Abc) var Abc: kotlin.String
 
 <caret_3>:
   KDocName(82,85): 'Abc'
@@ -24,9 +24,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in ROOT) class Abc(Abc: kotlin.String)
-        1: (in Abc) constructor(Abc: kotlin.String)
-        2: Abc: kotlin.String
+        Abc: kotlin.String
 
 <caret_4>:
   KDocName(87,90): 'Abc'
@@ -36,7 +34,7 @@
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) constructor(Abc: kotlin.String)
-        2: Abc: kotlin.String
+        2: (in Abc) var Abc: kotlin.String
 
 <caret_5>:
   KDocName(124,127): 'Abc'
@@ -44,9 +42,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in ROOT) class Abc(Abc: kotlin.String)
-        1: (in Abc) constructor(Abc: kotlin.String)
-        2: Abc: kotlin.String
+        (in Abc) var Abc: kotlin.String
 
 <caret_6>:
   KDocName(129,132): 'Abc'
@@ -56,4 +52,4 @@
       symbols:
         0: (in ROOT) class Abc(Abc: kotlin.String)
         1: (in Abc) constructor(Abc: kotlin.String)
-        2: Abc: kotlin.String
+        2: (in Abc) var Abc: kotlin.String

@@ -3,4 +3,4 @@ KDocName(8,10): 'aa'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      aa: kotlin.Int
+      (in C) val aa: kotlin.Int

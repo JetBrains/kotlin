@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -19,11 +20,14 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
         val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
         val selectedFqName = element.getQualifiedNameAsFqName()
+        val containedTagSectionIfSubject = element.getTagIfSubject()?.knownTag
+
         return KDocReferenceResolver.resolveKdocFqName(
             useSiteSession,
             selectedFqName,
             fullFqName,
-            contextElement = element
+            contextElement = element,
+            containedTagSectionIfSubject
         ).toSet()
     }
 

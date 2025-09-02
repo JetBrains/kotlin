@@ -31,12 +31,16 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -220,6 +224,14 @@ internal val KtDeclaration.location: KaSymbolLocation
 
 internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): Boolean = annotationEntries.any {
     it.useSiteTarget?.getAnnotationUseSiteTarget() == useSiteTarget
+}
+
+/**
+ * If [this] is a part of a tag section subject, returns the corresponding [KDocTag].
+ * Otherwise, returns null.
+ */
+internal fun KDocName.getTagIfSubject(): KDocTag? {
+    return getStrictParentOfType<KDocLink>()?.getTagIfSubject()
 }
 
 /**

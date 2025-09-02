@@ -4,7 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in A) class BB
+        Nothing (Unresolved reference)
 
 <caret_2>:
   KDocName(32,36): 'A.BB'
@@ -12,7 +12,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in A) class BB
+        Nothing (Unresolved reference)
 
 <caret_3>:
   KDocName(48,52): 'A.BB'
@@ -20,7 +20,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in A) class BB
+        Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(67,71): 'A.BB'
@@ -28,4 +28,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in A) class BB
+        Nothing (Unresolved reference)

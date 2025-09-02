@@ -4,7 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in ROOT) class AA
+        Nothing (Unresolved reference)
 
 <caret_2>:
   KDocName(29,31): 'AA'
@@ -20,7 +20,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in ROOT) class AA
+        Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(51,53): 'AA'

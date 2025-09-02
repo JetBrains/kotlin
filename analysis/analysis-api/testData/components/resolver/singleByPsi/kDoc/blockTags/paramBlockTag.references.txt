@@ -13,7 +13,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        abc: kotlin.String
+        (in AA) var abc: kotlin.String
 
 <caret_3>:
   KDocName(62,64): 'AA'
@@ -21,8 +21,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in ROOT) class AA(abc: kotlin.String)
-        1: (in AA) constructor(abc: kotlin.String)
+        Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(66,68): 'AA'
@@ -47,4 +46,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        abc: kotlin.String
+        (in AA) var abc: kotlin.String

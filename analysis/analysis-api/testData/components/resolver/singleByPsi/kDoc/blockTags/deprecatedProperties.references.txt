@@ -4,7 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        conPropWarning: kotlin.Int
+        (in AA) val conPropWarning: kotlin.Int
 
 <caret_2>:
   KDocName(48,60): 'conPropError'
@@ -12,7 +12,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        conPropError: kotlin.Int
+        (in AA) val conPropError: kotlin.Int
 
 <caret_3>:
   KDocName(76,89): 'conPropHidden'
@@ -20,7 +20,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        conPropHidden: kotlin.Int
+        Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(105,116): 'propWarning'

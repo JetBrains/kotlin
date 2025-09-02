@@ -20,7 +20,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        abc: kotlin.Int
+        Nothing (Unresolved reference)
 
 <caret_4>:
   KDocName(65,68): 'abc'
