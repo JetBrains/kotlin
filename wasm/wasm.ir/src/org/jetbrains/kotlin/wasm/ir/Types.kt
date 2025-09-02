@@ -84,27 +84,26 @@ fun WasmType.getHeapType(): WasmHeapType =
     }
 
 fun WasmHeapType.Simple.isShareable() = when (this) {
-    WasmHeapType.Simple.Extern -> true
-    WasmHeapType.Simple.NoExtern -> true
     WasmHeapType.Simple.Any -> true
     WasmHeapType.Simple.Eq -> true
     WasmHeapType.Simple.Struct -> true
     WasmHeapType.Simple.None -> true
+    // while extern are potentially shareable, most of JS objects are actually non-shared
+    WasmHeapType.Simple.Extern -> false
+    WasmHeapType.Simple.NoExtern -> false
     else -> false
 }
 
 fun WasmType.isShareableRefType() = when (this) {
     is WasmAnyRef -> true
     is WasmEqRef -> true
-    is WasmExternRef -> true
     is WasmI31Ref -> true
     is WasmStructRef -> true
     is WasmRefNullrefType -> true
-    is WasmRefNullExternrefType -> true
+    is WasmExternRef -> false
+    is WasmRefNullExternrefType -> false
     else -> false
 }
-
-// TODO fix WebAssembly.instantiate(): Import #107 "intrinsics" "tag": imported tag does not match the expected type
 
 fun WasmFunctionType.referencesTypeDeclarations(): Boolean =
     parameterTypes.any { it.referencesTypeDeclaration() } or resultTypes.any { it.referencesTypeDeclaration() }
