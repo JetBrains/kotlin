@@ -56,7 +56,7 @@ fun parseExpressionOrStatement(
         val expr = exprNode?.toJsAst(scope, fileName) {
             mapExpression(it)
         }
-        expr?.let { listOf(JsExpressionStatement(it)) }
+        expr?.let { listOf(it.makeStmt()) }
     }
     else {
         val node = parse(code, startPosition, 0, reporter, true, Parser::parse)
