@@ -7,40 +7,31 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtNullableType
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.psi.KtTypeAlias
-import org.jetbrains.kotlin.psi.KtTypeElement
-import org.jetbrains.kotlin.psi.KtUserType
-import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclarationIndex {
     override val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
     override val multiFileClassPartMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
     override val scriptMap: MutableMap<FqName, MutableSet<KtScript>> = mutableMapOf()
-    override val classMap: MutableMap<FqName, MutableSet<KtClassOrObject>> = mutableMapOf()
-    override val typeAliasMap: MutableMap<FqName, MutableSet<KtTypeAlias>> = mutableMapOf()
-    override val topLevelFunctionMap: MutableMap<FqName, MutableSet<KtNamedFunction>> = mutableMapOf()
-    override val topLevelPropertyMap: MutableMap<FqName, MutableSet<KtProperty>> = mutableMapOf()
+
+    override val classesByClassId: MutableMap<ClassId, MutableSet<KtClassOrObject>> = mutableMapOf()
+    override val typeAliasesByClassId: MutableMap<ClassId, MutableSet<KtTypeAlias>> = mutableMapOf()
+    override val topLevelFunctionsByCallableId: MutableMap<CallableId, MutableSet<KtNamedFunction>> = mutableMapOf()
+    override val topLevelPropertiesByCallableId: MutableMap<CallableId, MutableSet<KtProperty>> = mutableMapOf()
+
+    override val classLikeDeclarationsByPackage: MutableMap<FqName, MutableSet<KtClassLikeDeclaration>> = mutableMapOf()
+    override val topLevelCallablesByPackage: MutableMap<FqName, MutableSet<KtCallableDeclaration>> = mutableMapOf()
+
     override val classesBySupertypeName: MutableMap<Name, MutableSet<KtClassOrObject>> = mutableMapOf()
     override val inheritableTypeAliasesByAliasedName: MutableMap<Name, MutableSet<KtTypeAlias>> = mutableMapOf()
 
@@ -58,11 +49,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
     }
 
     private fun indexClassOrObject(classOrObject: KtClassOrObject) {
-        classOrObject.getClassId()?.let { classId ->
-            classMap.computeIfAbsent(classId.packageFqName) {
-                mutableSetOf()
-            }.add(classOrObject)
-        }
+        indexClassLikeDeclaration(classOrObject, classesByClassId)
 
         classOrObject.getSuperNames().forEach { superName ->
             classesBySupertypeName
@@ -72,19 +59,30 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
     }
 
     private fun indexTypeAlias(typeAlias: KtTypeAlias) {
-        typeAlias.getClassId()?.let { classId ->
-            typeAliasMap.computeIfAbsent(classId.packageFqName) {
-                mutableSetOf()
-            }.add(typeAlias)
-        }
+        indexClassLikeDeclaration(typeAlias, typeAliasesByClassId)
 
-        val typeElement = typeAlias.getTypeReference()?.typeElement ?: return
-
-        findInheritableSimpleNames(typeElement).forEach { expandedName ->
-            inheritableTypeAliasesByAliasedName
-                .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
-                .add(typeAlias)
+        typeAlias.getTypeReference()?.typeElement?.let { typeElement ->
+            findInheritableSimpleNames(typeElement).forEach { expandedName ->
+                inheritableTypeAliasesByAliasedName
+                    .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
+                    .add(typeAlias)
+            }
         }
+    }
+
+    private fun <T : KtClassLikeDeclaration> indexClassLikeDeclaration(
+        classLikeDeclaration: T,
+        classLikeDeclarationsByClassId: MutableMap<ClassId, MutableSet<T>>,
+    ) {
+        val classId = classLikeDeclaration.getClassId() ?: return
+
+        classLikeDeclarationsByClassId.computeIfAbsent(classId) {
+            mutableSetOf()
+        }.add(classLikeDeclaration)
+
+        classLikeDeclarationsByPackage.computeIfAbsent(classId.packageFqName) {
+            mutableSetOf()
+        }.add(classLikeDeclaration)
     }
 
     private fun processMultifileClassStub(compiledStub: KotlinFileStubImpl, decompiledFile: KtFile) {
@@ -98,18 +96,32 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
 
     private fun indexNamedFunction(function: KtNamedFunction) {
         if (!function.isTopLevel) return
-        val packageFqName = function.containingKtFile.packageFqName
-        topLevelFunctionMap.computeIfAbsent(packageFqName) {
-            mutableSetOf()
-        }.add(function)
+
+        indexTopLevelCallable(function, topLevelFunctionsByCallableId)
     }
 
     private fun indexProperty(property: KtProperty) {
         if (!property.isTopLevel) return
-        val packageFqName = property.containingKtFile.packageFqName
-        topLevelPropertyMap.computeIfAbsent(packageFqName) {
+
+        indexTopLevelCallable(property, topLevelPropertiesByCallableId)
+    }
+
+    private fun <T : KtCallableDeclaration> indexTopLevelCallable(
+        callable: T,
+        callablesByCallableId: MutableMap<CallableId, MutableSet<T>>,
+    ) {
+        val name = callable.nameAsName ?: return
+
+        val packageFqName = callable.containingKtFile.packageFqName
+        val callableId = CallableId(packageFqName, name)
+
+        callablesByCallableId.computeIfAbsent(callableId) {
             mutableSetOf()
-        }.add(property)
+        }.add(callable)
+
+        topLevelCallablesByPackage.computeIfAbsent(packageFqName) {
+            mutableSetOf()
+        }.add(callable)
     }
 
     fun indexStubRecursively(stub: StubElement<*>): Unit = when (stub) {
