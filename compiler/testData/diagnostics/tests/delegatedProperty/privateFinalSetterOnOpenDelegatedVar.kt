@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-80600
 import kotlin.properties.ReadWriteProperty
@@ -11,6 +12,7 @@ object DummyDelegate : ReadWriteProperty<Foo, String> {
 
 open class Foo {
     open var foo: String by DummyDelegate
+        <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>private<!> get
         <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> <!WRONG_MODIFIER_TARGET!>final<!> set
 }
 

@@ -434,9 +434,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         val getterStatus = getter?.status
-        val getterElement = getter?.source?.takeIf {
-            it.kind == KtRealSourceElementKind
-        }?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: declarationFakeSource
+        val getterElement = getter?.source?.takeIf { it.kind == KtRealSourceElementKind } ?: declarationFakeSource
         getter = buildPropertyAccessor {
             this.source = getterElement
             this.moduleData = moduleData
@@ -478,7 +476,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         val parameterAnnotations = setter?.valueParameters?.firstOrNull()?.annotations
         val setterStatus = setter?.status
-        val setterElement = setter?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: declarationFakeSource
+        val setterElement = setter?.source?.takeIf { it.kind is KtRealSourceElementKind } ?: declarationFakeSource
         setter = buildPropertyAccessor {
             this.source = setterElement
             this.moduleData = moduleData

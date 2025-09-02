@@ -10,15 +10,14 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.hasGeneratedDelegateBody
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
@@ -291,7 +290,7 @@ private fun rebindDelegate(newTarget: FirProperty, oldTarget: FirProperty) {
  * @see rebindDelegate
  */
 private fun rebindDelegatedAccessorBody(newTarget: FirPropertyAccessor, oldTarget: FirPropertyAccessor) {
-    if (newTarget.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return
+    if (!newTarget.hasGeneratedDelegateBody()) return
     val body = newTarget.body
     requireWithAttachment(
         body is FirSingleExpressionBlock,

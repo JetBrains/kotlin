@@ -117,3 +117,14 @@ fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): L
         this.propertySymbol.fir.contextParameters
     else
         this.contextParameters
+
+/**
+ * A delegated property is allowed to have accessors as long as they don't have a body.
+ *
+ * Returns `true` when the property is delegated and no accessor was defined in source or the accessor didn't have a body.
+ *
+ * The function assumes that the body is not lazy.
+ */
+fun FirPropertyAccessor.hasGeneratedDelegateBody(): Boolean {
+    return body?.statements?.firstOrNull()?.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+}

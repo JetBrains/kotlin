@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.hasGeneratedDelegateBody
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -78,7 +79,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         if (visibilityCompareResult == null || visibilityCompareResult > 0) {
             reporter.reportOn(setter.source, FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY)
         }
-        if (property.symbol.callableId?.classId != null && property.delegate == null) {
+        if (property.symbol.callableId?.classId != null) {
             val isLegallyAbstract = isLegallyAbstract(property)
             if (setter.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
                 if (isLegallyAbstract) {
@@ -118,13 +119,17 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         property: FirProperty,
         accessor: FirPropertyAccessor,
     ) {
-        if (property.delegateFieldSymbol != null && accessor.body != null &&
-            accessor.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor
-        ) {
+        if (property.delegateFieldSymbol != null && accessor.body != null && !accessor.hasGeneratedDelegateBody()) {
             reporter.reportOn(accessor.source, FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY)
         }
     }
 
+    /**
+     * Returns `true` when no accessor was defined in the source at all.
+     * Returns `false` when an accessor without body was defined in the source. This is allowed, e.g., to put annotation on the accessor.
+     *
+     * @see FirPropertyAccessor.hasGeneratedDelegateBody
+     */
     private fun FirPropertyAccessor.isImplicitDelegateAccessor(): Boolean =
         source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
 
