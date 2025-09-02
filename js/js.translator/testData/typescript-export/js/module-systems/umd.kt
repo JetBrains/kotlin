@@ -17,3 +17,6 @@ class C(val x: Int) {
 
 @JsExport
 fun box(): String = "OK"
+
+@JsExport.Default
+fun justSomeDefaultExport() = "OK"

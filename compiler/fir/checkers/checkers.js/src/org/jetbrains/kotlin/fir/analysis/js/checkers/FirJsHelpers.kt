@@ -124,7 +124,9 @@ fun FirBasedSymbol<*>.isExportedObject(session: FirSession): Boolean {
 
     return when {
         hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportIgnore, session) -> false
-        hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExport, session) -> true
+        hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExport, session) ||
+                hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsExportDefault, session)
+            -> true
         else -> getContainingFile()?.symbol?.hasAnnotation(JsStandardClassIds.Annotations.JsExport, session) ?: false
     }
 }

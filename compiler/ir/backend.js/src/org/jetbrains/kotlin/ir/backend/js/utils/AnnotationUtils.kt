@@ -22,6 +22,7 @@ object JsAnnotations {
     val jsFileNameFqn = FqName("kotlin.js.JsFileName")
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
     val jsExportFqn = FqName("kotlin.js.JsExport")
+    val jsExportDefaultFqn = FqName("kotlin.js.JsExport.Default")
     val jsImplicitExportFqn = FqName("kotlin.js.JsImplicitExport")
     val jsExportIgnoreFqn = FqName("kotlin.js.JsExport.Ignore")
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
@@ -66,6 +67,13 @@ fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
 
 fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
     getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()
+
+fun IrAnnotationContainer.isJsExportDefault(): Boolean =
+    annotations.any {
+        // Using `IrSymbol.hasEqualFqName(FqName)` instead of a usual `hasAnnotation` call, because `JsExport.Default` is a nested class,
+        // whose FQ name cannot be computed by traversing IR tree parents because it lacks `JsExport` for some reason.
+        it.symbol.owner.parentAsClass.symbol.hasEqualFqName(JsAnnotations.jsExportDefaultFqn)
+    }
 
 fun IrAnnotationContainer.isJsExportIgnore(): Boolean =
     annotations.any {

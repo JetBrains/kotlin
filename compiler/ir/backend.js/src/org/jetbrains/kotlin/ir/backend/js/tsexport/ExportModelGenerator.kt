@@ -802,12 +802,12 @@ private fun shouldDeclarationBeExported(
         }
     }
 
-    if (declaration.isJsExport())
+    if (declaration.isJsExport() || declaration.isJsExportDefault())
         return true
 
     return when (val parent = declaration.parent) {
         is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
-        is IrAnnotationContainer -> parent.isJsExport()
+        is IrAnnotationContainer -> parent.isJsExport() || declaration.isJsExportDefault()
         else -> false
     }
 }
@@ -910,6 +910,10 @@ private val allReservedWords = reservedWords + strictModeReservedWords
 
 fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
     declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
+
+    if (declaration.isJsExportDefault()) {
+        attributes.add(ExportedAttribute.DefaultExport)
+    }
 
     return this
 }

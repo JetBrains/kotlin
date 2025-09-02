@@ -27,4 +27,5 @@ export declare namespace foo {
     function box(): string;
     function asyncList(): Promise<kotlin.collections.KtList<number>>;
     function arrayOfLists(): Array<kotlin.collections.KtList<number>>;
+    function justSomeDefaultExport(): string;
 }

@@ -397,6 +397,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
         }
     }
 
+    val jsExportDefaultAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
+        jsExportAnnotationSymbol.owner
+            .findDeclaration<IrClass> { it.fqNameWhenAvailable == FqName("kotlin.js.JsExport.Default") }
+            ?.symbol ?: irError("can't find kotlin.js.JsExport.Default annotation") {
+            withIrEntry("jsExportAnnotationSymbol.owner", jsExportAnnotationSymbol.owner)
+        }
+    }
+
     val jsImplicitExportAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsImplicitExport)
 
     val charSequenceClassSymbol = symbolFinder.topLevelClass(StandardClassIds.CharSequence)

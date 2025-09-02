@@ -33,3 +33,6 @@ fun asyncList(): Promise<List<Int>> =
 
 fun arrayOfLists(): Array<List<Int>> =
     arrayOf(listOf(1, 2))
+
+@JsExport.Default
+fun justSomeDefaultExport() = "OK"
