@@ -223,8 +223,8 @@ private object EndToMarkerTokenizer : BytecodeTokenizer {
 }
 
 private object ComposableLambdaTokenizer : BytecodeTokenizer {
-    fun MethodId.toComposableLambda(): ComposeIds.ComposableLambda? =
-        ComposeIds.ComposableLambda.entries.firstOrNull {
+    fun MethodId.toComposableLambda(): ComposeIds.Lambdas? =
+        ComposeIds.Lambdas.values().firstOrNull {
             it.methodId == this
         }
 

@@ -81,7 +81,7 @@ internal object ComposeIds {
      * - an offset from call to the lambda insn;
      * - an offset from captures end to the key.
      */
-    enum class ComposableLambda(
+    enum class Lambdas(
         val lambdaOffset: Int,
         val keyOffset: Int,
         val methodId: MethodId

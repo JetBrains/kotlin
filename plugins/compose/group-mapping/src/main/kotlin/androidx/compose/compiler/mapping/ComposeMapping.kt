@@ -24,7 +24,7 @@ class ComposeMapping(
     )
 
     fun append(bytecode: ByteArray) {
-        val cls = context(reporter, keyCache) { ClassInfo(bytecode) }
+        val cls = classInfoFromBytecode(keyCache, reporter, bytecode)
         val entries = buildList {
             cls.methods.forEach { method ->
                 method.groups.forEachIndexed { i, group ->
