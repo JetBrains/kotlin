@@ -208,6 +208,3 @@ fun checkConstraint(
         ConstraintKind.UPPER -> typeChecker.isSubtypeOf(context, resultType, constraintType)
     }
 }
-
-fun Constraint.replaceType(newType: KotlinTypeMarker) =
-    Constraint(kind, newType, position, typeHashCode, derivedFrom, isNullabilityConstraint, isNoInfer, inputTypePositionBeforeIncorporation)
