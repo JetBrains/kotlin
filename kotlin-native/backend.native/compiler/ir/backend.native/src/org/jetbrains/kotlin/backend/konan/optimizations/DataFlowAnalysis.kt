@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrContinue
@@ -35,22 +37,41 @@ interface Semilattice<T> {
      * Must be idempotent, commutative and associative.
      */
     fun meet(x: T, y: T): T
+    fun meetInPlace(x: T, y: T): T = meet(x, y)
+
+    fun meetAllInPlace(values: List<T>): T = values.reduce { x, y -> meet(x, y) }
+
+    fun copy(x: T): T
 }
 
-fun <T> Semilattice<T>.meetAll(values: List<T>): T = values.reduce { x, y -> meet(x, y) }
 
 private fun <K, T> MutableMap<K, T>.meetOrInsert(key: K, lattice: Semilattice<T>, value: T) {
-    this[key] = lattice.meet(this[key] ?: lattice.top, value)
+    getOrPut(key) { lattice.top }.let {
+        lattice.meetInPlace(it, value)
+    }
+    //this[key] = lattice.meet(this[key] ?: lattice.top, value)
 }
 
 object BitsetUnionSemilattice : Semilattice<BitSet> {
     override val top: BitSet = BitSet()
     override fun meet(x: BitSet, y: BitSet): BitSet = x.copy().also { it.or(y) }
+    override fun copy(x: BitSet): BitSet = x.copy()
 }
 
-class BitsetIntersectSemilattice(completeSet: BitSet) : Semilattice<BitSet> {
+class BitsetIntersectLattice(completeSet: BitSet) : Semilattice<BitSet> {
     override val top: BitSet = completeSet
+    val bottom: BitSet = BitSet()
     override fun meet(x: BitSet, y: BitSet): BitSet = x.copy().also { it.and(y) }
+    override fun meetInPlace(x: BitSet, y: BitSet): BitSet = x.also { it.and(y) }
+    override fun meetAllInPlace(values: List<BitSet>): BitSet {
+        val result = values.first()
+        for (v in values.drop(1)) {
+            meetInPlace(result, v)
+        }
+        return result
+    }
+    fun join(x: BitSet, y: BitSet): BitSet = x.copy().also { it.or(y) }
+    override fun copy(x: BitSet): BitSet = x.copy()
 }
 
 abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisitor<T, T>() {
@@ -60,6 +81,7 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
     val returnedStates = mutableMapOf<IrReturnTargetSymbol, T>()
 
     infix fun T.meet(other: T): T = lattice.meet(this, other)
+    infix fun T.meetInPlace(other: T): T = lattice.meetInPlace(this, other)
 
     override fun visitElement(element: IrElement, data: T): T {
         var resultData = data
@@ -71,19 +93,27 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
         return resultData
     }
 
+    override fun visitClass(declaration: IrClass, data: T): T {
+        return data;
+    }
+
+    override fun visitFunction(declaration: IrFunction, data: T): T {
+        return data;
+    }
+
     final override fun visitBranch(branch: IrBranch, data: T): T = error("Should not call this")
 
     override fun visitWhen(expression: IrWhen, data: T): T {
         val conditions = expression.branches.map { it.condition }
         val conditionResults = conditions.fold(listOf<T>()) { acc, next ->
             val prev = if (acc.isEmpty()) data else acc.last()
-            acc + listOf(next.accept(this, prev))
+            acc + listOf(lattice.copy(next.accept(this, prev)))
         }
         val branchResults = conditionResults.zip(expression.branches) { conditionResult, branch ->
             branch.result.accept(this, conditionResult)
         }
         val elseResult = if (!expression.branches.last().isUnconditional()) conditionResults.last() else lattice.top
-        return lattice.meetAll(branchResults + elseResult)
+        return lattice.meetAllInPlace(branchResults + elseResult)
     }
 
     final override fun visitWhileLoop(loop: IrWhileLoop, data: T): T = super.visitWhileLoop(loop, data)
@@ -96,24 +126,24 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
         var lastIterData = lattice.top
         // TODO consider short-circuiting in special cases
         while (true) {
-            var thisIterData = lastIterData meet data
+            var thisIterData = data meetInPlace lastIterData
 
-            thisIterData = thisIterData meet continuedStates[loop]!!
+            thisIterData = thisIterData meetInPlace continuedStates[loop]!!
 
             if (loop is IrWhileLoop) {
-                thisIterData = thisIterData meet loop.condition.accept(this, thisIterData)
+                thisIterData = thisIterData meetInPlace loop.condition.accept(this, thisIterData)
             }
 
             thisIterData = loop.body?.accept(this, thisIterData) ?: thisIterData
 
             if (loop is IrDoWhileLoop) {
-                thisIterData = thisIterData meet loop.condition.accept(this, thisIterData)
+                thisIterData = thisIterData meetInPlace loop.condition.accept(this, thisIterData)
             }
 
-            thisIterData = thisIterData meet breakedStates[loop]!!
+            thisIterData = thisIterData meetInPlace breakedStates[loop]!!
 
             if (thisIterData == lastIterData) break
-            require(thisIterData meet lastIterData == thisIterData) { "Data flow analysis diverges" }
+            //require(thisIterData meet lastIterData == thisIterData) { "Data flow analysis diverges" }
             lastIterData = thisIterData
         }
 
@@ -132,7 +162,7 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
 
     override fun visitReturnableBlock(expression: IrReturnableBlock, data: T): T {
         val blockResult = super.visitReturnableBlock(expression, data)
-        return lattice.meet(blockResult, returnedStates[expression.symbol]!!)
+        return lattice.meetInPlace(blockResult, returnedStates[expression.symbol] ?: lattice.top)
     }
 
     override fun visitReturn(expression: IrReturn, data: T): T {
@@ -146,12 +176,12 @@ abstract class ForwardDataFlowAnalysis<T>(val lattice: Semilattice<T>) : IrVisit
 
         // The try block may be executed only partially,
         // the approximation of "either entirely or not at all" is safe.
-        val afterTry = aTry.tryResult.accept(this, data) meet data
+        val afterTry = aTry.tryResult.accept(this, data) meetInPlace data
         val afterCatches = aTry.catches.map { it.result.accept(this, afterTry) }
 
         require(aTry.finallyExpression == null)
 
-        return lattice.meetAll(listOf(afterTry) + afterCatches)
+        return lattice.meetAllInPlace(listOf(afterTry) + afterCatches)
     }
 
     override fun visitThrow(expression: IrThrow, data: T): T {

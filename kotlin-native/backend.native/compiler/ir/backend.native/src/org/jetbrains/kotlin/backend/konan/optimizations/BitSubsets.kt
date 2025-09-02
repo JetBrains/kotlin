@@ -97,6 +97,9 @@ class BitSubsets<T> {
 class BitSubsetsUnionSemilattice<T>(subsets: BitSubsets<T>) : Semilattice<BitSubsets<T>.Subset> {
     override val top: BitSubsets<T>.Subset = subsets.Subset()
     override fun meet(x: BitSubsets<T>.Subset, y: BitSubsets<T>.Subset): BitSubsets<T>.Subset = x union y
+    override fun copy(x: BitSubsets<T>.Subset): BitSubsets<T>.Subset {
+        TODO("Not yet implemented")
+    }
 }
 
 fun <T> BitSubsets<T>.unionSemilattice() = BitSubsetsUnionSemilattice(this)

@@ -288,21 +288,23 @@ internal object StaticInitializersOptimization {
                     previous.and(set)
             }
 
-            val containersSemilattice = BitsetIntersectSemilattice(BitSet().also {
+            val containersSemilattice = BitsetIntersectLattice(BitSet().also {
                 initializedContainers.containerIds.forEach { _, id -> it.set(id) }
             })
 
             val intraproceduralAnalysis = object : ForwardDataFlowAnalysis<BitSet>(containersSemilattice) {
-                private fun BitSet.withSetBit(bit: Int): BitSet =
-                        if (this.get(bit)) this else copy().also { it.set(bit) }
+                // TODO careful in place!!!
+                private fun BitSet.withSetBit(bit: Int): BitSet = this.also { it.set(bit) }
 
-                private fun getResultAfterCall(function: IrSimpleFunction, set: BitSet): BitSet {
+                // FIXME careful with the returned value!!!!
+                private fun getResultAfterCall(function: IrSimpleFunction, set: BitSet?): BitSet? {
                     val result = initializedContainers.afterCall[function]
                     if (result == null) {
                         val file = function.calledInitializer ?: return set
-                        return set.withSetBit(initializedContainers.containerIds[file]!!)
+                        return (set ?: BitSet()).also { it.set(initializedContainers.containerIds[file]!!) }
                     }
-                    return result.copy().also { it.or(set) }
+                    if (result.isEmpty) return set
+                    return (set ?: BitSet()).also { it.or(result) }
                 }
 
                 private fun updateResultForFunction(function: IrSimpleFunction, globalSet: BitSet, threadLocalSet: BitSet) {
@@ -313,8 +315,8 @@ internal object StaticInitializersOptimization {
 
                 private fun updateResultForFunction(function: IrSimpleFunction, set: BitSet) {
                     if (analysisGoal != AnalysisGoal.ComputeInitializedBeforeCall) return
-                    intersectInitializedFiles(initializedContainers.beforeCallGlobal, function, set.copy().also { it.or(containersWithInitializedGlobals) })
-                    intersectInitializedFiles(initializedContainers.beforeCallThreadLocal, function, set.copy().also { it.or(containersWithInitializedThreadLocals) })
+                    intersectInitializedFiles(initializedContainers.beforeCallGlobal, function, set.also { it.or(containersWithInitializedGlobals) })
+                    intersectInitializedFiles(initializedContainers.beforeCallThreadLocal, function, set.also { it.or(containersWithInitializedThreadLocals) })
                 }
 
                 override fun visitGetObjectValue(expression: IrGetObjectValue, data: BitSet): BitSet {
@@ -346,7 +348,7 @@ internal object StaticInitializersOptimization {
                                 callSitesRequiringThreadLocalInitializerCall += expression
                         }
                     }
-                    return getResultAfterCall(actualCallee, argumentsResult)
+                    return getResultAfterCall(actualCallee, argumentsResult) ?: BitSet()
                 }
 
                 private fun processExecuteImpl(expression: IrCall, data: BitSet): BitSet {
@@ -359,7 +361,7 @@ internal object StaticInitializersOptimization {
                     if (analysisGoal != AnalysisGoal.CollectCallSites) {
                         require(!jobInvocation.isVirtualCall) { "Expected a static call but was: ${jobInvocation.render()}" }
                         updateResultForFunction(jobInvocation.actualCallee,
-                                curData.copy().also { it.or(containersWithInitializedGlobals) }, // Globals (= shared) visible to other threads as well.
+                                curData.also { it.or(containersWithInitializedGlobals) }, // Globals (= shared) visible to other threads as well.
                                 BitSet() // A new thread is about to be created - no thread locals initialized yet.
                         )
                     }
@@ -379,20 +381,24 @@ internal object StaticInitializersOptimization {
                     val devirtualizedCallSite = virtualCallSites[expression] ?: return data
                     val arguments = expression.getArgumentsWithIr()
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
-                    var callResult = BitSet()
+                    var callResult: BitSet? = null
                     var first = true
                     for (callSite in devirtualizedCallSite) {
                         val callee = callSite.actualCallee.irFunction ?: error("No IR for: ${callSite.actualCallee}")
                         updateResultForFunction(callee, argumentsResult)
                         if (first) {
-                            callResult = getResultAfterCall(callee, BitSet())
+                            callResult = getResultAfterCall(callee, null)
                             first = false
                         } else {
-                            val otherSet = getResultAfterCall(callee, BitSet())
-                            callResult.and(otherSet)
+                            val otherSet = getResultAfterCall(callee, null)
+                            if (otherSet == null) {
+                                callResult = null
+                            } else {
+                                callResult?.and(otherSet)
+                            }
                         }
                     }
-                    return argumentsResult.copy().also { it.or(callResult) }
+                    return argumentsResult.also { if (callResult != null) { it.or(callResult) } }
                 }
             }
 
