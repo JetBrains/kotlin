@@ -30,21 +30,3 @@ kotlin {
         compilerOpts.add("-Ilibs/include")
     }
 }
-
-fun createListDependenciesTask(sourceSetName: String) {
-    tasks.create("list${sourceSetName.capitalize()}Dependencies") {
-        val sourceSet = kotlin.sourceSets[sourceSetName] as DefaultKotlinSourceSet
-        val metadataFiles = project.configurations[sourceSet.intransitiveMetadataConfigurationName].incoming.artifacts.artifactFiles
-        dependsOn(metadataFiles)
-        dependsOn("cinteropDummyNativePlatform")
-        doFirst {
-            metadataFiles.forEach { dependencyFile ->
-                logger.quiet("Dependency: $dependencyFile")
-            }
-        }
-    }
-}
-
-createListDependenciesTask("nativePlatformMain")
-createListDependenciesTask("nativeMain")
-createListDependenciesTask("commonMain")
