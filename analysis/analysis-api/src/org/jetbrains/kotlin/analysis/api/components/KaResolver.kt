@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -84,6 +83,13 @@ public interface KaResolver : KaSessionComponent {
      * passing all compatibility checks.
      */
     public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
+
+    /**
+     * Resolves [this] using the classic KDoc resolution logic.
+     */
+    @KaNonPublicApi
+    @KaK1Unsupported
+    public fun KDocReference.resolveToSymbolWithClassicKDocResolver(): KaSymbol?
 }
 
 /**
@@ -190,5 +196,19 @@ context(s: KaSession)
 public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> {
     return with(s) {
         resolveToCallCandidates()
+    }
+}
+
+/**
+ * Resolves [this] using the classic KDoc resolution logic.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaNonPublicApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(s: KaSession)
+public fun KDocReference.resolveToSymbolWithClassicKDocResolver(): KaSymbol? {
+    return with(s) {
+        resolveToSymbolWithClassicKDocResolver()
     }
 }
