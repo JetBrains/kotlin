@@ -463,10 +463,11 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 //         DEBUG
 //		 val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         compileLibrary(arguments, rootDisposable, paths, klibDestination)
+        println(klibDestination)
 //         DEBUG
-//         if (!klibDestination.exists) {
-//             error("Failed to compile KLIB $klibDestination")
-//         }
+        if (!klibDestination.exists) {
+            error("Failed to compile KLIB $klibDestination")
+        }
         return compileIr(arguments, rootDisposable, klibDestination)
     }
 
@@ -600,6 +601,13 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         // Deserialize modules
         // We explicitly use the DeserializationStrategy.ALL to deserialize the whole world,
         // so that we don't rely on linker side effects for proper deserialization.
+        linker.deserializeIrModuleHeader(
+            jarDepsModuleDescriptor,
+            null,
+            { DeserializationStrategy.ALL },
+            jarDepsModuleDescriptor.name.asString()
+        )
+
         lateinit var mainModuleFragment: IrModuleFragment
         for (dep in sortedDependencies) {
             val descriptor = getModuleDescriptor(dep)
@@ -610,12 +618,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
             }
         }
-        linker.deserializeIrModuleHeader(
-            jarDepsModuleDescriptor,
-            null,
-            { DeserializationStrategy.ALL },
-            jarDepsModuleDescriptor.name.asString()
-        )
 
         irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
             irBuiltIns,
