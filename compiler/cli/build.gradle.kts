@@ -34,6 +34,7 @@ dependencies {
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(libs.intellij.kotlinx.coroutines.core.jvm)
 }
 
 sourceSets {
