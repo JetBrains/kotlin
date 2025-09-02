@@ -29,6 +29,7 @@ private fun execImpl(output: KlibToolOutput, rawArgs: Array<String>): Int {
             "dump-abi" -> DumpAbi(output, args)
             "dump-ir" -> DumpIr(output, args)
             "dump-ir-signatures" -> DumpIrSignatures(output, args)
+            "dump-ir-inlinable-functions" -> DumpIrInlinableFunctions(output, args)
             "dump-metadata" -> DumpMetadata(output, args)
             "dump-metadata-signatures" -> DumpMetadataSignatures(output, args)
             "info" -> Info(output, args)
