@@ -390,7 +390,7 @@ class WasmCompiledModuleFragment(
 
         val tag = if (isWasmJsTarget) {
             val jsExceptionTagFuncType = WasmFunctionType(
-                parameterTypes = listOf(WasmUnshareableExternRef),
+                parameterTypes = listOf(WasmExternRef),
                 resultTypes = emptyList()
             )
 

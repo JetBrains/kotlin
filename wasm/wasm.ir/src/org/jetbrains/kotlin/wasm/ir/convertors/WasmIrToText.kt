@@ -565,7 +565,7 @@ class WasmIrToText(
         when (type) {
             is WasmFuncRef -> appendElement("func")
             is WasmAnyRef -> appendElement("any")
-            is WasmExternRef, WasmUnshareableExternRef -> appendElement("extern")
+            is WasmExternRef -> appendElement("extern")
             else -> TODO()
         }
     }

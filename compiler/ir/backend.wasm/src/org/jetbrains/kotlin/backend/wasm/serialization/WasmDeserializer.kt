@@ -181,7 +181,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.EQREF -> WasmEqRef
                 TypeTags.EXTERN_REF_TYPE -> WasmExnRefType
                 TypeTags.EXTERN_REF -> WasmExternRef
-                TypeTags.UNSHAREABLE_EXTERN_REF -> WasmUnshareableExternRef
                 TypeTags.F32 -> WasmF32
                 TypeTags.F64 -> WasmF64
                 TypeTags.FUNC_REF -> WasmFuncRef
