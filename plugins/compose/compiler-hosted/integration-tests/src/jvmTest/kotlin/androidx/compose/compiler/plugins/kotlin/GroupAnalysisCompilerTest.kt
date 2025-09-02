@@ -5,9 +5,9 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.mapping.ClassInfo
 import androidx.compose.compiler.mapping.ComposeMapping
 import androidx.compose.compiler.mapping.ErrorReporter
+import androidx.compose.compiler.mapping.classInfoFromBytecode
 import androidx.compose.compiler.mapping.group.LambdaKeyCache
 import androidx.compose.compiler.mapping.render
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
@@ -415,11 +415,9 @@ class GroupAnalysisCompilerTest(
                 val info = classLoader.allGeneratedFiles
                     .filter { it.relativePath.endsWith(".class") }
                     .mapNotNull { file ->
-                        context(ErrorReporter.Default, lambdaKeyCache) {
-                            ClassInfo(file.asByteArray()).takeIf {
-                                it.fileName == "Test.kt" && it.methods.isNotEmpty()
-                            }?.render()
-                        }
+                        classInfoFromBytecode(lambdaKeyCache, ErrorReporter.Default, file.asByteArray()).takeIf {
+                            it.fileName == "Test.kt" && it.methods.isNotEmpty()
+                        }?.render()
                     }.joinToString(separator = "\n")
                 p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX)
             }
