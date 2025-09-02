@@ -1,0 +1,8 @@
+depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Security darwin posix
+language = Objective-C
+package = platform.UIUtilities
+
+modules = UIUtilities
+compilerOpts = -framework UIUtilities
+linkerOpts = -framework UIUtilities
+#Disabled: Unavailable

@@ -1,4 +1,4 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+depends = ApplicationServices CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security VideoToolbox cups darwin libkern osx posix
 language = Objective-C
 package = platform.SensitiveContentAnalysis
 

@@ -1,3 +1,4 @@
+depends = posix
 language = Objective-C
 package = platform.SecurityUI
 

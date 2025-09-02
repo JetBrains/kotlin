@@ -1,7 +1,8 @@
 depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
 language = Objective-C
-package = platform.SecurityUI
+package = platform.UIUtilities
 
-modules = SecurityUI
-compilerOpts = -framework SecurityUI
-linkerOpts = -framework SecurityUI
+modules = UIUtilities
+compilerOpts = -framework UIUtilities
+linkerOpts = -framework UIUtilities
+#Disabled: Unavailable
