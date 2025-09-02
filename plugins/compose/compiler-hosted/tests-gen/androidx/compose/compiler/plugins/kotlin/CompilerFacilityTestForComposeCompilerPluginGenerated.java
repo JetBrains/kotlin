@@ -78,6 +78,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("inlineFunctionReference.kt")
+  public void testInlineFunctionReference() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/inlineFunctionReference.kt");
+  }
+
+  @Test
   @TestMetadata("interface.kt")
   public void testInterface() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/interface.kt");

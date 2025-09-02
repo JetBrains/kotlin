@@ -1,0 +1,53 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:module_main_inlineFunctionReference.kt
+    PROPERTY name:test visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUNCTION_REFERENCE 'public final fun items (content: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit [inline] declared in <root>' type=kotlin.reflect.KFunction1<@[ParameterName(name = "content")] kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> origin=null reflectionTarget=<same>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL returnType:kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit>
+        correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> origin=null
+    PROPERTY name:test1 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> visibility:private [final,static]
+        EXPRESSION_BODY
+          FUN_EXPR type=kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+              BLOCK_BODY
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  BLOCK type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+                    FUN name:invoke visibility:local modality:FINAL returnType:R of androidx.compose.runtime.internal.ComposableFunction0
+                      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:ExtensionReceiver name:receiver index:0 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, R of androidx.compose.runtime.internal.ComposableFunction0>
+                      VALUE_PARAMETER kind:Regular name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
+                      VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
+                      annotations:
+                        Composable
+                        ComposableInferredTarget(scheme = "[0[0]]")
+                      BLOCK_BODY
+                        BLOCK type=kotlin.Unit origin=null
+                          CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                            ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.test1.<anonymous>.invoke' type=androidx.compose.runtime.Composer? origin=null
+                            ARG key: CONST Int type=kotlin.Int value=-1017078748
+                          CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                            ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.test1.<anonymous>.invoke' type=androidx.compose.runtime.Composer? origin=null
+                            ARG sourceInformation: CONST String type=kotlin.String value="C(invoke):module_main_inlineFunctionReference.kt"
+                        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:R of androidx.compose.runtime.internal.ComposableFunction0 [val]
+                          CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2' type=R of androidx.compose.runtime.internal.ComposableFunction0 origin=null
+                            ARG <this>: GET_VAR 'receiver: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, R of androidx.compose.runtime.internal.ComposableFunction0> declared in <root>.test1.<anonymous>.invoke' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, R of androidx.compose.runtime.internal.ComposableFunction0> origin=null
+                            ARG p1: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.test1.<anonymous>.invoke' type=androidx.compose.runtime.Composer? origin=null
+                            ARG p2: CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                              ARG <this>: CONST Int type=kotlin.Int value=14
+                              ARG other: GET_VAR '$changed: kotlin.Int declared in <root>.test1.<anonymous>.invoke' type=kotlin.Int origin=null
+                        CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                          ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.test1.<anonymous>.invoke' type=androidx.compose.runtime.Composer? origin=null
+                        RETURN type=R of androidx.compose.runtime.internal.ComposableFunction0 from='local final fun invoke (receiver: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, R of androidx.compose.runtime.internal.ComposableFunction0>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.ComposableFunction0 declared in <root>.test1.<anonymous>'
+                          GET_VAR 'val tmp_0: R of androidx.compose.runtime.internal.ComposableFunction0 [val] declared in <root>.test1.<anonymous>.invoke' type=R of androidx.compose.runtime.internal.ComposableFunction0 origin=null
+                    FUNCTION_REFERENCE 'local final fun invoke (receiver: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, R of androidx.compose.runtime.internal.ComposableFunction0>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.ComposableFunction0 declared in <root>.test1.<anonymous>' type=kotlin.reflect.KFunction3<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=public abstract fun invoke ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): R of androidx.compose.runtime.internal.ComposableFunction0 [operator] declared in androidx.compose.runtime.internal.ComposableFunction0
+                      ARG receiver: GET_VAR 'it: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.test1.<anonymous>' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL returnType:kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit>
+        correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> declared in <root>'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function1<kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, kotlin.Unit> origin=null

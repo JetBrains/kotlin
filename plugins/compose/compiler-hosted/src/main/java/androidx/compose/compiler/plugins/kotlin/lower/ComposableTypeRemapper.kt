@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal fun IrFunction.needsComposableRemapping(): Boolean {
-    if (
-        returnType.containsComposableAnnotation()
-    ) return true
+    if (returnType.containsComposableAnnotation()) {
+        return true
+    }
 
     for (param in parameters) {
         if (param.type.containsComposableAnnotation()) return true
@@ -277,6 +277,12 @@ internal class ComposableTypeTransformer(
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
         expression.typeArguments.replaceAll { it?.remapType() }
+
+        val owner = expression.symbol.owner
+        if (owner is IrFunction && owner.needsComposableRemapping()) {
+            owner.transform(this, null)
+        }
+
         return super.visitMemberAccess(expression)
     }
 
