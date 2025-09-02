@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase.CompilerType
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -68,7 +69,7 @@ internal class WasmCompilerInvocationTestConfiguration(
 
 
     override fun onIgnoredTest() {
-        /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
+        Assumptions.abort<Unit>()
     }
 }
 
