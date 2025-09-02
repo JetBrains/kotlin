@@ -1,0 +1,26 @@
+<caret_1>:
+  KDocName(8,11): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in ROOT) fun abc(abc: kotlin.Int)
+        1: abc: kotlin.Int
+
+<caret_2>:
+  KDocName(41,44): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in ROOT) fun abc(abc: kotlin.Int)
+        1: abc: kotlin.Int
+
+<caret_3>:
+  KDocName(46,49): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in ROOT) fun abc(abc: kotlin.Int)
+        1: abc: kotlin.Int

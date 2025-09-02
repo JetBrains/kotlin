@@ -3308,6 +3308,70 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BlockTags {
+      @Test
+      public void testAllFilesPresentInBlockTags() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "cloneable");
+      }
+
+      @Test
+      @TestMetadata("constructorBlockTag.kt")
+      public void testConstructorBlockTag() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/constructorBlockTag.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorParameterInDifferentPlaces.kt")
+      public void testConstructorParameterInDifferentPlaces() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/constructorParameterInDifferentPlaces.kt");
+      }
+
+      @Test
+      @TestMetadata("overridePropertyInPrimaryConstructor.kt")
+      public void testOverridePropertyInPrimaryConstructor() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/overridePropertyInPrimaryConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("paramBlockOnFunction.kt")
+      public void testParamBlockOnFunction() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/paramBlockOnFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("paramBlockTag.kt")
+      public void testParamBlockTag() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/paramBlockTag.kt");
+      }
+
+      @Test
+      @TestMetadata("paramTagWithRegularParameter.kt")
+      public void testParamTagWithRegularParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/paramTagWithRegularParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("prioritiesWithSameNames.kt")
+      public void testPrioritiesWithSameNames() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/prioritiesWithSameNames.kt");
+      }
+
+      @Test
+      @TestMetadata("throwsAndException.kt")
+      public void testThrowsAndException() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/throwsAndException.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameters.kt")
+      public void testTypeParameters() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/typeParameters.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/companionObject")
     @TestDataPath("$PROJECT_ROOT")
     public class CompanionObject {

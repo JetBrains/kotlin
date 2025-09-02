@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(8,10): 'AA'
+    null
+
+<caret_2>:
+  KDocName(29,32): 'abc'
+    null
+
+<caret_3>:
+  KDocName(69,71): 'AA'
+    null
+
+<caret_4>:
+  KDocName(96,99): 'abc'
+    null
+
+<caret_5>:
+  KDocName(169,171): 'AA'
+    null
+
+<caret_6>:
+  KDocName(190,194): 'some'
+    null
+
+<caret_7>:
+  KDocName(230,232): 'AA'
+    null
+
+<caret_8>:
+  KDocName(257,261): 'some'
+    null

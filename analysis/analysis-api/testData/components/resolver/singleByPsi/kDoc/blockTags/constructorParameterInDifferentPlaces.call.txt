@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(8,11): 'abc'
+    null
+
+<caret_2>:
+  KDocName(24,27): 'abc'
+    null
+
+<caret_3>:
+  KDocName(43,46): 'abc'
+    null
+
+<caret_4>:
+  KDocName(65,68): 'abc'
+    null
+
+<caret_5>:
+  KDocName(111,114): 'abc'
+    null
+
+<caret_6>:
+  KDocName(131,134): 'abc'
+    null
+
+<caret_7>:
+  KDocName(154,157): 'abc'
+    null
+
+<caret_8>:
+  KDocName(180,183): 'abc'
+    null
+
+<caret_9>:
+  KDocName(225,228): 'abc'
+    null
+
+<caret_10>:
+  KDocName(245,248): 'abc'
+    null
+
+<caret_11>:
+  KDocName(268,271): 'abc'
+    null
+
+<caret_12>:
+  KDocName(294,297): 'abc'
+    null

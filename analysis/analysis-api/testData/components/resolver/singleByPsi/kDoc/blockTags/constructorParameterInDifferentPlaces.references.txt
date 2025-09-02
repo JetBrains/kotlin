@@ -1,0 +1,95 @@
+<caret_1>:
+  KDocName(8,11): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        abc: kotlin.Int
+
+<caret_2>:
+  KDocName(24,27): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        abc: kotlin.Int
+
+<caret_3>:
+  KDocName(43,46): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        abc: kotlin.Int
+
+<caret_4>:
+  KDocName(65,68): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        abc: kotlin.Int
+
+<caret_5>:
+  KDocName(111,114): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_6>:
+  KDocName(131,134): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_7>:
+  KDocName(154,157): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_8>:
+  KDocName(180,183): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_9>:
+  KDocName(225,228): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_10>:
+  KDocName(245,248): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_11>:
+  KDocName(268,271): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)
+
+<caret_12>:
+  KDocName(294,297): 'abc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        Nothing (Unresolved reference)

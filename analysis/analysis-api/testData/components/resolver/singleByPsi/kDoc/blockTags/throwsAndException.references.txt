@@ -1,0 +1,63 @@
+<caret_1>:
+  KDocName(25,27): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) class AA
+
+<caret_2>:
+  KDocName(29,31): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) class AA
+
+<caret_3>:
+  KDocName(47,49): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) class AA
+
+<caret_4>:
+  KDocName(51,53): 'AA'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) class AA
+
+<caret_5>:
+  KDocName(66,75): 'Exception'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in kotlin) typealias Exception = java.lang.Exception
+
+<caret_6>:
+  KDocName(77,86): 'Exception'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in kotlin) typealias Exception = java.lang.Exception
+
+<caret_7>:
+  KDocName(102,111): 'Exception'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in kotlin) typealias Exception = java.lang.Exception
+
+<caret_8>:
+  KDocName(113,122): 'Exception'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in kotlin) typealias Exception = java.lang.Exception

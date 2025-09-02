@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(8,11): 'abc'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(24,27): 'abc'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(43,46): 'abc'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(65,68): 'abc'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(111,114): 'abc'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(131,134): 'abc'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(154,157): 'abc'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(180,183): 'abc'
+    NO_CANDIDATES
+
+<caret_9>:
+  KDocName(225,228): 'abc'
+    NO_CANDIDATES
+
+<caret_10>:
+  KDocName(245,248): 'abc'
+    NO_CANDIDATES
+
+<caret_11>:
+  KDocName(268,271): 'abc'
+    NO_CANDIDATES
+
+<caret_12>:
+  KDocName(294,297): 'abc'
+    NO_CANDIDATES
