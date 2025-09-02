@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
+import org.jetbrains.kotlin.js.parser.antlr.JsAntlrParser
 
 /**
  * Returns null if constant expression could not be parsed.
@@ -60,7 +60,7 @@ private fun translateJsCodeIntoStatementList(
     //
     // So we try to generate the debug info on the best-effort basis. It should work correctly with plain string literals without
     // concatenations, interpolations or backslash replacements like \n.
-    return parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
+    return JsAntlrParser.parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
 }
 
 private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(copyByDefault = false)

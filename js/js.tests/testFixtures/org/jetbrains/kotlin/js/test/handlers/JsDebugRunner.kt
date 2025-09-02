@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.parser.parseFunction
+import org.jetbrains.kotlin.js.parser.antlr.JsAntlrParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.test.debugger.*
 import org.jetbrains.kotlin.js.test.utils.getAllFilesForRunner
@@ -279,7 +279,7 @@ private class NodeJsDebuggerFacade(jsFilePath: String, private val localVariable
             // TODO: This will not work with arrows. As of 2022 we don't generate them, but we might in the future.
             val parseableScopeText = prefix + scopeText
             val scope = JsProgram().scope
-            val jsFunction = parseFunction(
+            val jsFunction = JsAntlrParser.parseFunction(
                 parseableScopeText,
                 jsFile.name,
                 CodePosition(scopeStart.line, scopeStart.offset - prefix.length),

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.JsRootScope
-import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
+import org.jetbrains.kotlin.js.parser.antlr.JsAntlrParser
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object JsKlibJsCodeCallChecker : JsKlibCallChecker {
@@ -63,7 +63,7 @@ object JsKlibJsCodeCallChecker : JsKlibCallChecker {
             val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
             val fileName = context.containingFile?.fileEntry?.name ?: "<unknown file>"
             val jsErrorReporter = JsErrorReporter(jsCodeExpr, context, reporter)
-            val statements = parseExpressionOrStatement(jsCodeStr, jsErrorReporter, parserScope, CodePosition(0, 0), fileName)
+            val statements = JsAntlrParser.parseExpressionOrStatement(jsCodeStr, jsErrorReporter, parserScope, CodePosition(0, 0), fileName)
             if (statements.isNullOrEmpty()) {
                 reporter.at(jsCodeExpr, context).report(JsKlibErrors.JSCODE_NO_JAVASCRIPT_PRODUCED)
             }

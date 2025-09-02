@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.engine.ScriptEngine
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
-import org.jetbrains.kotlin.js.parser.parse
+import org.jetbrains.kotlin.js.parser.antlr.JsAntlrParser
 import org.jetbrains.kotlin.js.testOld.TEST_DATA_DIR_PATH
 import org.jetbrains.kotlin.js.testOld.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -62,7 +62,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String) {
         val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-        val unoptimizedAst = parse(unoptimizedCode, errorReporter, parserScope, "<unknown file>")!!
+        val unoptimizedAst = JsAntlrParser.parse(unoptimizedCode, errorReporter, parserScope, "<unknown file>")!!
 
         updateMetadata(unoptimizedCode, unoptimizedAst)
 
@@ -70,7 +70,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
             process(statement)
         }
 
-        val optimizedAst = parse(optimizedCode, errorReporter, parserScope, "<unknown file>")!!
+        val optimizedAst = JsAntlrParser.parse(optimizedCode, errorReporter, parserScope, "<unknown file>")!!
         Assert.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
     }
 
