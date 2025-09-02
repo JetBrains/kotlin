@@ -30,6 +30,7 @@ class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
             irLayout.irOfInlineableFunsDir.mkdirs()
             // Write all inlinable functions together, in a single file.
             with(listOf(ir.fileWithPreparedInlinableFunctions)) {
+                serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFilesOfInlineableFuns)
                 serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarationsOfInlineableFuns)
                 serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypesOfInlineableFuns)
                 serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignaturesOfInlineableFuns)

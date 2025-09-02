@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.IrArrayReader
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 class NonLinkingIrInlineFunctionDeserializer(
     private val irBuiltIns: IrBuiltIns,
@@ -142,9 +143,11 @@ class NonLinkingIrInlineFunctionDeserializer(
          * if the declaration happens to have multiple inline functions.
          */
         private val reversedSignatureIndex: Map<IdSignature, Int> = run {
-            val maxSignatureIndex = IrArrayReader(library.signaturesOfInlineableFuns()).entryCount() - 1
-            (0..maxSignatureIndex).associateBy { symbolDeserializer.deserializeIdSignature(it) }
+            val fileStream = library.irFileOfInlineableFuns().codedInputStream
+            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+            fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
         }
+
         private val deserializedFunctionCache = mutableMapOf<IdSignature, IrSimpleFunction?>()
 
         fun deserializeInlineFunction(signature: IdSignature, originalFunctionPackage: IrPackageFragment): IrSimpleFunction? =

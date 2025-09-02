@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.IrDeclarationWriter
 import org.jetbrains.kotlin.library.impl.IrStringWriter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -1594,9 +1595,15 @@ open class IrFileSerializer(
             SerializedDeclaration(sigIndex, byteArray)
         }
 
+        // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.
+        // This way it could be possible to quickly look up for a specific preprocessed function in a KLIB.
+        val fileProto = ProtoFile.newBuilder()
+            .addAllFqName(serializeFqName(FqName.ROOT.asString()))
+            .addAllDeclarationId(topLevelDeclarations.map { /* signature index */ it.id })
+
         return SerializedIrFile(
-            fileData = ByteArray(0),
-            fqName = "",
+            fileData = fileProto.build().toByteArray(),
+            fqName = FqName.ROOT.asString(),
             path = "",
             types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
             signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),

@@ -109,6 +109,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
 
     // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
     override val hasIrOfInlineableFuns: Boolean get() = false
+    override fun irFileOfInlineableFuns(): ByteArray = shouldNotBeCalled()
     override fun irDeclarationOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
     override fun typeOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
     override fun signatureOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
@@ -116,8 +117,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun bodyOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
     override fun debugInfoOfInlineableFuns(index: Int): ByteArray? = shouldNotBeCalled()
     override fun fileEntryOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
-    override fun declarationsOfInlineableFuns(): ByteArray = shouldNotBeCalled()
-    override fun signaturesOfInlineableFuns(): ByteArray = shouldNotBeCalled()
 }
 
 class CurrentModuleWithICDeserializer(

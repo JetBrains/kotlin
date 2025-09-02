@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.cli.klib
 
+import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.impl.DeclarationIdTableReader
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 /**
  * Some information obtained from library's IR.
@@ -22,11 +24,11 @@ internal class KlibIrInfoLoader(private val library: KotlinLibrary) {
     fun loadIrInfo(): KlibIrInfo? {
         if (!library.hasIrOfInlineableFuns) return null
 
-        val declarationsReader = DeclarationIdTableReader(library.declarationsOfInlineableFuns())
-        val preparedInlineFunctionCopyNumber = declarationsReader.entryCount()
+        val fileStream = library.irFileOfInlineableFuns().codedInputStream
+        val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
 
         return KlibIrInfo(
-            preparedInlineFunctionCopyNumber = preparedInlineFunctionCopyNumber,
+            preparedInlineFunctionCopyNumber = fileProto.declarationIdList.size,
         )
     }
 }
