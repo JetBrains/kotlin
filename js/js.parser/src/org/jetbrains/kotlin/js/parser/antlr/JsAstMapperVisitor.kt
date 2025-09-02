@@ -6,32 +6,20 @@
 package org.jetbrains.kotlin.js.parser.antlr
 
 import com.google.gwt.dev.js.ScopeContext
+import com.intellij.util.containers.addIfNotNull
+import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ErrorNode
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
-import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsDebugger
-import org.jetbrains.kotlin.js.backend.ast.JsDoWhile
-import org.jetbrains.kotlin.js.backend.ast.JsEmpty
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsFor
-import org.jetbrains.kotlin.js.backend.ast.JsForIn
-import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.backend.ast.JsIf
-import org.jetbrains.kotlin.js.backend.ast.JsNode
-import org.jetbrains.kotlin.js.backend.ast.JsParameter
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
-import org.jetbrains.kotlin.js.backend.ast.JsVars
-import org.jetbrains.kotlin.js.backend.ast.JsWhile
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.parser.antlr.JsAstMapper.Companion.createParserException
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserBaseVisitor
 
 class JsAstMapperVisitor(
     private val fileName: String,
-    private val scopeContext: ScopeContext
+    private val scopeContext: ScopeContext,
 ) : JavaScriptParserBaseVisitor<JsNode?>() {
     override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext): JsNode? {
         return visit<JsStatement?>(ctx.statement())
@@ -164,7 +152,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext): JsDoWhile {
-        val body = visit<JsStatement>(ctx.statement())
+        val body = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
         val condition = visit<JsExpression>(ctx.expressionSequence())
 
         return JsDoWhile(condition, body)
@@ -172,7 +160,7 @@ class JsAstMapperVisitor(
 
     override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext): JsWhile {
         val condition = visit<JsExpression>(ctx.expressionSequence())
-        val body = visit<JsStatement>(ctx.statement())
+        val body = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
 
         return JsWhile(condition, body)
     }
@@ -218,47 +206,82 @@ class JsAstMapperVisitor(
     }
 
     override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode? {
-        TODO("Not yet implemented")
+        // There is no JS node that represents 'var' modifier.
+        return null
     }
 
-    override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext): JsContinue {
+        return JsContinue(getTargetLabel(ctx))
     }
 
-    override fun visitBreakStatement(ctx: JavaScriptParser.BreakStatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBreakStatement(ctx: JavaScriptParser.BreakStatementContext): JsBreak {
+        return JsBreak(getTargetLabel(ctx))
     }
 
-    override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext): JsReturn {
+        return JsReturn().apply {
+            ctx.expressionSequence()?.let {
+                expression = visit<JsExpression>(it)
+            }
+        }
     }
 
     override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("yield statement is not supported yet")
     }
 
     override fun visitWithStatement(ctx: JavaScriptParser.WithStatementContext): JsNode? {
-        TODO("Not yet implemented")
+        // The "with" statement is unsupported because it introduces ambiguity
+        // related to whether or not a name is obfuscatable that we cannot resolve
+        // statically. This is modified in our copy of the Rhino Parser to provide
+        // detailed source & line info. So, this method should never actually be
+        // called.
+        //
+        throw createParserException(
+            "Internal error: unexpected token 'with'",
+            ctx
+        )
     }
 
-    override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext): JsSwitch {
+        val jsSwitchExpr = visit<JsExpression>(ctx.expressionSequence())
+
+        val jsCases = ctx.caseBlock().caseClauses()?.map { visit<JsCase>(it) } ?: emptyList()
+        val jsDefault = ctx.caseBlock().defaultClause()?.let { visit<JsDefault>(it) }
+
+        return JsSwitch().apply {
+            expression = jsSwitchExpr
+            cases.addAll(jsCases)
+            cases.addIfNotNull(jsDefault)
+        }
     }
 
     override fun visitCaseBlock(ctx: JavaScriptParser.CaseBlockContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have a node representing switch body.
+        return null
     }
 
     override fun visitCaseClauses(ctx: JavaScriptParser.CaseClausesContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have a node representing case clauses aggregate.
+        return null
     }
 
-    override fun visitCaseClause(ctx: JavaScriptParser.CaseClauseContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitCaseClause(ctx: JavaScriptParser.CaseClauseContext): JsCase {
+        val jsExpression = ctx.expressionSequence()?.let { visit<JsExpression>(it) }
+        val jsStatements = ctx.statementList()?.let { visit<JsStatement?>(it) }
+
+        return JsCase().apply {
+            caseExpression = jsExpression
+            statements.addAll(listOfNotNull(jsStatements))
+        }
     }
 
-    override fun visitDefaultClause(ctx: JavaScriptParser.DefaultClauseContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitDefaultClause(ctx: JavaScriptParser.DefaultClauseContext): JsDefault {
+        val jsStatements = ctx.statementList()?.let { visit<JsStatement?>(it) }
+
+        return JsDefault().apply {
+            statements.addAll(listOfNotNull(jsStatements))
+        }
     }
 
     override fun visitLabelledStatement(ctx: JavaScriptParser.LabelledStatementContext): JsNode? {
@@ -266,19 +289,21 @@ class JsAstMapperVisitor(
     }
 
     override fun visitThrowStatement(ctx: JavaScriptParser.ThrowStatementContext): JsNode? {
+        val jsThrowExpr = visit<JsExpression>(ctx.expressionSequence())
+
+        return JsThrow(jsThrowExpr)
+    }
+
+    override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsTry {
         TODO("Not yet implemented")
     }
 
-    override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsNode? {
+    override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext): JsCatch {
         TODO("Not yet implemented")
     }
 
-    override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext): JsBlock {
+        return visit<JsBlock>(ctx.block())
     }
 
     override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext): JsDebugger {
@@ -295,31 +320,31 @@ class JsAstMapperVisitor(
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitClassTail(ctx: JavaScriptParser.ClassTailContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitClassElement(ctx: JavaScriptParser.ClassElementContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitMethodDefinition(ctx: JavaScriptParser.MethodDefinitionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitFieldDefinition(ctx: JavaScriptParser.FieldDefinitionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitClassElementName(ctx: JavaScriptParser.ClassElementNameContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitPrivateIdentifier(ctx: JavaScriptParser.PrivateIdentifierContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
@@ -800,7 +825,7 @@ class JsAstMapperVisitor(
         name: String?,
         body: JavaScriptParser.FunctionBodyContext,
         params: List<JavaScriptParser.FormalParameterArgContext>,
-        isGenerator: Boolean
+        isGenerator: Boolean,
     ): JsFunction {
         val functionName = when {
             name.isNullOrEmpty() -> null
@@ -827,6 +852,19 @@ class JsAstMapperVisitor(
         return function.also {
             scopeContext.exitFunction()
         }
+    }
+
+    private fun getTargetLabel(statementWithLabel: ParserRuleContext): JsNameRef? {
+        val identifier = when {
+            statementWithLabel is JavaScriptParser.ContinueStatementContext ->
+                statementWithLabel.identifier()
+            statementWithLabel is JavaScriptParser.BreakStatementContext ->
+                statementWithLabel.identifier()
+            else -> TODO("Unexpected node type: ${statementWithLabel.javaClass.name}")
+        }
+
+        val labelName = scopeContext.localNameFor(identifier.text)
+        return labelName.makeRef()
     }
 
     private inline fun <reified T> visit(node: ParseTree): T =
