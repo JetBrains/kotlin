@@ -177,8 +177,20 @@ public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("nothingReturn.kt")
+  public void testNothingReturn() {
+    runTest("native/native.tests/testData/lldb/nothingReturn.kt");
+  }
+
+  @Test
   @TestMetadata("stepThroughInlineArguments.kt")
   public void testStepThroughInlineArguments() {
     runTest("native/native.tests/testData/lldb/stepThroughInlineArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("unitArg.kt")
+  public void testUnitArg() {
+    runTest("native/native.tests/testData/lldb/unitArg.kt");
   }
 }
