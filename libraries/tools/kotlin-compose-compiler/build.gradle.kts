@@ -6,9 +6,18 @@ plugins {
     id("gradle-plugin-api-reference")
 }
 
+repositories {
+    google()
+}
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin"))
+    commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
+        overrideTargetJvmVersion(11)
+        isTransitive = false
+    }
+    commonCompileOnly(project(":plugins:compose-compiler-plugin:group-mapping"))
 }
 
 gradlePlugin {

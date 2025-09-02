@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compose.compiler.gradle.internal.ComposeWithAgpConfig
+import org.jetbrains.kotlin.compose.compiler.gradle.internal.configureComposeMappingFile
 import org.jetbrains.kotlin.gradle.plugin.*
 
 // Internal visibility could not be set until will properly support custom friendPaths:
@@ -31,6 +32,7 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         composeExtension = target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
+        target.configureComposeMappingFile()
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
