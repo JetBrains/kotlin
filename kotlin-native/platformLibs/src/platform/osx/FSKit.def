@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.FSKit
+
+modules = FSKit
+compilerOpts = -framework FSKit
+linkerOpts = -framework FSKit

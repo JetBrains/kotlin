@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.TouchController
+
+modules = TouchController
+compilerOpts = -framework TouchController
+linkerOpts = -framework TouchController

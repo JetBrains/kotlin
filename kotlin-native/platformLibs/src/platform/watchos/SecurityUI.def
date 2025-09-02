@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.SecurityUI
+
+modules = SecurityUI
+compilerOpts = -framework SecurityUI
+linkerOpts = -framework SecurityUI

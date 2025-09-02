@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.GameSave
+
+modules = GameSave
+compilerOpts = -framework GameSave
+linkerOpts = -framework GameSave

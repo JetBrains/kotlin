@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._CompositorServices_SwiftUI
+
+modules = _CompositorServices_SwiftUI
+compilerOpts = -framework _CompositorServices_SwiftUI
+linkerOpts = -framework _CompositorServices_SwiftUI
+#Disabled: Unavailable

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.DeclaredAgeRange
+
+modules = DeclaredAgeRange
+compilerOpts = -framework DeclaredAgeRange
+linkerOpts = -framework DeclaredAgeRange
+#Disabled: Swift-only framework

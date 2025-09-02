@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.WiFiAware
+
+modules = WiFiAware
+compilerOpts = -framework WiFiAware
+linkerOpts = -framework WiFiAware
+#Disabled: Not officially available for osx

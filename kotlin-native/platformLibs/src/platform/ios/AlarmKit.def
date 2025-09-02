@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.AlarmKit
+
+modules = AlarmKit
+compilerOpts = -framework AlarmKit
+linkerOpts = -framework AlarmKit

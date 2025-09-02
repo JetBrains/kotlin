@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._ARKit_SwiftUI
+
+modules = _ARKit_SwiftUI
+compilerOpts = -framework _ARKit_SwiftUI
+linkerOpts = -framework _ARKit_SwiftUI
+#Disabled: Unavailable

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MetalFX
+
+modules = MetalFX
+compilerOpts = -framework MetalFX
+linkerOpts = -framework MetalFX
+#Disabled: Not officially available for tvos

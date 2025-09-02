@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._RelevanceKit_MapKit
+
+modules = _RelevanceKit_MapKit
+compilerOpts = -framework _RelevanceKit_MapKit
+linkerOpts = -framework _RelevanceKit_MapKit
+#Disabled: Unavailable

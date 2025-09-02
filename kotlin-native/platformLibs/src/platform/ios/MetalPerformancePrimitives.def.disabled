@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MetalPerformancePrimitives
+
+modules = MetalPerformancePrimitives
+compilerOpts = -framework MetalPerformancePrimitives
+linkerOpts = -framework MetalPerformancePrimitives
+#Disabled: Unavailable
