@@ -930,11 +930,11 @@ class LinkTest : BaseAbstractTest() {
             |interface MyListWithNumber : List<Number>
             |
             |/**
-            | * 1 [List.foo] is resolved
-            | * 2 [MutableList.foo] is unresolved
-            | * 3 [MyListWithT.foo] is unresolved
-            | * 4 [MyListWithTNumberBound.foo] is unresolved in K2
-            | * 5 [MyListWithNumber.foo] is unresolved in K2
+            | * 1 [List.foo] 
+            | * 2 [MutableList.foo] is resolved only in K2, but unresolved in K1
+            | * 3 [MyListWithT.foo] is resolved only in K2, but unresolved in K1
+            | * 4 [MyListWithTNumberBound.foo]
+            | * 5 [MyListWithNumber.foo] 
             | */
             |fun usage() {}
         """.trimMargin(),
@@ -952,7 +952,11 @@ class LinkTest : BaseAbstractTest() {
                 )
                 assertEquals(
                     listOf(
-                        "List.foo" to fooDRI
+                        "List.foo" to fooDRI,
+                        "MutableList.foo" to fooDRI,
+                        "MyListWithT.foo" to fooDRI,
+                        "MyListWithTNumberBound.foo" to fooDRI,
+                        "MyListWithNumber.foo" to fooDRI,
                     ), module.getAllLinkDRIFrom("usage")
                 )
             }
