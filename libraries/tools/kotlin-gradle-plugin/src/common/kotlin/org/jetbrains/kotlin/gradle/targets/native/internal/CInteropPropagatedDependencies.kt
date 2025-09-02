@@ -50,12 +50,6 @@ internal fun Project.setupCInteropPropagatedDependencies() {
     kotlin.forAllSharedNativeCompilations { compilation ->
         compilation.compileDependencyFiles += getPropagatedCInteropDependenciesOrEmpty(compilation)
     }
-
-    kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
-        addIntransitiveMetadataDependencyIfPossible(
-            sourceSet, getPropagatedCInteropDependenciesOrEmpty(sourceSet)
-        )
-    }
 }
 
 internal fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection =

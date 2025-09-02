@@ -107,33 +107,6 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
     val dependsOn: Set<KotlinSourceSet>
 
     /**
-     * @suppress
-     */
-    @Deprecated(message = "KT-55312. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    val apiMetadataConfigurationName: String
-
-    /**
-     * @suppress
-     */
-    @Deprecated(message = "KT-55312. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    val implementationMetadataConfigurationName: String
-
-    /**
-     * @suppress
-     */
-    @Deprecated(message = "KT-55312. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
-    val compileOnlyMetadataConfigurationName: String
-
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val runtimeOnlyMetadataConfigurationName: String
-
-    /**
      * Constants for [KotlinSourceSet].
      */
     companion object {

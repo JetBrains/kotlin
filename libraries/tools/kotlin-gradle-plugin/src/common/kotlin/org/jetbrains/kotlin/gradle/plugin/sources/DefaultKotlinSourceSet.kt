@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
-import java.io.File
 import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
@@ -41,28 +40,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
-
-    @Deprecated("KT-55312")
-    override val apiMetadataConfigurationName: String
-        get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    @Deprecated("KT-55312")
-    override val implementationMetadataConfigurationName: String
-        get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    @Deprecated("KT-55312")
-    override val compileOnlyMetadataConfigurationName: String
-        get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
-    override val runtimeOnlyMetadataConfigurationName: String
-        get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
-    /**
-     * Dependencies added to this configuration will not be exposed to any other source set.
-     */
-    val intransitiveMetadataConfigurationName: String
-        get() = lowerCamelCaseName(disambiguateName(INTRANSITIVE), METADATA_CONFIGURATION_NAME_SUFFIX)
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
 
@@ -120,58 +97,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    //region IDE import for Granular source sets metadata
-
-    data class MetadataDependencyTransformation(
-        val groupId: String?,
-        val moduleName: String,
-        val projectPath: String?,
-        val projectStructureMetadata: KotlinProjectStructureMetadata?,
-        val allVisibleSourceSets: Set<String>,
-        /** If empty, then this source set does not see any 'new' source sets of the dependency, compared to its dependsOn parents, but it
-         * still does see all what the dependsOn parents see. */
-        val useFilesForSourceSets: Map<String, Iterable<File>>,
-    )
-
-    @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility
-    fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
-        return getDependenciesTransformation()
-    }
-
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
-
-    internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
-        val metadataDependencyResolutionByModule =
-            metadataTransformation.metadataDependencyResolutionsOrEmpty
-                .associateBy { ModuleIds.fromComponent(project, it.dependency) }
-
-        return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
-            val (group, name) = groupAndName
-            val dependencyIdentifier = resolution.dependency.id
-            val projectPath = dependencyIdentifier.projectPathOrNull?.takeIf { dependencyIdentifier in project.currentBuild }
-
-            when (resolution) {
-                // No metadata transformation leads to original dependency being used during import
-                is MetadataDependencyResolution.KeepOriginalDependency -> null
-
-                // We should pass empty transformation for excluded dependencies.
-                // No transformation at all will result in a composite metadata jar being used as a dependency.
-                is MetadataDependencyResolution.Exclude ->
-                    MetadataDependencyTransformation(group, name, projectPath, null, emptySet(), emptyMap())
-
-                is MetadataDependencyResolution.ChooseVisibleSourceSets -> {
-                    MetadataDependencyTransformation(
-                        group, name, projectPath,
-                        resolution.projectStructureMetadata,
-                        resolution.allVisibleSourceSetNames,
-                        project.transformMetadataLibrariesForIde(resolution)
-                    )
-                }
-            }
-        }
-    }
-
-    //endregion
 }
 
 internal val defaultSourceSetLanguageSettingsChecker =
