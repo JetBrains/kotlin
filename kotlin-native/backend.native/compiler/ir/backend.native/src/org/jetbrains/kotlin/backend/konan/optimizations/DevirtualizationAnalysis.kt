@@ -975,7 +975,8 @@ internal object DevirtualizationAnalysis {
 
                     context.logMultiple {
                         +"CONSTRAINT GRAPH FOR $symbol"
-                        val ids = function.body.allScopes.flatMap { it.nodes }.withIndex().associateBy({ it.value }, { it.index })
+                        val nodes = listOf(body.rootScope) + body.allScopes.flatMap { it.nodes }
+                        val ids = nodes.withIndex().associateBy({ it.value }, { it.index })
                         function.body.forEachNonScopeNode { node ->
                             +"FT NODE #${ids[node]}"
                             +DataFlowIR.Function.nodeToString(node, ids)
