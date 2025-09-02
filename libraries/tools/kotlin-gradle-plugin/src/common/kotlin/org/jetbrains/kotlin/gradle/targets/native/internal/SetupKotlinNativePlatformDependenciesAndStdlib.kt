@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -80,26 +79,15 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
     }
 }
 
-internal val SetupKotlinNativeStdlibAndPlatformDependenciesImport = KotlinProjectSetupCoroutine {
+internal val SetupSourceSetCommonizerTargetAssociation = KotlinProjectSetupCoroutine {
     val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
     val sourceSets = multiplatform
         .awaitSourceSets()
         .filter { it.isNativeSourceSet.await() }
         .filterIsInstance<DefaultKotlinSourceSet>()
-
-    val stdlib = project.files(project.konanDistribution.stdlib)
-    val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
-
     sourceSets.forEach { sourceSet ->
-        val commonizerTarget = sourceSet.commonizerTarget.await() ?: return@forEach
-        val konanDistributionProvider = KotlinNativeFromToolchainProvider(
-            project,
-            commonizerTarget.konanTargets,
-            nativeBundleBuildService
-        ).bundleDirectory.map { KonanDistribution(it) }
-        val nativeDistributionDependencies = getNativeDistributionDependencies(konanDistributionProvider, commonizerTarget)
-        sourceSet.addDependencyForLegacyImport(nativeDistributionDependencies)
-        sourceSet.addDependencyForLegacyImport(stdlib)
+        // FIXME: Figure out why calling commonizerTarget here causes the commonizer target value to be correct
+        sourceSet.commonizerTarget.await() ?: return@forEach
     }
 }
 
@@ -134,18 +122,3 @@ internal fun ObjectFactory.getOriginalPlatformLibrariesFor(
 
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }
-
-/**
- * Legacy resolves [implementationMetadataConfigurationName] and [intransitiveMetadataConfigurationName]
- * to get dependencies for given source set. Therefore, compileDependencyFiles and dependencies in those configurations
- * must be synced.
- */
-private fun DefaultKotlinSourceSet.addDependencyForLegacyImport(libraries: FileCollection) {
-    @Suppress("DEPRECATION")
-    val metadataConfigurationName = if (project.isIntransitiveMetadataConfigurationEnabled) {
-        intransitiveMetadataConfigurationName
-    } else {
-        implementationMetadataConfigurationName
-    }
-    project.dependencies.add(metadataConfigurationName, libraries)
-}

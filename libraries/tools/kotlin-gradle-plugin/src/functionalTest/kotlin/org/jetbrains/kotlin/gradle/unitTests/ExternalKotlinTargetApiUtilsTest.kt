@@ -14,36 +14,6 @@ import kotlin.test.*
 
 class ExternalKotlinTargetApiUtilsTest {
     @Test
-    fun `test - enableKgpBasedDependencyResolution - without`() {
-        val project = buildProjectWithMPP()
-        assertNull(project.kotlinPropertiesProvider.enableKgpDependencyResolution)
-    }
-
-    @Test
-    fun `test - enableKgpBasedDependencyResolution - enabled`() {
-        val project = buildProjectWithMPP()
-
-        project.externalKotlinTargetApiUtils.enableKgpBasedDependencyResolution(true)
-        assertEquals(true, project.kotlinPropertiesProvider.enableKgpDependencyResolution)
-    }
-
-    @Test
-    fun `test - enableKgpBasedDependencyResolution - disabled`() {
-        val project = buildProjectWithMPP()
-
-        project.externalKotlinTargetApiUtils.enableKgpBasedDependencyResolution(false)
-        assertEquals(false, project.kotlinPropertiesProvider.enableKgpDependencyResolution)
-    }
-
-    @Test
-    fun `test - enableKgpBasedDependencyResolution - default`() {
-        val project = buildProjectWithMPP()
-
-        project.externalKotlinTargetApiUtils.enableKgpBasedDependencyResolution()
-        assertEquals(true, project.kotlinPropertiesProvider.enableKgpDependencyResolution)
-    }
-
-    @Test
     fun `test - publishJvmEnvironmentAttribute - enabled`() {
         val project = buildProjectWithMPP()
         project.externalKotlinTargetApiUtils.publishJvmEnvironmentAttribute(true)

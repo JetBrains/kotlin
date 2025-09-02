@@ -1215,12 +1215,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils {
-	public abstract fun enableKgpBasedDependencyResolution (Z)V
 	public abstract fun publishJvmEnvironmentAttribute (Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils$DefaultImpls {
-	public static synthetic fun enableKgpBasedDependencyResolution$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils;ZILjava/lang/Object;)V
 	public static synthetic fun publishJvmEnvironmentAttribute$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils;ZILjava/lang/Object;)V
 }
 

@@ -91,16 +91,12 @@ private fun excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project: Pr
 
 // there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
 // aside from KotlinTarget
-@Suppress("DEPRECATION_ERROR") // KT-58227, KT-64273
 private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilations() {
     compilations.all {
         listOfNotNull(
             it.compileDependencyConfigurationName,
-            it.defaultSourceSet.apiMetadataConfigurationName,
-            it.defaultSourceSet.implementationMetadataConfigurationName,
-            it.defaultSourceSet.compileOnlyMetadataConfigurationName,
+            @Suppress("DEPRECATION_ERROR") // KT-64273
             (it as? org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
-
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
             (it as? KotlinWithJavaCompilation<*, *>)?.apiConfigurationName
         ).forEach { configurationName ->
@@ -112,6 +108,7 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
         }
     }
 }
+
 
 internal fun DependencyHandler.kotlinDependency(moduleName: String, versionOrNull: String?) =
     create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")

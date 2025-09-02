@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -18,22 +17,6 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
-
-internal fun Project.setupCInteropPropagatedDependencies() {
-    val kotlin = this.multiplatformExtensionOrNull ?: return
-
-    kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
-        addIntransitiveMetadataDependencyIfPossible(
-            sourceSet, getPropagatedCInteropDependenciesOrEmpty(sourceSet)
-        )
-    }
-}
-
-internal fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection =
-    getPlatformCinteropDependenciesOrEmpty(sourceSet) { relevantCompilation ->
-        /* Source Set is directly included in compilation -> No need to add dependency again (when looking for propagated dependencies) */
-        sourceSet !in relevantCompilation.kotlinSourceSets
-    }
 
 internal fun Project.getPlatformCinteropDependenciesOrEmpty(
     sourceSet: DefaultKotlinSourceSet,
