@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -32,3 +34,10 @@ internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<Ko
 
 internal suspend fun InternalKotlinSourceSet.isSharedSourceSet() =
     awaitPlatformCompilations().size > 1
+
+internal val InternalKotlinSourceSet.metadataCompilationOrNull: KotlinMetadataCompilation<*>?
+    get() = project
+        .multiplatformExtension
+        .metadataTarget
+        .compilations
+        .findByName(this.name) as? KotlinMetadataCompilation<*>

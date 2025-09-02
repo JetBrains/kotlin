@@ -47,6 +47,15 @@ abstract class K2MultiplatformStructure {
         @get:IgnoreEmptyDirectories
         @get:Incremental
         val dependencies: FileCollection,
+
+        /**
+         * Represents friends dependencies for the containing fragment.
+         * All friend dependencies must be also declared in [dependencies]
+         */
+        @get:Classpath
+        @get:IgnoreEmptyDirectories
+        @get:Incremental
+        val friendDependencies: FileCollection,
     )
 
     @get:Nested
@@ -100,6 +109,13 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
 internal val K2MultiplatformStructure.fragmentDependenciesCompilerArgs: Array<String>
     get() = fragments.get().flatMap { fragment ->
         fragment.dependencies.files.map { dependencyFile ->
+            "${fragment.fragmentName}:${dependencyFile.absolutePath}"
+        }
+    }.toTypedArray()
+
+internal val K2MultiplatformStructure.fragmentFriendDependenciesCompilerArgs: Array<String>
+    get() = fragments.get().flatMap { fragment ->
+        fragment.friendDependencies.files.map { dependencyFile ->
             "${fragment.fragmentName}:${dependencyFile.absolutePath}"
         }
     }.toTypedArray()

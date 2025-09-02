@@ -294,9 +294,13 @@ abstract class KotlinCompile @Inject constructor(
             if (multiPlatformEnabled.get()) {
                 if (compilerOptions.usesK2.get()) {
                     args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourcesFiles, sourceFileFilter)
-                    args.fragmentDependencies = if (separateKmpCompilation.get()) {
-                        multiplatformStructure.fragmentDependenciesCompilerArgs
-                    } else emptyArray()
+                    args.fragmentDependencies =
+                        if (separateKmpCompilation.get()) multiplatformStructure.fragmentDependenciesCompilerArgs
+                        else emptyArray()
+
+                    args.fragmentFriendDependencies =
+                        if (separateKmpCompilation.get()) multiplatformStructure.fragmentFriendDependenciesCompilerArgs
+                        else emptyArray()
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }

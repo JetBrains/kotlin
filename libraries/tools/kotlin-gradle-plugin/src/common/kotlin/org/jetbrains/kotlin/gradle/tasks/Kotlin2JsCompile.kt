@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
@@ -220,9 +219,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
             if (multiPlatformEnabled.get()) {
                 if (compilerOptions.usesK2.get()) {
                     args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sources.files, sourceFileFilter)
-                    args.fragmentDependencies = if (separateKmpCompilation.get()) {
-                        multiplatformStructure.fragmentDependenciesCompilerArgs
-                    } else emptyArray()
+                    args.fragmentDependencies =
+                        if (separateKmpCompilation.get()) multiplatformStructure.fragmentDependenciesCompilerArgs
+                        else emptyArray()
+
+                    args.fragmentFriendDependencies =
+                        if (separateKmpCompilation.get()) multiplatformStructure.fragmentFriendDependenciesCompilerArgs
+                        else emptyArray()
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
