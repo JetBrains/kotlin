@@ -60,7 +60,7 @@ void gc::mark::ConcurrentMark::endMarkingEpoch() {
     lockedMutatorsList_ = std::nullopt;
 }
 
-void gc::mark::ConcurrentMark::markInSTW() {
+uint64_t gc::mark::ConcurrentMark::markInSTW(uint64_t suspensionId) {
     std::unique_lock markLock(markMutex_);
     ParallelProcessor::Worker mainWorker(*parallelProcessor_);
     GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
@@ -73,7 +73,7 @@ void gc::mark::ConcurrentMark::markInSTW() {
     completeMutatorsRootSet(mainWorker);
 
     barriers::enableBarriers(gcHandle().getEpoch());
-    resumeTheWorld(gcHandle());
+    resumeTheWorld(gcHandle(), suspensionId);
 
     // global root set must be collected after all the mutator's global data have been published
     collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
@@ -93,7 +93,7 @@ void gc::mark::ConcurrentMark::markInSTW() {
         ++iter;
         if (iter == compiler::concurrentMarkMaxIterations()) {
             GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after (%zu concurrent attempts)", iter);
-            stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
+            suspensionId = stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
             terminateInSTW = true;
         }
     } while (!tryTerminateMark(everSharedBatches));
@@ -105,7 +105,7 @@ void gc::mark::ConcurrentMark::markInSTW() {
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
 
     if (!terminateInSTW) {
-        stopTheWorld(gcHandle(), "GC stop the world: prepare to sweep");
+        suspensionId = stopTheWorld(gcHandle(), "GC stop the world: prepare to sweep");
     }
 
     barriers::disableBarriers();
@@ -114,6 +114,8 @@ void gc::mark::ConcurrentMark::markInSTW() {
         thread.gc().impl().mark_.markQueue().destroy();
     }
     endMarkingEpoch();
+
+    return suspensionId;
 }
 
 gc::GCHandle& gc::mark::ConcurrentMark::gcHandle() {
@@ -175,7 +177,7 @@ void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
             bool allDone = true;
             for (auto& mutator : *lockedMutatorsList_) {
                 auto& markData = mutator.gc().impl().mark_;
-                if (mutator.suspensionData().suspendedOrNative()) {
+                if (mutator.suspensionData().suspendedOrNative(0)) {
                     markData.ensureFlushActionExecuted();
                 } else if (!markData.flushAction_->executed()) {
                     allDone = false;

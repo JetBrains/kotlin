@@ -105,7 +105,7 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
     lockedMutatorsList_ = std::nullopt;
 }
 
-void gc::mark::ParallelMark::markInSTW() {
+uint64_t gc::mark::ParallelMark::markInSTW(uint64_t suspensionId) {
     if (compiler::gcMarkSingleThreaded()) {
         ParallelProcessor::Worker worker(*parallelProcessor_);
         gc::collectRootSet<MarkTraits>(gcHandle(), worker, [] (mm::ThreadData&) { return true; });
@@ -130,15 +130,17 @@ void gc::mark::ParallelMark::markInSTW() {
     if (compiler::concurrentWeakSweep()) {
         // Expected to happen inside STW.
         EnableWeakRefBarriers(gcHandle().getEpoch());
-        resumeTheWorld(gcHandle());
+        resumeTheWorld(gcHandle(), suspensionId);
     }
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
 
     if (compiler::concurrentWeakSweep()) {
-        stopTheWorld(gcHandle(), "GC stop the world: prepare heap for sweep");
+        suspensionId = stopTheWorld(gcHandle(), "GC stop the world: prepare heap for sweep");
         DisableWeakRefBarriers();
     }
+
+    return suspensionId;
 }
 
 void gc::mark::ParallelMark::markOnMutator(mm::ThreadData& mutatorThread) {

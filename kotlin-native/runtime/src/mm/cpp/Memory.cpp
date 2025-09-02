@@ -242,13 +242,13 @@ extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHe
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
 
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->suspensionData().requestThreadsSuspension("Memory dump");
+    auto id = threadData->suspensionData().requestThreadsSuspension("Memory dump");
     CallsCheckerIgnoreGuard guard;
     // We're in the runnable state, but everything else (including the GC thread) will be suspended.
     // It's fine to wait for that suspension and execute long-running operations (I/O) here.
-    mm::WaitForThreadsSuspension();
+    mm::WaitForThreadsSuspension(id);
     bool success = mm::DumpMemory(fd);
-    mm::ResumeThreads();
+    mm::ResumeThreads(id);
     return success;
 }
 

@@ -185,11 +185,12 @@ struct DefaultProcessWeaksTraits {
     static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
 };
 
-void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
-void resumeTheWorld(GCHandle gcHandle) noexcept;
+uint64_t stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
+void resumeTheWorld(GCHandle gcHandle, uint64_t id) noexcept;
 
 [[nodiscard]] inline auto stopTheWorldInScope(GCHandle gcHandle) noexcept {
-    return ScopeGuard([=]() { stopTheWorld(gcHandle, "GC stop the world"); }, [=]() { resumeTheWorld(gcHandle); });
+    auto id = stopTheWorld(gcHandle, "GC stop the world");
+    return ScopeGuard([=]() { resumeTheWorld(gcHandle, id); });
 }
 
 } // namespace gc

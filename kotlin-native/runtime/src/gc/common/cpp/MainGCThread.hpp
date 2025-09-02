@@ -47,13 +47,13 @@ private:
 
         mark_.setupBeforeSTW(gcHandle);
 
-        stopTheWorld(gcHandle, "GC stop the world: mark");
+        auto suspensionId = stopTheWorld(gcHandle, "GC stop the world: mark");
 
         gcScheduler_.onGCStart();
 
         state_.start(epoch);
 
-        mark_.markInSTW();
+        suspensionId = mark_.markInSTW(suspensionId);
 
         // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
         // By this point all the alive heap must be marked.
@@ -65,14 +65,14 @@ private:
         allocator_.prepareForGC();
 
         if (GCTraits::kConcurrentSweep) {
-            resumeTheWorld(gcHandle);
+            resumeTheWorld(gcHandle, suspensionId);
         }
 
         allocator_.sweep(gcHandle);
         gcScheduler_.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
 
         if (!GCTraits::kConcurrentSweep) {
-            resumeTheWorld(gcHandle);
+            resumeTheWorld(gcHandle, suspensionId);
         }
 
         state_.finish(epoch);

@@ -5,15 +5,17 @@
 
 #include "MarkAndSweepUtils.hpp"
 
-void kotlin::gc::stopTheWorld(GCHandle gcHandle, const char* reason) noexcept {
-    mm::RequestThreadsSuspension(reason);
+uint64_t kotlin::gc::stopTheWorld(GCHandle gcHandle, const char* reason) noexcept {
+    auto id = mm::RequestThreadsSuspension(reason);
     gcHandle.suspensionRequested();
 
-    mm::WaitForThreadsSuspension();
+    mm::WaitForThreadsSuspension(id);
     gcHandle.threadsAreSuspended();
+
+    return id;
 }
 
-void kotlin::gc::resumeTheWorld(kotlin::gc::GCHandle gcHandle) noexcept {
-    mm::ResumeThreads();
+void kotlin::gc::resumeTheWorld(kotlin::gc::GCHandle gcHandle, uint64_t id) noexcept {
+    mm::ResumeThreads(id);
     gcHandle.threadsAreResumed();
 }

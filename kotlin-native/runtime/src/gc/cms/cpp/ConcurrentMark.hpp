@@ -120,7 +120,7 @@ public:
     void setupBeforeSTW(GCHandle gcHandle);
 
     /** To be run by a single "main" GC thread during STW. */
-    void markInSTW();
+    uint64_t markInSTW(uint64_t suspensionId);
 
     void requestShutdown() { /* no-op */ }
 

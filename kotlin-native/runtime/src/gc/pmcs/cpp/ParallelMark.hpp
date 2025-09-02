@@ -119,7 +119,7 @@ public:
     void setupBeforeSTW(gc::GCHandle gcHandle);
 
     /** To be run by a single "main" GC thread during STW. */
-    void markInSTW();
+    uint64_t markInSTW(uint64_t suspensionId);
 
     /**
      * To be run by mutator threads that would like to participate in mark.

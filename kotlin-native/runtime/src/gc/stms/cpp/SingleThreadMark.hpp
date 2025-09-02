@@ -15,10 +15,11 @@ public:
         gcHandle_ = gcHandle;
     }
 
-    void markInSTW() {
+    uint64_t markInSTW(uint64_t suspensionId) {
         gc::collectRootSet<internal::MarkTraits>(gcHandle(), markQueue_, [](mm::ThreadData &) { return true; });
         gc::Mark<internal::MarkTraits>(gcHandle(), markQueue_);
         gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
+        return suspensionId;
     }
 
     void requestShutdown() { /* no-op */ }

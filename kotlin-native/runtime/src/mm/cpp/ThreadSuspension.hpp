@@ -19,20 +19,23 @@ class ThreadData;
 namespace internal {
 
 using SuspensionReason = const char*;
+extern std::atomic<uint64_t> gSuspensionRequestId;
 extern std::atomic<SuspensionReason> gSuspensionRequestReason;
 extern std::atomic<bool> gSuspensionRequestIsCritical;
 
 } // namespace internal
 
-inline bool IsThreadSuspensionRequested(bool critical = false) noexcept {
+inline uint64_t IsThreadSuspensionRequested(bool critical = false) noexcept {
     // Must use seq_cst ordering for synchronization with GC
     // in native->runnable transition.
-    auto reason = internal::gSuspensionRequestReason.load();
-    if (reason == nullptr)
-        return false;
+    auto currentId = internal::gSuspensionRequestId.load();
+    if (currentId == 0)
+        return 0;
     if (!critical)
-        return true;
-    return internal::gSuspensionRequestIsCritical.load(std::memory_order_relaxed);
+        return currentId;
+    if (internal::gSuspensionRequestIsCritical.load(std::memory_order_relaxed))
+        return currentId;
+    return 0;
 }
 
 class ThreadSuspensionData : private Pinned {
@@ -57,15 +60,25 @@ public:
     ~ThreadSuspensionData() = default;
 
     ThreadState state() noexcept { return state_; }
+    uint64_t suspensionId() noexcept { return suspensionId_.load(std::memory_order_relaxed); }
 
     ThreadState setState(ThreadState newState, bool critical) noexcept;
     ThreadState setStateNoSafePoint(ThreadState newState) noexcept { return state_.exchange(newState, std::memory_order_acq_rel); }
 
-    bool suspendedOrNative() noexcept { return state() == kotlin::ThreadState::kNative; }
+    bool suspendedOrNative(uint64_t id) noexcept {
+        if (state() != kotlin::ThreadState::kNative)
+            return false;
+        if (id == 0)
+            return true;
+        auto actualId = suspensionId();
+        if (actualId == 0)
+            return true;
+        return actualId == id;
+    }
 
     void suspendIfRequested(bool critical) noexcept;
 
-    void requestThreadsSuspension(const char* reason) noexcept;
+    uint64_t requestThreadsSuspension(const char* reason) noexcept;
 
     /**
      * Signals that the thread would not mutate a heap during a relatively long time.
@@ -80,6 +93,7 @@ public:
 
 private:
     std::atomic<ThreadState> state_;
+    std::atomic<uint64_t> suspensionId_ = 0;
     mm::ThreadData& threadData_;
 };
 
@@ -90,16 +104,16 @@ private:
  *
  * Returns false if some other thread tries to suspended the threads at the moment.
  */
-bool TryRequestThreadsSuspension(const char* reason) noexcept;
-void RequestThreadsSuspension(const char* reason) noexcept;
+uint64_t TryRequestThreadsSuspension(const char* reason) noexcept;
+uint64_t RequestThreadsSuspension(const char* reason) noexcept;
 
-void WaitForThreadsSuspension() noexcept;
+void WaitForThreadsSuspension(uint64_t id) noexcept;
 
 /**
  * Resumes all threads registered in ThreadRegistry that were suspended by the SuspendThreads call.
  * Does not wait until all such threads are actually resumed.
  */
-void ResumeThreads() noexcept;
+void ResumeThreads(uint64_t id) noexcept;
 
 } // namespace mm
 } // namespace kotlin
