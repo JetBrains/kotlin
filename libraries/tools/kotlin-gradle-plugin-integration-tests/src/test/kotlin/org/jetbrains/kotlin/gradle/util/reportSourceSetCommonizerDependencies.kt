@@ -11,29 +11,41 @@ import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 import java.nio.file.Path
 import javax.annotation.RegEx
-import kotlin.io.path.appendText
 import kotlin.test.fail
 
 data class SourceSetCommonizerDependency(
     val sourceSetName: String,
     val target: CommonizerTarget,
     val file: File,
-)
+) : Serializable
 
 data class SourceSetCommonizerDependencies(
     val sourceSetName: String,
     val dependencies: Set<SourceSetCommonizerDependency>,
-) {
+) : Serializable {
 
     fun withoutNativeDistributionDependencies(konanDataDirProperty: Path): SourceSetCommonizerDependencies {
         return SourceSetCommonizerDependencies(
@@ -121,39 +133,31 @@ fun TestProject.reportSourceSetCommonizerDependencies(
     options: BuildOptions = this.buildOptions,
     test: WithSourceSetCommonizerDependencies.(compiledProject: BuildResult) -> Unit,
 ) {
-    if (subproject != null) {
-        subProject(subproject).buildGradleKts.appendText(taskSourceCode)
-    } else {
-        buildGradleKts.appendText(taskSourceCode)
-    }
-
-    val taskName = buildString {
-        if (subproject != null) append(":$subproject")
-        append(":reportCommonizerSourceSetDependencies")
-    }
-
-    build(taskName, buildOptions = options) {
-
-        val dependencyReports = output.lineSequence().filter { line -> line.contains("SourceSetCommonizerDependencyReport") }.toList()
-
-        val withSourceSetCommonizerDependencies = WithSourceSetCommonizerDependencies { sourceSetName ->
-            val reportMarker = "Report[$sourceSetName]"
-
-            val reportForSourceSet = dependencyReports.firstOrNull { line -> line.contains(reportMarker) }
-                ?: fail("Missing dependency report for $sourceSetName")
-
-            val files = reportForSourceSet.split(reportMarker, limit = 2).last().split("|#+#|")
-                .map(String::trim).filter(String::isNotEmpty).map(::File)
-
-            val dependencies = files.mapNotNull { file -> createSourceSetCommonizerDependencyOrNull(sourceSetName, file) }.toSet()
-            SourceSetCommonizerDependencies(sourceSetName, dependencies)
-        }
-
-        withSourceSetCommonizerDependencies.test(this)
+    resolveIdeDependencies(subproject, buildOptions = options) { container ->
+        WithSourceSetCommonizerDependencies { sourceSetName ->
+            val ideDependencies = container[sourceSetName]
+            SourceSetCommonizerDependencies(
+                sourceSetName = sourceSetName,
+                dependencies = ideDependencies
+                    .filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+                    .filter {
+                        it.klibExtra?.commonizerTarget != null
+                    }
+                    .map {
+                        SourceSetCommonizerDependency(
+                            sourceSetName = sourceSetName,
+                            target = parseCommonizerTarget(it.klibExtra?.commonizerTarget!!),
+                            file = it.classpath.single(),
+                        )
+                    }
+                    .toSet()
+            )
+        }.test(this)
     }
 }
 
 private fun createSourceSetCommonizerDependencyOrNull(sourceSetName: String, libraryFile: File): SourceSetCommonizerDependency? {
+    if (!libraryFile.exists()) return null
     return SourceSetCommonizerDependency(
         sourceSetName,
         file = libraryFile,
@@ -167,41 +171,3 @@ private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = 
 ).commonizerTarget?.let(::parseCommonizerTarget)
 
 private val File.parentsClosure: Set<File> get() = this.linearClosure { it.parentFile }
-
-private const val dollar = "\$"
-
-private val taskSourceCode = """
-
-abstract class ReportCommonizerSourceSetDependencies : DefaultTask() {
-    class SourceSetIntransitiveDependencies(
-        @get:Input
-        val sourceSetName: String,
-
-        @get:InputFiles
-        val dependencies: FileCollection
-    )
-
-    @get:Nested
-    abstract val sourceSetIntransitiveDependencies: ListProperty<SourceSetIntransitiveDependencies>
-
-    @TaskAction
-    fun action() {
-        sourceSetIntransitiveDependencies.get().forEach {
-            println("SourceSetCommonizerDependencyReport[${'$'}{it.sourceSetName}]${'$'}{it.dependencies.joinToString("|#+#|")}")
-        }
-    }
-}
-
-tasks.register<ReportCommonizerSourceSetDependencies>("reportCommonizerSourceSetDependencies") {
-    sourceSetIntransitiveDependencies.set(kotlin.sourceSets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet>().map { sourceSet ->
-        val configuration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
-
-        ReportCommonizerSourceSetDependencies.SourceSetIntransitiveDependencies(
-            sourceSet.name,
-            configuration.incoming.artifacts.artifactFiles
-        )
-    })
-}
-
-
-""".trimIndent()
