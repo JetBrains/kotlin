@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
+import org.jetbrains.kotlin.test.services.fir.OnlyTestsWithTypeAliasesMetaConfigurator
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -48,6 +49,7 @@ open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFi
             }
 
             useAfterAnalysisCheckers(::FirWithoutAliasExpansionTestSuppressor)
+            useMetaTestConfigurators(::OnlyTestsWithTypeAliasesMetaConfigurator)
         }
     }
 }

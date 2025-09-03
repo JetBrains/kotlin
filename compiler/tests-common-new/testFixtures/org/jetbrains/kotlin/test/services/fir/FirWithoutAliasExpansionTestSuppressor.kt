@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -31,5 +32,12 @@ class FirWithoutAliasExpansionTestSuppressor(testServices: TestServices) : After
 
             else -> emptyList()
         }
+    }
+}
+
+class OnlyTestsWithTypeAliasesMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean {
+        val testText = testServices.moduleStructure.originalTestDataFiles.first().readText()
+        return !testText.contains("typealias")
     }
 }
