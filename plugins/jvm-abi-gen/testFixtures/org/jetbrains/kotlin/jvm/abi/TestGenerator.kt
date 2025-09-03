@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
+import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
