@@ -129,28 +129,26 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         val cache = mutableMapOf<Any, KotlinResolvedLibrary>()
         cache.putAll(rootLibraries.map { it.library.libraryFile.fileKey to it })
 
-        var newDependencies = rootLibraries
-        do {
-            newDependencies = newDependencies.map { library: KotlinResolvedLibraryImpl ->
-                library.library.unresolvedDependencies(resolveManifestDependenciesLenient).asSequence()
-
-                    .filterNot { searchPathResolver.isProvidedByDefault(it) }
-                    .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
-                    .map { resolved ->
-                        val fileKey = resolved.library.libraryFile.fileKey
-                        if (fileKey in cache) {
-                            library.addDependency(cache[fileKey]!!)
-                            null
-                        } else {
-                            cache.put(fileKey, resolved)
-                            library.addDependency(resolved)
-                            resolved
+        val processingQueue = ArrayDeque(rootLibraries)
+        while(processingQueue.isNotEmpty()) {
+            val currentLibrary = processingQueue.removeFirst()
+            currentLibrary.library.unresolvedDependencies(resolveManifestDependenciesLenient)
+                .forEach { unresolvedDependency ->
+                    if (!searchPathResolver.isProvidedByDefault(unresolvedDependency)) {
+                        searchPathResolver.resolve(unresolvedDependency)?.let { resolvedDependencyLibrary ->
+                            val fileKey = resolvedDependencyLibrary.libraryFile.fileKey
+                            if (fileKey in cache) {
+                                currentLibrary.addDependency(cache[fileKey]!!)
+                            } else {
+                                val newlyResolved = KotlinResolvedLibraryImpl(resolvedDependencyLibrary)
+                                cache[fileKey] = newlyResolved
+                                currentLibrary.addDependency(newlyResolved)
+                                processingQueue.add(newlyResolved)
+                            }
                         }
-
-                    }.filterNotNull()
-                    .toList()
-            }.flatten()
-        } while (newDependencies.isNotEmpty())
+                    }
+                }
+        }
         return result
     }
 }
