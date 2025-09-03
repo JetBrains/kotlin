@@ -5,4 +5,4 @@ $TEMP_DIR$
 illegalJsCode.kt
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
--Xklib-ir-inliner=false
+-Xklib-ir-inliner=disabled
