@@ -51,7 +51,9 @@ esac
 
 DEFS=$NATIVE_SRCDIR/platformLibs/src/platform/$1
 FRAMEWORKS_DEV=$DEV_SDK/System/Library/Frameworks
+SUBFRAMEWORKS_DEV=$DEV_SDK/System/Library/SubFrameworks
 FRAMEWORKS_SIM=$SIM_SDK/System/Library/Frameworks
+SUBFRAMEWORKS_SIM=$SIM_SDK/System/Library/SubFrameworks
 
 DEFS_FILE=$(mktemp)
 FRAMEWORKS_DEV_FILE=$(mktemp)
@@ -60,8 +62,8 @@ FRAMEWORKS_COMMON_FILE=$(mktemp)
 FRAMEWORKS_DEV_ONLY_FILE=$(mktemp)
 FRAMEWORKS_SIM_ONLY_FILE=$(mktemp)
 ls $DEFS | grep .def | cut -d '.' -f 1 > $DEFS_FILE
-ls $FRAMEWORKS_DEV | grep .framework | cut -d '.' -f 1 > $FRAMEWORKS_DEV_FILE
-ls $FRAMEWORKS_SIM | grep .framework | cut -d '.' -f 1 > $FRAMEWORKS_SIM_FILE
+{ ls "$FRAMEWORKS_DEV" 2>/dev/null || true; ls "$SUBFRAMEWORKS_DEV" 2>/dev/null || true; } | grep .framework | cut -d '.' -f 1 | sort -u > $FRAMEWORKS_DEV_FILE
+{ ls "$FRAMEWORKS_SIM" 2>/dev/null || true; ls "$SUBFRAMEWORKS_SIM" 2>/dev/null || true; } | grep .framework | cut -d '.' -f 1 | sort -u > $FRAMEWORKS_SIM_FILE
 
 comm -12 $FRAMEWORKS_DEV_FILE $FRAMEWORKS_SIM_FILE > $FRAMEWORKS_COMMON_FILE
 comm -13 $FRAMEWORKS_DEV_FILE $FRAMEWORKS_SIM_FILE > $FRAMEWORKS_SIM_ONLY_FILE
@@ -212,7 +214,7 @@ then
 fi
 for framework in "${AVAILABLE[@]}"
 do
-    if [[ -d $DEV_SDK/System/Library/Frameworks/$framework.framework/Modules ]]
+    if [[ -d "$DEV_SDK/System/Library/Frameworks/$framework.framework/Modules" || -d "$DEV_SDK/System/Library/SubFrameworks/$framework.framework/Modules" ]]
     then
         create_def $framework
     else
