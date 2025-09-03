@@ -32,8 +32,8 @@ import java.io.File
 internal fun collectNewDirtySourcesFromFirResult(
     phaseArtifact: JvmFrontendPipelineArtifact,
     caches: IncrementalJvmCachesManager,
+    alreadyCompiledSources: Set<File>,
     reporter: ICReporter,
-    alreadyCompiledSources: Set<File>
 ): LinkedHashSet<File> {
     val changesCollector = ChangesCollector()
     val globalSerializationBindings = JvmSerializationBindings()

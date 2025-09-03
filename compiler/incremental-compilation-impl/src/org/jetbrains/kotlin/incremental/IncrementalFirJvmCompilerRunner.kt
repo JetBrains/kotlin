@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.reportPerformanceData
+import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -131,14 +132,26 @@ open class IncrementalFirJvmCompilerRunner(
                     //TODO!!!!!!!!!!!(emazhukin) must log the fir specific logic to understand what's going on there
                     val firPipelineArtifact = phaseOutput as? JvmFrontendPipelineArtifact ?: return null // TODO check - error exit should look ok
                     alreadyCompiledByFrontendSources.addAll(firPipelineArtifact.sourceFiles.mapNotNull { it.toIoFileOrNull() })
-                    val expandedDirtySources = collectNewDirtySourcesFromFirResult(firPipelineArtifact, caches, reporter, alreadyCompiledByFrontendSources)
+                    val expandedDirtySources = collectNewDirtySourcesFromFirResult(
+                        firPipelineArtifact, caches, alreadyCompiledByFrontendSources,
+                        reporter,
+                    )
                     // note: it's always correct to pass alreadyCompiledByFrontendSources as excludes
                     // with monotonous dirtySet, if no new files are added to dirtySet, it's the final round
                     // and with non-monotonous dirtySet, this risky optimization is "in the name"
 
+
+                    //println("==============")
+                    //println("compiled so far: ${alreadyCompiledByFrontendSources.joinToString(", ") { it.name }}")
+                    //println("new dirty sources: ${expandedDirtySources.joinToString(", ") { it.name }}")
+
                     //TODO(emazhukin) is frontend dirtyset allowed to not be monotonous? i.e. can we run frontend once per file max?
                     // i bet we can not
                     val dirtySetDiff = expandedDirtySources - alreadyCompiledByFrontendSources
+
+                    //println("sanity check - dsetdiff: ${expandedDirtySources.joinToString(", ") { it.name }}")
+                    //println("==============")
+
                     when (dirtySetDiff.size) {
                         0 -> JvmFir2IrPipelinePhase
                         else -> {
