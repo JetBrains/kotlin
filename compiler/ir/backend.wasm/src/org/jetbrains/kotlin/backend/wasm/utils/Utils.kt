@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrTry
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionMarker
@@ -38,3 +37,6 @@ internal fun getFunctionalInterfaceSlot(iFace: IrClass): Int {
 
 internal val String.fitsLatin1
     get() = this.all { it.code in 0..255 }
+
+internal val String.fitsWasmImportName
+    get() = this.fitsLatin1 && this.length <= 100000
