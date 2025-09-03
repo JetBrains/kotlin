@@ -308,7 +308,8 @@ internal object CompilationServiceImpl : CompilationService {
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
             DaemonCompilationResults(
                 loggerAdapter.kotlinLogger,
-                compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir
+                compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir,
+                DoNothingBuildMetricsReporter,
             )
         ).get()
 
