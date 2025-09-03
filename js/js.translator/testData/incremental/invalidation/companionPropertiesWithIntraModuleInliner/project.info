@@ -4,6 +4,12 @@ IGNORE_PER_FILE: true
 // Expected :[lib1/l1, lib2/l2int]
 // Actual   :[lib1/l1, lib2/l2int, lib2/l2]
 
+IGNORE_BACKEND: WASM
+// ^^^KT-80698
+// Mismatched file stats for module [kotlin_lib2] at step 2
+// Expected :[updated imports=[l2int.kt, l2string.kt]]
+// Actual   :[updated imports=[l2.kt, l2int.kt, l2string.kt]]
+
 MODULES: lib1, lib2, main
 
 STEP 0:
