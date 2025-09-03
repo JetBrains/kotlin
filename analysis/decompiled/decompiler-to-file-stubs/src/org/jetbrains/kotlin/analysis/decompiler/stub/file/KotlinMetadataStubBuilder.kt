@@ -34,6 +34,11 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
     protected abstract fun readFile(virtualFile: VirtualFile, content: ByteArray?): FileWithMetadata?
 
     /**
+     * Whether [readFile] is expected to have a not null result
+     */
+    protected open fun hasMetadata(virtualFile: VirtualFile): Boolean = readFile(virtualFile, null) != null
+
+    /**
      * Whether the [file] is supported, so it might have a stub
      */
     fun isSupported(file: VirtualFile): Boolean {
@@ -44,20 +49,10 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
     /**
      * Whether the [file] would have a stub as the result of [buildFileStub]
      */
-    fun hasStub(file: VirtualFile): Boolean = isSupported(file) && readFileSafely(file) != null
+    fun hasStub(file: VirtualFile): Boolean = isSupported(file) && file.readSafely { hasMetadata(file) } == true
 
-    fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? = try {
-        if (file.isValid) {
-            readFile(file, content)
-        } else {
-            null
-        }
-    } catch (_: IOException) {
-        // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
-        // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
-        // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
-        // it's not always allowed and also is likely to degrade performance
-        null
+    fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? = file.readSafely {
+        readFile(file, content)
     }
 
     final override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
@@ -146,3 +141,16 @@ abstract class KotlinMetadataStubBuilder : ClsStubBuilder() {
     }
 }
 
+private inline fun <T> VirtualFile.readSafely(action: () -> T): T? = try {
+    if (isValid) {
+        action()
+    } else {
+        null
+    }
+} catch (_: IOException) {
+    // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
+    // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
+    // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
+    // it's not always allowed and also is likely to degrade performance
+    null
+}

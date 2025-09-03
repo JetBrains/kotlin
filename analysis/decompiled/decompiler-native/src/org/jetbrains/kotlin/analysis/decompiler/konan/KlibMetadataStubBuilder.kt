@@ -21,6 +21,11 @@ object KlibMetadataStubBuilder : KotlinMetadataStubBuilder() {
     override val supportedFileType: FileType get() = KlibMetaFileType
     override val expectedBinaryVersion: BinaryVersion get() = MetadataVersion.INSTANCE
 
+    override fun hasMetadata(virtualFile: VirtualFile): Boolean {
+        val metadataCache = KlibLoadingMetadataCache.getInstance()
+        return metadataCache.getCachedPackageFragment(virtualFile) != null
+    }
+
     override fun readFile(
         virtualFile: VirtualFile,
         content: ByteArray?,
