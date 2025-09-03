@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.model
 
 import org.jetbrains.kotlin.test.TargetBackend
 
-abstract class TransformingTestMethodModel(val source: SimpleTestMethodModel, val transformer: String) : MethodModel {
+abstract class TransformingTestMethodModel(val source: SimpleTestMethodModel, val transformer: String) : MethodModel() {
     override val kind: MethodModel.Kind
         get() = Kind
     abstract override val name: String

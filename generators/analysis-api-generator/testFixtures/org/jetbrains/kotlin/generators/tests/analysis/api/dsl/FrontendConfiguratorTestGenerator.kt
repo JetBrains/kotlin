@@ -49,8 +49,8 @@ object FrontendConfiguratorTestModelKind : MethodModel.Kind()
 class FrontendConfiguratorTestModel(
     val frontendConfiguratorFactoryClass: KClass<out AnalysisApiTestConfiguratorFactory>,
     val data: AnalysisApiTestConfiguratorFactoryData
-) : MethodModel {
-    override val kind: MethodModel.Kind get() = FrontendConfiguratorTestModelKind
+) : MethodModel() {
+    override val kind: Kind get() = FrontendConfiguratorTestModelKind
     override val name: String get() = "getConfigurator"
     override val dataString: String? get() = null
     override val tags: List<String> get() = emptyList()
