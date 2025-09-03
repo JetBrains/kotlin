@@ -10,7 +10,15 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.commonizer.CommonizerDependency
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.parseCommonizerDependency
+import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.future
@@ -23,11 +31,14 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
+import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -752,8 +763,18 @@ open class CommonizerIT : KGPBaseTest() {
                 }
             }
 
-            buildAndFail(":resolveIdeDependencies") {
-                assertOutputContains("Gradle detected a problem with the following location")
+            resolveIdeDependencies {
+                it["commonTest"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    IdeaKotlinDependencyMatcher("cinterop") {
+                        (it is IdeaKotlinResolvedBinaryDependency)
+                                && it.coordinates?.module == "test-cinterop-foo"
+                                && parseCommonizerTarget(it.klibExtra?.commonizerTarget!!) == CommonizerTarget(LINUX_X64, LINUX_ARM64)
+                    },
+                    friendSourceDependency(":/commonMain"),
+                    friendSourceDependency(":/linuxMain"),
+                    friendSourceDependency(":/nativeMain"),
+                )
             }
         }
     }

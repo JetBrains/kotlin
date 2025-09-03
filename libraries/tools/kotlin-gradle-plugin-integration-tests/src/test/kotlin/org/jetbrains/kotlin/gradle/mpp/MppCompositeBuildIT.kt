@@ -27,6 +27,10 @@ import kotlin.test.assertIs
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
 class MppCompositeBuildIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions
+        // FIXME: KT-81095 these tests fail with OOM when CC is enabled
+        get() = super.defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
+
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
@@ -416,8 +420,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample6-KT-56712-umbrella-composite/composite", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = agpVersion,
-                // FIXME: KT-81095 this test fails with OOM when CC is enabled
-                configurationCache = ConfigurationCacheValue.DISABLED,
             ), buildJdk = jdkVersion.location
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
