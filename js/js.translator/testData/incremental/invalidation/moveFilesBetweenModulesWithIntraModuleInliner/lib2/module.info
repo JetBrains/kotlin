@@ -1,0 +1,15 @@
+STEP 0:
+    dependencies: lib1
+    added file: l21.kt
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : l22.1.kt -> l22.kt
+    added file: l22.kt
+    modified ir: l21.kt
+STEP 2:
+    dependencies: lib1
+    modifications:
+        D : l22.kt
+    modified ir: l21.kt
+    removed file: l22.kt

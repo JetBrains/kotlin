@@ -375,6 +375,12 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("jsCodeWithConstStringFromOtherModuleWithIRInliner")
+  public void testJsCodeWithConstStringFromOtherModuleWithIRInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModuleWithIRInliner/");
+  }
+
+  @Test
   @TestMetadata("jsExport")
   public void testJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
@@ -465,6 +471,18 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("moveAndModifyInlineFunctionWithCrossModuleInliner")
+  public void testMoveAndModifyInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunctionWithCrossModuleInliner/");
+  }
+
+  @Test
+  @TestMetadata("moveAndModifyInlineFunctionWithIntraModuleInliner")
+  public void testMoveAndModifyInlineFunctionWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunctionWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("moveExternalDeclarationsBetweenFiles")
   public void testMoveExternalDeclarationsBetweenFiles() {
     runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
@@ -483,9 +501,33 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("moveFilesBetweenModulesWithCrossModuleInliner")
+  public void testMoveFilesBetweenModulesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModulesWithCrossModuleInliner/");
+  }
+
+  @Test
+  @TestMetadata("moveFilesBetweenModulesWithIntraModuleInliner")
+  public void testMoveFilesBetweenModulesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModulesWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("moveInlineFunctionBetweenModules")
   public void testMoveInlineFunctionBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+  }
+
+  @Test
+  @TestMetadata("moveInlineFunctionBetweenModulesWithCrossModuleInliner")
+  public void testMoveInlineFunctionBetweenModulesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModulesWithCrossModuleInliner/");
+  }
+
+  @Test
+  @TestMetadata("moveInlineFunctionBetweenModulesWithIntraModuleInliner")
+  public void testMoveInlineFunctionBetweenModulesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModulesWithIntraModuleInliner/");
   }
 
   @Test
