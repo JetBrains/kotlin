@@ -21,20 +21,16 @@ class SimpleTestClassModel(
     private val excludeParentDirs: Boolean,
     val filenamePattern: Pattern,
     val excludePattern: Pattern?,
-    private val checkFilenameStartsLowerCase: Boolean?,
     private val doTestMethodName: String,
     private val testClassName: String,
     val targetBackend: TargetBackend,
     excludeDirs: Collection<String>,
     excludeDirsRecursively: Collection<String>,
     private val testRunnerMethodName: String,
-    private val deep: Int?,
     override val annotations: Collection<AnnotationModel>,
     override val tags: List<String>,
     private val additionalMethods: Collection<MethodModel<*>>,
-    val skipSpecificFile: (File) -> Boolean,
     val skipTestAllFilesCheck: Boolean,
-    val generateEmptyTestClasses: Boolean,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -43,7 +39,7 @@ class SimpleTestClassModel(
     val excludeDirsRecursively: Set<String> = excludeDirsRecursively.toSet()
 
     override val innerTestClasses: Collection<TestClassModel> by lazy {
-        if (!rootFile.isDirectory || !recursive || deep != null && deep < 1) {
+        if (!rootFile.isDirectory || !recursive) {
             return@lazy emptyList()
         }
         val children = mutableListOf<TestClassModel>()
@@ -58,20 +54,16 @@ class SimpleTestClassModel(
                         excludeParentDirs,
                         filenamePattern,
                         excludePattern,
-                        checkFilenameStartsLowerCase,
                         doTestMethodName,
                         innerTestClassName,
                         targetBackend,
                         excludesStripOneDirectory(file.name),
                         excludeDirsRecursively,
                         testRunnerMethodName,
-                        if (deep != null) deep - 1 else null,
                         annotations,
                         extractTagsFromDirectory(file),
                         additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass() },
-                        skipSpecificFile,
                         skipTestAllFilesCheck,
-                        generateEmptyTestClasses,
                     )
                 )
             }
@@ -99,7 +91,6 @@ class SimpleTestClassModel(
                 rootDir = rootFile,
                 file = rootFile,
                 filenamePattern,
-                checkFilenameStartsLowerCase,
                 targetBackend,
                 extractTagsFromTestFile(rootFile)
             )
@@ -112,7 +103,7 @@ class SimpleTestClassModel(
         }
         result.addAll(additionalMethods)
         val listFiles = rootFile.listFiles()
-        if (listFiles != null && (deep == null || deep == 0)) {
+        if (listFiles != null) {
             for (file in listFiles) {
                 val excluded = let {
                     val name = file.name
@@ -131,18 +122,15 @@ class SimpleTestClassModel(
                                     "Consider removing empty directory or revert removing of its' contents."
                         )
                     }
-                    if (!skipSpecificFile(file)) {
-                        result.add(
-                            SimpleTestMethodModel(
-                                rootFile,
-                                file,
-                                filenamePattern,
-                                checkFilenameStartsLowerCase,
-                                targetBackend,
-                                extractTagsFromTestFile(file)
-                            )
+                    result.add(
+                        SimpleTestMethodModel(
+                            rootFile,
+                            file,
+                            filenamePattern,
+                            targetBackend,
+                            extractTagsFromTestFile(file)
                         )
-                    }
+                    )
                 }
             }
         }

@@ -130,11 +130,7 @@ class TestGroup(
             targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
-            filenameStartsLowerCase: Boolean? = null, // assert that file is properly named
-            deep: Int? = null, // specifies how deep recursive search will follow directory with testdata
-            skipSpecificFile: (File) -> Boolean = { false },
             skipTestAllFilesCheck: Boolean = false,
-            generateEmptyTestClasses: Boolean = true, // All test classes will be generated, even if empty
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -144,10 +140,9 @@ class TestGroup(
             testModels.add(
                 SimpleTestClassModel(
                     rootFile, recursive, excludeParentDirs,
-                    compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                    realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, deep, annotations,
-                    extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck,
-                    generateEmptyTestClasses
+                    compiledPattern, compiledExcludedPattern, testMethod, className,
+                    realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
+                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck
                 )
             )
         }
