@@ -5,6 +5,7 @@
 package main.kotlin.server
 
 import benchmark.RemoteCompilationServiceImplType
+import common.getServerEnv
 import kotlinx.rpc.krpc.serialization.cbor.cbor
 import kotlinx.serialization.ExperimentalSerializationApi
 import server.core.Server
@@ -42,6 +43,7 @@ class RemoteCompilationServer(
                 stop()
             },
         )
+        println("server environment: ${getServerEnv()}")
         serverImpl.start(block)
     }
 

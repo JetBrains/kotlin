@@ -75,16 +75,22 @@ class Benchmark {
 
 suspend fun main() {
     val ktorTasks =
-        TasksExtractor.getTasks("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/benchmark/compileOutput")
+        TasksExtractor.getTasks("/Users/michal.svec/Desktop/ktor/outputlatest")
     println("We have ${ktorTasks.size} tasks to compile")
-    val port = 8000
+    val localPort = 8000
+    val localHost = "localhost"
+
+    val remotePort = 443
+    val remoteHost = "remote-kotlin-daemon.labs.jb.gg"
+
+
     val implType = RemoteCompilationServiceImplType.GRPC
-//    val server = RemoteCompilationServer.getServer(implType, port)
-    val client = RemoteCompilationClient.getClient(implType, "localhost", port)
+//    val server = RemoteCompilationServer.getServer(implType, localPort, logging = true)
+    val client = RemoteCompilationClient.getClient(implType, remoteHost, remotePort)
 
 //    server.start(block = false)
     val benchmark = Benchmark()
-    benchmark.compileProject(client, ktorTasks)
+    benchmark.compileProject(client, ktorTasks.subList(10, ktorTasks.size))
 //    server.stop()
 
     SERVER_CACHE_DIR.toFile().deleteRecursively()

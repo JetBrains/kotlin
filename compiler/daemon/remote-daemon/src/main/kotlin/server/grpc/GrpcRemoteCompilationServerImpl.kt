@@ -50,6 +50,7 @@ class GrpcRemoteCompilationServerImpl(
 
     override fun start(block: Boolean) {
         server.start()
+        println("GRPC server is running: localhost:${server.port}")
         if (block) {
             server.awaitTermination()
         }
