@@ -57,7 +57,7 @@ internal abstract class KotlinLegacyAbiUpdateTask : DefaultTask() {
 
     companion object {
         fun nameForVariant(variantName: String): String {
-            return composeTaskName("updateLegacyAbi", variantName)
+            return composeTaskName("updateKotlinAbi", variantName)
         }
     }
 }

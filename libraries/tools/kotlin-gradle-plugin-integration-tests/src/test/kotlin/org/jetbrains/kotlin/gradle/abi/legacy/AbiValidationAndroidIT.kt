@@ -30,11 +30,11 @@ class AbiValidationAndroidIT : KGPBaseTest() {
                 enabled.set(true)
             }
 
-            build("updateLegacyAbi")
+            build("updateKotlinAbi")
             assertFileExists(referenceJvmDumpFile())
             assertTrue(referenceJvmDumpFile().length() > 0)
 
-            build("checkLegacyAbi")
+            build("checkKotlinAbi")
             build("apiCheck")
         }
     }
@@ -57,7 +57,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
                 }
             }
 
-            build("updateLegacyAbi")
+            build("updateKotlinAbi")
 
             val referenceMixedJvmDumpFile = referenceMixedJvmDumpFile()
             assertFileExists(referenceMixedJvmDumpFile)
@@ -67,7 +67,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
             assertFileExists(referenceMixedAndroidDumpFile)
             assertFileContains(referenceMixedAndroidDumpFile.toPath(), "class SimpleClass")
 
-            build("checkLegacyAbi")
+            build("checkKotlinAbi")
             build("apiCheck")
         }
     }

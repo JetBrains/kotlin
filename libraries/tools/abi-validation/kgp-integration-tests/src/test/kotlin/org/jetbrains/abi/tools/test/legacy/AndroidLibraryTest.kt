@@ -22,13 +22,13 @@ internal class AndroidLibraryTest : BaseKotlinGradleTest() {
         val runner = test {
             createProjectWithSubModules()
             runner {
-                arguments.add(":kotlin-library:updateLegacyAbi")
+                arguments.add(":kotlin-library:updateKotlinAbi")
                 arguments.add("--full-stacktrace")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":kotlin-library:updateLegacyAbi")
+            assertTaskSuccess(":kotlin-library:updateKotlinAbi")
         }
     }
 
@@ -38,10 +38,10 @@ internal class AndroidLibraryTest : BaseKotlinGradleTest() {
         test {
             createProjectWithSubModules()
             runner {
-                arguments.add(":kotlin-library:checkLegacyAbi")
+                arguments.add(":kotlin-library:checkKotlinAbi")
             }
         }.build().apply {
-            assertTaskSuccess(":kotlin-library:checkLegacyAbi")
+            assertTaskSuccess(":kotlin-library:checkKotlinAbi")
         }
     }
 
@@ -55,13 +55,13 @@ internal class AndroidLibraryTest : BaseKotlinGradleTest() {
         val runner = test {
             createProjectWithSubModules()
             runner {
-                arguments.add(":java-library:updateLegacyAbi")
+                arguments.add(":java-library:updateKotlinAbi")
                 arguments.add("--full-stacktrace")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":java-library:updateLegacyAbi")
+            assertTaskSuccess(":java-library:updateKotlinAbi")
         }
     }
 
@@ -71,10 +71,10 @@ internal class AndroidLibraryTest : BaseKotlinGradleTest() {
         test {
             createProjectWithSubModules()
             runner {
-                arguments.add(":java-library:checkLegacyAbi")
+                arguments.add(":java-library:checkKotlinAbi")
             }
         }.build().apply {
-            assertTaskSuccess(":java-library:checkLegacyAbi")
+            assertTaskSuccess(":java-library:checkKotlinAbi")
         }
     }
 

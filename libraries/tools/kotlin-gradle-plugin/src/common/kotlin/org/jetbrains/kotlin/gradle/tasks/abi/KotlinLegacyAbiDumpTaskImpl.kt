@@ -183,7 +183,7 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
 
     companion object {
         fun nameForVariant(variantName: String): String {
-            return composeTaskName("dumpLegacyAbi", variantName)
+            return composeTaskName("internalDumpKotlinAbi", variantName)
         }
     }
 }

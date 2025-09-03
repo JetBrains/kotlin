@@ -17,11 +17,11 @@ class JvmProjectTests : BaseKotlinGradleTest() {
                 resolve("/examples/gradle/configuration/generatedSources/generatedJvmSources.gradle.kts")
             }
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             val expectedApi = readFileList("/examples/classes/GeneratedSources.dump")
             Assertions.assertThat(rootProjectApiDump.readText()).isEqualToIgnoringNewLines(expectedApi)
@@ -39,11 +39,11 @@ class JvmProjectTests : BaseKotlinGradleTest() {
                 resolve("/examples/classes/GeneratedSources.dump")
             }
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 }

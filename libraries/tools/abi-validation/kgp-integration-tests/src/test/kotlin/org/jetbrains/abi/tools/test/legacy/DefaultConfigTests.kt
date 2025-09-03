@@ -21,7 +21,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
                 resolve("/examples/gradle/base/withPlugin.gradle.kts")
             }
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
@@ -30,9 +30,9 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             Assertions.assertThat(output).contains(
                 "Expected file with ABI declarations 'api${File.separator}$projectName.api' does not exist."
             ).contains(
-                "You can run ':updateLegacyAbi' task to create or overwrite reference ABI declarations"
+                "You can run ':updateKotlinAbi' task to create or overwrite reference ABI declarations"
             )
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
         }
     }
 
@@ -44,13 +44,13 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
-            assertTaskNotRun(":check") // checkLegacyAbi mustn't trigger check task
+            assertTaskFailure(":checkKotlinAbi")
+            assertTaskNotRun(":check") // checkKotlinAbi mustn't trigger check task
         }
     }
 
@@ -64,12 +64,12 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             emptyApiFile(projectName = rootProjectDir.name)
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -87,12 +87,12 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -135,7 +135,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             emptyApiFile(projectName = rootProjectDir.name)
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
@@ -148,7 +148,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
                             "  +\tpublic final fun getProperty ()I\n" +
                             "  +}"
 
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
             Assertions.assertThat(output).contains(dumpOutput)
         }
     }
@@ -161,12 +161,12 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             assertTrue(rootProjectApiDump.exists(), "api dump file ${rootProjectApiDump.path} should exist")
 
@@ -185,12 +185,12 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             val apiDumpFile = rootProjectDir.resolve("$API_DIR/testproject.api")
             assertTrue(apiDumpFile.exists(), "api dump file ${apiDumpFile.path} should exist")
@@ -213,12 +213,12 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 
@@ -243,7 +243,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
 
         runner.build().apply {
             assertTaskUpToDate(":check")
-            assertTaskNotRun(":checkLegacyAbi")
+            assertTaskNotRun(":checkKotlinAbi")
         }
     }
 
