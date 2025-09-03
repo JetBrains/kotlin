@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -32,20 +34,52 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-fun <T : ExtendableMessage<T>> T.loadAnnotations(
+/**
+ * Loads annotations from metadata only when the given [languageFeature] is enabled and metadata [annotations] list is not empty.
+ * Otherwise, returns null instead of an empty list to signal that the fallback annotation loading function should be called.
+ */
+fun loadAnnotationsFromMetadataGuarded(
+    session: FirSession,
+    flags: Int?,
+    annotations: List<ProtoBuf.Annotation>,
+    nameResolver: NameResolver,
+    languageFeature: LanguageFeature,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+): List<FirAnnotation>? =
+    runIf(session.languageVersionSettings.supportsFeature(languageFeature) && annotations.isNotEmpty()) {
+        loadAnnotationsFromMetadata(session, flags, annotations, nameResolver, useSiteTarget)
+    }
+
+fun loadAnnotationsFromMetadata(
+    session: FirSession,
+    flags: Int?,
+    annotations: List<ProtoBuf.Annotation>,
+    nameResolver: NameResolver,
+    useSiteTarget: AnnotationUseSiteTarget? = null,
+): List<FirAnnotation> =
+    if (isAnnotationsFlagNotSet(flags))
+        emptyList()
+    else
+        annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
+
+fun <T : ExtendableMessage<T>> T.loadAnnotationsFromProtocol(
     session: FirSession,
     extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
-    flags: Int,
+    flags: Int?,
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null
 ): List<FirAnnotation> {
-    if (extension == null || flags >= 0 && !Flags.HAS_ANNOTATIONS.get(flags)) return emptyList()
+    if (extension == null || isAnnotationsFlagNotSet(flags)) return emptyList()
     val annotations = getExtension(extension)
     return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 }
 
-fun deserializeAnnotation(
+private fun isAnnotationsFlagNotSet(flags: Int?): Boolean =
+    flags != null && !Flags.HAS_ANNOTATIONS.get(flags)
+
+private fun deserializeAnnotation(
     session: FirSession,
     proto: ProtoBuf.Annotation,
     nameResolver: NameResolver,
