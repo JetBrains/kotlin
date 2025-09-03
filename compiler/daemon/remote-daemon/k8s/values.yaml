@@ -99,14 +99,17 @@ databaseSecrets: []
 #       secretKeyRef:
 #         name: my-secret-object
 #         key: my-secret-object-key
-customEnv: []
+customEnv:
+  - name: SERVER_ENV
+    value: "k8s_debug"
+
 
 # Typically you need `internal-nginx` className for application working inside JetBrains networks
 # and just `nginx` className for external applications(but make sure you enable auth and don't exposing any sensitive data)
 # also you can set additional annotations https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
 ingress:
   enabled: true
-  className: internal-nginx
+  className: nginx
   annotations:
     #kubernetes.io/ingress.class: internal-nginx
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
@@ -159,7 +162,10 @@ service:
 #   data:
 #     size: 1Gi
 #     mountPath: /data
-pvc: {}
+pvc:
+  compilation-storage:
+    size: 4Gi
+    mountPath: /storage
 
 # You can extend pod.spec.volumes with the following field
 # For example with https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
