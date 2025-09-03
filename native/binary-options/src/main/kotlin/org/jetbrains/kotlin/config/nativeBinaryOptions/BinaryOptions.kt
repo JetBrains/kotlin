@@ -114,6 +114,11 @@ object BinaryOptions : BinaryOptionRegistry() {
     val minidumpLocation by stringOption()
 
     val cCallMode by option<CCallMode>()
+
+    /**
+     * Generate a macOS Catalyst binary for the given architecture
+     */
+    val macabi by option<MacAbi>()
 }
 
 open class BinaryOption<T : Any>(
