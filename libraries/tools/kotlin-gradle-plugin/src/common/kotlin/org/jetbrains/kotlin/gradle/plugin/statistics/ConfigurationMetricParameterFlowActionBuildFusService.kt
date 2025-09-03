@@ -29,7 +29,7 @@ abstract class ConfigurationMetricParameterFlowActionBuildFusService() : BuildFu
                 //init value to avoid `java.lang.IllegalStateException: GradleScopeServices has been closed` exception on close
                 spec.parameters.configurationMetrics.add(MetricContainer())
             }.also {
-                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult()
+                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResult(buildUidService)
             }
         }
     }

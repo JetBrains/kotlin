@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -52,7 +53,8 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
     protected val buildId = parameters.buildId.get()
 
     init {
-        log.kotlinDebug("Initialize ${this.javaClass.simpleName}")
+        log.kotlinDebug("Initialize ${this.javaClass.simpleName}: $buildId")
+        println("Initialize ${this.javaClass.simpleName}: $buildId")
         KotlinBuildStatsBeanService.recordBuildStart(buildId)
     }
 
@@ -155,6 +157,8 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
             val fusService = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.9")) {
+                val internalGradle = project.gradle as GradleInternal
+                println("Is root: ${internalGradle.isRootBuild}")
                 FlowActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
             } else if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
                 ConfigurationMetricParameterFlowActionBuildFusService.registerIfAbsentImpl(
@@ -196,7 +200,8 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
 
     override fun close() {
         KotlinBuildStatsBeanService.closeServices()
-        log.kotlinDebug("Close ${this.javaClass.simpleName}")
+        log.kotlinDebug("Close ${this.javaClass.simpleName}: $buildId")
+        println("Close ${this.javaClass.simpleName}: $buildId")
     }
 
     internal fun recordBuildFinished(buildFailed: Boolean, buildId: String, configurationMetrics: List<MetricContainer>) {

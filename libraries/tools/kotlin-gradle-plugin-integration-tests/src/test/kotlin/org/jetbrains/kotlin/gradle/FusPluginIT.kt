@@ -50,7 +50,7 @@ class FusPluginIT : KGPBaseTest() {
 
     @DisplayName("with configuration cache and project isolation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
+        minVersion = TestVersions.Gradle.G_8_14
     )
     @GradleTest
     fun withConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
@@ -85,6 +85,7 @@ class FusPluginIT : KGPBaseTest() {
                 "test-fus",
                 "-Pkotlin.session.logger.root.path=${projectPath.resolve(reportRelativePath).pathString}",
             ) {
+                makeSnapshotTo("/Users/Nataliya.Valtman/Development/snapshotProject")
                 assertConfigurationCacheStored()
                 assertFilesCombinedContains(
                     projectPath.resolve("$reportRelativePath/kotlin-profile").listDirectoryEntries(),

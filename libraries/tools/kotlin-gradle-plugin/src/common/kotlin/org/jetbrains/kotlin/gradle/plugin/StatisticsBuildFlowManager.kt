@@ -29,20 +29,25 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
             project.objects.newInstance(StatisticsBuildFlowManager::class.java)
     }
 
-    fun subscribeForBuildResultAndConfigurationTimeMetrics(buildFusServiceProvider: Provider<FlowActionBuildFusService>) {
+    fun subscribeForBuildResultAndConfigurationTimeMetrics(
+        buildFusServiceProvider: Provider<FlowActionBuildFusService>,
+        buildUidServiceProvider: Provider<BuildUidService>,
+    ) {
         flowScope.always(
             BuildFinishAndConfigurationTimeMetricsFlowAction::class.java
         ) { spec ->
             spec.parameters.buildFailed.set(flowProviders.buildWorkResult.map { it.failure.isPresent })
             spec.parameters.configurationTimeMetrics.addAll(buildFusServiceProvider.get().getConfigurationTimeMetrics())
+            spec.parameters.buildUidProperty.set(buildUidServiceProvider.map { it.buildId })
         }
     }
 
-    fun subscribeForBuildResult() {
+    fun subscribeForBuildResult(buildUidServiceProvider: Provider<BuildUidService>) {
         flowScope.always(
             BuildFinishFlowAction::class.java
         ) { spec ->
             spec.parameters.buildFailed.set(flowProviders.buildWorkResult.map { it.failure.isPresent })
+            spec.parameters.buildUidProperty.set(buildUidServiceProvider.map { it.buildId })
         }
     }
 
@@ -74,15 +79,15 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
         @get:ServiceReference
         val buildFusServiceProperty: Property<ConfigurationMetricParameterFlowActionBuildFusService>
 
-        @get:ServiceReference
-        val buildUidServiceProperty: Property<BuildUidService?>
+        @get:Input
+        val buildUidProperty: Property<String>
 
         @get:Input
         val buildFailed: Property<Boolean>
     }
 
     override fun execute(parameters: Parameters) {
-        val buildId = parameters.buildUidServiceProperty.orNull?.buildId ?: return
+        val buildId = parameters.buildUidProperty.orNull ?: return
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
             buildId,
@@ -96,8 +101,8 @@ internal class BuildFinishAndConfigurationTimeMetricsFlowAction : FlowAction<Bui
         @get:ServiceReference
         val buildFusServiceProperty: Property<FlowActionBuildFusService>
 
-        @get:ServiceReference
-        val buildUidServiceProperty: Property<BuildUidService?>
+        @get:Input
+        val buildUidProperty: Property<String?>
 
         @get:Input
         val buildFailed: Property<Boolean>
@@ -107,7 +112,7 @@ internal class BuildFinishAndConfigurationTimeMetricsFlowAction : FlowAction<Bui
     }
 
     override fun execute(parameters: Parameters) {
-        val buildId = parameters.buildUidServiceProperty.orNull?.buildId ?: return
+        val buildId = parameters.buildUidProperty.orNull ?: return
         parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
             buildId,

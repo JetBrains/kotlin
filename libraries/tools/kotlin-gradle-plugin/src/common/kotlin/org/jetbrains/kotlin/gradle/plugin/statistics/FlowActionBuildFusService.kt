@@ -38,7 +38,7 @@ abstract class FlowActionBuildFusService @Inject constructor(
                 spec.parameters.buildStatisticsConfiguration.set(KotlinBuildStatsConfiguration(project))
                 spec.parameters.buildId.value(buildUidService.map { it.buildId }).disallowChanges()
             }.also { buildService ->
-                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResultAndConfigurationTimeMetrics(buildService)
+                StatisticsBuildFlowManager.getInstance(project).subscribeForBuildResultAndConfigurationTimeMetrics(buildService, buildUidService)
             }
         }
     }

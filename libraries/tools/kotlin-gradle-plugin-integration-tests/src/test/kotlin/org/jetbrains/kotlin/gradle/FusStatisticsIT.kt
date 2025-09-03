@@ -249,15 +249,17 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("for project with buildSrc")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2]
+        minVersion = TestVersions.Gradle.G_8_14
     )
     fun testProjectWithBuildSrcForGradleVersion7(gradleVersion: GradleVersion) {
-        //KT-64022 there are a different build instances in buildSrc and rest project:
+        //KT-64022 there are different build instances in buildSrc and rest project:
         project(
             "instantExecutionWithBuildSrc",
             gradleVersion,
         ) {
-            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+//                makeSnapshotTo("/Users/Nataliya.Valtman/Development/snapshotProject")
+                println(output)
                 assertFilesCombinedContains(
                     projectPath.resolve("kotlin-profile").listDirectoryEntries(),
                     *expectedMetrics,
