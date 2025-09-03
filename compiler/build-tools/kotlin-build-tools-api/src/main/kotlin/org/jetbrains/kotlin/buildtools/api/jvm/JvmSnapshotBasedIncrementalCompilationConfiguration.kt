@@ -142,5 +142,8 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
          */
         @JvmField
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
+
+        @JvmField
+        public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> = Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
     }
 }
