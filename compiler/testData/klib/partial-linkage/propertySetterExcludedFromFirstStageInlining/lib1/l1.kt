@@ -1,0 +1,71 @@
+import kotlin.internal.ExcludedFromFirstStageInlining
+
+var _excludedInlineProperty = ""
+@ExcludedFromFirstStageInlining
+inline var excludedInlineProperty: String
+    get() = _excludedInlineProperty
+    set(value) {
+        _excludedInlineProperty = value + ".v1"
+    }
+
+var _excludedInlineExtensionProperty = ""
+@ExcludedFromFirstStageInlining
+context(c: String)
+inline var String.excludedInlineExtensionProperty: String
+    get() = _excludedInlineExtensionProperty
+    set(value) {
+        _excludedInlineExtensionProperty = "$this.$value.v1 with context $c"
+    }
+
+var _excludedInlinePropertySetter = ""
+inline var excludedInlinePropertySetter: String
+    get() = _excludedInlinePropertySetter
+    @ExcludedFromFirstStageInlining
+    set(value) {
+        _excludedInlinePropertySetter = value + ".v1"
+    }
+
+var _excludedInlineExtensionPropertySetter = ""
+context(c: String)
+inline var String.excludedInlineExtensionPropertySetter: String
+    get() = _excludedInlineExtensionPropertySetter
+    @ExcludedFromFirstStageInlining
+    set(value) {
+        _excludedInlineExtensionPropertySetter = "$this.$value.v1 with context $c"
+    }
+
+class C {
+    var _excludedInlineClassProperty = ""
+    @ExcludedFromFirstStageInlining
+    inline var excludedInlineClassProperty: String
+        get() = _excludedInlineClassProperty
+        set(value) {
+            _excludedInlineClassProperty = value + ".v1"
+        }
+
+    var _excludedInlineClassExtensionProperty = ""
+    @ExcludedFromFirstStageInlining
+    context(c: String)
+    inline var String.excludedInlineClassExtensionProperty: String
+        get() = _excludedInlineClassExtensionProperty
+        set(value) {
+            _excludedInlineClassExtensionProperty = "$this.$value.v1 with context $c"
+        }
+
+    var _excludedInlineClassPropertySetter = ""
+    inline var excludedInlineClassPropertySetter: String
+        get() = _excludedInlineClassPropertySetter
+        @ExcludedFromFirstStageInlining
+        set(value) {
+            _excludedInlineClassPropertySetter = value + ".v1"
+        }
+
+    var _excludedInlineClassExtensionPropertySetter = ""
+    context(c: String)
+    inline var String.excludedInlineClassExtensionPropertySetter: String
+        get() = _excludedInlineClassExtensionPropertySetter
+        @ExcludedFromFirstStageInlining
+        set(value) {
+            _excludedInlineClassExtensionPropertySetter = "$this.$value.v1 with context $c"
+        }
+}
