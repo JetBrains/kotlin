@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.wasm.internal.ManagedExternref
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 import kotlin.wasm.internal.wasmGetObjectRtti
 import kotlin.wasm.internal.getQualifiedName
@@ -20,7 +21,7 @@ import kotlin.wasm.internal.getSimpleName
 public actual open class Throwable internal constructor(
     public actual open val message: String?,
     public actual open val cause: Throwable?,
-    internal val jsError: JsError,
+    @ManagedExternref internal val jsError: JsError,
     overwriteJsErrorName: Boolean = true
 ) {
     init {

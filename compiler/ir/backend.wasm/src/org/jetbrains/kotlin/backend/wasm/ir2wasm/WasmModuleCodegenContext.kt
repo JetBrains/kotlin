@@ -237,8 +237,8 @@ class WasmModuleTypeTransformer(
         return with(typeTransformer) { irType.toWasmValueType() }
     }
 
-    fun transformFieldType(irType: IrType): WasmType {
-        return with(typeTransformer) { irType.toWasmFieldType() }
+    fun transformFieldType(irType: IrType, hasManagedExternrefAnnotation: Boolean): WasmType {
+        return with(typeTransformer) { irType.toWasmFieldType(hasManagedExternrefAnnotation) }
     }
 
     fun transformBoxedType(irType: IrType): WasmType {

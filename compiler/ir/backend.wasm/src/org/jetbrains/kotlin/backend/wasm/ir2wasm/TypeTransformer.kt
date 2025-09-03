@@ -54,8 +54,16 @@ class WasmTypeTransformer(
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()
 
-    fun IrType.toWasmFieldType(): WasmType =
-        when (this) {
+    fun IrType.toWasmFieldType(hasManagedExternrefAnnotation: Boolean): WasmType {
+        if (useSharedObjects) {
+            val klass = this.erasedUpperBound
+            if (klass.isExternal) {
+                if (!hasManagedExternrefAnnotation) error("Fields of external types of shared objects must be marked with @ManagedExternref")
+                return WasmI32
+            }
+        }
+
+        return when (this) {
             builtIns.booleanType,
             builtIns.byteType ->
                 WasmI8
@@ -66,6 +74,7 @@ class WasmTypeTransformer(
 
             else -> toWasmValueType()
         }
+    }
 
     private val irBuiltInToWasmType: HashMap<IrType, WasmType> = hashMapOf(
         builtIns.booleanType to WasmI32,

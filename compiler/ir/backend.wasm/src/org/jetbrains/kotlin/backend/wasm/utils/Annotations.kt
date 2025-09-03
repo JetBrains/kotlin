@@ -31,6 +31,7 @@ private val jsFunFqName = FqName("kotlin.JsFun")
 private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
 private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
 private val jsBuiltinFqName = FqName("kotlin.wasm.internal.JsBuiltin")
+private val managedExternrefFqName: FqName = FqName("kotlin.wasm.internal.ManagedExternref")
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(excludedFromCodegenFqName)
@@ -72,6 +73,9 @@ fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
 
 fun IrAnnotationContainer.hasWasmPrimitiveConstructorAnnotation(): Boolean =
     hasAnnotation(wasmPrimitiveConstructorFqName)
+
+fun IrAnnotationContainer.hasManagedExternrefAnnotation(): Boolean =
+    hasAnnotation(managedExternrefFqName)
 
 class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean, val isMutable: Boolean) {
     val type = klass.defaultType.let { if (isNullable) it.makeNullable() else it }

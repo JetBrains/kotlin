@@ -409,3 +409,12 @@ internal fun newJsArray(): ExternalInterfaceType =
 internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
     js("array.push(element);")
 }
+
+/**
+ * Marks fields of extern ([JsAny]) type as allowed for "useSharedObjects" mode.
+ * In this mode, (unshared) extern references are put into the corresponding Wasm table, and the field
+ * actually contains an index into this table.
+ */
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class ManagedExternref
