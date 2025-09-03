@@ -31,10 +31,19 @@ public final class Derived /* Derived*/ implements Base {
   public int foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object)
 
   @java.lang.Override()
+  public int getX();//  getX()
+
+  @java.lang.Override()
+  public int getY();//  getY()
+
+  @java.lang.Override()
   public void printMessage();//  printMessage()
 
   @java.lang.Override()
   public void printMessageLine();//  printMessageLine()
+
+  @java.lang.Override()
+  public void setY(int);//  setY(int)
 
   public  Derived(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Base);//  .ctor(@org.jetbrains.annotations.NotNull() Base)
 }
