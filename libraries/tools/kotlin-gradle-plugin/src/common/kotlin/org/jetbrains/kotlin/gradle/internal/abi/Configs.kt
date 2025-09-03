@@ -115,6 +115,9 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
             it.excludedClasses.convention(filters.excluded.byNames)
             it.excludedAnnotatedWith.convention(filters.excluded.annotatedWith)
 
+            it.description = "Dumps the public Application Binary Interface (ABI) in files into the build directory " +
+                    "for '$variantName' dump variant."
+
             it.onlyIf { isEnabled.get() }
         }
 
@@ -123,6 +126,9 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
 
+        it.description = "Checks that the public Application Binary Interface (ABI) of the current code in the project does not " +
+                "differ from what is specified in the reference dump file for '$variantName' dump variant."
+
         it.onlyIf { isEnabled.get() }
     }
 
@@ -130,6 +136,9 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
+
+        it.description = "Writes the public Application Binary Interface (ABI) of the current code to the reference dump " +
+                "for '$variantName' dump variant."
 
         it.onlyIf { isEnabled.get() }
     }
