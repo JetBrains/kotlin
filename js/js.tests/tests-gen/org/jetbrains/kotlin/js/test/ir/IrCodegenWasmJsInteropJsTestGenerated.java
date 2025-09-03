@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasmJsInteropJsTest {
   @Test
   public void testAllFilesPresentInBoxWasmJsInterop() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
@@ -538,7 +538,7 @@ public class IrCodegenWasmJsInteropJsTestGenerated extends AbstractIrCodegenWasm
   public class EscapedIdentifiers {
     @Test
     public void testAllFilesPresentInEscapedIdentifiers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop/escapedIdentifiers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

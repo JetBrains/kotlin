@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.dataframe;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
 
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
@@ -1063,7 +1062,7 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
 
     @Test
     public void testAllFilesPresentInColKinds() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box/colKinds"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box/colKinds"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1085,7 +1084,7 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
 
     @Test
     public void testAllFilesPresentInCsDsl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box/csDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/box/csDsl"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen.inlineScopes;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLocalVariableTestWithInlineScopes {
   @Test
   public void testAllFilesPresentInLocalVariables() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "inlineScopes/newFormatToOld");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, true, "inlineScopes/newFormatToOld");
   }
 
   @Test
@@ -253,7 +252,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
   public class Constructors {
     @Test
     public void testAllFilesPresentInConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/constructors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -275,7 +274,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
   public class Destructuring {
     @Test
     public void testAllFilesPresentInDestructuring() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -363,7 +362,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
   public class InlineScopes {
     @Test
     public void testAllFilesPresentInInlineScopes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "newFormatToOld");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes"), Pattern.compile("^(.+)\\.kt$"), null, true, "newFormatToOld");
     }
 
     @Nested
@@ -372,7 +371,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
     public class OldFormatToNew {
       @Test
       public void testAllFilesPresentInOldFormatToNew() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -443,7 +442,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
   public class ReceiverMangling {
     @Test
     public void testAllFilesPresentInReceiverMangling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -501,7 +500,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
   public class Suspend {
     @Test
     public void testAllFilesPresentInSuspend() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -558,7 +557,7 @@ public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLo
     public class Completion {
       @Test
       public void testAllFilesPresentInCompletion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend/completion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend/completion"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.klib;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class KlibCrossCompilationIdentityWithPreSerializationLoweringTestGenerated extends AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest {
   @Test
   public void testAllFilesPresentInIdentity() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/cross-compilation/identity"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/cross-compilation/identity"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

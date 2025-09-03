@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirJsSteppingWithInlinedFunInKlibTestGenerated extends AbstractFirJsSteppingWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInStepping() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

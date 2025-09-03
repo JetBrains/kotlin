@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "context_parameters");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "context_parameters");
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   public class Atomic_extensions {
     @Test
     public void testAllFilesPresentInAtomic_extensions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   public class Atomics_basic {
     @Test
     public void testAllFilesPresentInAtomics_basic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   public class Delegated {
     @Test
     public void testAllFilesPresentInDelegated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -217,7 +217,7 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   public class Locks {
     @Test
     public void testAllFilesPresentInLocks() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -239,7 +239,7 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   public class Top_level {
     @Test
     public void testAllFilesPresentInTop_level() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -261,7 +261,7 @@ public class AtomicfuJvmIrTestGenerated extends AbstractAtomicfuJvmIrTest {
   public class Trace {
     @Test
     public void testAllFilesPresentInTrace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

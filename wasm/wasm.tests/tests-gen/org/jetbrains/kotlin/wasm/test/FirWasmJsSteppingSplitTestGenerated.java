@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirWasmJsSteppingSplitTestGenerated extends AbstractFirWasmJsSteppingSplitTest {
   @Test
   public void testAllFilesPresentInStepping() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/stepping"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
