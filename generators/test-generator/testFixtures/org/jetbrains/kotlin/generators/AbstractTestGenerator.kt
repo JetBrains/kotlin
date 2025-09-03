@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.generators
 
 import org.jetbrains.kotlin.generators.dsl.TestGroup
-import org.jetbrains.kotlin.generators.model.MethodModel
 
-abstract class AbstractTestGenerator(methodGenerators: List<MethodGenerator<*>>) {
-    protected val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>> =
-        methodGenerators.associateBy { it.kind }.withDefault { error("Generator for method with kind $it not found") }
-
+abstract class AbstractTestGenerator {
     abstract fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult
 
     data class GenerationResult(val newFileGenerated: Boolean, val testSourceFilePath: String)

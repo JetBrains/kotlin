@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.generators
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.utils.Printer
 
-abstract class MethodGenerator<in T : MethodModel> {
+abstract class MethodGenerator<in T : MethodModel<in T>> {
     companion object {
-        fun generateDefaultSignature(method: MethodModel, p: Printer) {
+        fun generateDefaultSignature(method: MethodModel<*>, p: Printer) {
             p.print("public void ${method.name}()")
         }
     }
-
-    abstract val kind: MethodModel.Kind
 
     abstract fun generateSignature(method: T, p: Printer)
     abstract fun generateBody(method: T, p: Printer)

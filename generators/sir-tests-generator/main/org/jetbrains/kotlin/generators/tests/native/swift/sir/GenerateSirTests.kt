@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTe
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestModel
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
@@ -23,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
-    generateTestGroupSuiteWithJUnit5(additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
+    generateTestGroupSuiteWithJUnit5 {
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
             "native/swift/swift-export-standalone-integration-tests/simple/testData/generation"

@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.generators.impl
 
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.RunTestMethodModel
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.Printer
 
 object RunTestMethodGenerator : MethodGenerator<RunTestMethodModel>() {
-    override val kind: MethodModel.Kind
-        get() = RunTestMethodModel.Kind
-
     override fun generateBody(method: RunTestMethodModel, p: Printer) {
         with(method) {
             val modifiedTestMethodName =

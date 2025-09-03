@@ -15,7 +15,7 @@ class AnalysisApiTestGenerator(val suite: TestGroupSuite) {
 }
 
 fun generate(args: Array<String>, init: AnalysisApiTestGroup.() -> Unit) {
-    generateTestGroupSuiteWithJUnit5(args, additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
+    generateTestGroupSuiteWithJUnit5(args) {
         AnalysisApiTestGenerator(this).group(init)
     }
 }

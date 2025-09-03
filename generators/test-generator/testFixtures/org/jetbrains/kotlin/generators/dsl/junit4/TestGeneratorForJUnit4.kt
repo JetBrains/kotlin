@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.generators.dsl.junit4
 
 import org.jetbrains.kotlin.generators.AbstractTestGenerator
-import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.dsl.TestGroup
-import org.jetbrains.kotlin.generators.impl.*
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
@@ -20,14 +18,7 @@ import org.junit.runners.BlockJUnit4ClassRunner
 import java.io.File
 import java.io.IOException
 
-private val METHOD_GENERATORS = listOf(
-    RunTestMethodGenerator,
-    SimpleTestClassModelTestAllFilesPresentMethodGenerator,
-    SimpleTestMethodGenerator,
-    SingleClassTestModelAllFilesPresentedMethodGenerator,
-)
-
-object TestGeneratorForJUnit4 : AbstractTestGenerator(METHOD_GENERATORS) {
+object TestGeneratorForJUnit4 : AbstractTestGenerator() {
     override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult {
         val generatorInstance = TestGeneratorForJUnit4Instance(
             testClass.baseDir,
@@ -35,7 +26,6 @@ object TestGeneratorForJUnit4 : AbstractTestGenerator(METHOD_GENERATORS) {
             testClass.baseTestClassName,
             testClass.testModels,
             testClass.useJunit4,
-            methodGenerators,
             mainClassName,
         )
         return generatorInstance.generateAndSave(dryRun)
@@ -48,7 +38,6 @@ private class TestGeneratorForJUnit4Instance(
     baseTestClassFqName: String,
     private val testClassModels: Collection<TestClassModel>,
     private val useJunit4: Boolean,
-    private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>>,
     private val mainClassName: String?
 ) {
     companion object {
@@ -156,7 +145,7 @@ private class TestGeneratorForJUnit4Instance(
                 override val innerTestClasses: Collection<TestClassModel>
                     get() = testClassModels
 
-                override val methods: Collection<MethodModel>
+                override val methods: Collection<MethodModel<*>>
                     get() = emptyList()
 
                 override val isEmpty: Boolean
@@ -229,33 +218,21 @@ private class TestGeneratorForJUnit4Instance(
         p.println("}")
     }
 
-    private fun generateTestMethod(p: Printer, methodModel: MethodModel, useJunit4: Boolean) {
+    private fun generateTestMethod(p: Printer, methodModel: MethodModel<*>, useJunit4: Boolean) {
         if (useJunit4 && (methodModel !is RunTestMethodModel)) {
             p.println("@Test")
         }
 
-        val generator = methodGenerators.getValue(methodModel.kind)
-
         generateMetadata(p, methodModel)
-        generator.hackyGenerateSignature(methodModel, p)
+        methodModel.generateSignature(p)
         p.printWithNoIndent(" {")
         p.println()
 
         p.pushIndent()
 
-        generator.hackyGenerateBody(methodModel, p)
+        methodModel.generateBody(p)
 
         p.popIndent()
         p.println("}")
-    }
-
-    private fun <T : MethodModel> MethodGenerator<T>.hackyGenerateBody(method: MethodModel, p: Printer) {
-        @Suppress("UNCHECKED_CAST")
-        generateBody(method as T, p)
-    }
-
-    private fun <T : MethodModel> MethodGenerator<T>.hackyGenerateSignature(method: MethodModel, p: Printer) {
-        @Suppress("UNCHECKED_CAST")
-        generateSignature(method as T, p)
     }
 }

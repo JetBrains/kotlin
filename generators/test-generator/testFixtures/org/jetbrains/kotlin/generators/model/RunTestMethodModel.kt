@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.model
 
+import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.impl.RunTestMethodGenerator
 import org.jetbrains.kotlin.test.TargetBackend
 
 class RunTestMethodModel(
@@ -13,12 +15,8 @@ class RunTestMethodModel(
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
     val withTransformer: Boolean = false
-) : MethodModel() {
-    object Kind : MethodModel.Kind()
-
-    override val kind: MethodModel.Kind
-        get() = Kind
-
+) : MethodModel<RunTestMethodModel>() {
+    override val generator: MethodGenerator<RunTestMethodModel> get() = RunTestMethodGenerator
     override val name = METHOD_NAME
     override val dataString: String? = null
 
