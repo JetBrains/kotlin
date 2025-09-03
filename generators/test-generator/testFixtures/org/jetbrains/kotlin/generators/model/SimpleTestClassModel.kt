@@ -29,7 +29,6 @@ class SimpleTestClassModel(
     excludeDirs: Collection<String>,
     excludeDirsRecursively: Collection<String>,
     private val testRunnerMethodName: String,
-    private val additionalRunnerArguments: List<String>,
     private val deep: Int?,
     override val annotations: Collection<AnnotationModel>,
     override val tags: List<String>,
@@ -67,7 +66,6 @@ class SimpleTestClassModel(
                         excludesStripOneDirectory(file.name),
                         excludeDirsRecursively,
                         testRunnerMethodName,
-                        additionalRunnerArguments,
                         if (deep != null) deep - 1 else null,
                         annotations,
                         extractTagsFromDirectory(file),
@@ -108,7 +106,7 @@ class SimpleTestClassModel(
             )
         }
         val result = mutableListOf<MethodModel<*>>()
-        result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
+        result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
         if (!skipTestAllFilesCheck) {
             result.add(TestAllFilesPresentMethodModel())
         }
