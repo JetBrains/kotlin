@@ -23,9 +23,18 @@ repositories {
     google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
     gradlePluginPortal()
 
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+        content {
+            // coroutines for bootstrapping
+            includeGroupByRegex("com.intellij.platform.*")
+        }
+    }
+
     extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
+
+
 }
 
 dependencies {
