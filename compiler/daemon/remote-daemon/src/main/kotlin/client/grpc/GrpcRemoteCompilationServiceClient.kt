@@ -27,7 +27,7 @@ class GrpcRemoteCompilationServiceClient(
     private val channel: ManagedChannel
     = ManagedChannelBuilder
         .forAddress(host, port)
-        .usePlaintext()
+        .useTransportSecurity()
         .let { builder ->
             if (logging) builder.intercept(RemoteClientInterceptor()) else builder
         }

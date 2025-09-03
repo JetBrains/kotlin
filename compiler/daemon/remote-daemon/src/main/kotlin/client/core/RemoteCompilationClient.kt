@@ -33,8 +33,7 @@ import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import server.grpc.GrpcRemoteCompilationServerImpl
-import server.kotlinxrpc.KotlinxRpcRemoteCompilationServerImpl
+
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
