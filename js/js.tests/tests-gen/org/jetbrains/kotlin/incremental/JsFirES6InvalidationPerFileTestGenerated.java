@@ -69,6 +69,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("circleInlineImportsUpdateWithIntraModuleInliner")
+  public void testCircleInlineImportsUpdateWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/circleInlineImportsUpdateWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("class")
   public void testClass() {
     runTest("js/js.translator/testData/incremental/invalidation/class/");
@@ -93,6 +99,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("companionConstValWithIntraModuleInliner")
+  public void testCompanionConstValWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/companionConstValWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("companionFunction")
   public void testCompanionFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/companionFunction/");
@@ -108,6 +120,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   @TestMetadata("companionProperties")
   public void testCompanionProperties() {
     runTest("js/js.translator/testData/incremental/invalidation/companionProperties/");
+  }
+
+  @Test
+  @TestMetadata("companionPropertiesWithIntraModuleInliner")
+  public void testCompanionPropertiesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/companionPropertiesWithIntraModuleInliner/");
   }
 
   @Test
@@ -183,6 +201,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("exportsThroughInlineFunctionWithIntraModuleInliner")
+  public void testExportsThroughInlineFunctionWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunctionWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("externalOverriddenProperty")
   public void testExternalOverriddenProperty() {
     runTest("js/js.translator/testData/incremental/invalidation/externalOverriddenProperty/");
@@ -198,6 +222,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   @TestMetadata("fakeOverrideInheritance")
   public void testFakeOverrideInheritance() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritance/");
+  }
+
+  @Test
+  @TestMetadata("fakeOverrideInheritanceWithIntraModuleInliner")
+  public void testFakeOverrideInheritanceWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritanceWithIntraModuleInliner/");
   }
 
   @Test
@@ -309,6 +339,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("inlineFunctionAsFunctionReferenceWithIntraModuleInliner")
+  public void testInlineFunctionAsFunctionReferenceWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReferenceWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("inlineFunctionAsParam")
   public void testInlineFunctionAsParam() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsParam/");
@@ -372,6 +408,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   @TestMetadata("jsCodeWithConstStringFromOtherModule")
   public void testJsCodeWithConstStringFromOtherModule() {
     runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModule/");
+  }
+
+  @Test
+  @TestMetadata("jsCodeWithConstStringFromOtherModuleWithIntraModuleInliner")
+  public void testJsCodeWithConstStringFromOtherModuleWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModuleWithIntraModuleInliner/");
   }
 
   @Test
@@ -465,6 +507,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("moveAndModifyInlineFunctionWithIntraModuleInliner")
+  public void testMoveAndModifyInlineFunctionWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunctionWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("moveExternalDeclarationsBetweenFiles")
   public void testMoveExternalDeclarationsBetweenFiles() {
     runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
@@ -483,9 +531,21 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("moveFilesBetweenModulesWithIntraModuleInliner")
+  public void testMoveFilesBetweenModulesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModulesWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("moveInlineFunctionBetweenModules")
   public void testMoveInlineFunctionBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+  }
+
+  @Test
+  @TestMetadata("moveInlineFunctionBetweenModulesWithIntraModuleInliner")
+  public void testMoveInlineFunctionBetweenModulesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModulesWithIntraModuleInliner/");
   }
 
   @Test
@@ -528,6 +588,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   @TestMetadata("privateDeclarationLeakThroughDefaultParam")
   public void testPrivateDeclarationLeakThroughDefaultParam() {
     runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParam/");
+  }
+
+  @Test
+  @TestMetadata("privateDeclarationLeakThroughDefaultParamWithIntraModuleInliner")
+  public void testPrivateDeclarationLeakThroughDefaultParamWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParamWithIntraModuleInliner/");
   }
 
   @Test
@@ -606,6 +672,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   @TestMetadata("toplevelProperties")
   public void testToplevelProperties() {
     runTest("js/js.translator/testData/incremental/invalidation/toplevelProperties/");
+  }
+
+  @Test
+  @TestMetadata("toplevelPropertiesWithIntraModuleInliner")
+  public void testToplevelPropertiesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/toplevelPropertiesWithIntraModuleInliner/");
   }
 
   @Test
