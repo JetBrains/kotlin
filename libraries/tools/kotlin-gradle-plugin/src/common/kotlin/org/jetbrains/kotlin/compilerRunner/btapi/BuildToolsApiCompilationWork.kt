@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompil
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MODULE_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.ROOT_PROJECT_DIR
@@ -131,6 +132,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
                     this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
                     this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM] = icEnv.icFeatures.enableUnsafeIncrementalCompilationForMultiplatform
+                    this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = icEnv.icFeatures.enableMonotonousIncrementalCompileSetExpansion
                 }
                 jvmCompilationOperation[INCREMENTAL_COMPILATION] = JvmSnapshotBasedIncrementalCompilationConfiguration(
                     icEnv.workingDir.toPath(),
