@@ -409,7 +409,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     }
 
     /**
-     * T! <: Foo <=> T <: Foo & Any..Foo?
+     * T! <: Foo <=> T <: Foo!
      * T? <: Foo <=> T <: Foo && Nothing? <: Foo
      * T  <: Foo -- leave as is
      * T & Any <: Foo <=> T <: Foo?
