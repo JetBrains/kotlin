@@ -124,7 +124,6 @@ class TestGroup(
             pattern: String = if (extension == null) """^([^.]+)$""" else """^(.+)\.$extension$""",
             excludedPattern: String? = null,
             testMethod: String = "doTest",
-            singleClass: Boolean = false, // if true then tests from subdirectories will be flattened to single class
             testClassName: String? = null, // specific name for generated test class
             // which backend will be used in test. Specifying value may affect some test with
             // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated
@@ -143,23 +142,13 @@ class TestGroup(
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             val realTargetBackend = targetBackend ?: TargetBackend.ANY
             testModels.add(
-                if (singleClass) {
-                    if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
-
-                    SingleClassTestModel(
-                        rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, testRunnerMethodName, annotations,
-                        extractTagsFromDirectory(rootFile), methodModels
-                    )
-                } else {
-                    SimpleTestClassModel(
-                        rootFile, recursive, excludeParentDirs,
-                        compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, deep, annotations,
-                        extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck,
-                        generateEmptyTestClasses
-                    )
-                }
+                SimpleTestClassModel(
+                    rootFile, recursive, excludeParentDirs,
+                    compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
+                    realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, deep, annotations,
+                    extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck,
+                    generateEmptyTestClasses
+                )
             )
         }
     }
