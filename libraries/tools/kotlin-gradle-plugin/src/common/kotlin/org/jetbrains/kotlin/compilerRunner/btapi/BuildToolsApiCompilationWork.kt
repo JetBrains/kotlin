@@ -164,8 +164,10 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> compilationService.createInProcessExecutionPolicy()
                 else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
-            return build.executeOperation(jvmCompilationOperation, executionConfig, log)
-                .also { extractMetrics(jvmCompilationOperation) }
+
+            return metrics.measure(GradleBuildTime.RUN_COMPILATION) {
+                build.executeOperation(jvmCompilationOperation, executionConfig, log)
+            }.also { extractMetrics(jvmCompilationOperation) }
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)
         }
