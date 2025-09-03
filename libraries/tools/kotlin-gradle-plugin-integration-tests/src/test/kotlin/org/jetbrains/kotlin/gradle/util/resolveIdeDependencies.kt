@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
@@ -20,6 +21,9 @@ import java.io.File
 import kotlin.test.fail
 
 
+// TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
+private fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
+
 /* Test Utils / Test Infrastructure Implementation */
 
 internal fun TestProject.resolveIdeDependencies(
@@ -31,7 +35,7 @@ internal fun TestProject.resolveIdeDependencies(
     build(
         "${subproject.orEmpty()}:resolveIdeDependencies",
         "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=${strictMode}",
-        buildOptions = buildOptions
+        buildOptions = buildOptions.disableConfigurationCache_KT70416()
     ) {
         assertions(readIdeDependencies(subproject))
     }

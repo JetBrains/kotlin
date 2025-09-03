@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
@@ -26,9 +27,6 @@ import kotlin.test.assertIs
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
 class MppCompositeBuildIT : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.disableConfigurationCache_KT70416()
-
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
@@ -173,9 +171,15 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
+        var buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion)
+        if (gradleVersion < GradleVersion.version("9.1")) {
+            // FIXME: KT-74795
+            buildOptions = buildOptions.disableIsolatedProjects()
+        }
         project(
             "mpp-composite-build/sample1",
             gradleVersion,
+            buildOptions = buildOptions,
         ) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
@@ -211,6 +215,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 .suppressDeprecationWarningsOn(
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
+                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
         ) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
@@ -277,7 +282,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleProperties.append("kotlin.mpp.enableCInteropCommonization=true")
 
             build("cleanNativeDistributionCommonization")
-            build(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde") {
+
+            resolveIdeDependencies("consumerA") {
                 assertTasksAreNotInTaskGraph(
                     ":producerBuild:producerA:iosArm64MetadataJar",
                     ":producerBuild:producerA:iosX64MetadataJar",
@@ -472,7 +478,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 version = null,
                 enableKlibsCrossCompilation = false
             )
-        )
+        ).disableIsolatedProjects()
 
         val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion) {
             settingsGradleKts.modify {
