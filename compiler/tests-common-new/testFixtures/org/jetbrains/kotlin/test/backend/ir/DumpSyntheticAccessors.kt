@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.validation.temporarilyPushing
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 /**
@@ -293,10 +294,9 @@ private class SyntheticAccessorsDumper(
                 )
             ).substringBefore('{').trimEnd()
 
-            val oneLineDump =
-                if ('\n' in dump && (element as? IrFunction)?.parameters?.any { it.kind == IrParameterKind.Context } == true) {
-                    dump.replaceFirst('\n', ' ')
-                } else dump
+            val oneLineDump = runIf((element as? IrFunction)?.parameters?.any { it.kind == IrParameterKind.Context } == true) {
+                dump.lineSequence().joinToString(separator = " ")
+            } ?: dump
 
             return appendLine(oneLineDump)
         }
