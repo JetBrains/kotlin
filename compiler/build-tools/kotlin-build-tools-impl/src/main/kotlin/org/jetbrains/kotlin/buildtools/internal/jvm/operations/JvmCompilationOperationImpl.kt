@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.MODULE_BUILD_DIR
@@ -108,12 +109,12 @@ internal class JvmCompilationOperationImpl(
         }
     }
 
-    private fun toDaemonCompilationOptions(logger: KotlinLogger): CompilationOptions {
+    private fun toDaemonCompilationOptions(): CompilationOptions {
         val ktsExtensionsAsArray = get(KOTLINSCRIPT_EXTENSIONS)
         val reportCategories = arrayOf(
             ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code
         ) // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
-        val reportSeverity = if (logger.isDebugEnabled) {
+        val reportSeverity = if (VERBOSE in compilerArguments && compilerArguments[VERBOSE]) {
             ReportSeverity.DEBUG.code
         } else {
             ReportSeverity.INFO.code
@@ -200,7 +201,8 @@ internal class JvmCompilationOperationImpl(
             daemonJVMOptions = jvmOptions,
             daemonOptions = daemonOptions
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
-        val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger)
+        val daemonCompileOptions = toDaemonCompilationOptions()
+        loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
         if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {
             checkJvmFirRequirements(compilerArguments)
