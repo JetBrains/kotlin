@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.impl
 
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.model.RunTestMethodModel
 import org.jetbrains.kotlin.generators.model.SimpleTestMethodModel
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
@@ -19,7 +18,7 @@ object SimpleTestMethodGenerator : MethodGenerator<SimpleTestMethodModel>() {
     override fun generateBody(method: SimpleTestMethodModel, p: Printer) {
         with(method) {
             val filePath = KtTestUtil.getFilePath(file) + if (file.isDirectory) "/" else ""
-            p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");")
+            p.println(DEFAULT_RUN_TEST_METHOD_NAME, "(\"", filePath, "\");")
         }
     }
 }

@@ -13,6 +13,8 @@ abstract class MethodGenerator<in T : MethodModel<in T>> {
         fun generateDefaultSignature(method: MethodModel<*>, p: Printer) {
             p.print("public void ${method.name}()")
         }
+
+        const val DEFAULT_RUN_TEST_METHOD_NAME = "runTest"
     }
 
     abstract fun generateSignature(method: T, p: Printer)
