@@ -1209,6 +1209,34 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
+    @OnlySymbols("#3356")
+    fun `KDoc Link to a class with quoted name should be resolved`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |/**
+            |* Class: [Quoted Class Name] is unresolved in K2, but resolved in K1
+            |* [`Quoted Class Name`] is resolved in K2, but unresolved in K1 
+            |* [example.`Quoted Class Name`] is resolved in K2 and K1
+            |*/
+            |class `Quoted Class Name`
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "`Quoted Class Name`" to DRI("example", "Quoted Class Name"),
+                        "example.`Quoted Class Name`" to DRI("example", "Quoted Class Name"),
+                    ),
+                    module.getAllLinkDRIFrom("Quoted Class Name")
+                )
+            }
+        }
+    }
+
+    @Test
     fun `should resolve KDoc links in package documentation`() {
         val configuration = dokkaConfiguration {
             sourceSets {
@@ -1267,9 +1295,20 @@ class LinkTest : BaseAbstractTest() {
     private fun DModule.getAllLinkDRIFrom(name: String): List<Pair<String, DRI>> {
         val result = mutableListOf<Pair<String, DRI>>()
         this.dfs { it.name == name }?.documentation?.values?.single()?.dfs {
-            if (it is DocumentationLink) result.add(it.firstChildOfType<Text>().body to it.dri)
+            if (it is DocumentationLink) result.add(it.textWithCodeInline() to it.dri)
             false
         }
         return result
+    }
+
+    /**
+     * Adapted from [DocTag.text]
+     */
+    fun DocTag.textWithCodeInline(): String = when (val t = this) {
+        is Text -> t.body
+        is CodeInline -> "`" + t.children.joinToString("\n") { it.textWithCodeInline() } + "`"
+        is Code -> t.children.joinToString("\n") { it.textWithCodeInline() }
+        is P -> t.children.joinToString("") { it.textWithCodeInline() } + "\n"
+        else -> t.children.joinToString("") { it.textWithCodeInline() }
     }
 }
