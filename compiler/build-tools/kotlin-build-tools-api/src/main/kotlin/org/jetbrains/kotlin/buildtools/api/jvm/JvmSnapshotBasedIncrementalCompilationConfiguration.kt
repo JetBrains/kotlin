@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
@@ -142,5 +143,14 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
          */
         @JvmField
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
+
+        /**
+         * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
+         * Keeping this option disabled provides consistent builds at the cost of compilation speed. (See KT-62686 for the underlying issue.)
+         * Enabling this option brings back pre-K2 behavior and may potentially introduce incorrect incremental builds.
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> = Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
     }
 }
