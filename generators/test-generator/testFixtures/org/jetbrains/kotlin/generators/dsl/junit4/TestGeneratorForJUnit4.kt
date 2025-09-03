@@ -163,9 +163,6 @@ private class TestGeneratorForJUnit4Instance(
                 override val annotations: Collection<AnnotationModel>
                     get() = emptyList()
 
-                override val imports: Set<Class<*>>
-                    get() = super.imports
-
                 override val tags: List<String>
                     get() = emptyList()
             }
