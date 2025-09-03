@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 public sealed class ExportedDeclaration {
-    public val attributes: MutableSet<ExportedAttribute> = hashSetOf()
+    public val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
 }
 
 public sealed class ExportedAttribute {

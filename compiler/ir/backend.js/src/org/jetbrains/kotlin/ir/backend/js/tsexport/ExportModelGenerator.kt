@@ -802,12 +802,12 @@ private fun shouldDeclarationBeExported(
         }
     }
 
-    if (declaration.isJsExport() || declaration.isJsExportDefault())
+    if (declaration.isUnconditionallyExported())
         return true
 
     return when (val parent = declaration.parent) {
         is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
-        is IrAnnotationContainer -> parent.isJsExport() || declaration.isJsExportDefault()
+        is IrAnnotationContainer -> parent.isUnconditionallyExported()
         else -> false
     }
 }

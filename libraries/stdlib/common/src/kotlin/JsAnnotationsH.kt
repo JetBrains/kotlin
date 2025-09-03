@@ -109,10 +109,10 @@ public annotation class ExperimentalJsStatic
 @SinceKotlin("1.4")
 @OptionalExpectation
 public expect annotation class JsExport() {
-    /*
-    * The annotation prevents exporting the annotated member of an exported class.
-    * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
-    */
+    /**
+     * The annotation prevents exporting the annotated member of an exported class.
+     * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+     **/
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
     @Target(CLASS, PROPERTY, FUNCTION, CONSTRUCTOR)
@@ -120,12 +120,12 @@ public expect annotation class JsExport() {
     @OptionalExpectation
     public annotation class Ignore()
 
-    /*
-    * The annotation notifies that the exported declaration should be exported as `default` on the JS platform.
-    * It means that for ES modules the annotated declaration will be available under the `default` export.
-    * For CommonJS, UMD, and plain modules the annotated declaration will be available by the name `default`.
-    * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
-    */
+    /**
+     * The annotation notifies that the exported declaration should be exported as `default` on the JS platform.
+     * It means that for ES modules the annotated declaration will be available under the `default` export.
+     * For CommonJS, UMD, and plain modules the annotated declaration will be available by the name `default`.
+     * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+     */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
     @Target(CLASS, PROPERTY, FUNCTION)

@@ -62,6 +62,9 @@ fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
 fun IrAnnotationContainer.isJsExport(): Boolean =
     hasAnnotation(JsAnnotations.jsExportFqn)
 
+fun IrAnnotationContainer.isUnconditionallyExported(): Boolean =
+    isJsExport() || isJsExportDefault()
+
 fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
 
