@@ -131,7 +131,7 @@ fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map(::TypeProj
 fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
-    TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
+    TypeProjectionImpl(projectionKind, type)
 
 @Deprecated(
     "The function has been moved",
