@@ -141,16 +141,16 @@ open class IncrementalFirJvmCompilerRunner(
                     // and with non-monotonous dirtySet, this risky optimization is "in the name"
 
 
-                    println("==============")
-                    println("compiled so far: ${alreadyCompiledByFrontendSources.joinToString(", ") { it.name }}")
-                    println("new dirty sources: ${expandedDirtySources.joinToString(", ") { it.name }}")
+                    //println("==============")
+                    //println("compiled so far: ${alreadyCompiledByFrontendSources.joinToString(", ") { it.name }}")
+                    //println("new dirty sources: ${expandedDirtySources.joinToString(", ") { it.name }}")
 
                     //TODO(emazhukin) is frontend dirtyset allowed to not be monotonous? i.e. can we run frontend once per file max?
                     // i bet we can not
                     val dirtySetDiff = expandedDirtySources - alreadyCompiledByFrontendSources
 
-                    println("sanity check - dsetdiff: ${expandedDirtySources.joinToString(", ") { it.name }}")
-                    println("==============")
+                    //println("sanity check - dsetdiff: ${expandedDirtySources.joinToString(", ") { it.name }}")
+                    //println("==============")
 
                     when (dirtySetDiff.size) {
                         0 -> JvmFir2IrPipelinePhase
