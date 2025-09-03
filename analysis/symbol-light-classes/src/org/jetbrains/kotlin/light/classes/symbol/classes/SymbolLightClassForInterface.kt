@@ -58,9 +58,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         }
     }
 
-    protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
-        return symbol !is KaNamedFunctionSymbol || symbol.visibility != KaSymbolVisibility.PRIVATE
-    }
+    protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean = true
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
