@@ -223,7 +223,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
                     }
                     val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
-                    compileAndLink(
+                    generationStateEngine.compileAndLink(
                             moduleCompilationOutput,
                             outputFiles.mainFileName,
                             outputFiles,
