@@ -66,6 +66,12 @@ class WasmFileCodegenContext(
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction> =
         wasmFileFragment.functions.reference(irFunction.getReferenceKey())
 
+    fun referenceGlobalString(value: String): Pair<WasmSymbol<WasmGlobal>, WasmSymbol<Int>> =
+        Pair(
+            wasmFileFragment.globalLiterals.reference(value),
+            wasmFileFragment.globalLiteralsIds.reference(value)
+        )
+
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =
         wasmFileFragment.globalFields.reference(irField.getReferenceKey())
 
@@ -147,6 +153,7 @@ class WasmFileCodegenContext(
         kotlinAny: IrClassSymbol?,
         tryGetAssociatedObject: IrFunctionSymbol?,
         jsToKotlinAnyAdapter: IrFunctionSymbol?,
+        jsToKotlinStringAdapter: IrFunctionSymbol?,
         unitGetInstance: IrFunctionSymbol?,
         runRootSuites: IrFunctionSymbol?,
         createString: IrFunctionSymbol?,
@@ -163,6 +170,8 @@ class WasmFileCodegenContext(
                     ?: tryGetAssociatedObject?.getReferenceKey(),
                 jsToKotlinAnyAdapter = originalSignatures?.jsToKotlinAnyAdapter
                     ?: jsToKotlinAnyAdapter?.getReferenceKey(),
+                jsToKotlinStringAdapter = originalSignatures?.jsToKotlinStringAdapter
+                    ?: jsToKotlinStringAdapter?.getReferenceKey(),
                 unitGetInstance = originalSignatures?.unitGetInstance
                     ?: unitGetInstance?.getReferenceKey(),
                 runRootSuites = originalSignatures?.runRootSuites
