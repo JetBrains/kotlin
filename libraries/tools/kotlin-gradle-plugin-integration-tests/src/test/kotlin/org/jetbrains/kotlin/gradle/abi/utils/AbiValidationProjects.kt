@@ -39,7 +39,7 @@ internal fun KGPBaseTest.androidProject(
 }
 
 /**
- * Creates a test project with Kotlin Multiplatform Gradle Plugin and an Android target.
+ * Creates an empty test project with Kotlin Multiplatform Gradle Plugin and JVM + Android targets.
  */
 internal fun KGPBaseTest.kmpWithAndroidProject(
     gradleVersion: GradleVersion,
@@ -67,5 +67,37 @@ internal fun KGPBaseTest.kmpWithAndroidProject(
             kotlinMultiplatform.androidTarget()
         }
     }
+    project.configuration()
+}
+
+/**
+ * Creates an empty test project with Kotlin Multiplatform Gradle Plugin.
+ */
+internal fun KGPBaseTest.kmpProject(
+    gradleVersion: GradleVersion,
+    buildCache: Boolean = false,
+    configuration: TestProject.() -> Unit
+) {
+    val project = project(
+        "base-kotlin-multiplatform-library",
+        gradleVersion,
+        buildOptions = defaultBuildOptions.copy(buildCacheEnabled = buildCache)
+    )
+    project.configuration()
+}
+
+/**
+ * Creates an empty test project with Kotlin JVM Gradle Plugin.
+ */
+internal fun KGPBaseTest.jvmProject(
+    gradleVersion: GradleVersion,
+    buildCache: Boolean = false,
+    configuration: TestProject.() -> Unit
+) {
+    val project = project(
+        "base-kotlin-jvm-library",
+        gradleVersion,
+        buildOptions = defaultBuildOptions.copy(buildCacheEnabled = buildCache)
+    )
     project.configuration()
 }
