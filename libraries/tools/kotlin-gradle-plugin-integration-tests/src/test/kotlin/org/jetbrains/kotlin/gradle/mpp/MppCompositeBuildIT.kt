@@ -26,9 +26,6 @@ import kotlin.test.assertIs
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
 class MppCompositeBuildIT : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.disableConfigurationCache_KT70416()
-
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
@@ -173,9 +170,15 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
+        var buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion)
+        if (gradleVersion < GradleVersion.version("9.1")) {
+            // FIXME: KT-74795
+            buildOptions = buildOptions.disableIsolatedProjects()
+        }
         project(
             "mpp-composite-build/sample1",
             gradleVersion,
+            buildOptions = buildOptions,
         ) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
@@ -277,7 +280,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
             gradleProperties.append("kotlin.mpp.enableCInteropCommonization=true")
 
             build("cleanNativeDistributionCommonization")
-            build(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde") {
+
+            resolveIdeDependencies("consumerA") {
                 assertTasksAreNotInTaskGraph(
                     ":producerBuild:producerA:iosArm64MetadataJar",
                     ":producerBuild:producerA:iosX64MetadataJar",
