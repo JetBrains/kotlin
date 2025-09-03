@@ -351,6 +351,14 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is the sum of this and [other] duration values.
      *
+     * Overflow and infinity handling:
+     * - The operation does not throw on arithmetic overflow. If the exact mathematical sum of two finite durations
+     *   does not fit into the representable finite range of [Duration], the result is saturated to
+     *   [Duration.INFINITE] or its negative counterpart depending on the sign of the sum.
+     * - When both operands are infinite, adding infinities of the same sign yields that same infinity; adding infinities
+     *   of different signs is undefined and results in [IllegalArgumentException].
+     * - When one operand is infinite and the other is finite, the result is that infinite operand (no overflow occurs).
+     *
      * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
      * e.g. when adding infinite durations of different sign.
      */

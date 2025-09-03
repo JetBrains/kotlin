@@ -120,6 +120,13 @@ public interface TimeMark {
     /**
      * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
      *
+     * Typical usage: capture a mark with [TimeSource.markNow] and later query the elapsed interval to make decisions
+     * (for example, in loops or timeouts): `val mark = timeSource.markNow(); ...; if (mark.elapsedNow() > 100.milliseconds) { ... }`.
+     *
+     * The returned duration is:
+     * - Negative if this mark is in the future relative to the current reading of the same time source.
+     * - Infinite if the time mark is infinitely distant, or if the elapsed interval is too large to be represented as a finite [Duration].
+     *
      * Note that the value returned by this function can change on subsequent invocations.
      *
      * @throws IllegalArgumentException an implementation may throw if calculating the elapsed time involves
