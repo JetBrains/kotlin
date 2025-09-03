@@ -594,6 +594,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
         fragmentTag = deserializeNullable(::deserializeString),
         functions = deserializeFunctions(),
+        globalLiterals = deserializeGlobalLiterals(),
+        globalLiteralsIds = deserializeGlobalLiteralsIds(),
         globalFields = deserializeGlobalFields(),
         globalVTables = deserializeGlobalVTables(),
         globalClassITables = deserializeGlobalClassITables(),
@@ -621,6 +623,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
+    private fun deserializeGlobalLiterals() = deserializeReferencableElements(::deserializeString, ::deserializeGlobal)
+    private fun deserializeGlobalLiteralsIds() = deserializeReferencableElements(::deserializeString, ::deserializeInt)
     private fun deserializeGlobalFields() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
     private fun deserializeGlobalVTables() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
     private fun deserializeGlobalClassITables() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
@@ -647,6 +651,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 kotlinAny = deserializeNullable(::deserializeIdSignature),
                 tryGetAssociatedObject = deserializeNullable(::deserializeIdSignature),
                 jsToKotlinAnyAdapter = deserializeNullable(::deserializeIdSignature),
+                jsToKotlinStringAdapter = deserializeNullable(::deserializeIdSignature),
                 unitGetInstance = deserializeNullable(::deserializeIdSignature),
                 runRootSuites = deserializeNullable(::deserializeIdSignature),
                 createString = deserializeNullable(::deserializeIdSignature),
@@ -658,6 +663,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         WasmStringsElements(
             createStringLiteralUtf16 = deserializeSymbol(::deserializeFunction),
             createStringLiteralLatin1 = deserializeSymbol(::deserializeFunction),
+            createStringLiteralJsString = deserializeSymbol(::deserializeFunction),
             createStringLiteralType = deserializeSymbol(::deserializeFunctionType),
         )
     }

@@ -619,6 +619,8 @@ class WasmSerializer(outputStream: OutputStream) {
         with(compiledFileFragment) {
             serializeNullable(fragmentTag, ::serializeString)
             serializeReferencableAndDefinable(functions, ::serializeIdSignature, ::serializeWasmFunction)
+            serializeReferencableElements(globalLiterals, ::serializeString, ::serializeWasmGlobal)
+            serializeReferencableElements(globalLiteralsIds, ::serializeString, ::serializeInt)
             serializeReferencableAndDefinable(globalFields, ::serializeIdSignature, ::serializeWasmGlobal)
             serializeReferencableAndDefinable(globalVTables, ::serializeIdSignature, ::serializeWasmGlobal)
             serializeReferencableAndDefinable(globalClassITables, ::serializeIdSignature, ::serializeWasmGlobal)
@@ -648,6 +650,7 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeWasmStringsElements(wasmStringsElements: WasmStringsElements) {
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralUtf16, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralLatin1, ::serializeWasmFunction)
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralJsString, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralType, ::serializeWasmFunctionType)
     }
 
@@ -681,6 +684,7 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeNullable(builtinIdSignatures.kotlinAny, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.tryGetAssociatedObject, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.jsToKotlinAnyAdapter, ::serializeIdSignature)
+        serializeNullable(builtinIdSignatures.jsToKotlinStringAdapter, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.unitGetInstance, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.runRootSuites, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.createString, ::serializeIdSignature)

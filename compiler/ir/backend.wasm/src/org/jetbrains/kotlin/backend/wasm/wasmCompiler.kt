@@ -427,6 +427,10 @@ const js_code = {
 $jsCodeBodyIndented
 }
 
+const StringConstantsProxy = new Proxy({}, {
+  get(_, prop) { return prop; }
+});
+
 ${if (stdlibModuleOrWholeProgramMode) "export { wasmTag as __TAG };" else ""}
 
 $importObject
@@ -523,6 +527,7 @@ export const importObject = {
     intrinsics: {
         tag: wasmTag
     },
+    "strings": StringConstantsProxy,
 $imports};
     """.trimIndent()
 }
@@ -545,7 +550,7 @@ import { importObject, setWasmExports$commonStdlibExports } from './${baseFileNa
     """.trimIndent()
 
     val builtinsList = jsModuleImports.filter { it.startsWith("wasm:") }.map { "${it.removePrefix("wasm:")}" }
-    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
+    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: \"strings\" }"
 
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
 
@@ -580,23 +585,23 @@ try {
     const url = require('url');
     const filepath = import.meta.resolve(wasmFilePath);
     const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
-    const wasmModule = new WebAssembly.Module(wasmBuffer);
-    wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
+    const wasmModule = new WebAssembly.Module(wasmBuffer, $options);
+    wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
   }
 
   if (isDeno) {
     const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
     const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
-    const module = await WebAssembly.compile(binary);
-    wasmInstance = await WebAssembly.instantiate(module, importObject, $options);
+    const module = await WebAssembly.compile(binary, $options);
+    wasmInstance = await WebAssembly.instantiate(module, importObject);
   }
 
   if (isStandaloneJsVM) {
     const importMeta = import.meta;
     const filepath = importMeta.url.replace(/\.mjs$/, '.wasm');
     const wasmBuffer = read(filepath, 'binary');
-    const wasmModule = new WebAssembly.Module(wasmBuffer);
-    wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
+    const wasmModule = new WebAssembly.Module(wasmBuffer, $options);
+    wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
   }
 
   if (isBrowser) {
