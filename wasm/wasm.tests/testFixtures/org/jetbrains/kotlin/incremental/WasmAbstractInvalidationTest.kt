@@ -19,9 +19,12 @@ import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.TestDisposable
+import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase
+import org.jetbrains.kotlin.wasm.test.WasmCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 import kotlin.test.assertEquals
@@ -47,6 +50,9 @@ abstract class WasmAbstractInvalidationTest(
     @OptIn(K1Deprecation::class)
     override val environment: KotlinCoreEnvironment =
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+
+    override fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration =
+        WasmCompilerInvocationTestConfiguration(buildDir, AbstractWasmPartialLinkageTestCase.CompilerType.WITH_IC)
 
     override fun createConfiguration(
         moduleName: String,
