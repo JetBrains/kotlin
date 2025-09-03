@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.dsl
 
+import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
@@ -34,7 +35,7 @@ class TestGroupSuite {
     fun testGroup(
         testsRoot: String,
         testDataRoot: String,
-        testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
+        testRunnerMethodName: String = MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME,
         init: TestGroup.() -> Unit
     ) {
         _testGroups += TestGroup(

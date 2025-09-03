@@ -15,7 +15,7 @@ class RunTestMethodModel(
     val testRunnerMethodName: String,
 ) : MethodModel<RunTestMethodModel>() {
     override val generator: MethodGenerator<RunTestMethodModel> get() = RunTestMethodGenerator
-    override val name = METHOD_NAME
+    override val name = MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME
     override val dataString: String? = null
 
     override val tags: List<String>
@@ -26,10 +26,6 @@ class RunTestMethodModel(
     }
 
     fun isWithTargetBackend(): Boolean {
-        return !(targetBackend == TargetBackend.ANY && testRunnerMethodName == METHOD_NAME)
-    }
-
-    companion object {
-        const val METHOD_NAME = "runTest"
+        return !(targetBackend == TargetBackend.ANY && testRunnerMethodName == MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME)
     }
 }
