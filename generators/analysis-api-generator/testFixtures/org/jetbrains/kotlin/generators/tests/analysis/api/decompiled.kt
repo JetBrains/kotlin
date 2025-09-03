@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStu
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractPsiStubElementTypeConsistencyTest
-import org.jetbrains.kotlin.generators.TestGroupSuite
+import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 
 internal fun TestGroupSuite.generateDecompiledTests() {
     testGroup(

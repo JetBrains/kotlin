@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators
 
+import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.model.MethodModel
 
 abstract class AbstractTestGenerator(methodGenerators: List<MethodGenerator<*>>) {

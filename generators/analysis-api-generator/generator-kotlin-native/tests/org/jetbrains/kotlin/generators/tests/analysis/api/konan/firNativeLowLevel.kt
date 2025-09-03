@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.konan
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.konan.compiler.based.AbstractLLReversedNativeDiagnosticsTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.konan.compiler.based.AbstractLLNativeDiagnosticsTest
-import org.jetbrains.kotlin.generators.TestGroupSuite
+import org.jetbrains.kotlin.analysis.low.level.api.fir.konan.compiler.based.AbstractLLReversedNativeDiagnosticsTest
+import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag

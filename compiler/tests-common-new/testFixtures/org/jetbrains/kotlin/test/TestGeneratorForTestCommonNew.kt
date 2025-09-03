@@ -5,33 +5,11 @@
 
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.test.runners.AbstractClassicDiagnosticsTestWithConverter
-import org.jetbrains.kotlin.test.runners.AbstractClassicJvmIntegrationDiagnosticTest
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticUsingJavacTest
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticsTestWithJvmIrBackend
-import org.jetbrains.kotlin.test.runners.AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest
-import org.jetbrains.kotlin.test.runners.AbstractForeignAnnotationsCompiledJavaTest
-import org.jetbrains.kotlin.test.runners.AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest
-import org.jetbrains.kotlin.test.runners.AbstractForeignAnnotationsSourceJavaTest
-import org.jetbrains.kotlin.test.runners.AbstractJvmAbiConsistencyTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrAsmLikeInstructionListingTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBytecodeListingTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBytecodeTextTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrCompileKotlinAgainstInlineKotlinTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrLocalVariableTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrSteppingTest
-import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.AbstractFirBlackBoxCodegenTestWithInlineScopes
-import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.AbstractFirBlackBoxInlineCodegenTestWithInlineScopes
-import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.AbstractFirBytecodeTextTestWithInlineScopes
-import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.AbstractFirLocalVariableTestWithInlineScopes
-import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes
-import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.AbstractFirSteppingTestWithInlineScopes
+import org.jetbrains.kotlin.test.runners.*
+import org.jetbrains.kotlin.test.runners.codegen.*
+import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractClassicJvmIrSourceRangesTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractClassicJvmIrTextTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest

@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.impl
+package org.jetbrains.kotlin.generators.dsl.junit4
 
-import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.AbstractTestGenerator
-import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.dsl.TestGroup
+import org.jetbrains.kotlin.generators.impl.*
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
@@ -54,7 +54,7 @@ private class TestGeneratorForJUnit4Instance(
 ) {
     companion object {
         private val GENERATED_FILES = HashSet<String>()
-        private val RUNNER = JUnit3RunnerWithInners::class.java
+        private val JUNIT3_RUNNER = Class.forName("org.jetbrains.kotlin.test.JUnit3RunnerWithInners")
         private val JUNIT4_RUNNER = BlockJUnit4ClassRunner::class.java
 
         private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
@@ -119,9 +119,9 @@ private class TestGeneratorForJUnit4Instance(
         p.println()
         p.println("import com.intellij.testFramework.TestDataPath;")
         if (!useJunit4) {
-            p.println("import ", RUNNER.canonicalName, ";")
+            p.println("import ", JUNIT3_RUNNER.canonicalName, ";")
         }
-        p.println("import " + KotlinTestUtils::class.java.canonicalName + ";")
+        p.println("import org.jetbrains.kotlin.test.KotlinTestUtils;")
         p.println("import " + KtTestUtil::class.java.canonicalName + ";")
 
         for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
@@ -199,7 +199,7 @@ private class TestGeneratorForJUnit4Instance(
         generateTestDataPath(p, testClassModel)
         generateParameterAnnotations(p, testClassModel)
 
-        p.println("@RunWith(", if (useJunit4) JUNIT4_RUNNER.simpleName else RUNNER.simpleName, ".class)")
+        p.println("@RunWith(", if (useJunit4) JUNIT4_RUNNER.simpleName else JUNIT3_RUNNER.simpleName, ".class)")
 
         p.println("public " + staticModifier + "class ", testClassModel.name, " extends ", baseTestClassName, " {")
         p.pushIndent()

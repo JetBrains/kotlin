@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
-import org.jetbrains.kotlin.generators.TestGroupSuite
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
 class AnalysisApiTestGenerator(val suite: TestGroupSuite) {
     fun group(init: AnalysisApiTestGroup.() -> Unit) {

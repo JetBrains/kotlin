@@ -5,24 +5,12 @@
 
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.generators.TestGroup.TestClass
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.dsl.TestGroup.TestClass
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticTestSpec
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLoadK1CompiledJvmKotlinTest
-import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTestSpec
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsCompiledJavaTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsCompiledJavaWithPsiClassReadingTest
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiForeignAnnotationsSourceJavaTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
-import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticPsiTest
+import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {

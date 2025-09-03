@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.defaultExtension
-import org.jetbrains.kotlin.generators.TestGroup
-import org.jetbrains.kotlin.generators.TestGroupSuite
-import org.jetbrains.kotlin.generators.getDefaultSuiteTestClassName
+import org.jetbrains.kotlin.generators.dsl.TestGroup
+import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
+import org.jetbrains.kotlin.generators.dsl.getDefaultSuiteTestClassName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 class AnalysisApiTestGroup(

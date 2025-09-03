@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.js.test.klib.AbstractCustomJsCompilerFirstPhaseTest
 import org.jetbrains.kotlin.js.test.klib.AbstractCustomJsCompilerSecondPhaseTest

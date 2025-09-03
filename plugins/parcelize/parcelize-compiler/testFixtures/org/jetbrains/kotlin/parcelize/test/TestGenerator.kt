@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.parcelize.test
 
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractFirParcelizeBytecodeListingTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractFirPsiParcelizeDiagnosticTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeDiagnosticTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeFirLightTreeBoxTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBoxTest
-import org.jetbrains.kotlin.parcelize.test.runners.AbstractParcelizeIrBytecodeListingTest
+import org.jetbrains.kotlin.parcelize.test.runners.*
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {

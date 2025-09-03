@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlinx.serialization.matrix
 
-import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlinx.serialization.matrix.impl.CombinationContextImpl
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
+import org.jetbrains.kotlinx.serialization.matrix.impl.CombinationContextImpl
 import java.io.File
 
 internal fun TestGroup.testMatrix(casesBlock: TestCaseContext.() -> Unit) {
