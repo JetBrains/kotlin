@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.jps
 
 import org.jetbrains.kotlin.generators.TestGroup
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    generateTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit4(args) {
         testGroup("jps/jps-plugin/jps-tests/tests-gen", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
                 val targetBackend = TargetBackend.JVM_IR

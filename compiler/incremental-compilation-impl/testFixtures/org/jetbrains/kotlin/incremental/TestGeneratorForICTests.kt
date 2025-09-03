@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.generators.TestGroup
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.incremental.IncrementalTestsGeneratorUtil.IcTestTypes.*
 import org.jetbrains.kotlin.incremental.IncrementalTestsGeneratorUtil.incrementalJvmTestData
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
-    generateTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit4(args) {
         testGroup("compiler/incremental-compilation-impl/tests-gen", "jps/jps-plugin/testData") {
             testClass<AbstractIncrementalK1JvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(

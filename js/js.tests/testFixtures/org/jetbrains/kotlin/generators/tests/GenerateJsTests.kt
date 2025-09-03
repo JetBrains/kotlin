@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
     //generateTestDataForReservedWords()
     generateTypeScriptJsExportOnFiles("js/js.translator/testData/typescript-export/js")
 
-    generateTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit4(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirJsKlibEvolutionTest> {
                 model(targetBackend = TargetBackend.JS_IR)
