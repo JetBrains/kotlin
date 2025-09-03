@@ -44,6 +44,7 @@ internal class JvmLocalDeclarationsLowering(override val context: JvmBackendCont
     newParameterToCaptured = context.evaluatorData?.localDeclarationsData?.newParameterToCaptured ?: mutableMapOf(),
     newParameterToOld = context.evaluatorData?.localDeclarationsData?.newParameterToOld ?: mutableMapOf(),
     oldParameterToNew = context.evaluatorData?.localDeclarationsData?.oldParameterToNew ?: mutableMapOf(),
+    considerRichFunctionReferenceInvokeFunctionsAsLocal = true,
 ) {
 
     override fun getReplacementSymbolForCaptured(container: IrDeclaration, symbol: IrValueSymbol): IrValueSymbol {
