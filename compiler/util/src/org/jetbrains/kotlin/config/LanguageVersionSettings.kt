@@ -508,6 +508,10 @@ enum class LanguageFeature(
     // this feature will eventually switch this warning to an error
     ProhibitScriptTopLevelInnerClasses(sinceVersion = null, NO_ISSUE_SPECIFIED),
 
+    // Just a safety mechanism to revert the change in inference behavior that was required for a performance problem fix.
+    // If no problems are reported about it, can be removed after a couple of releases.
+    RevertSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
+
     // Experimental features
 
     ExpectRefinement(sinceVersion = null, "KT-73557"),
