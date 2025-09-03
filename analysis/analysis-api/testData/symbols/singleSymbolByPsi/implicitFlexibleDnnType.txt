@@ -17,7 +17,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaFlexibleType:
       annotations: []
-      type: ft<java/util/function/Function<kotlin/String!, ft<T & Any, T?>>, java/util/function/Function<kotlin/String!, ft<T & Any, T?>>?>
+      type: java/util/function/Function<kotlin/String!, ft<T & Any, T?>>!
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
@@ -53,7 +53,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaFlexibleType:
       annotations: []
-      type: ft<java/util/function/Function<kotlin/String!, ft<T & Any, T?>>, java/util/function/Function<kotlin/String!, ft<T & Any, T?>>?>
+      type: java/util/function/Function<kotlin/String!, ft<T & Any, T?>>!
     valueParameters: []
     visibility: PUBLIC
     getDispatchReceiver(): KaUsualClassType:
@@ -90,7 +90,7 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
-    type: ft<java/util/function/Function<kotlin/String!, ft<T & Any, T?>>, java/util/function/Function<kotlin/String!, ft<T & Any, T?>>?>
+    type: java/util/function/Function<kotlin/String!, ft<T & Any, T?>>!
   setter: null
   typeParameters: []
   visibility: PUBLIC

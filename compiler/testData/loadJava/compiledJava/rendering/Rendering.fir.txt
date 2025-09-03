@@ -62,11 +62,11 @@ public open class Rendering : R|kotlin/Any| {
 
         public abstract fun foo3(x: R|ft<kotlin/collections/MutableList<*>, kotlin/collections/List<*>?>|): R|kotlin/Unit|
 
-        public abstract fun foo4(x: R|ft<test/Rendering.D_SuperG<out kotlin/String!>, test/Rendering.D_SuperG<out kotlin/String!>?>|): R|kotlin/Unit|
+        public abstract fun foo4(x: R|test/Rendering.D_SuperG<out kotlin/String!>!|): R|kotlin/Unit|
 
-        public abstract fun foo5(x: R|ft<test/Rendering.D_SuperG<in kotlin/String!>, test/Rendering.D_SuperG<in kotlin/String!>?>|): R|kotlin/Unit|
+        public abstract fun foo5(x: R|test/Rendering.D_SuperG<in kotlin/String!>!|): R|kotlin/Unit|
 
-        public abstract fun foo6(x: R|ft<test/Rendering.D_SuperG<*>, test/Rendering.D_SuperG<*>?>|): R|kotlin/Unit|
+        public abstract fun foo6(x: R|test/Rendering.D_SuperG<*>!|): R|kotlin/Unit|
 
     }
 }

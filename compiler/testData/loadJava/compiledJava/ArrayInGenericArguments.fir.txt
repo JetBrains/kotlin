@@ -1,9 +1,9 @@
 public open class ArrayInGenericArguments : R|kotlin/Any| {
-    public final static field X: R|ft<ArrayInGenericArguments.DataKey<ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>, ArrayInGenericArguments.DataKey<ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>?>|
+    public final static field X: R|ArrayInGenericArguments.DataKey<ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>!|
 
-    public final static field Y: R|ft<ArrayInGenericArguments.DataKey<kotlin/IntArray!>, ArrayInGenericArguments.DataKey<kotlin/IntArray!>?>|
+    public final static field Y: R|ArrayInGenericArguments.DataKey<kotlin/IntArray!>!|
 
-    public final static field Z: R|ft<ArrayInGenericArguments.DataKey<out ft<kotlin/Array<kotlin/CharSequence!>, kotlin/Array<out kotlin/CharSequence!>?>>, ArrayInGenericArguments.DataKey<out ft<kotlin/Array<kotlin/CharSequence!>, kotlin/Array<out kotlin/CharSequence!>?>>?>|
+    public final static field Z: R|ArrayInGenericArguments.DataKey<out ft<kotlin/Array<kotlin/CharSequence!>, kotlin/Array<out kotlin/CharSequence!>?>>!|
 
     public constructor(): R|ArrayInGenericArguments|
 

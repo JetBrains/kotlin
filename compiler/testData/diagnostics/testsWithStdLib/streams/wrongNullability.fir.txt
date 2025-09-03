@@ -18,10 +18,10 @@ FILE: wrongNullability.fir.kt
 
     }
     public final fun run(filter: R|java/util/function/IntPredicate|, allProcesses: R|java/util/stream/Stream<Process>|): R|kotlin/collections/List<IntLongPair>| {
-        ^run R|<local>/allProcesses|.R|SubstitutionOverride<java/util/stream/Stream.filter: R|ft<java/util/stream/Stream<Process!>, java/util/stream/Stream<Process!>?>|>|(<L> = SAM(filter@fun <anonymous>(it: R|@EnhancedNullability Process!|): R|kotlin/Boolean| <inline=NoInline>  {
+        ^run R|<local>/allProcesses|.R|SubstitutionOverride<java/util/stream/Stream.filter: R|java/util/stream/Stream<Process!>!|>|(<L> = SAM(filter@fun <anonymous>(it: R|@EnhancedNullability Process!|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ R|<local>/filter|.R|java/util/function/IntPredicate.test|(R|<local>/it|.R|/Process.pid|())
         }
-        )).R|SubstitutionOverride<java/util/stream/Stream.map: R|ft<java/util/stream/Stream<R!>, java/util/stream/Stream<R!>?>|>|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=null) IntLongPair!|>(<L> = SAM(map@fun <anonymous>(it: R|@EnhancedNullability Process!|): R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) @EnhancedNullability IntLongPair!| <inline=NoInline>  {
+        )).R|SubstitutionOverride<java/util/stream/Stream.map: R|java/util/stream/Stream<R!>!|>|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=null) IntLongPair!|>(<L> = SAM(map@fun <anonymous>(it: R|@EnhancedNullability Process!|): R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=IntLongPair?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) @EnhancedNullability IntLongPair!| <inline=NoInline>  {
             lval duration: R|kotlin/Long?| = R|<local>/it|.R|/Process.totalCpuDuration|()
             ^ when () {
                 !=(R|<local>/duration|, Null(null)) ->  {

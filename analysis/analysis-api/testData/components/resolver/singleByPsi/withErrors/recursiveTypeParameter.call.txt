@@ -5,8 +5,8 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
         CoroutineModule.builder() -> (KaVariableSignature:
           name = builder
           receiverType = null
-          returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
-          symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+          returnType = AbstractModule.Builder<*>!
+          symbol = builder: AbstractModule.Builder<*>!
           contextParameters = []
           callableId = null)
       }
@@ -20,13 +20,13 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>): kotlin.Unit
+          symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: AbstractModule.Builder<*>!): kotlin.Unit
           valueParameters = [
             KaVariableSignature:
               name = builder
               receiverType = null
-              returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
-              symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+              returnType = AbstractModule.Builder<*>!
+              symbol = builder: AbstractModule.Builder<*>!
               contextParameters = []
               callableId = null
           ]

@@ -548,7 +548,7 @@ KaNamedFunctionSymbol:
   receiverParameter: null
   returnType: KaFlexibleType:
     annotations: []
-    type: ft<java/lang/Class<test/E!>, java/lang/Class<test/E!>?>
+    type: java/lang/Class<test/E!>!
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC

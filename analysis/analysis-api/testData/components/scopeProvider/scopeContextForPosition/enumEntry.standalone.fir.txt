@@ -560,7 +560,7 @@ scopes:
         receiverParameter: null
         returnType: KaFlexibleType:
           annotations: []
-          type: ft<java/lang/Class<E!>, java/lang/Class<E!>?>
+          type: java/lang/Class<E!>!
         typeParameters: []
         valueParameters: []
         visibility: PUBLIC

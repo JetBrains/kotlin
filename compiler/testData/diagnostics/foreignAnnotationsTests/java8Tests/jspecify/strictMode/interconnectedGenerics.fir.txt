@@ -53,10 +53,10 @@ FILE: Repro.kt
         private final fun isTableValid(c: R|java/lang/Class<lib/En<lib/Pr>>|, key: R|lib/Pr|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
             when () {
                 R|<local>/b| ->  {
-                    this@R|repro/Repro|.R|repro/Repro.f|<R|ft<it(lib/En<lib/Pr> & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>), it(lib/En<lib/Pr>? & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>?)>|>(this@R|repro/Repro|.R|repro/Repro.g|<R|lib/Pr|, R|ft<it(lib/En<lib/Pr> & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>), it(lib/En<lib/Pr>? & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>?)>|>(R|<local>/key|))
+                    this@R|repro/Repro|.R|repro/Repro.f|<R|ft<it(lib/En<lib/Pr> & lib/Il<@EnhancedNullability lib/En<lib/Pr>!>), it(lib/En<lib/Pr>? & lib/Il<@EnhancedNullability lib/En<lib/Pr>!>?)>|>(this@R|repro/Repro|.R|repro/Repro.g|<R|lib/Pr|, R|ft<it(lib/En<lib/Pr> & lib/Il<@EnhancedNullability lib/En<lib/Pr>!>), it(lib/En<lib/Pr>? & lib/Il<@EnhancedNullability lib/En<lib/Pr>!>?)>|>(R|<local>/key|))
                 }
                 else ->  {
-                    this@R|repro/Repro|.R|repro/Repro.f|<R|ft<lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>, lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>?>|>(Q|lib/a/C|.R|lib/a/C.from*s|<R|lib/Pr!|, R|ft<lib/En<lib/Pr>, lib/En<lib/Pr>?>|>(R|<local>/c|).R|SubstitutionOverride<lib/a/C.Fr.withL: R|ft<lib/a/C.WithL<lib/Pr!, ft<lib/En<lib/Pr>, lib/En<lib/Pr>?>>, lib/a/C.WithL<lib/Pr!, ft<lib/En<lib/Pr>, lib/En<lib/Pr>?>>?>|>|(Int(1)))
+                    this@R|repro/Repro|.R|repro/Repro.f|<R|lib/Il<@EnhancedNullability lib/En<lib/Pr>!>!|>(Q|lib/a/C|.R|lib/a/C.from*s|<R|lib/Pr!|, R|lib/En<lib/Pr>!|>(R|<local>/c|).R|SubstitutionOverride<lib/a/C.Fr.withL: R|lib/a/C.WithL<lib/Pr!, lib/En<lib/Pr>!>!|>|(Int(1)))
                 }
             }
 

@@ -178,6 +178,11 @@ open class ConeTypeRenderer(
     }
 
     private fun ConeFlexibleType.renderForSameLookupTags(): Boolean {
+        if (isTrivial && lowerBound !is ConeDefinitelyNotNullType) {
+            render(lowerBound, nullabilityMarker = "!")
+            return true
+        }
+
         if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
             lowerBound.lookupTag == upperBound.lookupTag &&
             !lowerBound.isMarkedNullable && upperBound.isMarkedNullable

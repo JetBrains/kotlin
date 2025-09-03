@@ -143,7 +143,7 @@ KaNamedFunctionSymbol:
       receiverParameter: null
       returnType: KaFlexibleType:
         annotations: []
-        type: ft<java/lang/Class<out T!>, java/lang/Class<out T!>?>
+        type: java/lang/Class<out T!>!
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass

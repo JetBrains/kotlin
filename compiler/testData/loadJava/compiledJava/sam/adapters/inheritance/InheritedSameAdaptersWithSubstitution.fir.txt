@@ -2,11 +2,11 @@ public abstract interface InheritedSameAdaptersWithSubstitution : R|kotlin/Any| 
     public abstract interface Sub : R|test/InheritedSameAdaptersWithSubstitution.Super1|, R|test/InheritedSameAdaptersWithSubstitution.Super2Substituted| {
     }
     public abstract interface Super1 : R|kotlin/Any| {
-        public abstract fun foo(r: R|ft<java/util/Comparator<kotlin/String!>, java/util/Comparator<kotlin/String!>?>|): R|kotlin/Unit|
+        public abstract fun foo(r: R|java/util/Comparator<kotlin/String!>!|): R|kotlin/Unit|
 
     }
     public abstract interface Super2<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun foo(r: R|ft<java/util/Comparator<T!>, java/util/Comparator<T!>?>|): R|kotlin/Unit|
+        public abstract fun foo(r: R|java/util/Comparator<T!>!|): R|kotlin/Unit|
 
     }
     public abstract interface Super2Substituted : R|test/InheritedSameAdaptersWithSubstitution.Super2<kotlin/String!>| {
