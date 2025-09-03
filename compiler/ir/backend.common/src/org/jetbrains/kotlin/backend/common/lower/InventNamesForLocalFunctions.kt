@@ -95,17 +95,6 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
             )
         }
 
-        override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Data) {
-            expression.boundValues.forEach { it.accept(this, data) }
-            expression.invokeFunction.acceptChildren(this, data)
-        }
-
-        override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Data) {
-            expression.boundValues.forEach { it.accept(this, data) }
-            expression.getterFunction.acceptChildren(this, data)
-            expression.setterFunction?.acceptChildren(this, data)
-        }
-
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {
             expression.function.acceptChildren(this, data)
         }
