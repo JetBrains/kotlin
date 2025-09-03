@@ -217,11 +217,11 @@ abstract class FirDataFlowAnalyzer(
     protected abstract val receiverStack: ImplicitValueStorage
     protected abstract fun implicitUpdated(info: TypeStatement)
 
-    private val graphBuilder get() = context.graphBuilder
-    private val variableStorage get() = context.variableStorage
+    private val graphBuilder: ControlFlowGraphBuilder get() = context.graphBuilder
+    private val variableStorage: VariableStorage get() = context.variableStorage
 
-    private val any = components.session.builtinTypes.anyType.coneType
-    private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneType
+    private val any: ConeClassLikeType = components.session.builtinTypes.anyType.coneType
+    private val nullableNothing: ConeClassLikeType = components.session.builtinTypes.nullableNothingType.coneType
 
     // ----------------------------------- Requests -----------------------------------
 

@@ -33,7 +33,7 @@ class StringConcatGenerator(
             fun parameter(type: Type) = Item(type, ItemType.PARAMETER, "\u0001")
         }
 
-        val encodedUTF8Size by lazy {
+        val encodedUTF8Size: Int by lazy {
             value.encodedUTF8Size()
         }
 

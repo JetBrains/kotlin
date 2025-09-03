@@ -276,7 +276,7 @@ sealed class IdSignature {
     ) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = true
 
-        private val packageFqNameObject = FqName(packageFqName)
+        private val packageFqNameObject: FqName = FqName(packageFqName)
 
         override fun packageFqName(): FqName = packageFqNameObject
 
@@ -323,7 +323,8 @@ sealed class IdSignature {
             other is CommonSignature && packageFqName == other.packageFqName && declarationFqName == other.declarationFqName &&
                     id == other.id && mask == other.mask
 
-        private val hashCode = ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
+        private val hashCode: Int =
+            ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
 
         override fun hashCode(): Int = hashCode
     }

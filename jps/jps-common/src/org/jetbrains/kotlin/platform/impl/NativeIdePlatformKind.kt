@@ -68,7 +68,7 @@ class FakeK2NativeCompilerArguments : CommonCompilerArguments() {
     override fun copyOf(): Freezable = copyCommonCompilerArguments(this, FakeK2NativeCompilerArguments())
 }
 
-val IdePlatformKind?.isKotlinNative
+val IdePlatformKind?.isKotlinNative: Boolean
     get() = this is NativeIdePlatformKind
 
 @Deprecated(

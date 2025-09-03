@@ -49,7 +49,7 @@ object CommonIdePlatformKind : IdePlatformKind() {
     }
 }
 
-val IdePlatformKind?.isCommon
+val IdePlatformKind?.isCommon: Boolean
     get() = this is CommonIdePlatformKind
 
 @Deprecated(

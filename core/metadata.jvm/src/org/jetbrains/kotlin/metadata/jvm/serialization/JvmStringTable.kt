@@ -16,15 +16,15 @@ import java.io.OutputStream
 
 // TODO: optimize by reordering records to minimize storage of 'range' fields
 open class JvmStringTable(nameResolver: JvmNameResolver? = null) : StringTable {
-    val strings = ArrayList<String>()
-    private val records = ArrayList<Record.Builder>()
-    private val map = HashMap<String, Int>()
-    private val localNames = LinkedHashSet<Int>()
+    val strings: ArrayList<String> = ArrayList()
+    private val records: ArrayList<Record.Builder> = ArrayList()
+    private val map: HashMap<String, Int> = HashMap()
+    private val localNames: LinkedHashSet<Int> = LinkedHashSet()
 
     init {
         if (nameResolver != null) {
             strings.addAll(nameResolver.strings)
-            nameResolver.types.recordList.mapTo(records, JvmProtoBuf.StringTableTypes.Record::toBuilder)
+            nameResolver.types.recordList.mapTo(records, Record::toBuilder)
             for (index in strings.indices) {
                 map[nameResolver.getString(index)] = index
             }

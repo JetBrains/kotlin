@@ -12,7 +12,7 @@ class MultiFieldValueClassRepresentation<Type : RigidTypeMarker>(
     override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
 ) : ValueClassRepresentation<Type>() {
 
-    private val map = underlyingPropertyNamesToTypes.toMap()
+    private val map: Map<Name, Type> = underlyingPropertyNamesToTypes.toMap()
 
     override fun containsPropertyWithName(name: Name): Boolean = name in map
     override fun getPropertyTypeByName(name: Name): Type? = map[name]

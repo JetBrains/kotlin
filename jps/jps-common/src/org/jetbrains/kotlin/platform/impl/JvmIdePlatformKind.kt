@@ -65,7 +65,7 @@ object JvmIdePlatformKind : IdePlatformKind() {
     }
 }
 
-val IdePlatformKind?.isJvm
+val IdePlatformKind?.isJvm: Boolean
     get() = this is JvmIdePlatformKind
 
 @Deprecated(

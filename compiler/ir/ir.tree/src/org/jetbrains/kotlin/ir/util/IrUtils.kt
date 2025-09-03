@@ -258,13 +258,13 @@ fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
     return this.hasAncestorInSuperTypes()
 }
 
-val IrClass.isAnnotationClass get() = kind == ClassKind.ANNOTATION_CLASS
-val IrClass.isEnumClass get() = kind == ClassKind.ENUM_CLASS
-val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY
-val IrClass.isInterface get() = kind == ClassKind.INTERFACE
-val IrClass.isClass get() = kind == ClassKind.CLASS
-val IrClass.isObject get() = kind == ClassKind.OBJECT
-val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
+val IrClass.isAnnotationClass: Boolean get() = kind == ClassKind.ANNOTATION_CLASS
+val IrClass.isEnumClass: Boolean get() = kind == ClassKind.ENUM_CLASS
+val IrClass.isEnumEntry: Boolean get() = kind == ClassKind.ENUM_ENTRY
+val IrClass.isInterface: Boolean get() = kind == ClassKind.INTERFACE
+val IrClass.isClass: Boolean get() = kind == ClassKind.CLASS
+val IrClass.isObject: Boolean get() = kind == ClassKind.OBJECT
+val IrClass.isAnonymousObject: Boolean get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 val IrClass.isReplSnippet: Boolean get() = origin == IrDeclarationOrigin.REPL_SNIPPET_CLASS
 

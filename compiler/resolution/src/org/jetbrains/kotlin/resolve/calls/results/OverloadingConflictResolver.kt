@@ -51,7 +51,7 @@ open class OverloadingConflictResolver<C : Any>(
     private val kotlinTypeRefiner: KotlinTypeRefiner,
 ) {
 
-    private val isTypeRefinementEnabled by lazy { module.isTypeRefinementEnabled() }
+    private val isTypeRefinementEnabled: Boolean by lazy { module.isTypeRefinementEnabled() }
 
     private val resolvedCallHashingStrategy = object : Hash.Strategy<C> {
         override fun equals(call1: C?, call2: C?): Boolean =

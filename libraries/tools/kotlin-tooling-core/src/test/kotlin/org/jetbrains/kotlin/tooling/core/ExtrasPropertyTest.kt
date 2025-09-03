@@ -180,7 +180,7 @@ class ExtrasPropertyTest {
         val invocationCounter = AtomicInteger(0)
 
         with(object {
-            val Subject.lazyProperty by keyANullable.lazyProperty {
+            val Subject.lazyProperty: Int? by keyANullable.lazyProperty {
                 assertEquals(0, invocationCounter.getAndIncrement())
                 null
             }
@@ -198,7 +198,7 @@ class ExtrasPropertyTest {
     @Test
     fun `test - lazyProperty - with nullable key - set key to null manually`() {
         with(object {
-            val Subject.lazyProperty by keyANullable.lazyProperty {
+            val Subject.lazyProperty: Int? by keyANullable.lazyProperty {
                 fail("Unexpected call to factory function")
             }
         }) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -41,13 +42,13 @@ class DeserializedClassDescriptor(
     outerContext.storageManager,
     nameResolver.getClassId(classProto.fqName).shortClassName
 ), DeserializedDescriptor {
-    private val classId = nameResolver.getClassId(classProto.fqName)
+    private val classId: ClassId = nameResolver.getClassId(classProto.fqName)
 
-    private val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(classProto.flags))
-    private val visibility = ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(classProto.flags))
-    private val kind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
+    private val modality: Modality = ProtoEnumFlags.modality(Flags.MODALITY.get(classProto.flags))
+    private val visibility: DescriptorVisibility = ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(classProto.flags))
+    private val kind: ClassKind = ProtoEnumFlags.classKind(Flags.CLASS_KIND.get(classProto.flags))
 
-    val c = outerContext.childContext(
+    val c: DeserializationContext = outerContext.childContext(
         this, classProto.typeParameterList, nameResolver, TypeTable(classProto.typeTable),
         VersionRequirementTable.create(classProto.versionRequirementTable), metadataVersion
     )

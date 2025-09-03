@@ -55,7 +55,7 @@ object JsIdePlatformKind : IdePlatformKind() {
     }
 }
 
-val IdePlatformKind?.isJavaScript
+val IdePlatformKind?.isJavaScript: Boolean
     get() = this is JsIdePlatformKind
 
 @Deprecated(

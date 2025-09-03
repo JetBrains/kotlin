@@ -29,14 +29,14 @@ import kotlin.test.*
 
 class MppPublicationTest {
 
-    private val project = ProjectBuilder.builder().build() as ProjectInternal
+    private val project: ProjectInternal = ProjectBuilder.builder().build() as ProjectInternal
 
     init {
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("maven-publish")
     }
 
-    private val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+    private val kotlin: KotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
 
     init {
         kotlin.jvm()

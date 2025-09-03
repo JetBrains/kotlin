@@ -9,6 +9,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.flow.*
 import org.gradle.api.initialization.Settings
 import org.gradle.api.initialization.dsl.ScriptHandler
@@ -273,17 +274,17 @@ annotation class BuildGradleKtsInjectionScope
 class GradleProjectBuildScriptInjectionContext(
     val project: Project,
 ) {
-    val java get() = project.extensions.getByName("java") as JavaPluginExtension
-    val kotlinMultiplatform get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
-    val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
-    val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
-    val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
-    val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
-    val androidApp get() = project.extensions.getByName("android") as AppExtension
-    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *>
-    val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
-    val signing get() = project.extensions.getByName("signing") as SigningExtension
-    val dependencies get() = project.dependencies
+    val java: JavaPluginExtension get() = project.extensions.getByName("java") as JavaPluginExtension
+    val kotlinMultiplatform: KotlinMultiplatformExtension get() = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+    val kotlinJvm: KotlinJvmProjectExtension get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
+    val cocoapods: CocoapodsExtension get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
+    val swiftExport: SwiftExportExtension get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
+    val androidLibrary: LibraryExtension get() = project.extensions.getByName("android") as LibraryExtension
+    val androidApp: AppExtension get() = project.extensions.getByName("android") as AppExtension
+    val androidBase: CommonExtension<*, *, *, *, *> get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *>
+    val publishing: PublishingExtension get() = project.extensions.getByName("publishing") as PublishingExtension
+    val signing: SigningExtension get() = project.extensions.getByName("signing") as SigningExtension
+    val dependencies: DependencyHandler get() = project.dependencies
 }
 
 @BuildGradleKtsInjectionScope
@@ -357,7 +358,7 @@ internal fun <T> TestProject.buildScriptReturn(
 }
 
 /**
- * Inject build script with a return lambda that serializes the return value from a [org.gradle.api.provider.Provider] at build completion.
+ * Inject build script with a return lambda that serializes the return value from a [Provider] at build completion.
  *
  * The [returnFromProject] by default executes without CC and at build completion. If you enable CC the closure will execute whenever Gradle
  * serializes the Provider value; in most cases this happens before execution, but for example if you flatMap the task output or derive

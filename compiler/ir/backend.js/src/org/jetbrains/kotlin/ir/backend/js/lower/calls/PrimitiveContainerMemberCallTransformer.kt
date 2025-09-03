@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.hasShape
@@ -69,26 +71,26 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
     }
 }
 
-private val IrClassSymbol.sizeProperty
+private val IrClassSymbol.sizeProperty: IrSimpleFunctionSymbol
     get() = getPropertyGetter("size")!!
 
-private val IrClassSymbol.getFunction
+private val IrClassSymbol.getFunction: IrSimpleFunctionSymbol
     get() = getSimpleFunction("get")!!
 
-private val IrClassSymbol.setFunction
+private val IrClassSymbol.setFunction: IrSimpleFunctionSymbol
     get() = getSimpleFunction("set")!!
 
-private val IrClassSymbol.iterator
+private val IrClassSymbol.iterator: IrSimpleFunctionSymbol
     get() = getSimpleFunction("iterator")!!
 
-private val IrClassSymbol.sizeConstructor
+private val IrClassSymbol.sizeConstructor: IrConstructorSymbol
     get() = owner.declarations.asSequence().filterIsInstance<IrConstructor>().first { it.hasShape(regularParameters = 1) }.symbol
 
-private val IrClassSymbol.lengthProperty
+private val IrClassSymbol.lengthProperty: IrSimpleFunctionSymbol
     get() = getPropertyGetter("length")!!
 
-private val IrClassSymbol.subSequence
+private val IrClassSymbol.subSequence: IrSimpleFunctionSymbol
     get() = getSimpleFunction("subSequence")!!
 
-private val IrClassSymbol.hashCodeFunction
+private val IrClassSymbol.hashCodeFunction: IrSimpleFunctionSymbol
     get() = getSimpleFunction("hashCode")!!

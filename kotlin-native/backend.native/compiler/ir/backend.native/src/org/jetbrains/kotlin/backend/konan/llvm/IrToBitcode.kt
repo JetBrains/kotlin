@@ -725,7 +725,7 @@ internal class CodeGeneratorVisitor(
         override fun functionScope(): CodeContext = this
 
 
-        private val scope by lazy {
+        private val scope: DIScopeOpaqueRef? by lazy {
             if (!context.shouldContainLocationDebugInfo() || declaration == null)
                 return@lazy null
             declaration.scope() ?: llvmFunction.scope(0, debugInfo.subroutineType(codegen.llvmTargetData, listOf(context.irBuiltIns.intType)), false)
@@ -2057,7 +2057,7 @@ internal class CodeGeneratorVisitor(
         }
 
         @Suppress("UNCHECKED_CAST")
-        private val scope by lazy {
+        private val scope: DIScopeOpaqueRef? by lazy {
             if (!context.shouldContainLocationDebugInfo())
                 return@lazy null
             fileEntry.diFileScope() as DIScopeOpaqueRef?
@@ -2071,12 +2071,12 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private inner class ClassScope(val clazz:IrClass) : InnerScopeImpl() {
-        val isExported
+        val isExported: Boolean
             get() = clazz.isExported()
         var offsetInBits = 0L
         val members = mutableListOf<DIDerivedTypeRef>()
         @Suppress("UNCHECKED_CAST")
-        val scope = if (isExported && context.shouldContainDebugInfo())
+        val scope: CPointer<DIType>? = if (isExported && context.shouldContainDebugInfo())
             debugInfo.objHeaderPointerType
         else null
         override fun classScope(): CodeContext? = this

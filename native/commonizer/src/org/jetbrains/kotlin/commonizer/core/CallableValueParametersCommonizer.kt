@@ -32,7 +32,7 @@ class CallableValueParametersCommonizer(
             check(originalNames is ValueParameterNames.Generated || originalNames is ValueParameterNames.Real)
         }
 
-        val canNamesBeOverwritten by lazy { callable.canNamesBeOverwritten() }
+        val canNamesBeOverwritten: Boolean by lazy { callable.canNamesBeOverwritten() }
 
         companion object {
             fun doNothing(): () -> Unit = {}

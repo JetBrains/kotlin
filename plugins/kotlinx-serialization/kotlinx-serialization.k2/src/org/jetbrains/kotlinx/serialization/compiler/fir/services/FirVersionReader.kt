@@ -21,7 +21,7 @@ class FirVersionReader(session: FirSession) : FirExtensionSessionComponent(sessi
         CommonVersionReader.computeRuntimeVersions(markerClass.sourceElement)
     }
 
-    val canSupportInlineClasses by session.firCachesFactory.createLazyValue lazy@{
+    val canSupportInlineClasses: Boolean by session.firCachesFactory.createLazyValue lazy@{
         CommonVersionReader.canSupportInlineClasses(runtimeVersions)
     }
 }

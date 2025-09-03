@@ -238,7 +238,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
-    override val kind get() = delegate.kind
+    override val kind: IrModuleDeserializerKind get() = delegate.kind
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()

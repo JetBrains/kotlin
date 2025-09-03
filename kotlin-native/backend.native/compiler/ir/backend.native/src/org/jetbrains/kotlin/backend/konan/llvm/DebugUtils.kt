@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.konan.file.File
 
 internal object DWARF {
     val producer = "kotlin-compiler: ${KotlinVersion.CURRENT}"
-    const val debugInfoVersion = 3 /* TODO: configurable? */
+    const val debugInfoVersion: Int = 3 /* TODO: configurable? */
 
     /**
      * This is  the value taken from [DIFlags.FlagFwdDecl], to mark type declaration as

@@ -42,7 +42,7 @@ open class SpecialGenericSignatures {
         }
 
         data class NameAndSignature(val classInternalName: String, val name: Name, val parameters: String, val returnType: String) {
-            val signature = SignatureBuildingComponents.signature(classInternalName, "$name($parameters)$returnType")
+            val signature: String = SignatureBuildingComponents.signature(classInternalName, "$name($parameters)$returnType")
         }
 
         private fun String.method(name: String, parameters: String, returnType: String) =
