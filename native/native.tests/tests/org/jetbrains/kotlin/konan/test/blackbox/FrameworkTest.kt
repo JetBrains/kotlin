@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
+import org.jetbrains.kotlin.native.executors.RunProcessException
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.test.KtAssert.fail
@@ -550,9 +551,12 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
             val expectedLazyHeaderName = "expectedLazy/expectedLazy${suffix}.h"
             val expectedLazyHeader = objcExportTestSuiteDir.resolve(expectedLazyHeaderName)
             if (!expectedLazyHeader.exists() || expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                runProcess("diff", "-u", expectedLazyHeader.absolutePath, lazyHeader.absolutePath)
-                lazyHeader.copyTo(expectedLazyHeader, overwrite = true)
-                fail("$expectedLazyHeader file patched;\nPlease review this change and commit the patch, if change is correct")
+                try {
+                    runProcess("diff", "-u", expectedLazyHeader.absolutePath, lazyHeader.absolutePath)
+                } catch (_: RunProcessException) {
+                    lazyHeader.copyTo(expectedLazyHeader, overwrite = true)
+                    fail("$expectedLazyHeader file patched;\nPlease review this change and commit the patch, if change is correct")
+                }
             }
         }
     }
