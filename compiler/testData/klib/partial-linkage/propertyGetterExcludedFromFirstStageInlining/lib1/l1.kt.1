@@ -1,0 +1,39 @@
+import kotlin.internal.ExcludedFromFirstStageInlining
+
+@ExcludedFromFirstStageInlining
+inline val excludedInlineProperty: String
+    get() = "excludedInlineProperty.v2"
+
+@ExcludedFromFirstStageInlining
+context(c: String)
+inline val String.excludedInlineExtensionProperty: String
+    get() = "$this.excludedInlineExtensionProperty.v2 with context $c"
+
+inline val excludedInlinePropertyGetter: String
+    @ExcludedFromFirstStageInlining
+    get() = "excludedInlinePropertyGetter.v2"
+
+context(c: String)
+inline val String.excludedInlineExtensionPropertyGetter: String
+    @ExcludedFromFirstStageInlining
+    get() = "$this.excludedInlineExtensionPropertyGetter.v2 with context $c"
+
+class C {
+    @ExcludedFromFirstStageInlining
+    inline val excludedInlineClassProperty: String
+        get() = "excludedInlineClassProperty.v2"
+
+    @ExcludedFromFirstStageInlining
+    context(c: String)
+    inline val String.excludedInlineClassExtensionProperty: String
+        get() = "$this.excludedInlineClassExtensionProperty.v2 with context $c"
+
+    inline val excludedInlineClassPropertyGetter: String
+        @ExcludedFromFirstStageInlining
+        get() = "excludedInlineClassPropertyGetter.v2"
+
+    context(c: String)
+    inline val String.excludedInlineClassExtensionPropertyGetter: String
+        @ExcludedFromFirstStageInlining
+        get() = "$this.excludedInlineClassExtensionPropertyGetter.v2 with context $c"
+}

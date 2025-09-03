@@ -177,6 +177,12 @@ public class JsPartialLinkageWithICTestCaseGenerated extends AbstractJsPartialLi
   }
 
   @Test
+  @TestMetadata("propertyGetterExcludedFromFirstStageInlining")
+  public void testPropertyGetterExcludedFromFirstStageInlining() {
+    runTest("compiler/testData/klib/partial-linkage/propertyGetterExcludedFromFirstStageInlining/");
+  }
+
+  @Test
   @TestMetadata("referenceOperations")
   public void testReferenceOperations() {
     runTest("compiler/testData/klib/partial-linkage/referenceOperations/");
