@@ -40,6 +40,9 @@ class EnforcedProperties(testClass: Class<*>) {
             this[it.property] = it.propertyValue
         }
         if (testClass.isAnnotationPresent(EnforcedHostTarget::class.java)) {
+            // Custom binary options might not be compatible with the host target.
+            // For example, this is the case for `macabi` property.
+            this[ClassLevelProperty.BINARY_OPTIONS] = ""
             this[ClassLevelProperty.TEST_TARGET] = HostManager.host.name
         }
     }

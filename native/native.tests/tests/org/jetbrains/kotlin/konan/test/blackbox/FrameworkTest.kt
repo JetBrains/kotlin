@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.isMacabi
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -236,6 +237,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     fun testStacktrace() {
         val testName = "stacktrace"
         Assumptions.assumeFalse(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
+        // Stacktraces support for Mac Catalyst requires additional adjustments in `supportsCoreSymbolication`.
+        // We can do it later if needed.
+        Assumptions.assumeFalse(testRunSettings.configurables.targetTriple.isMacabi)
 
         val testCase = generateObjCFramework(testName, listOf("-g"))
         compileAndRunSwift(testName, testCase)
