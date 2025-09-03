@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -43,10 +44,6 @@ import kotlin.test.fail
 @MppGradlePluginTests
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions
-            .disableConfigurationCache_KT70416()
-
     @GradleTest
     fun testCommonizedPlatformDependencyResolution(gradleVersion: GradleVersion) {
         with(project("commonizeHierarchically", gradleVersion)) {
@@ -112,6 +109,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             projectName = "cinteropImport",
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
+            buildOptions = defaultBuildOptions.disableIsolatedProjects()
         ) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
@@ -726,6 +724,23 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 jetbrainsAnnotationDependencies,
                 friendSourceDependency(":/commonMain")
             )
+        }
+    }
+
+    @GradleTest
+    fun `resolveIdeDependencies doesn't fail with CC serialization errors`(version: GradleVersion) {
+        project("empty", version) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    linuxArm64()
+                }
+            }
+
+            resolveIdeDependencies {}
         }
     }
 

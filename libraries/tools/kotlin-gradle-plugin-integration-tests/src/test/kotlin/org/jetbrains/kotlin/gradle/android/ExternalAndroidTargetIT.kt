@@ -101,7 +101,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         project(
             "externalAndroidTarget-simple",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion).disableConfigurationCache_KT70416(),
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
             buildJdk = jdkVersion.location,
         ) {
             modifyProjectForAGPVersion(androidVersion)
