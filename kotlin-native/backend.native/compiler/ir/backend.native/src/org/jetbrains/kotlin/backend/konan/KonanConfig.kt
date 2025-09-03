@@ -512,9 +512,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     } ?: StackProtectorMode.NO
 
     private fun StringBuilder.appendCommonCacheFlavor() {
-        // We use target-triple as it is more precise and handles cases
-        // when some components of the tripple are overriden (e.g. like we do in the case of Mac Catalyst).
-        append(platform.targetTriple)
+        append(target.toString())
         if (debug) append("-g")
         append("STATIC")
 
@@ -526,6 +524,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-check_state_at_external_calls")
         if (stackProtectorMode != StackProtectorMode.NO)
             append("-stack_protector${stackProtectorMode.name}")
+        // Ideally, we would like to use targetTriple instead, but this requires a lot of changes in our test infrastructure.
+        when (macabi) {
+            MacAbi.X64 -> append("-macabi_x64")
+            MacAbi.ARM64 -> append("-macabi_arm64")
+            null -> {}
+        }
     }
 
     private val systemCacheFlavorString = buildString {
