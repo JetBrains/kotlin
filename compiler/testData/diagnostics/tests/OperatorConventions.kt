@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-65881, KT-65760

@@ -1,4 +1,4 @@
-FILE: noInferenceFromWrappedDelegate.kt
+FILE: noInferenceFromWrappedDelegate.fir.kt
     public final class State<S> : R|kotlin/Any| {
         public constructor<S>(value: R|S|): R|State<S>| {
             super<R|kotlin/Any|>()

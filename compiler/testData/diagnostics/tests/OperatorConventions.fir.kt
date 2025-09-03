@@ -1,4 +1,4 @@
-// LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-65881, KT-65760
 
@@ -104,7 +104,7 @@ fun useIterator() {
     for (x in <!ITERATOR_MISSING!>A<!>) { }
 }
 fun useComponentN() {
-    val (x, y) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>A<!>
+    val [x, y] = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>A<!>
 }
 
 object D {
@@ -128,7 +128,7 @@ fun useDelegate() {
 }
 
 fun resolveToExtension() {
-    val (<!IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL!>uwu<!>) = X() // KT-65760
+    val [<!IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL!>uwu<!>] = X() // KT-65760
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, destructuringDeclaration, forLoop,

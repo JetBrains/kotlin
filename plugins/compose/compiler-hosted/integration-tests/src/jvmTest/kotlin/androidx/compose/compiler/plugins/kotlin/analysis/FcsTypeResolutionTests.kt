@@ -448,10 +448,14 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testUnresolvedQualifiedTag() {
-        val functionExpected = if (useFir) {
-            "FUNCTION_EXPECTED"
+        val functionExpected: String
+        val implicitPropertyTypeOnInvokeLikeCall: String
+        if (useFir) {
+            functionExpected = "FUNCTION_EXPECTED"
+            implicitPropertyTypeOnInvokeLikeCall = "IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL,"
         } else {
-            "UNRESOLVED_REFERENCE_WRONG_RECEIVER"
+            functionExpected = "UNRESOLVED_REFERENCE_WRONG_RECEIVER"
+            implicitPropertyTypeOnInvokeLikeCall = ""
         }
         check(
             """
@@ -477,7 +481,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     MyNamespace.Bar()
                     MyNamespace.Baz()
                     MyNamespace.<!UNRESOLVED_REFERENCE!>Qoo<!>()
-                    MyNamespace.<!FUNCTION_EXPECTED!>someString<!>()
+                    MyNamespace.<!${implicitPropertyTypeOnInvokeLikeCall}FUNCTION_EXPECTED!>someString<!>()
                     MyNamespace.NonComponent()
                     MyNamespace.Bar {}
                     MyNamespace.Baz <!TOO_MANY_ARGUMENTS!>{}<!>
@@ -495,7 +499,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     MyNamespace.<!UNRESOLVED_REFERENCE!>Qoo<!> {
                     }
 
-                    MyNamespace.<!$functionExpected!>someString<!> {
+                    MyNamespace.<!${implicitPropertyTypeOnInvokeLikeCall}$functionExpected!>someString<!> {
                     }
 
                     <!UNRESOLVED_REFERENCE!>SomethingThatDoesntExist<!>.Foo {

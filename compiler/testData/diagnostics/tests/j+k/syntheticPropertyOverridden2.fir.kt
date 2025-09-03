@@ -20,7 +20,7 @@ object ProtoEnumFlags {
 }
 
 class DeserializedClassDescriptor : ClassDescriptor {
-    private val modality = ProtoEnumFlags.modality()
+    private val modality = ProtoEnumFlags.<!IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL!>modality<!>()
 
     override fun getModality() = modality
 }

@@ -7,7 +7,7 @@ object Foo {
 }
 
 fun main() {
-    Foo.<!FUNCTION_EXPECTED!>x<!>()
+    Foo.<!FUNCTION_EXPECTED, IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL!>x<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, objectDeclaration, propertyDeclaration,

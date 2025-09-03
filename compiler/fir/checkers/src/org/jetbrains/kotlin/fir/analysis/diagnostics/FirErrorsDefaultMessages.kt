@@ -395,6 +395,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -1090,6 +1091,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR,
             "Self references to members of containing class are prohibited in constructor of nested object.",
+        )
+        map.put(
+            IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL,
+            "The resolving behavior is flaky and dependents on declarations order. Specify the return type of the ''{0}'' property explicitly.",
+            SYMBOL,
         )
         map.put(
             PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL,
