@@ -93,7 +93,16 @@ internal class DaemonCompilationResults(
     override fun add(compilationResultCategory: Int, value: Serializable) {
         // TODO propagate the values to the caller via callbacks, requires to make metrics a part of the API
         when (compilationResultCategory) {
-            CompilationResultCategory.IC_COMPILE_ITERATION.code -> kotlinLogger.debug(value as? CompileIterationResult, rootProjectDir)
+            CompilationResultCategory.IC_COMPILE_ITERATION.code -> {
+                kotlinLogger.debug(value as? CompileIterationResult, rootProjectDir)
+                val compileIterationResult = value as? CompileIterationResult
+                if (compileIterationResult != null) {
+                    val sourceFiles = compileIterationResult.sourceFiles
+                    if (sourceFiles.any()) {
+                        buildMetricsReporter.addMetric(GradleBuildPerformanceMetric.COMPILE_ITERATION, 1)
+                    }
+                }
+            }
             CompilationResultCategory.BUILD_METRICS.code -> @Suppress("UNCHECKED_CAST") (value as? BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>)?.let {
                 buildMetricsReporter.addMetrics(it)
             }
