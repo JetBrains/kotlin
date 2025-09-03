@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_ACTUAL_DUMP_DIR
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiUpdateTask
@@ -118,7 +119,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
             it.onlyIf { isEnabled.get() }
         }
 
-    tasks.register(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName), KotlinLegacyAbiCheckTaskImpl::class.java) {
+    val checkTaskProvider = tasks.register(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName), KotlinLegacyAbiCheckTaskImpl::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
@@ -126,11 +127,36 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.onlyIf { isEnabled.get() }
     }
 
-    tasks.register(KotlinLegacyAbiUpdateTask.nameForVariant(variantName), KotlinLegacyAbiUpdateTask::class.java) {
+    val updateTaskProvider = tasks.register(KotlinLegacyAbiUpdateTask.nameForVariant(variantName), KotlinLegacyAbiUpdateTask::class.java) {
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
 
         it.onlyIf { isEnabled.get() }
+    }
+
+    /**
+     * Creating of the temporary tasks for backward compatibility with previous naming.
+     *
+     * Although BCV is still in an experimental state, some projects (for example, coroutines) use it,
+     * so it will be convenient if we implement a smooth migration method.
+     *
+     * Short deprecation cycle:
+     * - create tasks with old names and deprecation warnings (current state)
+     * - throw exception if tasks with old names are used
+     * - remove tasks with old names
+     */
+    tasks.register(AbiToolsTask.composeTaskName("checkLegacyAbi", variantName)) { task ->
+        task.dependsOn(checkTaskProvider)
+        task.doFirst {
+            it.logger.warn("Task ${it.name} is deprecated, use ${checkTaskProvider.name} instead")
+        }
+    }
+
+    tasks.register(AbiToolsTask.composeTaskName("updateLegacyAbi", variantName)) { task ->
+        task.dependsOn(updateTaskProvider)
+        task.doFirst {
+            it.logger.warn("Task ${it.name} is deprecated, use ${updateTaskProvider.name} instead")
+        }
     }
 }

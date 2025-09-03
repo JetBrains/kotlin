@@ -84,7 +84,7 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
 
     companion object {
         fun nameForVariant(variantName: String): String {
-            return composeTaskName("checkLegacyAbi", variantName)
+            return composeTaskName("checkKotlinAbi", variantName)
         }
     }
 }
