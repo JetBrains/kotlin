@@ -59,7 +59,7 @@ open internal class CharSet(char: Char, val ignoreCase: Boolean = false) : LeafS
         var index = rightLimit
         while (index >= leftLimit) {
             index = testString.lastIndexOf(char, index, ignoreCase)
-            if (index < 0) {
+            if (index < leftLimit) {
                 return -1
             }
             if (next.matches(index + charCount, testString, matchResult) >= 0) {

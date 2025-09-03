@@ -127,7 +127,7 @@ internal class LowSurrogateCharSet(low: Char) : CharSet(low) {
         var index = rightLimit
         while (index >= leftLimit) {
             index = testString.lastIndexOf(char, index, ignoreCase)
-            if (index < 0) {
+            if (index < leftLimit) {
                 return -1
             }
             if (!testString.isHighSurrogate(index - 1, leftLimit, rightLimit)
@@ -190,7 +190,7 @@ internal class HighSurrogateCharSet(high: Char) : CharSet(high) {
         var index = rightLimit
         while (index >= leftLimit) {
             index = testString.lastIndexOf(char, index, ignoreCase)
-            if (index < 0) {
+            if (index < leftLimit) {
                 return -1
             }
             if (!testString.isLowSurrogate(index + 1, leftLimit, rightLimit)
