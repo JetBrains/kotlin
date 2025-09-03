@@ -53,6 +53,22 @@ public:
         } while (!stack_.compare_exchange_weak(head, elm, std::memory_order_acq_rel));
     }
 
+    T* PopNonAtomic() noexcept {
+        T* elm = stack_.load(std::memory_order_relaxed);
+        if (!elm) {
+            return nullptr;
+        }
+        auto* elmNext = elm->next_.load(std::memory_order_relaxed);
+        stack_.store(elmNext, std::memory_order_relaxed);
+        return elm;
+    }
+
+    void PushNonAtomic(T* elm) noexcept {
+        T* head = stack_.load(std::memory_order_relaxed);
+        elm->next_.store(head, std::memory_order_relaxed);
+        stack_.store(elm, std::memory_order_relaxed);
+    }
+
     // This will put the contents of the other stack on top of this stack
     void TransferAllFrom(AtomicStack<T> other) noexcept {
         T* otherHead = other.stack_.exchange(nullptr, std::memory_order_relaxed);
