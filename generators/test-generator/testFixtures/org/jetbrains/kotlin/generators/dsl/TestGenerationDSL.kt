@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 fun testGroupSuite(
     init: TestGroupSuite.() -> Unit
 ): TestGroupSuite {
-    return TestGroupSuite(DefaultTargetBackendComputer).apply(init)
+    return TestGroupSuite().apply(init)
 }
 
 fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
@@ -26,7 +26,7 @@ fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
         .forEach(f)
 }
 
-class TestGroupSuite(val targetBackendComputer: TargetBackendComputer) {
+class TestGroupSuite {
     private val _testGroups = mutableListOf<TestGroup>()
     val testGroups: List<TestGroup>
         get() = _testGroups
@@ -43,7 +43,6 @@ class TestGroupSuite(val targetBackendComputer: TargetBackendComputer) {
             testDataRoot,
             testRunnerMethodName,
             additionalRunnerArguments,
-            targetBackendComputer = targetBackendComputer
         ).apply(init)
     }
 }
@@ -54,7 +53,6 @@ class TestGroup(
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
     val annotations: List<AnnotationModel> = emptyList(),
-    val targetBackendComputer: TargetBackendComputer
 ) {
     private val _testClasses: MutableList<TestClass> = mutableListOf()
     val testClasses: List<TestClass>
@@ -78,7 +76,7 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, useJunit4, annotations, targetBackendComputer).apply(init)
+        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, useJunit4, annotations).apply(init)
     }
 
     inner class TestClass(
@@ -87,7 +85,6 @@ class TestGroup(
         val suiteTestClassName: String,
         val useJunit4: Boolean,
         val annotations: List<AnnotationModel>,
-        val targetBackendComputer: TargetBackendComputer
     ) {
         val testDataRoot: String
             get() = this@TestGroup.testDataRoot
@@ -146,7 +143,7 @@ class TestGroup(
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
-            val realTargetBackend = targetBackendComputer.compute(targetBackend, testKClass)
+            val realTargetBackend = targetBackend ?: TargetBackend.ANY
             testModels.add(
                 if (singleClass) {
                     if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
