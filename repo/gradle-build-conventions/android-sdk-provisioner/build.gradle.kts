@@ -11,6 +11,13 @@ repositories {
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     gradlePluginPortal()
 
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+        content {
+            // coroutines for bootstrapping
+            includeGroupByRegex("com.intellij.platform.*")
+        }
+    }
+
     extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
