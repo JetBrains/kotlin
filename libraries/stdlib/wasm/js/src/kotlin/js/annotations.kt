@@ -32,6 +32,14 @@ public actual annotation class JsExport {
      * It means that for ES modules the annotated declaration will be available under the `default` export.
      * For CommonJS, UMD, and plain modules the annotated declaration will be available by the name `default`.
      * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+     *
+     * Note that if the annotation is applied multiple times across the project, the behavior depends on the compilation granularity.
+     * For whole-program: if inside multiple libs the annotation is applied, it leads to a runtime error.
+     * For per-module: the case with the `whole-program` defaults across dependencies is solved.
+     * However, there will be the same runtime error if the annotation is applied multiple times in a single module.
+     * For per-file: both problems of `whole-program` and `per-module` are solved,
+     * but another one appear if @JsExport.Default applied multiple times in a single file
+     * (we have such an inspection [FirMultipleJsExportDefaultAnnotationChecker], so compiler notifies user and prevents any runtime error).
      **/
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)

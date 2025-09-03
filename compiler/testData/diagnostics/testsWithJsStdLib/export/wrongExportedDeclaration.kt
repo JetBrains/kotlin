@@ -52,7 +52,7 @@ inline class <!WRONG_EXPORTED_DECLARATION("inline class")!>B(val b: Int)<!>
 <!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>value<!> class <!WRONG_EXPORTED_DECLARATION("inline value class")!>C(val c: Int)<!>
 
 @JsExport.Default
-<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>inline<!> class <!WRONG_EXPORTED_DECLARATION("inline value class")!>D(val d: Int)<!>
+<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>inline<!> class D(val d: Int)
 
 @JsExport
 external interface ExternalInterface
