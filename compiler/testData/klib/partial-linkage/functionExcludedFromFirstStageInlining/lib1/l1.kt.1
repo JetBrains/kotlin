@@ -1,0 +1,125 @@
+@kotlin.internal.DoNotInlineOnFirstStage
+inline fun inlineFunction() = "inlineFunction.v2"
+
+@kotlin.internal.DoNotInlineOnFirstStage
+inline fun inlineFunctionWithParam(param: String = "default.v2") = "inlineFunctionWithParam.v2: $param"
+
+@kotlin.internal.DoNotInlineOnFirstStage
+context(c: String)
+inline fun String.inlineExtensionFunction() = "$this.inlineExtensionFunction.v2 with context $c"
+
+@kotlin.internal.DoNotInlineOnFirstStage
+inline val excludedReadOnlyInlineProperty: String
+    get() = "excludedReadOnlyInlineProperty.v2"
+
+@kotlin.internal.DoNotInlineOnFirstStage
+context(c: String)
+inline val String.excludedReadOnlyInlineExtensionProperty: String
+    get() = "$this.excludedReadOnlyInlineExtensionProperty.v2 with context $c"
+
+inline val excludedReadOnlyInlinePropertyGetter: String
+    @kotlin.internal.DoNotInlineOnFirstStage
+    get() = "excludedReadOnlyInlinePropertyGetter.v2"
+
+context(c: String)
+inline val String.excludedReadOnlyInlineExtensionPropertyGetter: String
+    @kotlin.internal.DoNotInlineOnFirstStage
+    get() = "$this.excludedReadOnlyInlineExtensionPropertyGetter.v2 with context $c"
+
+var _excludedReadWriteInlineProperty = ""
+@kotlin.internal.DoNotInlineOnFirstStage
+inline var excludedReadWriteInlineProperty: String
+    get() = _excludedReadWriteInlineProperty
+    set(value) {
+        _excludedReadWriteInlineProperty = "$value.v2"
+    }
+
+var _excludedReadWriteInlineExtensionProperty = ""
+@kotlin.internal.DoNotInlineOnFirstStage
+context(c: String)
+inline var String.excludedReadWriteInlineExtensionProperty: String
+    get() = _excludedReadWriteInlineExtensionProperty
+    set(value) {
+        _excludedReadWriteInlineExtensionProperty = "$this.$value.v2 with context $c"
+    }
+
+var _excludedReadWriteInlinePropertySetter = ""
+inline var excludedReadWriteInlinePropertySetter: String
+    get() = _excludedReadWriteInlinePropertySetter
+    @kotlin.internal.DoNotInlineOnFirstStage
+    set(value) {
+        _excludedReadWriteInlinePropertySetter = "$value.v2"
+    }
+
+var _excludedReadWriteInlineExtensionPropertySetter = ""
+context(c: String)
+inline var String.excludedReadWriteInlineExtensionPropertySetter: String
+    get() = _excludedReadWriteInlineExtensionPropertySetter
+    @kotlin.internal.DoNotInlineOnFirstStage
+    set(value) {
+        _excludedReadWriteInlineExtensionPropertySetter = "$this.$value.v2 with context $c"
+    }
+
+class C {
+    @kotlin.internal.DoNotInlineOnFirstStage
+    inline fun inlineClassFunction() = "inlineClassFunction.v2"
+
+    @kotlin.internal.DoNotInlineOnFirstStage
+    inline fun inlineClassFunctionWithParam(param: String = "default.v2") = "inlineClassFunctionWithParam.v2: $param"
+
+    @kotlin.internal.DoNotInlineOnFirstStage
+    context(c: String)
+    inline fun String.inlineClassExtensionFunction() = "$this.inlineClassExtensionFunction.v2 with context $c"
+
+    @kotlin.internal.DoNotInlineOnFirstStage
+    inline val excludedReadOnlyInlineClassProperty: String
+        get() = "excludedReadOnlyInlineClassProperty.v2"
+
+    @kotlin.internal.DoNotInlineOnFirstStage
+    context(c: String)
+    inline val String.excludedReadOnlyInlineClassExtensionProperty: String
+        get() = "$this.excludedReadOnlyInlineClassExtensionProperty.v2 with context $c"
+
+    inline val excludedReadOnlyInlineClassPropertyGetter: String
+        @kotlin.internal.DoNotInlineOnFirstStage
+        get() = "excludedReadOnlyInlineClassPropertyGetter.v2"
+
+    context(c: String)
+    inline val String.excludedReadOnlyInlineClassExtensionPropertyGetter: String
+        @kotlin.internal.DoNotInlineOnFirstStage
+        get() = "$this.excludedReadOnlyInlineClassExtensionPropertyGetter.v2 with context $c"
+
+    var _excludedReadWriteInlineClassProperty = ""
+    @kotlin.internal.DoNotInlineOnFirstStage
+    inline var excludedReadWriteInlineClassProperty: String
+        get() = _excludedReadWriteInlineClassProperty
+        set(value) {
+            _excludedReadWriteInlineClassProperty = "$value.v2"
+        }
+
+    var _excludedReadWriteInlineClassExtensionProperty = ""
+    @kotlin.internal.DoNotInlineOnFirstStage
+    context(c: String)
+    inline var String.excludedReadWriteInlineClassExtensionProperty: String
+        get() = _excludedReadWriteInlineClassExtensionProperty
+        set(value) {
+            _excludedReadWriteInlineClassExtensionProperty = "$this.$value.v2 with context $c"
+        }
+
+    var _excludedReadWriteInlineClassPropertySetter = ""
+    inline var excludedReadWriteInlineClassPropertySetter: String
+        get() = _excludedReadWriteInlineClassPropertySetter
+        @kotlin.internal.DoNotInlineOnFirstStage
+        set(value) {
+            _excludedReadWriteInlineClassPropertySetter = "$value.v2"
+        }
+
+    var _excludedReadWriteInlineClassExtensionPropertySetter = ""
+    context(c: String)
+    inline var String.excludedReadWriteInlineClassExtensionPropertySetter: String
+        get() = _excludedReadWriteInlineClassExtensionPropertySetter
+        @kotlin.internal.DoNotInlineOnFirstStage
+        set(value) {
+            _excludedReadWriteInlineClassExtensionPropertySetter = "$this.$value.v2 with context $c"
+        }
+}
