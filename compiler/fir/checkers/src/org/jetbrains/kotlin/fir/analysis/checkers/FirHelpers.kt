@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -45,6 +46,8 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.psi.KtBackingField
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
@@ -486,9 +489,14 @@ fun checkTypeMismatch(
                 )
             ) return
 
+            val factory = when (source.elementType) {
+                KtNodeTypes.BACKING_FIELD -> FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
+                else -> FirErrors.INITIALIZER_TYPE_MISMATCH
+            }
+
             reporter.reportOn(
                 source,
-                FirErrors.INITIALIZER_TYPE_MISMATCH,
+                factory,
                 lValueType,
                 rValueType,
                 context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)

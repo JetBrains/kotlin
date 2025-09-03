@@ -266,9 +266,9 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.RETURN_WITH_LABEL
     )
 
-    val PROPERTY_INITIALIZER = SourceElementPositioningStrategy(
+    val VARIABLE_INITIALIZER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.LAST_CHILD,
-        PositioningStrategies.PROPERTY_INITIALIZER
+        PositioningStrategies.VARIABLE_INITIALIZER
     )
 
     val WHOLE_ELEMENT = SourceElementPositioningStrategy(

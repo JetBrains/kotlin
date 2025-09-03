@@ -2018,6 +2018,14 @@ internal class InitializerTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.InitializerTypeMismatch
 
+internal class FieldInitializerTypeMismatchImpl(
+    override val expectedType: KaType,
+    override val actualType: KaType,
+    override val isMismatchDueToNullability: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.FieldInitializerTypeMismatch
+
 internal class AssignmentTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

@@ -754,7 +754,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         // the type argument is KtNamedDeclaration because PSI of FirProperty can be KtParameter in 'for' loops
-        val INITIALIZER_TYPE_MISMATCH by error<KtNamedDeclaration>(PositioningStrategy.PROPERTY_INITIALIZER) {
+        val INITIALIZER_TYPE_MISMATCH by error<KtNamedDeclaration>(PositioningStrategy.VARIABLE_INITIALIZER) {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+            parameter<Boolean>("isMismatchDueToNullability")
+        }
+
+        // KtBackingField is not a KtVariableDeclaration anyway as it's already a `KtNamedDeclaration`
+        val FIELD_INITIALIZER_TYPE_MISMATCH by error<KtBackingField>(PositioningStrategy.VARIABLE_INITIALIZER) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")

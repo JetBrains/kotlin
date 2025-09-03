@@ -61405,6 +61405,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("explicitFieldsInitializerTypeMismatch.kt")
+        public void testExplicitFieldsInitializerTypeMismatch() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldsInitializerTypeMismatch.kt");
+        }
+
+        @Test
         @TestMetadata("filePrivateBackingFieldAccess.kt")
         public void testFilePrivateBackingFieldAccess() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/filePrivateBackingFieldAccess.kt");
