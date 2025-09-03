@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.generators.dsl.junit5
 
 import org.jetbrains.kotlin.generators.InconsistencyChecker
-import org.jetbrains.kotlin.generators.ReflectionBasedTargetBackendComputer
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.forEachTestClassParallel
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -27,7 +26,7 @@ fun generateTestGroupSuiteWithJUnit5(
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit,
 ) {
-    val suite = TestGroupSuite(ReflectionBasedTargetBackendComputer).apply(init)
+    val suite = TestGroupSuite().apply(init)
     suite.forEachTestClassParallel { testClass ->
         val (changed, testSourceFilePath) = TestGeneratorForJUnit5
             .generateAndSave(testClass, dryRun, mainClassName)
