@@ -41,14 +41,14 @@ class GradleCompatibilityTest : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         skipInDebug(runner)
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             assertTrue(rootProjectApiDump.exists(), "api dump file should exist")
 

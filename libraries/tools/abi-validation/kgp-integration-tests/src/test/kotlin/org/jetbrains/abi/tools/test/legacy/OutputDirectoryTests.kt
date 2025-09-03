@@ -28,12 +28,12 @@ class OutputDirectoryTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             val dumpFile = rootProjectDir.resolve("custom").resolve("${rootProjectDir.name}.api")
             assertTrue(dumpFile.exists(), "api dump file ${dumpFile.path} should exist")
@@ -64,12 +64,12 @@ class OutputDirectoryTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -86,12 +86,12 @@ class OutputDirectoryTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             val dumpFile = rootProjectDir.resolve("validation")
                 .resolve("api")
@@ -124,12 +124,12 @@ class OutputDirectoryTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -146,7 +146,7 @@ class OutputDirectoryTests : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 

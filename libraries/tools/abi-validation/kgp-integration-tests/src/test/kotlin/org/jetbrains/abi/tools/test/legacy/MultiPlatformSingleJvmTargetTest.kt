@@ -25,7 +25,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
         val runner = test {
                 createProjectHierarchyWithPluginOnRoot()
                 runner {
-                    arguments.add(":checkLegacyAbi")
+                    arguments.add(":checkKotlinAbi")
                 }
 
                 dir("$API_DIR/") {
@@ -46,7 +46,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
             }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -56,7 +56,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
                 createProjectHierarchyWithPluginOnRoot()
                 runner {
                     arguments.add("--continue")
-                    arguments.add(":checkLegacyAbi")
+                    arguments.add(":checkKotlinAbi")
                 }
 
                 dir("$API_DIR/") {
@@ -77,7 +77,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
             }
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
             assertTaskNotRun(":apiCheck")
             assertThat(output).contains("ABI check failed for project testproject")
         }
@@ -89,7 +89,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
                 createProjectHierarchyWithPluginOnRoot()
 
                 runner {
-                    arguments.add(":updateLegacyAbi")
+                    arguments.add(":updateKotlinAbi")
                 }
 
                 dir("src/jvmMain/kotlin") {}
@@ -103,7 +103,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
             }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
 
             val commonExpectedApi = readFileList("/examples/classes/Subsub1Class.dump")
 
@@ -120,12 +120,12 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
         }
     }
 
@@ -139,12 +139,12 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
             emptyApiFile(projectName = rootProjectDir.name)
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -156,12 +156,12 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
             }
 
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
             assertThat(output).contains(
                 "Expected file with ABI declarations 'api${File.separator}${rootProjectDir.name}.api' does not exist"
             )

@@ -22,7 +22,7 @@ private fun KlibVerificationTests.checkKlibDump(
     buildResult: BuildResult,
     expectedDumpFileName: String,
     projectName: String = "testproject",
-    dumpTask: String = ":updateLegacyAbi"
+    dumpTask: String = ":updateKotlinAbi"
 ) {
     buildResult.assertTaskSuccess(dumpTask)
 
@@ -59,18 +59,18 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
 
     private fun BaseKotlinScope.runApiCheck() {
         runner {
-            arguments.add(":checkLegacyAbi")
+            arguments.add(":checkKotlinAbi")
         }
     }
 
     private fun BaseKotlinScope.runApiDump() {
         runner {
-            arguments.add(":updateLegacyAbi")
+            arguments.add(":updateKotlinAbi")
         }
     }
 
     private fun assertApiCheckPassed(buildResult: BuildResult) {
-        buildResult.assertTaskSuccess(":checkLegacyAbi")
+        buildResult.assertTaskSuccess(":checkKotlinAbi")
     }
 
     @Test
@@ -298,7 +298,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             }
             runner {
                 arguments.add("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64")
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
@@ -316,7 +316,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             }
             runner {
                 arguments.add("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64")
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
@@ -335,12 +335,12 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             }
             runner {
                 arguments.add("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64")
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":dumpLegacyAbi")
+            assertTaskFailure(":internalDumpKotlinAbi")
         }
     }
 
@@ -352,7 +352,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             addToSrcSet("/examples/classes/AnotherBuildConfigLinuxArm64.kt", "linuxArm64Main")
             runner {
                 arguments.add("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64")
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
@@ -373,13 +373,13 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
 
 
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         checkKlibDump(
             runner.build(), "/examples/classes/TopLevelDeclarations.klib.diverging.dump",
-            dumpTask = ":updateLegacyAbi"
+            dumpTask = ":updateKotlinAbi"
         )
     }
 
@@ -397,13 +397,13 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             addToSrcSet("/examples/classes/AnotherBuildConfigLinuxArm64.kt", "linuxMain")
             runner {
                 arguments.add("-P$BANNED_TARGETS_PROPERTY_NAME=linux")
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         checkKlibDump(
             runner.build(), "/examples/classes/TopLevelDeclarations.klib.with.guessed.linux.dump",
-            dumpTask = ":updateLegacyAbi"
+            dumpTask = ":updateKotlinAbi"
         )
     }
 
@@ -420,12 +420,12 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             addToSrcSet("/examples/classes/AnotherBuildConfigLinuxArm64.kt", "linuxArm64Main")
             runner {
                 arguments.add("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64")
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":dumpLegacyAbi")
+            assertTaskFailure(":internalDumpKotlinAbi")
             Assertions.assertThat(output).contains(
                 "The target linuxArm64 is not supported by the host compiler " +
                         "and there are no targets similar to linuxArm64 to infer a dump from it."
@@ -443,7 +443,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                     "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64," +
                             "androidNativeArm32,androidNativeArm64,androidNativeX64,androidNativeX86"
                 )
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
@@ -468,12 +468,12 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                     "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64," +
                             "androidNativeArm32,androidNativeArm64,androidNativeX64,androidNativeX86"
                 )
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -492,12 +492,12 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                     "-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64,linuxX64,mingwX64," +
                             "androidNativeArm32,androidNativeArm64,androidNativeX64,androidNativeX86"
                 )
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":dumpLegacyAbi")
+            assertTaskFailure(":internalDumpKotlinAbi")
         }
     }
 
@@ -517,13 +517,13 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                 resolve("/examples/classes/AnotherBuildConfigLinuxArm64.kt")
             }
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         checkKlibDump(
             runner.build(), "/examples/classes/AnotherBuildConfig.klib.clash.dump",
-            dumpTask = ":updateLegacyAbi"
+            dumpTask = ":updateKotlinAbi"
         )
     }
 
@@ -539,13 +539,13 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             }
             addToSrcSet("/examples/classes/AnotherBuildConfig.kt")
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         checkKlibDump(
             runner.build(), "/examples/classes/AnotherBuildConfig.klib.custom.dump",
-            dumpTask = ":updateLegacyAbi"
+            dumpTask = ":updateKotlinAbi"
         )
     }
 
@@ -559,13 +559,13 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                 resolve("/examples/classes/AnotherBuildConfigLinuxArm64.kt")
             }
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
 
         checkKlibDump(
             runner.build(), "/examples/classes/AnotherBuildConfigLinux.klib.grouping.dump",
-            dumpTask = ":updateLegacyAbi"
+            dumpTask = ":updateKotlinAbi"
         )
     }
 
@@ -667,7 +667,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         Files.write(existingSource.toPath(), updatedSourceFile.readBytes())
 
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
         }
     }
 
@@ -698,7 +698,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
         }
         val apiDumpFile = rootProjectAbiDump("testproject")
         assertTrue(apiDumpFile.exists())
@@ -717,7 +717,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         }
 
         runner.build().apply {
-            assertTaskSuccess(":updateLegacyAbi")
+            assertTaskSuccess(":updateKotlinAbi")
         }
         val dumpFile = rootProjectAbiDump("testproject")
         assertTrue(dumpFile.exists())
@@ -743,7 +743,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             runApiCheck()
         }
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
             Assertions.assertThat(output).contains(
                 "Expected file with ABI declarations 'api${File.separator}testproject.klib.api' does not exist."
             )
@@ -761,7 +761,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             runApiCheck()
         }
         runner.build().apply {
-            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":checkKotlinAbi")
         }
     }
 
@@ -771,7 +771,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             baseProjectSetting()
             additionalBuildConfig("/examples/gradle/configuration/generatedSources/generatedSources.gradle.kts")
             runner {
-                arguments.add(":updateLegacyAbi")
+                arguments.add(":updateKotlinAbi")
             }
         }
         checkKlibDump(runner.build(), "/examples/classes/GeneratedSources.klib.dump")
@@ -786,7 +786,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                 resolve("/examples/classes/GeneratedSources.klib.dump")
             }
             runner {
-                arguments.add(":checkLegacyAbi")
+                arguments.add(":checkKotlinAbi")
             }
         }
         assertApiCheckPassed(runner.build())
@@ -804,7 +804,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             runApiCheck()
         }
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
         }
     }
 
@@ -826,7 +826,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             runApiCheck()
         }
         runner.buildAndFail().apply {
-            assertTaskFailure(":checkLegacyAbi")
+            assertTaskFailure(":checkKotlinAbi")
             Assertions.assertThat(output)
                 .contains("-// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, " +
                         "androidNativeX86, linuxArm64, linuxX64, mingwX64]")
