@@ -18,7 +18,6 @@ open class SimpleTestMethodModel(
     checkFilenameStartsLowerCase: Boolean?,
     internal val targetBackend: TargetBackend,
     override val tags: List<String>,
-    val nativeTestInNonNativeTestInfra: Boolean,
 ) : MethodModel() {
     object Kind : MethodModel.Kind()
 

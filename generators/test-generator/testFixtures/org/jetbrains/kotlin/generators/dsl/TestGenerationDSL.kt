@@ -141,7 +141,6 @@ class TestGroup(
             skipSpecificFile: (File) -> Boolean = { false },
             skipTestAllFilesCheck: Boolean = false,
             generateEmptyTestClasses: Boolean = true, // All test classes will be generated, even if empty
-            nativeTestInNonNativeTestInfra: Boolean = false,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -163,7 +162,7 @@ class TestGroup(
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
                         realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
                         extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck,
-                        generateEmptyTestClasses, nativeTestInNonNativeTestInfra = nativeTestInNonNativeTestInfra
+                        generateEmptyTestClasses
                     )
                 }
             )
