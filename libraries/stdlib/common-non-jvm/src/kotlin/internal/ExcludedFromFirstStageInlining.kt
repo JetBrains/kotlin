@@ -9,6 +9,6 @@ package kotlin.internal
  * Specifies that the annotated declaration must be excluded from the inlining performed before klib serialization.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @SinceKotlin("2.3")
 internal annotation class ExcludedFromFirstStageInlining
