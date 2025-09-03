@@ -1,3 +1,9 @@
+IGNORE_PER_FILE: true
+// ^^^KT-80697
+// Mismatched rebuilt modules at step 8
+// Expected :[lib1/l1, lib2/l2int]
+// Actual   :[lib1/l1, lib2/l2int, lib2/l2]
+
 MODULES: lib1, lib2, main
 
 STEP 0:

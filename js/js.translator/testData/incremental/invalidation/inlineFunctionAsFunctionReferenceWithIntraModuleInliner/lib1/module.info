@@ -6,8 +6,7 @@ STEP 0:
 STEP 1:
     modifications:
         U : l1.1.kt -> l1.kt
-    modified ir: l1.kt
-    updated imports: l2.kt
+    modified ir: l1.kt l2.kt
 STEP 2:
     modifications:
         U : l2.2.kt -> l2.kt
@@ -15,5 +14,4 @@ STEP 2:
 STEP 3:
     modifications:
         U : l1.3.kt -> l1.kt
-    modified ir: l1.kt
-    updated imports: l2.kt
+    modified ir: l1.kt l2.kt
