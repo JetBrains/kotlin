@@ -4310,6 +4310,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPLICIT_FIELD_VISIBILITY_MUST_BE_LESS_PERMISSIVE) { firDiagnostic ->
+        ExplicitFieldVisibilityMustBeLessPermissiveImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS) { firDiagnostic ->
         PropertyWithExplicitFieldAndAccessorsImpl(
             firDiagnostic as KtPsiDiagnostic,

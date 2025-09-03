@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 
 object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -38,6 +40,10 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
 
         if (declaration.propertySymbol.isExpect) {
             reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPECT_PROPERTY_WITH_EXPLICIT_BACKING_FIELD)
+        }
+
+        if (Visibilities.isPrivate(declaration.propertySymbol.visibility)) {
+            reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPLICIT_FIELD_VISIBILITY_MUST_BE_LESS_PERMISSIVE)
         }
     }
 

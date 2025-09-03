@@ -1520,6 +1520,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD by error<KtBackingField>()
         val EXPECT_PROPERTY_WITH_EXPLICIT_BACKING_FIELD by error<KtElement>(PositioningStrategy.EXPECT_ACTUAL_MODIFIER)
         val INCONSISTENT_BACKING_FIELD_TYPE by error<KtProperty>(PositioningStrategy.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
+        val EXPLICIT_FIELD_VISIBILITY_MUST_BE_LESS_PERMISSIVE by error<KtProperty>(PositioningStrategy.VISIBILITY_MODIFIER)
         val PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS by error<PsiElement>(PositioningStrategy.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
         val EXPLICIT_BACKING_FIELD_IN_INTERFACE by error<KtBackingField>(PositioningStrategy.FIELD_KEYWORD)
         val EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY by error<KtBackingField>(PositioningStrategy.FIELD_KEYWORD)
