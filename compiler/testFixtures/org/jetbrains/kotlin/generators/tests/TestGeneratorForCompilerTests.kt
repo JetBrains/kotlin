@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrScriptCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava17Test
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
-    generateTestGroupSuite(args, mainClassName) {
+    generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractResolveTest> {
                 model("resolve", extension = "resolve")
