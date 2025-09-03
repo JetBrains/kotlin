@@ -109,6 +109,8 @@ ingress:
   className: internal-nginx
   annotations:
     #kubernetes.io/ingress.class: internal-nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 1g
