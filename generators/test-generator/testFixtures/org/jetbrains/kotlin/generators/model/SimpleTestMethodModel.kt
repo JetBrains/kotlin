@@ -32,10 +32,6 @@ open class SimpleTestMethodModel(
             return KtTestUtil.getFilePath(File(path))
         }
 
-    override fun shouldBeGenerated(): Boolean {
-        return true
-    }
-
     override val name: String
         get() {
             val matcher = filenamePattern.matcher(file.name)

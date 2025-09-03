@@ -146,7 +146,7 @@ class SimpleTestClassModel(
                 }
             }
         }
-        if (result.any { it is TransformingTestMethodModel && it.shouldBeGenerated() }) {
+        if (result.any { it is TransformingTestMethodModel }) {
             val additionalRunner =
                 RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
             result.add(additionalRunner)
@@ -181,10 +181,6 @@ class SimpleTestClassModel(
 
         val classModel: SimpleTestClassModel
             get() = this@SimpleTestClassModel
-
-        override fun shouldBeGenerated(): Boolean {
-            return true
-        }
 
         override val tags: List<String>
             get() = emptyList()
