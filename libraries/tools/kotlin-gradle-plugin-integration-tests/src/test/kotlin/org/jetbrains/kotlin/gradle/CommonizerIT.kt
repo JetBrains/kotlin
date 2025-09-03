@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
@@ -718,6 +721,39 @@ open class CommonizerIT : KGPBaseTest() {
                 build("commonizeCInterop") {
                     checkCommonizedMetadataBuildOnNonMac()
                 }
+            }
+        }
+    }
+
+    @DisplayName("KT-80675: import of commonized test compilation cinterops")
+    @GradleTest
+    fun testCommonizedTestCinteropImport(version: GradleVersion) {
+        project("empty", version) {
+            buildScriptInjection {
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                val defFile = project.layout.projectDirectory.file("foo.def").asFile
+                defFile.writeText("""
+                    language = C
+                    ---
+                    void bar(void);
+                """.trimIndent())
+                project.applyMultiplatform {
+                    listOf(
+                        linuxArm64(),
+                        linuxX64(),
+                    ).forEach {
+                        it.compilations.getByName("test").cinterops.create("foo").definitionFile.set(defFile)
+                    }
+                }
+            }
+
+            buildAndFail(":resolveIdeDependencies") {
+                assertOutputContains("Gradle detected a problem with the following location")
             }
         }
     }
