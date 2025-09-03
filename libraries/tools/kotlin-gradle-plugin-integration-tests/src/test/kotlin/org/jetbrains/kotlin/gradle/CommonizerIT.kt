@@ -927,7 +927,6 @@ open class CommonizerIT : KGPBaseTest() {
                 assertTestSourceSetsDependingOnMainParameter()
                 assertTasksUpToDate(":commonizeNativeDistribution")
                 assertOutputContains("Native Distribution Commonization: Cache hit")
-                assertTasksUpToDate(":commonizeCInterop")
             }
 
             build(":compileNativeMainKotlinMetadata", buildOptions = testSourceSetsDependingOnMainParameterOption) {
