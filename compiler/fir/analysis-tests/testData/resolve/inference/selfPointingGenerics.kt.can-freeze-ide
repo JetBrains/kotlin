@@ -1,0 +1,39 @@
+// RUN_PIPELINE_TILL: BACKEND
+// WITH_FULL_JDK
+// WITH_STDLIB
+// FILE: ImmutableMap.java
+import java.util.*;
+
+public class ImmutableMap {
+    public static <K, V> Map<K, V> copyOf(Iterable<Map.Entry<K, V>> entries) {
+        return null;
+    }
+}
+
+// FILE: test.kt
+import java.util.*
+
+interface IdObject<I1 : Comparable<I1>, ME: IdObject<I1, ME>>
+abstract class IdObjectBuilder<I2 : Comparable<I2>, O2 : IdObject<I2, O2>>
+class DataInMemoryReference<I5 : Comparable<I5>, O5 : IdObject<I5, O5>, B5 : IdObjectBuilder<I5, O5>>(
+    id: I5,
+)
+
+class ReadOnlyReferenceManager<
+    I6 : Comparable<I6>,
+    O6 : IdObject<I6, O6>,
+    B6 : IdObjectBuilder<I6, O6>
+>(
+    data: Map<I6, DataInMemoryReference<I6, O6, B6>>,
+) {
+    constructor(ids: Iterable<I6>) : this(
+        ImmutableMap.copyOf(
+            ids.map { id: I6 ->
+                AbstractMap.SimpleEntry(id, DataInMemoryReference(id))
+            }
+        )
+    )
+}
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, interfaceDeclaration, javaFunction, javaType, lambdaLiteral,
+primaryConstructor, propertyDeclaration, secondaryConstructor, typeConstraint, typeParameter */

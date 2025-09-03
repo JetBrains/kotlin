@@ -57362,6 +57362,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("selfPointingGenerics.kt.can-freeze-ide")
+      public void testSelfPointingGenerics() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/selfPointingGenerics.kt.can-freeze-ide");
+      }
+
+      @Test
       @TestMetadata("selfTypeFromJava.kt")
       public void testSelfTypeFromJava() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/selfTypeFromJava.kt");

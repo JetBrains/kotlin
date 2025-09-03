@@ -421,15 +421,16 @@ abstract class TypeCheckerStateForConstraintSystem(
     ): Boolean = with(extensionTypeContext) {
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
 
-        val simplifiedSuperType = when {
-            typeVariableLowerBound.isDefinitelyNotNullType() -> {
-                superType.withNullability(true)
-            }
-
-            typeVariable.isFlexible() && superType is RigidTypeMarker ->
+        val simplifiedSuperType = if (typeVariable.isFlexible()) {
+            if (superType.isRigidType()) {
                 createTrivialFlexibleTypeOrSelf(superType)
-
-            else -> superType
+            } else {
+                superType
+            }
+        } else if (typeVariableLowerBound.isDefinitelyNotNullType()) {
+            superType.withNullability(true)
+        } else {
+            superType
         }
 
         addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType, isNoInfer)
