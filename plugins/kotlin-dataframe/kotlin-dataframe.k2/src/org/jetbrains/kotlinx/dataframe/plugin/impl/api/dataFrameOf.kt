@@ -55,19 +55,24 @@ abstract class SchemaConstructor : AbstractSchemaModificationInterpreter() {
             val it = it.value
             val name = (it.first as? FirLiteralExpression)?.value as? String
             val resolvedType = (it.second as? FirExpression)?.resolvedType
-            val type: ConeKotlinType? = when (resolvedType?.classId) {
-                Names.COLUM_GROUP_CLASS_ID -> Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
-                Names.FRAME_COLUMN_CLASS_ID -> Names.DF_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
-                Names.DATA_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
-                Names.BASE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
-                Names.VALUE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
-                else -> null
-            }
+            val type: ConeKotlinType? = extractBaseColumnValuesType(resolvedType)
             if (name == null || type == null) return PluginDataFrameSchema(emptyList())
             simpleColumnOf(name, type)
         }
         return PluginDataFrameSchema(res)
     }
+}
+
+internal fun Arguments.extractBaseColumnValuesType(resolvedType: ConeKotlinType?): ConeKotlinType? {
+    val type: ConeKotlinType? = when (resolvedType?.classId) {
+        Names.COLUM_GROUP_CLASS_ID -> Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
+        Names.FRAME_COLUMN_CLASS_ID -> Names.DF_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
+        Names.DATA_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
+        Names.BASE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
+        Names.VALUE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
+        else -> null
+    }
+    return type
 }
 
 class DataFrameOfPairs : SchemaConstructor()

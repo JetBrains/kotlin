@@ -27,6 +27,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("addDsl_into.kt")
+  public void testAddDsl_into() {
+    runTest("plugins/kotlin-dataframe/testData/box/addDsl_into.kt");
+  }
+
+  @Test
   @TestMetadata("addId.kt")
   public void testAddId() {
     runTest("plugins/kotlin-dataframe/testData/box/addId.kt");
