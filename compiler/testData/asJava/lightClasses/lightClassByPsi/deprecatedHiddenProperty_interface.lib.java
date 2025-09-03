@@ -7,5 +7,6 @@ public abstract interface TestInterface /* test.pkg.TestInterface*/ {
 
   public abstract void setPOld_deprecatedOnGetter(int);//  setPOld_deprecatedOnGetter(int)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* test.pkg.TestInterface.DefaultImpls*/ {
+  }
 }

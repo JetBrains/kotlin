@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -271,10 +272,12 @@ class PsiClassRenderer private constructor(
         methods.ifNotEmpty { wasRendered = true }
         val classes = psiClass.innerClasses.filter { membersFilter.includeClass(it) }
         appendSorted(classes, wasRendered) {
-            if (renderInner)
+            val name = it.name
+            if (renderInner || name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
                 renderClass(it, renderInner)
-            else
-                "class ${it.name} ..."
+            else {
+                "class $name ..."
+            }
         }
 
         classes.ifNotEmpty { wasRendered = true }

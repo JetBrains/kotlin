@@ -37,7 +37,10 @@ public abstract interface Test /* Test*/ {
 
   public abstract int test-Eh1mVAw(int);//  test-Eh1mVAw(int)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* Test.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static int test-Eh1mVAw(@org.jetbrains.annotations.NotNull() Test, int);//  test-Eh1mVAw(Test, int)
+  }
 }
 
 public final class TestClass /* TestClass*/ implements Test {

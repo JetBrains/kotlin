@@ -9,7 +9,10 @@ public abstract interface Interface /* pack.Interface*/ {
 
   public abstract void setRegularVariable(int);//  setRegularVariable(int)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* pack.Interface.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static void regularFunction(@org.jetbrains.annotations.NotNull() pack.Interface);//  regularFunction(pack.Interface)
+  }
 }
 
 @kotlin.jvm.JvmInline()

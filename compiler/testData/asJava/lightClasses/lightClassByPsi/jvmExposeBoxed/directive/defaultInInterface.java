@@ -19,7 +19,10 @@ public abstract interface Test /* Test*/ {
   @kotlin.jvm.JvmExposeBoxed()
   private abstract @org.jetbrains.annotations.Nullable() IC getBar();//  getBar()
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* Test.DefaultImpls*/ {
+    @kotlin.jvm.JvmExposeBoxed()
+    private static final @org.jetbrains.annotations.Nullable() IC getBar(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Test);//  getBar(@org.jetbrains.annotations.NotNull() Test)
+  }
 }
 
 public final class TestClass /* TestClass*/ implements Test {

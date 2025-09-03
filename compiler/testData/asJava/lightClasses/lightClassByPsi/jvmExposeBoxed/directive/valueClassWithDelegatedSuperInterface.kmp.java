@@ -5,7 +5,9 @@ public abstract interface Interface /* pack.Interface*/ {
 
   public abstract void setRegularVariable(int);//  setRegularVariable(int)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* pack.Interface.DefaultImpls*/ {
+    public static void regularFunction(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.Interface);//  regularFunction(@org.jetbrains.annotations.NotNull() pack.Interface)
+  }
 }
 
 @<error>()

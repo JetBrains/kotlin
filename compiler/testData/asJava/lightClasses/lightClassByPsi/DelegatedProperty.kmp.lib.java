@@ -58,7 +58,11 @@ public static abstract interface Delegate /* Container.Delegate*/<R>  {
 
   public abstract void setValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R);//  setValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* Container.Delegate.DefaultImpls*/ {
+    public static <R> R getValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);// <R>  getValue(@org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>)
+
+    public static <R> void setValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R);// <R>  setValue(@org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R)
+  }
 }
 
 public static final class Derived /* Container.Derived*/ extends Container.Base {
