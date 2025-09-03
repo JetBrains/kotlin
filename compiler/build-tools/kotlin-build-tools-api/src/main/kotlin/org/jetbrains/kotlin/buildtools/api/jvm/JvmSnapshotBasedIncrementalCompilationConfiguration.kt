@@ -152,5 +152,18 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
         @JvmField
         @ExperimentalCompilerArgument
         public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> = Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
+
+        /**
+         * When this option is enabled, the incremental compilation scope is always expanded monotonously (see explanation below).
+         *
+         * For example, when recompilation of file `a.kt` introduces changes that require the recompilation of file `b.kt`, the new
+         * file `b.kt` is _added_ to the compilation scope, and both files `a.kt` and `b.kt` are recompiled in the next step.
+         *
+         * When this option is disabled, only the files that weren't compiled previously are recompiled,
+         * so only `b.kt` from the example above would be recompiled in the second step.
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION")
     }
 }
