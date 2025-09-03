@@ -18,10 +18,7 @@ object RunTestMethodGenerator : MethodGenerator<RunTestMethodModel>() {
                 p.println("KotlinTestUtils.$testRunnerMethodName($modifiedTestMethodName, this, testDataFilePath);")
             } else {
                 val className = TargetBackend::class.java.simpleName
-                val additionalArguments = if (additionalRunnerArguments.isNotEmpty())
-                    additionalRunnerArguments.joinToString(separator = ", ", prefix = ", ")
-                else ""
-                p.println("KotlinTestUtils.$testRunnerMethodName($modifiedTestMethodName, $className.$targetBackend, testDataFilePath$additionalArguments);")
+                p.println("KotlinTestUtils.$testRunnerMethodName($modifiedTestMethodName, $className.$targetBackend, testDataFilePath);")
             }
         }
     }

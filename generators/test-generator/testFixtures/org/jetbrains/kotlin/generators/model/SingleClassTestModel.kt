@@ -22,7 +22,6 @@ class SingleClassTestModel(
     private val testClassName: String,
     val targetBackend: TargetBackend,
     private val testRunnerMethodName: String,
-    private val additionalRunnerArguments: List<String>,
     override val annotations: List<AnnotationModel>,
     override val tags: List<String>,
     private val additionalMethods: Collection<MethodModel<*>>,
@@ -32,7 +31,7 @@ class SingleClassTestModel(
 
     override val methods: Collection<MethodModel<*>> by lazy {
         val result: MutableList<MethodModel<*>> = ArrayList()
-        result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
+        result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
         result.add(TestAllFilesPresentMethodModel())
         result.addAll(additionalMethods)
         FileUtil.processFilesRecursively(rootFile) { file: File ->

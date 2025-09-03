@@ -35,14 +35,12 @@ class TestGroupSuite {
         testsRoot: String,
         testDataRoot: String,
         testRunnerMethodName: String = RunTestMethodModel.METHOD_NAME,
-        additionalRunnerArguments: List<String> = emptyList(),
         init: TestGroup.() -> Unit
     ) {
         _testGroups += TestGroup(
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
-            additionalRunnerArguments,
         ).apply(init)
     }
 }
@@ -51,7 +49,6 @@ class TestGroup(
     private val testsRoot: String,
     val testDataRoot: String,
     val testRunnerMethodName: String,
-    val additionalRunnerArguments: List<String> = emptyList(),
     val annotations: List<AnnotationModel> = emptyList(),
 ) {
     private val _testClasses: MutableList<TestClass> = mutableListOf()
@@ -150,14 +147,14 @@ class TestGroup(
 
                     SingleClassTestModel(
                         rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, testRunnerMethodName, additionalRunnerArguments, annotations,
+                        realTargetBackend, testRunnerMethodName, annotations,
                         extractTagsFromDirectory(rootFile), methodModels
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
+                        realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, deep, annotations,
                         extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck,
                         generateEmptyTestClasses
                     )
