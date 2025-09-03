@@ -125,6 +125,7 @@ open class LocalDeclarationsLowering(
     val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf(),
     val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
+    val considerRichFunctionReferenceInvokeFunctionsAsLocal: Boolean = false,
 ) : BodyLoweringPass {
     private val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<DeclarationKeyForScope, Scope>> = mutableMapOf()
 
@@ -521,24 +522,22 @@ open class LocalDeclarationsLowering(
                             newParameterToCaptured[newValueParameterDeclaration]
                                 ?: throw AssertionError("Non-mapped parameter $newValueParameterDeclaration")
 
-                        val capturedValue = capturedValueSymbol.owner
-
-                        localContext?.irGet(oldExpression.startOffset, oldExpression.endOffset, capturedValue) ?: run {
-                            IrGetValueImpl(
-                                oldExpression.startOffset,
-                                oldExpression.endOffset,
-                                getReplacementSymbolForCaptured(
-                                    container,
-                                    oldParameterToNew[capturedValue]?.symbol ?: capturedValueSymbol
-                                )
-                            )
-                        }
+                        replacedCapturedValue(oldExpression.startOffset, oldExpression.endOffset, capturedValueSymbol)
                     }
 
                 }
                 arguments.assignFrom(transformedNewTargetParameters)
 
                 return this
+            }
+
+            private fun replacedCapturedValue(startOffset: Int, endOffset: Int, capturedValueSymbol: IrValueSymbol): IrExpression {
+                val capturedValue = capturedValueSymbol.owner
+                localContext?.irGet(startOffset, endOffset, capturedValue)?.let { return it }
+                val replacementSymbol = getReplacementSymbolForCaptured(
+                    container, oldParameterToNew[capturedValue]?.symbol ?: capturedValueSymbol
+                )
+                return IrGetValueImpl(startOffset, endOffset, replacementSymbol)
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
@@ -569,8 +568,23 @@ open class LocalDeclarationsLowering(
 
             // note: we don't need to upgrade property references as properties are not moved by the lowering
             override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                val oldInvokeFunction = expression.invokeFunction
                 expression.transformChildrenVoid(this)
                 expression.reflectionTargetSymbol = expression.reflectionTargetSymbol?.run { owner.transformed ?: owner }?.symbol
+                val newInvokeFunction = oldInvokeFunction.transformed as IrSimpleFunction?
+                if (newInvokeFunction != null && considerRichFunctionReferenceInvokeFunctionsAsLocal) {
+                    expression.invokeFunction = newInvokeFunction
+                    val parent = newInvokeFunction.parent
+                    newInvokeFunction.parent = (parent as? IrFunction)?.transformed ?: parent
+                    val capturedIndex = newInvokeFunction.parameters.indexOfFirst { newParameterToCaptured[it] != null }
+                    if (capturedIndex >= 0) {
+                        val capturedValues = newInvokeFunction.parameters.mapNotNull { newParameterToCaptured[it] }
+                        val capturedValueExpressions = capturedValues.map { capturedValueSymbol ->
+                            replacedCapturedValue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedValueSymbol)
+                        }
+                        expression.boundValues.addAll(capturedIndex, capturedValueExpressions)
+                    }
+                }
                 return expression
             }
 
@@ -1195,8 +1209,12 @@ open class LocalDeclarationsLowering(
                 }
 
                 override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Data) {
-                    expression.boundValues.forEach { it.accept(this, data) }
-                    expression.invokeFunction.acceptChildren(this, data)
+                    if (considerRichFunctionReferenceInvokeFunctionsAsLocal) {
+                        super.visitRichFunctionReference(expression, data)
+                    } else {
+                        expression.boundValues.forEach { it.accept(this, data) }
+                        expression.invokeFunction.acceptChildren(this, data)
+                    }
                 }
 
                 override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: Data) {
