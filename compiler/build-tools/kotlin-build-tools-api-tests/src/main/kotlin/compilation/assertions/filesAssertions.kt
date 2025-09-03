@@ -37,7 +37,13 @@ fun CompilationOutcome.assertCompiledSources(module: Module, expectedCompiledSou
         .map(Path::toString)
         .toSet()
     assertEquals(normalizedPaths, actualCompiledSources) {
-        "Compiled sources do not match "
+        """
+            Compiled sources do not match. Set diff:
+            Unexpected: ${actualCompiledSources - normalizedPaths}
+            Missing: ${normalizedPaths - actualCompiledSources}
+            
+            Full sets:
+        """.trimIndent()
     }
 }
 
