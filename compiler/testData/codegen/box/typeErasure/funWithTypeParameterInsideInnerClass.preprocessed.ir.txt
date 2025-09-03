@@ -1,0 +1,10 @@
+Module: main
+// CallableId=/foo
+FUN name:foo visibility:public modality:FINAL returnType:kotlin.Int [inline]
+  TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:false
+  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.A.Inner
+  VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.CharSequence
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun foo <T> (<this>: <root>.A.Inner, a: kotlin.CharSequence): kotlin.Int [inline] declared in <root>'
+      CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
+        ARG <this>: GET_VAR 'a: kotlin.CharSequence declared in <root>.foo' type=kotlin.CharSequence origin=null
