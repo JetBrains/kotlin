@@ -673,6 +673,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
   }
 
   @Test
+  @TestMetadata("suspendClosingBrace.kt")
+  public void testSuspendClosingBrace() {
+    runTest("compiler/testData/debug/stepping/suspendClosingBrace.kt");
+  }
+
+  @Test
   @TestMetadata("suspendFunWithLambdaParameter.kt")
   public void testSuspendFunWithLambdaParameter() {
     runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");

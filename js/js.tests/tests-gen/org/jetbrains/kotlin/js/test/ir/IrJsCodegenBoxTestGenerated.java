@@ -13319,6 +13319,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("linenumberDoesNotDuplicate.kt")
+      public void testLinenumberDoesNotDuplicate() {
+        runTest("compiler/testData/codegen/box/coroutines/debug/linenumberDoesNotDuplicate.kt");
+      }
+
+      @Test
       @TestMetadata("multipleSuspendCallsOnSameLine.kt")
       public void testMultipleSuspendCallsOnSameLine() {
         runTest("compiler/testData/codegen/box/coroutines/debug/multipleSuspendCallsOnSameLine.kt");
