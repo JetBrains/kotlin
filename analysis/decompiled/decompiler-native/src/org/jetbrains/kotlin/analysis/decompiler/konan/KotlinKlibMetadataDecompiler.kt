@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
 
-class KotlinKlibDecompiler : KotlinMetadataDecompiler() {
+class KotlinKlibMetadataDecompiler : KotlinMetadataDecompiler() {
     override fun getStubBuilder(): KotlinMetadataStubBuilder = KlibMetadataStubBuilder
     override fun createFile(viewProvider: KotlinDecompiledFileViewProvider): KtDecompiledFile = KlibDecompiledFile(viewProvider)
 }

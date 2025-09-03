@@ -17,7 +17,7 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneIndexCache.SharedIndexableDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibDecompiledFile
-import org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
@@ -203,7 +203,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         // A hack to avoid costly checks inside createFile
         val ktFile = when (kotlinDecompiler) {
             is KotlinClassFileDecompiler -> KtClsFile(viewProvider)
-            is KotlinKlibDecompiler -> KlibDecompiledFile(viewProvider)
+            is KotlinKlibMetadataDecompiler -> KlibDecompiledFile(viewProvider)
             is KotlinBuiltInDecompiler -> KotlinBuiltinsDecompiledFile(viewProvider)
             else -> error("Unexpected decompiler: ${kotlinDecompiler::class.simpleName}")
         }
