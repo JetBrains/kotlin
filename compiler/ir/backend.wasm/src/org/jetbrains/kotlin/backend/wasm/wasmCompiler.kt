@@ -219,6 +219,7 @@ fun compileWasm(
         }
 
         val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)
+        val useSharedObjects = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
         jsUninstantiatedWrapper = generateAsyncJsWrapper(
             jsModuleImports,
@@ -226,6 +227,7 @@ fun compileWasm(
             "./$baseFileName.wasm",
             jsModuleAndQualifierReferences,
             useJsTag,
+            useSharedObjects,
         )
         jsWrapper = generateEsmExportsWrapper(
             jsModuleImports,
@@ -289,6 +291,7 @@ fun generateAsyncJsWrapper(
     wasmFilePath: String,
     jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
     useJsTag: Boolean,
+    useSharedObjects: Boolean,
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
@@ -304,6 +307,11 @@ fun generateAsyncJsWrapper(
             val moduleSpecifier = it.toJsStringLiteral()
             "        $moduleSpecifier: imports[$moduleSpecifier],\n"
         }
+
+    val initExternrefTableIfNeeded = if (useSharedObjects) """
+    const externrefTable = new WebAssembly.Table({ element: "externref", initial: 0 });"""
+    else ""
+    val importExternrefTableIfNeeded = if (useSharedObjects) "            externrefTable: externrefTable," else ""
 
     val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
         .map {
@@ -376,11 +384,13 @@ $jsCodeBodyIndented
     }
 
     const wasmFilePath = $pathJsStringLiteral;
+$initExternrefTableIfNeeded
 
     const importObject = {
         js_code,
         intrinsics: {
-            tag: wasmTag
+            tag: wasmTag,
+$importExternrefTableIfNeeded
         },
 $imports
     };

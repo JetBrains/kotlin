@@ -263,24 +263,35 @@ class WasmCompiledModuleFragment(
             ?: compilationException("kotlin.Throwable is not found in fragments", null)
 
         // Tables and elements for indirect calls (useSharedObjects mode)
-        val tables = mutableListOf<WasmTable>()
+        val definedTables = mutableListOf<WasmTable>()
         val elements = mutableListOf<WasmElement>()
 
         if (functionsTableValues.isNotEmpty()) {
             val tableSize = functionsTableValues.size.toUInt()
             val funcTable = WasmTable(elementType = WasmFuncRef, limits = WasmLimits(tableSize, tableSize))
-            tables.add(FUNCTIONS_TABLE, funcTable)
+            definedTables.add(funcTable)
             elements.add(WasmElement(WasmFuncRef, functionsTableValues, WasmElement.Mode.Active(funcTable, 0)))
         }
         elements.addAll(declarativeFuncElements)
         functionsTableValues = emptyList() // prevents adding new table functions
         declarativeFuncElements = emptyList()
 
+        val useSharedObjects = useIndirectVirtualCalls // TODO rename globally
+        val importedTables = if (useSharedObjects) {
+            listOf(
+                WasmTable(
+                    limits = WasmLimits(0.toUInt(), null),
+                    elementType = WasmExternRef,
+                    importPair = WasmImportDescriptor("intrinsics", WasmSymbol("externrefTable"))
+                )
+            )
+        } else emptyList()
+
         val tags = getTags(throwableDeclaration)
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
-        val importsInOrder = importedFunctions + importedTags
+        val importsInOrder = importedFunctions + importedTags + importedTables
         tags.forEach { additionalTypes.add(it.type) }
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
@@ -290,7 +301,7 @@ class WasmCompiledModuleFragment(
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             definedFunctions = definedFunctions,
-            tables = tables,
+            tables = definedTables,
             memories = listOf(memory),
             globals = globals,
             exports = exports,
@@ -300,6 +311,7 @@ class WasmCompiledModuleFragment(
             dataCount = true,
             tags = definedTags,
             importedTags = importedTags,
+            importedTables = importedTables
         ).apply { calculateIds() }
     }
 
