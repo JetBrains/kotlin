@@ -104,7 +104,18 @@ sealed class ClangArgs(
             when (configurables) {
                 // isysroot and sysroot on darwin are _almost_ synonyms.
                 // The first one parses SDKSettings.json while second one is not.
-                is AppleConfigurables -> add(listOf("-isysroot", absoluteTargetSysRoot))
+                is AppleConfigurables -> {
+                    add(listOf("-isysroot", absoluteTargetSysRoot))
+                    if (targetTriple.isMacabi) {
+                        add(
+                            listOf(
+                                "-L$absoluteTargetSysRoot/System/iOSSupport/usr/lib",
+                                "-L$absoluteTargetToolchain/lib/swift/maccatalyst",
+                                "-F$absoluteTargetSysRoot/System/iOSSupport/System/Library/Frameworks",
+                            )
+                        )
+                    }
+                }
                 else -> add(listOf("--sysroot=$absoluteTargetSysRoot"))
             }
         }
