@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
@@ -38,6 +39,10 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
 
         if (declaration.propertySymbol.isExpect) {
             reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPECT_PROPERTY_WITH_EXPLICIT_BACKING_FIELD)
+        }
+
+        if (declaration.propertySymbol.effectiveVisibility.privateApi) {
+            reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPLICIT_FIELD_VISIBILITY_MUST_BE_LESS_PERMISSIVE)
         }
     }
 

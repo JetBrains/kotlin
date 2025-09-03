@@ -9921,6 +9921,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("privatePropertyWithExplicitField.kt")
+        public void testPrivatePropertyWithExplicitField() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/privatePropertyWithExplicitField.kt");
+        }
+
+        @Test
         @TestMetadata("propertyTypeNarrowing.kt")
         public void testPropertyTypeNarrowing() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/propertyTypeNarrowing.kt");
