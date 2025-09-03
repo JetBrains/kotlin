@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LoggingContext
@@ -38,6 +37,13 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
+
+    /**
+     * Whether inlining of `external inline fun`s is allowed.
+     * By default, it is allowed everywhere.
+     */
+    val allowInliningOfExternalFunctions: Boolean
+        get() = true
 
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector

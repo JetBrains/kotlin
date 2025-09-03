@@ -20,4 +20,7 @@ class NativePreSerializationLoweringContext(
     override val symbols: PreSerializationNativeSymbols = PreSerializationNativeSymbols.Impl(irBuiltIns)
 
     override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
+
+    override val allowInliningOfExternalFunctions: Boolean
+        get() = false
 }
