@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.generators.model
 
+import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.utils.Printer
+
 sealed class TestEntityModel {
     abstract val name: String
     abstract val dataString: String?
@@ -13,7 +16,7 @@ sealed class TestEntityModel {
 
 sealed class ClassModel : TestEntityModel() {
     abstract val innerTestClasses: Collection<TestClassModel>
-    abstract val methods: Collection<MethodModel>
+    abstract val methods: Collection<MethodModel<*>>
     abstract val isEmpty: Boolean
     abstract val dataPathRoot: String?
     abstract val annotations: Collection<AnnotationModel>
@@ -31,11 +34,19 @@ abstract class TestClassModel : ClassModel() {
         }
 }
 
-abstract class MethodModel : TestEntityModel() {
-    abstract class Kind
-
-    abstract val kind: Kind
+abstract class MethodModel<M : MethodModel<M>> : TestEntityModel() {
+    abstract val generator: MethodGenerator<M>
     open fun isTestMethod(): Boolean = true
     open fun shouldBeGeneratedForInnerTestClass(): Boolean = true
     open fun imports(): Collection<Class<*>> = emptyList()
+
+    fun generateBody(p: Printer) {
+        @Suppress("UNCHECKED_CAST")
+        generator.generateBody(this as M, p)
+    }
+
+    fun generateSignature(p: Printer) {
+        @Suppress("UNCHECKED_CAST")
+        generator.generateSignature(this as M, p)
+    }
 }

@@ -5,6 +5,8 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPresentMethodGenerator
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
@@ -31,7 +33,7 @@ class SimpleTestClassModel(
     private val deep: Int?,
     override val annotations: Collection<AnnotationModel>,
     override val tags: List<String>,
-    private val additionalMethods: Collection<MethodModel>,
+    private val additionalMethods: Collection<MethodModel<*>>,
     val skipSpecificFile: (File) -> Boolean,
     val skipTestAllFilesCheck: Boolean,
     val generateEmptyTestClasses: Boolean,
@@ -94,7 +96,7 @@ class SimpleTestClassModel(
         return result
     }
 
-    override val methods: Collection<MethodModel> by lazy {
+    override val methods: Collection<MethodModel<*>> by lazy {
         if (!rootFile.isDirectory) {
             return@lazy methodModelLocator(
                 rootFile,
@@ -105,7 +107,7 @@ class SimpleTestClassModel(
                 extractTagsFromTestFile(rootFile)
             )
         }
-        val result = mutableListOf<MethodModel>()
+        val result = mutableListOf<MethodModel<*>>()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
         if (!skipTestAllFilesCheck) {
             result.add(TestAllFilesPresentMethodModel())
@@ -158,11 +160,9 @@ class SimpleTestClassModel(
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"
 
-    object TestAllFilesPresentMethodKind : MethodModel.Kind()
-
-    inner class TestAllFilesPresentMethodModel : MethodModel() {
-        override val kind: Kind
-            get() = TestAllFilesPresentMethodKind
+    inner class TestAllFilesPresentMethodModel : MethodModel<TestAllFilesPresentMethodModel>() {
+        override val generator: MethodGenerator<TestAllFilesPresentMethodModel>
+            get() = SimpleTestClassModelTestAllFilesPresentMethodGenerator
 
         override val name: String
             get() = "testAllFilesPresentIn$testClassName"

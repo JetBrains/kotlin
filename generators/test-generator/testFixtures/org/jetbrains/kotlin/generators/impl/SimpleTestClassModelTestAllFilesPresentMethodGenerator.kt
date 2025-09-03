@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.impl
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.SimpleTestClassModel
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -15,9 +14,6 @@ import org.jetbrains.kotlin.utils.Printer
 import java.util.regex.Pattern
 
 object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<SimpleTestClassModel.TestAllFilesPresentMethodModel>() {
-    override val kind: MethodModel.Kind
-        get() = SimpleTestClassModel.TestAllFilesPresentMethodKind
-
     override fun generateSignature(method: SimpleTestClassModel.TestAllFilesPresentMethodModel, p: Printer) {
         generateDefaultSignature(method, p)
     }

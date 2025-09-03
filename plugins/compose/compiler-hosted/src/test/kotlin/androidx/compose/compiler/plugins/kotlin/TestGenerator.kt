@@ -6,12 +6,11 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
 
-    generateTestGroupSuiteWithJUnit5(additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
+    generateTestGroupSuiteWithJUnit5 {
         testGroup("plugins/compose/compiler-hosted/tests-gen", "plugins/compose/compiler-hosted/testData") {
             testClass<AbstractCompilerFacilityTestForComposeCompilerPlugin> {
                 model("codegen")

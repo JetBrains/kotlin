@@ -6,17 +6,15 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.utils.Printer
 import kotlin.reflect.KClass
 
 object FrontendConfiguratorTestGenerator : MethodGenerator<FrontendConfiguratorTestModel>() {
-    override val kind: MethodModel.Kind get() = FrontendConfiguratorTestModelKind
-
     override fun generateSignature(method: FrontendConfiguratorTestModel, p: Printer): Unit = with(p) {
         println("@NotNull")
         println("@Override")
@@ -43,14 +41,11 @@ object FrontendConfiguratorTestGenerator : MethodGenerator<FrontendConfiguratorT
     private fun Enum<*>.asJavaCode(): String = "${this::class.simpleName}.${this.name}"
 }
 
-object FrontendConfiguratorTestModelKind : MethodModel.Kind()
-
-
 class FrontendConfiguratorTestModel(
     val frontendConfiguratorFactoryClass: KClass<out AnalysisApiTestConfiguratorFactory>,
     val data: AnalysisApiTestConfiguratorFactoryData
-) : MethodModel() {
-    override val kind: Kind get() = FrontendConfiguratorTestModelKind
+) : MethodModel<FrontendConfiguratorTestModel>() {
+    override val generator: MethodGenerator<FrontendConfiguratorTestModel> get() = FrontendConfiguratorTestGenerator
     override val name: String get() = "getConfigurator"
     override val dataString: String? get() = null
     override val tags: List<String> get() = emptyList()

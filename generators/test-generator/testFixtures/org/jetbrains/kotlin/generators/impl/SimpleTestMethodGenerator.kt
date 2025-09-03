@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.generators.impl
 
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.RunTestMethodModel
 import org.jetbrains.kotlin.generators.model.SimpleTestMethodModel
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 
 object SimpleTestMethodGenerator : MethodGenerator<SimpleTestMethodModel>() {
-    override val kind: MethodModel.Kind
-        get() = SimpleTestMethodModel.Kind
-
     override fun generateSignature(method: SimpleTestMethodModel, p: Printer) {
         generateDefaultSignature(method, p)
     }
