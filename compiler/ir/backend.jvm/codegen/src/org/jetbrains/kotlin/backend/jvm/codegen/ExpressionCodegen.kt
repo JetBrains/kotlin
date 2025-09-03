@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
@@ -546,7 +546,13 @@ class ExpressionCodegen(
             handleParameter(parameter, argument, type)
         }
 
-        expression.markLineNumber(true)
+        if (expression.startOffset == UNDEFINED_OFFSET && lastLineNumber < 0 && callee.isGeneratedCodeMarker(config, context.symbols)) {
+            // Do not generate negative line numbers in SMAP for generated code markers,
+            // which happens when suspend function is the first in the file.
+            irFunction.markLineNumber(true)
+        } else {
+            expression.markLineNumber(true)
+        }
 
         if (suspensionPointKind != SuspensionPointKind.NEVER) {
             addSuspendMarker(mv, isStartNotEnd = true, suspensionPointKind == SuspensionPointKind.NOT_INLINE)
