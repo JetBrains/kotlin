@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPres
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.generators.util.extractTagsFromTestFile
-import org.jetbrains.kotlin.generators.util.methodModelLocator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -96,14 +95,15 @@ class SimpleTestClassModel(
 
     override val methods: Collection<MethodModel<*>> by lazy {
         if (!rootFile.isDirectory) {
-            return@lazy methodModelLocator(
-                rootFile,
-                rootFile,
+            val methodModel = SimpleTestMethodModel(
+                rootDir = rootFile,
+                file = rootFile,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
                 targetBackend,
                 extractTagsFromTestFile(rootFile)
             )
+            return@lazy listOf(methodModel)
         }
         val result = mutableListOf<MethodModel<*>>()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
@@ -132,10 +132,14 @@ class SimpleTestClassModel(
                         )
                     }
                     if (!skipSpecificFile(file)) {
-                        result.addAll(
-                            methodModelLocator(
-                                rootFile, file, filenamePattern,
-                                checkFilenameStartsLowerCase, targetBackend, extractTagsFromTestFile(file)
+                        result.add(
+                            SimpleTestMethodModel(
+                                rootFile,
+                                file,
+                                filenamePattern,
+                                checkFilenameStartsLowerCase,
+                                targetBackend,
+                                extractTagsFromTestFile(file)
                             )
                         )
                     }
