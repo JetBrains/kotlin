@@ -1102,14 +1102,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val konanTarget: KonanTarget = params.konanTarget
 
-    @Deprecated(
-        message = "This property is scheduled for removal in Kotlin 2.3. " +
-                "Please, don't use it in your builds.",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Internal
-    val konanVersion: String = project.nativeProperties.kotlinNativeVersion.get()
-
     @Suppress("unused")
     @get:Input
     val libraryVersion = project.version.toString()
