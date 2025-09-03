@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.utils.Printer
 object RunTestMethodGenerator : MethodGenerator<RunTestMethodModel>() {
     override fun generateBody(method: RunTestMethodModel, p: Printer) {
         with(method) {
-            val modifiedTestMethodName =
-                if (withTransformer) "path -> ${testMethodName}WithTransformer(path, transformer)" else "this::$testMethodName"
+            val modifiedTestMethodName = "this::$testMethodName"
             if (!isWithTargetBackend()) {
                 p.println("KotlinTestUtils.$testRunnerMethodName($modifiedTestMethodName, this, testDataFilePath);")
             } else {
@@ -28,7 +27,6 @@ object RunTestMethodGenerator : MethodGenerator<RunTestMethodModel>() {
     }
 
     override fun generateSignature(method: RunTestMethodModel, p: Printer) {
-        val optionalTransformer = if (method.withTransformer) ", ${Function::class.java.canonicalName}<String, String> transformer" else ""
-        p.print("private void ${method.name}(String testDataFilePath${optionalTransformer})")
+        p.print("private void ${method.name}(String testDataFilePath)")
     }
 }
