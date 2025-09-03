@@ -110,6 +110,11 @@ object BinaryOptions : BinaryOptionRegistry() {
     val stackProtector by option<StackProtectorMode>()
 
     val minidumpLocation by stringOption()
+
+    /**
+     * Generate a macOS Catalyst binary for the given architecture
+     */
+    val macabi by option<MacAbi>()
 }
 
 open class BinaryOption<T : Any>(
