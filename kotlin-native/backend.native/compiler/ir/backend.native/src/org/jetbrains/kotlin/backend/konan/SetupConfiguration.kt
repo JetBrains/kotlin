@@ -366,6 +366,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
     putIfNotNull(KONAN_DATA_DIR, konanConfig.distribution.localKonanDir.absolutePath)
     putIfNotNull(BinaryOptions.minidumpLocation, konanConfig.minidumpLocation)
+    putIfNotNull(BinaryOptions.macabi, konanConfig.macabi)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

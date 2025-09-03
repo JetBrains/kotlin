@@ -235,7 +235,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
 
         val platformName = when (target.family) {
             Family.OSX -> "macos"
-            Family.IOS -> "ios"
+            Family.IOS -> if (targetTriple.isMacabi) "mac-catalyst" else "ios"
             Family.TVOS -> "tvos"
             Family.WATCHOS -> "watchos"
             else -> error("Unexpected Apple target family: ${target.family}")
@@ -276,6 +276,11 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +platformVersionFlags()
             +listOf("-syslibroot", absoluteTargetSysRoot, "-o", executable)
             +objectFiles
+            if (targetTriple.isMacabi) +listOf(
+                "-L$absoluteTargetSysRoot/System/iOSSupport/usr/lib",
+                "-L$absoluteTargetToolchain/lib/swift/maccatalyst",
+                "-F$absoluteTargetSysRoot/System/iOSSupport/System/Library/Frameworks",
+            )
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
