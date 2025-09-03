@@ -59,6 +59,12 @@ val TargetTriple.isSimulator: Boolean
     get() = environment == "simulator"
 
 /**
+ * Check that the given target is Mac Catalyst.
+ */
+val TargetTriple.isMacabi: Boolean
+    get() = environment == "macabi"
+
+/**
  * Appends version to OS part of triple.
  *
  * Useful for precise target specification in Clang and Swift.
