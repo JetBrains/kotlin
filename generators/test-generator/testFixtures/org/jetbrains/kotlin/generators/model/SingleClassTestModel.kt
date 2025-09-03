@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.model
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresentedMethodGenerator
-import org.jetbrains.kotlin.generators.util.methodModelLocator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -36,7 +35,7 @@ class SingleClassTestModel(
         result.addAll(additionalMethods)
         FileUtil.processFilesRecursively(rootFile) { file: File ->
             if (!file.isDirectory && filenamePattern.matcher(file.name).matches()) {
-                result.addAll(getTestMethodsFromFile(file))
+                result.add(getTestMethodFromFile(file))
             }
             true
         }
@@ -46,9 +45,14 @@ class SingleClassTestModel(
     override val innerTestClasses: Collection<TestClassModel>
         get() = emptyList()
 
-    private fun getTestMethodsFromFile(file: File): Collection<MethodModel<*>> {
-        return methodModelLocator(
-            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, tags = emptyList()
+    private fun getTestMethodFromFile(file: File): MethodModel<*> {
+        return SimpleTestMethodModel(
+            rootFile,
+            file,
+            filenamePattern,
+            checkFilenameStartsLowerCase,
+            targetBackend,
+            tags = emptyList()
         )
     }
 
