@@ -14,7 +14,6 @@ class RunTestMethodModel(
     val testMethodName: String,
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
-    val withTransformer: Boolean = false
 ) : MethodModel<RunTestMethodModel>() {
     override val generator: MethodGenerator<RunTestMethodModel> get() = RunTestMethodGenerator
     override val name = METHOD_NAME
