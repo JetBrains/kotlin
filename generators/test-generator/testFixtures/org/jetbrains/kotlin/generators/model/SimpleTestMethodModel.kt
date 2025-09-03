@@ -17,7 +17,6 @@ class SimpleTestMethodModel(
     private val rootDir: File,
     val file: File,
     private val filenamePattern: Pattern,
-    checkFilenameStartsLowerCase: Boolean?,
     internal val targetBackend: TargetBackend,
     override val tags: List<String>,
 ) : MethodModel<SimpleTestMethodModel>() {
@@ -50,15 +49,4 @@ class SimpleTestMethodModel(
             val nameSuffix = escapeForJavaIdentifier(unescapedName).replaceFirstChar(Char::uppercaseChar)
             return "test$nameSuffix"
         }
-
-    init {
-        if (checkFilenameStartsLowerCase != null) {
-            val c = file.name[0]
-            if (checkFilenameStartsLowerCase) {
-                assert(Character.isLowerCase(c)) { "Invalid file name '$file', file name should start with lower-case letter" }
-            } else {
-                assert(Character.isUpperCase(c)) { "Invalid file name '$file', file name should start with upper-case letter" }
-            }
-        }
-    }
 }
