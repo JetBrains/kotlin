@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.types.coneType
@@ -19,12 +20,20 @@ import org.jetbrains.kotlin.fir.types.coneType
 object FirInitializerTypeMismatchChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        val initializer = declaration.initializer?.takeIf { it !is FirErrorExpression } ?: return
-        val source = declaration.source ?: return
+        if (declaration.returnTypeRef.source?.kind == KtRealSourceElementKind) {
+            checkInitializerOf(declaration)
+        }
+
+        declaration.backingField?.let { checkInitializerOf(it) }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkInitializerOf(variable: FirVariable) {
+        val initializer = variable.initializer?.takeIf { it !is FirErrorExpression } ?: return
+        val source = variable.source ?: return
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) return
         if (initializer is FirComponentCall) return
-        if (declaration.returnTypeRef.source?.kind != KtRealSourceElementKind) return
-        val propertyType = declaration.returnTypeRef.coneType
+        val propertyType = variable.returnTypeRef.coneType
 
         checkTypeMismatch(propertyType, null, initializer, source, true)
     }
