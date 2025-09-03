@@ -14,17 +14,14 @@ sealed class TestEntityModel {
     abstract val tags: List<String>
 }
 
-sealed class ClassModel : TestEntityModel() {
+abstract class TestClassModel : TestEntityModel() {
     abstract val innerTestClasses: Collection<TestClassModel>
     abstract val methods: Collection<MethodModel<*>>
     abstract val isEmpty: Boolean
     abstract val dataPathRoot: String?
     abstract val annotations: Collection<AnnotationModel>
-    abstract val imports: Set<Class<*>>
-}
 
-abstract class TestClassModel : ClassModel() {
-    override val imports: Set<Class<*>>
+    val imports: Set<Class<*>>
         get() {
             return mutableSetOf<Class<*>>().also { allImports ->
                 annotations.flatMapTo(allImports) { it.imports() }
