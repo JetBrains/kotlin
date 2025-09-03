@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.lowLevelFir.AbstractStandalonePsiClassResolveToFirSymbolTest
-import org.jetbrains.kotlin.generators.TestGroupSuite
+import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 /**

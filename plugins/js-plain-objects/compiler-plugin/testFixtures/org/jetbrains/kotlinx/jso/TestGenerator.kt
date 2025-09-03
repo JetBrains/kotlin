@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.jspo
 
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlinx.jspo.runners.AbstractFirJsPlainObjectsIrJsBoxTest
 import org.jetbrains.kotlinx.jspo.runners.AbstractFirJsPlainObjectsPluginDiagnosticTest
 

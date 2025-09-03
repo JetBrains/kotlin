@@ -7,7 +7,7 @@ package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
+import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
