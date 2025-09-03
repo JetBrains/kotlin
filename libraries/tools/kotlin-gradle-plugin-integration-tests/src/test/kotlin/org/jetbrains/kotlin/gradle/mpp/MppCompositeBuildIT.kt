@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
@@ -213,6 +214,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 .suppressDeprecationWarningsOn(
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
+                .copy(configurationCache = ConfigurationCacheValue.DISABLED)
         ) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
@@ -474,7 +476,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 version = null,
                 enableKlibsCrossCompilation = false
             )
-        )
+        ).disableIsolatedProjects()
 
         val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion) {
             settingsGradleKts.modify {
