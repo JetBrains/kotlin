@@ -288,7 +288,6 @@ class NewTestGeneratorImpl(
 
             for (methodModel in testMethods) {
                 if (methodModel is RunTestMethodModel) continue // should also skip its imports
-                if (!methodModel.shouldBeGenerated()) continue // should also skip its imports
 
                 if (first) {
                     first = false
@@ -370,7 +369,7 @@ class NewTestGeneratorImpl(
     private fun TestClassModel.predefinedNativeTransformers(recursive: Boolean): List<Pair<String, String>> =
         methods.mapNotNull { method ->
             (method as? TransformingTestMethodModel)
-                ?.takeIf { it.registerInConstructor && it.shouldBeGenerated() }
+                ?.takeIf { it.registerInConstructor }
                 ?.let { it.source.file.invariantSeparatorsPath to it.transformer }
         } + if (recursive) innerTestClasses.flatMap { it.predefinedNativeTransformers(true) } else listOf()
 }
