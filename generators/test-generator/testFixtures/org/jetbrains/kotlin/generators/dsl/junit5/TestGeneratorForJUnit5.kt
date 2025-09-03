@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPresentMethodGenerator
 import org.jetbrains.kotlin.generators.impl.SimpleTestMethodGenerator
 import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresentedMethodGenerator
-import org.jetbrains.kotlin.generators.impl.TransformingTestMethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
@@ -27,7 +26,6 @@ private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,
     SingleClassTestModelAllFilesPresentedMethodGenerator,
-    TransformingTestMethodGenerator,
 )
 
 class TestGeneratorForJUnit5(
@@ -136,12 +134,7 @@ class TestGeneratorForJUnit5(
             p.println("import ${KtTestUtil::class.java.canonicalName};")
 
             for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
-                val realName = when (clazz) {
-                    TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
-                        "org.jetbrains.kotlin.test.utils.TransformersFunctions"
-                    else -> clazz.canonicalName
-                }
-                p.println("import $realName;")
+                p.println("import ${clazz.canonicalName};")
             }
 
             if (suiteClassPackage != baseTestClassPackage) {
@@ -278,17 +271,6 @@ class TestGeneratorForJUnit5(
 
             var first = true
 
-            val transformers = testClassModel.predefinedNativeTransformers(false)
-
-            if (transformers.isNotEmpty()) {
-                p.println("public ${testClassModel.name}() {")
-                p.pushIndent()
-                transformers.forEach { (path, transformer) -> p.println("register(\"$path\", $transformer);") }
-                p.popIndent()
-                p.println("}")
-                first = false
-            }
-
             for (methodModel in testMethods) {
                 if (methodModel is RunTestMethodModel) continue // should also skip its imports
 
@@ -368,11 +350,4 @@ class TestGeneratorForJUnit5(
         }
         return false
     }
-
-    private fun TestClassModel.predefinedNativeTransformers(recursive: Boolean): List<Pair<String, String>> =
-        methods.mapNotNull { method ->
-            (method as? TransformingTestMethodModel)
-                ?.takeIf { it.registerInConstructor }
-                ?.let { it.source.file.invariantSeparatorsPath to it.transformer }
-        } + if (recursive) innerTestClasses.flatMap { it.predefinedNativeTransformers(true) } else listOf()
 }
