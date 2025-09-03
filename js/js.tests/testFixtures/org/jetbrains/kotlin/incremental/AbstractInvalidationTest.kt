@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
@@ -106,6 +107,8 @@ abstract class AbstractInvalidationTest(
         jsDir: File,
     ): AbstractProjectStepsExecutor
 
+    protected abstract fun testConfiguration(buildDir: File): KlibCompilerInvocationTestUtils.TestConfiguration
+
     protected fun runTest(@TestDataFile testPath: String) {
         val testDirectory = File(testPath)
         val testName = testDirectory.name
@@ -135,6 +138,11 @@ abstract class AbstractInvalidationTest(
         val buildDir = File(workingDir, "build").also { it.invalidateDir() }
         val jsDir = File(workingDir, "js").also { it.invalidateDir() }
 
+        testConfiguration(buildDir).run {
+            if (isIgnoredTest(projectInfo)) {
+                return onIgnoredTest()
+            }
+        }
         initializeWorkingDir(projectInfo, testDirectory, sourceDir, buildDir)
 
         createProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir, jsDir).execute()
