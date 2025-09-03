@@ -35,8 +35,7 @@ class SimpleTestClassModel(
     override val name: String
         get() = testClassName
 
-    val excludeDirs: Set<String> = excludeDirs.toSet()
-    val excludeDirsRecursively: Set<String> = excludeDirsRecursively.toSet()
+    val allExcludedDirs: Set<String> = (excludeDirs + excludeDirsRecursively).toSet()
 
     override val innerTestClasses: Collection<TestClassModel> by lazy {
         if (!rootFile.isDirectory || !recursive) {
@@ -45,7 +44,7 @@ class SimpleTestClassModel(
         val children = mutableListOf<TestClassModel>()
         val files = rootFile.listFiles() ?: return@lazy emptyList()
         for (file in files) {
-            if (file.isDirectory && dirHasFilesInside(file) && !excludeDirs.contains(file.name) && !excludeDirsRecursively.contains(file.name)) {
+            if (file.isDirectory && dirHasFilesInside(file) && !allExcludedDirs.contains(file.name)) {
                 val innerTestClassName = fileNameToJavaIdentifier(file)
                 children.add(
                     SimpleTestClassModel(
@@ -57,7 +56,7 @@ class SimpleTestClassModel(
                         doTestMethodName,
                         innerTestClassName,
                         targetBackend,
-                        excludesStripOneDirectory(file.name),
+                        excludesStripOneDirectory(excludeDirs, file.name),
                         excludeDirsRecursively,
                         testRunnerMethodName,
                         annotations,
@@ -73,7 +72,7 @@ class SimpleTestClassModel(
     }
 
 
-    private fun excludesStripOneDirectory(directoryName: String): Set<String> {
+    private fun excludesStripOneDirectory(excludeDirs: Collection<String>, directoryName: String): Collection<String> {
         if (excludeDirs.isEmpty()) return excludeDirs
         val result: MutableSet<String> = LinkedHashSet()
         for (excludeDir in excludeDirs) {
@@ -108,7 +107,7 @@ class SimpleTestClassModel(
                 val excluded = let {
                     val name = file.name
                     val byPattern = excludePattern != null && excludePattern.matcher(name).matches()
-                    val byDirectory = file.isDirectory && (name in excludeDirs || name in excludeDirsRecursively)
+                    val byDirectory = file.isDirectory && (name in allExcludedDirs)
                     return@let byPattern || byDirectory
                 }
                 if (!excluded && filenamePattern.matcher(file.name).matches()) {
