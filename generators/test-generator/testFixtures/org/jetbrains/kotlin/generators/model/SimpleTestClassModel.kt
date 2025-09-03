@@ -169,8 +169,8 @@ class SimpleTestClassModel(
 
     object TestAllFilesPresentMethodKind : MethodModel.Kind()
 
-    inner class TestAllFilesPresentMethodModel : MethodModel {
-        override val kind: MethodModel.Kind
+    inner class TestAllFilesPresentMethodModel : MethodModel() {
+        override val kind: Kind
             get() = TestAllFilesPresentMethodKind
 
         override val name: String

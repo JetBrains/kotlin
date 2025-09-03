@@ -65,7 +65,7 @@ class SingleClassTestModel(
 
     object AllFilesPresentedMethodKind : MethodModel.Kind()
 
-    inner class TestAllFilesPresentMethodModel : MethodModel {
+    inner class TestAllFilesPresentMethodModel : MethodModel() {
         override val name: String = "testAllFilesPresentIn$testClassName"
         override val dataString: String?
             get() = null
@@ -73,7 +73,7 @@ class SingleClassTestModel(
         val classModel: SingleClassTestModel
             get() = this@SingleClassTestModel
 
-        override val kind: MethodModel.Kind
+        override val kind: Kind
             get() = AllFilesPresentedMethodKind
 
         override val tags: List<String>

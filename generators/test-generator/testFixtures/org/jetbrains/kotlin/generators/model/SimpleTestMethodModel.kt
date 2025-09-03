@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.escapeForJavaIdentifier
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -20,7 +19,7 @@ open class SimpleTestMethodModel(
     internal val targetBackend: TargetBackend,
     override val tags: List<String>,
     val nativeTestInNonNativeTestInfra: Boolean,
-) : MethodModel {
+) : MethodModel() {
     object Kind : MethodModel.Kind()
 
     override val kind: MethodModel.Kind

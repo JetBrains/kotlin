@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.generators.model
 
-interface TestEntityModel {
-    val name: String
-    val dataString: String?
-    val tags: List<String>
+sealed class TestEntityModel {
+    abstract val name: String
+    abstract val dataString: String?
+    abstract val tags: List<String>
 }
 
-interface ClassModel : TestEntityModel {
-    val innerTestClasses: Collection<TestClassModel>
-    val methods: Collection<MethodModel>
-    val isEmpty: Boolean
-    val dataPathRoot: String?
-    val annotations: Collection<AnnotationModel>
-    val imports: Set<Class<*>>
+sealed class ClassModel : TestEntityModel() {
+    abstract val innerTestClasses: Collection<TestClassModel>
+    abstract val methods: Collection<MethodModel>
+    abstract val isEmpty: Boolean
+    abstract val dataPathRoot: String?
+    abstract val annotations: Collection<AnnotationModel>
+    abstract val imports: Set<Class<*>>
 }
 
-abstract class TestClassModel : ClassModel {
+abstract class TestClassModel : ClassModel() {
     override val imports: Set<Class<*>>
         get() {
             return mutableSetOf<Class<*>>().also { allImports ->
@@ -31,11 +31,11 @@ abstract class TestClassModel : ClassModel {
         }
 }
 
-interface MethodModel : TestEntityModel {
+abstract class MethodModel : TestEntityModel() {
     abstract class Kind
 
-    val kind: Kind
-    fun isTestMethod(): Boolean = true
-    fun shouldBeGeneratedForInnerTestClass(): Boolean = true
-    fun imports(): Collection<Class<*>> = emptyList()
+    abstract val kind: Kind
+    open fun isTestMethod(): Boolean = true
+    open fun shouldBeGeneratedForInnerTestClass(): Boolean = true
+    open fun imports(): Collection<Class<*>> = emptyList()
 }

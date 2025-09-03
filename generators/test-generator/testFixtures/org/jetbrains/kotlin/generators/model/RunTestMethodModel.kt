@@ -13,7 +13,7 @@ class RunTestMethodModel(
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
     val withTransformer: Boolean = false
-) : MethodModel {
+) : MethodModel() {
     object Kind : MethodModel.Kind()
 
     override val kind: MethodModel.Kind
