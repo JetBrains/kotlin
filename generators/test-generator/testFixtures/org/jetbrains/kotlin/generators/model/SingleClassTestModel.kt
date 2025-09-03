@@ -39,11 +39,6 @@ class SingleClassTestModel(
             }
             true
         }
-        if (result.any { it is TransformingTestMethodModel }) {
-            val additionalRunner =
-                RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
-            result.add(additionalRunner)
-        }
         result.sortedWith { o1: MethodModel, o2: MethodModel -> o1.name.compareTo(o2.name, ignoreCase = true) }
     }
 
@@ -52,8 +47,7 @@ class SingleClassTestModel(
 
     private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
         return methodModelLocator(
-            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, tags = emptyList(),
-            nativeTestInNonNativeTestInfra = false
+            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, tags = emptyList()
         )
     }
 

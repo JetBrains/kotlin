@@ -35,7 +35,6 @@ class SimpleTestClassModel(
     val skipSpecificFile: (File) -> Boolean,
     val skipTestAllFilesCheck: Boolean,
     val generateEmptyTestClasses: Boolean,
-    val nativeTestInNonNativeTestInfra: Boolean,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -74,7 +73,6 @@ class SimpleTestClassModel(
                         skipSpecificFile,
                         skipTestAllFilesCheck,
                         generateEmptyTestClasses,
-                        nativeTestInNonNativeTestInfra
                     )
                 )
             }
@@ -104,8 +102,7 @@ class SimpleTestClassModel(
                 filenamePattern,
                 checkFilenameStartsLowerCase,
                 targetBackend,
-                extractTagsFromTestFile(rootFile),
-                nativeTestInNonNativeTestInfra
+                extractTagsFromTestFile(rootFile)
             )
         }
         val result = mutableListOf<MethodModel>()
@@ -138,18 +135,12 @@ class SimpleTestClassModel(
                         result.addAll(
                             methodModelLocator(
                                 rootFile, file, filenamePattern,
-                                checkFilenameStartsLowerCase, targetBackend, extractTagsFromTestFile(file),
-                                nativeTestInNonNativeTestInfra
+                                checkFilenameStartsLowerCase, targetBackend, extractTagsFromTestFile(file)
                             )
                         )
                     }
                 }
             }
-        }
-        if (result.any { it is TransformingTestMethodModel }) {
-            val additionalRunner =
-                RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
-            result.add(additionalRunner)
         }
         result.sortWith(BY_NAME)
         result

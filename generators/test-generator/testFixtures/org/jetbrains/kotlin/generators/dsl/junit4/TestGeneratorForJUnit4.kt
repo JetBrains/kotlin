@@ -25,7 +25,6 @@ private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,
     SingleClassTestModelAllFilesPresentedMethodGenerator,
-    TransformingTestMethodGenerator,
 )
 
 object TestGeneratorForJUnit4 : AbstractTestGenerator(METHOD_GENERATORS) {
@@ -125,12 +124,7 @@ private class TestGeneratorForJUnit4Instance(
         p.println("import " + KtTestUtil::class.java.canonicalName + ";")
 
         for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
-            val realName = when (clazz) {
-                TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
-                    "org.jetbrains.kotlin.test.utils.TransformersFunctions"
-                else -> clazz.canonicalName
-            }
-            p.println("import $realName;")
+            p.println("import ${clazz.canonicalName};")
         }
 
         if (suiteClassPackage != baseTestClassPackage) {
