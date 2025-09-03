@@ -15,6 +15,18 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.regex.Pattern
 
+/**
+ * The main implementation of a class model.
+ * Class structure reflects the testdata directory structure, where
+ * - directory is a class
+ * - subdirectory is a nested/inner class (for JUnit4/JUnit5 respectively)
+ * - a test data file is a test method
+ *
+ * The model encapsulates the logic of traversing the testdata directory,
+ * locating testdata files and generating test method models for them.
+ *
+ * @property recursive if false then subdirectories wouldn't be traversed
+ */
 class SimpleTestClassModel(
     val rootFile: File,
     val recursive: Boolean,
@@ -90,7 +102,6 @@ class SimpleTestClassModel(
                 rootDir = rootFile,
                 file = rootFile,
                 filenamePattern,
-                targetBackend,
                 extractTagsFromTestFile(rootFile)
             )
             return@lazy listOf(methodModel)
@@ -126,7 +137,6 @@ class SimpleTestClassModel(
                             rootFile,
                             file,
                             filenamePattern,
-                            targetBackend,
                             extractTagsFromTestFile(file)
                         )
                     )
@@ -149,6 +159,10 @@ class SimpleTestClassModel(
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"
 
+    /**
+     * Test method which ensures that there is a generated test for each testdata file in the
+     *   corresponding directory. Used to validate that generated test is up-to-date.
+     */
     inner class TestAllFilesPresentMethodModel : MethodModel<TestAllFilesPresentMethodModel>() {
         override val generator: MethodGenerator<TestAllFilesPresentMethodModel>
             get() = SimpleTestClassModelTestAllFilesPresentMethodGenerator

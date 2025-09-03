@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.regex.Pattern
 
+/**
+ * Default model for the test method.
+ */
 class SimpleTestMethodModel(
     private val rootDir: File,
     val file: File,
     private val filenamePattern: Pattern,
-    internal val targetBackend: TargetBackend,
     override val tags: List<String>,
 ) : MethodModel<SimpleTestMethodModel>() {
     override val generator: MethodGenerator<SimpleTestMethodModel>

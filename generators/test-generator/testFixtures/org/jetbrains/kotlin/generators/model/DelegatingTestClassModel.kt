@@ -4,7 +4,7 @@
  */
 package org.jetbrains.kotlin.generators.model
 
-open class DelegatingTestClassModel(private val delegate: TestClassModel) : TestClassModel() {
+abstract class DelegatingTestClassModel(private val delegate: TestClassModel) : TestClassModel() {
     override val name: String
         get() = delegate.name
 

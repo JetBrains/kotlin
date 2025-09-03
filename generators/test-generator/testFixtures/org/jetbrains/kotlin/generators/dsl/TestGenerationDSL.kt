@@ -125,9 +125,7 @@ class TestGroup(
             excludedPattern: String? = null,
             testMethod: String = "doTest",
             testClassName: String? = null, // specific name for generated test class
-            // which backend will be used in test. Specifying value may affect some test with
-            // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated
-            targetBackend: TargetBackend? = null,
+            targetBackend: TargetBackend? = null, // the parameter is redundant for JUnit5 tests
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
             skipTestAllFilesCheck: Boolean = false,
