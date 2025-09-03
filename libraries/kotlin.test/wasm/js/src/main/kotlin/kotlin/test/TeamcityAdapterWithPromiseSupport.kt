@@ -7,6 +7,7 @@ package kotlin.test
 
 import kotlin.math.abs
 import kotlin.js.*
+import kotlin.wasm.internal.ManagedExternref
 
 // Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
 @JsFun("() => globalThis.arguments?.join?.(' ') ?? ''")
@@ -17,6 +18,7 @@ private external fun nodeArguments(): String
 internal actual fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
 
 internal class TeamcityAdapterWithPromiseSupport : TeamcityAdapter() {
+    @ManagedExternref
     private var scheduleNextTaskAfter: Promise<JsAny?>? = null
     override fun runOrScheduleNext(block: () -> Unit) {
         if (scheduleNextTaskAfter == null) {

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.wasm.ir
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 const val NO_FUNC_IDX = -1
-const val FUNCTIONS_TABLE = 0
+// TODO decide which table is most used and make it default (0), after making all of them imported
+const val EXTERNREF_TABLE = 0
+const val FUNCTIONS_TABLE = 1
 
 class WasmModule(
     val recGroups: List<List<WasmTypeDeclaration>> = emptyList(),
