@@ -62506,6 +62506,77 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/typeErasure")
+    @TestDataPath("$PROJECT_ROOT")
+    @HeavyTest()
+    public class TypeErasure {
+      @Test
+      public void testAllFilesPresentInTypeErasure() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeErasure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameter.kt")
+      public void testFunWithTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterAndContextParameter.kt")
+      public void testFunWithTypeParameterAndContextParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterAndContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterAndExtensionReceiver.kt")
+      public void testFunWithTypeParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiver.kt")
+      public void testFunWithTypeParameterContextParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+      public void testFunWithTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideClass.kt")
+      public void testFunWithTypeParameterInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideInnerClass.kt")
+      public void testFunWithTypeParameterInsideInnerClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterInsideNestedClass.kt")
+      public void testFunWithTypeParameterInsideNestedClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterInsideNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterWithTwoUpperBounds.kt")
+      public void testFunWithTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithTypeParameterWithUpperBound.kt")
+      public void testFunWithTypeParameterWithUpperBound() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterWithUpperBound.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     @TestDataPath("$PROJECT_ROOT")
     @HeavyTest()
