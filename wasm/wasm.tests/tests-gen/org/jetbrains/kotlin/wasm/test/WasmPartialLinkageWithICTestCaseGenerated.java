@@ -91,6 +91,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("functionExcludedFromFirstStageInlining")
+  public void testFunctionExcludedFromFirstStageInlining() {
+    runTest("compiler/testData/klib/partial-linkage/functionExcludedFromFirstStageInlining/");
+  }
+
+  @Test
   @TestMetadata("functionTransformations")
   public void testFunctionTransformations() {
     runTest("compiler/testData/klib/partial-linkage/functionTransformations/");
