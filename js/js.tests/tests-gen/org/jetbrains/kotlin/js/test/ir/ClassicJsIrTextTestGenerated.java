@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   @Test
   public void testAllFilesPresentInIrText() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "declarations/multiplatform/k2");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, true, "declarations/multiplatform/k2");
   }
 
   @Nested
@@ -46,7 +46,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
 
     @Test
     public void testAllFilesPresentInClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -362,7 +362,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class DataClasses {
       @Test
       public void testAllFilesPresentInDataClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/classes/dataClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/classes/dataClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -428,7 +428,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Declarations {
     @Test
     public void testAllFilesPresentInDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "multiplatform/k2");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true, "multiplatform/k2");
     }
 
     @Test
@@ -636,7 +636,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -887,7 +887,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -910,7 +910,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1058,7 +1058,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public class FromKEEP {
         @Test
         public void testAllFilesPresentInFromKEEP() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1100,7 +1100,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Delegate {
       @Test
       public void testAllFilesPresentInDelegate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/delegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/delegate"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1129,7 +1129,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class JvmRecord {
       @Test
       public void testAllFilesPresentInJvmRecord() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1152,7 +1152,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "k2");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, true, "k2");
       }
 
       @Nested
@@ -1162,7 +1162,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public class K1 {
         @Test
         public void testAllFilesPresentInK1() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1210,7 +1210,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Parameters {
       @Test
       public void testAllFilesPresentInParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1299,7 +1299,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class ProvideDelegate {
       @Test
       public void testAllFilesPresentInProvideDelegate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1353,7 +1353,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Errors {
     @Test
     public void testAllFilesPresentInErrors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/errors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1370,7 +1370,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Expressions {
     @Test
     public void testAllFilesPresentInExpressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2514,7 +2514,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
 
       @Test
       public void testAllFilesPresentInCallableReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2633,7 +2633,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class FloatingPointComparisons {
       @Test
       public void testAllFilesPresentInFloatingPointComparisons() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/floatingPointComparisons"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/floatingPointComparisons"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2710,7 +2710,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2775,7 +2775,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2841,7 +2841,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class FakeOverrides {
     @Test
     public void testAllFilesPresentInFakeOverrides() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2911,7 +2911,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2964,7 +2964,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Charsequence {
       @Test
       public void testAllFilesPresentInCharsequence() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/charsequence"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/charsequence"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2987,7 +2987,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Collections {
       @Test
       public void testAllFilesPresentInCollections() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -2997,7 +2997,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public class List {
         @Test
         public void testAllFilesPresentInList() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/list"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/list"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3086,7 +3086,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public class Map {
         @Test
         public void testAllFilesPresentInMap() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/map"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/map"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3175,7 +3175,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public class Set {
         @Test
         public void testAllFilesPresentInSet() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/set"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/collections/set"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3229,7 +3229,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Dataclass {
       @Test
       public void testAllFilesPresentInDataclass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/dataclass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/dataclass"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3246,7 +3246,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Enum {
       @Test
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3263,7 +3263,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Fieldmodifiers {
       @Test
       public void testAllFilesPresentInFieldmodifiers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/fieldmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3286,7 +3286,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Generics {
       @Test
       public void testAllFilesPresentInGenerics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/generics"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3411,7 +3411,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Gettersetter {
       @Test
       public void testAllFilesPresentInGettersetter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/gettersetter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/gettersetter"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3464,7 +3464,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Java21 {
       @Test
       public void testAllFilesPresentInJava21() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/java21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/java21"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3529,7 +3529,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Javastatic {
       @Test
       public void testAllFilesPresentInJavastatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/javastatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/javastatic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3600,7 +3600,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Kotlinextensions {
       @Test
       public void testAllFilesPresentInKotlinextensions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/kotlinextensions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/kotlinextensions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3623,7 +3623,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Methodmodifiers {
       @Test
       public void testAllFilesPresentInMethodmodifiers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodmodifiers"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3664,7 +3664,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Methodparameters {
       @Test
       public void testAllFilesPresentInMethodparameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodparameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/methodparameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3699,7 +3699,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Number {
       @Test
       public void testAllFilesPresentInNumber() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/number"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/number"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3722,7 +3722,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Operators {
       @Test
       public void testAllFilesPresentInOperators() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/operators"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/operators"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3757,7 +3757,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Platformtypes {
       @Test
       public void testAllFilesPresentInPlatformtypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/platformtypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/platformtypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3858,7 +3858,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Typenothing {
       @Test
       public void testAllFilesPresentInTypenothing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/typenothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/typenothing"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3887,7 +3887,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Vararg {
       @Test
       public void testAllFilesPresentInVararg() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/vararg"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3922,7 +3922,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Visibility {
       @Test
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4053,7 +4053,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Void {
       @Test
       public void testAllFilesPresentInVoid() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/void"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/fakeOverrides/void"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4089,7 +4089,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
 
     @Test
     public void testAllFilesPresentInFirProblems() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4538,7 +4538,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Js {
     @Test
     public void testAllFilesPresentInJs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -4548,7 +4548,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Dynamic {
       @Test
       public void testAllFilesPresentInDynamic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4697,7 +4697,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class External {
       @Test
       public void testAllFilesPresentInExternal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/external"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4720,7 +4720,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/native"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4738,7 +4738,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Lambdas {
     @Test
     public void testAllFilesPresentInLambdas() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4809,7 +4809,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class LenientMode {
     @Test
     public void testAllFilesPresentInLenientMode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4832,7 +4832,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Properties {
     @Test
     public void testAllFilesPresentInProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4854,7 +4854,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class BackingField {
       @Test
       public void testAllFilesPresentInBackingField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4890,7 +4890,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Regressions {
     @Test
     public void testAllFilesPresentInRegressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4955,7 +4955,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Singletons {
     @Test
     public void testAllFilesPresentInSingletons() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/singletons"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/singletons"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4984,7 +4984,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
   public class Stubs {
     @Test
     public void testAllFilesPresentInStubs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5097,7 +5097,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
 
     @Test
     public void testAllFilesPresentInTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5293,7 +5293,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     public class NullChecks {
       @Test
       public void testAllFilesPresentInNullChecks() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5393,7 +5393,7 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       public class NullCheckOnLambdaResult {
         @Test
         public void testAllFilesPresentInNullCheckOnLambdaResult() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/types/nullChecks/nullCheckOnLambdaResult"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test

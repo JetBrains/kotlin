@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
 
   @Test
   public void testAllFilesPresentInScript() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
   }
 
   @Test
@@ -235,7 +234,7 @@ public class FirScriptCodegenTestGenerated extends AbstractFirScriptCodegenTest 
   public class ScriptInstanceCapturing {
     @Test
     public void testAllFilesPresentInScriptInstanceCapturing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test

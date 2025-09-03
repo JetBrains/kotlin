@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.ir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class FirLightTreeWithInterpreterDiagnosticsTestGenerated extends AbstractFirLightTreeWithInterpreterDiagnosticsTest {
   @Test
   public void testAllFilesPresentInIrInterpreter() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen.inlineScopes;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
 
   @Test
   public void testAllFilesPresentInBytecodeText() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
@@ -583,7 +582,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ArgumentOrder {
     @Test
     public void testAllFilesPresentInArgumentOrder() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -605,7 +604,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Assert {
     @Test
     public void testAllFilesPresentInAssert() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/assert"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -645,7 +644,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Boxing {
     @Test
     public void testAllFilesPresentInBoxing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxing"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -673,7 +672,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class BoxingOptimization {
     @Test
     public void testAllFilesPresentInBoxingOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -863,7 +862,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class BuiltinFunctions {
     @Test
     public void testAllFilesPresentInBuiltinFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -902,7 +901,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
 
       @Test
       public void testAllFilesPresentInGenericParameterBridge() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -949,7 +948,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1019,7 +1018,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class CapturedVarsOptimization {
     @Test
     public void testAllFilesPresentInCapturedVarsOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1095,7 +1094,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Checkcast {
     @Test
     public void testAllFilesPresentInCheckcast() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/checkcast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/checkcast"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1147,7 +1146,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class CoercionToUnitOptimization {
     @Test
     public void testAllFilesPresentInCoercionToUnitOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1211,7 +1210,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Companion {
     @Test
     public void testAllFilesPresentInCompanion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1299,7 +1298,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Conditions {
     @Test
     public void testAllFilesPresentInConditions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1477,7 +1476,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ConstProperty {
     @Test
     public void testAllFilesPresentInConstProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1499,7 +1498,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ConstantConditions {
     @Test
     public void testAllFilesPresentInConstantConditions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constantConditions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constantConditions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1539,7 +1538,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Constants {
     @Test
     public void testAllFilesPresentInConstants() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constants"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constants"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1621,7 +1620,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Constructors {
     @Test
     public void testAllFilesPresentInConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constructors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1691,7 +1690,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ControlStructures {
     @Test
     public void testAllFilesPresentInControlStructures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1713,7 +1712,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Coroutines {
     @Test
     public void testAllFilesPresentInCoroutines() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1788,7 +1787,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class Debug {
       @Test
       public void testAllFilesPresentInDebug() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1828,7 +1827,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class DestructuringInLambda {
       @Test
       public void testAllFilesPresentInDestructuringInLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1844,7 +1843,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1896,7 +1895,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class IntLikeVarSpilling {
       @Test
       public void testAllFilesPresentInIntLikeVarSpilling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1966,7 +1965,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class StateMachine {
       @Test
       public void testAllFilesPresentInStateMachine() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1989,7 +1988,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class DeadCodeElimination {
     @Test
     public void testAllFilesPresentInDeadCodeElimination() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2065,7 +2064,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2141,7 +2140,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class DirectInvoke {
     @Test
     public void testAllFilesPresentInDirectInvoke() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/directInvoke"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/directInvoke"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2169,7 +2168,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class DisabledOptimizations {
     @Test
     public void testAllFilesPresentInDisabledOptimizations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/disabledOptimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/disabledOptimizations"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2215,7 +2214,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Enum {
     @Test
     public void testAllFilesPresentInEnum() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2297,7 +2296,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ExclExcl {
     @Test
     public void testAllFilesPresentInExclExcl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/exclExcl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/exclExcl"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2319,7 +2318,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class FieldsForCapturedValues {
     @Test
     public void testAllFilesPresentInFieldsForCapturedValues() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2389,7 +2388,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ForLoop {
     @Test
     public void testAllFilesPresentInForLoop() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -2560,7 +2559,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInArrayWithIndex {
       @Test
       public void testAllFilesPresentInForInArrayWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2600,7 +2599,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInCharSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInCharSequenceWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2646,7 +2645,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInIndices {
       @Test
       public void testAllFilesPresentInForInIndices() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIndices"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIndices"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2710,7 +2709,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInIterableWithIndex {
       @Test
       public void testAllFilesPresentInForInIterableWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2756,7 +2755,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInProgressionWithIndex {
       @Test
       public void testAllFilesPresentInForInProgressionWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInProgressionWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInProgressionWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2838,7 +2837,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInRangeUntil {
       @Test
       public void testAllFilesPresentInForInRangeUntil() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2902,7 +2901,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInRangeWithUpperBoundMinus1 {
       @Test
       public void testAllFilesPresentInForInRangeWithUpperBoundMinus1() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3026,7 +3025,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3114,7 +3113,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInSequenceWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3166,7 +3165,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class ForInUntil {
       @Test
       public void testAllFilesPresentInForInUntil() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3230,7 +3229,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class Stepped {
       @Test
       public void testAllFilesPresentInStepped() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/stepped"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3324,7 +3323,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class Unsigned {
       @Test
       public void testAllFilesPresentInUnsigned() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3461,7 +3460,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class HashCode {
     @Test
     public void testAllFilesPresentInHashCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -3483,7 +3482,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Ieee754 {
     @Test
     public void testAllFilesPresentInIeee754() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -3541,7 +3540,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -3712,7 +3711,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class Property {
       @Test
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline/property"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3729,7 +3728,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class InlineArgsInPlace {
     @Test
     public void testAllFilesPresentInInlineArgsInPlace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -3757,7 +3756,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class InlineClasses {
     @Test
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4199,7 +4198,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class InnerClasses {
     @Test
     public void testAllFilesPresentInInnerClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4239,7 +4238,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
 
     @Test
     public void testAllFilesPresentInInterfaces() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/interfaces"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/interfaces"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4291,7 +4290,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Intrinsics {
     @Test
     public void testAllFilesPresentInIntrinsics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4319,7 +4318,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class IntrinsicsCompare {
     @Test
     public void testAllFilesPresentInIntrinsicsCompare() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsCompare"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsCompare"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4365,7 +4364,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class IntrinsicsTrim {
     @Test
     public void testAllFilesPresentInIntrinsicsTrim() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsTrim"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsTrim"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4399,7 +4398,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Invokedynamic {
     @Test
     public void testAllFilesPresentInInvokedynamic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4433,7 +4432,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Jvm8 {
     @Test
     public void testAllFilesPresentInJvm8() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -4442,7 +4441,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class HashCode {
       @Test
       public void testAllFilesPresentInHashCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4464,7 +4463,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class JvmDefault {
       @Test
       public void testAllFilesPresentInJvmDefault() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -4473,7 +4472,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
       public class AllCompatibility {
         @Test
         public void testAllFilesPresentInAllCompatibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4515,7 +4514,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class LazyCodegen {
     @Test
     public void testAllFilesPresentInLazyCodegen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4561,7 +4560,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class LineNumbers {
     @Test
     public void testAllFilesPresentInLineNumbers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4661,7 +4660,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class LocalInitializationLVT {
     @Test
     public void testAllFilesPresentInLocalInitializationLVT() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/localInitializationLVT"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/localInitializationLVT"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4785,7 +4784,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Mangling {
     @Test
     public void testAllFilesPresentInMangling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/mangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/mangling"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4807,7 +4806,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class MultifileClasses {
     @Test
     public void testAllFilesPresentInMultifileClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4835,7 +4834,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class NotNullAssertions {
     @Test
     public void testAllFilesPresentInNotNullAssertions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -4917,7 +4916,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class NullCheckOptimization {
     @Test
     public void testAllFilesPresentInNullCheckOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5076,7 +5075,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class LocalLateinit {
       @Test
       public void testAllFilesPresentInLocalLateinit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5105,7 +5104,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Objects {
     @Test
     public void testAllFilesPresentInObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/objects"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5121,7 +5120,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class OptimizedDelegatedProperties {
     @Test
     public void testAllFilesPresentInOptimizedDelegatedProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5161,7 +5160,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class OuterClass {
     @Test
     public void testAllFilesPresentInOuterClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/outerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/outerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5177,7 +5176,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ParameterlessMain {
     @Test
     public void testAllFilesPresentInParameterlessMain() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5235,7 +5234,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Properties {
     @Test
     public void testAllFilesPresentInProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5256,7 +5255,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     public class Lateinit {
       @Test
       public void testAllFilesPresentInLateinit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5279,7 +5278,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Ranges {
     @Test
     public void testAllFilesPresentInRanges() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ranges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ranges"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5367,7 +5366,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Sam {
     @Test
     public void testAllFilesPresentInSam() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5419,7 +5418,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Statements {
     @Test
     public void testAllFilesPresentInStatements() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/statements"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/statements"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5477,7 +5476,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class StaticFields {
     @Test
     public void testAllFilesPresentInStaticFields() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5499,7 +5498,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class StoreStackBeforeInline {
     @Test
     public void testAllFilesPresentInStoreStackBeforeInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5545,7 +5544,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class StringOperations {
     @Test
     public void testAllFilesPresentInStringOperations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/stringOperations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/stringOperations"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5765,7 +5764,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class TemporaryVals {
     @Test
     public void testAllFilesPresentInTemporaryVals() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/temporaryVals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/temporaryVals"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5835,7 +5834,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ToArray {
     @Test
     public void testAllFilesPresentInToArray() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/toArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/toArray"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5851,7 +5850,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class UnsignedTypes {
     @Test
     public void testAllFilesPresentInUnsignedTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5921,7 +5920,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class ValueClasses {
     @Test
     public void testAllFilesPresentInValueClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5973,7 +5972,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class Varargs {
     @Test
     public void testAllFilesPresentInVarargs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/varargs"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -5989,7 +5988,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class When {
     @Test
     public void testAllFilesPresentInWhen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -6155,7 +6154,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class WhenEnumOptimization {
     @Test
     public void testAllFilesPresentInWhenEnumOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenEnumOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenEnumOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -6249,7 +6248,7 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   public class WhenStringOptimization {
     @Test
     public void testAllFilesPresentInWhenStringOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenStringOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenStringOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

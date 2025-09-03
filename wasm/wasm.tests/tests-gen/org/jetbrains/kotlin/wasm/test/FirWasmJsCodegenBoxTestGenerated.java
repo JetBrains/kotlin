@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "compileKotlinAgainstKotlin", "multiplatform/k1");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, true, "compileKotlinAgainstKotlin", "multiplatform/k1");
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Annotations {
     @Test
     public void testAllFilesPresentInAnnotations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -496,7 +496,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class AnnotatedLambda {
       @Test
       public void testAllFilesPresentInAnnotatedLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/annotatedLambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/annotatedLambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -542,7 +542,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Instances {
       @Test
       public void testAllFilesPresentInInstances() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/instances"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/instances"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -828,7 +828,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class KClassMapping {
       @Test
       public void testAllFilesPresentInKClassMapping() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/kClassMapping"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/kClassMapping"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -874,7 +874,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Repeatable {
       @Test
       public void testAllFilesPresentInRepeatable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/repeatable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/repeatable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -914,7 +914,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class TypeAnnotations {
       @Test
       public void testAllFilesPresentInTypeAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/typeAnnotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/typeAnnotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -1015,7 +1015,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ArgumentOrder {
     @Test
     public void testAllFilesPresentInArgumentOrder() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/argumentOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1127,7 +1127,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Arithmetic {
     @Test
     public void testAllFilesPresentInArithmetic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arithmetic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arithmetic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1203,7 +1203,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Arrays {
     @Test
     public void testAllFilesPresentInArrays() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1650,7 +1650,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInArraysOfInlineClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/arraysOfInlineClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/arraysOfInlineClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -1666,7 +1666,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -1706,7 +1706,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInUnsignedArray {
       @Test
       public void testAllFilesPresentInForInUnsignedArray() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInUnsignedArray"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInUnsignedArray"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -1764,7 +1764,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class MultiDecl {
       @Test
       public void testAllFilesPresentInMultiDecl() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -1821,7 +1821,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Int {
         @Test
         public void testAllFilesPresentInInt() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -1855,7 +1855,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Long {
         @Test
         public void testAllFilesPresentInLong() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/arrays/multiDecl/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -1891,7 +1891,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Assert {
     @Test
     public void testAllFilesPresentInAssert() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1942,7 +1942,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Jvm {
       @Test
       public void testAllFilesPresentInJvm() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert/jvm"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert/jvm"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2085,7 +2085,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class AssociatedObjects {
     @Test
     public void testAllFilesPresentInAssociatedObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/associatedObjects"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/associatedObjects"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2125,7 +2125,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Basics {
     @Test
     public void testAllFilesPresentInBasics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/basics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/basics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2381,7 +2381,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Bce {
     @Test
     public void testAllFilesPresentInBce() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bce"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bce"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2499,7 +2499,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class BinaryOp {
     @Test
     public void testAllFilesPresentInBinaryOp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/binaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/binaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2695,7 +2695,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Boxing {
     @Test
     public void testAllFilesPresentInBoxing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxing"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxing"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2825,7 +2825,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class BoxingOptimization {
     @Test
     public void testAllFilesPresentInBoxingOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxingOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxingOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -3123,7 +3123,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInBranching() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/branching"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/branching"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -3199,7 +3199,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInBridges() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -3802,7 +3802,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DeclarationDifferentSignature {
       @Test
       public void testAllFilesPresentInDeclarationDifferentSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/declarationDifferentSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/declarationDifferentSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3836,7 +3836,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Diamond {
       @Test
       public void testAllFilesPresentInDiamond() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/diamond"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/diamond"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3864,7 +3864,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DoubleOverride {
       @Test
       public void testAllFilesPresentInDoubleOverride() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/doubleOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/doubleOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3892,7 +3892,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInFakeOverride() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4004,7 +4004,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FakeOverrideDifferentSignature {
       @Test
       public void testAllFilesPresentInFakeOverrideDifferentSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4038,7 +4038,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class NoBridges {
       @Test
       public void testAllFilesPresentInNoBridges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/noBridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/noBridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4096,7 +4096,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInOverridesTwoDeclarations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/overridesTwoDeclarations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/overridesTwoDeclarations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4124,7 +4124,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInSubstitutionInSuperClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/substitutionInSuperClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/substitutionInSuperClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4201,7 +4201,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInBuiltinStubMethods() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -4348,7 +4348,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class BridgesForStubs {
       @Test
       public void testAllFilesPresentInBridgesForStubs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4418,7 +4418,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInExtendJavaClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4518,7 +4518,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class MapGetOrDefault {
       @Test
       public void testAllFilesPresentInMapGetOrDefault() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4546,7 +4546,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class MapRemove {
       @Test
       public void testAllFilesPresentInMapRemove() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapRemove"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/mapRemove"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4581,7 +4581,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -4914,7 +4914,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInAdaptedReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5289,7 +5289,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInSuspendConversion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -5474,7 +5474,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInBound() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5675,7 +5675,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Equals {
         @Test
         public void testAllFilesPresentInEquals() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/bound/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -5704,7 +5704,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/equality"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/equality"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5810,7 +5810,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FunInterfaceConstructor {
       @Test
       public void testAllFilesPresentInFunInterfaceConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/funInterfaceConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/funInterfaceConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5862,7 +5862,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -6357,7 +6357,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/function/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -6506,7 +6506,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/property"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/property"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -6762,7 +6762,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInSerializability() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -6809,7 +6809,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Casts {
     @Test
     public void testAllFilesPresentInCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7112,7 +7112,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7218,7 +7218,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7312,7 +7312,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class LiteralExpressionAsGenericArgument {
       @Test
       public void testAllFilesPresentInLiteralExpressionAsGenericArgument() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7364,7 +7364,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class MutableCollections {
       @Test
       public void testAllFilesPresentInMutableCollections() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/mutableCollections"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/mutableCollections"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7422,7 +7422,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class NativeCCEMessage {
       @Test
       public void testAllFilesPresentInNativeCCEMessage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/nativeCCEMessage"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/nativeCCEMessage"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7457,7 +7457,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class CheckcastOptimization {
     @Test
     public void testAllFilesPresentInCheckcastOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/checkcastOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/checkcastOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7497,7 +7497,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ClassDelegation {
     @Test
     public void testAllFilesPresentInClassDelegation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7627,7 +7627,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ClassLiteral {
     @Test
     public void testAllFilesPresentInClassLiteral() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7660,7 +7660,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Bound {
       @Test
       public void testAllFilesPresentInBound() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7700,7 +7700,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Java {
       @Test
       public void testAllFilesPresentInJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/java"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classLiteral/java"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7759,7 +7759,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Classes {
     @Test
     public void testAllFilesPresentInClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8500,7 +8500,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Inner {
       @Test
       public void testAllFilesPresentInInner() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -8559,7 +8559,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Closures {
     @Test
     public void testAllFilesPresentInClosures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8886,7 +8886,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CaptureInSuperConstructorCall {
       @Test
       public void testAllFilesPresentInCaptureInSuperConstructorCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureInSuperConstructorCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureInSuperConstructorCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -9088,7 +9088,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CaptureOuterProperty {
       @Test
       public void testAllFilesPresentInCaptureOuterProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureOuterProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/captureOuterProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -9146,7 +9146,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CapturedVarsOptimization {
       @Test
       public void testAllFilesPresentInCapturedVarsOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -9240,7 +9240,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ClosureInsideClosure {
       @Test
       public void testAllFilesPresentInClosureInsideClosure() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/closureInsideClosure"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/closureInsideClosure"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -9287,7 +9287,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class CollectionLiterals {
     @Test
     public void testAllFilesPresentInCollectionLiterals() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9327,7 +9327,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInCollections() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collections"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/collections"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9631,7 +9631,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Companion {
     @Test
     public void testAllFilesPresentInCompanion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9677,7 +9677,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Compatibility {
     @Test
     public void testAllFilesPresentInCompatibility() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9693,7 +9693,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Constants {
     @Test
     public void testAllFilesPresentInConstants() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constants"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constants"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9787,7 +9787,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Constructor {
     @Test
     public void testAllFilesPresentInConstructor() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9809,7 +9809,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ConstructorCall {
     @Test
     public void testAllFilesPresentInConstructorCall() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/constructorCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9915,7 +9915,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ContextParameters {
     @Test
     public void testAllFilesPresentInContextParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contextParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10201,7 +10201,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Contracts {
     @Test
     public void testAllFilesPresentInContracts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10355,7 +10355,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ControlStructures {
     @Test
     public void testAllFilesPresentInControlStructures() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10868,7 +10868,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class BreakContinueInExpressions {
       @Test
       public void testAllFilesPresentInBreakContinueInExpressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10997,7 +10997,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class InlinedBreakContinue {
         @Test
         public void testAllFilesPresentInInlinedBreakContinue() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -11080,7 +11080,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInArray {
       @Test
       public void testAllFilesPresentInForInArray() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArray"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11150,7 +11150,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInArrayWithIndex {
       @Test
       public void testAllFilesPresentInForInArrayWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11280,7 +11280,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInCharSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInCharSequenceWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11374,7 +11374,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInIterableWithIndex {
       @Test
       public void testAllFilesPresentInForInIterableWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11474,7 +11474,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInForInIterator() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInIterator"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11502,7 +11502,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInSequenceWithIndex {
       @Test
       public void testAllFilesPresentInForInSequenceWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11578,7 +11578,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ReturnsNothing {
       @Test
       public void testAllFilesPresentInReturnsNothing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11618,7 +11618,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SlowDsl {
       @Test
       public void testAllFilesPresentInSlowDsl() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11640,7 +11640,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class TryCatchInExpressions {
       @Test
       public void testAllFilesPresentInTryCatchInExpressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11831,7 +11831,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Controlflow {
     @Test
     public void testAllFilesPresentInControlflow() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlflow"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlflow"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11973,7 +11973,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInCoroutines() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -13110,7 +13110,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Bridges {
       @Test
       public void testAllFilesPresentInBridges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/bridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/bridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -13162,7 +13162,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ControlFlow {
       @Test
       public void testAllFilesPresentInControlFlow() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -13310,7 +13310,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Debug {
       @Test
       public void testAllFilesPresentInDebug() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/debug"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/debug"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -13380,7 +13380,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FeatureIntersection {
       @Test
       public void testAllFilesPresentInFeatureIntersection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -13509,7 +13509,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -13548,7 +13548,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Bound {
           @Test
           public void testAllFilesPresentInBound() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -13570,7 +13570,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
           @Test
           public void testAllFilesPresentInFunction() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -13597,7 +13597,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Local {
             @Test
             public void testAllFilesPresentInLocal() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -13615,7 +13615,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -13649,7 +13649,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class JvmDefault {
         @Test
         public void testAllFilesPresentInJvmDefault() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -13664,7 +13664,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Kt46007 {
           @Test
           public void testAllFilesPresentInKt46007() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -13693,7 +13693,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Tailrec {
         @Test
         public void testAllFilesPresentInTailrec() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -13788,7 +13788,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class GeneratedCodeMarkers {
       @Test
       public void testAllFilesPresentInGeneratedCodeMarkers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/generatedCodeMarkers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/generatedCodeMarkers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -13804,7 +13804,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -13849,7 +13849,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Direct {
         @Test
         public void testAllFilesPresentInDirect() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/direct"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/direct"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -14147,7 +14147,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Resume {
         @Test
         public void testAllFilesPresentInResume() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resume"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resume"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -14445,7 +14445,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ResumeWithException {
         @Test
         public void testAllFilesPresentInResumeWithException() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -14708,7 +14708,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class IntLikeVarSpilling {
       @Test
       public void testAllFilesPresentInIntLikeVarSpilling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -14790,7 +14790,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class IntrinsicSemantics {
       @Test
       public void testAllFilesPresentInIntrinsicSemantics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -14860,7 +14860,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -14900,7 +14900,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Nested
@@ -14909,7 +14909,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Named {
         @Test
         public void testAllFilesPresentInNamed() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -14998,7 +14998,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15068,7 +15068,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class RedundantLocalsElimination {
       @Test
       public void testAllFilesPresentInRedundantLocalsElimination() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/redundantLocalsElimination"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/redundantLocalsElimination"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15084,7 +15084,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Reflect {
       @Test
       public void testAllFilesPresentInReflect() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15118,7 +15118,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class StackUnwinding {
       @Test
       public void testAllFilesPresentInStackUnwinding() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/stackUnwinding"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/stackUnwinding"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15164,7 +15164,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SuspendConversion {
       @Test
       public void testAllFilesPresentInSuspendConversion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15210,7 +15210,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SuspendFunctionAsCoroutine {
       @Test
       public void testAllFilesPresentInSuspendFunctionAsCoroutine() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15328,7 +15328,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SuspendFunctionTypeCall {
       @Test
       public void testAllFilesPresentInSuspendFunctionTypeCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15368,7 +15368,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class TailCallOptimizations {
       @Test
       public void testAllFilesPresentInTailCallOptimizations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15491,7 +15491,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Unit {
         @Test
         public void testAllFilesPresentInUnit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -15574,7 +15574,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class TailOperations {
       @Test
       public void testAllFilesPresentInTailOperations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailOperations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailOperations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15608,7 +15608,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class UnitTypeReturn {
       @Test
       public void testAllFilesPresentInUnitTypeReturn() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/unitTypeReturn"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/unitTypeReturn"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15660,7 +15660,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class VarSpilling {
       @Test
       public void testAllFilesPresentInVarSpilling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -15765,7 +15765,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Cleanup {
         @Test
         public void testAllFilesPresentInCleanup() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanup"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -15823,7 +15823,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class CleanupWithoutStdlibFunction {
         @Test
         public void testAllFilesPresentInCleanupWithoutStdlibFunction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/cleanupWithoutStdlibFunction"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -15887,7 +15887,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class DebugMode {
         @Test
         public void testAllFilesPresentInDebugMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/debugMode"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -15957,7 +15957,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class NoCleanup {
         @Test
         public void testAllFilesPresentInNoCleanup() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/varSpilling/noCleanup"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -16029,7 +16029,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class CorrectFrontendCode {
     @Test
     public void testAllFilesPresentInCorrectFrontendCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/correctFrontendCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/correctFrontendCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16045,7 +16045,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Cycles {
     @Test
     public void testAllFilesPresentInCycles() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cycles"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/cycles"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16073,7 +16073,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DataClasses {
     @Test
     public void testAllFilesPresentInDataClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16214,7 +16214,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Components {
       @Test
       public void testAllFilesPresentInComponents() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/components"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/components"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16236,7 +16236,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Copy {
       @Test
       public void testAllFilesPresentInCopy() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/copy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/copy"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16294,7 +16294,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Equals {
       @Test
       public void testAllFilesPresentInEquals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16346,7 +16346,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class HashCode {
       @Test
       public void testAllFilesPresentInHashCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/hashCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/hashCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16434,7 +16434,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ToString {
       @Test
       public void testAllFilesPresentInToString() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/toString"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataClasses/toString"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16493,7 +16493,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DataObjects {
     @Test
     public void testAllFilesPresentInDataObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataObjects"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataObjects"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16533,7 +16533,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Dataflow {
     @Test
     public void testAllFilesPresentInDataflow() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataflow"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/dataflow"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16555,7 +16555,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DeadCodeElimination {
     @Test
     public void testAllFilesPresentInDeadCodeElimination() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deadCodeElimination"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deadCodeElimination"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16589,7 +16589,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -16772,7 +16772,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Constructor {
       @Test
       public void testAllFilesPresentInConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/constructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/constructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16890,7 +16890,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Convention {
       @Test
       public void testAllFilesPresentInConvention() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -16942,7 +16942,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17114,7 +17114,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Private {
       @Test
       public void testAllFilesPresentInPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/private"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/private"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17154,7 +17154,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Reflection {
       @Test
       public void testAllFilesPresentInReflection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17236,7 +17236,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Signature {
       @Test
       public void testAllFilesPresentInSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/signature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/signature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17271,7 +17271,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInDelegatedProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -17718,7 +17718,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DelegateToAnother {
       @Test
       public void testAllFilesPresentInDelegateToAnother() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToAnother"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToAnother"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17800,7 +17800,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DelegateToConst {
       @Test
       public void testAllFilesPresentInDelegateToConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToConst"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17828,7 +17828,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DelegateToFinalProperty {
       @Test
       public void testAllFilesPresentInDelegateToFinalProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17898,7 +17898,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DelegateToSingleton {
       @Test
       public void testAllFilesPresentInDelegateToSingleton() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17950,7 +17950,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DelegateToThis {
       @Test
       public void testAllFilesPresentInDelegateToThis() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToThis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/delegateToThis"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -17978,7 +17978,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Local {
       @Test
       public void testAllFilesPresentInLocal() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -18102,7 +18102,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class OptimizedDelegatedProperties {
       @Test
       public void testAllFilesPresentInOptimizedDelegatedProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -18178,7 +18178,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ProvideDelegate {
       @Test
       public void testAllFilesPresentInProvideDelegate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty/provideDelegate"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -18345,7 +18345,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Delegation {
     @Test
     public void testAllFilesPresentInDelegation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -18595,7 +18595,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Deprecated {
     @Test
     public void testAllFilesPresentInDeprecated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deprecated"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/deprecated"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -18611,7 +18611,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DestructuringDeclInLambdaParam {
     @Test
     public void testAllFilesPresentInDestructuringDeclInLambdaParam() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/destructuringDeclInLambdaParam"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/destructuringDeclInLambdaParam"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -18675,7 +18675,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Devirtualization {
     @Test
     public void testAllFilesPresentInDevirtualization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/devirtualization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/devirtualization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -18721,7 +18721,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Diagnostics {
     @Test
     public void testAllFilesPresentInDiagnostics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -18730,7 +18730,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Nested
@@ -18739,7 +18739,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Inference {
         @Test
         public void testAllFilesPresentInInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/inference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/inference"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -18755,7 +18755,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -18764,7 +18764,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class OnObjects {
           @Test
           public void testAllFilesPresentInOnObjects() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -18835,7 +18835,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class TailRecursion {
         @Test
         public void testAllFilesPresentInTailRecursion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/functions/tailRecursion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -19122,7 +19122,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Vararg {
       @Test
       public void testAllFilesPresentInVararg() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/diagnostics/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -19139,7 +19139,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DifferentDependencyVersion {
     @Test
     public void testAllFilesPresentInDifferentDependencyVersion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -19167,7 +19167,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class DirectInvokeOptimization {
     @Test
     public void testAllFilesPresentInDirectInvokeOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/directInvokeOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/directInvokeOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -19267,7 +19267,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Elvis {
     @Test
     public void testAllFilesPresentInElvis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/elvis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/elvis"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -19343,7 +19343,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Enclosing {
     @Test
     public void testAllFilesPresentInEnclosing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enclosing"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enclosing"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -19533,7 +19533,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInEnum() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20292,7 +20292,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DefaultCtor {
       @Test
       public void testAllFilesPresentInDefaultCtor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum/defaultCtor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/enum/defaultCtor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -20345,7 +20345,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class EquivalentCalls {
     @Test
     public void testAllFilesPresentInEquivalentCalls() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20361,7 +20361,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class EscapeAnalysis {
     @Test
     public void testAllFilesPresentInEscapeAnalysis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/escapeAnalysis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/escapeAnalysis"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20467,7 +20467,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Evaluate {
     @Test
     public void testAllFilesPresentInEvaluate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20579,7 +20579,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Exceptions {
     @Test
     public void testAllFilesPresentInExceptions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exceptions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exceptions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20637,7 +20637,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ExclExcl {
     @Test
     public void testAllFilesPresentInExclExcl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exclExcl"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/exclExcl"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20671,7 +20671,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ExtensionClasses {
     @Test
     public void testAllFilesPresentInExtensionClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -20753,7 +20753,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ExtensionFunctions {
     @Test
     public void testAllFilesPresentInExtensionFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -21158,7 +21158,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -21467,7 +21467,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class FromKEEP {
         @Test
         public void testAllFilesPresentInFromKEEP() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -21521,7 +21521,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInExtensionProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -21723,7 +21723,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class External {
     @Test
     public void testAllFilesPresentInExternal() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/external"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/external"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -21751,7 +21751,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class FakeOverride {
     @Test
     public void testAllFilesPresentInFakeOverride() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fakeOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fakeOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -21953,7 +21953,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class FieldRename {
     @Test
     public void testAllFilesPresentInFieldRename() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fieldRename"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fieldRename"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -21993,7 +21993,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Finally {
     @Test
     public void testAllFilesPresentInFinally() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/finally"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/finally"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -22147,7 +22147,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Fir {
     @Test
     public void testAllFilesPresentInFir() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -22738,7 +22738,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ContextSensitiveResolution {
       @Test
       public void testAllFilesPresentInContextSensitiveResolution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/contextSensitiveResolution"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/contextSensitiveResolution"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -22778,7 +22778,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class PrimitivesInJava {
       @Test
       public void testAllFilesPresentInPrimitivesInJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/primitivesInJava"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -22831,7 +22831,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class FullJdk {
     @Test
     public void testAllFilesPresentInFullJdk() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -22882,7 +22882,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -22910,7 +22910,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Regressions {
       @Test
       public void testAllFilesPresentInRegressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/regressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fullJdk/regressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -22933,7 +22933,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class FunInterface {
     @Test
     public void testAllFilesPresentInFunInterface() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -23200,7 +23200,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface/equality"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/funInterface/equality"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -23241,7 +23241,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Function {
     @Test
     public void testAllFilesPresentInFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -23467,7 +23467,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Functions {
     @Test
     public void testAllFilesPresentInFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -23836,7 +23836,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class BigArity {
       @Test
       public void testAllFilesPresentInBigArity() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -23912,7 +23912,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FunctionExpression {
       @Test
       public void testAllFilesPresentInFunctionExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -23952,7 +23952,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Invoke {
       @Test
       public void testAllFilesPresentInInvoke() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -24052,7 +24052,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/localFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -24249,7 +24249,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class GenericJvmSignature {
     @Test
     public void testAllFilesPresentInGenericJvmSignature() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/genericJvmSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/genericJvmSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -24361,7 +24361,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Ieee754 {
     @Test
     public void testAllFilesPresentInIeee754() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -24659,7 +24659,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Increment {
     @Test
     public void testAllFilesPresentInIncrement() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/increment"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/increment"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -24831,7 +24831,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Inference {
     @Test
     public void testAllFilesPresentInInference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -25176,7 +25176,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Pcla {
       @Test
       public void testAllFilesPresentInPcla() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -25449,7 +25449,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Issues {
         @Test
         public void testAllFilesPresentInIssues() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/issues"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/issues"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -25939,7 +25939,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class OneParameter {
         @Test
         public void testAllFilesPresentInOneParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -25948,7 +25948,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class OneTypeVariable {
           @Test
           public void testAllFilesPresentInOneTypeVariable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Nested
@@ -25957,7 +25957,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class OneTypeInfoOrigin {
             @Test
             public void testAllFilesPresentInOneTypeInfoOrigin() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -25990,7 +25990,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class SourceSinkFeedContexts {
               @Test
               public void testAllFilesPresentInSourceSinkFeedContexts() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -26054,7 +26054,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class TargetTypes {
               @Test
               public void testAllFilesPresentInTargetTypes() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -26280,7 +26280,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class TypeInfoSinks {
               @Test
               public void testAllFilesPresentInTypeInfoSinks() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -26344,7 +26344,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class TypeInfoSources {
               @Test
               public void testAllFilesPresentInTypeInfoSources() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -26395,7 +26395,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Initializers {
     @Test
     public void testAllFilesPresentInInitializers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -26536,7 +26536,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Files {
       @Test
       public void testAllFilesPresentInFiles() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers/files"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/initializers/files"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -26571,7 +26571,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -26959,7 +26959,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InlineArgsInPlace {
     @Test
     public void testAllFilesPresentInInlineArgsInPlace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineArgsInPlace"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineArgsInPlace"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -27041,7 +27041,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InlineClass {
     @Test
     public void testAllFilesPresentInInlineClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -27075,7 +27075,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InlineClasses {
     @Test
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -29682,7 +29682,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class BoxReturnValueInLambda {
       @Test
       public void testAllFilesPresentInBoxReturnValueInLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -29860,7 +29860,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class BoxReturnValueOnOverride {
       @Test
       public void testAllFilesPresentInBoxReturnValueOnOverride() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -30236,7 +30236,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CallableReferences {
       @Test
       public void testAllFilesPresentInCallableReferences() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -30491,7 +30491,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Let {
         @Test
         public void testAllFilesPresentInLet() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences/let"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences/let"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -30742,7 +30742,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInContextsAndAccessors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -30884,7 +30884,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DefaultParameterValues {
       @Test
       public void testAllFilesPresentInDefaultParameterValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31031,7 +31031,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class DefaultWithDefaultParameter {
         @Test
         public void testAllFilesPresentInDefaultWithDefaultParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -31077,7 +31077,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class OverrideFunctionWithDefaultParameter {
         @Test
         public void testAllFilesPresentInOverrideFunctionWithDefaultParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -31124,7 +31124,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class DelegationByUnderlyingType {
       @Test
       public void testAllFilesPresentInDelegationByUnderlyingType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31170,7 +31170,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FunInterface {
       @Test
       public void testAllFilesPresentInFunInterface() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31264,7 +31264,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FunctionNameMangling {
       @Test
       public void testAllFilesPresentInFunctionNameMangling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/functionNameMangling"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/functionNameMangling"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31490,7 +31490,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class GenericUnderlyingValue {
       @Test
       public void testAllFilesPresentInGenericUnderlyingValue() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31542,7 +31542,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class HiddenConstructor {
       @Test
       public void testAllFilesPresentInHiddenConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31702,7 +31702,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class InlineClassCollection {
       @Test
       public void testAllFilesPresentInInlineClassCollection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/inlineClassCollection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/inlineClassCollection"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31754,7 +31754,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class InterfaceDelegation {
       @Test
       public void testAllFilesPresentInInterfaceDelegation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31854,7 +31854,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class InterfaceMethodCalls {
       @Test
       public void testAllFilesPresentInInterfaceMethodCalls() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -31996,7 +31996,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32060,7 +32060,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Jvm8DefaultInterfaceMethods {
       @Test
       public void testAllFilesPresentInJvm8DefaultInterfaceMethods() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32202,7 +32202,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JvmExposeBoxed {
       @Test
       public void testAllFilesPresentInJvmExposeBoxed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32343,7 +32343,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Directive {
         @Test
         public void testAllFilesPresentInDirective() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -32473,7 +32473,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class FeatureInteraction {
         @Test
         public void testAllFilesPresentInFeatureInteraction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -32507,7 +32507,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Inherit {
         @Test
         public void testAllFilesPresentInInherit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -32522,7 +32522,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
           @Test
           public void testAllFilesPresentInChild() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -32546,7 +32546,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class PropertyDelegation {
       @Test
       public void testAllFilesPresentInPropertyDelegation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32700,7 +32700,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Result {
       @Test
       public void testAllFilesPresentInResult() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/result"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/result"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32758,7 +32758,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ReturnResult {
       @Test
       public void testAllFilesPresentInReturnResult() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/returnResult"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32804,7 +32804,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class UnboxGenericParameter {
       @Test
       public void testAllFilesPresentInUnboxGenericParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -32819,7 +32819,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class FunInterface {
         @Test
         public void testAllFilesPresentInFunInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -32931,7 +32931,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Lambda {
         @Test
         public void testAllFilesPresentInLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -33043,7 +33043,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ObjectLiteral {
         @Test
         public void testAllFilesPresentInObjectLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -33157,7 +33157,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InnerClass {
     @Test
     public void testAllFilesPresentInInnerClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -33239,7 +33239,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InnerNested {
     @Test
     public void testAllFilesPresentInInnerNested() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -33482,7 +33482,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SuperConstructorCall {
       @Test
       public void testAllFilesPresentInSuperConstructorCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested/superConstructorCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/innerNested/superConstructorCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -33625,7 +33625,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Instructions {
     @Test
     public void testAllFilesPresentInInstructions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -33634,7 +33634,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Swap {
       @Test
       public void testAllFilesPresentInSwap() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions/swap"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/instructions/swap"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -33657,7 +33657,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InterfaceCallsNCasts {
     @Test
     public void testAllFilesPresentInInterfaceCallsNCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/interfaceCallsNCasts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/interfaceCallsNCasts"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -33691,7 +33691,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Intrinsics {
     @Test
     public void testAllFilesPresentInIntrinsics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -33875,7 +33875,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Invokedynamic {
     @Test
     public void testAllFilesPresentInInvokedynamic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -33890,7 +33890,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Lambdas {
       @Test
       public void testAllFilesPresentInLambdas() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -34079,7 +34079,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class InlineClassInSignature {
         @Test
         public void testAllFilesPresentInInlineClassInSignature() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -34126,7 +34126,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -34381,7 +34381,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class FunctionExprToJavaInterface {
         @Test
         public void testAllFilesPresentInFunctionExprToJavaInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -34451,7 +34451,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInFunctionRefToJavaInterface() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -34664,7 +34664,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class SpecialFunctions {
           @Test
           public void testAllFilesPresentInSpecialFunctions() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -34728,7 +34728,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class WithAccessor {
           @Test
           public void testAllFilesPresentInWithAccessor() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -34787,7 +34787,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class InlineClassInSignature {
         @Test
         public void testAllFilesPresentInInlineClassInSignature() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -34869,7 +34869,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class SpecializedGenerics {
         @Test
         public void testAllFilesPresentInSpecializedGenerics() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -35012,7 +35012,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Serializable {
       @Test
       public void testAllFilesPresentInSerializable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/serializable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/serializable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35179,7 +35179,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class InvolvesIrInterpreter {
     @Test
     public void testAllFilesPresentInInvolvesIrInterpreter() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -35416,7 +35416,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInConstEvaluationFromJavaWorld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35444,7 +35444,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class IntrinsicConst {
       @Test
       public void testAllFilesPresentInIntrinsicConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35520,7 +35520,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Serialization {
       @Test
       public void testAllFilesPresentInSerialization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35585,7 +35585,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Ir {
     @Test
     public void testAllFilesPresentInIr() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -35738,7 +35738,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ClosureConversion {
       @Test
       public void testAllFilesPresentInClosureConversion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/closureConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/closureConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35796,7 +35796,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class PrimitiveNumberComparisons {
       @Test
       public void testAllFilesPresentInPrimitiveNumberComparisons() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/primitiveNumberComparisons"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/primitiveNumberComparisons"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35830,7 +35830,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class PrivateSignatures {
       @Test
       public void testAllFilesPresentInPrivateSignatures() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/privateSignatures"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/privateSignatures"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35888,7 +35888,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SerializationRegressions {
       @Test
       public void testAllFilesPresentInSerializationRegressions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/serializationRegressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir/serializationRegressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -35941,7 +35941,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JavaFieldAndKotlinProperty {
     @Test
     public void testAllFilesPresentInJavaFieldAndKotlinProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -36095,7 +36095,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInJavaInterop() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -36362,7 +36362,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInCommonAtomicTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/commonAtomicTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/commonAtomicTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -36414,7 +36414,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForeignAnnotationsTests {
       @Test
       public void testAllFilesPresentInForeignAnnotationsTests() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Nested
@@ -36423,7 +36423,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Tests {
         @Test
         public void testAllFilesPresentInTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -36446,7 +36446,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Generics {
       @Test
       public void testAllFilesPresentInGenerics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/generics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/generics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -36498,7 +36498,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class NotNullAssertions {
       @Test
       public void testAllFilesPresentInNotNullAssertions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -36645,7 +36645,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class EnhancedNullability {
         @Test
         public void testAllFilesPresentInEnhancedNullability() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -36703,7 +36703,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ExpressionAssertionMessages {
         @Test
         public void testAllFilesPresentInExpressionAssertionMessages() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -36785,7 +36785,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class NullCheckOnLambdaReturnValue {
         @Test
         public void testAllFilesPresentInNullCheckOnLambdaReturnValue() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -36856,7 +36856,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ObjectMethods {
       @Test
       public void testAllFilesPresentInObjectMethods() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/objectMethods"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -36902,7 +36902,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class PrimitiveVsWrapperTypeInInheritance {
       @Test
       public void testAllFilesPresentInPrimitiveVsWrapperTypeInInheritance() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/primitiveVsWrapperTypeInInheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -36966,7 +36966,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Statics {
       @Test
       public void testAllFilesPresentInStatics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/statics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -37007,7 +37007,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JavaVisibility {
     @Test
     public void testAllFilesPresentInJavaVisibility() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -37016,7 +37016,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Package {
       @Test
       public void testAllFilesPresentInPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -37092,7 +37092,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ProtectedAndPackage {
       @Test
       public void testAllFilesPresentInProtectedAndPackage() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedAndPackage"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedAndPackage"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -37156,7 +37156,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ProtectedStatic {
       @Test
       public void testAllFilesPresentInProtectedStatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedStatic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaVisibility/protectedStatic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -37239,7 +37239,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Jdk {
     @Test
     public void testAllFilesPresentInJdk() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jdk"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jdk"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -37297,7 +37297,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Js {
     @Test
     public void testAllFilesPresentInJs() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -37336,7 +37336,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class InlinedReturnBreakContinue {
       @Test
       public void testAllFilesPresentInInlinedReturnBreakContinue() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -37395,7 +37395,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Jvm8 {
     @Test
     public void testAllFilesPresentInJvm8() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -37536,7 +37536,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Defaults {
       @Test
       public void testAllFilesPresentInDefaults() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -37557,7 +37557,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class DefaultCompatibilityBridges {
         @Test
         public void testAllFilesPresentInDefaultCompatibilityBridges() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -37627,7 +37627,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class DelegationBy {
         @Test
         public void testAllFilesPresentInDelegationBy() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -37655,7 +37655,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInEnable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -37940,7 +37940,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/enable/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -37975,7 +37975,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInNoCompatibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -38230,7 +38230,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class DelegationBy {
           @Test
           public void testAllFilesPresentInDelegationBy() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/delegationBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -38252,7 +38252,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Specialization {
           @Test
           public void testAllFilesPresentInSpecialization() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/specialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -38268,7 +38268,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class WithCompatibility {
           @Test
           public void testAllFilesPresentInWithCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noCompatibility/withCompatibility"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -38315,7 +38315,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class NonDefaultInheritance {
         @Test
         public void testAllFilesPresentInNonDefaultInheritance() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -38367,7 +38367,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Reflection {
         @Test
         public void testAllFilesPresentInReflection() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -38384,7 +38384,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class InterfaceFlag {
       @Test
       public void testAllFilesPresentInInterfaceFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/interfaceFlag"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/interfaceFlag"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -38406,7 +38406,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaDefaults {
       @Test
       public void testAllFilesPresentInJavaDefaults() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/javaDefaults"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/javaDefaults"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -38507,7 +38507,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JvmField {
     @Test
     public void testAllFilesPresentInJvmField() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmField"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmField"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -38697,7 +38697,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JvmName {
     @Test
     public void testAllFilesPresentInJvmName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -38814,7 +38814,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FileFacades {
       @Test
       public void testAllFilesPresentInFileFacades() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName/fileFacades"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmName/fileFacades"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -38843,7 +38843,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JvmOverloads {
     @Test
     public void testAllFilesPresentInJvmOverloads() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmOverloads"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmOverloads"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -38979,7 +38979,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JvmPackageName {
     @Test
     public void testAllFilesPresentInJvmPackageName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmPackageName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmPackageName"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39043,7 +39043,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class JvmStatic {
     @Test
     public void testAllFilesPresentInJvmStatic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39286,7 +39286,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ProtectedInSuperClass {
       @Test
       public void testAllFilesPresentInProtectedInSuperClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -39315,7 +39315,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Kclass {
     @Test
     public void testAllFilesPresentInKclass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/kclass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/kclass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39337,7 +39337,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Klib {
     @Test
     public void testAllFilesPresentInKlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/klib"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/klib"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39353,7 +39353,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Ktype {
     @Test
     public void testAllFilesPresentInKtype() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ktype"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ktype"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39405,7 +39405,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Labels {
     @Test
     public void testAllFilesPresentInLabels() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39463,7 +39463,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Lambda {
     @Test
     public void testAllFilesPresentInLambda() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lambda"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39593,7 +39593,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Lateinit {
     @Test
     public void testAllFilesPresentInLateinit() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lateinit"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lateinit"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39663,7 +39663,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class LazyCodegen {
     @Test
     public void testAllFilesPresentInLazyCodegen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39726,7 +39726,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Optimizations {
       @Test
       public void testAllFilesPresentInOptimizations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lazyCodegen/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -39791,7 +39791,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Literals {
     @Test
     public void testAllFilesPresentInLiterals() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/literals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/literals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39813,7 +39813,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class LocalClass {
     @Test
     public void testAllFilesPresentInLocalClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -39889,7 +39889,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class LocalClasses {
     @Test
     public void testAllFilesPresentInLocalClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40139,7 +40139,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class LocalEscapeAnalysis {
     @Test
     public void testAllFilesPresentInLocalEscapeAnalysis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localEscapeAnalysis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/localEscapeAnalysis"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40155,7 +40155,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Lower {
     @Test
     public void testAllFilesPresentInLower() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40170,7 +40170,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForLoopsLowering {
       @Test
       public void testAllFilesPresentInForLoopsLowering() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower/forLoopsLowering"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower/forLoopsLowering"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -40247,7 +40247,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Mangling {
     @Test
     public void testAllFilesPresentInMangling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mangling"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mangling"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40317,7 +40317,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class MixedNamedPosition {
     @Test
     public void testAllFilesPresentInMixedNamedPosition() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mixedNamedPosition"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/mixedNamedPosition"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40351,7 +40351,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class MultiDecl {
     @Test
     public void testAllFilesPresentInMultiDecl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40474,7 +40474,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForIterator {
       @Test
       public void testAllFilesPresentInForIterator() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -40513,7 +40513,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class LongIterator {
         @Test
         public void testAllFilesPresentInLongIterator() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -40548,7 +40548,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForRange {
       @Test
       public void testAllFilesPresentInForRange() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -40599,7 +40599,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ExplicitRangeTo {
         @Test
         public void testAllFilesPresentInExplicitRangeTo() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -40638,7 +40638,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -40672,7 +40672,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -40707,7 +40707,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ExplicitRangeToWithDot {
         @Test
         public void testAllFilesPresentInExplicitRangeToWithDot() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -40746,7 +40746,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Int {
           @Test
           public void testAllFilesPresentInInt() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -40780,7 +40780,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Long {
           @Test
           public void testAllFilesPresentInLong() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -40815,7 +40815,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Int {
         @Test
         public void testAllFilesPresentInInt() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/int"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -40849,7 +40849,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Long {
         @Test
         public void testAllFilesPresentInLong() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiDecl/forRange/long"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -40885,7 +40885,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class MultifileClasses {
     @Test
     public void testAllFilesPresentInMultifileClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -40984,7 +40984,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Optimized {
       @Test
       public void testAllFilesPresentInOptimized() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multifileClasses/optimized"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -41061,7 +41061,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "k1");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform"), Pattern.compile("^([^_](.+))\\.kt$"), null, true, "k1");
     }
 
     @Nested
@@ -41100,7 +41100,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInK2() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -41361,7 +41361,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Annotations {
         @Test
         public void testAllFilesPresentInAnnotations() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -41413,7 +41413,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInBasic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -41801,7 +41801,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ComplexMatchings {
         @Test
         public void testAllFilesPresentInComplexMatchings() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -41829,7 +41829,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42013,7 +42013,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Delegation {
         @Test
         public void testAllFilesPresentInDelegation() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42107,7 +42107,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Exhaustiveness {
         @Test
         public void testAllFilesPresentInExhaustiveness() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42141,7 +42141,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInHmpp() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42325,7 +42325,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class LenientMode {
         @Test
         public void testAllFilesPresentInLenientMode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42365,7 +42365,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class MigratedOldTests {
         @Test
         public void testAllFilesPresentInMigratedOldTests() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42405,7 +42405,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class MultiModule {
         @Test
         public void testAllFilesPresentInMultiModule() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -42441,7 +42441,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class NonLocalReturns {
     @Test
     public void testAllFilesPresentInNonLocalReturns() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nonLocalReturns"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nonLocalReturns"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42493,7 +42493,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class NotNullAssertions {
     @Test
     public void testAllFilesPresentInNotNullAssertions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/notNullAssertions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/notNullAssertions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42563,7 +42563,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class NothingValue {
     @Test
     public void testAllFilesPresentInNothingValue() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nothingValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nothingValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42591,7 +42591,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class NullCheckOptimization {
     @Test
     public void testAllFilesPresentInNullCheckOptimization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42685,7 +42685,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Object {
     @Test
     public void testAllFilesPresentInObject() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/object"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/object"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42749,7 +42749,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ObjectExpression {
     @Test
     public void testAllFilesPresentInObjectExpression() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectExpression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectExpression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42783,7 +42783,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ObjectIntrinsics {
     @Test
     public void testAllFilesPresentInObjectIntrinsics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -42799,7 +42799,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Objects {
     @Test
     public void testAllFilesPresentInObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -43300,7 +43300,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CompanionObjectAccess {
       @Test
       public void testAllFilesPresentInCompanionObjectAccess() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -43411,7 +43411,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInMultipleCompanionsWithAccessors() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -43487,7 +43487,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class PrimitiveCompanion {
         @Test
         public void testAllFilesPresentInPrimitiveCompanion() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -43541,7 +43541,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class OperatorConventions {
     @Test
     public void testAllFilesPresentInOperatorConventions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -43706,7 +43706,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CompareTo {
       @Test
       public void testAllFilesPresentInCompareTo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions/compareTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions/compareTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -43783,7 +43783,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Optimizations {
     @Test
     public void testAllFilesPresentInOptimizations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/optimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -43811,7 +43811,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Package {
     @Test
     public void testAllFilesPresentInPackage() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -43923,7 +43923,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ParametersMetadata {
     @Test
     public void testAllFilesPresentInParametersMetadata() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/parametersMetadata"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/parametersMetadata"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -44005,7 +44005,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class PlatformTypes {
     @Test
     public void testAllFilesPresentInPlatformTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -44080,7 +44080,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Primitives {
       @Test
       public void testAllFilesPresentInPrimitives() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/platformTypes/primitives"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -44217,7 +44217,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class PolymorphicSignature {
     @Test
     public void testAllFilesPresentInPolymorphicSignature() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/polymorphicSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/polymorphicSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -44293,7 +44293,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class PrimitiveTypes {
     @Test
     public void testAllFilesPresentInPrimitiveTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -44734,7 +44734,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class EqualityWithObject {
       @Test
       public void testAllFilesPresentInEqualityWithObject() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -44797,7 +44797,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Generated {
         @Test
         public void testAllFilesPresentInGenerated() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -44916,7 +44916,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class IdentityEqualsWithNullable {
       @Test
       public void testAllFilesPresentInIdentityEqualsWithNullable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/identityEqualsWithNullable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -44956,7 +44956,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInNumberToChar() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/numberToChar"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/numberToChar"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -45003,7 +45003,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Private {
     @Test
     public void testAllFilesPresentInPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -45025,7 +45025,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class PrivateConstructors {
     @Test
     public void testAllFilesPresentInPrivateConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/privateConstructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/privateConstructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -45149,7 +45149,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -45752,7 +45752,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class BackingField {
       @Test
       public void testAllFilesPresentInBackingField() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -45840,7 +45840,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Const {
       @Test
       public void testAllFilesPresentInConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/const"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/const"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -45928,7 +45928,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInLateinit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -46021,7 +46021,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class IsInitializedAndDeinitialize {
         @Test
         public void testAllFilesPresentInIsInitializedAndDeinitialize() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -46091,7 +46091,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Local {
         @Test
         public void testAllFilesPresentInLocal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -46155,7 +46155,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInTopLevel() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/topLevel"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/topLevel"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -46185,7 +46185,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class PropertyCallableReference {
     @Test
     public void testAllFilesPresentInPropertyCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/propertyCallableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/propertyCallableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -46243,7 +46243,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class PublishedApi {
     @Test
     public void testAllFilesPresentInPublishedApi() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/publishedApi"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/publishedApi"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -46283,7 +46283,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Ranges {
     @Test
     public void testAllFilesPresentInRanges() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -46448,7 +46448,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Contains {
       @Test
       public void testAllFilesPresentInContains() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -46769,7 +46769,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Generated {
         @Test
         public void testAllFilesPresentInGenerated() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains/generated"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains/generated"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -46942,7 +46942,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class EvaluationOrder {
       @Test
       public void testAllFilesPresentInEvaluationOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47005,7 +47005,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Stepped {
         @Test
         public void testAllFilesPresentInStepped() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -47014,7 +47014,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class ForInDownTo {
           @Test
           public void testAllFilesPresentInForInDownTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -47072,7 +47072,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class ForInRangeLiteral {
           @Test
           public void testAllFilesPresentInForInRangeLiteral() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -47130,7 +47130,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class ForInUntil {
           @Test
           public void testAllFilesPresentInForInUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -47190,7 +47190,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Expression {
       @Test
       public void testAllFilesPresentInExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47386,7 +47386,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInDownTo {
       @Test
       public void testAllFilesPresentInForInDownTo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInDownTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47444,7 +47444,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInIndices {
       @Test
       public void testAllFilesPresentInForInIndices() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47598,7 +47598,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInProgressionWithIndex {
       @Test
       public void testAllFilesPresentInForInProgressionWithIndex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInProgressionWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInProgressionWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47698,7 +47698,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInReversed {
       @Test
       public void testAllFilesPresentInForInReversed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInReversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInReversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47816,7 +47816,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForInUntil {
       @Test
       public void testAllFilesPresentInForInUntil() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -47916,7 +47916,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ForWithPossibleOverflow {
       @Test
       public void testAllFilesPresentInForWithPossibleOverflow() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forWithPossibleOverflow"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forWithPossibleOverflow"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -48004,7 +48004,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -48127,7 +48127,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class WithIndex {
         @Test
         public void testAllFilesPresentInWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop/withIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/javaInterop/withIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -48216,7 +48216,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Literal {
       @Test
       public void testAllFilesPresentInLiteral() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -48412,7 +48412,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class NullableLoopParameter {
       @Test
       public void testAllFilesPresentInNullableLoopParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/nullableLoopParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/nullableLoopParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -48440,7 +48440,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Stepped {
       @Test
       public void testAllFilesPresentInStepped() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Nested
@@ -48449,7 +48449,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -48458,7 +48458,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class DownTo {
           @Test
           public void testAllFilesPresentInDownTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -48563,7 +48563,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -48621,7 +48621,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -48668,7 +48668,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class RangeTo {
           @Test
           public void testAllFilesPresentInRangeTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -48773,7 +48773,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -48831,7 +48831,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -48878,7 +48878,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class RangeUntil {
           @Test
           public void testAllFilesPresentInRangeUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -48947,7 +48947,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49005,7 +49005,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49052,7 +49052,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Until {
           @Test
           public void testAllFilesPresentInUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -49163,7 +49163,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49221,7 +49221,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49269,7 +49269,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -49278,7 +49278,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class DownTo {
           @Test
           public void testAllFilesPresentInDownTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -49383,7 +49383,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49441,7 +49441,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49488,7 +49488,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class RangeTo {
           @Test
           public void testAllFilesPresentInRangeTo() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -49593,7 +49593,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49651,7 +49651,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49698,7 +49698,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class RangeUntil {
           @Test
           public void testAllFilesPresentInRangeUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -49767,7 +49767,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49825,7 +49825,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -49872,7 +49872,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Until {
           @Test
           public void testAllFilesPresentInUntil() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -49983,7 +49983,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class NestedStep {
             @Test
             public void testAllFilesPresentInNestedStep() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -50041,7 +50041,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Reversed {
             @Test
             public void testAllFilesPresentInReversed() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -50089,7 +50089,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Unsigned {
         @Test
         public void testAllFilesPresentInUnsigned() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -50098,7 +50098,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Expression {
           @Test
           public void testAllFilesPresentInExpression() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Nested
@@ -50107,7 +50107,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -50212,7 +50212,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50270,7 +50270,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50317,7 +50317,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -50422,7 +50422,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50480,7 +50480,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50527,7 +50527,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -50596,7 +50596,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50654,7 +50654,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50701,7 +50701,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -50812,7 +50812,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50870,7 +50870,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -50918,7 +50918,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Literal {
           @Test
           public void testAllFilesPresentInLiteral() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Nested
@@ -50927,7 +50927,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class DownTo {
             @Test
             public void testAllFilesPresentInDownTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -51032,7 +51032,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51090,7 +51090,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51137,7 +51137,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class RangeTo {
             @Test
             public void testAllFilesPresentInRangeTo() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -51242,7 +51242,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51300,7 +51300,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51347,7 +51347,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class RangeUntil {
             @Test
             public void testAllFilesPresentInRangeUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -51416,7 +51416,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51474,7 +51474,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51521,7 +51521,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class Until {
             @Test
             public void testAllFilesPresentInUntil() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -51632,7 +51632,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class NestedStep {
               @Test
               public void testAllFilesPresentInNestedStep() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51690,7 +51690,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
             public class Reversed {
               @Test
               public void testAllFilesPresentInReversed() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
               }
 
               @Test
@@ -51740,7 +51740,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Unsigned {
       @Test
       public void testAllFilesPresentInUnsigned() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -51791,7 +51791,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Expression {
         @Test
         public void testAllFilesPresentInExpression() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -51987,7 +51987,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Literal {
         @Test
         public void testAllFilesPresentInLiteral() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/literal"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -52183,7 +52183,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class NullableLoopParameter {
         @Test
         public void testAllFilesPresentInNullableLoopParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -52213,7 +52213,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class RecursiveRawTypes {
     @Test
     public void testAllFilesPresentInRecursiveRawTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/recursiveRawTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/recursiveRawTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -52235,7 +52235,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -52244,7 +52244,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -52373,7 +52373,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class OnTypes {
         @Test
         public void testAllFilesPresentInOnTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/onTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/onTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -52431,7 +52431,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Repeatable {
         @Test
         public void testAllFilesPresentInRepeatable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/repeatable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/repeatable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -52490,7 +52490,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Builtins {
       @Test
       public void testAllFilesPresentInBuiltins() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/builtins"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/builtins"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -52518,7 +52518,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Caching {
       @Test
       public void testAllFilesPresentInCaching() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/caching"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/caching"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -52540,7 +52540,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Call {
       @Test
       public void testAllFilesPresentInCall() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -52705,7 +52705,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/bound"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -52793,7 +52793,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -52838,7 +52838,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class NonNullObject {
           @Test
           public void testAllFilesPresentInNonNullObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -52914,7 +52914,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class NullableObject {
           @Test
           public void testAllFilesPresentInNullableObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -52990,7 +52990,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Primitive {
           @Test
           public void testAllFilesPresentInPrimitive() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -53073,7 +53073,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -53174,7 +53174,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CallBy {
       @Test
       public void testAllFilesPresentInCallBy() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -53429,7 +53429,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Nested
@@ -53438,7 +53438,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class NonNullObject {
           @Test
           public void testAllFilesPresentInNonNullObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Nested
@@ -53447,7 +53447,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -53506,7 +53506,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class NullableObject {
           @Test
           public void testAllFilesPresentInNullableObject() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Nested
@@ -53515,7 +53515,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -53574,7 +53574,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Primitive {
           @Test
           public void testAllFilesPresentInPrimitive() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Nested
@@ -53583,7 +53583,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
           public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
             }
 
             @Test
@@ -53644,7 +53644,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ClassLiterals {
       @Test
       public void testAllFilesPresentInClassLiterals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classLiterals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classLiterals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -53720,7 +53720,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Classes {
       @Test
       public void testAllFilesPresentInClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -53880,7 +53880,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -53926,7 +53926,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CreateAnnotation {
       @Test
       public void testAllFilesPresentInCreateAnnotation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/createAnnotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/createAnnotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54014,7 +54014,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Functions {
       @Test
       public void testAllFilesPresentInFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54114,7 +54114,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class IsInstance {
       @Test
       public void testAllFilesPresentInIsInstance() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/isInstance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/isInstance"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54130,7 +54130,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class KClassInAnnotation {
       @Test
       public void testAllFilesPresentInKClassInAnnotation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/kClassInAnnotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/kClassInAnnotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54194,7 +54194,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class LambdaClasses {
       @Test
       public void testAllFilesPresentInLambdaClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/lambdaClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/lambdaClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54270,7 +54270,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class LocalClasses {
       @Test
       public void testAllFilesPresentInLocalClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/localClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/localClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54298,7 +54298,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Mapping {
       @Test
       public void testAllFilesPresentInMapping() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54457,7 +54457,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class FakeOverrides {
         @Test
         public void testAllFilesPresentInFakeOverrides() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/fakeOverrides"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/fakeOverrides"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -54479,7 +54479,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/inlineClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -54501,7 +54501,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class JvmStatic {
         @Test
         public void testAllFilesPresentInJvmStatic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/jvmStatic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/jvmStatic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -54523,7 +54523,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Types {
         @Test
         public void testAllFilesPresentInTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -54677,7 +54677,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -54706,7 +54706,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
       @Test
       public void testAllFilesPresentInMethodsFromAny() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54872,7 +54872,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Modifiers {
       @Test
       public void testAllFilesPresentInModifiers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/modifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/modifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54954,7 +54954,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/multifileClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/multifileClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -54982,7 +54982,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class NoReflectAtRuntime {
       @Test
       public void testAllFilesPresentInNoReflectAtRuntime() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -55033,7 +55033,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class MethodsFromAny {
         @Test
         public void testAllFilesPresentInMethodsFromAny() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -55062,7 +55062,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Parameters {
       @Test
       public void testAllFilesPresentInParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -55174,7 +55174,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -55393,7 +55393,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
         @Test
         public void testAllFilesPresentInAccessors() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/accessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/accessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -55427,7 +55427,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class GetDelegate {
         @Test
         public void testAllFilesPresentInGetDelegate() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -55532,7 +55532,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class Method {
           @Test
           public void testAllFilesPresentInMethod() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate/method"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/getDelegate/method"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -55591,7 +55591,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class JvmField {
         @Test
         public void testAllFilesPresentInJvmField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/jvmField"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/jvmField"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -55619,7 +55619,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class LocalDelegated {
         @Test
         public void testAllFilesPresentInLocalDelegated() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/localDelegated"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/properties/localDelegated"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -55690,7 +55690,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Supertypes {
       @Test
       public void testAllFilesPresentInSupertypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/supertypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/supertypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -55760,7 +55760,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SyntheticClasses {
       @Test
       public void testAllFilesPresentInSyntheticClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -55776,7 +55776,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class TypeOf {
       @Test
       public void testAllFilesPresentInTypeOf() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -55917,7 +55917,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Js {
         @Test
         public void testAllFilesPresentInJs() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/js"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/js"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -55975,7 +55975,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class NoReflect {
         @Test
         public void testAllFilesPresentInNoReflect() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -56044,7 +56044,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         public class NonReifiedTypeParameters {
           @Test
           public void testAllFilesPresentInNonReifiedTypeParameters() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
           }
 
           @Test
@@ -56109,7 +56109,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class NonReifiedTypeParameters {
         @Test
         public void testAllFilesPresentInNonReifiedTypeParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -56228,7 +56228,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeParameters"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -56268,7 +56268,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Types {
       @Test
       public void testAllFilesPresentInTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -56373,7 +56373,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class CreateType {
         @Test
         public void testAllFilesPresentInCreateType() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/createType"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/createType"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -56419,7 +56419,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Subtyping {
         @Test
         public void testAllFilesPresentInSubtyping() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/subtyping"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/types/subtyping"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -56491,7 +56491,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Regressions {
     @Test
     public void testAllFilesPresentInRegressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -57149,7 +57149,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Reified {
     @Test
     public void testAllFilesPresentInReified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -57446,7 +57446,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ArraysReification {
       @Test
       public void testAllFilesPresentInArraysReification() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/arraysReification"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/arraysReification"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -57492,7 +57492,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class CatchParameter {
       @Test
       public void testAllFilesPresentInCatchParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -57533,7 +57533,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ReturnInExpressionBody {
     @Test
     public void testAllFilesPresentInReturnInExpressionBody() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/returnInExpressionBody"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/returnInExpressionBody"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -57549,7 +57549,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class SafeCall {
     @Test
     public void testAllFilesPresentInSafeCall() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -57709,7 +57709,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Sam {
     @Test
     public void testAllFilesPresentInSam() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -58066,7 +58066,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Adapters {
       @Test
       public void testAllFilesPresentInAdapters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -58249,7 +58249,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       public class Operators {
         @Test
         public void testAllFilesPresentInOperators() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters/operators"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/adapters/operators"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -58320,7 +58320,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Approximation {
       @Test
       public void testAllFilesPresentInApproximation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/approximation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/approximation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -58354,7 +58354,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -58466,7 +58466,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Equality {
       @Test
       public void testAllFilesPresentInEquality() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/equality"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/equality"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -58506,7 +58506,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaSamWithEqualsHashCode {
       @Test
       public void testAllFilesPresentInJavaSamWithEqualsHashCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -58535,7 +58535,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class SameFileInSourceAndDependencies {
     @Test
     public void testAllFilesPresentInSameFileInSourceAndDependencies() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sameFileInSourceAndDependencies"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sameFileInSourceAndDependencies"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -58605,7 +58605,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Script {
     @Test
     public void testAllFilesPresentInScript() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/script"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -58669,7 +58669,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Sealed {
     @Test
     public void testAllFilesPresentInSealed() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sealed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sealed"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -58745,7 +58745,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInSecondaryConstructors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -58947,7 +58947,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Serialization {
     @Test
     public void testAllFilesPresentInSerialization() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/serialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/serialization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59005,7 +59005,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInSize() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59045,7 +59045,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Smap {
     @Test
     public void testAllFilesPresentInSmap() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smap"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59073,7 +59073,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class SmartCasts {
     @Test
     public void testAllFilesPresentInSmartCasts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smartCasts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/smartCasts"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59371,7 +59371,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class SpecialBuiltins {
     @Test
     public void testAllFilesPresentInSpecialBuiltins() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59585,7 +59585,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Statics {
     @Test
     public void testAllFilesPresentInStatics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/statics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/statics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59691,7 +59691,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class StoreStackBeforeInline {
     @Test
     public void testAllFilesPresentInStoreStackBeforeInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/storeStackBeforeInline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/storeStackBeforeInline"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59731,7 +59731,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class StringTrim {
     @Test
     public void testAllFilesPresentInStringTrim() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/stringTrim"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/stringTrim"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -59747,7 +59747,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Strings {
     @Test
     public void testAllFilesPresentInStrings() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/strings"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60009,7 +60009,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Super {
     @Test
     public void testAllFilesPresentInSuper() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60228,7 +60228,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class SuperConstructor {
       @Test
       public void testAllFilesPresentInSuperConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super/superConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/super/superConstructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -60281,7 +60281,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Suppressions {
     @Test
     public void testAllFilesPresentInSuppressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60303,7 +60303,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class SuspendConversion {
     @Test
     public void testAllFilesPresentInSuspendConversion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suspendConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suspendConversion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60397,7 +60397,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Synchronized {
     @Test
     public void testAllFilesPresentInSynchronized() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/synchronized"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/synchronized"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60515,7 +60515,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInSyntheticAccessors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60662,7 +60662,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class FunctionsWithDefaultValues {
       @Test
       public void testAllFilesPresentInFunctionsWithDefaultValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/functionsWithDefaultValues"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -60768,7 +60768,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ProtectedJavaFieldAccessor {
       @Test
       public void testAllFilesPresentInProtectedJavaFieldAccessor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -60832,7 +60832,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class ProtectedMemberReferenceAccessor {
       @Test
       public void testAllFilesPresentInProtectedMemberReferenceAccessor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -60891,7 +60891,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class SyntheticExtensions {
     @Test
     public void testAllFilesPresentInSyntheticExtensions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticExtensions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticExtensions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60997,7 +60997,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Throws {
     @Test
     public void testAllFilesPresentInThrows() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/throws"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/throws"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61019,7 +61019,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ToArray {
     @Test
     public void testAllFilesPresentInToArray() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/toArray"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/toArray"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61089,7 +61089,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class TopLevelInitializtion {
     @Test
     public void testAllFilesPresentInTopLevelInitializtion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelInitializtion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61129,7 +61129,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61175,7 +61175,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class TrailingComma {
     @Test
     public void testAllFilesPresentInTrailingComma() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/trailingComma"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/trailingComma"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61203,7 +61203,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInTraits() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/traits"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/traits"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61447,7 +61447,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Try {
     @Test
     public void testAllFilesPresentInTry() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/try"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/try"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61589,7 +61589,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class TypeInfo {
     @Test
     public void testAllFilesPresentInTypeInfo() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeInfo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeInfo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61641,7 +61641,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class TypeMapping {
     @Test
     public void testAllFilesPresentInTypeMapping() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61729,7 +61729,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
 
     @Test
     public void testAllFilesPresentInTypealias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -61955,7 +61955,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class UnaryOp {
     @Test
     public void testAllFilesPresentInUnaryOp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unaryOp"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -62001,7 +62001,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class UnderscoredTypeArguments {
     @Test
     public void testAllFilesPresentInUnderscoredTypeArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/underscoredTypeArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/underscoredTypeArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -62041,7 +62041,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Unit {
     @Test
     public void testAllFilesPresentInUnit() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unit"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unit"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -62141,7 +62141,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class UnsignedTypes {
     @Test
     public void testAllFilesPresentInUnsignedTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -62456,7 +62456,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Jvm8Intrinsics {
       @Test
       public void testAllFilesPresentInJvm8Intrinsics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -62515,7 +62515,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class ValueClasses {
     @Test
     public void testAllFilesPresentInValueClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -62782,7 +62782,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class JavaInterop {
       @Test
       public void testAllFilesPresentInJavaInterop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -62817,7 +62817,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Vararg {
     @Test
     public void testAllFilesPresentInVararg() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -62995,7 +62995,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Volatile {
     @Test
     public void testAllFilesPresentInVolatile() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -63095,7 +63095,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class Wasm_new_exception_handling {
     @Test
     public void testAllFilesPresentInWasm_new_exception_handling() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-new-exception-handling"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-new-exception-handling"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -63447,7 +63447,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   public class When {
     @Test
     public void testAllFilesPresentInWhen() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -63768,7 +63768,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class EnumOptimization {
       @Test
       public void testAllFilesPresentInEnumOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/enumOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/enumOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -63904,7 +63904,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Exhaustiveness {
       @Test
       public void testAllFilesPresentInExhaustiveness() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/exhaustiveness"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/exhaustiveness"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -63932,7 +63932,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class Guard {
       @Test
       public void testAllFilesPresentInGuard() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/guard"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -63948,7 +63948,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class StringOptimization {
       @Test
       public void testAllFilesPresentInStringOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/stringOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/stringOptimization"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -64024,7 +64024,7 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     public class WhenSubjectVariable {
       @Test
       public void testAllFilesPresentInWhenSubjectVariable() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/whenSubjectVariable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/whenSubjectVariable"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test

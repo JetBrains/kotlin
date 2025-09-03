@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,7 +51,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
 
   @Test
   public void testAllFilesPresentInK2() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
@@ -313,7 +312,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class Annotations {
     @Test
     public void testAllFilesPresentInAnnotations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -365,7 +364,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
 
     @Test
     public void testAllFilesPresentInBasic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -753,7 +752,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class ComplexMatchings {
     @Test
     public void testAllFilesPresentInComplexMatchings() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/complexMatchings"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -781,7 +780,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -965,7 +964,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class Delegation {
     @Test
     public void testAllFilesPresentInDelegation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/delegation"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1059,7 +1058,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class Exhaustiveness {
     @Test
     public void testAllFilesPresentInExhaustiveness() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1093,7 +1092,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
 
     @Test
     public void testAllFilesPresentInHmpp() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1277,7 +1276,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class LenientMode {
     @Test
     public void testAllFilesPresentInLenientMode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lenientMode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1317,7 +1316,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class MigratedOldTests {
     @Test
     public void testAllFilesPresentInMigratedOldTests() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -1357,7 +1356,7 @@ public class JvmLightTreeBlackBoxCodegenWithSeparateKmpCompilationTestGenerated 
   public class MultiModule {
     @Test
     public void testAllFilesPresentInMultiModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

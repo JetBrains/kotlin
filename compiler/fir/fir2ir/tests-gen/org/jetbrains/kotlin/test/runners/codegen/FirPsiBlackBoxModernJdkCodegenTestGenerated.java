@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiBlackBoxCodegenTest {
   @Test
   public void testAllFilesPresentInBoxModernJdk() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Nested
@@ -33,7 +32,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
   public class TestsWithJava11 {
     @Test
     public void testAllFilesPresentInTestsWithJava11() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -156,7 +155,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public class ReleaseFlag {
       @Test
       public void testAllFilesPresentInReleaseFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -165,7 +164,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class ByteBuffer {
         @Test
         public void testAllFilesPresentInByteBuffer() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -211,7 +210,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class InnerClass {
         @Test
         public void testAllFilesPresentInInnerClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -245,7 +244,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class Reflective {
         @Test
         public void testAllFilesPresentInReflective() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -291,7 +290,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class WithJava {
         @Test
         public void testAllFilesPresentInWithJava() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -334,7 +333,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
   public class TestsWithJava17 {
     @Test
     public void testAllFilesPresentInTestsWithJava17() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -343,7 +342,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public class Records {
       @Test
       public void testAllFilesPresentInRecords() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/records"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/records"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -449,7 +448,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public class Reflection {
       @Test
       public void testAllFilesPresentInReflection() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -458,7 +457,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class Classes {
         @Test
         public void testAllFilesPresentInClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -474,7 +473,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class Modifiers {
         @Test
         public void testAllFilesPresentInModifiers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -497,7 +496,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public class ReleaseFlag {
       @Test
       public void testAllFilesPresentInReleaseFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -506,7 +505,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class ByteBuffer {
         @Test
         public void testAllFilesPresentInByteBuffer() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -582,7 +581,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class Constable {
         @Test
         public void testAllFilesPresentInConstable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -658,7 +657,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class InnerClass {
         @Test
         public void testAllFilesPresentInInnerClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -728,7 +727,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
       public class WithJava {
         @Test
         public void testAllFilesPresentInWithJava() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -799,7 +798,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public class Sealed {
       @Test
       public void testAllFilesPresentInSealed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -888,7 +887,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
 
     @Test
     public void testAllFilesPresentInTestsWithJava21() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -903,7 +902,7 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
     public class TypeSwitch {
       @Test
       public void testAllFilesPresentInTypeSwitch() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test

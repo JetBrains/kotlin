@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
   public class BoxInline {
     @Test
     public void testAllFilesPresentInBoxInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -34,7 +33,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -56,7 +55,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class AnonymousObject {
       @Test
       public void testAllFilesPresentInAnonymousObject() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -563,7 +562,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class EnumEntries {
         @Test
         public void testAllFilesPresentInEnumEntries() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumEntries"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -597,7 +596,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class EnumWhen {
         @Test
         public void testAllFilesPresentInEnumWhen() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/enumWhen"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -631,7 +630,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ProperRecapturing {
         @Test
         public void testAllFilesPresentInProperRecapturing() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -677,7 +676,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ProperRecapturingInClass {
         @Test
         public void testAllFilesPresentInProperRecapturingInClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -759,7 +758,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Sam {
         @Test
         public void testAllFilesPresentInSam() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -811,7 +810,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class TwoCapturedReceivers {
         @Test
         public void testAllFilesPresentInTwoCapturedReceivers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -864,7 +863,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ArgumentOrder {
       @Test
       public void testAllFilesPresentInArgumentOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -946,7 +945,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ArrayConvention {
       @Test
       public void testAllFilesPresentInArrayConvention() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/arrayConvention"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -992,7 +991,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Assert {
       @Test
       public void testAllFilesPresentInAssert() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/assert"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1086,7 +1085,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Builders {
       @Test
       public void testAllFilesPresentInBuilders() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/builders"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1108,7 +1107,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class BytecodePreprocessing {
       @Test
       public void testAllFilesPresentInBytecodePreprocessing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/bytecodePreprocessing"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1136,7 +1135,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1259,7 +1258,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class AdaptedReferences {
         @Test
         public void testAllFilesPresentInAdaptedReferences() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/adaptedReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1311,7 +1310,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Bound {
         @Test
         public void testAllFilesPresentInBound() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/callableReference/bound"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1484,7 +1483,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Capture {
       @Test
       public void testAllFilesPresentInCapture() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/capture"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1560,7 +1559,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Complex {
       @Test
       public void testAllFilesPresentInComplex() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complex"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1636,7 +1635,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ComplexStack {
       @Test
       public void testAllFilesPresentInComplexStack() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/complexStack"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1700,7 +1699,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1734,7 +1733,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1846,7 +1845,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInDefaultValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1963,7 +1962,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class LambdaInlining {
         @Test
         public void testAllFilesPresentInLambdaInlining() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2182,7 +2181,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class CallableReferences {
           @Test
           public void testAllFilesPresentInCallableReferences() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -2379,7 +2378,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
         @Test
         public void testAllFilesPresentInMaskElimination() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/defaultValues/maskElimination"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2420,7 +2419,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DelegatedProperty {
       @Test
       public void testAllFilesPresentInDelegatedProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2466,7 +2465,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DontReify {
       @Test
       public void testAllFilesPresentInDontReify() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2536,7 +2535,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class EnclosingInfo {
       @Test
       public void testAllFilesPresentInEnclosingInfo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2594,7 +2593,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Enum {
       @Test
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2706,7 +2705,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class FunctionExpression {
       @Test
       public void testAllFilesPresentInFunctionExpression() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2728,7 +2727,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class FunctionReference {
       @Test
       public void testAllFilesPresentInFunctionReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/functionReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2756,7 +2755,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InlineArgsInplace {
       @Test
       public void testAllFilesPresentInInlineArgsInplace() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineArgsInplace"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2772,7 +2771,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2823,7 +2822,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class UnboxGenericParameter {
         @Test
         public void testAllFilesPresentInUnboxGenericParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -2832,7 +2831,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class FunInterface {
           @Test
           public void testAllFilesPresentInFunInterface() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -2878,7 +2877,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Lambda {
           @Test
           public void testAllFilesPresentInLambda() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -2924,7 +2923,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class ObjectLiteral {
           @Test
           public void testAllFilesPresentInObjectLiteral() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -2972,7 +2971,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InnerClasses {
       @Test
       public void testAllFilesPresentInInnerClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3042,7 +3041,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Invokedynamic {
       @Test
       public void testAllFilesPresentInInvokedynamic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -3051,7 +3050,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Lambdas {
         @Test
         public void testAllFilesPresentInLambdas() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3085,7 +3084,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Sam {
         @Test
         public void testAllFilesPresentInSam() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/invokedynamic/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3120,7 +3119,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class JvmName {
       @Test
       public void testAllFilesPresentInJvmName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3136,7 +3135,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class JvmPackageName {
       @Test
       public void testAllFilesPresentInJvmPackageName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmPackageName"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3152,7 +3151,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LambdaClassClash {
       @Test
       public void testAllFilesPresentInLambdaClassClash() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaClassClash"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3174,7 +3173,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LambdaTransformation {
       @Test
       public void testAllFilesPresentInLambdaTransformation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/lambdaTransformation"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3220,7 +3219,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LocalFunInLambda {
       @Test
       public void testAllFilesPresentInLocalFunInLambda() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3290,7 +3289,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class MultiModule {
       @Test
       public void testAllFilesPresentInMultiModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3306,7 +3305,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3334,7 +3333,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -3343,7 +3342,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3360,7 +3359,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class NestedInline {
       @Test
       public void testAllFilesPresentInNestedInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nestedInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nestedInline"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3382,7 +3381,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class NoInline {
       @Test
       public void testAllFilesPresentInNoInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3440,7 +3439,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class NonLocalReturns {
       @Test
       public void testAllFilesPresentInNonLocalReturns() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3587,7 +3586,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Deparenthesize {
         @Test
         public void testAllFilesPresentInDeparenthesize() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3609,7 +3608,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class TryFinally {
         @Test
         public void testAllFilesPresentInTryFinally() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3696,7 +3695,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class CallSite {
           @Test
           public void testAllFilesPresentInCallSite() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -3742,7 +3741,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Chained {
           @Test
           public void testAllFilesPresentInChained() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -3800,7 +3799,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class DeclSite {
           @Test
           public void testAllFilesPresentInDeclSite() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -3882,7 +3881,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class ExceptionTable {
           @Test
           public void testAllFilesPresentInExceptionTable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -4012,7 +4011,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Variables {
           @Test
           public void testAllFilesPresentInVariables() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -4030,7 +4029,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Optimizations {
       @Test
       public void testAllFilesPresentInOptimizations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/optimizations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4064,7 +4063,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/private"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4140,7 +4139,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Property {
       @Test
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/property"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4246,7 +4245,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Reified {
       @Test
       public void testAllFilesPresentInReified() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4453,7 +4452,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class CheckCast {
         @Test
         public void testAllFilesPresentInCheckCast() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4523,7 +4522,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class DefaultLambda {
         @Test
         public void testAllFilesPresentInDefaultLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4581,7 +4580,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class IsCheck {
         @Test
         public void testAllFilesPresentInIsCheck() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -4610,7 +4609,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Signature {
       @Test
       public void testAllFilesPresentInSignature() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signature"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4686,7 +4685,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class SignatureMangling {
       @Test
       public void testAllFilesPresentInSignatureMangling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/signatureMangling"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4720,7 +4719,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Simple {
       @Test
       public void testAllFilesPresentInSimple() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/simple"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -4880,7 +4879,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Smap {
       @Test
       public void testAllFilesPresentInSmap() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5027,7 +5026,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Anonymous {
         @Test
         public void testAllFilesPresentInAnonymous() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5097,7 +5096,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class DefaultLambda {
         @Test
         public void testAllFilesPresentInDefaultLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/defaultLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5161,7 +5160,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class InlineOnly {
         @Test
         public void testAllFilesPresentInInlineOnly() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/inlineOnly"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5207,7 +5206,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Newsmap {
         @Test
         public void testAllFilesPresentInNewsmap() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/newsmap"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5241,7 +5240,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Resolve {
         @Test
         public void testAllFilesPresentInResolve() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/smap/resolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5264,7 +5263,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Special {
       @Test
       public void testAllFilesPresentInSpecial() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5340,7 +5339,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class StackOnReturn {
       @Test
       public void testAllFilesPresentInStackOnReturn() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/stackOnReturn"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5446,7 +5445,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Suspend {
       @Test
       public void testAllFilesPresentInSuspend() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -5659,7 +5658,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class CallableReference {
         @Test
         public void testAllFilesPresentInCallableReference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5699,7 +5698,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class DefaultParameter {
         @Test
         public void testAllFilesPresentInDefaultParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/defaultParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5745,7 +5744,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class InlineClass {
         @Test
         public void testAllFilesPresentInInlineClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5779,7 +5778,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class InlineUsedAsNoinline {
         @Test
         public void testAllFilesPresentInInlineUsedAsNoinline() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5813,7 +5812,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Receiver {
         @Test
         public void testAllFilesPresentInReceiver() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/receiver"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -5871,7 +5870,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class StateMachine {
         @Test
         public void testAllFilesPresentInStateMachine() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6020,7 +6019,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class SyntheticAccessors {
       @Test
       public void testAllFilesPresentInSyntheticAccessors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6047,7 +6046,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class WithinInlineLambda {
         @Test
         public void testAllFilesPresentInWithinInlineLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6106,7 +6105,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Trait {
       @Test
       public void testAllFilesPresentInTrait() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/trait"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6122,7 +6121,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class TryCatchFinally {
       @Test
       public void testAllFilesPresentInTryCatchFinally() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/tryCatchFinally"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6156,7 +6155,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class TypeParameters {
       @Test
       public void testAllFilesPresentInTypeParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6202,7 +6201,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Varargs {
       @Test
       public void testAllFilesPresentInVarargs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/varargs"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6230,7 +6229,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Wasm_new_exception_handling {
       @Test
       public void testAllFilesPresentInWasm_new_exception_handling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/wasm-new-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6265,7 +6264,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
   public class BoxModernJdk {
     @Test
     public void testAllFilesPresentInBoxModernJdk() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -6275,7 +6274,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class TestsWithJava11 {
       @Test
       public void testAllFilesPresentInTestsWithJava11() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -6398,7 +6397,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ReleaseFlag {
         @Test
         public void testAllFilesPresentInReleaseFlag() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -6407,7 +6406,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class ByteBuffer {
           @Test
           public void testAllFilesPresentInByteBuffer() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6453,7 +6452,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class InnerClass {
           @Test
           public void testAllFilesPresentInInnerClass() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6487,7 +6486,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Reflective {
           @Test
           public void testAllFilesPresentInReflective() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6533,7 +6532,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class WithJava {
           @Test
           public void testAllFilesPresentInWithJava() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6576,7 +6575,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class TestsWithJava17 {
       @Test
       public void testAllFilesPresentInTestsWithJava17() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -6585,7 +6584,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Records {
         @Test
         public void testAllFilesPresentInRecords() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/records"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/records"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -6691,7 +6690,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Reflection {
         @Test
         public void testAllFilesPresentInReflection() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -6700,7 +6699,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Classes {
           @Test
           public void testAllFilesPresentInClasses() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6716,7 +6715,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Modifiers {
           @Test
           public void testAllFilesPresentInModifiers() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/reflection/modifiers"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6739,7 +6738,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ReleaseFlag {
         @Test
         public void testAllFilesPresentInReleaseFlag() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -6748,7 +6747,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class ByteBuffer {
           @Test
           public void testAllFilesPresentInByteBuffer() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/byteBuffer"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6824,7 +6823,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Constable {
           @Test
           public void testAllFilesPresentInConstable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/constable"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6900,7 +6899,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class InnerClass {
           @Test
           public void testAllFilesPresentInInnerClass() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -6970,7 +6969,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class WithJava {
           @Test
           public void testAllFilesPresentInWithJava() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -7041,7 +7040,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Sealed {
         @Test
         public void testAllFilesPresentInSealed() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7130,7 +7129,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInTestsWithJava21() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7145,7 +7144,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class TypeSwitch {
         @Test
         public void testAllFilesPresentInTypeSwitch() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -7301,7 +7300,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
     @Test
     public void testAllFilesPresentInBytecodeText() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -7844,7 +7843,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ArgumentOrder {
       @Test
       public void testAllFilesPresentInArgumentOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7866,7 +7865,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Assert {
       @Test
       public void testAllFilesPresentInAssert() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/assert"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/assert"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7906,7 +7905,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Boxing {
       @Test
       public void testAllFilesPresentInBoxing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxing"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -7934,7 +7933,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class BoxingOptimization {
       @Test
       public void testAllFilesPresentInBoxingOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxingOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8124,7 +8123,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class BuiltinFunctions {
       @Test
       public void testAllFilesPresentInBuiltinFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8163,7 +8162,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
         @Test
         public void testAllFilesPresentInGenericParameterBridge() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -8210,7 +8209,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class CallableReference {
       @Test
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8280,7 +8279,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class CapturedVarsOptimization {
       @Test
       public void testAllFilesPresentInCapturedVarsOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8356,7 +8355,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Checkcast {
       @Test
       public void testAllFilesPresentInCheckcast() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/checkcast"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/checkcast"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8408,7 +8407,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class CoercionToUnitOptimization {
       @Test
       public void testAllFilesPresentInCoercionToUnitOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coercionToUnitOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8472,7 +8471,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Companion {
       @Test
       public void testAllFilesPresentInCompanion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8560,7 +8559,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Conditions {
       @Test
       public void testAllFilesPresentInConditions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/conditions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8738,7 +8737,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ConstProperty {
       @Test
       public void testAllFilesPresentInConstProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8760,7 +8759,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ConstantConditions {
       @Test
       public void testAllFilesPresentInConstantConditions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constantConditions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constantConditions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8800,7 +8799,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Constants {
       @Test
       public void testAllFilesPresentInConstants() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constants"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constants"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8882,7 +8881,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Constructors {
       @Test
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constructors"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8952,7 +8951,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ControlStructures {
       @Test
       public void testAllFilesPresentInControlStructures() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/controlStructures"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -8974,7 +8973,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Coroutines {
       @Test
       public void testAllFilesPresentInCoroutines() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9049,7 +9048,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Debug {
         @Test
         public void testAllFilesPresentInDebug() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9089,7 +9088,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class DestructuringInLambda {
         @Test
         public void testAllFilesPresentInDestructuringInLambda() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9105,7 +9104,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class InlineClasses {
         @Test
         public void testAllFilesPresentInInlineClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9157,7 +9156,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class IntLikeVarSpilling {
         @Test
         public void testAllFilesPresentInIntLikeVarSpilling() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9227,7 +9226,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class StateMachine {
         @Test
         public void testAllFilesPresentInStateMachine() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/stateMachine"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9250,7 +9249,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DeadCodeElimination {
       @Test
       public void testAllFilesPresentInDeadCodeElimination() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/deadCodeElimination"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9326,7 +9325,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DefaultArguments {
       @Test
       public void testAllFilesPresentInDefaultArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9402,7 +9401,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DirectInvoke {
       @Test
       public void testAllFilesPresentInDirectInvoke() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/directInvoke"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/directInvoke"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9430,7 +9429,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DisabledOptimizations {
       @Test
       public void testAllFilesPresentInDisabledOptimizations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/disabledOptimizations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/disabledOptimizations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9476,7 +9475,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Enum {
       @Test
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9558,7 +9557,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ExclExcl {
       @Test
       public void testAllFilesPresentInExclExcl() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/exclExcl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/exclExcl"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9580,7 +9579,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class FieldsForCapturedValues {
       @Test
       public void testAllFilesPresentInFieldsForCapturedValues() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9650,7 +9649,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ForLoop {
       @Test
       public void testAllFilesPresentInForLoop() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -9821,7 +9820,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInArrayWithIndex {
         @Test
         public void testAllFilesPresentInForInArrayWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9861,7 +9860,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInCharSequenceWithIndex {
         @Test
         public void testAllFilesPresentInForInCharSequenceWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9907,7 +9906,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInIndices {
         @Test
         public void testAllFilesPresentInForInIndices() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIndices"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIndices"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -9971,7 +9970,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInIterableWithIndex {
         @Test
         public void testAllFilesPresentInForInIterableWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInIterableWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10017,7 +10016,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInProgressionWithIndex {
         @Test
         public void testAllFilesPresentInForInProgressionWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInProgressionWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInProgressionWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10099,7 +10098,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInRangeUntil {
         @Test
         public void testAllFilesPresentInForInRangeUntil() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10163,7 +10162,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInRangeWithUpperBoundMinus1 {
         @Test
         public void testAllFilesPresentInForInRangeWithUpperBoundMinus1() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10287,7 +10286,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInReversed {
         @Test
         public void testAllFilesPresentInForInReversed() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInReversed"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10375,7 +10374,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInSequenceWithIndex {
         @Test
         public void testAllFilesPresentInForInSequenceWithIndex() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInSequenceWithIndex"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10427,7 +10426,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ForInUntil {
         @Test
         public void testAllFilesPresentInForInUntil() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInUntil"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10491,7 +10490,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Stepped {
         @Test
         public void testAllFilesPresentInStepped() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/stepped"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10585,7 +10584,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Unsigned {
         @Test
         public void testAllFilesPresentInUnsigned() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10722,7 +10721,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class HashCode {
       @Test
       public void testAllFilesPresentInHashCode() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -10744,7 +10743,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Ieee754 {
       @Test
       public void testAllFilesPresentInIeee754() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -10802,7 +10801,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -10973,7 +10972,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Property {
         @Test
         public void testAllFilesPresentInProperty() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline/property"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -10990,7 +10989,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InlineArgsInPlace {
       @Test
       public void testAllFilesPresentInInlineArgsInPlace() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineArgsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11018,7 +11017,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11460,7 +11459,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InnerClasses {
       @Test
       public void testAllFilesPresentInInnerClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/innerClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11500,7 +11499,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInInterfaces() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/interfaces"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/interfaces"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11552,7 +11551,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Intrinsics {
       @Test
       public void testAllFilesPresentInIntrinsics() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11580,7 +11579,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class IntrinsicsCompare {
       @Test
       public void testAllFilesPresentInIntrinsicsCompare() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsCompare"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsCompare"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11626,7 +11625,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class IntrinsicsTrim {
       @Test
       public void testAllFilesPresentInIntrinsicsTrim() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsTrim"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsicsTrim"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11660,7 +11659,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Invokedynamic {
       @Test
       public void testAllFilesPresentInInvokedynamic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11694,7 +11693,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Jvm8 {
       @Test
       public void testAllFilesPresentInJvm8() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -11703,7 +11702,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class HashCode {
         @Test
         public void testAllFilesPresentInHashCode() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/hashCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -11725,7 +11724,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class JvmDefault {
         @Test
         public void testAllFilesPresentInJvmDefault() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -11734,7 +11733,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class AllCompatibility {
           @Test
           public void testAllFilesPresentInAllCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -11776,7 +11775,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LazyCodegen {
       @Test
       public void testAllFilesPresentInLazyCodegen() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lazyCodegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11822,7 +11821,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LineNumbers {
       @Test
       public void testAllFilesPresentInLineNumbers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -11922,7 +11921,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LocalInitializationLVT {
       @Test
       public void testAllFilesPresentInLocalInitializationLVT() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/localInitializationLVT"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/localInitializationLVT"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12046,7 +12045,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Mangling {
       @Test
       public void testAllFilesPresentInMangling() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/mangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/mangling"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12068,7 +12067,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12096,7 +12095,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class NotNullAssertions {
       @Test
       public void testAllFilesPresentInNotNullAssertions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12178,7 +12177,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class NullCheckOptimization {
       @Test
       public void testAllFilesPresentInNullCheckOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12337,7 +12336,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class LocalLateinit {
         @Test
         public void testAllFilesPresentInLocalLateinit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization/localLateinit"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -12366,7 +12365,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Objects {
       @Test
       public void testAllFilesPresentInObjects() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/objects"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12382,7 +12381,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class OptimizedDelegatedProperties {
       @Test
       public void testAllFilesPresentInOptimizedDelegatedProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12422,7 +12421,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class OuterClass {
       @Test
       public void testAllFilesPresentInOuterClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/outerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/outerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12438,7 +12437,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ParameterlessMain {
       @Test
       public void testAllFilesPresentInParameterlessMain() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12496,7 +12495,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12517,7 +12516,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Lateinit {
         @Test
         public void testAllFilesPresentInLateinit() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -12540,7 +12539,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Ranges {
       @Test
       public void testAllFilesPresentInRanges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ranges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ranges"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12628,7 +12627,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12680,7 +12679,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Statements {
       @Test
       public void testAllFilesPresentInStatements() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/statements"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/statements"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12738,7 +12737,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class StaticFields {
       @Test
       public void testAllFilesPresentInStaticFields() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12760,7 +12759,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class StoreStackBeforeInline {
       @Test
       public void testAllFilesPresentInStoreStackBeforeInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/storeStackBeforeInline"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -12806,7 +12805,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class StringOperations {
       @Test
       public void testAllFilesPresentInStringOperations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/stringOperations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/stringOperations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13026,7 +13025,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class TemporaryVals {
       @Test
       public void testAllFilesPresentInTemporaryVals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/temporaryVals"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/temporaryVals"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13096,7 +13095,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ToArray {
       @Test
       public void testAllFilesPresentInToArray() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/toArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/toArray"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13112,7 +13111,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class UnsignedTypes {
       @Test
       public void testAllFilesPresentInUnsignedTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13182,7 +13181,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ValueClasses {
       @Test
       public void testAllFilesPresentInValueClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13234,7 +13233,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Varargs {
       @Test
       public void testAllFilesPresentInVarargs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/varargs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/varargs"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13250,7 +13249,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class When {
       @Test
       public void testAllFilesPresentInWhen() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/when"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13416,7 +13415,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class WhenEnumOptimization {
       @Test
       public void testAllFilesPresentInWhenEnumOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenEnumOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenEnumOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13510,7 +13509,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class WhenStringOptimization {
       @Test
       public void testAllFilesPresentInWhenStringOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenStringOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/whenStringOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -13599,7 +13598,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
     @Test
     public void testAllFilesPresentInBytecodeListing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -13860,7 +13859,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14007,7 +14006,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Repeatable {
         @Test
         public void testAllFilesPresentInRepeatable() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations/repeatable"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -14072,7 +14071,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
     }
 
@@ -14088,7 +14087,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInCollectionStubs() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14301,7 +14300,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class AbstractStubSignatures {
         @Test
         public void testAllFilesPresentInAbstractStubSignatures() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -14473,7 +14472,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ToArray {
         @Test
         public void testAllFilesPresentInToArray() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs/toArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs/toArray"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -14502,7 +14501,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14529,7 +14528,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class FromKEEP {
         @Test
         public void testAllFilesPresentInFromKEEP() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/contextReceivers/fromKEEP"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -14570,7 +14569,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Coroutines {
       @Test
       public void testAllFilesPresentInCoroutines() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14633,7 +14632,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Spilling {
         @Test
         public void testAllFilesPresentInSpilling() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines/spilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines/spilling"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -14686,7 +14685,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DefaultArguments {
       @Test
       public void testAllFilesPresentInDefaultArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14714,7 +14713,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class DelegatedProperty {
       @Test
       public void testAllFilesPresentInDelegatedProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14742,7 +14741,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Deprecated {
       @Test
       public void testAllFilesPresentInDeprecated() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14812,7 +14811,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -14899,7 +14898,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class EnclosingInfo {
         @Test
         public void testAllFilesPresentInEnclosingInfo() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -14946,7 +14945,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class InlineClasses {
       @Test
       public void testAllFilesPresentInInlineClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15141,7 +15140,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class DefaultInterfaceMembers {
         @Test
         public void testAllFilesPresentInDefaultInterfaceMembers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -15175,7 +15174,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class InlineCollection {
         @Test
         public void testAllFilesPresentInInlineCollection() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -15275,7 +15274,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class InlineCollectionOfInlineClass {
         @Test
         public void testAllFilesPresentInInlineCollectionOfInlineClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -15375,7 +15374,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class ReturnResult {
         @Test
         public void testAllFilesPresentInReturnResult() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/returnResult"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/returnResult"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -15421,7 +15420,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class StdlibManglingIn1430 {
         @Test
         public void testAllFilesPresentInStdlibManglingIn1430() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -15438,7 +15437,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Jvm8 {
       @Test
       public void testAllFilesPresentInJvm8() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -15447,7 +15446,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Defaults {
         @Test
         public void testAllFilesPresentInDefaults() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Nested
@@ -15456,7 +15455,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class DefaultCompatibilityBridges {
           @Test
           public void testAllFilesPresentInDefaultCompatibilityBridges() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/defaultCompatibilityBridges"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -15478,7 +15477,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Disable {
           @Test
           public void testAllFilesPresentInDisable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/disable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/disable"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -15530,7 +15529,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class Enable {
           @Test
           public void testAllFilesPresentInEnable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -15635,7 +15634,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
           public class Specialization {
             @Test
             public void testAllFilesPresentInSpecialization() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable/specialization"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -15658,7 +15657,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         public class NoCompatibility {
           @Test
           public void testAllFilesPresentInNoCompatibility() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -15724,7 +15723,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class JvmStatic {
       @Test
       public void testAllFilesPresentInJvmStatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15758,7 +15757,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class LocalFunctions {
       @Test
       public void testAllFilesPresentInLocalFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/localFunctions"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15798,7 +15797,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Main {
       @Test
       public void testAllFilesPresentInMain() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/main"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/main"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15832,7 +15831,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class MultifileClasses {
       @Test
       public void testAllFilesPresentInMultifileClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15872,7 +15871,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15888,7 +15887,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class NullabilityAnnotations {
       @Test
       public void testAllFilesPresentInNullabilityAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -15934,7 +15933,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Properties {
       @Test
       public void testAllFilesPresentInProperties() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -15943,7 +15942,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class BackingField {
         @Test
         public void testAllFilesPresentInBackingField() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -15960,7 +15959,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Sam {
       @Test
       public void testAllFilesPresentInSam() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/sam"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -16108,7 +16107,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class Sealed {
       @Test
       public void testAllFilesPresentInSealed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/sealed"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -16184,7 +16183,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
       @Test
       public void testAllFilesPresentInSpecialBridges() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -16277,7 +16276,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       public class Signatures {
         @Test
         public void testAllFilesPresentInSignatures() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges/signatures"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges/signatures"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -16348,7 +16347,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ValueClasses {
       @Test
       public void testAllFilesPresentInValueClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -16371,7 +16370,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
   public class ComposeLike {
     @Test
     public void testAllFilesPresentInComposeLike() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLike"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLike"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -16399,7 +16398,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
   public class ComposeLikeBytecodeText {
     @Test
     public void testAllFilesPresentInComposeLikeBytecodeText() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLikeBytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLikeBytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -16433,7 +16432,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
 
     @Test
     public void testAllFilesPresentInScript() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
     }
 
     @Test
@@ -16640,7 +16639,7 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     public class ScriptInstanceCapturing {
       @Test
       public void testAllFilesPresentInScriptInstanceCapturing() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/script/scriptInstanceCapturing"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
       }
 
       @Test

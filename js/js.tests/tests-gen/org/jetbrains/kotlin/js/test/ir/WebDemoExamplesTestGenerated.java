@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class WebDemoExamplesTestGenerated extends AbstractWebDemoExamplesTest {
   @Test
   public void testAllFilesPresentInWebDemoExamples() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/webDemoExamples"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/webDemoExamples"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

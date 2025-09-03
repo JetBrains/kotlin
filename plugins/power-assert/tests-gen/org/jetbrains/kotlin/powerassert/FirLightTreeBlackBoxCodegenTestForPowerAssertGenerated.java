@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.powerassert;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert {
   @Test
   public void testAllFilesPresentInCodegen() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
   @Test
@@ -79,7 +78,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Arithmetic {
     @Test
     public void testAllFilesPresentInArithmetic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/arithmetic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/arithmetic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -143,7 +142,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Boolean {
     @Test
     public void testAllFilesPresentInBoolean() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/boolean"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/boolean"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -207,7 +206,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/callableReference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/callableReference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -265,7 +264,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Cast {
     @Test
     public void testAllFilesPresentInCast() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/cast"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/cast"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -305,7 +304,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Dbg {
     @Test
     public void testAllFilesPresentInDbg() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/dbg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/dbg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -351,7 +350,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Expressions {
     @Test
     public void testAllFilesPresentInExpressions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/expressions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -433,7 +432,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Format {
     @Test
     public void testAllFilesPresentInFormat() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/format"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/format"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -479,7 +478,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Function {
     @Test
     public void testAllFilesPresentInFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/function"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/function"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -513,7 +512,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Infix {
     @Test
     public void testAllFilesPresentInInfix() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/infix"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/infix"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -679,7 +678,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Junit5 {
     @Test
     public void testAllFilesPresentInJunit5() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/junit5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/junit5"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -719,7 +718,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Kotlin_test {
     @Test
     public void testAllFilesPresentInKotlin_test() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/kotlin-test"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/kotlin-test"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -801,7 +800,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Lambda {
     @Test
     public void testAllFilesPresentInLambda() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/lambda"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/lambda"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -835,7 +834,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Nullsafe {
     @Test
     public void testAllFilesPresentInNullsafe() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/nullsafe"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/nullsafe"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -863,7 +862,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Operator {
     @Test
     public void testAllFilesPresentInOperator() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/operator"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/operator"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -951,7 +950,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Parameters {
     @Test
     public void testAllFilesPresentInParameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -991,7 +990,7 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   public class Property {
     @Test
     public void testAllFilesPresentInProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/property"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/property"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
