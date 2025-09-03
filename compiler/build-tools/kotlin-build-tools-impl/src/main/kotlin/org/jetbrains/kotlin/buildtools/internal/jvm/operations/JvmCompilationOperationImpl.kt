@@ -126,9 +126,10 @@ internal class JvmCompilationOperationImpl(
                 val aggregatedIcConfigurationOptions =
                     aggregatedIcConfiguration.options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
-                val requestedCompilationResults = arrayOf(
+                val requestedCompilationResults = listOfNotNull(
                     CompilationResultCategory.IC_COMPILE_ITERATION.code,
-                )
+                    CompilationResultCategory.BUILD_METRICS.code.takeIf { this[XX_KGP_METRICS_COLLECTOR] },
+                ).toTypedArray()
                 val classpathChanges = aggregatedIcConfiguration.classpathChanges
                 IncrementalCompilationOptions(
                     sourcesChanges,
@@ -215,13 +216,14 @@ internal class JvmCompilationOperationImpl(
         val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.options as? JvmSnapshotBasedIncrementalCompilationOptionsImpl
         val rootProjectDir = aggregatedIcConfigurationOptions?.get(ROOT_PROJECT_DIR)
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        val metricsReporter = getMetricsReporter()
         val exitCode = daemon.compile(
             sessionId,
             arguments.toArgumentStrings().toTypedArray(),
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
             DaemonCompilationResults(
-                loggerAdapter.kotlinLogger, rootProjectDir?.toFile()
+                loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
             )
         ).get()
 
@@ -235,8 +237,13 @@ internal class JvmCompilationOperationImpl(
             ExitCode.OK
         } else {
             ExitCode.COMPILATION_ERROR
-        }).asCompilationResult
-
+        }).asCompilationResult.also {
+            if (this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
+                this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
+                    ObjectOutputStream(this).writeObject(metricsReporter)
+                }.toByteArray()
+            }
+        }
     }
 
     private fun getCurrentClasspath() =
