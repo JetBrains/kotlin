@@ -373,6 +373,12 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("privateInterfaceCallable.kt")
+  public void testPrivateInterfaceCallable() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/privateInterfaceCallable.kt");
+  }
+
+  @Test
   @TestMetadata("PrivateObject.kt")
   public void testPrivateObject() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");

@@ -319,6 +319,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/OnlySecondaryConstructors.kt");
   }
 
+  @TestMetadata("privateInterfaceCallable.kt")
+  public void testPrivateInterfaceCallable() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/privateInterfaceCallable.kt");
+  }
+
   @TestMetadata("PrivateObject.kt")
   public void testPrivateObject() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
