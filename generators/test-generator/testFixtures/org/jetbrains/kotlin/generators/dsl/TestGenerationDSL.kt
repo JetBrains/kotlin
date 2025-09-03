@@ -95,9 +95,9 @@ class TestGroup(
             get() = this@TestGroup.testsRoot
 
         val testModels = ArrayList<TestClassModel>()
-        private val methodModels = mutableListOf<MethodModel>()
+        private val methodModels = mutableListOf<MethodModel<*>>()
 
-        fun method(method: MethodModel) {
+        fun method(method: MethodModel<*>) {
             methodModels += method
         }
 

@@ -11,7 +11,7 @@ open class DelegatingTestClassModel(private val delegate: TestClassModel) : Test
     override val innerTestClasses: Collection<TestClassModel>
         get() = delegate.innerTestClasses
 
-    override val methods: Collection<MethodModel>
+    override val methods: Collection<MethodModel<*>>
         get() = delegate.methods
 
     override val isEmpty: Boolean

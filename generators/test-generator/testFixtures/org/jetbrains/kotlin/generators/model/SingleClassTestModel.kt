@@ -5,6 +5,8 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresentedMethodGenerator
 import org.jetbrains.kotlin.generators.util.methodModelLocator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -23,13 +25,13 @@ class SingleClassTestModel(
     private val additionalRunnerArguments: List<String>,
     override val annotations: List<AnnotationModel>,
     override val tags: List<String>,
-    private val additionalMethods: Collection<MethodModel>,
+    private val additionalMethods: Collection<MethodModel<*>>,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
 
-    override val methods: Collection<MethodModel> by lazy {
-        val result: MutableList<MethodModel> = ArrayList()
+    override val methods: Collection<MethodModel<*>> by lazy {
+        val result: MutableList<MethodModel<*>> = ArrayList()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
         result.add(TestAllFilesPresentMethodModel())
         result.addAll(additionalMethods)
@@ -39,13 +41,13 @@ class SingleClassTestModel(
             }
             true
         }
-        result.sortedWith { o1: MethodModel, o2: MethodModel -> o1.name.compareTo(o2.name, ignoreCase = true) }
+        result.sortedWith { o1, o2 -> o1.name.compareTo(o2.name, ignoreCase = true) }
     }
 
     override val innerTestClasses: Collection<TestClassModel>
         get() = emptyList()
 
-    private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
+    private fun getTestMethodsFromFile(file: File): Collection<MethodModel<*>> {
         return methodModelLocator(
             rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, tags = emptyList()
         )
@@ -57,18 +59,17 @@ class SingleClassTestModel(
     override val dataString: String = KtTestUtil.getFilePath(rootFile)
     override val dataPathRoot: String = "\$PROJECT_ROOT"
 
-    object AllFilesPresentedMethodKind : MethodModel.Kind()
-
-    inner class TestAllFilesPresentMethodModel : MethodModel() {
+    inner class TestAllFilesPresentMethodModel : MethodModel<TestAllFilesPresentMethodModel>() {
         override val name: String = "testAllFilesPresentIn$testClassName"
+
+        override val generator: MethodGenerator<TestAllFilesPresentMethodModel>
+            get() = SingleClassTestModelAllFilesPresentedMethodGenerator
+
         override val dataString: String?
             get() = null
 
         val classModel: SingleClassTestModel
             get() = this@SingleClassTestModel
-
-        override val kind: Kind
-            get() = AllFilesPresentedMethodKind
 
         override val tags: List<String>
             get() = emptyList()

@@ -7,16 +7,12 @@ package org.jetbrains.kotlin.generators.impl
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.SingleClassTestModel
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 
 object SingleClassTestModelAllFilesPresentedMethodGenerator : MethodGenerator<SingleClassTestModel.TestAllFilesPresentMethodModel>() {
-    override val kind: MethodModel.Kind
-        get() = SingleClassTestModel.AllFilesPresentedMethodKind
-
     override fun generateSignature(method: SingleClassTestModel.TestAllFilesPresentMethodModel, p: Printer) {
         generateDefaultSignature(method, p)
     }

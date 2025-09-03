@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.generators.dsl.junit5
 
 import org.jetbrains.kotlin.generators.AbstractTestGenerator
-import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.dsl.TestGroup
-import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPresentMethodGenerator
-import org.jetbrains.kotlin.generators.impl.SimpleTestMethodGenerator
-import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresentedMethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
@@ -22,15 +18,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
 
-private val METHOD_GENERATORS = listOf(
-    SimpleTestClassModelTestAllFilesPresentMethodGenerator,
-    SimpleTestMethodGenerator,
-    SingleClassTestModelAllFilesPresentedMethodGenerator,
-)
-
-class TestGeneratorForJUnit5(
-    additionalMethodGenerators: List<MethodGenerator<Nothing>>
-) : AbstractTestGenerator(METHOD_GENERATORS + additionalMethodGenerators) {
+object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
     private val GENERATED_FILES = HashSet<String>()
 
@@ -81,18 +69,16 @@ class TestGeneratorForJUnit5(
             testClass.suiteTestClassName,
             testClass.baseTestClassName,
             testClass.testModels,
-            methodGenerators,
             mainClassName,
         )
         return generatorInstance.generateAndSave(dryRun)
     }
 
-    private inner class TestGeneratorInstance(
+    private class TestGeneratorInstance(
         baseDir: String,
         suiteTestClassFqName: String,
         baseTestClassFqName: String,
         private val testClassModels: Collection<TestClassModel>,
-        private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>>,
         private val mainClassName: String?
     ) {
         private val baseTestClassPackage: String = baseTestClassFqName.substringBeforeLast('.', "")
@@ -171,7 +157,7 @@ class TestGeneratorForJUnit5(
                     override val innerTestClasses: Collection<TestClassModel>
                         get() = testClassModels
 
-                    override val methods: Collection<MethodModel>
+                    override val methods: Collection<MethodModel<*>>
                         get() = emptyList()
 
                     override val isEmpty: Boolean
@@ -303,34 +289,22 @@ class TestGeneratorForJUnit5(
             p.println("}")
         }
 
-        private fun generateTestMethod(p: Printer, methodModel: MethodModel) {
-            val generator = methodGenerators.getValue(methodModel.kind)
-
+        private fun generateTestMethod(p: Printer, methodModel: MethodModel<*>) {
             if (methodModel.isTestMethod()) {
                 p.generateTestAnnotation()
                 p.generateTags(methodModel)
                 p.generateMetadata(methodModel)
             }
-            generator.hackyGenerateSignature(methodModel, p)
+            methodModel.generateSignature(p)
             p.printWithNoIndent(" {")
             p.println()
 
             p.pushIndent()
 
-            generator.hackyGenerateBody(methodModel, p)
+            methodModel.generateBody(p)
 
             p.popIndent()
             p.println("}")
-        }
-
-        private fun <T : MethodModel> MethodGenerator<T>.hackyGenerateBody(method: MethodModel, p: Printer) {
-            @Suppress("UNCHECKED_CAST")
-            generateBody(method as T, p)
-        }
-
-        private fun <T : MethodModel> MethodGenerator<T>.hackyGenerateSignature(method: MethodModel, p: Printer) {
-            @Suppress("UNCHECKED_CAST")
-            generateSignature(method as T, p)
         }
     }
 
