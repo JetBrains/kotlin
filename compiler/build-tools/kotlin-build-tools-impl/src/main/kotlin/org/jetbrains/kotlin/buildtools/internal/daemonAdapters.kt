@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
@@ -70,7 +73,11 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
         }
     }
 
-internal class DaemonCompilationResults(private val kotlinLogger: KotlinLogger, private val rootProjectDir: File?) : CompilationResults,
+internal class DaemonCompilationResults(
+    private val kotlinLogger: KotlinLogger,
+    private val rootProjectDir: File?,
+    private val buildMetricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
         LoopbackNetworkInterface.clientLoopbackSocketFactory,
@@ -87,6 +94,9 @@ internal class DaemonCompilationResults(private val kotlinLogger: KotlinLogger, 
         // TODO propagate the values to the caller via callbacks, requires to make metrics a part of the API
         when (compilationResultCategory) {
             CompilationResultCategory.IC_COMPILE_ITERATION.code -> kotlinLogger.debug(value as? CompileIterationResult, rootProjectDir)
+            CompilationResultCategory.BUILD_METRICS.code -> @Suppress("UNCHECKED_CAST") (value as? BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>)?.let {
+                buildMetricsReporter.addMetrics(it)
+            }
             else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
         }
     }
