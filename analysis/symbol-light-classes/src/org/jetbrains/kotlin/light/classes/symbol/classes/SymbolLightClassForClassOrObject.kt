@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
@@ -219,9 +220,20 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             )
         }
 
-        classSymbol.delegatedMemberScope.callables.forEach { functionSymbol ->
-            if (functionSymbol is KaNamedFunctionSymbol) {
-                createDelegateMethod(functionSymbol)
+        classSymbol.delegatedMemberScope.callables.forEach { callableSymbol ->
+            when (callableSymbol) {
+                is KaNamedFunctionSymbol -> {
+                    createDelegateMethod(functionSymbol = callableSymbol)
+                }
+                is KaKotlinPropertySymbol -> {
+                    createPropertyAccessors(
+                        lightClass = this@SymbolLightClassForClassOrObject,
+                        result = result,
+                        declaration = callableSymbol,
+                        isTopLevel = false
+                    )
+                }
+                else -> {}
             }
         }
     }

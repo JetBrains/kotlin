@@ -594,6 +594,9 @@ internal class SymbolLightAccessorMethod private constructor(
                 KaSymbolOrigin.SOURCE_MEMBER_GENERATED ->
                     LightMemberOriginForDeclaration(originalElement, originKind = JvmDeclarationOriginKind.OTHER)
 
+                KaSymbolOrigin.DELEGATED ->
+                    LightMemberOriginForDeclaration(originalElement, originKind = JvmDeclarationOriginKind.DELEGATION)
+
                 else -> null
             }
         }
