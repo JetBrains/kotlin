@@ -89,11 +89,6 @@ private val removeImplicitExportsFromCollections = makeIrModulePhase(
     name = "RemoveImplicitExportsFromCollections",
 )
 
-private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
-    ::ExcludeSyntheticDeclarationsFromExportLowering,
-    name = "ExcludeSyntheticDeclarationsFromExportLowering",
-)
-
 private val jsStaticLowering = makeIrModulePhase(
     ::JsStaticLowering,
     name = "JsStaticLowering",
@@ -470,6 +465,18 @@ private val ignoreOriginalSuspendFunctionsThatWereExportedLowering = makeIrModul
     prerequisite = setOf(prepareSuspendFunctionsForExportLowering, replaceExportedSuspendFunctionCallsWithItsBridge)
 )
 
+private val implicitlyExportedDeclarationsMarkingLowering = makeIrModulePhase(
+    ::ImplicitlyExportedDeclarationsMarkingLowering,
+    name = "ImplicitlyExportedDeclarationsMarkingLowering",
+    prerequisite = setOf(prepareSuspendFunctionsForExportLowering, prepareCollectionsToExportLowering)
+)
+
+private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
+    ::ExcludeSyntheticDeclarationsFromExportLowering,
+    name = "ExcludeSyntheticDeclarationsFromExportLowering",
+    prerequisite = setOf(implicitlyExportedDeclarationsMarkingLowering)
+)
+
 private val privateMembersLoweringPhase = makeIrModulePhase(
     ::PrivateMembersLowering,
     name = "PrivateMembersLowering",
@@ -708,11 +715,6 @@ private val escapedIdentifiersLowering = makeIrModulePhase(
     name = "EscapedIdentifiersLowering",
 )
 
-private val implicitlyExportedDeclarationsMarkingLowering = makeIrModulePhase(
-    ::ImplicitlyExportedDeclarationsMarkingLowering,
-    name = "ImplicitlyExportedDeclarationsMarkingLowering",
-)
-
 private val cleanupLoweringPhase = makeIrModulePhase<JsIrBackendContext>(
     { CleanupLowering() },
     name = "CleanupLowering",
@@ -780,6 +782,7 @@ fun getJsLowerings(
     replaceExportedSuspendFunctionCallsWithItsBridge,
     ignoreOriginalSuspendFunctionsThatWereExportedLowering,
     prepareCollectionsToExportLowering,
+    implicitlyExportedDeclarationsMarkingLowering,
     preventExportOfSyntheticDeclarationsLowering,
     jsStaticLowering,
     inventNamesForLocalClassesPhase,
@@ -866,7 +869,6 @@ fun getJsLowerings(
     es6ConstructorUsageLowering,
     callsLoweringPhase,
     escapedIdentifiersLowering,
-    implicitlyExportedDeclarationsMarkingLowering,
     removeImplicitExportsFromCollections,
     mainFunctionCallWrapperLowering,
     cleanupLoweringPhase,

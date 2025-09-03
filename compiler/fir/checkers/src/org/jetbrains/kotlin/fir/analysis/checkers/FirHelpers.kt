@@ -880,6 +880,11 @@ fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: Fi
     return expression?.value as? String
 }
 
+fun FirBasedSymbol<*>.getAnnotationBooleanParameter(classId: ClassId, session: FirSession): Boolean? {
+    val expression = getAnnotationFirstArgument(classId, session) as? FirLiteralExpression
+    return expression?.value as? Boolean
+}
+
 context(context: CheckerContext)
 fun FirElement.isLhsOfAssignment(): Boolean {
     if (this !is FirQualifiedAccessExpression) return false

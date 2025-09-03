@@ -982,6 +982,40 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/tuples")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class Tuples {
+    @Test
+    public void testAllFilesPresentInTuples() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/tuples"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("tuples.kt")
+    public void testTuples() {
+      runTest("js/js.translator/testData/typescript-export/js/tuples/tuples.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/tuples-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  public class Tuples_in_exported_file {
+    @Test
+    public void testAllFilesPresentInTuples_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/tuples-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("tuples.kt")
+    public void testTuples() {
+      runTest("js/js.translator/testData/typescript-export/js/tuples-in-exported-file/tuples.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/visibility")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
