@@ -37,14 +37,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface VisibilityPolicy {
-    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-        DescriptorVisibilities.PRIVATE
+    fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
+    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility = DescriptorVisibilities.PRIVATE
+    fun forCapturedField(value: IrValueSymbol): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
-    fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
-        DescriptorVisibilities.PRIVATE
-
-    fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
-        DescriptorVisibilities.PRIVATE
+    fun forSimpleFunction(declaration: IrSimpleFunction, ownerIsLocal: Boolean): DescriptorVisibility =
+        if (ownerIsLocal) DescriptorVisibilities.LOCAL else DescriptorVisibilities.PRIVATE
 
     companion object {
         val DEFAULT = object : VisibilityPolicy {}
@@ -828,7 +826,7 @@ open class LocalDeclarationsLowering(
             val newDeclaration = context.irFactory.buildFun {
                 updateFrom(oldDeclaration)
                 name = oldDeclaration.inventedNameForLocalFunction ?: oldDeclaration.name
-                visibility = if (owner.isLocal) DescriptorVisibilities.LOCAL else DescriptorVisibilities.PRIVATE
+                visibility = visibilityPolicy.forSimpleFunction(oldDeclaration, owner.isLocal)
                 modality = Modality.FINAL
             }
 

@@ -1,4 +1,3 @@
-// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization, -IrCrossModuleInlinerBeforeKlibSerialization
 // NO_CHECK_LAMBDA_INLINING
 
 // FILE: lib.kt

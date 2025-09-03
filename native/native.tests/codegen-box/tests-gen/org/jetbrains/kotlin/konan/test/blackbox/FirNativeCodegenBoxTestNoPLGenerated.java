@@ -20028,12 +20028,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Test
-        @TestMetadata("liftThroughFunObjectLambdaWithInlinedFunInKlib.kt")
-        public void testLiftThroughFunObjectLambdaWithInlinedFunInKlib() {
-          runTest("compiler/testData/codegen/box/functions/localFunctions/liftThroughFunObjectLambdaWithInlinedFunInKlib.kt");
-        }
-
-        @Test
         @TestMetadata("localExtensionOnNullableParameter.kt")
         public void testLocalExtensionOnNullableParameter() {
           runTest("compiler/testData/codegen/box/functions/localFunctions/localExtensionOnNullableParameter.kt");

@@ -18781,12 +18781,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
-      @TestMetadata("liftThroughFunObjectLambdaWithInlinedFunInKlib.kt")
-      public void testLiftThroughFunObjectLambdaWithInlinedFunInKlib() {
-        runTest("compiler/testData/codegen/box/functions/localFunctions/liftThroughFunObjectLambdaWithInlinedFunInKlib.kt");
-      }
-
-      @Test
       @TestMetadata("localExtensionOnNullableParameter.kt")
       public void testLocalExtensionOnNullableParameter() {
         runTest("compiler/testData/codegen/box/functions/localFunctions/localExtensionOnNullableParameter.kt");
