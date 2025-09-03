@@ -211,8 +211,6 @@ private class TestGeneratorImplInstance(
         var first = true
 
         for (methodModel in testMethods) {
-            if (!methodModel.shouldBeGenerated()) continue
-
             if (first) {
                 first = false
             } else {
