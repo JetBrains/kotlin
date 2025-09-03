@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 
 /**
@@ -96,19 +98,23 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: Kotlin
 
 private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
-        .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
+        .mapNotNull { taskName ->
+            if (taskName in tasks.names) {
+                tasks.named<CInteropProcess>(taskName)
+            } else null
+        }
 
     if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
         // this part of import isn't ready for working with unpackaged klibs: KTIJ-31053
         return project.filesProvider {
             cinteropTasks.map { interopTask ->
                 compilation.maybeCreateKlibPackingTask(
-                    interopTask.settings.classifier,
-                    interopTask.klibDirectory,
+                    interopTask.get().settings.classifier,
+                    interopTask.map { it.klibDirectory.get() },
                 )
             }
         }
     }
-    return project.filesProvider { cinteropTasks.map { it.klibFile } }
+    return project.filesProvider { cinteropTasks.map { it.get().klibFile } }
         .builtBy(*cinteropTasks.toTypedArray())
 }
