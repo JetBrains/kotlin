@@ -586,6 +586,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             type = jsRelatedSymbols.jsAnyType
             visibility = DescriptorVisibilities.PRIVATE
             isFinal = true
+        }.apply {
+            val builder = context.createIrBuilder(symbol)
+            annotations += builder.irCallConstructor(symbols.managedExternrefConstructor, typeArguments = emptyList())
         }
 
         val closureClassConstructor = closureClass.addConstructor {

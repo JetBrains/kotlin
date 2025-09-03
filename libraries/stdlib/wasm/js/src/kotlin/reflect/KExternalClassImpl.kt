@@ -17,7 +17,10 @@ private fun getJsClassName(jsKlass: JsAny): String? =
 private fun instanceOf(ref: JsAny, jsKlass: JsAny): Boolean =
     js("ref instanceof jsKlass")
 
-internal class KExternalClassImpl<T : Any> @WasmPrimitiveConstructor constructor(private val jsConstructor: JsAny) : KClass<T> {
+internal class KExternalClassImpl<T : Any> @WasmPrimitiveConstructor constructor(
+    @ManagedExternref
+    private val jsConstructor: JsAny
+) : KClass<T> {
     override val simpleName: String? get() = getJsClassName(jsConstructor)
     override val qualifiedName: String? get() = null
 

@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+private const val HIGH_32_BITS_MASK: ULong = 0xFFFF_FFFF_0000_0000uL
+private const val LOW_32_BITS_MASK: ULong = 0x0000_0000_FFFF_FFFFuL
+
 class BodyGenerator(
     private val backendContext: WasmBackendContext,
     private val wasmFileCodegenContext: WasmFileCodegenContext,
@@ -554,6 +557,9 @@ class BodyGenerator(
                 // Doing nothing.
             } else {
                 generateInstanceFieldAccess(field, location)
+                if (useSharedObjects && field.hasManagedExternrefAnnotation()) {
+                    handleManagedExternRefLoad(location)
+                }
             }
         } else {
             body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalField(field.symbol), location)
@@ -592,6 +598,8 @@ class BodyGenerator(
         if (receiver != null) {
             generateExpression(receiver)
             generateExpression(expression.value)
+            if (useSharedObjects && field.hasManagedExternrefAnnotation())
+                handleManagedExternRefStore(location)
             body.buildStructSet(
                 struct = wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
                 fieldId = getStructFieldRef(field),
@@ -658,7 +666,11 @@ class BodyGenerator(
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
-            expression.arguments.forEach { generateExpression(it!!) }
+            (expression.arguments zip klass.fields.filterNot { it.isStatic }.asIterable()).forEach {
+                generateExpression(it.first!!)
+                if (useSharedObjects && it.second.hasManagedExternrefAnnotation())
+                    handleManagedExternRefStore(location)
+            }
 
             body.buildStructNew(wasmGcType, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
@@ -667,6 +679,41 @@ class BodyGenerator(
 
         body.buildRefNull(WasmHeapType.Simple.None, location) // this = null
         generateCall(expression)
+    }
+
+    private fun handleManagedExternRefStore(location: SourceLocation) {
+        // stack: [externrefToStore, ...]
+        body.buildConstI32(1, location)
+        body.buildInstr(WasmOp.TABLE_GROW, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
+        // TODO maybe process errors (grows failed) by checking return value (-1 means error)
+        body.buildInstr(WasmOp.I64_EXTEND_I32_U, location)
+        body.buildGetGlobal(wasmFileCodegenContext.referenceModuleIdMaskGlobal(), location)
+        body.buildInstr(WasmOp.I64_OR, location)
+        // stack: [managedRefDesc(i64)=[moduleId(i32), externrefTableIdx(i32)], ...]
+    }
+
+    private fun handleManagedExternRefLoad(location: SourceLocation) {
+        // stack: [managedRefDesc(i64)=[moduleId(i32), externrefTableIdx(i32)], ...]
+        val tmpDescLocal = functionContext.referenceLocal(SyntheticLocalType.MANAGEDREF_DESC)
+        // compare stored module id with the current one
+        body.buildTeeLocal(tmpDescLocal, location)
+        body.buildConstI64(HIGH_32_BITS_MASK.toLong(), location)
+        body.buildInstr(WasmOp.I64_AND, location)
+        body.buildGetGlobal(wasmFileCodegenContext.referenceModuleIdMaskGlobal(), location)
+        body.buildInstr(WasmOp.I64_EQ, location)
+        // if not equal, report an error (NPE for now, may be changed to something else eventually)
+        body.buildIf("equalModuleId", WasmExternRef)
+        body.buildGetLocal(tmpDescLocal, location)
+        body.buildConstI64(LOW_32_BITS_MASK.toLong(), location)
+        body.buildInstr(WasmOp.I64_AND, location)
+        body.buildInstr(WasmOp.I32_WRAP_I64, location)
+        // stack: [externrefTableIdx(i32), ...]
+        body.buildInstr(WasmOp.TABLE_GET, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
+        // stack: [externref, ...]
+        body.buildElse(location)
+        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.throwNullPointerException), location)
+        body.buildUnreachable(location)
+        body.buildEnd(location)
     }
 
     private fun generateAnyParameters(klassSymbol: IrClassSymbol, location: SourceLocation) {
@@ -698,7 +745,7 @@ class BodyGenerator(
             val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
             irFields.forEachIndexed { index, field ->
                 if (index > 0) {
-                    generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), body)
+                    generateDefaultInitializerForType(wasmModuleTypeTransformer.transformInstanceFieldType(field), body)
                 }
             }
             body.buildStructNew(wasmFileCodegenContext.referenceGcType(parentClass.symbol), location)

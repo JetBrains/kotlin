@@ -238,6 +238,7 @@ fun compileWasm(
         }
 
         val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)
+        val useSharedObjects = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
         jsUninstantiatedWrapper = generateAsyncJsWrapper(
             jsModuleImports,
@@ -246,6 +247,7 @@ fun compileWasm(
             "./$baseFileName.wasm",
             jsModuleAndQualifierReferences,
             useJsTag,
+            useSharedObjects,
             baseFileName,
             singleModulePreloadJs,
         )
@@ -311,6 +313,7 @@ fun generateAsyncJsWrapper(
     wasmFilePath: String,
     jsModuleAndQualifierReferences: Set<JsModuleAndQualifierReference>,
     useJsTag: Boolean,
+    useSharedObjects: Boolean,
     baseFileName: String,
     singleModulePreloadJs: String?,
 ): String {
@@ -351,6 +354,11 @@ fun generateAsyncJsWrapper(
             "    imports[$moduleSpecifier] = imports[$moduleSpecifier] ?? (await (await import('./${import.fileName}.uninstantiated.mjs')).instantiate(imports, true)).exports;\n"
         }
 
+    val initExternrefTableIfNeeded = if (useSharedObjects) """
+    const externrefTable = new WebAssembly.Table({ element: "externref", initial: 1 });"""
+    else ""
+    val importExternrefTableIfNeeded = if (useSharedObjects) "            externrefTable: externrefTable," else ""
+
     val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
         .map {
             val module = it.module
@@ -378,6 +386,8 @@ fun generateAsyncJsWrapper(
     val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
 
     return """
+let moduleInstanceCounter = 0;
+
 export async function instantiate(imports={}, runInitializer=true) {
     imports['_cachedJsObjects_'] = imports['_cachedJsObjects_'] ?? new WeakMap();
     const cachedJsObjects = imports['_cachedJsObjects_'];
@@ -403,6 +413,8 @@ $referencesToQualifiedAndImportedDeclarations
     }const wasmJsTag = ${if (useJsTag) "WebAssembly.JSTag" else "void 0"};
     const wasmTag = wasmJsTag ?? new WebAssembly.Tag({ parameters: ['externref'] });
 
+    const moduleInstanceId = moduleInstanceCounter++;
+
     const js_code = {
 $jsCodeBodyIndented
     }
@@ -427,11 +439,14 @@ $jsCodeBodyIndented
     }
 
     const wasmFilePath = $pathJsStringLiteral;
+$initExternrefTableIfNeeded
 
     const importObject = {
         js_code,
         intrinsics: {
-            tag: wasmTag
+            tag: wasmTag,
+            moduleInstanceId: new WebAssembly.Global({ value: "i32", mutable: false }, moduleInstanceId),
+$importExternrefTableIfNeeded
         },
 $imports
 $dependenciesImports

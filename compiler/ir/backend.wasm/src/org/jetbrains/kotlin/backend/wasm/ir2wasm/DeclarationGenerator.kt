@@ -527,7 +527,7 @@ class DeclarationGenerator(
                 nameStr,
                 WasmStructFieldDeclaration(
                     name = "field",
-                    type = wasmModuleTypeTransformer.transformFieldType(wasmArrayAnnotation.type),
+                    type = wasmModuleTypeTransformer.transformFieldType(wasmArrayAnnotation.type, false),
                     isMutable = wasmArrayAnnotation.isMutable
                 )
             )
@@ -561,7 +561,7 @@ class DeclarationGenerator(
             declaration.allFields(irBuiltIns).mapTo(fields) {
                 WasmStructFieldDeclaration(
                     name = it.name.toString(),
-                    type = wasmModuleTypeTransformer.transformFieldType(it.type),
+                    type = wasmModuleTypeTransformer.transformFieldType(it.type, it.hasManagedExternrefAnnotation()),
                     isMutable = true
                 )
             }

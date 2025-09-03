@@ -18,7 +18,7 @@ internal external class JsStringRef internal constructor() : JsAny
 
 internal typealias ExternalInterfaceType = JsAny
 
-internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
+internal class JsExternalBox @WasmPrimitiveConstructor constructor(@ManagedExternref val ref: ExternalInterfaceType) {
     override fun toString(): String =
         externrefToString(ref)
 
@@ -409,3 +409,12 @@ internal fun newJsArray(): ExternalInterfaceType =
 internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
     js("array.push(element);")
 }
+
+/**
+ * Marks fields of extern ([JsAny]) type as allowed for "useSharedObjects" mode.
+ * In this mode, (unshared) extern references are put into the corresponding Wasm table, and the field
+ * actually contains an index into this table.
+ */
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.SOURCE)
+public annotation class ManagedExternref

@@ -5,6 +5,8 @@
 
 package kotlin.test
 
+import kotlin.wasm.internal.ManagedExternref
+
 internal external interface ExternalFrameworkAdapter : JsAny {
     fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
     fun test(name: String, ignored: Boolean, testFn: () -> JsAny?)
@@ -15,7 +17,7 @@ private fun createExternalFrameworkAdapter(
     testFn: (String, Boolean, () -> JsAny?) -> Unit
 ): ExternalFrameworkAdapter = js("{ return { suite: suiteFn, test: testFn } }")
 
-private class ExternalAdapterWrapper(private val externalAdapter: ExternalFrameworkAdapter) : FrameworkAdapter {
+private class ExternalAdapterWrapper(@ManagedExternref private val externalAdapter: ExternalFrameworkAdapter) : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) = externalAdapter.suite(name, ignored, suiteFn)
     override fun test(name: String, ignored: Boolean, testFn: () -> Any?) = externalAdapter.test(name, ignored, { testFn()?.toJsReference() })
 }

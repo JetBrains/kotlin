@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.utils.hasManagedExternrefAnnotation
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -216,6 +218,8 @@ open class WasmFileCodegenContext(
 
     fun referenceRttiGlobal(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
         rttiElements.globalReferences.reference(irClass.getReferenceKey())
+
+    fun referenceModuleIdMaskGlobal(): WasmSymbol<WasmGlobal> = wasmFileFragment.moduleIdMaskGlobal
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {
@@ -244,12 +248,16 @@ class WasmModuleTypeTransformer(
     private val typeTransformer =
         WasmTypeTransformer(backendContext, wasmFileCodegenContext)
 
-    fun transformType(irType: IrType): WasmType {
-        return with(typeTransformer) { irType.toWasmValueType() }
+    fun transformInstanceFieldType(field: IrField): WasmType {
+        return with(typeTransformer) { field.type.toWasmValueType(true, field.hasManagedExternrefAnnotation()) }
     }
 
-    fun transformFieldType(irType: IrType): WasmType {
-        return with(typeTransformer) { irType.toWasmFieldType() }
+    fun transformType(irType: IrType, isManagedExternrefField: Boolean = false): WasmType {
+        return with(typeTransformer) { irType.toWasmValueType(isManagedExternrefField) }
+    }
+
+    fun transformFieldType(irType: IrType, hasManagedExternrefAnnotation: Boolean): WasmType {
+        return with(typeTransformer) { irType.toWasmFieldType(hasManagedExternrefAnnotation) }
     }
 
     fun transformBoxedType(irType: IrType): WasmType {
