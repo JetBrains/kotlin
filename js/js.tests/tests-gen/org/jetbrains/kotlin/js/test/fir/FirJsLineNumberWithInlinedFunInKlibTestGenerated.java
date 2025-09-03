@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirJsLineNumberWithInlinedFunInKlibTestGenerated extends AbstractFirJsLineNumberWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInLineNumbers() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
@@ -313,7 +313,7 @@ public class FirJsLineNumberWithInlinedFunInKlibTestGenerated extends AbstractFi
   public class InlineMultiModule {
     @Test
     public void testAllFilesPresentInInlineMultiModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers/inlineMultiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/lineNumbers/inlineMultiModule"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

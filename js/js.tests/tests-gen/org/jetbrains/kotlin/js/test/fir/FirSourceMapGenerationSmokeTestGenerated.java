@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirSourceMapGenerationSmokeTestGenerated extends AbstractFirSourceMapGenerationSmokeTest {
   @Test
   public void testAllFilesPresentInSourcemap() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/sourcemap"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

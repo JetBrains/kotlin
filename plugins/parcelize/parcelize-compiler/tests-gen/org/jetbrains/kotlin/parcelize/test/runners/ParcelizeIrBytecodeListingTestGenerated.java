@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.parcelize.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class ParcelizeIrBytecodeListingTestGenerated extends AbstractParcelizeIrBytecodeListingTest {
   @Test
   public void testAllFilesPresentInCodegen() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-compiler/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

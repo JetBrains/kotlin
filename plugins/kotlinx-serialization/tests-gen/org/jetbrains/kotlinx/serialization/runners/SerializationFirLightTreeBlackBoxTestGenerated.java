@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.serialization.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
 
     @Test
     public void testAllFilesPresentInBoxIr() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -430,7 +429,7 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
 
     @Test
     public void testAllFilesPresentInFirMembers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/firMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/firMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

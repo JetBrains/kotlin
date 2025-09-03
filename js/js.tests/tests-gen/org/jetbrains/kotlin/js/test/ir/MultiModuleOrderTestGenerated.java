@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class MultiModuleOrderTestGenerated extends AbstractMultiModuleOrderTest {
   @Test
   public void testAllFilesPresentInMultiModuleOrder() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/multiModuleOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/multiModuleOrder"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

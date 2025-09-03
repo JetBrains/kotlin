@@ -24,7 +24,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   public class Main {
     @Test
     public void testAllFilesPresentInMain() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
 
     @Test
     public void testAllFilesPresentInNative() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -350,7 +350,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   public class EsModules {
     @Test
     public void testAllFilesPresentInEsModules() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "escapedIdentifiers", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, true, "jsExport", "native", "export", "escapedIdentifiers", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
     }
 
     @Nested
@@ -359,7 +359,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public class Incremental {
       @Test
       public void testAllFilesPresentInIncremental() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -375,7 +375,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -391,7 +391,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public class JsModule {
       @Test
       public void testAllFilesPresentInJsModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -485,7 +485,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public class JsName {
       @Test
       public void testAllFilesPresentInJsName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -507,7 +507,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public class Kotlin_test {
       @Test
       public void testAllFilesPresentInKotlin_test() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -571,7 +571,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     public class Main {
       @Test
       public void testAllFilesPresentInMain() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -630,7 +630,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   public class JsQualifier {
     @Test
     public void testAllFilesPresentInJsQualifier() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -676,7 +676,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"), null, true);
     }
   }
 
@@ -686,7 +686,7 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
   public class Kotlin_test {
     @Test
     public void testAllFilesPresentInKotlin_test() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test

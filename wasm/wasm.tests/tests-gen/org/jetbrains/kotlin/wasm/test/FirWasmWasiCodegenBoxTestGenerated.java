@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirWasmWasiCodegenBoxTestGenerated extends AbstractFirWasmWasiCodegenBoxTest {
   @Test
   public void testAllFilesPresentInBoxWasmWasi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmWasi"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmWasi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

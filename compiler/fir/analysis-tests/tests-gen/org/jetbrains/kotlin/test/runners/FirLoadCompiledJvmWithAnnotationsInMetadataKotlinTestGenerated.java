@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
   public class CompiledKotlin {
     @Test
     public void testAllFilesPresentInCompiledKotlin() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -33,7 +32,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -108,7 +107,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class ClassMembers {
         @Test
         public void testAllFilesPresentInClassMembers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -178,7 +177,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Classes {
         @Test
         public void testAllFilesPresentInClasses() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -278,7 +277,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class PackageMembers {
         @Test
         public void testAllFilesPresentInPackageMembers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -336,7 +335,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Parameters {
         @Test
         public void testAllFilesPresentInParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -412,7 +411,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class PropertiesWithoutBackingFields {
         @Test
         public void testAllFilesPresentInPropertiesWithoutBackingFields() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -470,7 +469,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Types {
         @Test
         public void testAllFilesPresentInTypes() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -546,7 +545,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
 
         @Test
         public void testAllFilesPresentInWithUseSiteTarget() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -581,7 +580,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Class {
       @Test
       public void testAllFilesPresentInClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -806,7 +805,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class JavaBean {
         @Test
         public void testAllFilesPresentInJavaBean() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -853,7 +852,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class ClassFun {
       @Test
       public void testAllFilesPresentInClassFun() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -893,7 +892,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class ClassObject {
       @Test
       public void testAllFilesPresentInClassObject() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -981,7 +980,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Constructor {
       @Test
       public void testAllFilesPresentInConstructor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1086,7 +1085,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Vararg {
         @Test
         public void testAllFilesPresentInVararg() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1109,7 +1108,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class ContextParameters {
       @Test
       public void testAllFilesPresentInContextParameters() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1131,7 +1130,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class ContextReceivers {
       @Test
       public void testAllFilesPresentInContextReceivers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1147,7 +1146,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Coroutines {
       @Test
       public void testAllFilesPresentInCoroutines() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1169,7 +1168,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class DataClass {
       @Test
       public void testAllFilesPresentInDataClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1203,7 +1202,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class FromLoadJava {
       @Test
       public void testAllFilesPresentInFromLoadJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1416,7 +1415,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
 
         @Test
         public void testAllFilesPresentInKotlinSignature() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1521,7 +1520,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
 
           @Test
           public void testAllFilesPresentInError() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -1687,7 +1686,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
         public class Propagation {
           @Test
           public void testAllFilesPresentInPropagation() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), null, true);
           }
 
           @Test
@@ -1702,7 +1701,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
           public class Parameter {
             @Test
             public void testAllFilesPresentInParameter() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -1904,7 +1903,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
 
             @Test
             public void testAllFilesPresentInReturn() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -2082,7 +2081,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
           public class TypeParameter {
             @Test
             public void testAllFilesPresentInTypeParameter() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @Test
@@ -2148,7 +2147,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Library {
         @Test
         public void testAllFilesPresentInLibrary() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2176,7 +2175,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Modality {
         @Test
         public void testAllFilesPresentInModality() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2192,7 +2191,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class NotNull {
         @Test
         public void testAllFilesPresentInNotNull() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2233,7 +2232,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Fun {
       @Test
       public void testAllFilesPresentInFun() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2308,7 +2307,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class GenericWithTypeVariables {
         @Test
         public void testAllFilesPresentInGenericWithTypeVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2378,7 +2377,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class GenericWithoutTypeVariables {
         @Test
         public void testAllFilesPresentInGenericWithoutTypeVariables() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2418,7 +2417,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class NonGeneric {
         @Test
         public void testAllFilesPresentInNonGeneric() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2524,7 +2523,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Vararg {
         @Test
         public void testAllFilesPresentInVararg() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2553,7 +2552,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2569,7 +2568,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class MemberOrder {
       @Test
       public void testAllFilesPresentInMemberOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2609,7 +2608,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class NestedClasses {
       @Test
       public void testAllFilesPresentInNestedClasses() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2637,7 +2636,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class PlatformTypes {
       @Test
       public void testAllFilesPresentInPlatformTypes() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2659,7 +2658,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Prop {
       @Test
       public void testAllFilesPresentInProp() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -2872,7 +2871,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class DefaultAccessors {
         @Test
         public void testAllFilesPresentInDefaultAccessors() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -2943,7 +2942,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Type {
       @Test
       public void testAllFilesPresentInType() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3139,7 +3138,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Typealias {
       @Test
       public void testAllFilesPresentInTypealias() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3173,7 +3172,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Visibility {
       @Test
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3256,7 +3255,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
   public class CompiledKotlinWithStdlib {
     @Test
     public void testAllFilesPresentInCompiledKotlinWithStdlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -3265,7 +3264,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Annotations {
       @Test
       public void testAllFilesPresentInAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3310,7 +3309,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class ClassMembers {
         @Test
         public void testAllFilesPresentInClassMembers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3326,7 +3325,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
       public class Parameters {
         @Test
         public void testAllFilesPresentInParameters() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test
@@ -3343,7 +3342,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Class {
       @Test
       public void testAllFilesPresentInClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/class"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3365,7 +3364,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Contracts {
       @Test
       public void testAllFilesPresentInContracts() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3447,7 +3446,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Coroutines {
       @Test
       public void testAllFilesPresentInCoroutines() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3463,7 +3462,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Enum {
       @Test
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3509,7 +3508,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class FromLoadJava {
       @Test
       public void testAllFilesPresentInFromLoadJava() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3525,7 +3524,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class MemberOrder {
       @Test
       public void testAllFilesPresentInMemberOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/memberOrder"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/memberOrder"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3541,7 +3540,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class Mutability {
       @Test
       public void testAllFilesPresentInMutability() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -3575,7 +3574,7 @@ public class FirLoadCompiledJvmWithAnnotationsInMetadataKotlinTestGenerated exte
     public class PlatformNames {
       @Test
       public void testAllFilesPresentInPlatformNames() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/platformNames"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/platformNames"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test

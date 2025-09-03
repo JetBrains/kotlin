@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWithTestExtensionsCodegenTest {
   @Test
   public void testAllFilesPresentInRepl() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/repl"), Pattern.compile("^(.+)\\.kts$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/repl"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
   @Test

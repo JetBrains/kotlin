@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
   }
 
   @Nested
@@ -36,7 +36,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Annotation {
     @Test
     public void testAllFilesPresentInAnnotation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/annotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/annotation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Builtins {
     @Test
     public void testAllFilesPresentInBuiltins() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/builtins"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/builtins"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -102,7 +102,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class CallableReference {
     @Test
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -113,7 +113,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Function {
       @Test
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -179,7 +179,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Property {
       @Test
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference/property"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/callableReference/property"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -210,7 +210,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Char {
     @Test
     public void testAllFilesPresentInChar() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/char"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/char"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -312,7 +312,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
     @Test
     public void testAllFilesPresentInClassObject() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/classObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/classObject"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -396,7 +396,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Closure {
     @Test
     public void testAllFilesPresentInClosure() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -689,7 +689,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class InlineAnonymousFunctions {
       @Test
       public void testAllFilesPresentInInlineAnonymousFunctions() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure/inlineAnonymousFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/closure/inlineAnonymousFunctions"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -762,7 +762,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Coercion {
     @Test
     public void testAllFilesPresentInCoercion() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/coercion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/coercion"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -924,7 +924,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Coroutines {
     @Test
     public void testAllFilesPresentInCoroutines() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/coroutines"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/coroutines"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1056,7 +1056,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class CrossModuleRef {
     @Test
     public void testAllFilesPresentInCrossModuleRef() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1164,7 +1164,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class CrossModuleRefIR {
     @Test
     public void testAllFilesPresentInCrossModuleRefIR() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRefIR"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/crossModuleRefIR"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1290,7 +1290,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class DataClass {
     @Test
     public void testAllFilesPresentInDataClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dataClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dataClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1350,7 +1350,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Dce {
     @Test
     public void testAllFilesPresentInDce() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dce"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dce"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1368,7 +1368,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class DefaultArguments {
     @Test
     public void testAllFilesPresentInDefaultArguments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1518,7 +1518,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class DelegateProperty {
     @Test
     public void testAllFilesPresentInDelegateProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/delegateProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/delegateProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1668,7 +1668,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Delegation {
     @Test
     public void testAllFilesPresentInDelegation() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/delegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1788,7 +1788,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Dynamic {
     @Test
     public void testAllFilesPresentInDynamic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dynamic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/dynamic"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -1956,7 +1956,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
     @Test
     public void testAllFilesPresentInEnum() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/enum"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/enum"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2046,7 +2046,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Es6classes {
     @Test
     public void testAllFilesPresentInEs6classes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/es6classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/es6classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -2154,7 +2154,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class EsModules {
     @Test
     public void testAllFilesPresentInEsModules() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -2165,7 +2165,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class CrossModuleRef {
       @Test
       public void testAllFilesPresentInCrossModuleRef() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2273,7 +2273,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class CrossModuleRefPerFile {
       @Test
       public void testAllFilesPresentInCrossModuleRefPerFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2387,7 +2387,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class CrossModuleRefPerModule {
       @Test
       public void testAllFilesPresentInCrossModuleRefPerModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2477,7 +2477,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class EscapedIdentifiers {
       @Test
       public void testAllFilesPresentInEscapedIdentifiers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2519,7 +2519,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Export {
       @Test
       public void testAllFilesPresentInExport() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2723,7 +2723,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Incremental {
       @Test
       public void testAllFilesPresentInIncremental() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2741,7 +2741,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Inline {
       @Test
       public void testAllFilesPresentInInline() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2759,7 +2759,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class JsExport {
       @Test
       public void testAllFilesPresentInJsExport() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2843,7 +2843,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class JsModule {
       @Test
       public void testAllFilesPresentInJsModule() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2939,7 +2939,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class JsName {
       @Test
       public void testAllFilesPresentInJsName() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -2963,7 +2963,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Kotlin_test {
       @Test
       public void testAllFilesPresentInKotlin_test() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3029,7 +3029,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Main {
       @Test
       public void testAllFilesPresentInMain() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3089,7 +3089,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Native {
       @Test
       public void testAllFilesPresentInNative() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3114,7 +3114,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class EscapedIdentifiers {
     @Test
     public void testAllFilesPresentInEscapedIdentifiers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -3222,7 +3222,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Examples {
     @Test
     public void testAllFilesPresentInExamples() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/examples"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/examples"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -3246,7 +3246,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Export {
     @Test
     public void testAllFilesPresentInExport() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -3528,7 +3528,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Expression {
     @Test
     public void testAllFilesPresentInExpression() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -3539,7 +3539,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Cast {
       @Test
       public void testAllFilesPresentInCast() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/cast"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/cast"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3719,7 +3719,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class CompareTo {
       @Test
       public void testAllFilesPresentInCompareTo() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/compareTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/compareTo"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3743,7 +3743,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class DollarParameter {
       @Test
       public void testAllFilesPresentInDollarParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/dollarParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/dollarParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3761,7 +3761,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Equals {
       @Test
       public void testAllFilesPresentInEquals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/equals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -3857,7 +3857,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
       @Test
       public void testAllFilesPresentInEvaluationOrder() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/evaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/evaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4085,7 +4085,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class For {
       @Test
       public void testAllFilesPresentInFor() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/for"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/for"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4193,7 +4193,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
       @Test
       public void testAllFilesPresentInFunction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/function"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4409,7 +4409,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class IdentifierClash {
       @Test
       public void testAllFilesPresentInIdentifierClash() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/identifierClash"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/identifierClash"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4439,7 +4439,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class IdentityEquals {
       @Test
       public void testAllFilesPresentInIdentityEquals() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/identityEquals"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/identityEquals"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4463,7 +4463,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class If {
       @Test
       public void testAllFilesPresentInIf() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/if"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/if"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4505,7 +4505,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Invoke {
       @Test
       public void testAllFilesPresentInInvoke() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/invoke"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4589,7 +4589,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Misc {
       @Test
       public void testAllFilesPresentInMisc() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/misc"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/misc"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4859,7 +4859,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class StringClass {
       @Test
       public void testAllFilesPresentInStringClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/stringClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/stringClass"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4949,7 +4949,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class StringTemplates {
       @Test
       public void testAllFilesPresentInStringTemplates() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/stringTemplates"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/stringTemplates"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -4979,7 +4979,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Try {
       @Test
       public void testAllFilesPresentInTry() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/try"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/try"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5063,7 +5063,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class TypeCheck {
       @Test
       public void testAllFilesPresentInTypeCheck() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/typeCheck"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/typeCheck"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5117,7 +5117,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class When {
       @Test
       public void testAllFilesPresentInWhen() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/when"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5333,7 +5333,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class While {
       @Test
       public void testAllFilesPresentInWhile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/while"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/expression/while"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5376,7 +5376,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class ExtensionFunction {
     @Test
     public void testAllFilesPresentInExtensionFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/extensionFunction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/extensionFunction"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -5496,7 +5496,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
     @Test
     public void testAllFilesPresentInExtensionProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/extensionProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/extensionProperty"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -5544,7 +5544,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Incremental {
     @Test
     public void testAllFilesPresentInIncremental() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -5694,7 +5694,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
     @Test
     public void testAllFilesPresentInInheritance() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inheritance"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -5849,7 +5849,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
       @Test
       public void testAllFilesPresentInInterfaces() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inheritance/interfaces"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inheritance/interfaces"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -5886,7 +5886,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Initialize {
     @Test
     public void testAllFilesPresentInInitialize() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/initialize"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/initialize"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -5952,7 +5952,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Inline {
     @Test
     public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -6516,7 +6516,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class InlineEvaluationOrder {
     @Test
     public void testAllFilesPresentInInlineEvaluationOrder() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineEvaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineEvaluationOrder"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -6852,7 +6852,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class InlineMultiFile {
     @Test
     public void testAllFilesPresentInInlineMultiFile() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineMultiFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineMultiFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7044,7 +7044,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class InlineMultiModule {
     @Test
     public void testAllFilesPresentInInlineMultiModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineMultiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineMultiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7254,7 +7254,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class InlineSizeReduction {
     @Test
     public void testAllFilesPresentInInlineSizeReduction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineSizeReduction"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineSizeReduction"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7368,7 +7368,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class InlineStdlib {
     @Test
     public void testAllFilesPresentInInlineStdlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineStdlib"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/inlineStdlib"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7434,7 +7434,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Intrinsics {
     @Test
     public void testAllFilesPresentInIntrinsics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7452,7 +7452,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Java {
     @Test
     public void testAllFilesPresentInJava() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -7463,7 +7463,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class AbstractList {
       @Test
       public void testAllFilesPresentInAbstractList() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java/abstractList"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java/abstractList"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7487,7 +7487,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
       @Test
       public void testAllFilesPresentInArrayList() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java/arrayList"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/java/arrayList"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -7590,7 +7590,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class JsAstOptimizations {
     @Test
     public void testAllFilesPresentInJsAstOptimizations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsAstOptimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsAstOptimizations"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7626,7 +7626,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class JsCode {
     @Test
     public void testAllFilesPresentInJsCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7878,7 +7878,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class JsExport {
     @Test
     public void testAllFilesPresentInJsExport() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -7944,7 +7944,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class JsModule {
     @Test
     public void testAllFilesPresentInJsModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8088,7 +8088,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class JsName {
     @Test
     public void testAllFilesPresentInJsName() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8226,7 +8226,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class JsQualifier {
     @Test
     public void testAllFilesPresentInJsQualifier() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsQualifier"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8274,7 +8274,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Keep {
     @Test
     public void testAllFilesPresentInKeep() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/keep"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/keep"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8328,7 +8328,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Kotlin_test {
     @Test
     public void testAllFilesPresentInKotlin_test() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/kotlin.test"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8394,7 +8394,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Labels {
     @Test
     public void testAllFilesPresentInLabels() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/labels"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8478,7 +8478,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Local {
     @Test
     public void testAllFilesPresentInLocal() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/local"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8496,7 +8496,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Main {
     @Test
     public void testAllFilesPresentInMain() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8556,7 +8556,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class MultiFile {
     @Test
     public void testAllFilesPresentInMultiFile() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8610,7 +8610,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class MultiModule {
     @Test
     public void testAllFilesPresentInMultiModule() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8700,7 +8700,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class MultiModuleWrappers {
     @Test
     public void testAllFilesPresentInMultiModuleWrappers() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -8711,7 +8711,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Amd {
       @Test
       public void testAllFilesPresentInAmd() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/amd"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/amd"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -8741,7 +8741,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Common_js {
       @Test
       public void testAllFilesPresentInCommon_js() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/common_js"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/common_js"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -8771,7 +8771,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Plain {
       @Test
       public void testAllFilesPresentInPlain() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/plain"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/plain"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -8801,7 +8801,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Umd {
       @Test
       public void testAllFilesPresentInUmd() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/umd"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/umd"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -8826,7 +8826,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class MultiPackage {
     @Test
     public void testAllFilesPresentInMultiPackage() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiPackage"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multiPackage"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8892,7 +8892,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Multideclaration {
     @Test
     public void testAllFilesPresentInMultideclaration() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multideclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/multideclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -8946,7 +8946,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class NameClashes {
     @Test
     public void testAllFilesPresentInNameClashes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/nameClashes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/nameClashes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9114,7 +9114,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
     @Test
     public void testAllFilesPresentInNative() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9378,7 +9378,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class NestedTypes {
     @Test
     public void testAllFilesPresentInNestedTypes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/nestedTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/nestedTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9498,7 +9498,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Number {
     @Test
     public void testAllFilesPresentInNumber() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/number"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/number"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9702,7 +9702,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class ObjectDeclaration {
     @Test
     public void testAllFilesPresentInObjectDeclaration() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/objectDeclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/objectDeclaration"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9798,7 +9798,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class OperatorOverloading {
     @Test
     public void testAllFilesPresentInOperatorOverloading() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/operatorOverloading"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/operatorOverloading"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9942,7 +9942,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Package {
     @Test
     public void testAllFilesPresentInPackage() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/package"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -9984,7 +9984,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Polyfills {
     @Test
     public void testAllFilesPresentInPolyfills() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -10007,7 +10007,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
       @Test
       public void testAllFilesPresentInAcosh() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/acosh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/acosh"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
     }
 
@@ -10019,7 +10019,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Asinh {
       @Test
       public void testAllFilesPresentInAsinh() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/asinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/asinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10043,7 +10043,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Atanh {
       @Test
       public void testAllFilesPresentInAtanh() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/atanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/atanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10067,7 +10067,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Clz32 {
       @Test
       public void testAllFilesPresentInClz32() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/clz32"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/clz32"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10091,7 +10091,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Cosh {
       @Test
       public void testAllFilesPresentInCosh() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/cosh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/cosh"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10115,7 +10115,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Expm1 {
       @Test
       public void testAllFilesPresentInExpm1() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/expm1"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/expm1"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10139,7 +10139,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Fill {
       @Test
       public void testAllFilesPresentInFill() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/fill"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/fill"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10163,7 +10163,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class GlobalThis {
       @Test
       public void testAllFilesPresentInGlobalThis() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/globalThis"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/globalThis"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10187,7 +10187,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Hypot {
       @Test
       public void testAllFilesPresentInHypot() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/hypot"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/hypot"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10211,7 +10211,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Imul {
       @Test
       public void testAllFilesPresentInImul() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/imul"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/imul"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10235,7 +10235,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class IsView {
       @Test
       public void testAllFilesPresentInIsView() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/isView"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/isView"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10259,7 +10259,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Log10 {
       @Test
       public void testAllFilesPresentInLog10() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log10"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log10"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10283,7 +10283,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Log1p {
       @Test
       public void testAllFilesPresentInLog1p() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log1p"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log1p"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10307,7 +10307,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Log2 {
       @Test
       public void testAllFilesPresentInLog2() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log2"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log2"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10331,7 +10331,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Sign {
       @Test
       public void testAllFilesPresentInSign() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sign"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sign"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10355,7 +10355,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Sinh {
       @Test
       public void testAllFilesPresentInSinh() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10379,7 +10379,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Sort {
       @Test
       public void testAllFilesPresentInSort() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sort"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sort"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10403,7 +10403,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Tanh {
       @Test
       public void testAllFilesPresentInTanh() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/tanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/tanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10427,7 +10427,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class Trunc {
       @Test
       public void testAllFilesPresentInTrunc() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/trunc"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/trunc"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -10458,7 +10458,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
     @Test
     public void testAllFilesPresentInPropertyAccess() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10614,7 +10614,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class PropertyOverride {
     @Test
     public void testAllFilesPresentInPropertyOverride() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyOverride"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10710,7 +10710,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Range {
     @Test
     public void testAllFilesPresentInRange() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/range"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/range"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10788,7 +10788,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Reflection {
     @Test
     public void testAllFilesPresentInReflection() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10926,7 +10926,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Regression {
     @Test
     public void testAllFilesPresentInRegression() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -10979,7 +10979,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
 
       @Test
       public void testAllFilesPresentInStdlibTestSnippets() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression/stdlibTestSnippets"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression/stdlibTestSnippets"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11015,7 +11015,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public class TypeChecks {
       @Test
       public void testAllFilesPresentInTypeChecks() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression/typeChecks"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression/typeChecks"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Test
@@ -11052,7 +11052,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Reified {
     @Test
     public void testAllFilesPresentInReified() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reified"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reified"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11184,7 +11184,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Rtti {
     @Test
     public void testAllFilesPresentInRtti() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/rtti"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/rtti"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11310,7 +11310,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class SafeCall {
     @Test
     public void testAllFilesPresentInSafeCall() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/safeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/safeCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11364,7 +11364,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Simple {
     @Test
     public void testAllFilesPresentInSimple() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/simple"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/simple"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11574,7 +11574,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class StandardClasses {
     @Test
     public void testAllFilesPresentInStandardClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/standardClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/standardClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11694,7 +11694,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class SuperCall {
     @Test
     public void testAllFilesPresentInSuperCall() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/superCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/superCall"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11742,7 +11742,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Trait {
     @Test
     public void testAllFilesPresentInTrait() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/trait"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/trait"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test
@@ -11808,7 +11808,7 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
   public class Vararg {
     @Test
     public void testAllFilesPresentInVararg() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test

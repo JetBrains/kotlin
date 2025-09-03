@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
   public class OuterThis {
     @Test
     public void testAllFilesPresentInOuterThis() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -40,7 +40,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class CrossFileLeak {
       @Test
       public void testAllFilesPresentInCrossFileLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -116,7 +116,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class CrossModuleLeak {
       @Test
       public void testAllFilesPresentInCrossModuleLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -192,7 +192,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/outerThis/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -269,7 +269,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
   public class PrivateMember {
     @Test
     public void testAllFilesPresentInPrivateMember() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -278,7 +278,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -636,7 +636,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1000,7 +1000,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1239,7 +1239,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -1248,7 +1248,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1528,7 +1528,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1820,7 +1820,7 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test

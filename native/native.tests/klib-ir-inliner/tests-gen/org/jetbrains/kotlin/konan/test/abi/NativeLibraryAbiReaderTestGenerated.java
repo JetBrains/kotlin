@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.abi;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class NativeLibraryAbiReaderTestGenerated extends AbstractNativeLibraryAbiReaderTest {
   @Test
   public void testAllFilesPresentInContent() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/content"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/content"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

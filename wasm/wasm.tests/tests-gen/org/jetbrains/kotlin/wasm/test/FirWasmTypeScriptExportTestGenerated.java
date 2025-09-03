@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScriptExportTest {
   @Test
   public void testAllFilesPresentInWasm() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class ExternalDeclarations {
     @Test
     public void testAllFilesPresentInExternalDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/externalDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/externalDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class Generics {
     @Test
     public void testAllFilesPresentInGenerics() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/generics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/generics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class JsPrimitives {
     @Test
     public void testAllFilesPresentInJsPrimitives() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/jsPrimitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/jsPrimitives"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class NullableJsPrimitives {
     @Test
     public void testAllFilesPresentInNullableJsPrimitives() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullableJsPrimitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullableJsPrimitives"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class NullablePrimitives {
     @Test
     public void testAllFilesPresentInNullablePrimitives() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullablePrimitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullablePrimitives"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class NullableUnsigned {
     @Test
     public void testAllFilesPresentInNullableUnsigned() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullableUnsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/nullableUnsigned"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class Primitives {
     @Test
     public void testAllFilesPresentInPrimitives() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/primitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/primitives"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class FirWasmTypeScriptExportTestGenerated extends AbstractFirWasmTypeScr
   public class Unsigned {
     @Test
     public void testAllFilesPresentInUnsigned() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/wasm/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

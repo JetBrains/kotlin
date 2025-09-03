@@ -7,7 +7,6 @@ package androidx.compose.compiler.plugins.kotlin;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class FirJsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends AbstractFirJsLightTreePluginBlackBoxCodegenForComposeTest {
   @Test
   public void testAllFilesPresentInJs() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/compose/compiler-hosted/testData/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/compose/compiler-hosted/testData/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

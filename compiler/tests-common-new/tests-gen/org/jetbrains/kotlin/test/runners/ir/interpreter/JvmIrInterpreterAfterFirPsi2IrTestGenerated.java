@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.runners.ir.interpreter;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
 
   @Test
   public void testAllFilesPresentInInterpreter() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "helpers");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers");
   }
 
   @Test
@@ -367,7 +366,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class Collections {
     @Test
     public void testAllFilesPresentInCollections() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/collections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/collections"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -455,7 +454,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class Exceptions {
     @Test
     public void testAllFilesPresentInExceptions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/exceptions"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -549,7 +548,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class GeneratedStdlib {
     @Test
     public void testAllFilesPresentInGeneratedStdlib() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/generatedStdlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/generatedStdlib"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -595,7 +594,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class Jvm {
     @Test
     public void testAllFilesPresentInJvm() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/jvm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/jvm"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -629,7 +628,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class Primitives {
     @Test
     public void testAllFilesPresentInPrimitives() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/primitives"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/primitives"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -663,7 +662,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class Proxy {
     @Test
     public void testAllFilesPresentInProxy() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/proxy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/proxy"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -697,7 +696,7 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
   public class Reference {
     @Test
     public void testAllFilesPresentInReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/reference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/reference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test

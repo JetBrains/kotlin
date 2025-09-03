@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.plugin.sandbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ import java.util.regex.Pattern;
 public class FirLoadK2CompiledWithPluginJsKotlinTestGenerated extends AbstractFirLoadK2CompiledWithPluginJsKotlinTest {
   @Test
   public void testAllFilesPresentInFirLoadK2Compiled() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/firLoadK2Compiled"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
