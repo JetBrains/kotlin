@@ -36,8 +36,7 @@ STEP 9:
     dependencies: lib1
     modifications:
         U : l2globalVar.9.kt -> l2globalVar.kt
-    modified ir: l2globalVar.kt
-    updated imports: l2.kt
+    modified ir: l2globalVar.kt l2.kt
 STEP 10:
     dependencies: lib1
     updated imports: l2inlineGlobalVal.kt, l2.kt
@@ -52,8 +51,7 @@ STEP 12:
     dependencies: lib1
     modifications:
         U : l2inlineGlobalVar.12.kt -> l2inlineGlobalVar.kt
-    modified ir: l2inlineGlobalVar.kt
-    updated imports: l2.kt
+    modified ir: l2inlineGlobalVar.kt l2.kt
 STEP 13:
     dependencies: lib1
 STEP 14..15:
@@ -70,8 +68,7 @@ STEP 17:
     dependencies: lib1
     modifications:
         U : l2inlineExtensionProperty.17.kt -> l2inlineExtensionProperty.kt
-    modified ir: l2inlineExtensionProperty.kt
-    updated imports: l2.kt
+    modified ir: l2inlineExtensionProperty.kt l2.kt
 STEP 18:
     dependencies: lib1
     modifications:
