@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
@@ -693,11 +692,23 @@ internal fun writeConfig(
 
     config.files.add(modules.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
 
-    if (debug) {
-        config.singleRun = false
-        config.autoWatch = true
+    val newConfJsWriters = confJsWriters.toMutableList()
 
+    if (debug) {
         config.browsers.clear()
+
+        newConfJsWriters.add {
+            //language=ES6
+            it.appendLine(
+                """
+                        config.plugins = config.plugins || [];
+                        
+                        config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');
+                    """.trimIndent()
+            )
+        }
+
+        config.frameworks.add("karma-kotlin-debug")
     }
 
     if (platformType != KotlinPlatformType.wasm) {
@@ -748,7 +759,7 @@ internal fun writeConfig(
             .toJson(config, confWriter)
         confWriter.println(");")
 
-        confJsWriters.forEach { it(confWriter) }
+        newConfJsWriters.forEach { it(confWriter) }
 
         writerAction(confWriter)
 

@@ -24,7 +24,7 @@ class NpmVersions : Serializable {
     val toStringLoader = NpmPackageVersion("to-string-loader", "1.2.0")
     val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "2.9.3")
     val mocha = NpmPackageVersion("mocha", "11.7.1")
-    val karma = NpmPackageVersion("karma", "6.4.4")
+    val karma = NpmPackageVersion("karma", "github:Kotlin/karma")
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.2.0")
 
     @Deprecated("Phantom JS is deprecated. Scheduled for removal in Kotlin 2.4.")
@@ -38,7 +38,7 @@ class NpmVersions : Serializable {
     val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.1")
     val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
     val typescript = NpmPackageVersion("typescript", "5.9.2")
-    val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "2.1.0")
+    val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "3.0.0")
 
     val allDependencies = listOf(
         webpack,
