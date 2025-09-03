@@ -39,7 +39,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsBlock {
-        return mapBlock(ctx.statement().map { visit<JsStatement?>(it) })
+        return mapBlock(visitAll<JsStatement?>(ctx.statement()))
     }
 
     override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext): JsNode? {
@@ -142,7 +142,7 @@ class JsAstMapperVisitor(
     override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsIf {
         val ifCondition = visit<JsExpression>(ctx.expressionSequence())
         // Empty statements are not supported in both 'if' branches, so always expect non-nullable statements.
-        val allStatements = ctx.statement().map { visit<JsStatement>(it) }
+        val allStatements = visitAll<JsStatement>(ctx.statement())
 
         return JsIf(
             ifCondition,
@@ -246,7 +246,7 @@ class JsAstMapperVisitor(
     override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext): JsSwitch {
         val jsSwitchExpr = visit<JsExpression>(ctx.expressionSequence())
 
-        val jsCases = ctx.caseBlock().caseClauses()?.map { visit<JsCase>(it) } ?: emptyList()
+        val jsCases = ctx.caseBlock().caseClauses()?.let { visitAll<JsDefault>(it) } ?: emptyList()
         val jsDefault = ctx.caseBlock().defaultClause()?.let { visit<JsDefault>(it) }
 
         return JsSwitch().apply {
@@ -284,8 +284,15 @@ class JsAstMapperVisitor(
         }
     }
 
-    override fun visitLabelledStatement(ctx: JavaScriptParser.LabelledStatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitLabelledStatement(ctx: JavaScriptParser.LabelledStatementContext): JsLabel {
+        val jsLabelIdentifier = ctx.identifier().text
+        val jsName = scopeContext.enterLabel(jsLabelIdentifier, jsLabelIdentifier)
+        val jsLabel = JsLabel(jsName).apply {
+            statement = visit<JsStatement>(ctx.statement())
+        }
+        scopeContext.exitLabel()
+
+        return jsLabel
     }
 
     override fun visitThrowStatement(ctx: JavaScriptParser.ThrowStatementContext): JsNode? {
@@ -295,11 +302,32 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsTry {
-        TODO("Not yet implemented")
+        val jsTry = JsTry().apply {
+            tryBlock = visit<JsBlock>(ctx.block())
+        }
+
+        val jsCatchProduction = ctx.catchProduction()?.let { visit<JsCatch>(it) }
+        if (jsCatchProduction != null) {
+            jsTry.catches.add(jsCatchProduction)
+        }
+
+        val jsFinallyProduction = ctx.finallyProduction()?.let { visit<JsBlock>(it) }
+        if (jsFinallyProduction != null) {
+            jsTry.finallyBlock = jsFinallyProduction
+        }
     }
 
     override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext): JsCatch {
-        TODO("Not yet implemented")
+        val jsCatchIdentifier = ctx.assignable().identifier()?.text
+            ?: TODO("Only identifier catch variables are supported yet")
+
+        return scopeContext.enterCatch(jsCatchIdentifier).apply {
+            body = visit<JsBlock>(ctx.block())
+            // TODO: Decide what to do with "catch conditions":
+            //   https://lia.disi.unibo.it/materiale/JS/developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...html#Conditional_catch_clauses
+            condition = null
+            scopeContext.exitCatch()
+        }
     }
 
     override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext): JsBlock {
@@ -351,7 +379,7 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext): JsNode? {
+    override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext): JsParameter {
         TODO("Not yet implemented")
     }
 
@@ -364,7 +392,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsBlock {
-        val statements = ctx.sourceElement().map { visit<JsStatement?>(it) }
+        val statements = visitAll<JsStatement?>(ctx.sourceElement())
         return mapBlock(statements)
     }
 
@@ -421,7 +449,7 @@ class JsAstMapperVisitor(
             return visit<JsExpression>(ctx.singleExpression()[0])
         }
 
-        val exprs = ctx.singleExpression().map { visit<JsExpression>(it) }
+        val exprs = visitAll<JsExpression>(ctx.singleExpression())
         return mapComma(exprs)
     }
 
@@ -869,6 +897,9 @@ class JsAstMapperVisitor(
 
     private inline fun <reified T> visit(node: ParseTree): T =
         visit(node).expect<T>()
+
+    private inline fun <reified T> visitAll(nodes: List<ParseTree>): List<T> =
+        nodes.map { visit(it).expect<T>() }
 
     private inline fun <reified T> JsNode?.expect(): T {
         if (this !is T) throw AssertionError("Expected ${T::class}, got ${this?.javaClass}")
