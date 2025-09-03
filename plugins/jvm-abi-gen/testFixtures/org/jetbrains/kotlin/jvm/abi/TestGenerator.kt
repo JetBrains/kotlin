@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
-    generateTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit4(args) {
         testGroup("plugins/jvm-abi-gen/tests-gen", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
                 model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)

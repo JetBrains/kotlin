@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.checkers.*
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8Test
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8WithPsiClassReadingTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.AbstractEnhancedSignaturesResolvedCall
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    generateTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit4(args) {
         testGroup("compiler/tests-java8/tests-gen", "compiler/testData") {
             testClass<AbstractLoadJava8Test> {
                 model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")

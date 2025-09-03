@@ -7,7 +7,7 @@ package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.AbstractIrCustomScriptCodegenTest
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
 
-    generateTestGroupSuite(args, mainClassName) {
+    generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/tests-integration/tests-gen", "compiler/testData") {
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)

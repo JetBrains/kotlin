@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.generators
 
 import org.jetbrains.kotlin.generators.model.MethodModel
 
-abstract class TestGenerator(
-    methodGenerators: List<MethodGenerator<*>>
-) {
+abstract class AbstractTestGenerator(methodGenerators: List<MethodGenerator<*>>) {
     protected val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>> =
         methodGenerators.associateBy { it.kind }.withDefault { error("Generator for method with kind $it not found") }
 

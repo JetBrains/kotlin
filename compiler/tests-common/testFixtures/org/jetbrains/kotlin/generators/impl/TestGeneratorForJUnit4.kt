@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.generators.impl
 
 import org.jetbrains.kotlin.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.TestGenerator
+import org.jetbrains.kotlin.generators.AbstractTestGenerator
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -29,9 +28,9 @@ private val METHOD_GENERATORS = listOf(
     TransformingTestMethodGenerator,
 )
 
-object TestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
+object TestGeneratorForJUnit4 : AbstractTestGenerator(METHOD_GENERATORS) {
     override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult {
-        val generatorInstance = TestGeneratorImplInstance(
+        val generatorInstance = TestGeneratorForJUnit4Instance(
             testClass.baseDir,
             testClass.suiteTestClassName,
             testClass.baseTestClassName,
@@ -44,7 +43,7 @@ object TestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
     }
 }
 
-private class TestGeneratorImplInstance(
+private class TestGeneratorForJUnit4Instance(
     baseDir: String,
     suiteTestClassFqName: String,
     baseTestClassFqName: String,
@@ -97,7 +96,7 @@ private class TestGeneratorImplInstance(
     }
 
     @Throws(IOException::class)
-    fun generateAndSave(dryRun: Boolean): TestGenerator.GenerationResult {
+    fun generateAndSave(dryRun: Boolean): AbstractTestGenerator.GenerationResult {
         val generatedCode = generate()
 
         val testSourceFile = File(testSourceFilePath)
@@ -106,7 +105,7 @@ private class TestGeneratorImplInstance(
         } else {
             GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
         }
-        return TestGenerator.GenerationResult(changed, testSourceFilePath)
+        return AbstractTestGenerator.GenerationResult(changed, testSourceFilePath)
     }
 
     private fun generate(): String {

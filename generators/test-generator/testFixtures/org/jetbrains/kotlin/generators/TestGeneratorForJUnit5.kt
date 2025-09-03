@@ -27,9 +27,9 @@ private val METHOD_GENERATORS = listOf(
     TransformingTestMethodGenerator,
 )
 
-class NewTestGeneratorImpl(
+class TestGeneratorForJUnit5(
     additionalMethodGenerators: List<MethodGenerator<Nothing>>
-) : TestGenerator(METHOD_GENERATORS + additionalMethodGenerators) {
+) : AbstractTestGenerator(METHOD_GENERATORS + additionalMethodGenerators) {
 
     private val GENERATED_FILES = HashSet<String>()
 

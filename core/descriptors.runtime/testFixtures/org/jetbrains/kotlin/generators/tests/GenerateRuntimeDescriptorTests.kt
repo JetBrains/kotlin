@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    generateTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit4(args) {
         testGroup("core/descriptors.runtime/tests-gen", "compiler/testData") {
             testClass<AbstractJvmRuntimeDescriptorLoaderTest> {
                 model("loadJava/compiledKotlin")

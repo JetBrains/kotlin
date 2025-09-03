@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.lightTree
 
-import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuiteWithJUnit4
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
-    generateTestGroupSuite(args, mainClassName) {
+    generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
                 model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)

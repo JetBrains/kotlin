@@ -27,7 +27,7 @@ fun generateTestGroupSuiteWithJUnit5(
 ) {
     val suite = TestGroupSuite(ReflectionBasedTargetBackendComputer).apply(init)
     suite.forEachTestClassParallel { testClass ->
-        val (changed, testSourceFilePath) = NewTestGeneratorImpl(additionalMethodGenerators)
+        val (changed, testSourceFilePath) = TestGeneratorForJUnit5(additionalMethodGenerators)
             .generateAndSave(testClass, dryRun, mainClassName)
         if (changed) {
             InconsistencyChecker.inconsistencyChecker(dryRun).add(testSourceFilePath)

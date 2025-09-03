@@ -12,22 +12,22 @@ import org.jetbrains.kotlin.generators.forEachTestClassParallel
 import org.jetbrains.kotlin.generators.testGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
-fun generateTestGroupSuite(
+fun generateTestGroupSuiteWithJUnit4(
     args: Array<String>,
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit
 ) {
-    generateTestGroupSuite(InconsistencyChecker.hasDryRunArg(args), mainClassName, init)
+    generateTestGroupSuiteWithJUnit4(InconsistencyChecker.hasDryRunArg(args), mainClassName, init)
 }
 
-fun generateTestGroupSuite(
+fun generateTestGroupSuiteWithJUnit4(
     dryRun: Boolean = false,
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit,
 ) {
     val suite = testGroupSuite(init)
     suite.forEachTestClassParallel { testClass ->
-        val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun, mainClassName)
+        val (changed, testSourceFilePath) = TestGeneratorForJUnit4.generateAndSave(testClass, dryRun, mainClassName)
         if (changed) {
             inconsistencyChecker(dryRun).add(testSourceFilePath)
         }
