@@ -62,6 +62,4 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
       Too many arguments for 'constructor(p: Int): Sub'.
 
     constructor(i: Int, j: Int): Sub:
-      Too many arguments for 'constructor(i: Int, j: Int): Sub'.
-
-    >
+      Too many arguments for 'constructor(i: Int, j: Int): Sub'.>

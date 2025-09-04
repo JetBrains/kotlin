@@ -11,5 +11,4 @@ fun println(message: Float): Unit
 fun println(message: Double): Unit
 fun println(message: CharArray): Unit
 
-
 /noneApplicableMessage.fir.kt:(124,134): error: Unresolved reference 'unresolved'.

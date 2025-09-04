@@ -461,7 +461,7 @@ object FirDiagnosticRenderers {
 
                 appendLine()
             }
-        }
+        }.trim()
     }
 }
 

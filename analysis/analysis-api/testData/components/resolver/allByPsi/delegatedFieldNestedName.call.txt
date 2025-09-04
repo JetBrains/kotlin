@@ -1508,9 +1508,7 @@ KtBinaryExpression(406,415): '6 + inner'
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-    >
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtConstantExpression(406,407): '6'
   null
@@ -1741,9 +1739,7 @@ KtOperationReferenceExpression(408,409): '+'
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-    >
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(410,415): 'inner'
   KaSuccessCallInfo:
@@ -2087,9 +2083,7 @@ KtBinaryExpression(428,437): '7 + inner'
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-    >
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtConstantExpression(428,429): '7'
   null
@@ -2320,9 +2314,7 @@ KtOperationReferenceExpression(430,431): '+'
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-    >
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(432,437): 'inner'
   KaSuccessCallInfo:
@@ -2666,9 +2658,7 @@ KtBinaryExpression(450,459): '8 + inner'
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-    >
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtConstantExpression(450,451): '8'
   null
@@ -2899,9 +2889,7 @@ KtOperationReferenceExpression(452,453): '+'
       Argument type mismatch: actual type is 'String', but 'Float' was expected.
 
     fun plus(other: Double): Double:
-      Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-    >
+      Argument type mismatch: actual type is 'String', but 'Double' was expected.>
 
 KtNameReferenceExpression(454,459): 'inner'
   KaSuccessCallInfo:

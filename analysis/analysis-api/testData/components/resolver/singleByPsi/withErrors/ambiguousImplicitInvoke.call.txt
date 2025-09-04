@@ -60,6 +60,4 @@ KtCallExpression(134,137): 'x()'
       No value passed for parameter 'a'.
 
     fun Int.invoke(b: Boolean): Unit:
-      No value passed for parameter 'b'.
-
-    >
+      No value passed for parameter 'b'.>

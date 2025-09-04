@@ -125,6 +125,4 @@ KtCallExpression(128,139): 'function(1)'
       No value passed for parameter 'b'.
 
     fun <V> function(v: V, c: String): Unit:
-      No value passed for parameter 'c'.
-
-    >
+      No value passed for parameter 'c'.>

@@ -60,6 +60,4 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
       No value passed for parameter 'i'.
 
     fun <B> Foo<B>.foo(s: String): Unit:
-      No value passed for parameter 's'.
-
-    >
+      No value passed for parameter 's'.>

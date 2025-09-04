@@ -17,8 +17,6 @@ fun plus(other: Float): Float:
 
 fun plus(other: Double): Double:
   Argument type mismatch: actual type is 'String', but 'Double' was expected.
-
-
     val x = 1 + ""
               ^
 COMPILATION_ERROR
