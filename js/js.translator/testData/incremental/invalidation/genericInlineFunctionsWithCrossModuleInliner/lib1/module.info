@@ -1,0 +1,96 @@
+STEP 0:
+    modifications:
+        U : l1.0.kt -> l1.kt
+    added file: l1.kt
+STEP 1:
+    modifications:
+        U : l1.1.kt -> l1.kt
+    modified ir: l1.kt
+STEP 2:
+    modifications:
+        U : l1.2.kt -> l1.kt
+    modified ir: l1.kt
+STEP 3:
+    modifications:
+        U : l1.3.kt -> l1.kt
+    modified ir: l1.kt
+STEP 4:
+    modifications:
+        U : l1.4.kt -> l1.kt
+    modified ir: l1.kt
+STEP 5:
+    modifications:
+        U : l1.5.kt -> l1.kt
+    modified ir: l1.kt
+STEP 6:
+    modifications:
+        U : l1.6.kt -> l1.kt
+    modified ir: l1.kt
+STEP 7:
+    modifications:
+        U : l1.7.kt -> l1.kt
+    modified ir: l1.kt
+STEP 8:
+    modifications:
+        U : l1.0.kt -> l1.kt
+    modified ir: l1.kt
+STEP 9:
+    modifications:
+        U : l1.1.kt -> l1.kt
+    modified ir: l1.kt
+STEP 10:
+    modifications:
+        U : l1.2.kt -> l1.kt
+    modified ir: l1.kt
+STEP 11:
+    modifications:
+        U : l1.3.kt -> l1.kt
+    modified ir: l1.kt
+STEP 12:
+    modifications:
+        U : l1.4.kt -> l1.kt
+    modified ir: l1.kt
+STEP 13:
+    modifications:
+        U : l1.5.kt -> l1.kt
+    modified ir: l1.kt
+STEP 14:
+    modifications:
+        U : l1.6.kt -> l1.kt
+    modified ir: l1.kt
+STEP 15:
+    modifications:
+        U : l1.7.kt -> l1.kt
+    modified ir: l1.kt
+STEP 16:
+    modifications:
+        U : l1.0.kt -> l1.kt
+    modified ir: l1.kt
+STEP 17:
+    modifications:
+        U : l1.1.kt -> l1.kt
+    modified ir: l1.kt
+STEP 18:
+    modifications:
+        U : l1.2.kt -> l1.kt
+    modified ir: l1.kt
+STEP 19:
+    modifications:
+        U : l1.3.kt -> l1.kt
+    modified ir: l1.kt
+STEP 20:
+    modifications:
+        U : l1.4.kt -> l1.kt
+    modified ir: l1.kt
+STEP 21:
+    modifications:
+        U : l1.5.kt -> l1.kt
+    modified ir: l1.kt
+STEP 22:
+    modifications:
+        U : l1.6.kt -> l1.kt
+    modified ir: l1.kt
+STEP 23:
+    modifications:
+        U : l1.7.kt -> l1.kt
+    modified ir: l1.kt
