@@ -158,9 +158,13 @@ fun Project.configureDefaultPublishing(
             maven {
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
 
-                val repo: String? = project.properties["kotlin.build.deploy-repo"]?.toString() ?: project.properties["deploy-repo"]?.toString()
+                val repo: String? = project.properties["kotlin.build.deploy-repo"]?.toString()
+                    ?: project.properties["deploy-repo"]?.toString()
 
-                val deployRepoUrl = (project.properties["kotlin.build.deploy-url"] ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
+                val deployRepoUrl = (project.properties["kotlin.build.deploy-url"]
+                    ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
+                    ?: project.properties["kotlin.build.deploy-path"]?.toString()?.takeIf { it.isNotBlank() }
+                        ?.let { "file://${project.rootProject.layout.projectDirectory.dir(it).asFile}" }
 
                 val repoUrl: String by extra(
                     (deployRepoUrl ?: "file://${project.rootProject.layout.buildDirectory.dir("repo").get().asFile}")
