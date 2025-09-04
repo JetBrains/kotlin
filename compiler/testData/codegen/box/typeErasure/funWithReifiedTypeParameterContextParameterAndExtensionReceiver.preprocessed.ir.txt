@@ -1,0 +1,11 @@
+Module: main
+// CallableId=/foo
+FUN name:foo visibility:public modality:FINAL returnType:kotlin.reflect.KType [inline]
+  TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:true
+  VALUE_PARAMETER kind:Regular name:c index:0 type:kotlin.Int
+  VALUE_PARAMETER kind:Regular name:<this> index:1 type:kotlin.Int
+  VALUE_PARAMETER kind:Regular name:a index:2 type:T of <root>.foo
+  BLOCK_BODY
+    RETURN type=kotlin.Nothing from='public final fun foo <T> (c: kotlin.Int, <this>: kotlin.Int, a: T of <root>.foo): kotlin.reflect.KType [inline] declared in <root>'
+      CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+        TYPE_ARG T: T of <root>.foo
