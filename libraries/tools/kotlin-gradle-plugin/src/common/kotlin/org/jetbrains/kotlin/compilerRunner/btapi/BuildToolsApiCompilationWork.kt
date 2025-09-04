@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner.btapi
 
-import com.android.build.gradle.internal.cxx.os.exe
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.ListProperty
@@ -38,10 +37,13 @@ import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
+import org.jetbrains.kotlin.gradle.logging.CompositeKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.ExceptionReportingKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.logCompilerArgumentsMessage
+import org.jetbrains.kotlin.gradle.logging.reportToIde
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
@@ -89,9 +91,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         DoNothingBuildMetricsReporter
     }
 
-    private val log: KotlinLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
-
-    private fun performCompilation(executionStrategy: KotlinCompilerExecutionStrategy): CompilationResult {
+    private fun performCompilation(executionStrategy: KotlinCompilerExecutionStrategy, log: KotlinLogger): CompilationResult {
         try {
             val classLoader = parameters.classLoadersCachingService.get()
                 .getClassLoader(workArguments.compilerFullClasspath, SharedApiClassesClassLoaderProvider)
@@ -192,7 +192,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     }
 
     // the files are backed up in the task action before any changes to the outputs
-    private fun initializeBackup(): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
+    private fun initializeBackup(log: KotlinLogger): TaskOutputsBackup? = if (parameters.snapshotsDir.isPresent) {
         TaskOutputsBackup(
             fileSystemOperations,
             parameters.snapshotsDir,
@@ -205,6 +205,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
 
     private fun compileWithDaemonOrFallback(
         executionStrategy: KotlinCompilerExecutionStrategy,
+        log: KotlinLogger,
         backup: TaskOutputsBackup?,
     ): CompilationResult {
         with(log) {
@@ -218,7 +219,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
         }
         try {
-            val result = performCompilation(executionStrategy)
+            val result = performCompilation(executionStrategy, log)
             if (result == CompilationResult.COMPILATION_OOM_ERROR || result == CompilationResult.COMPILATION_ERROR) {
                 backup?.restoreOutputs()
             }
@@ -237,9 +238,17 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     override fun execute() {
         metrics.addTimeMetric(GradleBuildPerformanceMetric.START_WORKER_EXECUTION)
         metrics.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
-        val backup = initializeBackup()
+        val exceptionReportingKotlinLogger = ExceptionReportingKotlinLogger()
+        val printingLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
+        val log: KotlinLogger = CompositeKotlinLogger(
+            setOf(
+                printingLogger,
+                exceptionReportingKotlinLogger,
+            )
+        )
+        val backup = initializeBackup(log)
         try {
-            compileWithDaemonOrFallback(workArguments.compilerExecutionSettings.strategy, backup)
+            compileWithDaemonOrFallback(workArguments.compilerExecutionSettings.strategy, log, backup)
         } catch (e: FailedCompilationException) {
             if (workArguments.compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.DAEMON) {
                 val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, workArguments.allWarningsAsErrors)
@@ -276,6 +285,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 )
                 compileWithDaemonOrFallback(
                     KotlinCompilerExecutionStrategy.IN_PROCESS,
+                    log,
                     backup
                 )
             } else {
@@ -293,6 +303,19 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
             TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
+
+            workArguments.errorsFiles?.let {
+                /*
+                 * Use `printingLogger` here intentionally (not `log`) to avoid accidentally writing
+                 * to the exception-reporting logger.
+                 * After we extract messages from
+                 * `exceptionReportingKotlinLogger`, it should remain silent.
+                 * The extractor asserts this
+                 * and will flag any further writes as misuse.
+                 */
+                exceptionReportingKotlinLogger.extractExceptionMessages()
+                    .reportToIde(it, workArguments.kotlinPluginVersion, logger = printingLogger)
+            }
         }
     }
 
