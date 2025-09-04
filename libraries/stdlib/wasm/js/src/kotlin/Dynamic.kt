@@ -51,13 +51,14 @@ private fun jsCatch(f: () -> Unit): JsAny? {
 public fun JsAny.toThrowableOrNull(): Throwable? {
     val thisAny: Any = this
     if (thisAny is Throwable) return thisAny
-    var result: Throwable? = null
-    val _ = jsCatch {
-        try {
-            jsThrow(this)
-        } catch (e: Throwable) {
-            result = e
-        }
-    }
-    return result
+    return null
+//    var result: Throwable? = null
+//    val _ = jsCatch {
+//        try {
+//            jsThrow(this)
+//        } catch (e: Throwable) {
+//            result = e
+//        }
+//    }
+//    return result
 }
