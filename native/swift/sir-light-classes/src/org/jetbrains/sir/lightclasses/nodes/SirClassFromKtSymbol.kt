@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
+import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.sirModule
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule.kotli
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule.caseIterable
 import org.jetbrains.kotlin.sir.util.SirSwiftModule.losslessStringConvertible
@@ -201,6 +204,48 @@ internal class SirEnumFromKtSymbol(
             )
         )
     }.also { it.parent = this }
+}
+
+public class SirEnumCaseFromKtSymbol(
+    override val ktSymbol: KaEnumEntrySymbol,
+    override val sirSession: SirSession,
+) : SirEnumCase(), SirFromKtSymbol<KaEnumEntrySymbol> {
+    override val name: String = ktSymbol.name.asString()
+    override val enum: SirEnum = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
+    override val origin: SirOrigin = KotlinSource(ktSymbol)
+
+    override val visibility: SirVisibility
+        get() = SirVisibility.PUBLIC
+    override val documentation: String?
+        get() = enum.documentation
+    override var parent: SirDeclarationParent
+        get() = enum
+        set(arg) {
+            if (arg === enum) return
+            error("Changing SirEnumCase.parent is prohibited")
+        }
+    override val attributes: List<SirAttribute>
+        get() = emptyList()
+
+    private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
+        val fqName = bridgeFqName ?: return@lazyWithSessions null
+        val baseName = fqName.forBridge.joinToString("_")
+        generateFunctionBridge(
+            baseBridgeName = baseName,
+            explicitParameters = emptyList(),
+            returnType = SirType.any,
+            kotlinFqName = fqName,
+            selfParameter = null,
+            extensionReceiverParameter = null,
+            errorParameter = null,
+        )
+    }
+
+    override val bridges: List<SirBridge> by lazyWithSessions {
+        listOfNotNull(bridgeProxy?.createSirBridge {
+            buildCall("")
+        })
+    }
 }
 
 internal abstract class SirAbstractClassFromKtSymbol(

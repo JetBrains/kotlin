@@ -8,7 +8,6 @@ package org.jetbrains.sir.lightclasses
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.sir.SirEnum
-import org.jetbrains.kotlin.sir.SirEnumCase
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -68,12 +67,7 @@ public class SirDeclarationFromKtSymbolProvider(
                     ).let(SirTranslationResult::RegularFunction)
             }
             is KaEnumEntrySymbol -> {
-                SirTranslationResult.EnumCase(
-                    SirEnumCase(
-                        ktSymbol.name.asString(), emptyList(),
-                        sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
-                    )
-                )
+                SirTranslationResult.EnumCase(SirEnumCaseFromKtSymbol(ktSymbol, sirSession))
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {

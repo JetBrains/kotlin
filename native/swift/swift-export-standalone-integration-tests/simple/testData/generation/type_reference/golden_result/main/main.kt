@@ -568,6 +568,12 @@ public fun __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_
     var_object_wp = __newValue
 }
 
+@ExportedBridge("ignored_ENUM_A")
+public fun ignored_ENUM_A(): kotlin.native.internal.NativePtr {
+    val _result = ignored.ENUM.A
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("ignored_produce_ENUM")
 public fun ignored_produce_ENUM(): kotlin.native.internal.NativePtr {
     val _result = ignored.produce_ENUM()

@@ -111,6 +111,14 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +listField("cases", enumCaseType)
     }
 
+    val enumCase: Element by element {
+        customParentInVisitor = namedDeclaration
+        parent(namedDeclaration)
+        parent(bridged)
+
+        +field("enum", enumType)
+    }
+
     val struct: Element by element {
         customParentInVisitor = namedDeclaration
         parent(namedDeclaration)
