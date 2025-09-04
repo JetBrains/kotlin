@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeMapper
@@ -79,6 +80,7 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
 
         override val typeContext = ConeTypeSystemCommonBackendContextForTypeMapping(session.typeContext, unresolvedQualifierRemapper)
 
+        @OptIn(ClassIdBasedLocality::class)
         override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String {
             require(typeConstructor is ConeClassLikeLookupTag)
             val classId = typeConstructor.classId
@@ -223,6 +225,7 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
         fun segments(): List<PossiblyInnerConeType> = outerType?.segments().orEmpty() + this
     }
 
+    @OptIn(ClassIdBasedLocality::class)
     internal fun getJvmShortName(classId: ClassId): String {
         val result = runUnless(classId.isLocal) {
             classId.asSingleFqName().toUnsafe().let { JavaToKotlinClassMap.mapKotlinToJava(it)?.shortClassName?.asString() }

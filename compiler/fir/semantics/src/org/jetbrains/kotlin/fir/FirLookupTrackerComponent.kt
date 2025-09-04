@@ -3,15 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ClassIdBasedLocality::class)
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -112,8 +116,8 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(type: ConeKotlinType?, s
 fun FirLookupTrackerComponent.recordCallableCandidateAsLookup(
     callableSymbol: FirCallableSymbol<*>, source: KtSourceElement?, fileSource: KtSourceElement?
 ) {
-    val callableId = callableSymbol.callableId
-    if (callableId?.isLocal == false && callableSymbol !is FirConstructorSymbol) {
+    val callableId = callableSymbol.callableId ?: return
+    if (callableSymbol.visibility != Visibilities.Local && callableSymbol !is FirConstructorSymbol) {
         recordTypeResolveAsLookup(callableSymbol.fir.returnTypeRef, source, fileSource)
         recordFqNameLookup(callableId.asSingleFqName(), source, fileSource)
     }

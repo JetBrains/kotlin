@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -309,6 +310,7 @@ class Fir2IrBuiltinSymbolsContainer(
     }
 
     @Fir2IrBuiltInsInternals
+    @OptIn(ClassIdBasedLocality::class)
     internal fun findFunctions(callableId: CallableId): List<IrSimpleFunctionSymbol> {
         require(!callableId.isLocal)
         val classId = callableId.classId
@@ -320,6 +322,7 @@ class Fir2IrBuiltinSymbolsContainer(
     }
 
     @Fir2IrBuiltInsInternals
+    @OptIn(ClassIdBasedLocality::class)
     internal fun findProperties(callableId: CallableId): List<IrPropertySymbol> {
         require(!callableId.isLocal)
         val classId = callableId.classId

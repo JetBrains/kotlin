@@ -168,7 +168,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             allowedOnSomeOperators && declaration.isOperator && declaration.isContractOnOperatorForbidden() -> {
                 contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
             }
-            declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local -> {
+            declaration.visibility == Visibilities.Local -> {
                 contractNotAllowed("Contracts are not allowed for local functions.")
             }
             else -> return false

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.symbols.isLocal
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
@@ -55,7 +56,7 @@ internal object KaAnnotationValueRenderer {
         when (type) {
             is KaUsualClassType -> {
                 val classId = type.classId
-                if (classId.isLocal) {
+                if (type.symbol.isLocal) {
                     append(classId.shortClassName.render())
                 } else {
                     append(classId.asSingleFqName().render())

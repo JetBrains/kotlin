@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
@@ -36,6 +37,7 @@ object ClsClassFinder {
      * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
      */
     @JvmOverloads
+    @OptIn(ClassIdBasedLocality::class)
     fun isKotlinInternalCompiledFile(
         file: VirtualFile,
         fileContent: ByteArray? = null,

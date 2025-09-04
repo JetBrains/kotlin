@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
@@ -40,6 +41,7 @@ import java.security.MessageDigest
 
 const val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
+@OptIn(ClassIdBasedLocality::class)
 open class IncrementalJvmCache(
     targetDataRoot: File,
     icContext: IncrementalCompilationContext,

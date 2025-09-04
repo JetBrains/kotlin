@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAn
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsCodeFragmentAware
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.captureValueInAnalyze
 import org.jetbrains.kotlin.fir.generatedContextParameterName
@@ -331,7 +333,7 @@ private class CodeFragmentCapturedValueVisitor(
         val needsRegistration = when (symbol) {
             is FirRegularClassSymbol -> symbol.isLocal
             is FirAnonymousObjectSymbol -> true
-            is FirNamedFunctionSymbol -> symbol.callableId.isLocal || symbol.hasAnnotationArgumentShouldBeEvaluated
+            is FirNamedFunctionSymbol -> symbol.visibility == Visibilities.Local || symbol.hasAnnotationArgumentShouldBeEvaluated
             is FirPropertySymbol ->
                 symbol.getterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
                         || symbol.setterSymbol?.hasAnnotationArgumentShouldBeEvaluated == true
