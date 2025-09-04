@@ -10,6 +10,7 @@ plugins {
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -70,15 +71,30 @@ projectTests {
             JdkMajorVersion.JDK_21_0
         )
     ) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJUnitPlatform()
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt")
 
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
+
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJDKModifiedRuntime()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyJsr305()
+    withThirdPartyAnnotations()
+    withThirdPartyJava8Annotations()
+    withThirdPartyJava9Annotations()
 }
 
 testsJar()
