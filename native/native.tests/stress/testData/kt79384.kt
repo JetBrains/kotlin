@@ -68,7 +68,7 @@ void runLoop(uint64_t index, bool doThreadInit) {
     if (doThreadInit)
         threadInit();
     derefWeak(index);
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{ runLoop(index + 1); });
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{ runLoop(index + 1, doThreadInit); });
 }
 
 }
