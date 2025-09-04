@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.InconsistencyChecker
 import org.jetbrains.kotlin.generators.InconsistencyChecker.Companion.inconsistencyChecker
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.forEachTestClassParallel
-import org.jetbrains.kotlin.generators.dsl.testGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 fun generateTestGroupSuiteWithJUnit4(
@@ -25,7 +24,7 @@ fun generateTestGroupSuiteWithJUnit4(
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit,
 ) {
-    val suite = testGroupSuite(init)
+    val suite = TestGroupSuite(TestGroupSuite.Mode.LegacyJUnit4).apply(init)
     suite.forEachTestClassParallel { testClass ->
         val (changed, testSourceFilePath) = TestGeneratorForJUnit4.generateAndSave(testClass, dryRun, mainClassName)
         if (changed) {

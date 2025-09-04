@@ -43,7 +43,6 @@ fun main(args: Array<String>) {
                 model(
                     "diagnostics/testsWithJvmBackend",
                     pattern = "^(.+)\\.kts?$",
-                    targetBackend = TargetBackend.JVM_IR,
                     excludedPattern = excludedCustomTestdataPattern
                 )
             }
@@ -52,7 +51,6 @@ fun main(args: Array<String>) {
                 model(
                     "diagnostics/testsWithConverter",
                     pattern = "^(.+)\\.kts?$",
-                    targetBackend = TargetBackend.JVM_IR,
                     excludedPattern = excludedCustomTestdataPattern
                 )
             }
