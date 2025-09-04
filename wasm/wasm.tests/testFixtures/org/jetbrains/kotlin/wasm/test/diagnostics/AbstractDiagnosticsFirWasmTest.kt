@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.wasm.test.diagnostics
 
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -20,19 +20,17 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
-import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractFirWasmDiagnosticTestBase(
     val parser: FirParser,
     private val targetPlatform: TargetPlatform,
-    private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
+    private val wasmTarget: WasmTarget,
 ) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
@@ -49,7 +47,7 @@ abstract class AbstractFirWasmDiagnosticTestBase(
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            wasmEnvironmentConfigurator,
+            ::WasmEnvironmentConfigurator.bind(wasmTarget),
         )
 
         useAdditionalSourceProviders(
@@ -82,11 +80,11 @@ abstract class AbstractFirWasmDiagnosticTestBase(
 abstract class AbstractDiagnosticsFirWasmTest : AbstractFirWasmDiagnosticTestBase(
     FirParser.Psi,
     WasmPlatforms.wasmJs,
-    ::WasmEnvironmentConfiguratorJs
+    WasmTarget.JS,
 )
 
 abstract class AbstractDiagnosticsFirWasmWasiTest : AbstractFirWasmDiagnosticTestBase(
     FirParser.Psi,
     WasmPlatforms.wasmWasi,
-    ::WasmEnvironmentConfiguratorWasi
+    WasmTarget.WASI,
 )

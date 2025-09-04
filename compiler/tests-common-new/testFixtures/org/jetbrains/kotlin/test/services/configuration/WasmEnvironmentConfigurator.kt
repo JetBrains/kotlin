@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-class WasmEnvironmentConfiguratorJs(testServices: TestServices) : WasmEnvironmentConfigurator(testServices, WasmTarget.JS)
-class WasmEnvironmentConfiguratorWasi(testServices: TestServices) : WasmEnvironmentConfigurator(testServices, WasmTarget.WASI)
-
-abstract class WasmEnvironmentConfigurator(
+class WasmEnvironmentConfigurator(
     testServices: TestServices,
     private val wasmTarget: WasmTarget,
 ) : EnvironmentConfigurator(testServices) {

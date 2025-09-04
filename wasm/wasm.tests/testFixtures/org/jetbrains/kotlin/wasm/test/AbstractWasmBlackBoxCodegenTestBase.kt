@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -25,8 +26,8 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -45,7 +46,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     abstract val backendFacade: Constructor<BackendFacade<I, A>>
     abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Wasm>>
     abstract val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
-    abstract val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
+    abstract val wasmTarget: WasmTarget
     open val additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null
     protected open val customIgnoreDirective: ValueDirective<TargetBackend>?
         get() = null
@@ -72,7 +73,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
 
         useConfigurators(
-            wasmEnvironmentConfigurator,
+            ::WasmEnvironmentConfigurator.bind(wasmTarget),
         )
 
         useAdditionalSourceProviders(

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.test.diagnostics
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -22,17 +22,16 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaIn
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractDiagnosticsWasmTestBase(
     private val targetPlatform: TargetPlatform,
-    private val wasmEnvironmentConfigurator: Constructor<AbstractEnvironmentConfigurator>,
+    private val wasmTarget: WasmTarget,
 ) : AbstractKotlinCompilerTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
@@ -54,7 +53,7 @@ abstract class AbstractDiagnosticsWasmTestBase(
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            wasmEnvironmentConfigurator,
+            ::WasmEnvironmentConfigurator.bind(wasmTarget),
         )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
@@ -82,10 +81,10 @@ abstract class AbstractDiagnosticsWasmTestBase(
 
 abstract class AbstractDiagnosticsWasmTest : AbstractDiagnosticsWasmTestBase(
     WasmPlatforms.wasmJs,
-    ::WasmEnvironmentConfiguratorJs
+    WasmTarget.JS,
 )
 
 abstract class AbstractDiagnosticsWasmWasiTest : AbstractDiagnosticsWasmTestBase(
     WasmPlatforms.wasmWasi,
-    ::WasmEnvironmentConfiguratorWasi
+    WasmTarget.WASI,
 )
