@@ -34,22 +34,21 @@ internal constructor(
     @Transient
     @Internal
     override var compilation: KotlinJsIrCompilation,
-    private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
-    execOps: ExecOperations,
-) : KotlinTest(execOps),
+    createdWithPublicConstructor: ObjectFactory?,
+) : KotlinTest(createdWithPublicConstructor),
     RequiresNpmDependencies {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     @Suppress("DEPRECATION")
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
-        compilation = compilation,
-        objects = compilation.target.project.objects,
-        providers = compilation.target.project.providers,
-        execOps = compilation.target.project.getExecOperations(),
+        compilation,
+        null
     )
+
+    private val objects: ObjectFactory = project.objects
+    private val providers: ProviderFactory = project.providers
 
     @Input
     var environment = mutableMapOf<String, String>()
@@ -63,7 +62,7 @@ internal constructor(
             }
         }
 
-    private var onTestFrameworkCallbacks = project.objects.domainObjectSet<Action<KotlinJsTestFramework>>()
+    private var onTestFrameworkCallbacks = objects.domainObjectSet<Action<KotlinJsTestFramework>>()
 
     fun onTestFrameworkSet(action: Action<KotlinJsTestFramework>) {
         onTestFrameworkCallbacks.add(action)

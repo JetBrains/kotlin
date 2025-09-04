@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
@@ -24,18 +25,26 @@ import javax.inject.Inject
 abstract class KotlinTest
 @Inject
 internal constructor(
-    execOps: ExecOperations?,
+    /**
+     * Use this injectable type as a marker to identify if the subclass called the public constructor, or we instantiated the type
+     * internally with @Inject constructor
+     */
+    createdWithPublicConstructor: ObjectFactory?
 ) : AbstractTestTask() {
 
-    @Deprecated(message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     // Note to KGP developers: subtypes are still supported for KGP. We just want to prevent users from extending this task.
     constructor() : this(
-        execOps = null,
+        null
     )
 
-    // TODO KT-75294 When the deprecated secondary constructor is removed, move execOps to a non-null constructor property.
-    private val execOps: ExecOperations =
-        execOps ?: @Suppress("DEPRECATION") project.getExecOperations()
+    init {
+        if (createdWithPublicConstructor == null) {
+            error("Cannot create instance of ${this::class.java.superclass.name}. Constructor is deprecated, see Kdoc for details.")
+        }
+    }
+
+    private val execOps: ExecOperations = project.getExecOperations()
 
     @Input
     @Optional

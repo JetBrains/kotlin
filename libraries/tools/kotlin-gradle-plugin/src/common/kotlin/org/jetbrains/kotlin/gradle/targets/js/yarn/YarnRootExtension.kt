@@ -21,17 +21,15 @@ internal constructor(
     project: Project,
     nodeJsRoot: NodeJsRootExtension,
     yarnSpec: YarnRootEnvSpec,
-    objects: ObjectFactory,
-    execOps: ExecOperations,
+    createdWithPublicConstructor: ObjectFactory?,
 ) : BaseYarnRootExtension(
     project = project,
     nodeJsRoot = nodeJsRoot,
     yarnSpec = yarnSpec,
-    objects = objects,
-    execOps = execOps,
+    createdWithPublicConstructor = createdWithPublicConstructor,
 ) {
 
-    @Deprecated("Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("Extending or manually creating instances of this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     constructor(
         project: Project,
         nodeJsRoot: NodeJsRootExtension,
@@ -40,8 +38,7 @@ internal constructor(
         project = project,
         nodeJsRoot = nodeJsRoot,
         yarnSpec = yarnSpec,
-        objects = project.objects,
-        execOps = @Suppress("DEPRECATION") project.getExecOperations(),
+        createdWithPublicConstructor = null
     )
 
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {

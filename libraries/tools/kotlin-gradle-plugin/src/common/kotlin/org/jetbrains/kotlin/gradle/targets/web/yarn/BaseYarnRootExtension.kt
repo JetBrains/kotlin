@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.*
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
@@ -28,12 +29,14 @@ abstract class BaseYarnRootExtension internal constructor(
     val project: Project,
     val nodeJsRoot: BaseNodeJsRootExtension,
     private val yarnSpec: BaseYarnRootEnvSpec,
-    private val objects: ObjectFactory,
-    private val execOps: ExecOperations,
+    createdWithPublicConstructor: ObjectFactory?,
 ) : AbstractSettings<YarnEnv>(), NpmApiExtension<YarnEnvironment, Yarn> {
 
     init {
         check(project == project.rootProject)
+        if (createdWithPublicConstructor == null) {
+            error("Cannot create instance of ${this::class.java.superclass.name}. Constructor is deprecated, see Kdoc for details.")
+        }
     }
 
     override val name: String
@@ -45,8 +48,8 @@ abstract class BaseYarnRootExtension internal constructor(
 
     override val packageManager: Yarn by lazy {
         Yarn(
-            objects = objects,
-            execOps = execOps,
+            objects = project.objects,
+            execOps = project.getExecOperations(),
         )
     }
 

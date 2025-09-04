@@ -46,19 +46,25 @@ internal constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
-    private val objects: ObjectFactory,
-    private val execOps: ExecOperations,
+    createdWithPublicConstructor: ObjectFactory?,
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
-    @Suppress("DEPRECATION")
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     constructor(
         compilation: KotlinJsIrCompilation,
     ) : this(
         compilation = compilation,
-        objects = compilation.project.objects,
-        execOps = compilation.project.getExecOperations(),
+        null,
     )
+
+    init {
+        if (createdWithPublicConstructor == null) {
+            error("Cannot create instance of ${this::class.java.superclass.name}. Constructor is deprecated.")
+        }
+    }
+
+    private val objects: ObjectFactory = project.objects
+    private val execOps: ExecOperations = project.getExecOperations()
 
     @get:Internal
     internal abstract val versions: Property<NpmVersions>

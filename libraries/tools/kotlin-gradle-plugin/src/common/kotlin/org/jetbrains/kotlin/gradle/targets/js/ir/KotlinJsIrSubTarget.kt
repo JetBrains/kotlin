@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.*
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -26,17 +27,35 @@ import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+import javax.inject.Inject
 
 interface KotlinJsIrSubTargetWithBinary : KotlinJsSubTargetDsl, Named {
     fun processBinary()
 }
 
-abstract class KotlinJsIrSubTarget(
+abstract class KotlinJsIrSubTarget
+// FIXME: Discuss with Adam: also deprecate this or just make this constructor public?
+internal constructor(
     val target: KotlinJsIrTarget,
     val disambiguationClassifier: String,
+    createdWithPublicConstructor: ObjectFactory?,
 ) : KotlinJsIrSubTargetWithBinary, KotlinJsSubTargetDsl {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    constructor(
+        target: KotlinJsIrTarget,
+        disambiguationClassifier: String,
+    ) : this(
+        target,
+        disambiguationClassifier,
+        null
+    )
+
     init {
         target.configureTestSideEffect
+        if (createdWithPublicConstructor == null) {
+            error("Cannot create instance of ${this::class.java.superclass.name}. Constructor is deprecated, see Kdoc for details.")
+        }
     }
 
     override fun getName(): String = disambiguationClassifier

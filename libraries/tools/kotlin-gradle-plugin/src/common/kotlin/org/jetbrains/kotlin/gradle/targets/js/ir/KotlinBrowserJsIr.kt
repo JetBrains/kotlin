@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -17,9 +18,17 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
 
-abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
-    KotlinJsIrNpmBasedSubTarget(target, "browser"),
+abstract class KotlinBrowserJsIr
+@Inject
+internal constructor(
+    target: KotlinJsIrTarget,
+    createdWithPublicConstructor: ObjectFactory?,
+) :
+    KotlinJsIrNpmBasedSubTarget(target, "browser", createdWithPublicConstructor),
     KotlinJsBrowserDsl {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    constructor(target: KotlinJsIrTarget) : this(target, null)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"

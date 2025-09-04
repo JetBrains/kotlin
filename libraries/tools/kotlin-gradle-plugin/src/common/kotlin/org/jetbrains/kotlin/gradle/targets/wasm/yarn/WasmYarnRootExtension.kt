@@ -13,19 +13,20 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
+import javax.inject.Inject
 
-abstract class WasmYarnRootExtension internal constructor(
+abstract class WasmYarnRootExtension
+@Inject
+internal constructor(
     project: Project,
     nodeJsRoot: WasmNodeJsRootExtension,
     yarnSpec: WasmYarnRootEnvSpec,
-    objects: ObjectFactory,
-    execOps: ExecOperations,
+    createdWithPublicConstructor: ObjectFactory?,
 ) : BaseYarnRootExtension(
     project = project,
     nodeJsRoot = nodeJsRoot,
     yarnSpec = yarnSpec,
-    objects = objects,
-    execOps = execOps,
+    createdWithPublicConstructor = createdWithPublicConstructor,
 ) {
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {
         val YARN: String

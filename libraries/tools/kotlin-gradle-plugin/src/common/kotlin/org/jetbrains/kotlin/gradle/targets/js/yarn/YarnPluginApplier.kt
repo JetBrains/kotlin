@@ -81,6 +81,7 @@ internal class YarnPluginApplier(
             project,
             nodeJsRoot,
             yarnSpec,
+            project.objects
         )
 
         yarnSpec.initializeYarnEnvSpec(project.objects, yarnRootExtension)

@@ -5,16 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
-abstract class KotlinJsIrNpmBasedSubTarget(
+abstract class KotlinJsIrNpmBasedSubTarget internal constructor(
     target: KotlinJsIrTarget,
     disambiguationClassifier: String,
-) : KotlinJsIrSubTarget(target, disambiguationClassifier) {
+    createdWithPublicConstructor: ObjectFactory?,
+) : KotlinJsIrSubTarget(target, disambiguationClassifier, createdWithPublicConstructor) {
+
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    constructor(
+        target: KotlinJsIrTarget,
+        disambiguationClassifier: String,
+    ) : this(target, disambiguationClassifier, null)
+
     protected val nodeJsRoot = target.webTargetVariant(
         { project.rootProject.kotlinNodeJsRootExtension },
         { project.rootProject.wasmKotlinNodeJsRootExtension },

@@ -26,17 +26,19 @@ internal constructor(
     target: KotlinJsIrTarget,
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
+    createdWithPublicConstructor: ObjectFactory?,
 ) :
-    KotlinJsIrNpmBasedSubTarget(target, "node"),
+    KotlinJsIrNpmBasedSubTarget(target, "node", createdWithPublicConstructor),
     KotlinJsNodeDsl {
 
-    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     constructor(
         target: KotlinJsIrTarget,
     ) : this(
         target = target,
         objects = target.project.objects,
         providers = target.project.providers,
+        null,
     )
 
     override val testTaskDescription: String

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertTrue
 
 class WebTargetTests {
