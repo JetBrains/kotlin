@@ -46,7 +46,7 @@ projectTests {
     //    classpath = embeddableTestRuntime
     //}
 
-    testTask(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask(taskName = "testWithK1", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         dependsOn(":dist")
         workingDir = rootDir
         doFirst {
