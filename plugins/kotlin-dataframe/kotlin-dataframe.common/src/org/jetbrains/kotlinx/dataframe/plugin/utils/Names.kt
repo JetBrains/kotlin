@@ -76,6 +76,7 @@ object Names {
     val LOCAL_DATE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDate"))
     val LOCAL_DATE_TIME_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDateTime"))
     val INSTANT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("Instant"))
+    val STDLIB_INSTANT_CLASS_ID = ClassId(FqName("kotlin.time"), Name.identifier("Instant"))
     val DATE_TIME_PERIOD_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimePeriod"))
     val DATE_TIME_UNIT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimeUnit"))
     val TIME_ZONE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("TimeZone"))
