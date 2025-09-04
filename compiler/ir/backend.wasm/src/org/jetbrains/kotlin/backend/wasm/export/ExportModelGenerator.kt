@@ -207,6 +207,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 parameterTypes = nonNullType.arguments.dropLast(1).memoryOptimizedMap { exportTypeArgument(it) },
                 returnType = exportTypeArgument(nonNullType.arguments.last())
             )
+            nonNullType.isNothing() -> ExportedType.Primitive.Nothing
 
             classifier is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
 
