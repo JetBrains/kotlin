@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationWasmSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.bind
 
 @Suppress("JUnitTestCaseWithNoTests")
 class WasmPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
@@ -23,6 +25,6 @@ class WasmPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
     ::IrPreSerializationWasmSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(::WasmEnvironmentConfiguratorJs)
+        useConfigurators(::WasmEnvironmentConfigurator.bind(WasmTarget.JS))
     }
 }
