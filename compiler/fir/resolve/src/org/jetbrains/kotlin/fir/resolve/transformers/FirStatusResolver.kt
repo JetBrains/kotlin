@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import java.util.*
 
 class FirStatusResolver(
@@ -165,11 +166,8 @@ class FirStatusResolver(
             is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass?.symbol, isLocal) }
             else -> firClass.status
         }
-        require(status.visibility == firClass.status.visibility) {
-            "Attempt to change visibility of a class-like: ${firClass.symbol.classId}, " +
-                    "original visibility: ${firClass.status.visibility}, new visibility: ${status.visibility}"
-        }
 
+        classLikeStatusValidation(newStatus = status, declaration = firClass)
         return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
     }
 
@@ -181,7 +179,26 @@ class FirStatusResolver(
         val status = typeAlias.applyExtensionTransformers {
             transformStatus(it, typeAlias, containingClass?.symbol, isLocal)
         }
+
+        classLikeStatusValidation(newStatus = status, declaration = typeAlias)
         return resolveStatus(typeAlias, status, containingClass, null, isLocal, emptyList())
+    }
+
+    private fun classLikeStatusValidation(newStatus: FirDeclarationStatus, declaration: FirClassLikeDeclaration) {
+        val originalVisibility = declaration.status.visibility
+        requireWithAttachment(
+            originalVisibility != Visibilities.Unknown,
+            { "Visibility has to be provided for a class-like declaration (${declaration::class.simpleName}) during its initialization" },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
+
+        requireWithAttachment(
+            newStatus.visibility == originalVisibility,
+            { "Attempt to change visibility of a class-like declaration (${declaration::class.simpleName}), original visibility: $originalVisibility, new visibility: ${declaration.visibility}" },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
     }
 
     fun resolveStatus(
