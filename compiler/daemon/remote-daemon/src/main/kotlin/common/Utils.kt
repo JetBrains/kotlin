@@ -5,10 +5,13 @@
 
 package common
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyOf
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import java.security.MessageDigest
 
 fun calculateCompilationInputHash(
-    compilerArguments: Map<String, String>
+    args: K2JVMCompilerArguments
 ): String {
     // TODO: at this stage I'm computing input hash with these arguments
     // this needs to be revisited as they might be other important arguments that can produce
@@ -16,24 +19,18 @@ fun calculateCompilationInputHash(
 
     // TODO: remove the output folder from compiler args because that is not important
     // TODO: consider refactor and create method that just creates arguments for this hashing use case, it will be probably less error prone
-    val importantCompilerArgs = compilerArguments.toMutableMap()
-    importantCompilerArgs.remove(CompilerUtils.DIRECTORY_ARG)
-    importantCompilerArgs.remove(CompilerUtils.CLASS_PATH_ARG)
-    importantCompilerArgs.remove(CompilerUtils.X_PLUGIN_ARG)
-    importantCompilerArgs.remove(CompilerUtils.SOURCE_FILE_ARG)
+    val importantCompilerArgs = args.copyOf()
+    importantCompilerArgs.destination = null
+    importantCompilerArgs.classpath = null
+    importantCompilerArgs.pluginConfigurations = null
+    importantCompilerArgs.freeArgs = importantCompilerArgs.freeArgs.filter { !it.startsWith("/") }
 
     val digest = MessageDigest.getInstance("SHA-256")
-    val files = CompilerUtils.getSourceFilePaths(importantCompilerArgs).map { it.toFile() } + CompilerUtils.getDependencyFilePaths(importantCompilerArgs).map { it.toFile() }
+    val files = CompilerUtils.getSourceFiles(args) + CompilerUtils.getDependencyFiles(args)
     files.sortedBy { it.path }.forEach { file ->
-        file.inputStream().use { input ->
-            val buffer = ByteArray(8192)
-            var bytesRead: Int
-            while (input.read(buffer).also { bytesRead = it } != -1) {
-                digest.update(buffer, 0, bytesRead)
-            }
-        }
+        digest.update(computeSha256(file).toByteArray(Charsets.UTF_8))// TODO: double check this approach
     }
-    importantCompilerArgs.values.sorted().forEach { arg ->
+    ArgumentUtils.convertArgumentsToStringList(importantCompilerArgs).sorted().forEach { arg ->
         digest.update(arg.toByteArray())
     }
     return digest.digest().joinToString("") { "%02x".format(it) }

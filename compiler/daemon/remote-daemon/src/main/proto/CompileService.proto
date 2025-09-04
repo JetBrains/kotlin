@@ -35,7 +35,7 @@ message CompilationMetadataGrpc{
   int32 source_files_count = 2;
   int32 dependency_files_count = 3;
   int32 compiler_plugin_file_count = 4;
-  map<string, string> compiler_arguments = 5;
+  repeated string compiler_arguments = 5;
   CompilationOptionsGrpc compilation_options = 6;
 }
 
