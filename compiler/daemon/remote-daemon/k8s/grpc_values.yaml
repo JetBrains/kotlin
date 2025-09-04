@@ -1,7 +1,7 @@
 ### Following options are set through the console UI
 ### DO NOT TRY TO EDIT IT IN UI
 # Application name will be used for many parts of the deployment
-applicationName: remote-kotlin-daemon
+applicationName: remote-kotlin-daemon-grpc
 # Image path with tag
 image: registry.jetbrains.team/p/kotlin-build-tools/remote-kotlin-daemon-containers/kotlin-remote-daemon-workaround:latest
 # Secret usially created by space-controller and detected by console UI
@@ -99,10 +99,12 @@ databaseSecrets: []
 #       secretKeyRef:
 #         name: my-secret-object
 #         key: my-secret-object-key
+
 customEnv:
   - name: SERVER_ENV
-    value: "k8s_debug"
-
+    value: "K8S_DEBUG"
+  - name: IMPL_TYPE
+    value: "GRPC"
 
 # Typically you need `internal-nginx` className for application working inside JetBrains networks
 # and just `nginx` className for external applications(but make sure you enable auth and don't exposing any sensitive data)
