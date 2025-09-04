@@ -2113,6 +2113,9 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
         final fun parse(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parse|parse(kotlin.String){}[0]
         final fun parseHex(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHex|parseHex(kotlin.String){}[0]
         final fun parseHexDash(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHexDash|parseHexDash(kotlin.String){}[0]
+        final fun parseHexDashOrNull(kotlin/String): kotlin.uuid/Uuid? // kotlin.uuid/Uuid.Companion.parseHexDashOrNull|parseHexDashOrNull(kotlin.String){}[0]
+        final fun parseHexOrNull(kotlin/String): kotlin.uuid/Uuid? // kotlin.uuid/Uuid.Companion.parseHexOrNull|parseHexOrNull(kotlin.String){}[0]
+        final fun parseOrNull(kotlin/String): kotlin.uuid/Uuid? // kotlin.uuid/Uuid.Companion.parseOrNull|parseOrNull(kotlin.String){}[0]
         final fun random(): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.random|random(){}[0]
     }
 }

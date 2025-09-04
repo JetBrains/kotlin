@@ -147,10 +147,14 @@ class UuidTest {
             if (hexDash != null) {
                 check { Uuid.parseHexDash(hexDash) }
                 check { Uuid.parse(hexDash) }
+                check { Uuid.parseHexDashOrNull(hexDash)!! }
+                check { Uuid.parseOrNull(hexDash)!! }
             }
             if (hex != null) {
                 check { Uuid.parseHex(hex) }
                 check { Uuid.parse(hex) }
+                check { Uuid.parseHexOrNull(hex)!! }
+                check { Uuid.parseOrNull(hex)!! }
             }
         }
 
@@ -166,10 +170,32 @@ class UuidTest {
         // mixed case
         test(uuidString.mixedcase(), uuidHexString.mixedcase()) { assertEquals(uuid, it()) }
         test(uuidStringMax.mixedcase(), uuidHexStringMax.mixedcase()) { assertEquals(uuidMax, it()) }
+    }
+
+    @Test
+    fun parseInvalid() {
+        fun test(hexDash: String? = null, hex: String? = null, check: (parse: () -> Uuid) -> Unit) {
+            require(hexDash != null || hex != null)
+
+            if (hexDash != null) {
+                check { Uuid.parseHexDash(hexDash) }
+                check { Uuid.parse(hexDash) }
+                assertNull(Uuid.parseHexDashOrNull(hexDash))
+                assertNull(Uuid.parseOrNull(hexDash))
+            }
+            if (hex != null) {
+                check { Uuid.parseHex(hex) }
+                check { Uuid.parse(hex) }
+                assertNull(Uuid.parseHexOrNull(hex))
+                assertNull(Uuid.parseOrNull(hex))
+            }
+        }
 
         // Illegal String format
         assertFailsWith<IllegalArgumentException> { Uuid.parseHexDash(uuidHexString) }
+        assertNull(Uuid.parseHexDashOrNull(uuidHexString))
         assertFailsWith<IllegalArgumentException> { Uuid.parseHex(uuidString) }
+        assertNull(Uuid.parseHexOrNull(uuidString))
         test("$uuidString-", "$uuidHexString-") { assertFailsWith<IllegalArgumentException> { it() } }
         test("-$uuidString", "-$uuidHexString") { assertFailsWith<IllegalArgumentException> { it() } }
         test("${uuidString}0", "${uuidHexString}0") { assertFailsWith<IllegalArgumentException> { it() } }

@@ -6499,6 +6499,9 @@ public final class kotlin/uuid/Uuid$Companion {
 	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun parseHex (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun parseHexDash (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHexDashOrNull (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHexOrNull (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseOrNull (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun random ()Lkotlin/uuid/Uuid;
 }
 

@@ -546,8 +546,8 @@ private fun String.hexToByteArraySlowPath(
 }
 
 private fun String.parseByteAt(index: Int): Byte {
-    val high = decimalFromHexDigitAt(index)
-    val low = decimalFromHexDigitAt(index + 1)
+    val high = decimalFromHexDigitAt(index) { throwInvalidDigitAt(it) }
+    val low = decimalFromHexDigitAt(index + 1) { throwInvalidDigitAt(it) }
     return ((high shl 4) or low).toByte()
 }
 
@@ -1166,17 +1166,41 @@ private fun String.checkZeroDigits(startIndex: Int, endIndex: Int) {
 }
 
 private fun String.parseInt(startIndex: Int, endIndex: Int): Int {
+    return parseHexToInt(startIndex, endIndex) { index -> throwInvalidDigitAt(index) }
+}
+
+/**
+ * Parses [this] string's substring starting at [startIndex] and ending at [endIndex] as a hex-encoded [Int] value.
+ *
+ * If a string contains characters other than `0-9`, `a-f`, `A-F`, the function invokes [onError] callback with
+ * [this] as a receiver and an index at which an illegal character was found as a parameter.
+ *
+ * This function does not validate [startIndex] and [endIndex] values.
+ */
+internal inline fun String.parseHexToInt(startIndex: Int, endIndex: Int, onError: String.(Int) -> Nothing): Int {
     var result = 0
-    for (i in startIndex until endIndex) {
-        result = (result shl 4) or decimalFromHexDigitAt(i)
+    for (index in startIndex until endIndex) {
+        result = (result shl 4) or decimalFromHexDigitAt(index) { this.onError(it) }
     }
     return result
 }
 
 private fun String.parseLong(startIndex: Int, endIndex: Int): Long {
+    return parseHexToLong(startIndex, endIndex) { index -> throwInvalidDigitAt(index) }
+}
+
+/**
+ * Parses [this] string's substring starting at [startIndex] and ending at [endIndex] as a hex-encoded [Long] value.
+ *
+ * If a string contains characters other than `0-9`, `a-f`, `A-F`, the function invokes [onError] callback with
+ * [this] as a receiver and an index at which an illegal character was found as a parameter.
+ *
+ * This function does not validate [startIndex] and [endIndex] values.
+ */
+internal inline fun String.parseHexToLong(startIndex: Int, endIndex: Int, onError: String.(Int) -> Nothing): Long {
     var result = 0L
-    for (i in startIndex until endIndex) {
-        result = (result shl 4) or longDecimalFromHexDigitAt(i)
+    for (index in startIndex until endIndex) {
+        result = result.shl(4) or longDecimalFromHexDigitAt(index) { this.onError(it) }
     }
     return result
 }
@@ -1193,22 +1217,20 @@ private inline fun String.checkContainsAt(index: Int, endIndex: Int, part: Strin
     return index + part.length
 }
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun String.decimalFromHexDigitAt(index: Int): Int {
+private inline fun String.decimalFromHexDigitAt(index: Int, onError: String.(Int) -> Nothing): Int {
     val code = this[index].code
     if (code ushr 8 == 0 && HEX_DIGITS_TO_DECIMAL[code] >= 0) {
         return HEX_DIGITS_TO_DECIMAL[code]
     }
-    throwInvalidDigitAt(index)
+    onError(index)
 }
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun String.longDecimalFromHexDigitAt(index: Int): Long {
+private inline fun String.longDecimalFromHexDigitAt(index: Int, onError: String.(Int) -> Nothing): Long {
     val code = this[index].code
     if (code ushr 8 == 0 && HEX_DIGITS_TO_LONG_DECIMAL[code] >= 0) {
         return HEX_DIGITS_TO_LONG_DECIMAL[code]
     }
-    throwInvalidDigitAt(index)
+    onError(index)
 }
 
 private fun String.throwInvalidNumberOfDigits(startIndex: Int, endIndex: Int, specifier: String, expected: Int) {
