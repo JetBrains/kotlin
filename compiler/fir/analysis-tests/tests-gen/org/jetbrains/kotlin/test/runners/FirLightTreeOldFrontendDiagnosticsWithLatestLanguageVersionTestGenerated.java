@@ -34866,6 +34866,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("missingOuterClassReceiver.kt")
+      public void testMissingOuterClassReceiver() {
+        runTest("compiler/testData/diagnostics/tests/resolve/missingOuterClassReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("nestedClassUnresolvedReference.kt")
       public void testNestedClassUnresolvedReference() {
         runTest("compiler/testData/diagnostics/tests/resolve/nestedClassUnresolvedReference.kt");
