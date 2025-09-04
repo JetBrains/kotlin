@@ -1082,6 +1082,12 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       }
 
       @Test
+      @TestMetadata("leakingCapturedTypeParameter.kt")
+      public void testLeakingCapturedTypeParameter() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingCapturedTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateConstructorInInnerClass.kt")
       public void testLeakingPrivateConstructorInInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClass.kt");
