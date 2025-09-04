@@ -47,11 +47,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import kotlin.collections.orEmpty
+import kotlin.collections.plus
 
 class DataFlowAnalyzerContext private constructor(
     private val session: FirSession,
@@ -267,14 +268,28 @@ abstract class FirDataFlowAnalyzer(
      *
      * @param expression The variable access expression.
      */
-    open fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartCastStatement? {
+    inline fun getTypeUsingSmartcastInfo(
+        expression: FirExpression,
+        augmentTypeStatement: (DataFlowVariable, TypeStatement?) -> TypeStatement? = { _, statement -> statement },
+    ): SmartCastStatement? {
         val flow = currentSmartCastPosition ?: return null
         var variable: DataFlowVariable = SyntheticVariable(expression)
-        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty } ?: run {
-            // Can have an unstable alias to a stable variable, so don't resolve aliases here.
-            variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
-            flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty }
-        }
+        val typeStatement = augmentTypeStatement(variable, extractTypeStatementFrom(flow, variable))?.takeIf { it.isNotEmpty }
+            ?: run {
+                // Can have an unstable alias to a stable variable, so don't resolve aliases here.
+                variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
+                augmentTypeStatement(variable, extractTypeStatementFrom(flow, variable))?.takeIf { it.isNotEmpty }
+            }
+        return buildSmartCastStatement(flow, variable, typeStatement)
+    }
+
+    open fun extractTypeStatementFrom(flow: Flow, variable: DataFlowVariable): TypeStatement? = flow.getTypeStatement(variable)
+
+    fun buildSmartCastStatement(
+        flow: Flow,
+        variable: DataFlowVariable,
+        typeStatement: TypeStatement?,
+    ): SmartCastStatement? {
         val upperTypes = typeStatement?.upperTypes
         val upperTypesStability = when {
             upperTypes != null -> variable.getStability(flow, targetTypes = upperTypes)
@@ -1282,7 +1297,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun processBackingFieldAccess(flow: MutableFlow, qualifiedAccess: FirQualifiedAccessExpression) {
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
-        val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.inlineFunction, session) as? FirVariableSymbol<*> ?: return
+        val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.inlineFunction, session) ?: return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
         flow.addTypeStatement(variable typeEq fieldSymbol.resolvedReturnType)
     }
@@ -1624,7 +1639,8 @@ abstract class FirDataFlowAnalyzer(
     // The data flow state from which type statements are taken during expression resolution.
     // Should normally be equal to `graphBuilder.lastNode`, but one exception is between exiting call
     // arguments and exiting the call itself, where smart casting does not use information from the arguments.
-    private var currentSmartCastPosition: Flow? = null
+    var currentSmartCastPosition: Flow? = null
+        private set
 
     private fun CFGNode<*>.buildDefaultFlow(
         builder: (FlowPath, MutableFlow) -> Unit,
@@ -1849,7 +1865,7 @@ abstract class FirDataFlowAnalyzer(
     private fun Flow.getVariable(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
         variableStorage.get(fir, createReal, unwrapAlias = { unwrapVariableIfStable(it) })
 
-    private fun Flow.getVariableWithoutUnwrappingAlias(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
+    fun Flow.getVariableWithoutUnwrappingAlias(fir: FirExpression, createReal: Boolean): DataFlowVariable? =
         variableStorage.get(fir, createReal, unwrapAlias = { it }, unwrapAliasInReceivers = { unwrapVariableIfStable(it) })
 
     // Use this when making non-type statements, such as `variable eq true`.

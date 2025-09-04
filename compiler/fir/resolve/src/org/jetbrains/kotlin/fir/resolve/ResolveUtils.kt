@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.isVisible
+import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -525,9 +526,10 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Con
 private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 
-fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
-    val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
-
+fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
+    expression: FirExpression,
+    smartcastStatement: FirDataFlowAnalyzer.SmartCastStatement,
+): FirExpression {
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType()
 
@@ -595,6 +597,11 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
             .takeIf { smartcastStatement.lowerTypesStability == SmartcastStability.STABLE_VALUE }
             .orEmpty()
     }
+}
+
+fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirExpression): FirExpression {
+    val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) ?: return expression
+    return transformExpressionUsingSmartcastInfo(expression, smartcastStatement)
 }
 
 fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(

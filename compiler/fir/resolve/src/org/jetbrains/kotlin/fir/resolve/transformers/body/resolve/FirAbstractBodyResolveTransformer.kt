@@ -132,6 +132,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
 
+        override val inlineFunction: FirFunction? by context::inlineFunction
+
         override val callResolver: FirCallResolver by lazy(LazyThreadSafetyMode.NONE) {
             FirCallResolver(this)
         }

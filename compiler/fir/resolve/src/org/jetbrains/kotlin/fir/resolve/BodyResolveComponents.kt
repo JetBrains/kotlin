@@ -46,6 +46,7 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val dataFlowAnalyzer: FirDataFlowAnalyzer
     abstract val outerClassManager: FirOuterClassManager
     abstract val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer
+    abstract val inlineFunction: FirFunction?
 }
 
 // --------------------------------------- Utils ---------------------------------------
