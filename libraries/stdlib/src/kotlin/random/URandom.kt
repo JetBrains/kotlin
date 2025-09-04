@@ -128,7 +128,6 @@ public fun Random.nextUBytes(array: UByteArray): UByteArray {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-@IgnorableReturnValue
 public fun Random.nextUBytes(size: Int): UByteArray = nextBytes(size).asUByteArray()
 
 /**
