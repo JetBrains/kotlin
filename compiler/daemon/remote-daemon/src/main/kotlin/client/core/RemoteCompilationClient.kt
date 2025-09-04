@@ -94,11 +94,11 @@ class RemoteCompilationClient(
     }
 
     suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
-        val compilerArgumentsMap = CompilerUtils.getMap(compilerArguments)
+        val parsedArgs = CompilerUtils.parseArgs(compilerArguments)
+        val sourceFiles = CompilerUtils.getSourceFiles(parsedArgs)
+        val dependencyFiles = CompilerUtils.getDependencyFiles(parsedArgs)
+        val compilerPluginFiles = CompilerUtils.getXPluginFiles(parsedArgs)
 
-        val sourceFiles = CompilerUtils.getSourceFilePaths(compilerArgumentsMap).map { it.toFile() }
-        val dependencyFiles = CompilerUtils.getDependencyFilePaths(compilerArgumentsMap).map { it.toFile() }
-        val compilerPluginFiles = CompilerUtils.getCompilerPluginFilesPath(compilerArgumentsMap).map { it.toFile() }
 
         val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
@@ -145,7 +145,7 @@ class RemoteCompilationClient(
                         }
                         is FileChunk -> {
                             launch {
-                                val moduleName = CompilerUtils.getModuleName(compilerArgumentsMap)
+                                val moduleName = CompilerUtils.getModuleName(parsedArgs)
                                 fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
                                     fileChunkStrategy.reconstruct(
@@ -175,7 +175,7 @@ class RemoteCompilationClient(
                         sourceFiles.size,
                         dependencyFiles.size,
                         compilerPluginFiles.size,
-                        compilerArgumentsMap,
+                        compilerArguments,
                         compilationOptions
                     )
                 )

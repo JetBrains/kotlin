@@ -25,6 +25,8 @@ import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
 import model.ArtifactType
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
@@ -162,12 +164,12 @@ class RemoteCompilationServiceImpl(
             launch {
                 allFilesReady.join()
 
-                val remoteCompilerArguments = CompilerUtils.replaceClientPathsWithRemotePaths(
+                val remoteCompilerArguments = CompilerUtils.replacePathsWithRemoteOnes(
                     userId,
-                    compilationMetadata!!, // TODO exclamation marks
+                    compilationMetadata!!,
                     workspaceManager,
-                    dependencyFiles,
                     sourceFiles,
+                    dependencyFiles,
                     compilerPluginFiles
                 )
 
@@ -212,7 +214,7 @@ class RemoteCompilationServiceImpl(
     }
 
     private fun doCompilation(
-        remoteCompilerArguments: Map<String, String>,
+        remoteCompilerArguments: K2JVMCompilerArguments,
         compilationMetadata: CompilationMetadata,
         send: (CompileResponse) -> Unit
     ): Pair<File, CompilationResult> {
@@ -227,9 +229,9 @@ class RemoteCompilationServiceImpl(
             BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
 
         debug("[SERVER COMPILATION] remote compiler arguments are:")
-        debug(CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments).toString())
+        debug(ArgumentUtils.convertArgumentsToStringList(remoteCompilerArguments).toString())
         val exitCode = compilerService.compileImpl(
-            compilerArguments = CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments)
+            compilerArguments = ArgumentUtils.convertArgumentsToStringList(remoteCompilerArguments)
                 .toTypedArray(),
             compilationOptions = compilationMetadata.compilationOptions,
             servicesFacade = servicesFacade,

@@ -12,6 +12,7 @@ import common.calculateCompilationInputHash
 import common.computeSha256
 import common.copyDirectoryRecursively
 import model.ArtifactType
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -55,7 +56,7 @@ class CacheHandler {
         tmpFile: File,
         artifactType: ArtifactType,
         deleteOriginalFile: Boolean,
-        remoteCompilerArguments: Map<String, String>? = null
+        remoteCompilerArguments: K2JVMCompilerArguments? = null
     ): File {
         val fingerprint = computeSha256(tmpFile)
         val targetPath = SERVER_ARTIFACTS_CACHE_DIR.resolve(fingerprint)
@@ -97,7 +98,7 @@ class CacheHandler {
     }
 
     fun isCompilationResultCached(
-        compilerArguments: Map<String, String>,
+        compilerArguments: K2JVMCompilerArguments,
     ): Pair<Boolean, String> {
         val inputFingerprint = calculateCompilationInputHash(compilerArguments)
         return artifacts.containsKey(inputFingerprint) to inputFingerprint

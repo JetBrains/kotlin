@@ -16,7 +16,7 @@ data class CompilationMetadata(
     val sourceFilesCount: Int,
     val dependencyFilesCount: Int,
     val compilerPluginFilesCount: Int,
-    val compilerArguments: Map<String, String>,
+    val compilerArguments: List<String>,
     @Contextual
     val compilationOptions: CompilationOptions
 ) : CompileRequest
@@ -26,7 +26,7 @@ fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
         .setSourceFilesCount(sourceFilesCount)
         .setDependencyFilesCount(dependencyFilesCount)
         .setCompilerPluginFileCount(compilerPluginFilesCount)
-        .putAllCompilerArguments(compilerArguments)
+        .addAllCompilerArguments(compilerArguments)
         .setProjectName(projectName)
         .setCompilationOptions(compilationOptions.toGrpc())
         .build()
@@ -38,7 +38,7 @@ fun CompilationMetadataGrpc.toDomain(): CompilationMetadata {
         sourceFilesCount,
         dependencyFilesCount,
         compilerPluginFileCount,
-        compilerArgumentsMap,
+        compilerArgumentsList,
         compilationOptions.toDomain()
     )
 }

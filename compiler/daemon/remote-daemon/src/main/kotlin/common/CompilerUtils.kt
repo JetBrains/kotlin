@@ -6,6 +6,11 @@
 package common
 
 import model.CompilationMetadata
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
 
 import server.core.WorkspaceManager
 import java.io.File
@@ -17,207 +22,102 @@ import kotlin.collections.component2
 
 object CompilerUtils {
 
-    const val SOURCE_FILE_ARG = ""
-    const val DIRECTORY_ARG = "-d"
-    const val CLASS_PATH_ARG = "-classpath"
-    const val JDK_HOME_ARG = "-jdk-home"
-    const val MODULE_NAME_ARG = "-module-name"
-    const val X_PLUGIN_ARG = "-Xplugin="
-    const val X_FRIEND_PATHS_ARG = "-Xfriend-paths="
-    const val X_FRAGMENT_SOURCES_ARG = "-Xfragment-sources="
-    const val X_MODULE_PATH_ARG = "-Xmodule-path="
-    const val X_BUILD_FILE_ARG = "-Xbuild-file="
-    const val X_PROFILE_ARG = "-Xprofile="
-    const val X_JAVA_SOURCE_ROOTS_ARG = "-Xjava-source-roots="
-    const val X_KLIB_ARG = "-Xklib="
+    fun parseArgs(compilerArguments: List<String>): K2JVMCompilerArguments {
+        return parseCommandLineArguments<K2JVMCompilerArguments>(compilerArguments)
+    }
 
-    fun getMap(args: List<String>): MutableMap<String, String> {
-        //  TODO this must be verified
-        val argumentsExpectingFilePath = setOf(
-            DIRECTORY_ARG,
-            CLASS_PATH_ARG,
-            JDK_HOME_ARG,
-            X_MODULE_PATH_ARG,
-            X_BUILD_FILE_ARG,
-            X_JAVA_SOURCE_ROOTS_ARG,
-            X_FRIEND_PATHS_ARG,
-            X_KLIB_ARG,
-            X_PROFILE_ARG
-        )
-        val map = mutableMapOf<String, String>()
-        var i = 0
-        while (i < args.size) {
-            val curr = args[i]
-            val next = args.getOrNull(i + 1)
+    fun getSourceFiles(args: K2JVMCompilerArguments): List<File> {
+        return args.freeArgs.filter { it.startsWith("/") }.map { File(it.trim()) }
+    }
 
-            if (curr.startsWith("-")) {
-                if ('=' in curr) {
-                    val (key, value) = curr.split("=")
-                    map["$key="] = value
-                    i++
-                    continue
-                }
-                if (next == null || next.startsWith("-") || (next.startsWith('/') && curr !in argumentsExpectingFilePath)) {
-                    map[curr] = ""
-                    i++
-                    continue
-                } else {
-                    map[curr] = next
-                    i += 2
-                    continue
-                }
-            }
-            i++
-        }
+    fun getDependencyFiles(args: K2JVMCompilerArguments): List<File> {
+        return args.classpathAsList
+    }
 
-        val sourceFiles = mutableListOf<String>()
-        for (value in args.asReversed()) {
-            if (value.startsWith("/")) {
-                sourceFiles.add(value.trim())
+    fun getXPluginFiles(args: K2JVMCompilerArguments): List<File> {
+        return args.pluginClasspaths?.map { File(it.trim()) } ?: emptyList()
+    }
+
+    fun getModuleName(args: K2JVMCompilerArguments): String {
+        // TODO: revisit null case
+        return args.moduleName ?: "not set"
+    }
+
+    fun getOutputDir(args: K2JVMCompilerArguments): File {
+        return args.destinationAsFile
+    }
+
+    fun replacePathsWithRemoteOnes(
+        userId: String,
+        compilationMetadata: CompilationMetadata,
+        workspaceManager: WorkspaceManager,
+        sourceFiles: ConcurrentHashMap<Path, File>,
+        dependencyFiles: ConcurrentHashMap<Path, File>,
+        compilerPluginFiles: ConcurrentHashMap<Path, File>
+    ): K2JVMCompilerArguments {
+        val parsed = parseCommandLineArguments<K2JVMCompilerArguments>(compilationMetadata.compilerArguments)
+
+        // replace source file paths
+        parsed.freeArgs = parsed.freeArgs.map {
+            if (it.startsWith("/")) {
+                sourceFiles[Paths.get(it.trim())]?.absolutePath.toString()
             } else {
-                break
+                it
             }
         }
-        map[SOURCE_FILE_ARG] = sourceFiles.reversed().joinToString(" ")
-        if (X_PLUGIN_ARG in map) {
-            val clientPlugins = map[X_PLUGIN_ARG]?.split(",") ?: emptyList()
-            val remotePlugins = clientPlugins.joinToString(",") { clientPath ->
-                // TODO: proper solution
-                // THIS IS JUST A WORKAROUND, because we use a compiler from Kotlin project and the older libraries are not compatible
-                // with the current Kotlin compiler
-                if (clientPath.contains("kotlin-scripting-compiler-impl-embeddable")) {
+
+        // replace friend paths
+        if (parsed.friendPaths != null) {
+            val remoteFriendPaths = mutableListOf<String>()
+            for (clientPath in parsed.friendPaths){
+                val remotePath = dependencyFiles[Paths.get(clientPath)]?.absolutePath.toString()
+                remoteFriendPaths.add(remotePath)
+            }
+            parsed.friendPaths = remoteFriendPaths.toTypedArray()
+        }
+
+        // replace output directory
+        // TODO revisit module name
+        parsed.destination =
+            workspaceManager.getOutputDir(userId, compilationMetadata.projectName, parsed.moduleName ?: "module").toString()
+
+        // replace -classpath
+        // TODO revisit !!
+        if (parsed.classpath != null) {
+            parsed.classpathAsList = parsed.classpathAsList.map { clientFile -> dependencyFiles[clientFile.toPath()]!! }
+        }
+
+        // replace -Xcompiler-plugin
+        if (parsed.pluginClasspaths != null) {
+            val remoteFriendPaths = mutableListOf<String>()
+            for (clientPath in parsed.pluginClasspaths){
+                val remotePath = if (clientPath.contains("kotlin-scripting-compiler-impl-embeddable")) {
                     File("src/main/kotlin/server/libsworkaround/kotlin-scripting-compiler-impl-embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else if (clientPath.contains("kotlin-scripting-compiler-embeddable")) {
                     File("src/main/kotlin/server/libsworkaround/kotlin-scripting-compiler-embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else if (clientPath.contains("kotlin-serialization-compiler-plugin-embeddable")) {
                     File("src/main/kotlin/server/libsworkaround/kotlinx-serialization-compiler-plugin.embeddable-2.3.255-SNAPSHOT.jar").absolutePath
+                } else if (clientPath.contains("kotlin-assignment-compiler-plugin-embeddable")) {
+                    File("src/main/kotlin/server/libsworkaround/kotlin-assignment-compiler-plugin.embeddable-2.3.255-SNAPSHOT.jar").absolutePath
                 } else {
-                    clientPath
+                    compilerPluginFiles[Paths.get(clientPath)]?.absolutePath.toString()
                 }
+                remoteFriendPaths.add(remotePath)
             }
-            map[X_PLUGIN_ARG] = remotePlugins
-        }
-        // TODO: this is just a workaround
-        // compiler will infer JDK from a $JAVA_HOME
-        map.remove(JDK_HOME_ARG)
-        return map
-    }
-
-    fun getSourceFilePaths(args: Map<String, String>): Set<Path> {
-        return args[SOURCE_FILE_ARG]?.split(" ")?.map { Paths.get(it.trim()).toAbsolutePath().normalize() }?.toSet() ?: emptySet()
-    }
-
-    fun getDependencyFilePaths(args: Map<String, String>): Set<Path> {
-        return args[CLASS_PATH_ARG]?.split(":")?.map { Paths.get(it.trim()).toAbsolutePath().normalize() }?.toSet() ?: emptySet()
-    }
-
-    fun getOutputDir(args: Map<String, String>): File {
-        return File(args[DIRECTORY_ARG] ?: "")
-    }
-
-    fun getModuleName(args: Map<String, String>): String {
-        return args[MODULE_NAME_ARG] ?: ""
-    }
-
-    fun getCompilerPluginFilesPath(args: Map<String, String>): Set<Path> {
-        return args[X_PLUGIN_ARG]?.split(",")?.map { Paths.get(it.trim()).toAbsolutePath().normalize() }?.toSet() ?: emptySet()
-    }
-
-    fun getFragmentSources(args: Map<String, String>): Map<String, Set<Path>> {
-        val fragmentSourcesList = args[X_FRAGMENT_SOURCES_ARG]?.split(",") ?: emptyList()
-        val fragmentSourcesMap = mutableMapOf<String, MutableSet<Path>>()
-        fragmentSourcesList.forEach { source ->
-            val (fragmentName, clientPathString) = source.split(":").map { it.trim() }
-            val clientPath = Paths.get(clientPathString).toAbsolutePath().normalize()
-            fragmentSourcesMap.getOrPut(fragmentName) { mutableSetOf() }.add(clientPath)
-        }
-        return fragmentSourcesMap
-    }
-
-    fun getXFriendPaths(args: Map<String, String>): Set<Path> {
-        return args[X_FRIEND_PATHS_ARG]
-            ?.split(",")
-            ?.map { Paths.get(it.trim()).toAbsolutePath().normalize() }
-            ?.toSet()
-            ?: emptySet()
-    }
-
-    fun replaceClientPathsWithRemotePaths(
-        userId: String,
-        compilationMetadata: CompilationMetadata,
-        workspaceManager: WorkspaceManager,
-        dependencyFiles: ConcurrentHashMap<Path, File>,
-        sourceFiles: ConcurrentHashMap<Path, File>,
-        compilerPluginFiles: ConcurrentHashMap<Path, File>
-    ): Map<String, String> {
-
-        // -d
-        // -classpath
-        // -jdk-home
-        // -Xmodule-path
-        // -Xbuild-file
-        // -Xjava-source-roots
-        // -Xfriend-paths
-        // -Xklib
-        // -Xprofile
-        // <fragment name>:<path>
-        // TODO there is more arguments that can take files as values, it needs to be properly handled
-
-        val args = compilationMetadata.compilerArguments.toMutableMap()
-
-        if (DIRECTORY_ARG in args) {
-            args[DIRECTORY_ARG] =
-                workspaceManager.getOutputDir(userId, compilationMetadata.projectName, getModuleName(args)).toAbsolutePath().toString()
+            parsed.pluginClasspaths = remoteFriendPaths.toTypedArray()
         }
 
-        if (CLASS_PATH_ARG in args) {
-            val clientDependencies = getDependencyFilePaths(args)
-            val remoteDependencies =
-                clientDependencies.joinToString(":") { clientPath -> dependencyFiles[clientPath]?.absolutePath.toString() }
-            args[CLASS_PATH_ARG] = remoteDependencies
-        }
-
-        if (X_PLUGIN_ARG in args) {
-            val clientPlugins = args[X_PLUGIN_ARG]?.split(",") ?: emptyList()
-            val remotePlugins = clientPlugins.joinToString(",") { clientPath ->
-                compilerPluginFiles[Paths.get(clientPath).normalize()]?.absolutePath.toString()
+        // replace -Xfragment-sources
+        if (parsed.fragmentSources != null) {
+            val remoteFragmentSources = mutableListOf<String>()
+            for (fs in parsed.fragmentSources) {
+                val (fragment, clientPaths) = fs.split(":")
+                remoteFragmentSources.add("$fragment:${sourceFiles[Paths.get(clientPaths)]?.toPath()?.toAbsolutePath()}")
             }
-            args[X_PLUGIN_ARG] = remotePlugins
+            parsed.fragmentSources = remoteFragmentSources.toTypedArray()
         }
 
-        if (X_FRAGMENT_SOURCES_ARG in args) {
-            val fragmentSources = getFragmentSources(args)
-            val remoteFragmentSources = fragmentSources.map { (fragmentName, clientPaths) ->
-                clientPaths.joinToString(",") { clientPath ->
-                    "$fragmentName:${sourceFiles[clientPath]?.toPath()?.toAbsolutePath()}"
-                }
-            }.joinToString(",")
-            args[X_FRAGMENT_SOURCES_ARG] = remoteFragmentSources
-        }
-
-        if (X_FRIEND_PATHS_ARG in args) {
-            val clientPaths = getXFriendPaths(args)
-            val remotePaths = clientPaths.joinToString(",") { clientPath ->
-                dependencyFiles[clientPath]?.absolutePath.toString()
-            }
-            args[X_FRIEND_PATHS_ARG] = remotePaths
-        }
-
-        if (SOURCE_FILE_ARG in args) {
-            args[SOURCE_FILE_ARG] = sourceFiles.values.joinToString(" ") { it.absolutePath }
-        }
-        return args
+        return parsed
     }
 
-    fun getCompilerArgumentsList(args: Map<String, String>): List<String>{
-        return args.entries.flatMap { (key, value) ->
-            when {
-                key.endsWith('=') -> listOf("$key$value")
-                value.isEmpty() -> listOf(key)
-                key == SOURCE_FILE_ARG -> value.split(' ')
-                else -> listOf(key, value)
-
-            }
-        }.filter { it.isNotBlank() }
-    }
 }
