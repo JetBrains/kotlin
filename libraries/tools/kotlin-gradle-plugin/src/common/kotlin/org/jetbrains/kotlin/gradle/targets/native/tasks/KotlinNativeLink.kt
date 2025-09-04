@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
 import org.jetbrains.kotlin.compilerRunner.getKonanParallelThreads
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
@@ -138,7 +137,7 @@ constructor(
 
     @Suppress("unused")
     @get:Input
-    internal val konanCacheKind: Provider<NativeCacheKind> = project.getKonanCacheKind(konanTarget)
+    internal val konanCacheKind: Provider<NativeCacheKind> = konanPropertiesService.map { it.defaultCacheKindForTarget(konanTarget) }
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
@@ -235,7 +234,7 @@ constructor(
     @get:Internal
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
 
-    private val konanCacheDir = project.getKonanCacheKind(konanTarget)
+    private val konanCacheDir = konanPropertiesService.map { it.defaultCacheKindForTarget(konanTarget) }
     private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
     private val cacheBuilderSettings by lazy {
         CacheBuilder.Settings(
@@ -264,7 +263,7 @@ constructor(
 
     private val cacheSettings = CacheSettings(
         project.getKonanCacheOrchestration(),
-        project.getKonanCacheKind(konanTarget).get(),
+        konanPropertiesService.map { it.defaultCacheKindForTarget(konanTarget) }.get(),
         project.isKonanIncrementalCompilationEnabled(),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,

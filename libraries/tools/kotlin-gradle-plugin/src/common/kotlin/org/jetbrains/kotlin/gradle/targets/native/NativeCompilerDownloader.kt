@@ -14,7 +14,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
@@ -296,7 +295,7 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
             project.listProperty { nativeProperties.jvmArgs.get() },
             nativeProperties.actualNativeHomeDirectory,
             project.provider { nativeProperties.konanDataDir.orNull?.absolutePath },
-            nativeProperties.getKonanCacheKind(konanTarget, konanPropertiesBuildService),
+            konanPropertiesBuildService.map { it.defaultCacheKindForTarget(konanTarget) },
         ).generatePlatformLibsIfNeeded()
     }
 }
