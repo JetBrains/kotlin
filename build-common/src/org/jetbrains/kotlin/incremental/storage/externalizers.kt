@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.InlinePropertyAccessor
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
@@ -89,6 +90,7 @@ object FqNameExternalizer : DataExternalizer<FqName> {
     }
 }
 
+@OptIn(ClassIdBasedLocality::class)
 object ClassIdExternalizer : DataExternalizer<ClassId> {
 
     override fun save(output: DataOutput, classId: ClassId) {

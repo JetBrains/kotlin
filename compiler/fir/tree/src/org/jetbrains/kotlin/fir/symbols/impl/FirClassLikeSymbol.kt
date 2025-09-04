@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.mpp.ClassLikeSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -26,7 +27,12 @@ import org.jetbrains.kotlin.name.SpecialNames
 sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
     val classId: ClassId,
 ) : FirClassifierSymbol<D>(), ClassLikeSymbolMarker {
-    abstract override fun toLookupTag(): ConeClassLikeLookupTag
+    @OptIn(ClassIdBasedLocality::class)
+    protected val lookupTag: ConeClassLikeLookupTag =
+        if (classId.isLocal) ConeClassLikeLookupTagWithFixedSymbol(classId, this)
+        else classId.toLookupTag()
+
+    override fun toLookupTag(): ConeClassLikeLookupTag = lookupTag
 
     val name: Name get() = classId.shortClassName
 
@@ -65,12 +71,6 @@ sealed class FirClassLikeSymbol<out D : FirClassLikeDeclaration>(
 }
 
 sealed class FirClassSymbol<out C : FirClass>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
-    private val lookupTag: ConeClassLikeLookupTag =
-        if (classId.isLocal) ConeClassLikeLookupTagWithFixedSymbol(classId, this)
-        else classId.toLookupTag()
-
-    override fun toLookupTag(): ConeClassLikeLookupTag = lookupTag
-
     val resolvedSuperTypeRefs: List<FirResolvedTypeRef>
         get() {
             lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
@@ -138,13 +138,6 @@ class FirAnonymousObjectSymbol(packageFqName: FqName) : FirClassSymbol<FirAnonym
 )
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), TypeAliasSymbolMarker {
-    private val lookupTag: ConeClassLikeLookupTag =
-        if (classId.isLocal) ConeClassLikeLookupTagWithFixedSymbol(classId, this)
-        else classId.toLookupTag()
-
-    override fun toLookupTag(): ConeClassLikeLookupTag = lookupTag
-
-
     val resolvedExpandedTypeRef: FirResolvedTypeRef
         get() {
             lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)

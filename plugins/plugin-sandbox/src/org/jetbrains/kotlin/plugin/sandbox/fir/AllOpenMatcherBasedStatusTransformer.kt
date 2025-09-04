@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.plugin.sandbox.fir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMatchingService
@@ -25,8 +27,8 @@ class AllOpenMatcherBasedStatusTransformer(session: FirSession) : FirStatusTrans
         return when (declaration) {
             is FirRegularClass -> declaration.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(declaration.symbol)
             is FirCallableDeclaration -> {
+                if (declaration.symbol.visibility == Visibilities.Local) return false
                 val parentClassId = declaration.symbol.callableId?.classId ?: return false
-                if (parentClassId.isLocal) return false
                 val parentClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol
                     ?: return false
                 session.allOpenPredicateMatcher.isAnnotated(parentClassSymbol)

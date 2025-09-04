@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
@@ -31,6 +32,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             visitExpression(name, createConstant(value))
         }
 
+        @OptIn(ClassIdBasedLocality::class)
         private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression? {
             // toLookupTag will throw an exception if classId is local.
             // This should only happen in annotations of local declarations, in which we aren't interested anyway, so it should be fine

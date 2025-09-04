@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -31,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.isLocal
 
 internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KaSymbolByFirBuilder): List<KaValueParameterSymbol> {
     return fir.valueParameters.map { valueParameter ->
@@ -85,13 +86,13 @@ private fun createContextReceiver(
 internal fun FirCallableSymbol<*>.getCallableId(): CallableId? {
     return when {
         origin == FirDeclarationOrigin.DynamicScope -> null
-        callableId.isLocal -> null
-        else -> callableId
+        isNonLocal -> callableId
+        else -> null
     }
 }
 
 internal fun FirClassLikeSymbol<*>.getClassId(): ClassId? =
-    classId.takeUnless { it.isLocal }
+    classId.takeUnless { isLocal }
 
 internal fun FirCallableSymbol<*>.dispatchReceiverType(
     builder: KaSymbolByFirBuilder,

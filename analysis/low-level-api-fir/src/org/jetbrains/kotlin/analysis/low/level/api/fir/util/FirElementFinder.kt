@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -98,6 +99,7 @@ internal class FirElementFinder : FirSessionComponent {
          *
          * @see declarationTarget
          */
+        @OptIn(ClassIdBasedLocality::class)
         private fun collectDesignationPath(
             firFile: FirFile,
             containerClassId: ClassId?,

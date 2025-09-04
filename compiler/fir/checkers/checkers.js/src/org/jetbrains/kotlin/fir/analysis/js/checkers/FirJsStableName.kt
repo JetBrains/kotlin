@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.name.isLocal
 
 internal data class FirJsStableName(
     val name: String,
@@ -33,7 +32,7 @@ internal data class FirJsStableName(
                             else -> false
                         }
                     } else {
-                        !symbol.callableId.isLocal && symbol.effectiveVisibility.publicApi
+                        symbol.effectiveVisibility.publicApi
                     }
                 }
                 else -> false

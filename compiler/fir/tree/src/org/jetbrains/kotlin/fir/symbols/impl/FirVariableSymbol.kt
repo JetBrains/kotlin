@@ -106,11 +106,6 @@ class FirLocalPropertySymbol() : FirPropertySymbol() {
         get() = true
 }
 
-class FirLocalPropertySymbolWithCallableId(override val callableId: CallableId) : FirPropertySymbol() {
-    override val isLocal: Boolean
-        get() = true
-}
-
 /**
  * Used for top-level and member properties, including member properties of local classes / anonymous objects
  */

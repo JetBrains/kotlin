@@ -397,7 +397,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
         this.resolvedSymbolOrigin = resolvedSymbolOrigin
     }.build().apply {
-        if (symbol?.classId?.isLocal == true) {
+        if (symbol?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
                 ?.also { replaceCanBeValue(true) }
                 ?: session.builtinTypes.unitType.coneType

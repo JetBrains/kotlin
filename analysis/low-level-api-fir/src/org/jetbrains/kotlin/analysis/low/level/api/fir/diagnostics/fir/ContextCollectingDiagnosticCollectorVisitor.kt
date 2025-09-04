@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvi
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -72,10 +75,10 @@ internal object PersistenceContextCollector {
         declaration: FirDeclaration,
     ): CheckerContextForProvider {
         val isLocal = when (declaration) {
-            is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
+            is FirClassLikeDeclaration -> declaration.symbol.isLocal
             is FirCallableDeclaration -> declaration.symbol.isLocalForLazyResolutionPurposes
-            is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
-            is FirAnonymousInitializer -> declaration.containingClassIdOrNull()?.isLocal == true
+            is FirDanglingModifierList -> declaration.containingClass()?.toSymbol(sessionHolder.session)?.isLocal == true
+            is FirAnonymousInitializer -> declaration.getContainingClassSymbol()?.isLocal == true
             is FirScript, is FirCodeFragment -> false
             else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
                 withFirEntry("declaration", declaration)

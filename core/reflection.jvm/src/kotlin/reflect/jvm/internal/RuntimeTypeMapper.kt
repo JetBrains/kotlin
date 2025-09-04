@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -274,6 +275,7 @@ internal object RuntimeTypeMapper {
             else -> descriptor.name.asString()
         }
 
+    @OptIn(ClassIdBasedLocality::class)
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
         if (klass.isArray) {
             klass.componentType.primitiveType?.let {

@@ -72,11 +72,13 @@ internal object UsualClassTypeQualifierBuilder {
         require(isLocal)
         var containingClassLookUp = containingClassForLocal()
         val designation = mutableListOf<FirClassLikeDeclaration>(this)
+        var currentClass = containingClassLookUp?.toRegularClassSymbol(moduleData.session)?.fir
+
         @OptIn(LookupTagInternals::class)
-        while (containingClassLookUp != null && containingClassLookUp.classId.isLocal) {
-            val currentClass = containingClassLookUp.toRegularClassSymbol(moduleData.session)?.fir ?: break
+        while (containingClassLookUp != null && currentClass?.isLocal == true) {
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()
+            currentClass = containingClassLookUp?.toRegularClassSymbol(moduleData.session)?.fir
         }
         return designation.asReversed()
     }

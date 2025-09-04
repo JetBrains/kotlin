@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -319,7 +320,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is IrClassSymbol) return false
-        return this.owner.classId?.isLocal == true
+        return this.owner.visibility == Visibilities.Local
     }
 
     override fun TypeConstructorMarker.isAnonymous(): Boolean {

@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -82,8 +85,8 @@ internal class KaFirConstructorSymbol private constructor(
     override val containingClassId: ClassId?
         get() = withValidityAssertion {
             backingPsi?.getContainingClassOrObject()?.getClassId()
-                ?: firSymbol.typeAliasConstructorInfo?.typeAliasSymbol?.classId?.takeUnless { it.isLocal }
-                ?: firSymbol.containingClassLookupTag()?.classId?.takeUnless { it.isLocal }
+                ?: firSymbol.typeAliasConstructorInfo?.typeAliasSymbol?.takeUnless { it.isLocal }?.classId
+                ?: firSymbol.getContainingClassSymbol()?.takeUnless { it.isLocal }?.classId
         }
 
     override val isPrimary: Boolean

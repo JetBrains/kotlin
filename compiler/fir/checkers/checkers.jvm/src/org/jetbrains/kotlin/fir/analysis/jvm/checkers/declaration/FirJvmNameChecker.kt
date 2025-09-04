@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isOverridable
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.java.findJvmNameAnnotation
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
@@ -60,7 +62,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
     private fun CheckerContext.isRenamableFunction(function: FirFunction): Boolean {
         val containingClass = function.getContainingClassSymbol()
-        return containingClass != null || !function.symbol.callableId.isLocal
+        return containingClass != null || function.visibility != Visibilities.Local
     }
 
     private fun FirRegularClass.isValueClassThatRequiresMangling(): Boolean {

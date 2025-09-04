@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -207,6 +208,7 @@ object InlineTestUtil {
         return isClassOrPackagePartKind(inlineInfo.binaryClasses.getValue(classInternalName))
     }
 
+    @OptIn(ClassIdBasedLocality::class)
     private fun isClassOrPackagePartKind(klass: KotlinJvmBinaryClass): Boolean {
         return klass.classHeader.kind == KotlinClassHeader.Kind.CLASS && !klass.classId.isLocal
                 || klass.classHeader.kind == KotlinClassHeader.Kind.FILE_FACADE /*single file facade equals to package part*/
