@@ -5,18 +5,22 @@ MODULE_KIND: commonjs
 MODULES: lib1, main
 
 STEP 0:
+    language: -IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, main/m, main/m.export, main
 STEP 1:
+    language: -IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, lib1/l1.export, lib1, main/m
 STEP 2..3:
+    language: -IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, lib1/l1.export, main/m
 STEP 4..6:
+    language: -IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
     dirty js files:   lib1/l1, lib1/l1.export, main/m
