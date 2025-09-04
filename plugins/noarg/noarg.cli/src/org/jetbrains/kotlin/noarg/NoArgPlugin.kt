@@ -91,7 +91,7 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
         ): Unit = with(extensionStorage) {
             StorageComponentContainerContributor.registerExtension(CliNoArgComponentContainerContributor(annotations, useIr = true))
             FirExtensionRegistrarAdapter.registerExtension(FirNoArgExtensionRegistrar(annotations))
-            IrGenerationExtension.registerExtension(NoArgIrGenerationExtension(annotations, invokeInitializers))
+            IrGenerationExtension.registerExtension(NoArgFullConstructorIrGenerationExtension(annotations, invokeInitializers))
         }
     }
 }

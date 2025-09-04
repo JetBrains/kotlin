@@ -26,16 +26,16 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
-class NoArgIrGenerationExtension(
+class NoArgFullConstructorIrGenerationExtension(
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        moduleFragment.accept(NoArgIrTransformer(pluginContext, annotations, invokeInitializers), null)
+        moduleFragment.accept(NoArgFullConstructorIrGenerationTransformer(pluginContext, annotations, invokeInitializers), null)
     }
 }
 
-private class NoArgIrTransformer(
+private class NoArgFullConstructorIrGenerationTransformer(
     private val context: IrPluginContext,
     private val annotations: List<String>,
     private val invokeInitializers: Boolean,
