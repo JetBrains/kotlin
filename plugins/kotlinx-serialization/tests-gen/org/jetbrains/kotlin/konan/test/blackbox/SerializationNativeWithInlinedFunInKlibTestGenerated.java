@@ -36,7 +36,7 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
 
   @Test
   public void testAllFilesPresentInBoxIr() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/boxIr"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test

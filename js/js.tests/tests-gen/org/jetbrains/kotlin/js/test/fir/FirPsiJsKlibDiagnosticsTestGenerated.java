@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagnosticWithBackendTest {
   @Test
   public void testAllFilesPresentInKlibSerializationTests() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
   @Test
@@ -55,7 +55,7 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
   public class PrivateTypeUsageInsideNonPrivateInlineFunction {
     @Test
     public void testAllFilesPresentInPrivateTypeUsageInsideNonPrivateInlineFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
     public class PrivateMember {
       @Test
       public void testAllFilesPresentInPrivateMember() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/privateMember"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
       }
 
       @Test
@@ -158,7 +158,7 @@ public class FirPsiJsKlibDiagnosticsTestGenerated extends AbstractFirPsiJsDiagno
     public class TopLevelPrivate {
       @Test
       public void testAllFilesPresentInTopLevelPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/klibSerializationTests/privateTypeUsageInsideNonPrivateInlineFunction/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
       }
 
       @Test

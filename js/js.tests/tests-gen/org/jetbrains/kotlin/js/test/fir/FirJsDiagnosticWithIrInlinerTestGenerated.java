@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiagnosticWithIrInlinerTest {
   @Test
   public void testAllFilesPresentInIrInliner() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
   }
 
   @Nested
@@ -31,7 +31,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
   public class SyntheticAccessors {
     @Test
     public void testAllFilesPresentInSyntheticAccessors() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Nested
@@ -40,7 +40,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
     public class PrivateMember {
       @Test
       public void testAllFilesPresentInPrivateMember() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Nested
@@ -49,7 +49,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
       public class CrossFilePrivateLeak {
         @Test
         public void testAllFilesPresentInCrossFilePrivateLeak() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossFilePrivateLeak"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/crossFilePrivateLeak"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -77,7 +77,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
       public class SingleFile {
         @Test
         public void testAllFilesPresentInSingleFile() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -154,7 +154,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
     public class TopLevelPrivate {
       @Test
       public void testAllFilesPresentInTopLevelPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
       }
 
       @Nested
@@ -163,7 +163,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
       public class CrossFilePrivateLeak {
         @Test
         public void testAllFilesPresentInCrossFilePrivateLeak() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test
@@ -185,7 +185,7 @@ public class FirJsDiagnosticWithIrInlinerTestGenerated extends AbstractFirJsDiag
       public class SingleFile {
         @Test
         public void testAllFilesPresentInSingleFile() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/irInliner/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
         }
 
         @Test

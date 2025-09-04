@@ -42,7 +42,7 @@ public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends Abstr
   }
 
   public void testAllFilesPresentInPureKotlin() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin"), Pattern.compile("^([^.]+)$"), null, TargetBackend.JVM_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("generateNewTopLevelFunction")
