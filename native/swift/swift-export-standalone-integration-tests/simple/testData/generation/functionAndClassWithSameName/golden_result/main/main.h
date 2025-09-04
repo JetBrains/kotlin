@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 int32_t ClassWithFactoryWithoutParameters_value_get(void * self);
 
+void * EnumWithFactory_ONE();
+
 void * __root___ClassWithFactoryWithoutParameters();
 
 void * __root___ClassWithFactoryWithoutParameters_init_allocate();

@@ -51,3 +51,21 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Foo())
 }
+
+@ExportedBridge("a_b_c_E_A")
+public fun a_b_c_E_A(): kotlin.native.internal.NativePtr {
+    val _result = a.b.c.E.A
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("a_b_c_E_B")
+public fun a_b_c_E_B(): kotlin.native.internal.NativePtr {
+    val _result = a.b.c.E.B
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("a_b_c_E_C")
+public fun a_b_c_E_C(): kotlin.native.internal.NativePtr {
+    val _result = a.b.c.E.C
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}

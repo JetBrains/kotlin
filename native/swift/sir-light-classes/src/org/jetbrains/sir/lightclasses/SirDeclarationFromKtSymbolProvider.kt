@@ -68,14 +68,7 @@ public class SirDeclarationFromKtSymbolProvider(
                     ).let(SirTranslationResult::RegularFunction)
             }
             is KaEnumEntrySymbol -> {
-                SirTranslationResult.EnumCase(
-                    SirEnumCase(
-                        ktSymbol.name.asString(),
-                        emptyList(),
-                        sirSession.withSessions { ktSymbol.getSirParent() as SirEnum },
-                        KotlinSource(ktSymbol),
-                    )
-                )
+                SirTranslationResult.EnumCase(SirEnumCaseFromKtSymbol(ktSymbol, sirSession))
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {

@@ -144,6 +144,24 @@ public fun DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32_
     __self.variable = __newValue
 }
 
+@ExportedBridge("ENUM_A")
+public fun ENUM_A(): kotlin.native.internal.NativePtr {
+    val _result = ENUM.A
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("ENUM_B")
+public fun ENUM_B(): kotlin.native.internal.NativePtr {
+    val _result = ENUM.B
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("ENUM_C")
+public fun ENUM_C(): kotlin.native.internal.NativePtr {
+    val _result = ENUM.C
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("ENUM_INSIDE_ENUM_init_allocate")
 public fun ENUM_INSIDE_ENUM_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<ENUM.INSIDE_ENUM>()

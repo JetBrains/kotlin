@@ -18,6 +18,12 @@ public fun ClassWithFactoryWithoutParameters_value_get(self: kotlin.native.inter
     return _result
 }
 
+@ExportedBridge("EnumWithFactory_ONE")
+public fun EnumWithFactory_ONE(): kotlin.native.internal.NativePtr {
+    val _result = EnumWithFactory.ONE
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___ClassWithFactoryWithoutParameters")
 public fun __root___ClassWithFactoryWithoutParameters(): kotlin.native.internal.NativePtr {
     val _result = ClassWithFactoryWithoutParameters()

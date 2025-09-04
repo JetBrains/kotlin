@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.sir
 
-class SirEnumCase(
+abstract class SirEnumCase(
     override val name: String,
     val parameters: List<SirParameter>,
     val enum: SirEnum,
     override val origin: SirOrigin,
-) : SirNamedDeclaration {
+) : SirBridged(), SirNamedDeclaration {
     override val visibility: SirVisibility
         get() = SirVisibility.PUBLIC
     override val documentation: String?
