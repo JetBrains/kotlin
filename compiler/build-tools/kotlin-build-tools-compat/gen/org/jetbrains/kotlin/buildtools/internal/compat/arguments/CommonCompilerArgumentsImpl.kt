@@ -16,6 +16,7 @@ import kotlin.collections.MutableMap
 import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.API_VERSION
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.HEADER
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
@@ -125,6 +126,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("LANGUAGE_VERSION" in optionsMap) { arguments.add("-language-version=" + get(LANGUAGE_VERSION)?.stringValue) }
     if ("API_VERSION" in optionsMap) { arguments.add("-api-version=" + get(API_VERSION)?.stringValue) }
     if ("KOTLIN_HOME" in optionsMap) { arguments.add("-kotlin-home=" + get(KOTLIN_HOME)) }
+    if ("HEADER" in optionsMap) { arguments.add("-header=" + get(HEADER)) }
     if ("PROGRESSIVE" in optionsMap) { arguments.add("-progressive=" + get(PROGRESSIVE)) }
     if ("OPT_IN" in optionsMap) { arguments.add("-opt-in=" + get(OPT_IN)) }
     if ("X_NO_INLINE" in optionsMap) { arguments.add("-Xno-inline=" + get(X_NO_INLINE)) }
@@ -198,6 +200,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.valueOf(it) }
     this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.valueOf(it) }
     this[KOTLIN_HOME] = arguments.kotlinHome
+    this[HEADER] = arguments.headerMode
     this[PROGRESSIVE] = arguments.progressiveMode
     this[OPT_IN] = arguments.optIn
     this[X_NO_INLINE] = arguments.noInline
@@ -276,6 +279,8 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
         CommonCompilerArgument("API_VERSION")
 
     public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
+
+    public val HEADER: CommonCompilerArgument<Boolean> = CommonCompilerArgument("HEADER")
 
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("PROGRESSIVE")
 

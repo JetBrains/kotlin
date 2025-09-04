@@ -76,6 +76,9 @@ fun CompilerConfiguration.copyCommonKlibArgumentsFrom(source: CompilerConfigurat
     klibAbiCompatibilityLevel = source.klibAbiCompatibilityLevel
 
     zipFileSystemAccessor = source.zipFileSystemAccessor
+
+    // Header compilation mode needs to be propagated to KLIB compilation.
+    headerCompilation = source.headerCompilation
 }
 
 private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: MessageCollector): KotlinAbiVersion? {

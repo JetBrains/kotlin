@@ -62,6 +62,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
         val lightTreeConverter = LightTree2Fir(
             session = session,
+            headerCompilationMode = false,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -97,6 +98,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
         val lightTreeConverter = LightTree2Fir(
             session = session,
+            headerCompilationMode = false,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
