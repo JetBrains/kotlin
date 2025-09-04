@@ -80,18 +80,18 @@ internal fun <T> PhaseEngine<PhaseContext>.linkKlibs(
     val (linkKlibsOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
         val linkKlibsInput = LinkKlibsInput(frontendOutput.moduleDescriptor, frontendOutput.environment)
-        val output = psiToIrEngine.runPhase(LinkKlibsPhase, linkKlibsInput)
+        val output = psiToIrEngine.runAndMeasurePhase(LinkKlibsPhase, linkKlibsInput)
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runPhase(CopyDefaultValuesToActualPhase, Pair(linkKlibsOutput.irModule, linkKlibsOutput.irBuiltIns))
+    runAndMeasurePhase(CopyDefaultValuesToActualPhase, Pair(linkKlibsOutput.irModule, linkKlibsOutput.irBuiltIns))
     return linkKlibsOutput to additionalOutput
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
-        backendEngine.runPhase(functionsWithoutBoundCheck)
+        backendEngine.runAndMeasurePhase(functionsWithoutBoundCheck)
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
@@ -105,11 +105,11 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 val module = fragment.irModule
                 newEngine(generationState) { generationStateEngine ->
                     if (context.config.produce.isCache) {
-                        generationStateEngine.runPhase(BuildAdditionalCacheInfoPhase, module)
+                        generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
                         if (context.config.produce.isHeaderCache) return@newEngine
                     }
                     if (context.config.produce == CompilerOutputKind.PROGRAM) {
-                        generationStateEngine.runPhase(EntryPointPhase, module)
+                        generationStateEngine.runAndMeasurePhase(EntryPointPhase, module)
                     }
                 }
                 return generationState
@@ -196,9 +196,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             val outputFiles = generationState.outputFiles
             if (context.config.produce.isHeaderCache) {
                 newEngine(generationState) { generationStateEngine ->
-                    generationStateEngine.runPhase(SaveAdditionalCacheInfoPhase)
+                    generationStateEngine.runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
                     File(outputFiles.nativeBinaryFile).createNew()
-                    generationStateEngine.runPhase(FinalizeCachePhase, outputFiles)
+                    generationStateEngine.runAndMeasurePhase(FinalizeCachePhase, outputFiles)
                 }
                 return
             }
@@ -293,7 +293,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
         bitcodeEngine.runBitcodePostProcessing()
-        runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+        runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
         compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
