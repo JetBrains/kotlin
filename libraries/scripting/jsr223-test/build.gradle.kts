@@ -59,7 +59,7 @@ projectTests {
         configureProperties(testRuntimeProvider, testCompilationClasspathProvider)
     }
 
-    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, parallel = true, skipInLocalBuild = false) {
+    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
         workingDir = rootDir
         dependsOn(embeddableTestRuntime)
         classpath = embeddableTestRuntime
