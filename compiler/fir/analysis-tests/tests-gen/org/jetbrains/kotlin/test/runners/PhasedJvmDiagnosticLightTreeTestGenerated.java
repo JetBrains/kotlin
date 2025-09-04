@@ -1499,6 +1499,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("noneApplicableMessage.kt")
+    public void testNoneApplicableMessage() {
+      runTest("compiler/testData/diagnostics/tests/noneApplicableMessage.kt");
+    }
+
+    @Test
     @TestMetadata("nothingBound.kt")
     public void testNothingBound() {
       runTest("compiler/testData/diagnostics/tests/nothingBound.kt");

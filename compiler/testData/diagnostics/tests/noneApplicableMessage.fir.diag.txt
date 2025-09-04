@@ -1,0 +1,5 @@
+/noneApplicableMessage.fir.kt:(114,121): error: None of the following candidates is applicable:
+
+fun println(message: Any?): Unitfun println(message: Int): Unitfun println(message: Long): Unitfun println(message: Byte): Unitfun println(message: Short): Unitfun println(message: Char): Unitfun println(message: Boolean): Unitfun println(message: Float): Unitfun println(message: Double): Unitfun println(message: CharArray): Unit
+
+/noneApplicableMessage.fir.kt:(124,134): error: Unresolved reference 'unresolved'.
