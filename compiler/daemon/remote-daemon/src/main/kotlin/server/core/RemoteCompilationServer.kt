@@ -59,7 +59,13 @@ class RemoteCompilationServer(
 fun main() {
     try {
         val port = 8000
-        val server = RemoteCompilationServer.getServer(RemoteCompilationServiceImplType.GRPC, port, logging = true)
+        val implEnv = System.getenv("IMPL_TYPE") ?: "GRPC"
+        val implType = when (implEnv) {
+            "GRPC" -> RemoteCompilationServiceImplType.GRPC
+            "WEB_SOCKETS" -> RemoteCompilationServiceImplType.KOTLINX_RPC
+            else -> RemoteCompilationServiceImplType.GRPC
+        }
+        val server = RemoteCompilationServer.getServer(implType, port, logging = true)
         server.start(block = true)
     } catch (e: Exception) {
         println("error occurred: ${e.message}")

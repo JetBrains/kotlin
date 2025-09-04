@@ -32,6 +32,13 @@ class KotlinxRpcRemoteCompilationServiceClient(
             port = this@KotlinxRpcRemoteCompilationServiceClient.port
             encodedPath = "compile"
         }
+        url {
+            val useTls = this@KotlinxRpcRemoteCompilationServiceClient.port == 443
+            protocol = if (useTls) URLProtocol.WSS else URLProtocol.WS
+            host = this@KotlinxRpcRemoteCompilationServiceClient.host
+            port = this@KotlinxRpcRemoteCompilationServiceClient.port
+            encodedPath = "/compile"
+        }
         rpcConfig {
             serialization {
                 this.serialization()
