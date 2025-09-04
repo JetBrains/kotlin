@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.impl
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.model.SimpleTestClassModel
-import org.jetbrains.kotlin.test.TargetBackend
+
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import java.util.regex.Pattern
@@ -27,41 +27,21 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
                 exclude.append("\"")
             }
             val excludePattern = classModel.excludePattern
-            if (classModel.targetBackend === TargetBackend.ANY) {
-                p.print(
-                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
-                    KtTestUtil.getFilePath(classModel.rootFile),
-                    "\"), Pattern.compile(\"",
-                    StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
-                    "\"), ",
-                )
-                p.printExcludePattern(excludePattern)
-                p.printlnWithNoIndent(
-                    ", ",
-                    classModel.recursive,
-                    exclude,
-                    ");"
-                )
-            } else {
-                p.print(
-                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
-                    KtTestUtil.getFilePath(classModel.rootFile),
-                    "\"), Pattern.compile(\"",
-                    StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
-                    "\"), ",
-                )
-                p.printExcludePattern(excludePattern)
-                p.printlnWithNoIndent(
-                    ", ",
-                    TargetBackend::class.java.simpleName,
-                    ".",
-                    classModel.targetBackend.toString(),
-                    ", ",
-                    classModel.recursive,
-                    exclude,
-                    ");"
-                )
-            }
+            p.print(
+                "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"",
+                KtTestUtil.getFilePath(classModel.rootFile),
+                "\"), Pattern.compile(\"",
+                StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
+                "\"), ",
+            )
+            p.printExcludePattern(excludePattern)
+            p.printlnWithNoIndent(
+                ", ",
+                classModel.recursive,
+                exclude,
+                ");"
+            )
+
         }
     }
 
