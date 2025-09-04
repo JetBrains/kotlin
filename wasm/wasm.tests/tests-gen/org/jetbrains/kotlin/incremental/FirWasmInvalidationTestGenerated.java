@@ -45,7 +45,7 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.WASM, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
   @Test

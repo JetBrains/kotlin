@@ -27,7 +27,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
   }
 
   public void testAllFilesPresentInWriteSignature() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @TestMetadata("ArrayOfCharSequence.kt")
@@ -144,7 +144,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInAnnotations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("kArrayClassOfJClass.kt")
@@ -182,7 +182,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("constructorReferenceInReturnType.kt")
@@ -215,7 +215,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInConstructor() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Constructor0.kt")
@@ -248,7 +248,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInDeclarationSiteVariance() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("FunctionTwoTypeParameters.kt")
@@ -395,7 +395,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
       }
 
       public void testAllFilesPresentInJvmWildcardAnnotations() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("onFunction.kt")
@@ -423,7 +423,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
       }
 
       public void testAllFilesPresentInWildcardOptimization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("argumentOverridability.kt")
@@ -492,7 +492,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInDefaultImpls() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/defaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/defaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("functionTypeParameterClash.kt")
@@ -520,7 +520,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInInlineClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("basicInlineClassDeclarationCodegen.kt")
@@ -583,7 +583,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInJava8() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/java8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/java8"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("mutableMapRemove.kt")
@@ -601,7 +601,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInNothing() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("nothing.kt")
@@ -624,7 +624,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInParameterlessMain() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("arrayWithContravariantStringIsNotMainMethod.kt")
@@ -662,7 +662,7 @@ public class FirPsiWriteSignatureTestGenerated extends AbstractFirPsiWriteSignat
     }
 
     public void testAllFilesPresentInSuspendMain() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/suspendMain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/suspendMain"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("parameterlessSuspendMain.kt")

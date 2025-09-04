@@ -27,7 +27,7 @@ public class IrCustomScriptCodegenTestGenerated extends AbstractIrCustomScriptCo
   }
 
   public void testAllFilesPresentInCustomScript() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.*)$"), null, true);
   }
 
   @TestMetadata("captureImplicitReceiverInDefaultValue.kts")

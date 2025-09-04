@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirWasmInvalidationWithPLTestGenerated extends AbstractFirWasmInvalidationWithPLTest {
   @Test
   public void testAllFilesPresentInInvalidationWithPL() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.WASM, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
   @Test

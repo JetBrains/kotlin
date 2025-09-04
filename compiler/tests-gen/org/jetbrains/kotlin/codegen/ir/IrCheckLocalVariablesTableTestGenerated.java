@@ -27,7 +27,7 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
   }
 
   public void testAllFilesPresentInCheckLocalVariablesTable() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @TestMetadata("contextParameters.kt")
@@ -129,7 +129,7 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
     }
 
     public void testAllFilesPresentInParametersInSuspendLambda() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("dataClass.kt")

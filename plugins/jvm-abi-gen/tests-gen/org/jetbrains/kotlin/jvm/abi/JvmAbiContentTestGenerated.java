@@ -27,7 +27,7 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
   }
 
   public void testAllFilesPresentInContent() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^.]+)$"), null, TargetBackend.JVM_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("annotation")

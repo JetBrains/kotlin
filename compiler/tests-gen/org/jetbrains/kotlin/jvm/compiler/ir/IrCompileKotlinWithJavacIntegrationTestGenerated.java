@@ -39,7 +39,7 @@ public class IrCompileKotlinWithJavacIntegrationTestGenerated extends AbstractIr
     }
 
     public void testAllFilesPresentInWithAPT() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnnotationWithArguments.kt")
@@ -327,7 +327,7 @@ public class IrCompileKotlinWithJavacIntegrationTestGenerated extends AbstractIr
     }
 
     public void testAllFilesPresentInWithoutAPT() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("AnnotationWithArguments.kt")

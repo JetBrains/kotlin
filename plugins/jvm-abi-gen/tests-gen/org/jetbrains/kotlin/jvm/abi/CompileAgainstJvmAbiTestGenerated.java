@@ -27,7 +27,7 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
   }
 
   public void testAllFilesPresentInCompile() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^.]+)$"), null, TargetBackend.JVM_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("anonymousObject")
