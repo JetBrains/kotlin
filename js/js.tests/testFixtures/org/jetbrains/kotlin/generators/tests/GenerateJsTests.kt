@@ -45,13 +45,13 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
             testClass<AbstractJsPartialLinkageWithICTestCase>(annotations = listOf(*legacyFrontend())) {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model(pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractJsPartialLinkageNoICTestCase>(annotations = listOf(*legacyFrontend())) {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model(pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractJsPartialLinkageNoICES6TestCase>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model(pattern = "^([^_](.+))$", recursive = false)
             }
         }
 
@@ -68,27 +68,27 @@ fun main(args: Array<String>) {
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
             testClass<AbstractJsFirInvalidationPerFileTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
             testClass<AbstractJsFirInvalidationPerModuleTest> {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
             testClass<AbstractJsFirES6InvalidationPerFileTest>(annotations = listOf(*es6())) {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
             testClass<AbstractJsFirES6InvalidationPerModuleTest>(annotations = listOf(*es6())) {
-                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
 
             testClass<AbstractJsFirInvalidationPerFileWithPLTest> {
-                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("invalidationWithPL/", pattern = "^([^_](.+))$", recursive = false)
             }
 
             testClass<AbstractJsFirInvalidationPerModuleWithPLTest> {
-                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("invalidationWithPL/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
 
@@ -282,7 +282,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "klibSerializationTests",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -291,7 +290,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -300,7 +298,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -309,7 +306,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -318,7 +314,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -327,13 +322,11 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
                 model(
                     relativeRootPath = "testsWithAnyBackend",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -345,7 +338,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLib",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -357,7 +349,6 @@ fun main(args: Array<String>) {
                     relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
 
@@ -365,7 +356,6 @@ fun main(args: Array<String>) {
                 model(
                     relativeRootPath = "irInliner",
                     pattern = "^([^_](.+))\\.kt$",
-                    targetBackend = TargetBackend.JS_IR
                 )
             }
         }
