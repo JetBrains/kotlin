@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -79,19 +80,27 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isNotEmpty()) {
-            registerNoArgComponents(this, annotations, configuration.getBoolean(INVOKE_INITIALIZERS))
+            registerNoArgComponents(this, configuration, annotations, configuration.getBoolean(INVOKE_INITIALIZERS))
         }
     }
 
     companion object {
         fun registerNoArgComponents(
             extensionStorage: ExtensionStorage,
+            configuration: CompilerConfiguration,
             annotations: List<String>,
             invokeInitializers: Boolean
         ): Unit = with(extensionStorage) {
             StorageComponentContainerContributor.registerExtension(CliNoArgComponentContainerContributor(annotations, useIr = true))
             FirExtensionRegistrarAdapter.registerExtension(FirNoArgExtensionRegistrar(annotations))
-            IrGenerationExtension.registerExtension(NoArgFullConstructorIrGenerationExtension(annotations, invokeInitializers))
+
+            val irExtension = if (configuration.languageVersionSettings.languageVersion.usesK2) {
+                NoArgConstructorBodyIrGenerationExtension(annotations, invokeInitializers)
+            } else {
+                NoArgFullConstructorIrGenerationExtension(annotations, invokeInitializers)
+            }
+
+            IrGenerationExtension.registerExtension(irExtension)
         }
     }
 }

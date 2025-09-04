@@ -1,6 +1,5 @@
 // ISSUE: KT-53122
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // MODULE: annotations
 
 @Retention(AnnotationRetention.SOURCE)
