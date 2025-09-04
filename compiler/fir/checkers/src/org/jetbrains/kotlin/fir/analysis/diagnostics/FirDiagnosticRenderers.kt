@@ -450,15 +450,13 @@ object FirDiagnosticRenderers {
             for ((symbol, diagnostics) in list) {
                 append(SYMBOL.render(symbol))
 
-                if (diagnostics.isEmpty()) {
-                    continue
-                }
+                if (diagnostics.isNotEmpty()) {
+                    appendLine(":")
 
-                appendLine(":")
-
-                diagnostics.forEach {
-                    append("  ")
-                    appendLine(it)
+                    diagnostics.forEach {
+                        append("  ")
+                        appendLine(it)
+                    }
                 }
 
                 appendLine()
