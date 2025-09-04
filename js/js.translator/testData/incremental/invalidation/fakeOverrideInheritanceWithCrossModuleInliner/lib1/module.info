@@ -1,0 +1,27 @@
+STEP 0:
+    modifications:
+        U : A.0.kt -> A.kt
+        U : B.0.kt -> B.kt
+        U : C.0.kt -> C.kt
+    added file: A.kt, B.kt, C.kt
+STEP 1:
+    modifications:
+        U : A.1.kt -> A.kt
+    modified ir: A.kt B.kt, C.kt
+STEP 2:
+    modifications:
+        U : B.2.kt -> B.kt
+    modified ir: B.kt C.kt
+STEP 3:
+    modifications:
+        U : A.0.kt -> A.kt
+    modified ir: A.kt
+    updated imports: B.kt, C.kt
+STEP 4:
+    modifications:
+        U : B.0.kt -> B.kt
+    modified ir: B.kt C.kt
+STEP 5:
+    modifications:
+        U : A.1.kt -> A.kt
+    modified ir: A.kt B.kt, C.kt

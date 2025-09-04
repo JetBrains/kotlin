@@ -1,0 +1,11 @@
+STEP 0:
+STEP 1:
+    modifications:
+        U : l1c.1.kt -> l1c.kt
+    added file: l1c.kt
+STEP 2..3:
+STEP 4:
+    modifications:
+        D : l1c.kt
+    removed file: l1c.kt
+STEP 5:

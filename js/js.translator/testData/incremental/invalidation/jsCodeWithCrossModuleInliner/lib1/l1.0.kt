@@ -1,0 +1,1 @@
+inline fun foo() = js("42")

@@ -1,0 +1,1 @@
+fun jsWrapper() = jsFun()
