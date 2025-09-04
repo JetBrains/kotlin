@@ -116,16 +116,25 @@ class TestGroup(
             )
         }
 
+        /**
+         * Declares a class model for testdata in [relativeRootPath] (relative to outer [TestGroup.testDataRoot]).
+         *
+         * @param extension defines extension for files which would be considered as testdata (null string means dir (name without dot))
+         * @param testClassName defines specific name for generated test class
+         * @param targetBackend defines the backend of a specific test. Later it would be used by the test
+         *   suppression machinery if there are some `IGNORE_BACKEND` directives in the test.
+         *   Note that it's necessary only for legacy JUnit3/4 tests; for JUnit5 tests this parameter is obsolete and should be avoided.
+         */
         fun model(
             relativeRootPath: String = "",
             recursive: Boolean = true,
             excludeParentDirs: Boolean = false,
-            extension: String? = "kt", // null string means dir (name without dot)
+            extension: String? = "kt",
             pattern: String = if (extension == null) """^([^.]+)$""" else """^(.+)\.$extension$""",
             excludedPattern: String? = null,
             testMethod: String = "doTest",
-            testClassName: String? = null, // specific name for generated test class
-            targetBackend: TargetBackend? = null, // the parameter is redundant for JUnit5 tests
+            testClassName: String? = null,
+            targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
             skipTestAllFilesCheck: Boolean = false,
@@ -134,12 +143,12 @@ class TestGroup(
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
-            val realTargetBackend = targetBackend ?: TargetBackend.ANY
+            require(targetBackend != TargetBackend.ANY) { "TargetBackend.ANY is not allowed, please specify target backend explicitly" }
             testModels.add(
                 SimpleTestClassModel(
                     rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
-                    realTargetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
+                    targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
                     extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck
                 )
             )

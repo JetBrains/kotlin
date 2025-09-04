@@ -35,7 +35,7 @@ class SimpleTestClassModel(
     val excludePattern: Pattern?,
     private val doTestMethodName: String,
     private val testClassName: String,
-    val targetBackend: TargetBackend,
+    val targetBackend: TargetBackend?,
     excludeDirs: Collection<String>,
     excludeDirsRecursively: Collection<String>,
     private val testRunnerMethodName: String,
