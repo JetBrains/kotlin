@@ -18,7 +18,7 @@ internal external class JsStringRef internal constructor() : JsAny
 
 internal typealias ExternalInterfaceType = JsAny
 
-internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
+internal class JsExternalBox @WasmPrimitiveConstructor constructor(@ManagedExternref val ref: ExternalInterfaceType) {
     override fun toString(): String =
         externrefToString(ref)
 
@@ -417,4 +417,4 @@ internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfac
  */
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-internal annotation class ManagedExternref
+public annotation class ManagedExternref

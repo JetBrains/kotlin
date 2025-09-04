@@ -690,7 +690,7 @@ class BodyGenerator(
             val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
             irFields.forEachIndexed { index, field ->
                 if (index > 0) {
-                    generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), body)
+                    generateDefaultInitializerForType(wasmModuleTypeTransformer.transformInstanceFieldType(field), body)
                 }
             }
             body.buildStructNew(wasmFileCodegenContext.referenceGcType(parentClass.symbol), location)
