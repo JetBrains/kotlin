@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.TargetBackend
  * This method is not generated in JUnit5 mode even if it's added to the class model.
  */
 class RunTestMethodModel(
-    val targetBackend: TargetBackend,
+    val targetBackend: TargetBackend?,
     val testMethodName: String,
     val testRunnerMethodName: String,
 ) : MethodModel<RunTestMethodModel>() {
@@ -32,6 +32,6 @@ class RunTestMethodModel(
     }
 
     fun isWithTargetBackend(): Boolean {
-        return !(targetBackend == TargetBackend.ANY && testRunnerMethodName == MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME)
+        return !(targetBackend == null && testRunnerMethodName == MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME)
     }
 }

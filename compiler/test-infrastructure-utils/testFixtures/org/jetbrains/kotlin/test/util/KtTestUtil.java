@@ -15,6 +15,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.DeprecationLevel;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -264,32 +265,18 @@ public class KtTestUtil {
 
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
+    // TODO: remove when KTIJ-35531 is fixed
+    @kotlin.Deprecated(message = "Kept for compatibility with tests in intellij repo", level = DeprecationLevel.ERROR)
     public static void assertAllTestsPresentByMetadataWithExcluded(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
             @Nullable Pattern excludedPattern,
+            TargetBackend targetBackend,
             boolean recursive,
             @NotNull String... excludeDirs
     ) {
-        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, excludedPattern, TargetBackend.ANY, recursive, excludeDirs);
-    }
-
-    public static void assertAllTestsPresentByMetadata(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        assertAllTestsPresentByMetadata(
-                testCaseClass,
-                testDataDir,
-                filenamePattern,
-                TargetBackend.ANY,
-                recursive,
-                excludeDirs
-        );
+        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, excludedPattern, recursive, excludeDirs);
     }
 
     public static void assertAllTestsPresentByMetadataWithExcluded(
@@ -297,7 +284,6 @@ public class KtTestUtil {
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
             @Nullable Pattern excludedPattern,
-            @NotNull TargetBackend targetBackend,
             boolean recursive,
             @NotNull String... excludeDirs
     ) {
@@ -316,7 +302,7 @@ public class KtTestUtil {
                 }
                 else {
                     boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
-                    if (!excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+                    if (!excluded && filenamePattern.matcher(file.getName()).matches()) {
                         assertFilePathPresent(file, rootFile, filePaths);
                     }
                 }
@@ -328,11 +314,10 @@ public class KtTestUtil {
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
-            @NotNull TargetBackend targetBackend,
             boolean recursive,
             @NotNull String... excludeDirs
     ) {
-        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, null, targetBackend, recursive, excludeDirs);
+        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, null, recursive, excludeDirs);
     }
 
     public static void assertAllTestsPresentInSingleGeneratedClass(
