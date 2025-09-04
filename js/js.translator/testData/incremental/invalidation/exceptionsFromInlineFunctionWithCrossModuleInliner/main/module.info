@@ -1,0 +1,5 @@
+STEP 0:
+    dependencies: lib1, lib2
+    added file: m.kt
+STEP 1..8:
+    dependencies: lib1, lib2

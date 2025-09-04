@@ -1,0 +1,36 @@
+STEP 0:
+    modifications:
+        U : l1.0.kt -> l1.kt
+        U : l2.0.kt -> l2.kt
+    added file: l1.kt, l2.kt
+STEP 1:
+    modifications:
+        U : l2.1.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l1.kt
+STEP 2:
+    modifications:
+        U : l2.2.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l1.kt
+STEP 3:
+    modifications:
+        U : l1.3.kt -> l1.kt
+    modified ir: l1.kt l2.kt
+STEP 4:
+    modifications:
+        U : l2.1.kt -> l2.kt
+    modified ir: l2.kt
+    updated exports: l1.kt
+STEP 5:
+    modifications:
+        U : l1.5.kt -> l1.kt
+    modified ir: l1.kt
+STEP 6:
+    modifications:
+        U : l1.6.kt -> l1.kt
+    modified ir: l1.kt, l2.kt
+STEP 7:
+    modifications:
+        U : l2.0.kt -> l2.kt
+    modified ir: l2.kt l1.kt

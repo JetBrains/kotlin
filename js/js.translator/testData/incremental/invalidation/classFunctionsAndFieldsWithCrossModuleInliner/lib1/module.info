@@ -1,0 +1,48 @@
+STEP 0:
+    modifications:
+        U : l1.0_init.kt -> l1.kt
+    added file: l1.kt
+STEP 1:
+    modifications:
+        U : l1.1_update_fun.kt -> l1.kt
+    modified ir: l1.kt
+STEP 2:
+    modifications:
+        U : l1.2_update_inline_fun.kt -> l1.kt
+    modified ir: l1.kt
+STEP 3:
+    modifications:
+        U : l1.3_add_param.kt -> l1.kt
+    modified ir: l1.kt
+STEP 4:
+    modifications:
+        U : l1.4_add_field.kt -> l1.kt
+    modified ir: l1.kt
+STEP 5:
+    modifications:
+        U : l1.5_update_field.kt -> l1.kt
+    modified ir: l1.kt
+STEP 6:
+    modifications:
+        U : l1.6_update_unused_inline.kt -> l1.kt
+    modified ir: l1.kt
+STEP 7:
+    modifications:
+        U : l1.7_add_unused_interface.kt -> l1.kt
+    modified ir: l1.kt
+STEP 8:
+    modifications:
+        U : l1.8_use_interface.kt -> l1.kt
+    modified ir: l1.kt
+STEP 9:
+    modifications:
+        U : l1.9_update_interface.kt -> l1.kt
+    modified ir: l1.kt
+STEP 10:
+    modifications:
+        U : l1.10_update_field_type.kt -> l1.kt
+    modified ir: l1.kt
+STEP 11:
+    modifications:
+        U : l1.11_update_field_type.kt -> l1.kt
+    modified ir: l1.kt

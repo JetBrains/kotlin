@@ -37,9 +37,21 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("addUpdateRemoveDependentFileWithCrossModuleInliner")
+  public void testAddUpdateRemoveDependentFileWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFileWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("addUpdateRemoveDependentModule")
   public void testAddUpdateRemoveDependentModule() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentModule/");
+  }
+
+  @Test
+  @TestMetadata("addUpdateRemoveDependentModuleWithCrossModuleInliner")
+  public void testAddUpdateRemoveDependentModuleWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentModuleWithCrossModuleInliner/");
   }
 
   @Test
@@ -66,6 +78,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("circleInlineImportsUpdateWithCrossModuleInliner")
+  public void testCircleInlineImportsUpdateWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/circleInlineImportsUpdateWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("circleInlineImportsUpdateWithIntraModuleInliner")
   public void testCircleInlineImportsUpdateWithIntraModuleInliner() {
     runTest("js/js.translator/testData/incremental/invalidation/circleInlineImportsUpdateWithIntraModuleInliner/");
@@ -81,6 +99,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   @TestMetadata("classFunctionsAndFields")
   public void testClassFunctionsAndFields() {
     runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFields/");
+  }
+
+  @Test
+  @TestMetadata("classFunctionsAndFieldsWithCrossModuleInliner")
+  public void testClassFunctionsAndFieldsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFieldsWithCrossModuleInliner/");
   }
 
   @Test
@@ -114,9 +138,21 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("companionInlineFunctionWithCrossModuleInliner")
+  public void testCompanionInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/companionInlineFunctionWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("companionProperties")
   public void testCompanionProperties() {
     runTest("js/js.translator/testData/incremental/invalidation/companionProperties/");
+  }
+
+  @Test
+  @TestMetadata("companionPropertiesWithCrossModuleInliner")
+  public void testCompanionPropertiesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/companionPropertiesWithCrossModuleInliner/");
   }
 
   @Test
@@ -135,6 +171,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   @TestMetadata("constVals")
   public void testConstVals() {
     runTest("js/js.translator/testData/incremental/invalidation/constVals/");
+  }
+
+  @Test
+  @TestMetadata("constValsWithCrossModuleInliner")
+  public void testConstValsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/constValsWithCrossModuleInliner/");
   }
 
   @Test
@@ -186,15 +228,33 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("enumsInInlineFunctionsWithCrossModuleInliner")
+  public void testEnumsInInlineFunctionsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctionsWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("exceptionsFromInlineFunction")
   public void testExceptionsFromInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/exceptionsFromInlineFunction/");
   }
 
   @Test
+  @TestMetadata("exceptionsFromInlineFunctionWithCrossModuleInliner")
+  public void testExceptionsFromInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/exceptionsFromInlineFunctionWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("exportsThroughInlineFunction")
   public void testExportsThroughInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("exportsThroughInlineFunctionWithCrossModuleInliner")
+  public void testExportsThroughInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunctionWithCrossModuleInliner/");
   }
 
   @Test
@@ -216,9 +276,21 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("fakeOverrideClassFunctionQualifiersWithCrossModuleInliner")
+  public void testFakeOverrideClassFunctionQualifiersWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideClassFunctionQualifiersWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("fakeOverrideInheritance")
   public void testFakeOverrideInheritance() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritance/");
+  }
+
+  @Test
+  @TestMetadata("fakeOverrideInheritanceWithCrossModuleInliner")
+  public void testFakeOverrideInheritanceWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritanceWithCrossModuleInliner/");
   }
 
   @Test
@@ -234,15 +306,33 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("fakeOverrideInlineExtensionWithCrossModuleInliner")
+  public void testFakeOverrideInlineExtensionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineExtensionWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("fakeOverrideInlineFunction")
   public void testFakeOverrideInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineFunction/");
   }
 
   @Test
+  @TestMetadata("fakeOverrideInlineFunctionWithCrossModuleInliner")
+  public void testFakeOverrideInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineFunctionWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("fakeOverrideInlineProperty")
   public void testFakeOverrideInlineProperty() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlineProperty/");
+  }
+
+  @Test
+  @TestMetadata("fakeOverrideInlinePropertyWithCrossModuleInliner")
+  public void testFakeOverrideInlinePropertyWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInlinePropertyWithCrossModuleInliner/");
   }
 
   @Test
@@ -276,6 +366,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("friendDependencyWithCrossModuleInliner")
+  public void testFriendDependencyWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/friendDependencyWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("functionDefaultParams")
   public void testFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/functionDefaultParams/");
@@ -300,6 +396,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("functionTypeInterfaceWithCrossModuleInliner")
+  public void testFunctionTypeInterfaceWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterfaceWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("genericFunctions")
   public void testGenericFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/genericFunctions/");
@@ -309,6 +411,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   @TestMetadata("genericInlineFunctions")
   public void testGenericInlineFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/genericInlineFunctions/");
+  }
+
+  @Test
+  @TestMetadata("genericInlineFunctionsWithCrossModuleInliner")
+  public void testGenericInlineFunctionsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/genericInlineFunctionsWithCrossModuleInliner/");
   }
 
   @Test
@@ -324,15 +432,33 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("inlineBecomeNonInlineWithCrossModuleInliner")
+  public void testInlineBecomeNonInlineWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineBecomeNonInlineWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("inlineFunctionAnnotations")
   public void testInlineFunctionAnnotations() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAnnotations/");
   }
 
   @Test
+  @TestMetadata("inlineFunctionAnnotationsWithCrossModuleInliner")
+  public void testInlineFunctionAnnotationsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAnnotationsWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("inlineFunctionAsFunctionReference")
   public void testInlineFunctionAsFunctionReference() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReference/");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctionAsFunctionReferenceWithCrossModuleInliner")
+  public void testInlineFunctionAsFunctionReferenceWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReferenceWithCrossModuleInliner/");
   }
 
   @Test
@@ -348,15 +474,33 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("inlineFunctionAsParamWithCrossModuleInliner")
+  public void testInlineFunctionAsParamWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsParamWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("inlineFunctionDefaultParams")
   public void testInlineFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");
   }
 
   @Test
+  @TestMetadata("inlineFunctionDefaultParamsWithCrossModuleInliner")
+  public void testInlineFunctionDefaultParamsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParamsWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("inlineFunctionWithObject")
   public void testInlineFunctionWithObject() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionWithObject/");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctionWithObjectWithCrossModuleInliner")
+  public void testInlineFunctionWithObjectWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionWithObjectWithCrossModuleInliner/");
   }
 
   @Test
@@ -414,6 +558,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("jsCodeWithCrossModuleInliner")
+  public void testJsCodeWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("jsExport")
   public void testJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
@@ -426,9 +576,27 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("jsExportReexportWithCrossModuleInliner")
+  public void testJsExportReexportWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportReexportWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("jsExportWithClass")
   public void testJsExportWithClass() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExportWithClass/");
+  }
+
+  @Test
+  @TestMetadata("jsExportWithClassWithCrossModuleInliner")
+  public void testJsExportWithClassWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportWithClassWithCrossModuleInliner/");
+  }
+
+  @Test
+  @TestMetadata("jsExportWithCrossModuleInliner")
+  public void testJsExportWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportWithCrossModuleInliner/");
   }
 
   @Test
@@ -528,6 +696,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("moveFilesBetweenModulesWithCrossModuleInliner")
+  public void testMoveFilesBetweenModulesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModulesWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("moveFilesBetweenModulesWithIntraModuleInliner")
   public void testMoveFilesBetweenModulesWithIntraModuleInliner() {
     runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModulesWithIntraModuleInliner/");
@@ -537,6 +711,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   @TestMetadata("moveInlineFunctionBetweenModules")
   public void testMoveInlineFunctionBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+  }
+
+  @Test
+  @TestMetadata("moveInlineFunctionBetweenModulesWithCrossModuleInliner")
+  public void testMoveInlineFunctionBetweenModulesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModulesWithCrossModuleInliner/");
   }
 
   @Test
@@ -558,6 +738,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("multiPlatformClashFileNamesWithCrossModuleInliner")
+  public void testMultiPlatformClashFileNamesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/multiPlatformClashFileNamesWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("multiPlatformSimple")
   public void testMultiPlatformSimple() {
     runTest("js/js.translator/testData/incremental/invalidation/multiPlatformSimple/");
@@ -570,9 +756,21 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("nestedClassWithCrossModuleInliner")
+  public void testNestedClassWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/nestedClassWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("nonInlineBecomeInline")
   public void testNonInlineBecomeInline() {
     runTest("js/js.translator/testData/incremental/invalidation/nonInlineBecomeInline/");
+  }
+
+  @Test
+  @TestMetadata("nonInlineBecomeInlineWithCrossModuleInliner")
+  public void testNonInlineBecomeInlineWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/nonInlineBecomeInlineWithCrossModuleInliner/");
   }
 
   @Test
@@ -636,6 +834,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("renameModuleWithCrossModuleInliner")
+  public void testRenameModuleWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/renameModuleWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("simple")
   public void testSimple() {
     runTest("js/js.translator/testData/incremental/invalidation/simple/");
@@ -648,9 +852,21 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("splitJoinModuleWithCrossModuleInliner")
+  public void testSplitJoinModuleWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/splitJoinModuleWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("suspendFunctions")
   public void testSuspendFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/suspendFunctions/");
+  }
+
+  @Test
+  @TestMetadata("suspendFunctionsWithCrossModuleInliner")
+  public void testSuspendFunctionsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/suspendFunctionsWithCrossModuleInliner/");
   }
 
   @Test
@@ -672,6 +888,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   }
 
   @Test
+  @TestMetadata("toplevelPropertiesWithCrossModuleInliner")
+  public void testToplevelPropertiesWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/toplevelPropertiesWithCrossModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("toplevelPropertiesWithIntraModuleInliner")
   public void testToplevelPropertiesWithIntraModuleInliner() {
     runTest("js/js.translator/testData/incremental/invalidation/toplevelPropertiesWithIntraModuleInliner/");
@@ -681,6 +903,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   @TestMetadata("transitiveInlineFunction")
   public void testTransitiveInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("transitiveInlineFunctionWithCrossModuleInliner")
+  public void testTransitiveInlineFunctionWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunctionWithCrossModuleInliner/");
   }
 
   @Test
@@ -717,6 +945,12 @@ public class JsFirInvalidationPerModuleTestGenerated extends AbstractJsFirInvali
   @TestMetadata("updateExportsAndInlineImports")
   public void testUpdateExportsAndInlineImports() {
     runTest("js/js.translator/testData/incremental/invalidation/updateExportsAndInlineImports/");
+  }
+
+  @Test
+  @TestMetadata("updateExportsAndInlineImportsWithCrossModuleInliner")
+  public void testUpdateExportsAndInlineImportsWithCrossModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/updateExportsAndInlineImportsWithCrossModuleInliner/");
   }
 
   @Test

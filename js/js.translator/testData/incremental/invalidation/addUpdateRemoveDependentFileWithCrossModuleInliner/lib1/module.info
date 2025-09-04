@@ -1,0 +1,30 @@
+STEP 0:
+    modifications:
+        U : l1a.0.kt -> l1a.kt
+    added file: l1a.kt
+STEP 1:
+    modifications:
+        U : l1b.1.kt -> l1b.kt
+    added file: l1b.kt
+    updated exports: l1a.kt
+STEP 2:
+    modifications:
+        U : l1b.2.kt -> l1b.kt
+    modified ir: l1b.kt
+    updated exports: l1a.kt
+STEP 3:
+    updated exports: l1a.kt, l1b.kt
+STEP 4:
+    updated exports: l1a.kt, l1b.kt
+STEP 5:
+    modifications:
+        U : l1b.1.kt -> l1b.kt
+    modified ir: l1b.kt
+    updated exports: l1a.kt
+STEP 6:
+    modifications:
+        D : l1b.kt
+    removed inverse depends: l1a.kt
+    removed file: l1b.kt
+STEP 7:
+    updated exports: l1a.kt
