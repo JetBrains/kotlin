@@ -94,7 +94,6 @@ private fun TestGroup.analysisApiTestClass(
     testClass(
         testClass,
         suiteTestClassName = suiteTestClassName,
-        useJunit4 = false
     ) {
         method(FrontendConfiguratorTestModel(factory::class, data))
         init(data)
