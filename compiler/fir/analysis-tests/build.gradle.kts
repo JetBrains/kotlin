@@ -70,15 +70,26 @@ projectTests {
             JdkMajorVersion.JDK_21_0
         )
     ) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJUnitPlatform()
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt")
 
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/loadJava")
+
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
 }
 
 testsJar()
