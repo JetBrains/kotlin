@@ -50,8 +50,8 @@ class FrontendConfiguratorTestModel(
     override val dataString: String? get() = null
     override val tags: List<String> get() = emptyList()
 
-    override fun isTestMethod(): Boolean = false
-    override fun shouldBeGeneratedForInnerTestClass(): Boolean = false
+    override val isTestMethod: Boolean get() = false
+    override val shouldBeGeneratedForInnerTestClass: Boolean get() = false
 
     override fun imports(): Collection<Class<*>> {
         return buildList {

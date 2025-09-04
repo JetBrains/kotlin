@@ -33,8 +33,13 @@ abstract class TestClassModel : TestEntityModel() {
 
 abstract class MethodModel<M : MethodModel<M>> : TestEntityModel() {
     abstract val generator: MethodGenerator<M>
-    open fun isTestMethod(): Boolean = true
-    open fun shouldBeGeneratedForInnerTestClass(): Boolean = true
+
+    /**
+     * If false then no test annotations would be generated for the method (including `@Test`)
+     */
+    open val isTestMethod: Boolean get() = true
+    open val shouldBeGeneratedForInnerTestClass: Boolean get() = true
+
     open fun imports(): Collection<Class<*>> = emptyList()
 
     fun generateBody(p: Printer) {
