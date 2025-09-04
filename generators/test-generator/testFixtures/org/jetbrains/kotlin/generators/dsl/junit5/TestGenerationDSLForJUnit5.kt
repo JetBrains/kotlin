@@ -26,7 +26,7 @@ fun generateTestGroupSuiteWithJUnit5(
     mainClassName: String? = TestGeneratorUtil.getMainClassName(),
     init: TestGroupSuite.() -> Unit,
 ) {
-    val suite = TestGroupSuite().apply(init)
+    val suite = TestGroupSuite(TestGroupSuite.Mode.JUnit5).apply(init)
     suite.forEachTestClassParallel { testClass ->
         val (changed, testSourceFilePath) = TestGeneratorForJUnit5
             .generateAndSave(testClass, dryRun, mainClassName)

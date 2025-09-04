@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentity
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
@@ -150,8 +149,8 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE)
+                model("box", excludeDirs = k1BoxTestDir)
+                model("boxInline")
             }
             testClass<AbstractNativeIrDeserializationTest> {
                 model("box", excludeDirs = k1BoxTestDir)
@@ -172,7 +171,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model()
             }
         }
 

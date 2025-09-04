@@ -90,13 +90,13 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "SerializationNativeTestGenerated",
                 annotations = listOf(*standalone(), *serializationNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
-                model("boxIr", targetBackend = TargetBackend.NATIVE)
+                model("boxIr")
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "SerializationNativeWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(*standalone(), klibIrInliner(), *serializationNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
-                model("boxIr", targetBackend = TargetBackend.NATIVE)
+                model("boxIr")
             }
 
             // ------------------------------- code compile -------------------------------
