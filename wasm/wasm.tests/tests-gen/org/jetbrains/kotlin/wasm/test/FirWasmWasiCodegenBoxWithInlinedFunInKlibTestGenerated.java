@@ -61689,6 +61689,66 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("funWithReifiedTypeParameter.kt")
+      public void testFunWithReifiedTypeParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterAndContextParameter.kt")
+      public void testFunWithReifiedTypeParameterAndContextParameter() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterAndContextParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterAndExtensionReceiver.kt")
+      public void testFunWithReifiedTypeParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiver.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiver() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
+      public void testFunWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideClass.kt")
+      public void testFunWithReifiedTypeParameterInsideClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideInnerClass.kt")
+      public void testFunWithReifiedTypeParameterInsideInnerClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterInsideNestedClass.kt")
+      public void testFunWithReifiedTypeParameterInsideNestedClass() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterInsideNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterWithTwoUpperBounds.kt")
+      public void testFunWithReifiedTypeParameterWithTwoUpperBounds() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterWithTwoUpperBounds.kt");
+      }
+
+      @Test
+      @TestMetadata("funWithReifiedTypeParameterWithUpperBound.kt")
+      public void testFunWithReifiedTypeParameterWithUpperBound() {
+        runTest("compiler/testData/codegen/box/typeErasure/funWithReifiedTypeParameterWithUpperBound.kt");
+      }
+
+      @Test
       @TestMetadata("funWithTypeParameter.kt")
       public void testFunWithTypeParameter() {
         runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameter.kt");
@@ -61710,12 +61770,6 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
       @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiver.kt")
       public void testFunWithTypeParameterContextParameterAndExtensionReceiver() {
         runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiver.kt");
-      }
-
-      @Test
-      @TestMetadata("funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt")
-      public void testFunWithTypeParameterContextParameterAndExtensionReceiverInsideClass() {
-        runTest("compiler/testData/codegen/box/typeErasure/funWithTypeParameterContextParameterAndExtensionReceiverInsideClass.kt");
       }
 
       @Test
