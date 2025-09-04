@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.builders
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.sir.*
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.sir.providers.trampolineDeclarations
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
-import org.jetbrains.kotlin.swiftexport.standalone.klib.getAllDeclarations
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 
 internal fun buildSirSession(

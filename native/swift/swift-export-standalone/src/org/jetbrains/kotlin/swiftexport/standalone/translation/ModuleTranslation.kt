@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.translation
 
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.klib.reader.getAllClassifiers
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
 import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
-import org.jetbrains.kotlin.swiftexport.standalone.klib.getAllClassifiers
 import org.jetbrains.kotlin.swiftexport.standalone.writer.BridgeSources
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.sir.printer.SirPrinter
