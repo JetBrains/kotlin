@@ -9,7 +9,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 fun getServerEnv(): String = System.getenv("SERVER_ENV") ?: "localhost"
-fun isServerEnvK8s(): Boolean = (System.getenv("SERVER_ENV") ?: "").contains("k8s")
+fun isServerEnvK8s(): Boolean = (System.getenv("SERVER_ENV") ?: "").contains("K8S")
 
 val K8S_STORAGE_PATH: Path = Paths.get("/storage")
 

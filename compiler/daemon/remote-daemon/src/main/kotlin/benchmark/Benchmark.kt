@@ -77,16 +77,17 @@ suspend fun main() {
     val ktorTasks =
         TasksExtractor.getTasks("/Users/michal.svec/Desktop/ktor/outputlatest")
     println("We have ${ktorTasks.size} tasks to compile")
+
     val localPort = 8000
     val localHost = "localhost"
 
     val remotePort = 443
-    val remoteHost = "remote-kotlin-daemon.labs.jb.gg"
+    val remoteWebsocketsHost = "remote-kotlin-daemon-websockets.labs.jb.gg"
+    val remoteGrpcHost = "remote-kotlin-daemon.labs-grpc.jb.gg"
 
-
-    val implType = RemoteCompilationServiceImplType.GRPC
+    val implType = RemoteCompilationServiceImplType.KOTLINX_RPC
 //    val server = RemoteCompilationServer.getServer(implType, localPort, logging = true)
-    val client = RemoteCompilationClient.getClient(implType, remoteHost, remotePort)
+    val client = RemoteCompilationClient.getClient(implType, remoteWebsocketsHost, remotePort)
 
 //    server.start(block = false)
     val benchmark = Benchmark()

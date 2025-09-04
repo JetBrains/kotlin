@@ -58,6 +58,7 @@ class KotlinxRpcRemoteCompilationServerImpl(
         server = embeddedServer(Netty, port) {
             module()
         }
+        println("WebSockets server is running: localhost:${port}")
         server.start(wait = block)
     }
 
