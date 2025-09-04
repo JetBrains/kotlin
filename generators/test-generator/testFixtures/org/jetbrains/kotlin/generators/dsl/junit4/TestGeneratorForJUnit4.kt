@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
-import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.BlockJUnit4ClassRunner
 import java.io.File
 import java.io.IOException
 
@@ -25,7 +23,6 @@ object TestGeneratorForJUnit4 : AbstractTestGenerator() {
             testClass.suiteTestClassName,
             testClass.baseTestClassName,
             testClass.testModels,
-            testClass.useJunit4,
             mainClassName,
         )
         return generatorInstance.generateAndSave(dryRun)
@@ -37,13 +34,11 @@ private class TestGeneratorForJUnit4Instance(
     suiteTestClassFqName: String,
     baseTestClassFqName: String,
     private val testClassModels: Collection<TestClassModel>,
-    private val useJunit4: Boolean,
     private val mainClassName: String?
 ) {
     companion object {
         private val GENERATED_FILES = HashSet<String>()
         private val JUNIT3_RUNNER = Class.forName("org.jetbrains.kotlin.test.JUnit3RunnerWithInners")
-        private val JUNIT4_RUNNER = BlockJUnit4ClassRunner::class.java
 
         private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
             val dataString = testDataSource.dataString
@@ -106,9 +101,7 @@ private class TestGeneratorForJUnit4Instance(
         p.println("package ", suiteClassPackage, ";")
         p.println()
         p.println("import com.intellij.testFramework.TestDataPath;")
-        if (!useJunit4) {
-            p.println("import ", JUNIT3_RUNNER.canonicalName, ";")
-        }
+        p.println("import ", JUNIT3_RUNNER.canonicalName, ";")
         p.println("import org.jetbrains.kotlin.test.KotlinTestUtils;")
         p.println("import " + KtTestUtil::class.java.canonicalName + ";")
 
@@ -122,10 +115,6 @@ private class TestGeneratorForJUnit4Instance(
 
         p.println("import " + TestMetadata::class.java.canonicalName + ";")
         p.println("import " + RunWith::class.java.canonicalName + ";")
-        if (useJunit4) {
-            p.println("import " + BlockJUnit4ClassRunner::class.java.canonicalName + ";")
-            p.println("import " + Test::class.java.canonicalName + ";")
-        }
         p.println()
         p.println("import java.io.File;")
         p.println("import java.util.regex.Pattern;")
@@ -179,7 +168,7 @@ private class TestGeneratorForJUnit4Instance(
         generateTestDataPath(p, testClassModel)
         generateParameterAnnotations(p, testClassModel)
 
-        p.println("@RunWith(", if (useJunit4) JUNIT4_RUNNER.simpleName else JUNIT3_RUNNER.simpleName, ".class)")
+        p.println("@RunWith(${JUNIT3_RUNNER.simpleName}.class)")
 
         p.println("public " + staticModifier + "class ", testClassModel.name, " extends ", baseTestClassName, " {")
         p.pushIndent()
@@ -196,7 +185,7 @@ private class TestGeneratorForJUnit4Instance(
                 p.println()
             }
 
-            generateTestMethod(p, methodModel, useJunit4)
+            generateTestMethod(p, methodModel)
         }
 
         for (innerTestClass in innerTestClasses) {
@@ -215,11 +204,7 @@ private class TestGeneratorForJUnit4Instance(
         p.println("}")
     }
 
-    private fun generateTestMethod(p: Printer, methodModel: MethodModel<*>, useJunit4: Boolean) {
-        if (useJunit4 && (methodModel !is RunTestMethodModel)) {
-            p.println("@Test")
-        }
-
+    private fun generateTestMethod(p: Printer, methodModel: MethodModel<*>) {
         generateMetadata(p, methodModel)
         methodModel.generateSignature(p)
         p.printWithNoIndent(" {")

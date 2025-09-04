@@ -58,30 +58,27 @@ class TestGroup(
 
     inline fun <reified T> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
-        useJunit4: Boolean = false,
         annotations: List<AnnotationModel> = emptyList(),
         noinline init: TestClass.() -> Unit
     ) {
         val testKClass = T::class.java
-        testClass(testKClass, testKClass.name, suiteTestClassName, useJunit4, annotations, init)
+        testClass(testKClass, testKClass.name, suiteTestClassName, annotations, init)
     }
 
     fun testClass(
         testKClass: Class<*>,
         baseTestClassName: String = testKClass.name,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
-        useJunit4: Boolean,
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, useJunit4, annotations).apply(init)
+        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
     }
 
     inner class TestClass(
         val testKClass: Class<*>,
         val baseTestClassName: String,
         val suiteTestClassName: String,
-        val useJunit4: Boolean,
         val annotations: List<AnnotationModel>,
     ) {
         val testDataRoot: String
