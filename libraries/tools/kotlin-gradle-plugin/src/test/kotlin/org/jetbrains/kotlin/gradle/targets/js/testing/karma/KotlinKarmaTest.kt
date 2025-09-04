@@ -120,6 +120,8 @@ class KotlinKarmaTest {
             assertContains(it, "\"port\": 12345")
             assertContains(it, "\"browsers\": []")
 
+            assertContains(it, "config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');")
+
             additionalCheck(it, testDir)
         }
     }
