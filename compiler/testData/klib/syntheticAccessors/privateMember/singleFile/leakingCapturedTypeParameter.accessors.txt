@@ -1,0 +1,86 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingCapturedTypeParameter.kt */
+
+public open class A<T : Any?>
+    /* TARGET declaration */ private fun foo(x: T): T
+    internal inline fun callFoo(x: T): T
+        /* ACCESSOR use-site */ access$foo<T>($this = <this>, x = x)
+    /* TARGET declaration */ private fun <U : Any?> baz(x: T, y: U): Pair<T, U>
+    internal inline fun <U : Any?> callBaz(x: T, y: U): Pair<T, U>
+        /* ACCESSOR use-site */ access$baz<T, U>($this = <this>, x = x, y = y)
+    public inner class B<S : Any?>
+        /* TARGET declaration */ private fun barB(x: T, y: S): Pair<T, S>
+        internal inline fun callBarB(x: T, y: S): Pair<T, S>
+            /* ACCESSOR use-site */ access$barB<S, T>($this = <this>, x = x, y = y)
+        /* ACCESSOR declaration */ internal /* static */ fun <S : Any?, T : Any?> access$barB($this: B<S, T>, x: T, y: S): Pair<T, S>
+            /* TARGET use-site */ $this.barB(x = x, y = y)
+    public inner class C<S : Any?>
+        /* TARGET declaration */ private constructor(x: S) /* primary */
+        internal inline fun copy(): C<Int, T>
+            /* ACCESSOR use-site */ access$<outer-this-0><S, T>($this = <this>)
+            /* ACCESSOR use-site */ access$<outer-this-0><S, T>($this = <this>).C<Int>(x = 42, $constructor_marker = null)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): A<T>
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ internal constructor(x: S, $constructor_marker: SyntheticConstructorMarker?)
+            /* TARGET use-site */ <this>.C<S>(x = x)
+        /* ACCESSOR declaration */ internal /* static */ fun <S : Any?, T : Any?> access$<outer-this-0>($this: C<S, T>): A<T>
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    public companion object Companion
+        /* TARGET declaration */ private fun barCompanion(x: Any): Any
+        internal inline fun callBarCompanion(x: Any): Any
+            /* ACCESSOR use-site */ access$barCompanion($this = <this>, x = x)
+        /* ACCESSOR declaration */ internal /* static */ fun access$barCompanion($this: Companion, x: Any): Any
+            /* TARGET use-site */ $this.barCompanion(x = x)
+    public class Nested
+        /* TARGET declaration */ private fun barNested(x: Any): Any
+        internal inline fun callBarNested(x: Any): Any
+            /* ACCESSOR use-site */ access$barNested($this = <this>, x = x)
+        /* ACCESSOR declaration */ internal /* static */ fun access$barNested($this: Nested, x: Any): Any
+            /* TARGET use-site */ $this.barNested(x = x)
+    public inner class D : A<Int>
+        /* TARGET declaration */ private fun barD(x: T): T
+        internal inline fun callBarD(x: T): T
+            /* ACCESSOR use-site */ access$barD<T>($this = <this>, x = x)
+        /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$barD($this: D<T>, x: T): T
+            /* TARGET use-site */ $this.barD(x = x)
+    /* TARGET declaration */ private fun listHead(xs: List<T>): T
+    internal inline fun callListHead(xs: List<T>): T
+        /* ACCESSOR use-site */ access$listHead<T>($this = <this>, xs = xs)
+    internal inline fun <reified R : Any?> callFooReified(x: T): R?
+        /* ACCESSOR use-site */ access$foo<T>($this = <this>, x = x)
+    /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$foo($this: A<T>, x: T): T
+        /* TARGET use-site */ $this.foo(x = x)
+    /* ACCESSOR declaration */ internal /* static */ fun <T : Any?, U : Any?> access$baz($this: A<T>, x: T, y: U): Pair<T, U>
+        /* TARGET use-site */ $this.baz<U>(x = x, y = y)
+    /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$listHead($this: A<T>, xs: List<T>): T
+        /* TARGET use-site */ $this.listHead(xs = xs)
+    /* TARGET declaration */ <this>: A<T>
+public class E : A<Int>
+    /* TARGET declaration */ private fun barE(x: Int): Int
+    internal inline fun callBarE(x: Int): Int
+        /* ACCESSOR use-site */ access$barE($this = <this>, x = x)
+    public inner class F
+        /* TARGET declaration */ private fun barF(x: Int): Int
+        internal inline fun callBarF(x: Int): Int
+            /* ACCESSOR use-site */ access$barF($this = <this>, x = x)
+        /* ACCESSOR declaration */ internal /* static */ fun access$barF($this: F, x: Int): Int
+            /* TARGET use-site */ $this.barF(x = x)
+    /* ACCESSOR declaration */ internal /* static */ fun access$barE($this: E, x: Int): Int
+        /* TARGET use-site */ $this.barE(x = x)
+public fun box(): String
+    /* ACCESSOR use-site */ access$foo<Any?>($this = this, x = x)
+    /* ACCESSOR use-site */ access$baz<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$baz<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$barB<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$barB<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$barD<Any?>($this = this, x = x)
+    /* ACCESSOR use-site */ access$foo<Any?>($this = this, x = x)
+    /* ACCESSOR use-site */ access$baz<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$baz<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$barB<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$barB<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$barE($this = this, x = x)
+    /* ACCESSOR use-site */ access$barF($this = this, x = x)
+    /* ACCESSOR use-site */ access$listHead<Any?>($this = this, xs = xs)
+    /* ACCESSOR use-site */ access$foo<Any?>($this = this, x = x)
