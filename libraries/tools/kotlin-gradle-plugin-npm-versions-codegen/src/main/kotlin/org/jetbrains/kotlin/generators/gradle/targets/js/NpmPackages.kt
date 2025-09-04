@@ -18,7 +18,7 @@ val npmPackages = listOf(
     NpmPackage("to-string-loader"),
     NpmPackage("mini-css-extract-plugin"),
     NpmPackage("mocha"),
-    NpmPackage("karma"),
+    NpmPackage("karma", "github:Kotlin/karma#6.4.5"),
     NpmPackage("karma-chrome-launcher"),
     NpmPackage("karma-firefox-launcher"),
     NpmPackage("karma-opera-launcher"),
