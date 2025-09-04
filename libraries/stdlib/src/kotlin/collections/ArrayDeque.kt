@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -393,7 +393,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             for (index in head until tail) {
                 if (element == elementData[index]) return index - head
             }
-        } else if (head >= tail) {
+        } else if (isNotEmpty() && head >= tail) {
             for (index in head until elementData.size) {
                 if (element == elementData[index]) return index - head
             }
@@ -412,7 +412,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             for (index in tail - 1 downTo head) {
                 if (element == elementData[index]) return index - head
             }
-        } else if (head > tail) {
+        } else if (isNotEmpty() && head >= tail) {
             for (index in tail - 1 downTo 0) {
                 if (element == elementData[index]) return index + elementData.size - head
             }
