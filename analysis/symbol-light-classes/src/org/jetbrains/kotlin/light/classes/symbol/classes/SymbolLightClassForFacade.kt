@@ -206,7 +206,7 @@ internal class SymbolLightClassForFacade(
     }
 
     override fun hashCode() = facadeClassFqName.hashCode()
-    override fun toString() = "${SymbolLightClassForFacade::class.java.simpleName}:$facadeClassFqName"
+    override fun toString(): String = "${this::class.simpleName.orEmpty()}:$facadeClassFqName"
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
     override fun getText() = firstFileInFacade.text ?: ""
     override fun getTextRange(): TextRange = firstFileInFacade.textRange ?: TextRange.EMPTY_RANGE

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
 
 abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
-    override fun toString() = "${this.javaClass.simpleName} of $parent"
+    override fun toString() = "${this::class.simpleName.orEmpty()} of $parent"
     override fun getParent(): PsiElement = parent
 
     abstract val kotlinOrigin: KtElement?

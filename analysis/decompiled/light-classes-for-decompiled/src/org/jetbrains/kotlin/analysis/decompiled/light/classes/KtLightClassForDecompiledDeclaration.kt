@@ -222,7 +222,6 @@ open class KtLightClassForDecompiledDeclaration(
     override fun hashCode(): Int = qualifiedName?.hashCode() ?: kotlinOrigin?.fqName?.hashCode() ?: 0
     override fun copy(): PsiElement = this
     override fun clone(): Any = this
-    override fun toString(): String = "${this.javaClass.simpleName} of $parent"
     override fun getName(): String? = clsDelegate.name
     override fun isValid(): Boolean = file.isValid && clsDelegate.isValid && (kotlinOrigin?.isValid != false)
 }
