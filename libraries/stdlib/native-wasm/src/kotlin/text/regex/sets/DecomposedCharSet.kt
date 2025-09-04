@@ -115,6 +115,7 @@ open internal class DecomposedCharSet(
             return -1
         }
 
+        // TODO: it seems meaningless: lambda does not depend on range
         if ((0 until readCodePoints).firstOrNull { decomposedCodePoint[i] != decomposedChar[i] } != null) {
             return -1
         }
