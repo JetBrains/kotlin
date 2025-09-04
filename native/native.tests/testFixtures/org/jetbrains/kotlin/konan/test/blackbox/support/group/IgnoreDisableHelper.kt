@@ -31,7 +31,6 @@ private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
 private val GC_TYPE_NAMES = GC.entries.map { it.shortcut.uppercase() }
 private val GC_SCHEDULER_NAMES = GCSchedulerType.entries.map { it.name }
-private val ALLOCATOR_NAMES = Allocator.entries.map { it.name }
 private val THREAD_STATE_CHECKER_NAMES = ThreadStateChecker.entries.map { it.name }
 private val FAMILY_NAMES = Family.entries.map { it.name }
 private val ARCHITECTURE_NAMES = Architecture.entries.map { it.name }
@@ -127,7 +126,7 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
                 ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
                 ClassLevelProperty.GC_TYPE.shortName -> get<GCType>().gc?.let { it.shortcut.uppercase() to GC_TYPE_NAMES }
                 ClassLevelProperty.GC_SCHEDULER.shortName -> get<GCScheduler>().scheduler?.let { it.name to GC_SCHEDULER_NAMES }
-                ClassLevelProperty.ALLOCATOR.shortName -> get<Allocator>().name to ALLOCATOR_NAMES
+                ClassLevelProperty.PAGED_ALLOCATOR.shortName -> get<Allocator>().paged?.let { it to BOOLEAN_NAMES }
                 ClassLevelProperty.USE_THREAD_STATE_CHECKER.shortName -> get<ThreadStateChecker>().name to THREAD_STATE_CHECKER_NAMES
                 TARGET_FAMILY -> get<KotlinNativeTargets>().testTarget.family.name to FAMILY_NAMES
                 TARGET_ARCHITECTURE -> get<KotlinNativeTargets>().testTarget.architecture.name to ARCHITECTURE_NAMES

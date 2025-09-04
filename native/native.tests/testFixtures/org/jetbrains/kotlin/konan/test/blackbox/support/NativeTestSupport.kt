@@ -293,7 +293,11 @@ object NativeTestSupport {
         ).let(::ExplicitBinaryOptions)
 
     private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator =
-        ClassLevelProperty.ALLOCATOR.readValue(enforcedProperties, Allocator.values(), default = Allocator.UNSPECIFIED)
+        ClassLevelProperty.PAGED_ALLOCATOR.readValue(
+            enforcedProperties,
+            transform = String::toBooleanStrictOrNull,
+            default = null
+        ).let { Allocator(it) }
 
     private fun computeNativeTargets(enforcedProperties: EnforcedProperties, hostManager: HostManager): KotlinNativeTargets {
         val hostTarget = HostManager.host

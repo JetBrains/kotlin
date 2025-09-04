@@ -41,7 +41,7 @@ private enum class TestProperty(shortName: String) {
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
     GC_TYPE("gcType"),
     GC_SCHEDULER("gcScheduler"),
-    ALLOCATOR("alloc"),
+    PAGED_ALLOCATOR("pagedAllocator"),
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
@@ -109,7 +109,7 @@ private open class NativeArgsProvider @Inject constructor(
 
     @get:Input
     @get:Optional
-    protected val allocator = providers.testProperty(ALLOCATOR)
+    protected val pagedAllocator = providers.testProperty(PAGED_ALLOCATOR)
 
     @get:Input
     @get:Optional
@@ -258,7 +258,7 @@ private open class NativeArgsProvider @Inject constructor(
             gcType.orNull?.let { "-D${GC_TYPE.fullName}=$it" },
             binaryOptions.orNull?.let { "-D${BINARY_OPTIONS.fullName}=$it" },
             gcScheduler.orNull?.let { "-D${GC_SCHEDULER.fullName}=$it" },
-            allocator.orNull?.let { "-D${ALLOCATOR.fullName}=$it" },
+            pagedAllocator.orNull?.let { "-D${PAGED_ALLOCATOR.fullName}=$it" },
             cacheMode.orNull?.let { "-D${CACHE_MODE.fullName}=$it" },
             executionTimeout.orNull?.let { "-D${EXECUTION_TIMEOUT.fullName}=$it" },
             sanitizer.orNull?.let { "-D${SANITIZER.fullName}=$it" },

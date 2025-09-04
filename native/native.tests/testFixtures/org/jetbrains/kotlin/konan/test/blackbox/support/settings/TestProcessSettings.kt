@@ -187,10 +187,9 @@ class ExplicitBinaryOptions(private val rawOptions: List<String>) {
         options.singleOrNull { it.compilerConfigurationKey == key }?.value as? T
 }
 
-enum class Allocator(val compilerFlag: String?) {
-    UNSPECIFIED(null),
-    STD("-Xallocator=std"),
-    CUSTOM("-Xallocator=custom");
+data class Allocator(val paged: Boolean?) {
+    val compilerFlag: String?
+        get() = paged?.let { "-Xbinary=pagedAllocator=${it}" }
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
