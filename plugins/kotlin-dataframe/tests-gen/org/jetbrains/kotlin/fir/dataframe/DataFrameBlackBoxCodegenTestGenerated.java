@@ -224,6 +224,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("emptyColumnGroup.kt")
+  public void testEmptyColumnGroup() {
+    runTest("plugins/kotlin-dataframe/testData/box/emptyColumnGroup.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyFrameColumn.kt")
+  public void testEmptyFrameColumn() {
+    runTest("plugins/kotlin-dataframe/testData/box/emptyFrameColumn.kt");
+  }
+
+  @Test
   @TestMetadata("explode.kt")
   public void testExplode() {
     runTest("plugins/kotlin-dataframe/testData/box/explode.kt");

@@ -36,6 +36,8 @@ private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
     val columns = map {
         it.asDataColumn()
     }
+    // avoiding UnequalColumnSize exception in dataFrameOf for an empty column group
+    if (columns.isEmpty()) return DataFrame.empty(nrow = 1).cast()
     return dataFrameOf(columns).cast()
 }
 
