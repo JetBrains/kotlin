@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGrou
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage.Mode;
 import org.junit.jupiter.api.Tag;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
