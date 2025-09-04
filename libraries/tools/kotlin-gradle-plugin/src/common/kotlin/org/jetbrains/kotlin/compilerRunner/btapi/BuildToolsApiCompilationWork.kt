@@ -32,15 +32,12 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.CompositeKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.ExceptionReportingKotlinLogger
-import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
-import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.logCompilerArgumentsMessage
 import org.jetbrains.kotlin.gradle.logging.reportToIde
@@ -203,35 +200,51 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         null
     }
 
-    private fun compileWithDaemonOrFallback(
-        executionStrategy: KotlinCompilerExecutionStrategy,
+    /**
+     * Fallback to in-process on any unexpected problem, like daemon communication exception or uncaught compiler exception.
+     * Normally, valid [CompilationResult] does not lead to a fallback except [CompilationResult.COMPILER_INTERNAL_ERROR].
+     */
+    private fun compileInDaemon(
         log: KotlinLogger,
-        backup: TaskOutputsBackup?,
-    ): CompilationResult {
-        with(log) {
-            kotlinDebug { "Kotlin compiler class: ${workArguments.compilerClassName}" }
-            kotlinDebug {
-                val compilerClasspath = workArguments.compilerFullClasspath.joinToString(File.pathSeparator) { it.normalize().absolutePath }
-                "Kotlin compiler classpath: $compilerClasspath"
+        tryFallback: Boolean,
+    ): Pair<CompilationResult, KotlinCompilerExecutionStrategy> {
+        val fallback: (Throwable?) -> Pair<CompilationResult, KotlinCompilerExecutionStrategy> = { t ->
+            if (t != null) {
+                log.error("Daemon compilation failed", t)
             }
-            logCompilerArgumentsMessage(workArguments.compilerArgumentsLogLevel) {
-                "${workArguments.taskPath} Kotlin compiler args: ${workArguments.compilerArgs.joinToString(" ")}"
+            val recommendation = """
+                        Try ./gradlew --stop if this issue persists
+                        If it does not look related to your configuration, please file an issue with logs to https://kotl.in/issue
+                    """.trimIndent()
+            if (!tryFallback) {
+                throw RuntimeException(
+                    """
+                            |Failed to compile with Kotlin daemon.
+                            |Fallback strategy (compiling without Kotlin daemon) is turned off.
+                            |$recommendation
+                            """.trimMargin(),
+                    t
+                )
             }
+            val failDetails = t?.stackTraceAsString()?.removeSuffixIfPresent("\n")?.let { ": $it" } ?: ""
+            log.warn(
+                """
+                    |Failed to compile with Kotlin daemon$failDetails
+                    |Using fallback strategy: Compile without Kotlin daemon
+                    |$recommendation
+                    """.trimMargin()
+            )
+            performCompilation(KotlinCompilerExecutionStrategy.IN_PROCESS, log) to KotlinCompilerExecutionStrategy.IN_PROCESS
         }
-        try {
-            val result = performCompilation(executionStrategy, log)
-            if (result == CompilationResult.COMPILATION_OOM_ERROR || result == CompilationResult.COMPILATION_ERROR) {
-                backup?.restoreOutputs()
+        return try {
+            val daemonCompilationResult = performCompilation(KotlinCompilerExecutionStrategy.DAEMON, log)
+            if (daemonCompilationResult != CompilationResult.COMPILER_INTERNAL_ERROR) {
+                daemonCompilationResult to KotlinCompilerExecutionStrategy.DAEMON
+            } else {
+                fallback(null)
             }
-            throwExceptionIfCompilationFailed(result.asExitCode, executionStrategy)
-            log.info(executionStrategy.asFinishLogMessage)
-            return result
-        } catch (e: FailedCompilationException) {
-            backup?.tryRestoringOnRecoverableException(e) { restoreAction ->
-                log.info(DEFAULT_BACKUP_RESTORE_MESSAGE)
-                restoreAction()
-            }
-            throw e
+        } catch (t: Throwable) {
+            fallback(t)
         }
     }
 
@@ -248,49 +261,41 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         )
         val backup = initializeBackup(log)
         try {
-            compileWithDaemonOrFallback(workArguments.compilerExecutionSettings.strategy, log, backup)
-        } catch (e: FailedCompilationException) {
-            if (workArguments.compilerExecutionSettings.strategy == KotlinCompilerExecutionStrategy.DAEMON) {
-                val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, workArguments.allWarningsAsErrors)
-                val gradleMessageCollector = GradleErrorMessageCollector(
-                    log,
-                    gradlePrintingMessageCollector,
-                    kotlinPluginVersion = workArguments.kotlinPluginVersion
-                )
-                gradleMessageCollector.report(
-                    severity = CompilerMessageSeverity.EXCEPTION,
-                    message = "Daemon compilation failed: ${e.message}\n${e.stackTraceToString()}"
-                )
-                val recommendation = """
-                        Try ./gradlew --stop if this issue persists
-                        If it does not look related to your configuration, please file an issue with logs to https://kotl.in/issue
-                    """.trimIndent()
-                if (!workArguments.compilerExecutionSettings.useDaemonFallbackStrategy) {
-                    throw RuntimeException(
-                        """
-                            |Failed to compile with Kotlin daemon.
-                            |Fallback strategy (compiling without Kotlin daemon) is turned off.
-                            |$recommendation
-                            """.trimMargin(),
-                        e
-                    )
+            with(log) {
+                kotlinDebug { "Kotlin compiler class: ${workArguments.compilerClassName}" }
+                kotlinDebug {
+                    val compilerClasspath =
+                        workArguments.compilerFullClasspath.joinToString(File.pathSeparator) { it.normalize().absolutePath }
+                    "Kotlin compiler classpath: $compilerClasspath"
                 }
-                val failDetails = e.stackTraceAsString().removeSuffixIfPresent("\n")
-                log.warn(
-                    """
-                        |Failed to compile with Kotlin daemon: $failDetails
-                        |Using fallback strategy: Compile without Kotlin daemon
-                        |$recommendation
-                        """.trimMargin()
-                )
-                compileWithDaemonOrFallback(
-                    KotlinCompilerExecutionStrategy.IN_PROCESS,
-                    log,
-                    backup
-                )
-            } else {
-                throw e
+                logCompilerArgumentsMessage(workArguments.compilerArgumentsLogLevel) {
+                    "${workArguments.taskPath} Kotlin compiler args: ${workArguments.compilerArgs.joinToString(" ")}"
+                }
             }
+
+            val executionStrategy = workArguments.compilerExecutionSettings.strategy
+            val (compilationResult, effectiveExecutionStrategy) = when (executionStrategy) {
+                KotlinCompilerExecutionStrategy.DAEMON -> {
+                    val tryFallback = workArguments.compilerExecutionSettings.useDaemonFallbackStrategy
+                    compileInDaemon(log, tryFallback)
+                }
+                KotlinCompilerExecutionStrategy.IN_PROCESS -> performCompilation(
+                    KotlinCompilerExecutionStrategy.IN_PROCESS,
+                    log
+                ) to KotlinCompilerExecutionStrategy.IN_PROCESS
+                else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
+            }
+            log.info(effectiveExecutionStrategy.asFinishLogMessage)
+
+            throwExceptionIfCompilationFailed(compilationResult.asExitCode, executionStrategy)
+        } catch (e: FailedCompilationException) {
+            // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
+            backup?.tryRestoringOnRecoverableException(e) { restoreAction ->
+                metrics.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                    restoreAction()
+                }
+            }
+            throw e
         } finally {
             val taskInfo = TaskExecutionInfo(
                 kotlinLanguageVersion = workArguments.kotlinLanguageVersion,
@@ -298,12 +303,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 compilerArguments = if (workArguments.reportingSettings.includeCompilerArguments) workArguments.compilerArgs else emptyArray(),
                 tags = workArguments.incrementalCompilationEnvironment?.collectIcTags().orEmpty(),
             )
-            metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
-            val result =
-                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
-            TaskExecutionResults[workArguments.taskPath] = result
-            backup?.deleteSnapshot()
-
             workArguments.errorsFiles?.let {
                 /*
                  * Use `printingLogger` here intentionally (not `log`) to avoid accidentally writing
@@ -316,6 +315,11 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 exceptionReportingKotlinLogger.extractExceptionMessages()
                     .reportToIde(it, workArguments.kotlinPluginVersion, logger = printingLogger)
             }
+            metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
+            val result =
+                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
+            TaskExecutionResults[workArguments.taskPath] = result
+            backup?.deleteSnapshot()
         }
     }
 
