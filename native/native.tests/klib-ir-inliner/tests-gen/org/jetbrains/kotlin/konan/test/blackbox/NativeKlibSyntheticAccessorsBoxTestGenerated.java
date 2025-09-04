@@ -1101,6 +1101,12 @@ public class NativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNative
       }
 
       @Test
+      @TestMetadata("LeakingCapturedTypeParameter.kt")
+      public void testLeakingCapturedTypeParameter() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/LeakingCapturedTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateConstructorInInnerClass.kt")
       public void testLeakingPrivateConstructorInInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClass.kt");

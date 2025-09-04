@@ -1,0 +1,39 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=KT-79739.kt */
+
+public class A<T : Any?>
+    /* TARGET declaration */ private fun foo(x: T): T
+    public inline fun callFoo(x: T): T
+        /* ACCESSOR use-site */ access$foo<T>($this = <this>, x = x)
+    /* TARGET declaration */ private fun <U : Any?> baz(x: T, y: U): Pair<T, U>
+    public inline fun <U : Any?> callBaz(x: T, y: U): Pair<T, U>
+        /* ACCESSOR use-site */ access$baz<T, U>($this = <this>, x = x, y = y)
+    public inner class B<S : Any?>
+        /* TARGET declaration */ private fun bar(x: T, y: S): Pair<T, S>
+        public inline fun callBar(x: T, y: S): Pair<T, S>
+            /* ACCESSOR use-site */ access$bar<S, T>($this = <this>, x = x, y = y)
+        /* ACCESSOR declaration */ public /* static */ fun <S : Any?, T : Any?> access$bar($this: B<S, T>, x: T, y: S): Pair<T, S>
+            /* TARGET use-site */ $this.bar(x = x, y = y)
+    public companion object Companion
+        /* TARGET declaration */ private fun bar(x: Any): Any
+        public inline fun callBar(x: Any): Any
+            /* ACCESSOR use-site */ access$bar($this = <this>, x = x)
+        /* ACCESSOR declaration */ public /* static */ fun access$bar($this: Companion, x: Any): Any
+            /* TARGET use-site */ $this.bar(x = x)
+    public class Nested
+        /* TARGET declaration */ private fun bar(x: Any): Any
+        public inline fun callBar(x: Any): Any
+            /* ACCESSOR use-site */ access$bar($this = <this>, x = x)
+        /* ACCESSOR declaration */ public /* static */ fun access$bar($this: Nested, x: Any): Any
+            /* TARGET use-site */ $this.bar(x = x)
+    /* ACCESSOR declaration */ public /* static */ fun <T : Any?> access$foo($this: A<T>, x: T): T
+        /* TARGET use-site */ $this.foo(x = x)
+    /* ACCESSOR declaration */ public /* static */ fun <T : Any?, U : Any?> access$baz($this: A<T>, x: T, y: U): Pair<T, U>
+        /* TARGET use-site */ $this.baz<U>(x = x, y = y)
+public fun box(): String
+    /* ACCESSOR use-site */ access$foo<Any?>($this = this, x = x)
+    /* ACCESSOR use-site */ access$baz<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$baz<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$bar<Any?, Any?>($this = this, x = x, y = y)
+    /* ACCESSOR use-site */ access$bar<Any?, Any?>($this = this, x = x, y = y)
