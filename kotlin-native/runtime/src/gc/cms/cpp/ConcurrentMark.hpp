@@ -147,7 +147,7 @@ private:
     void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
     bool tryTerminateMark(std::size_t& everSharedBatches) noexcept;
-    void flushMutatorQueues() noexcept;
+    bool flushMutatorQueues() noexcept;
     void endMarkingEpoch();
 
     void resetMutatorFlags();

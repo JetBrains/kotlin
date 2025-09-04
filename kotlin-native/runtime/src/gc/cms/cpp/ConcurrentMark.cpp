@@ -143,7 +143,8 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
     std::unique_lock markTerminationGuard(markTerminationMutex_);
 
     // has to happen under the termination lock guard
-    flushMutatorQueues();
+    if (!flushMutatorQueues())
+        return false;
 
     // After the mutators have been forced to flush their local queues,
     // there is only on possibility for this counter to remain the same as on a previous iteration:
@@ -162,15 +163,18 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
     return true;
 }
 
-void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
+bool gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
     for (auto& mutator : *lockedMutatorsList_) {
         mutator.gc().impl().mark_.flushAction_.construct();
     }
 
+    bool success = false;
     {
         FlushActionActivator flushActivator{};
 
         // wait all mutators flushed
+        // TODO: How many iterations are actually needed?
+        size_t iterationCountLeft = 1000;
         while (true) {
             bool allDone = true;
             for (auto& mutator : *lockedMutatorsList_) {
@@ -181,7 +185,12 @@ void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
                     allDone = false;
                 }
             }
-            if (allDone) break;
+            if (allDone) {
+                success = true;
+                break;
+            }
+            if (--iterationCountLeft == 0)
+                break;
             std::this_thread::yield();
         }
     }
@@ -190,6 +199,7 @@ void gc::mark::ConcurrentMark::flushMutatorQueues() noexcept {
     for (auto& mutator : *lockedMutatorsList_) {
         mutator.gc().impl().mark_.flushAction_.destroy();
     }
+    return success;
 }
 
 void gc::mark::ConcurrentMark::resetMutatorFlags() {
