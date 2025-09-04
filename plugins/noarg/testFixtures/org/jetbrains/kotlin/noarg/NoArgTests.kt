@@ -84,7 +84,7 @@ class NoArgEnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        NoArgComponentRegistrar.registerNoArgComponents(this, NOARG_ANNOTATIONS, NoArgDirectives.INVOKE_INITIALIZERS in module.directives)
+        NoArgComponentRegistrar.registerNoArgComponents(this, configuration, NOARG_ANNOTATIONS, NoArgDirectives.INVOKE_INITIALIZERS in module.directives)
     }
 }
 

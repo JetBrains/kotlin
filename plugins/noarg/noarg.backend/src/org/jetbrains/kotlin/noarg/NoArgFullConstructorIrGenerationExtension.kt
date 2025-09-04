@@ -73,18 +73,7 @@ private class NoArgFullConstructorIrGenerationTransformer(
             returnType = klass.defaultType
         }.also { ctor ->
             ctor.parent = klass
-            ctor.body = context.irFactory.createBlockBody(
-                ctor.startOffset, ctor.endOffset,
-                listOfNotNull(
-                    IrDelegatingConstructorCallImpl(
-                        ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
-                        superConstructor.symbol, 0,
-                    ),
-                    IrInstanceInitializerCallImpl(
-                        ctor.startOffset, ctor.endOffset, klass.symbol, context.irBuiltIns.unitType
-                    ).takeIf { invokeInitializers }
-                )
-            )
+            context.generateNoArgConstructorBody(ctor, klass, superConstructor, invokeInitializers)
         }
     }
 
@@ -95,12 +84,4 @@ private class NoArgFullConstructorIrGenerationTransformer(
 
     private fun IrClass.isAnnotatedWithNoarg(): Boolean =
         toIrBasedDescriptor().hasSpecialAnnotation(null)
-
-    // Returns true if this constructor is callable with no arguments by JVM rules, i.e. will have descriptor `()V`.
-    private fun IrConstructor.isZeroParameterConstructor(): Boolean {
-        val valueParameters = parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
-        return valueParameters.all { it.defaultValue != null } && (valueParameters.isEmpty() || isPrimary || hasAnnotation(
-            JVM_OVERLOADS_FQ_NAME
-        ))
-    }
 }
