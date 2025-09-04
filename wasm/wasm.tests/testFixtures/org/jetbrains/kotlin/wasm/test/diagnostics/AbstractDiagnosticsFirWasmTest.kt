@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -47,7 +47,7 @@ abstract class AbstractFirWasmDiagnosticTestBase(
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::WasmEnvironmentConfigurator.bind(wasmTarget),
+            ::WasmFirstStageEnvironmentConfigurator.bind(wasmTarget),
         )
 
         useAdditionalSourceProviders(

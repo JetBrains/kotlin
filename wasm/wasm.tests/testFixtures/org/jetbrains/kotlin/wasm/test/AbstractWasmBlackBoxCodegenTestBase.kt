@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -73,7 +75,8 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
 
         useConfigurators(
-            ::WasmEnvironmentConfigurator.bind(wasmTarget),
+            ::WasmFirstStageEnvironmentConfigurator.bind(wasmTarget),
+            ::WasmSecondStageEnvironmentConfigurator.bind(wasmTarget),
         )
 
         useAdditionalSourceProviders(
