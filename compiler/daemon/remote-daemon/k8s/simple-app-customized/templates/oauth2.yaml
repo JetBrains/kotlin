@@ -1,0 +1,36 @@
+{{ if .Values.oauth2 }}
+{{- $fullName := include "helm.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-oauth2
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ include "helm.domainName" . }}
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}-oauth2-proxy-jb
+                port:
+                  number: 4180
+  tls:
+    - hosts:
+      - {{ include "helm.domainName" . }}
+      secretName: {{ include "helm.tlsSecretName" . }}
+---
+# only once per namespace
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $fullName }}-oauth2-proxy-jb
+spec:
+  type: ExternalName
+  externalName: oauth2-proxy-jb.ingress-nginx.svc.cluster.local
+  ports:
+    - port: 4180
+{{- end}}

@@ -1,0 +1,165 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  strategy:
+    {{- with .Values.deployStrategy }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.minReplicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret }}
+      {{- end }}
+      serviceAccountName: {{ include "helm.fullname" . }}
+      securityContext:
+        fsGroup: {{ .Values.runAsUser }}
+      volumes:
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.pvc }}
+        {{- range $k, $v := .Values.pvc }}
+        - name: {{ $k }}
+          persistentVolumeClaim:
+            claimName: {{ $k }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.configMapFromFiles.files }}
+        - name: config-volume
+          configMap:
+            name: {{ include "helm.fullname" . }}
+        {{- end }}
+      {{- if gt (len .Values.secretsMount) 0 }}
+        {{- range $i, $secret := .Values.secretsMount }}
+        - name: {{ $secret }}
+          secret:
+            secretName: {{ $secret }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ include "helm.fullname" . }}
+          {{- with .Values.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            #readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: {{ .Values.runAsUser }}
+            runAsGroup: {{ .Values.runAsGroup }}
+          image: "{{ .Values.image }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy | default "IfNotPresent" }}
+          ports:
+            {{- if .Values.portMapping }}
+            {{- range .Values.portMapping }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: TCP
+            {{- end }}
+            {{- else }}
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+            {{- end }}
+          {{- if .Values.health.liveness.enabled }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.health.liveness.initialDelaySeconds }}
+            failureThreshold: {{ .Values.health.liveness.failureThreshold }}
+            periodSeconds: {{ .Values.health.liveness.periodSeconds }}
+            httpGet:
+              path: {{ .Values.health.path }}
+              port: {{ .Values.health.port }}
+          {{- end }}
+          {{- if .Values.health.readiness.enabled }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.health.readiness.initialDelaySeconds }}
+            failureThreshold: {{ .Values.health.readiness.failureThreshold }}
+            periodSeconds: {{ .Values.health.readiness.periodSeconds }}
+            httpGet:
+              path: {{ .Values.health.path }}
+              port: {{ .Values.health.port }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if or (gt (len .Values.secrets) 0) (gt (len .Values.configMaps) 0 )}}
+          envFrom:
+            {{- range $i, $secret := .Values.secrets }}
+            - secretRef:
+                name: {{ $secret }}
+            {{- end }}
+            {{- range $i, $cm := .Values.configMaps }}
+            - configMapRef:
+                name: {{ $cm }}
+            {{- end }}
+          {{- end }}
+          env: {{- include "helm.env" . | indent 12 }}
+          volumeMounts:
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            - mountPath: /tmp
+              name: tmp
+            {{- if .Values.pvc }}
+            {{- range $k, $v := .Values.pvc }}
+            - name: {{ $k }}
+              mountPath: {{ $v.mountPath }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.configMapFromFiles.files }}
+            - name: config-volume
+              mountPath: {{ .Values.configMapFromFiles.configMountPath }}
+            {{- end }}
+          {{- if gt (len .Values.secretsMount) 0 }}
+            {{- range $i, $secret := .Values.secretsMount }}
+            - name: {{ $secret }}
+              mountPath: /secrets/{{ $secret }}
+            {{- end }}
+          {{- end }}
+      affinity:
+        {{- include "helm.affinity" . | indent 8 }}
+        {{- if .Values.nodeAffinity }}
+        nodeAffinity:
+          {{- toYaml .Values.nodeAffinity | nindent 10 }}
+        {{- end }}
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

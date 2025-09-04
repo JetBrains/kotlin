@@ -1,0 +1,51 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "helm.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- if $.Values.oauth2 }}
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy-jb.ingress-nginx.svc.cluster.local:4180/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-cache-key: "$remote_addr$cookie__oauth2_proxy"
+    nginx.ingress.kubernetes.io/auth-cache-duration: "200 202 10m, 401 1m"
+    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  #{{- if ne .Values.ingress.className "gke" }}
+  ingressClassName: {{ .Values.ingress.className }}
+  #{{- end }}
+  tls:
+    - hosts:
+      - {{ include "helm.domainName" . }}
+      secretName: {{ include "helm.tlsSecretName" . }}
+  rules:
+    - host: {{ include "helm.domainName" . }}
+      http:
+        paths:
+          {{- if .Values.portMapping }}
+          {{- range .Values.portMapping }}
+          - path: {{ .path }}{{- if eq $.Values.ingress.className "gke" }}*{{- end }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ .port }}
+          {{- end }}
+          {{- else }}
+          - path: /{{- if eq .Values.ingress.className "gke" }}*{{- end }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $svcPort }}
+          {{- end }}
+{{- end }}

@@ -1,0 +1,253 @@
+### Following options are set through the console UI
+### DO NOT TRY TO EDIT IT IN UI
+# Application name will be used for many parts of the deployment
+applicationName: remote-kotlin-daemon
+# Image path with tag
+image: registry.jetbrains.team/p/kotlin-build-tools/remote-kotlin-daemon-containers/kotlin-remote-daemon-workaround:latest
+# Secret usially created by space-controller and detected by console UI
+imagePullSecret: space-registry-kotlin-build-tools
+# Separate field in UI
+containerPort: 8000
+
+
+### You can override following options if required
+
+# Minimal number of replicas to start
+minReplicaCount: 1
+
+# Domain name, please check out the domains for you cluster https://console.intellij.net/cicd-apps
+domainName: labs.jb.gg
+
+# Only non root PIDs availabe, default is nobody
+# For amazoncorretto images use 99 user and 99 group
+runAsUser: 65534
+runAsGroup: 65534
+
+# If you need to set custom annotations to your deployment
+# https://jetbrains.team/p/mon/repositories/rules-common/files/master/README.md
+deploymentAnnotations: {}
+# prometheus.io/service_itm: "your_service_name"
+
+# If you need set pod annotation for your pods
+# Used typicaly for monitoring purposes https://youtrack.jetbrains.com/articles/SRE-A-69/Monitoring#Custom-metrics
+podAnnotations: {}
+  # prometheus.io/scrape: "true"       # Note: it is "scrape", not "probe"
+  # prometheus.io/path: "/metrics"     # Optional, default is "/metrics"
+  # prometheus.io/port: "8080"         # Optional, default all ports of Pod
+  # prometheus.io/scheme: "http|https" # Optional, default is "http"
+
+podLabels: {}
+  # podCustomLabel: "true"
+
+# Used both for readiness and liveness, keep the endpoint simple, like just return "OK" in the body
+health:
+  path: /healthz
+  port: http
+  liveness:
+    enabled: false
+    # wait $initialDelaySeconds seconds before performing the first probe
+    initialDelaySeconds: 30
+    # should perform a probe every $periodSeconds seconds
+    periodSeconds: 10
+    # if at least $failureThreshold probes have failed, the pod will be marked as unhealthy
+    failureThreshold: 30
+  readiness:
+    enabled: false
+    # wait $initialDelaySeconds seconds before performing the first probe
+    initialDelaySeconds: 5
+    # should perform a probe every $periodSeconds seconds
+    periodSeconds: 3
+    # if at least $failureThreshold probes have failed, the pod will be marked as unhealthy
+    failureThreshold: 5
+
+# All fields from the following secrets will be added to the pods environment variables
+# https://kubernetes.io/docs/concepts/configuration/secret/#use-cases
+secrets: []
+
+# All fields from the following configmaps will be added to the pods environment variables
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables
+configMaps: []
+
+# Map of file contents to include in the ConfigMap as individual entries
+#configMapFromFiles:
+# files:
+#   config.yaml: |-
+#     hello: world!
+#   config1.yaml: |-
+#     hello1: world2!
+#  configMountPath: "configurations/app_name"
+configMapFromFiles:
+  files: {}
+  configMountPath: "your_mount_path"
+
+# All fields from the following secrets will be mounted to /secrets/<secret-name>/<secret-key>
+# Each key from Secret will be a file and value of the key will be a file content
+secretsMount: []
+
+# If you have database from the console.intellij.net or from database controller, you can pass secretname here
+# All db fields from secret will be passed to the container with next mapping:
+# db_url from secret 0 will be DB0_URL, host will be DB0_HOST etc
+databaseSecrets: []
+
+# https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-environment-variables
+# You can use customEnv as regular env for pod.spec.container.env, for example:
+# customEnv:
+#   - name: MY_VAR
+#     value: my_value
+#   - name: MY_SECRET
+#     valueFrom:
+#       secretKeyRef:
+#         name: my-secret-object
+#         key: my-secret-object-key
+customEnv:
+  - name: SERVER_ENV
+    value: "k8s_debug"
+
+
+# Typically you need `internal-nginx` className for application working inside JetBrains networks
+# and just `nginx` className for external applications(but make sure you enable auth and don't exposing any sensitive data)
+# also you can set additional annotations https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    #kubernetes.io/ingress.class: internal-nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 1g
+
+# Turn on oauth2 for the service, please contact #sre before turning on
+# Enabling require adding url and redirect to the application
+oauth2: false
+
+# Service account annotations. This could be used to bind AWS IAM role to the service account.
+# https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html
+# Example:
+# serviceAccountAnnotations:
+#   eks.amazonaws.com/role-arn: arn:aws:iam::123456789:role/my-iam-role
+serviceAccountAnnotations: {}
+
+# https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+resources:
+   requests:
+     cpu: 100m
+     memory: 256Mi
+   limits:
+     cpu: 1000m
+     memory: 1024Mi
+
+# Added specifically for choosing GPU model - can be used for other things
+# Example usage: cloud.google.com/gke-accelerator: nvidia-tesla-t4
+nodeSelector: {}
+
+# https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+autoscaling:
+  enabled: false # only enable when you have resources.requests.cpu=limits.cpu
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80 # of resources.requests.cpu
+
+tolerations: []
+
+service:
+  type: ClusterIP
+  port: 8000
+  annotations: {}
+
+# https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
+# Example:
+# pvc:
+#   data:
+#     size: 1Gi
+#     mountPath: /data
+pvc:
+  compilation-storage:
+    size: 10Gi
+    mountPath: /storage
+
+# You can extend pod.spec.volumes with the following field
+# For example with https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
+extraVolumes: []
+# - name: scratch-volume
+#   ephemeral:
+#     volumeClaimTemplate:
+#       spec:
+#         resources:
+#           requests:
+#             storage: 1Gi
+
+# You can extend pod.spec.containers[0].volumeMounts with the following field
+extraVolumeMounts: []
+# - mountPath: /data
+#   name: scratch-volume
+
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+deployStrategy:
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+  type: RollingUpdate
+
+portMapping: null
+#  - port: 3000
+#    name: http
+#    path: /
+#  - port: 8080
+#    name: api
+#    path: /api
+
+# nodeAffinity: {}
+servicePortMappings: null # publish only port on Service(not on Ingress)
+#   - podPort: 9000
+#     servicePort: 9000
+#     name: udp-service
+#     proto: UDP
+#   - podPort: 8080
+#     servicePort: 80
+#     name: tcp-service
+#     proto: TCP
+
+# You could specify command for main container to overwrite CMD/ENTRYPOINT from container image config
+# command: []
+#
+
+# https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
+frontendConfig: {}
+#  redirectToHttps:
+#    enabled: true
+#    responseCodeName: MOVED_PERMANENTLY_DEFAULT
+
+
+# https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-configuration#configuring_ingress_features_through_backendconfig_parameters
+backendConfig: {}
+# iap:
+#   enabled: true
+# logging:
+#   enable: true
+#   sampleRate: 1
+
+networkPolicy: {}
+  # policyTypes:
+  #   - Ingress
+  #   - Egress
+  # ingress:
+  #   - from:
+  #       - ipBlock:
+  #           cidr: 0.0.0.0/0
+  #     ports:
+  #       - port: 80
+  # egress:
+  #   - to:
+  #       - namespaceSelector: {}
+  #         podSelector:
+  #           matchLabels:
+  #             k8s-app: kube-dns
+  #     ports:
+  #       - port: 53
+  #         protocol: UDP
+
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#pod-v1-core
+enableServiceLinks: false
+

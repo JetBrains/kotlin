@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 1.16.0
+description: A Helm chart for Kubernetes
+name: simple-app-customized
+type: application
+version: 0.3.2

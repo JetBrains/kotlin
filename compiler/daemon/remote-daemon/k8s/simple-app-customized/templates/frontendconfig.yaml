@@ -1,0 +1,12 @@
+#{{- if .Values.frontendConfig }}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.frontendConfig }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+#{{- end }}
