@@ -102,22 +102,16 @@ public class SirDeclarationFromKtSymbolProvider(
         sirSession = sirSession,
     )
 
-    private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol? = when (this) {
-        is KaEnumEntrySymbol -> SirEnumCaseFromKtSymbol(
-            ktSymbol = this,
-            sirSession = sirSession,
-        )
-        else ->
-            if (this is KaPropertySymbol
-                && isStatic
-                && name == StandardNames.ENUM_ENTRIES
-            ) {
-                null
-            } else {
-                SirVariableFromKtSymbol(
-                    ktSymbol = this@toSirVariable,
-                    sirSession = sirSession,
-                )
-            }
-    }
+    private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol? =
+        if (this is KaPropertySymbol
+            && isStatic
+            && name == StandardNames.ENUM_ENTRIES
+        ) {
+            null
+        } else {
+            SirVariableFromKtSymbol(
+                ktSymbol = this@toSirVariable,
+                sirSession = sirSession,
+            )
+        }
 }

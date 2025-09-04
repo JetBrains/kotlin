@@ -112,13 +112,6 @@ internal class SirVariableFromKtSymbol(
         get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
 }
 
-internal class SirEnumCaseFromKtSymbol(
-    ktSymbol: KaEnumEntrySymbol,
-    sirSession: SirSession,
-) : SirAbstractVariableFromKtSymbol(ktSymbol, sirSession) {
-    override val isInstance: Boolean = false
-}
-
 internal abstract class SirAbstractGetter(
     val sirSession: SirSession,
 ) : SirGetter() {
