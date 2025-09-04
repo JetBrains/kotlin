@@ -37,7 +37,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     manager: PsiManager,
 ) : SymbolLightClassBase(ktModule, manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
-    @Suppress("RemoveRedundantQualifierName")
+    @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
         ktModule: KaModule,
         classSymbol: SType,
