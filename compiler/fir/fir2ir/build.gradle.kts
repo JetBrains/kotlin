@@ -97,7 +97,7 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt")
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()
