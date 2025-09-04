@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+    val testRoot = args[0]
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
-        testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
+        testGroup(testRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionTestGenerated") {
                 model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
@@ -76,7 +77,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
+        testGroup(testRoot, "compiler/testData") {
             testClass<AbstractFirLoadK1CompiledJvmKotlinTest> {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
@@ -93,7 +94,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
+        testGroup(testRoot, "compiler/fir/analysis-tests/testData") {
             val init: TestClass.() -> Unit = {
                 val relativeRootPaths = listOf(
                     "resolve",
@@ -112,7 +113,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = init)
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/") {
+        testGroup(testRoot, "compiler/") {
             fun TestClass.phasedModel(allowKts: Boolean, excludeDirsRecursively: List<String> = emptyList()) {
                 val relativeRootPaths = listOf(
                     "testData/diagnostics/tests",
@@ -146,7 +147,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/tests-spec/testData") {
+        testGroup(testRoot, testDataRoot = "compiler/tests-spec/testData") {
             testClass<AbstractFirPsiDiagnosticTestSpec> {
                 model(
                     "diagnostics",
