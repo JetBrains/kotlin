@@ -28,6 +28,7 @@ dependencies {
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     testFixturesApi(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
