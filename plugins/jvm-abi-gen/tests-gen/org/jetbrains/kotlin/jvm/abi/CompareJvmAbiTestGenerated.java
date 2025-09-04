@@ -27,7 +27,7 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
   }
 
   public void testAllFilesPresentInCompare() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^.]+)$"), null, TargetBackend.JVM_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("anonymousObjects")

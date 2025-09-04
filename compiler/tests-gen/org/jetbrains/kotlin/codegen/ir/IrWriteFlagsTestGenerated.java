@@ -27,7 +27,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
   }
 
   public void testAllFilesPresentInWriteFlags() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @TestMetadata("protectedAccessToBaseMethod.kt")
@@ -49,7 +49,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInCallableReference() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/callableReference/flags")
@@ -61,7 +61,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInFlags() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/callableReference/flags"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/callableReference/flags"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("functionReference.kt")
@@ -95,7 +95,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/class/accessFlags")
@@ -107,7 +107,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInAccessFlags() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("defaultImpls.kt")
@@ -170,7 +170,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInDeprecatedFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("class.kt")
@@ -208,7 +208,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("compiler/testData/writeFlags/class/visibility/internal")
@@ -220,7 +220,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInInternal() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("class.kt")
@@ -273,7 +273,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInPackageprivate() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/packageprivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/packageprivate"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("enumEntry.kt")
@@ -291,7 +291,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInPrivate() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("class.kt")
@@ -344,7 +344,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInPublic() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("class.kt")
@@ -399,7 +399,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInDelegatedProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/delegatedProperty/visibility")
@@ -411,7 +411,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("privateSet.kt")
@@ -430,7 +430,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInFunction() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/function/classObjectPrivate")
@@ -442,7 +442,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInClassObjectPrivate() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("privateFun.kt")
@@ -470,7 +470,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInConstructors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("classObject.kt")
@@ -518,7 +518,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInDeprecatedFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("deprecatedSinceKotlin.kt")
@@ -596,7 +596,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInWithDefaultArguments() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/withDefaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/withDefaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("funInClass.kt")
@@ -635,7 +635,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInHidden() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/hidden"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/hidden"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("function.kt")
@@ -663,7 +663,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/inline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/inline"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("inlineOnly.kt")
@@ -696,7 +696,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInInnerClass() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/innerClass/visibility")
@@ -708,7 +708,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("internal.kt")
@@ -752,7 +752,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInJvm8() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("interfaceMethod.kt")
@@ -774,7 +774,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInDefaults() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("compiler/testData/writeFlags/jvm8/defaults/all-compatibility")
@@ -786,7 +786,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInAll_compatibility() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults/all-compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults/all-compatibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("defaultImplementations.kt")
@@ -816,7 +816,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInJvmOverloads() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvmOverloads"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("openFunction.kt")
@@ -834,7 +834,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInLambda() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/lambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/lambda"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("lambdaInInlineFunction.kt")
@@ -857,7 +857,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInLateinit() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/lateinit"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("lateinitGetter.kt")
@@ -885,7 +885,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInProperty() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("enumFields.kt")
@@ -902,7 +902,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInClassObject() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("compiler/testData/writeFlags/property/classObject/class")
@@ -914,7 +914,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("delegatedProtectedVar.kt")
@@ -1012,7 +1012,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInRename() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("constructorAndClassObject.kt")
@@ -1045,7 +1045,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
         }
 
         public void testAllFilesPresentInTrait() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("delegatedProtectedVar.kt")
@@ -1164,7 +1164,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInDeprecatedFlag() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("propertyInClass.kt")
@@ -1187,7 +1187,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInSyntheticAnnotationsMethod() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("privateProperty.kt")
@@ -1220,7 +1220,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInVisibility() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("internal.kt")
@@ -1249,7 +1249,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
     }
 
     public void testAllFilesPresentInTypealias() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/typealias"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod")
@@ -1261,7 +1261,7 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
       }
 
       public void testAllFilesPresentInSyntheticAnnotationsMethod() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("privateTypealias.kt")

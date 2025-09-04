@@ -35,7 +35,7 @@ public class JsPartialLinkageWithICTestCaseGenerated extends AbstractJsPartialLi
 
   @Test
   public void testAllFilesPresentInPartial_linkage() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/partial-linkage"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/partial-linkage"), Pattern.compile("^([^_](.+))$"), null, false);
   }
 
   @Test

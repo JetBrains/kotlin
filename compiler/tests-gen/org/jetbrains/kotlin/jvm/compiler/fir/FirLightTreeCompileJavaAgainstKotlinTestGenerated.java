@@ -29,7 +29,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
     }
 
     public void testAllFilesPresentInWithoutJavac() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/annotation")
@@ -41,7 +41,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInAnnotation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("retention.kt")
@@ -59,7 +59,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("GenericSignature.kt")
@@ -77,7 +77,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("ClassObject.kt")
@@ -160,7 +160,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("DefaultArgumentInEnumConstructor.kt")
@@ -178,7 +178,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInJvmStatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("simpleCompanionObject.kt")
@@ -216,7 +216,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInMethod() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("Any.kt")
@@ -348,7 +348,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInContextualFunctions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Signature.kt")
@@ -366,7 +366,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPlatformName() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("PlatformName.kt")
@@ -384,7 +384,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPrimitiveOverride() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ByteOverridesObject.kt")
@@ -452,7 +452,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPrimitiveOverrideWithInlineClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverrideWithInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverrideWithInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("InlineIntOverridesObject.kt")
@@ -470,7 +470,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInThrows() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ClassMembers.kt")
@@ -524,7 +524,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("ConstVal.kt")
@@ -551,7 +551,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPlatformName() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("PlatformName.kt")
@@ -570,7 +570,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInSealed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("Derived.kt")
@@ -593,7 +593,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInStaticFields() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("AnnotationClass.kt")
@@ -631,7 +631,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInTargets() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/targets"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/targets"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("annotation.kt")
@@ -715,7 +715,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
     }
 
     public void testAllFilesPresentInWithJavac() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/annotation")
@@ -727,7 +727,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInAnnotation() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/annotation"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("retention.kt")
@@ -745,7 +745,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInCallableReference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("GenericSignature.kt")
@@ -763,7 +763,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInClass() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("ClassObject.kt")
@@ -846,7 +846,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInEnum() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("DefaultArgumentInEnumConstructor.kt")
@@ -864,7 +864,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInJvmStatic() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("simpleCompanionObject.kt")
@@ -902,7 +902,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInMethod() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("Any.kt")
@@ -1034,7 +1034,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInContextualFunctions() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/contextualFunctions"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Signature.kt")
@@ -1052,7 +1052,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPlatformName() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/platformName"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("PlatformName.kt")
@@ -1070,7 +1070,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPrimitiveOverride() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ByteOverridesObject.kt")
@@ -1138,7 +1138,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPrimitiveOverrideWithInlineClass() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverrideWithInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverrideWithInlineClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("InlineIntOverridesObject.kt")
@@ -1156,7 +1156,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInThrows() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ClassMembers.kt")
@@ -1210,7 +1210,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInProperty() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("ConstVal.kt")
@@ -1237,7 +1237,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
         }
 
         public void testAllFilesPresentInPlatformName() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/property/platformName"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("PlatformName.kt")
@@ -1256,7 +1256,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInSealed() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("Derived.kt")
@@ -1279,7 +1279,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInStaticFields() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/staticFields"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("AnnotationClass.kt")
@@ -1317,7 +1317,7 @@ public class FirLightTreeCompileJavaAgainstKotlinTestGenerated extends AbstractF
       }
 
       public void testAllFilesPresentInTargets() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/targets"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/targets"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @TestMetadata("annotation.kt")

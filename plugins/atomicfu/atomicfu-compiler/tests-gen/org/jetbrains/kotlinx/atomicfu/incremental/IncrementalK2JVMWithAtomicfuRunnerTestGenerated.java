@@ -27,7 +27,7 @@ public class IncrementalK2JVMWithAtomicfuRunnerTestGenerated extends AbstractInc
   }
 
   public void testAllFilesPresentInProjects() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/projects"), Pattern.compile("^([^.]+)$"), null, TargetBackend.JVM_IR, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/projects"), Pattern.compile("^([^.]+)$"), null, false);
   }
 
   @TestMetadata("atomicExtension")
