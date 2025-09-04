@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
@@ -18,11 +19,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.dfa.PersistentTypeStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -354,8 +355,25 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         source = fakeSource
     }.build().let {
         callCompleter.completeCall(it, ResolutionMode.ReceiverResolution)
-    }.let {
-        transformExpressionUsingSmartcastInfo(it)
+    }.let { expression ->
+        // This manual picking is necessary since we don't support snapshots/backtracking for DFA and are so unable
+        // to rely on `dataFlowAnalyzer.exitQualifiedAccessExpression(it)`: the implicit `invoke()` candidate may not
+        // end up being chosen during resolution, so we can't commit anything into our DFA just yet.
+        val field = (symbol as? FirPropertySymbol)?.tryAccessExplicitFieldSymbol(inlineFunction, session, candidate.hasVisibleBackingField)
+
+        val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) { variable, statement ->
+            if (field == null) {
+                statement
+            } else {
+                PersistentTypeStatement(
+                    variable = statement?.variable ?: variable,
+                    upperTypes = (statement?.upperTypes.orEmpty() + field.resolvedReturnType).toPersistentSet(),
+                    lowerTypes = statement?.lowerTypes.orEmpty().toPersistentSet()
+                )
+            }
+        } ?: return@let expression
+
+        transformExpressionUsingSmartcastInfo(expression, smartcastStatement)
     }
 }
 

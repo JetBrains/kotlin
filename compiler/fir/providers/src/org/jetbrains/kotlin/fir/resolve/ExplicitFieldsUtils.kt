@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
@@ -25,24 +25,30 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
     return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
 }
 
-fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.tryAccessExplicitFieldSymbol(
+fun FirPropertySymbol.tryAccessExplicitFieldSymbol(
     closestInlineFunction: FirFunction?,
     session: FirSession,
-): FirBasedSymbol<*> {
-    val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
+    hasVisibleBackingField: Boolean,
+): FirBackingFieldSymbol? {
     val visibilityCheckResult = closestInlineFunction?.visibility?.compareTo(Visibilities.Private)
 
     if (visibilityCheckResult != null && visibilityCheckResult > 0) {
-        return resolvedSymbol
+        return null
     }
 
     if (
-        propertyReceiver.isEffectivelyFinal(session) &&
+        isEffectivelyFinal(session) &&
         hasVisibleBackingField &&
-        propertyReceiver.canNarrowDownGetterType
+        canNarrowDownGetterType
     ) {
-        return propertyReceiver.fir.backingField?.symbol ?: resolvedSymbol
+        return fir.backingField?.symbol
     }
 
-    return resolvedSymbol
+    return null
 }
+
+fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.tryAccessExplicitFieldSymbol(
+    closestInlineFunction: FirFunction?,
+    session: FirSession,
+): FirBackingFieldSymbol? =
+    (resolvedSymbol as? FirPropertySymbol)?.tryAccessExplicitFieldSymbol(closestInlineFunction, session, hasVisibleBackingField)

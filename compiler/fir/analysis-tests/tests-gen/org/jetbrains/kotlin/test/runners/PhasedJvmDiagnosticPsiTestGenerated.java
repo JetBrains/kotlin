@@ -61577,6 +61577,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("explicitFieldWithFunctionType.kt")
+        public void testExplicitFieldWithFunctionType() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldWithFunctionType.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitFieldWithFunctionTypeAndEarlySmartcast.kt")
+        public void testExplicitFieldWithFunctionTypeAndEarlySmartcast() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldWithFunctionTypeAndEarlySmartcast.kt");
+        }
+
+        @Test
         @TestMetadata("explicitFieldsInitializerTypeMismatch.kt")
         public void testExplicitFieldsInitializerTypeMismatch() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldsInitializerTypeMismatch.kt");
