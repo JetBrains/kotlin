@@ -320,7 +320,7 @@ arrayLiteral
     : ('[' elementList ']')
     ;
 
-// JavaScript supports arrasys like [,,1,2,,].
+// JavaScript supports arrays like [,,1,2,,].
 elementList
     : ','* arrayElement? (','+ arrayElement) * ','* // Yes, everything is optional
     ;
