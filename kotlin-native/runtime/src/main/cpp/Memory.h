@@ -17,6 +17,7 @@
 #ifndef RUNTIME_MEMORY_H
 #define RUNTIME_MEMORY_H
 
+#include <shared_mutex>
 #include <utility>
 #include <std_support/Atomic.hpp>
 
@@ -351,6 +352,7 @@ inline ThreadState GetThreadState() noexcept {
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
 ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
+void SwitchThreadStateRunnableNoSafePoint(MemoryState* thread) noexcept;
 
 // Asserts that the given thread is in the given state.
 void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
@@ -464,6 +466,8 @@ void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
 
 void initObjectPool() noexcept;
 void compactObjectPoolInCurrentThread() noexcept;
+
+std::shared_lock<std::shared_mutex> gcSuspendLock() noexcept;
 
 } // namespace kotlin
 

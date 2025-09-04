@@ -4,6 +4,7 @@
  */
 
 #include "Memory.h"
+#include "GlobalData.hpp"
 #include "MemoryPrivate.hpp"
 
 #include "Allocator.hpp"

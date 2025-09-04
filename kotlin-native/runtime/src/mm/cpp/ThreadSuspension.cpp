@@ -7,6 +7,7 @@
 #include "ThreadSuspension.hpp"
 
 #include <condition_variable>
+#include <shared_mutex>
 
 #include "CallsChecker.hpp"
 #include "Logging.hpp"
@@ -20,6 +21,8 @@ namespace {
 [[clang::no_destroy]] thread_local std::optional<mm::SafePointActivator> gSafePointActivator = std::nullopt;
 [[clang::no_destroy]] std::mutex gSuspensionRequestMutex;
 [[clang::no_destroy]] std::condition_variable gSuspensionCondVar;
+[[clang::no_destroy]] std::shared_mutex gSuspensionMutex2;
+[[clang::no_destroy]] std::unique_lock<std::shared_mutex> gSuspensionLock;
 
 } // namespace
 
@@ -122,6 +125,7 @@ void kotlin::mm::WaitForThreadsSuspension() noexcept {
     threadRegistry.waitAllThreads([currentThread](mm::ThreadData& thread) noexcept {
         return &thread == currentThread || thread.suspensionData().suspendedOrNative();
     });
+    gSuspensionLock = std::unique_lock{gSuspensionMutex2};
 }
 
 void kotlin::mm::ResumeThreads() noexcept {
@@ -137,4 +141,9 @@ void kotlin::mm::ResumeThreads() noexcept {
         internal::gSuspensionRequestReason.store(nullptr);
     }
     gSuspensionCondVar.notify_all();
+    gSuspensionLock.unlock();
+}
+
+std::shared_lock<std::shared_mutex> kotlin::gcSuspendLock() noexcept {
+    return std::shared_lock{gSuspensionMutex2};
 }

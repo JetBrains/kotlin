@@ -8,6 +8,7 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
+#include <shared_mutex>
 
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"

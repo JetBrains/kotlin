@@ -10,6 +10,7 @@
 #include "ExternalRCRef.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
+#include "Runtime.h"
 #include "Utils.hpp"
 #include "concurrent/Mutex.hpp"
 
@@ -94,7 +95,13 @@ public:
             // That means `dealloc` is running in parallel, so cannot possibly retain
             return false;
         }
-        CalledFromNativeGuard threadStateGuard;
+        Kotlin_initRuntimeIfNeeded();
+        auto* thread = GetMemoryState();
+        auto suspendLock = gcSuspendLock();
+        SwitchThreadStateRunnableNoSafePoint(thread);
+        auto threadStateGuard = ScopeGuard([thread] {
+            SwitchThreadState(thread, ThreadState::kNative);
+        });
         // In objc export if ObjCClass is objc_setAssociatedObject with KtClass
         // calling [KtClass _tryRetain] inside [ObjCClass dealloc] will lead to
         // this->tryRetain() being called after this->~ObjCBackRef()
