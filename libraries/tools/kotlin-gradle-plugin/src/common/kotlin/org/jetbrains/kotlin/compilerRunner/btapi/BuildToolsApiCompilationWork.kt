@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.report.collectIcTags
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
@@ -58,6 +59,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.collections.orEmpty
 
 private const val LOGGER_PREFIX = "[KOTLIN] "
 
@@ -284,7 +286,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 kotlinLanguageVersion = workArguments.kotlinLanguageVersion,
                 changedFiles = workArguments.incrementalCompilationEnvironment?.changedFiles,
                 compilerArguments = if (workArguments.reportingSettings.includeCompilerArguments) workArguments.compilerArgs else emptyArray(),
-//                tags = collectStatTags(),
+                tags = workArguments.incrementalCompilationEnvironment?.collectIcTags().orEmpty(),
             )
             metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
             val result =
