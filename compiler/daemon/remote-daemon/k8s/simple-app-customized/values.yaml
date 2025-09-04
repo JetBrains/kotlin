@@ -1,13 +1,14 @@
 ### Following options are set through the console UI
 ### DO NOT TRY TO EDIT IT IN UI
 # Application name will be used for many parts of the deployment
-applicationName: remote-kotlin-daemon
+applicationName: my-app
 # Image path with tag
-image: registry.jetbrains.team/p/kotlin-build-tools/remote-kotlin-daemon-containers/kotlin-remote-daemon-workaround:latest
+image: full-image-path
+imagePullPolicy: Always
 # Secret usially created by space-controller and detected by console UI
-imagePullSecret: space-registry-kotlin-build-tools
+imagePullSecret: secret
 # Separate field in UI
-containerPort: 8000
+containerPort: 8080
 
 
 ### You can override following options if required
@@ -44,7 +45,7 @@ health:
   path: /healthz
   port: http
   liveness:
-    enabled: false
+    enabled: true
     # wait $initialDelaySeconds seconds before performing the first probe
     initialDelaySeconds: 30
     # should perform a probe every $periodSeconds seconds
@@ -52,7 +53,7 @@ health:
     # if at least $failureThreshold probes have failed, the pod will be marked as unhealthy
     failureThreshold: 30
   readiness:
-    enabled: false
+    enabled: true
     # wait $initialDelaySeconds seconds before performing the first probe
     initialDelaySeconds: 5
     # should perform a probe every $periodSeconds seconds
@@ -99,21 +100,16 @@ databaseSecrets: []
 #       secretKeyRef:
 #         name: my-secret-object
 #         key: my-secret-object-key
-customEnv:
-  - name: SERVER_ENV
-    value: "k8s_debug"
-
+customEnv: []
 
 # Typically you need `internal-nginx` className for application working inside JetBrains networks
 # and just `nginx` className for external applications(but make sure you enable auth and don't exposing any sensitive data)
 # also you can set additional annotations https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
 ingress:
   enabled: true
-  className: nginx
+  className: internal-nginx
   annotations:
     #kubernetes.io/ingress.class: internal-nginx
-    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-    nginx.ingress.kubernetes.io/grpc-backend: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 1g
@@ -153,7 +149,7 @@ tolerations: []
 
 service:
   type: ClusterIP
-  port: 8000
+  port: 80
   annotations: {}
 
 # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
@@ -162,10 +158,7 @@ service:
 #   data:
 #     size: 1Gi
 #     mountPath: /data
-pvc:
-  compilation-storage:
-    size: 4Gi
-    mountPath: /storage
+pvc: {}
 
 # You can extend pod.spec.volumes with the following field
 # For example with https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
@@ -250,4 +243,3 @@ networkPolicy: {}
 
 # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#pod-v1-core
 enableServiceLinks: false
-

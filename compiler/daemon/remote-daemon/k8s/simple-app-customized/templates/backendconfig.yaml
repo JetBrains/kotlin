@@ -1,0 +1,12 @@
+#{{- if .Values.backendConfig }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.backendConfig }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+#{{- end }}

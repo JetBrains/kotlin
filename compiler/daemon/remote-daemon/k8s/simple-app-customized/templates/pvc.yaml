@@ -1,0 +1,16 @@
+{{- if .Values.pvc -}}
+{{- range $k, $v := .Values.pvc }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $k }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: {{ $v.size }}
+{{- end }}
+{{- end }}

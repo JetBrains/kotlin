@@ -1,0 +1,24 @@
+#{{- if .Values.networkPolicy }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    {{- with .Values.networkPolicy.policyTypes }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  ingress:
+    {{- with .Values.networkPolicy.ingress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  egress:
+    {{- with .Values.networkPolicy.egress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+#{{- end }}
