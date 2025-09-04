@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.*
@@ -145,6 +146,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         }
     }
 
+    @OptIn(ClassIdBasedLocality::class)
     private fun createReflectedPackageView(classLoader: URLClassLoader): SyntheticPackageViewForTest {
         val moduleData = RuntimeModuleData.create(classLoader)
         val module = moduleData.module
