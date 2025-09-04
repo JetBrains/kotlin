@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.location
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
+import org.jetbrains.kotlin.analysis.api.fir.visibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -56,16 +57,8 @@ internal class KaFirTypeAliasSymbol private constructor(
     override val classId: ClassId?
         get() = withValidityAssertion { backingPsi?.getClassId() ?: firSymbol.getClassId() }
 
-    override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion {
-            backingPsi?.visibilityByModifiers?.asKaSymbolVisibility ?: when (val visibility = firSymbol.possiblyRawVisibility) {
-                Visibilities.Unknown -> KaSymbolVisibility.PUBLIC
-                else -> visibility.asKaSymbolVisibility
-            }
-        }
-
     override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibilityByModifiers ?: firSymbol.visibility }
+        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {

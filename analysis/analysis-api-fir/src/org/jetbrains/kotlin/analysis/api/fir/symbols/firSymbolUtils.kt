@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
-import org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivityTracker
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -19,8 +18,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -135,21 +136,3 @@ internal val FirBasedSymbol<*>.kaSymbolModality: KaSymbolModality
         is FirClassLikeSymbol<*> -> modality
         else -> Modality.FINAL
     }.asKaSymbolModality
-
-/**
- * Issue: KT-58572
- *
- * Visibility computation can be requested from Java resolution via light classes,
- * so [resolvedStatus][FirClassLikeSymbol.resolvedStatus] can be called only if there is no pending resolution
- * on the stack.
- * Otherwise, only [rawStatus][FirClassLikeSymbol.rawStatus] can be requested in this case to avoid
- * potential contract violation.
- * However, the status still might be already resolved at this moment,
- * so the resolved status still might be returned in this case.
- */
-internal val FirClassLikeSymbol<*>.possiblyRawVisibility: Visibility
-    get() = if (KaResolutionActivityTracker.getInstance()?.isKotlinResolutionActive == true) {
-        rawStatus
-    } else {
-        resolvedStatus
-    }.visibility

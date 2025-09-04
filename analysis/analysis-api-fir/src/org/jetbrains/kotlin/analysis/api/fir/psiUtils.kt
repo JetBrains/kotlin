@@ -166,10 +166,17 @@ internal val KtNamedFunction.visibility: Visibility?
         else -> visibilityByModifiers
     }
 
-internal val KtClassOrObject.visibility: Visibility?
-    get() = when {
-        isLocal -> Visibilities.Local
-        else -> visibilityByModifiers
+/**
+ * The compiler forces the class-like declarations to have proper visibility right
+ * away during their constructions and forbids its changes later, so the visibility might be
+ * computed from the PSI directly
+ */
+internal val KtClassLikeDeclaration.visibility: Visibility
+    get() = when (this) {
+        // TODO: KT-80716 replaced with native isLocal check
+        is KtTypeAlias if getClassId() == null -> Visibilities.Local
+        is KtClassOrObject if isLocal -> Visibilities.Local
+        else -> visibilityByModifiers ?: Visibilities.Public
     }
 
 internal val KtProperty.visibility: Visibility?

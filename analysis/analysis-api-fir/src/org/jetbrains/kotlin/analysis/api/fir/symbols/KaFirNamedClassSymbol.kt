@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -77,14 +76,6 @@ internal class KaFirNamedClassSymbol private constructor(
     override val modality: KaSymbolModality
         get() = withValidityAssertion {
             backingPsi?.kaSymbolModality ?: firSymbol.modality.asKaSymbolModality
-        }
-
-    override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion {
-            backingPsi?.visibility?.asKaSymbolVisibility ?: when (val visibility = firSymbol.possiblyRawVisibility) {
-                Visibilities.Unknown -> if (firSymbol.fir.isLocal) KaSymbolVisibility.LOCAL else KaSymbolVisibility.PUBLIC
-                else -> visibility.asKaSymbolVisibility
-            }
         }
 
     override val compilerVisibility: Visibility
