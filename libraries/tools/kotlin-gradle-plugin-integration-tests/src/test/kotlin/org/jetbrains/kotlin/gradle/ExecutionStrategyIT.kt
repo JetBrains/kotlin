@@ -276,7 +276,11 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             } else {
                 emptyArray()
             }
-            val expectedFinishStrategy = if (testFallbackStrategy) KotlinCompilerExecutionStrategy.OUT_OF_PROCESS else executionStrategy
+            val expectedFinishStrategy = when {
+                testFallbackStrategy && this@ExecutionStrategyIT is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.IN_PROCESS
+                testFallbackStrategy && this@ExecutionStrategyIT !is ExecutionStrategyJvmIT -> KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
+                else -> executionStrategy
+            }
             val finishMessage = expectedFinishStrategy.asFinishLogMessage
 
             if (expectFailureWithMessage != null) {
