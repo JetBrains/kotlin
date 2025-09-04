@@ -74,7 +74,7 @@ projectTests {
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
-    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt")
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt", generateTestsInBuildDirectory = true)
 
     testData(project(":compiler:fir:analysis-tests").isolated, "testData")
     testData(project(":compiler").isolated, "testData/diagnostics")
