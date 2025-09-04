@@ -34,13 +34,13 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
                 annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model()
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "AtomicfuNativeTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model()
             }
         }
 

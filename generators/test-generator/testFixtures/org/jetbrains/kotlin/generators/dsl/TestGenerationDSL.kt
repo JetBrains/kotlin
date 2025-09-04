@@ -13,12 +13,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
 
-fun testGroupSuite(
-    init: TestGroupSuite.() -> Unit
-): TestGroupSuite {
-    return TestGroupSuite().apply(init)
-}
-
 fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
     testGroups
         .parallelStream()
@@ -27,7 +21,11 @@ fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
         .forEach(f)
 }
 
-class TestGroupSuite {
+class TestGroupSuite(val mode: Mode) {
+    enum class Mode {
+        LegacyJUnit4, JUnit5
+    }
+
     private val _testGroups = mutableListOf<TestGroup>()
     val testGroups: List<TestGroup>
         get() = _testGroups
@@ -42,6 +40,7 @@ class TestGroupSuite {
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
+            mode,
         ).apply(init)
     }
 }
@@ -50,6 +49,7 @@ class TestGroup(
     private val testsRoot: String,
     val testDataRoot: String,
     val testRunnerMethodName: String,
+    val mode: TestGroupSuite.Mode,
     val annotations: List<AnnotationModel> = emptyList(),
 ) {
     private val _testClasses: MutableList<TestClass> = mutableListOf()
@@ -141,6 +141,9 @@ class TestGroup(
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             require(targetBackend != TargetBackend.ANY) { "TargetBackend.ANY is not allowed, please specify target backend explicitly" }
+            if (mode == TestGroupSuite.Mode.JUnit5) {
+                require(targetBackend == null) { "TargetBackend shouldn't be defined for JUnit5" }
+            }
             testModels.add(
                 SimpleTestClassModel(
                     rootFile, recursive, excludeParentDirs,

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
-import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -37,7 +36,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model()
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
@@ -45,7 +44,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model()
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated",
@@ -54,7 +53,7 @@ fun main() {
                     provider<UseExtTestCaseGroupProvider>()
                 )
             ) {
-                model(targetBackend = TargetBackend.NATIVE)
+                model()
             }
         }
 
@@ -68,8 +67,8 @@ fun main() {
                     codegenBox(),
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k2BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE)
+                model("box", excludeDirs = k2BoxTestDir)
+                model("boxInline")
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestNoPLGenerated",
@@ -80,8 +79,8 @@ fun main() {
                     codegenBox(),
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k2BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE)
+                model("box", excludeDirs = k2BoxTestDir)
+                model("boxInline")
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
@@ -90,8 +89,8 @@ fun main() {
                     codegenBox(),
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE)
+                model("box", excludeDirs = k1BoxTestDir)
+                model("boxInline")
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
@@ -101,8 +100,8 @@ fun main() {
                     codegenBox(),
                 )
             ) {
-                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE)
+                model("box", excludeDirs = k1BoxTestDir)
+                model("boxInline")
             }
         }
 
