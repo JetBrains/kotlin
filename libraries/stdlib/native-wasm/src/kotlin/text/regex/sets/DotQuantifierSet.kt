@@ -88,15 +88,23 @@ internal class DotQuantifierSet(
      * Find the first line terminator between [from] (inclusive) and [to] (exclusive) indices.
      * Returns [to] if no terminator found.
      */
-    private fun CharSequence.findLineTerminator(from: Int, to: Int): Int =
-        (from until to).firstOrNull { lineTerminator.isLineTerminator(this[it]) } ?: to
+    private fun CharSequence.findLineTerminator(from: Int, to: Int): Int {
+        for (index in from until to) {
+            if (lineTerminator.isLineTerminator(this[index])) return index
+        }
+        return to
+    }
 
     /**
      * Find the first line terminator between [from] (inclusive) and [to] (exclusive) indices.
      * Returns [from - 1] if no terminator found.
      */
-    private fun findBackLineTerminator(from: Int, to: Int, testString: CharSequence): Int =
-        (from until to).lastOrNull { lineTerminator.isLineTerminator(testString[it]) } ?: from - 1
+    private fun findBackLineTerminator(from: Int, to: Int, testString: CharSequence): Int {
+        for (index in to - 1 downTo from) {
+            if (lineTerminator.isLineTerminator(testString[index])) return index
+        }
+        return from - 1
+    }
 
     override val name: String
             get() = ".*"
