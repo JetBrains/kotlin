@@ -12,6 +12,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.internal.logging.progress.ProgressLogger
@@ -137,6 +138,10 @@ class KotlinKarma internal constructor(
             { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
         )
     )
+
+    //Used in IntelliJ IDEA to find the correct url which should be opened in a browser
+    @Suppress("unused")
+    val debugPath: Property<String> = project.objects.property<String>().convention("/")
 
     val webpackConfig = KotlinWebpackConfig(
         npmProjectDir = npmProjectDir.map { it.asFile },
