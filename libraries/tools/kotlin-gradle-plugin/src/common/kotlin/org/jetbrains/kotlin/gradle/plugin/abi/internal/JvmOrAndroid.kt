@@ -65,5 +65,5 @@ internal fun Project.addDependencyWithCheckTask(variant: AbiValidationVariantSpe
         }
     }
 
-    tasks.getByName("check").dependsOn(dependencyTasks)
+    tasks.named("check") { checkTask -> checkTask.dependsOn(dependencyTasks) }
 }
