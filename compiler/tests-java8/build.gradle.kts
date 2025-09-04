@@ -47,7 +47,6 @@ projectTests {
     withThirdPartyJava8Annotations()
 
     testTask(
-        parallel = true,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
         jUnitMode = JUnitMode.JUnit5
     ) {
