@@ -236,7 +236,7 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
         }
 
         private fun generateTestMethod(p: Printer, methodModel: MethodModel<*>) {
-            if (methodModel.isTestMethod()) {
+            if (methodModel.isTestMethod) {
                 p.generateTestAnnotation()
                 p.generateTags(methodModel)
                 p.generateMetadata(methodModel)

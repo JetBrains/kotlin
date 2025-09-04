@@ -61,7 +61,7 @@ class SimpleTestClassModel(
                         testRunnerMethodName,
                         annotations,
                         extractTagsFromDirectory(file),
-                        additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass() },
+                        additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                         skipTestAllFilesCheck,
                     )
                 )
