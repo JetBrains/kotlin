@@ -62,8 +62,7 @@ class CallableId private constructor(
      * Returns `true` if the corresponding callable declaration is itself local, or if it is a member of a local class.
      * Otherwise, returns `false`.
      */
-    @OptIn(ClassIdBasedLocality::class)
-    // TODO: replace @OptIn with just @ClassIdBasedLocality (KT-80673)
+    @ClassIdBasedLocality
     val isLocal: Boolean
         get() = packageName == PACKAGE_FQ_NAME_FOR_LOCAL || classId?.isLocal == true
 
@@ -138,4 +137,5 @@ fun CallableId.withClassId(classId: ClassId): CallableId {
 
 val CallableId?.packageName: FqName get() = this?.packageName ?: PACKAGE_FQ_NAME_FOR_LOCAL
 
+@ClassIdBasedLocality
 val CallableId?.isLocal: Boolean get() = this == null || this.isLocal

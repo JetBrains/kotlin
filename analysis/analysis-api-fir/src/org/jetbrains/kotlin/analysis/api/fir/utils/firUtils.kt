@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -57,8 +58,8 @@ internal fun KtExpression.unwrap(): KtExpression {
  * @return An [FqName] by which this symbol can be imported (if it is possible)
  */
 internal fun FirCallableSymbol<*>.computeImportableName(): FqName? {
+    if (!isNonLocal) return null
     val callableId = callableId ?: return null
-    if (callableId.isLocal) return null
 
     // SAM constructors are synthetic, but can be imported
     if (origin is FirDeclarationOrigin.SamConstructor) return callableId.asSingleFqName()

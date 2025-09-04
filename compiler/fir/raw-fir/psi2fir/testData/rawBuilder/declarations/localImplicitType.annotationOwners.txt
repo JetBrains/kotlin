@@ -1,23 +1,23 @@
 @Anno(<getClass>(C#))
 owner -> FirRegularPropertySymbol <local>/foo
-context -> FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
+context -> FirRegularPropertySymbol <local>/foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
 
 @Anno(<getClass>(C#))
 owner -> FirRegularPropertySymbol <local>/foo
-context -> FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
+context -> FirRegularPropertySymbol <local>/foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
 
 @Anno(<getClass>(C#))
 owner -> FirRegularPropertySymbol <local>/foo
-context -> FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo from FirRegularClassSymbol <local>/A.B from FirRegularClassSymbol <local>/A from FirNamedFunctionSymbol second/check
+context -> FirRegularPropertySymbol <local>/foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
 
 @Anno(<getClass>(C#))
 owner -> FirNamedFunctionSymbol <local>/doo

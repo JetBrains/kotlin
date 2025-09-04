@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -116,8 +118,8 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(type: ConeKotlinType?, s
 fun FirLookupTrackerComponent.recordCallableCandidateAsLookup(
     callableSymbol: FirCallableSymbol<*>, source: KtSourceElement?, fileSource: KtSourceElement?
 ) {
-    val callableId = callableSymbol.callableId
-    if (callableId?.isLocal == false && callableSymbol !is FirConstructorSymbol) {
+    val callableId = callableSymbol.callableId ?: return
+    if (callableSymbol.visibility != Visibilities.Local && callableSymbol !is FirConstructorSymbol) {
         recordTypeResolveAsLookup(callableSymbol.fir.returnTypeRef, source, fileSource)
         recordFqNameLookup(callableId.asSingleFqName(), source, fileSource)
     }

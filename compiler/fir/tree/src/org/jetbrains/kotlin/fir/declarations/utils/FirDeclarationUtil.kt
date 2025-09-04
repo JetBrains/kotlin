@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -17,14 +18,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -60,7 +60,9 @@ val FirDeclaration.isNonLocal: Boolean
 val FirBasedSymbol<*>.isNonLocal: Boolean
     get() = when (this) {
         is FirFileSymbol -> true
-        is FirCallableSymbol -> !callableId.isLocal
+        is FirPropertySymbol -> !isLocal
+        is FirValueParameterSymbol -> false
+        is FirCallableSymbol -> rawStatus.visibility != Visibilities.Local
         is FirClassLikeSymbol -> !isLocal
         else -> false
     }
@@ -81,12 +83,6 @@ val FirMemberDeclaration.nameOrSpecialName: Name
         is FirCallableDeclaration -> symbol.name
         is FirClassLikeDeclaration -> classId.shortClassName
     }
-
-fun FirBasedSymbol<*>.asMemberDeclarationResolvedTo(phase: FirResolvePhase): FirMemberDeclaration? {
-    return (fir as? FirMemberDeclaration)?.also {
-        lazyResolveToPhase(phase)
-    }
-}
 
 val FirNamedFunctionSymbol.isMethodOfAny: Boolean
     get() {

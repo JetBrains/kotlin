@@ -138,27 +138,27 @@ context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassS
 
 @Anno2()
 owner -> FirRegularPropertySymbol <local>/a
-context -> FirRegularPropertySymbol <local>/a from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/a
 
 @Anno1()
 owner -> FirRegularPropertySymbol <local>/a
-context -> FirRegularPropertySymbol <local>/a from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/a
 
 @AnonymousFunction()
 owner -> FirRegularPropertySymbol <local>/b
-context -> FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b
 
 @AnonymousParameterType()
 owner -> FirRegularPropertySymbol <local>/b
-context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b
 
 @AnonymousParameter()
 owner -> FirRegularPropertySymbol <local>/b
-context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/b
-context -> FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirAnonymousFunctionSymbol special/anonymous from FirRegularPropertySymbol <local>/b
 
 @Anno()
 owner -> FirNamedFunctionSymbol <local>/boo
@@ -458,26 +458,26 @@ context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol
 
 @PropType()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_GETTER:Getter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SETTER_PARAMETER:Parameter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_SETTER:Setter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Prop()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularClassSymbol <local>/Local
@@ -501,26 +501,26 @@ context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol
 
 @PropType()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_GETTER:Getter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SETTER_PARAMETER:Parameter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_SETTER:Setter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Prop()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local.LocalNested.Local from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested.Local
@@ -722,210 +722,210 @@ context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol
 
 @PropType()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty
 
 @Anno2()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirLocalPropertySymbol <local>/a from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirLocalPropertySymbol <local>/a from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno1()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirLocalPropertySymbol <local>/a from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirLocalPropertySymbol <local>/a from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @AnonymousFunction()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @AnonymousParameterType()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @AnonymousParameter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/b from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
-context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
-context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
-context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
-context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
-context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo
-context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/boo from FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/boo from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedNestedSuperType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedSuperType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SuperType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirConstructorSymbol <local>/Local.Local from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedNestedSuperDelegateType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirFieldSymbol <local>/Local.$$delegate_0 from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirFieldSymbol <local>/Local.$$delegate_0 from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedSuperDelegateType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirFieldSymbol <local>/Local.$$delegate_0 from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirFieldSymbol <local>/Local.$$delegate_0 from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SuperDelegateType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirFieldSymbol <local>/Local.$$delegate_0 from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirFieldSymbol <local>/Local.$$delegate_0 from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedNestedSuperType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedSuperType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SuperType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirConstructorSymbol <local>/Local.LocalNested.LocalNested from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedNestedSuperDelegateType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirFieldSymbol <local>/Local.LocalNested.$$delegate_0 from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirFieldSymbol <local>/Local.LocalNested.$$delegate_0 from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedSuperDelegateType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirFieldSymbol <local>/Local.LocalNested.$$delegate_0 from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirFieldSymbol <local>/Local.LocalNested.$$delegate_0 from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SuperDelegateType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirFieldSymbol <local>/Local.LocalNested.$$delegate_0 from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirFieldSymbol <local>/Local.LocalNested.$$delegate_0 from FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedNestedSuperInterfaceType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedSuperInterfaceType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SuperInterfaceType()
 owner -> FirRegularClassSymbol <local>/Local.LocalNested
-context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local.LocalNested from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @FunType()
 owner -> FirNamedFunctionSymbol <local>/localMember
-context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Fun()
 owner -> FirNamedFunctionSymbol <local>/localMember
-context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @PropType()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_GETTER:Getter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SETTER_PARAMETER:Parameter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_SETTER:Setter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Prop()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedNestedSuperInterfaceType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @NestedSuperInterfaceType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SuperInterfaceType()
 owner -> FirRegularClassSymbol <local>/Local
-context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularClassSymbol <local>/Local from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularClassSymbol <local>/Local
@@ -949,26 +949,26 @@ context -> FirNamedFunctionSymbol <local>/localMember from FirRegularClassSymbol
 
 @PropType()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
-context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_GETTER:Getter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @SETTER_PARAMETER:Parameter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @PROPERTY_SETTER:Setter()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/localProperty
 
 @Prop()
 owner -> FirRegularPropertySymbol <local>/localProperty
-context -> FirRegularPropertySymbol <local>/localProperty from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /foo
+context -> FirRegularPropertySymbol <local>/localProperty
 
 @Anno()
 owner -> FirRegularClassSymbol <local>/Local
