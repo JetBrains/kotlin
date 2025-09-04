@@ -57670,6 +57670,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
       }
 
       @Test
+      @TestMetadata("lambdaWithTypeParameters.kt")
+      public void testLambdaWithTypeParameters() {
+        runTest("compiler/testData/codegen/box/regressions/lambdaWithTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaWrongReturnType.kt")
       public void testLambdaWrongReturnType() {
         runTest("compiler/testData/codegen/box/regressions/lambdaWrongReturnType.kt");
