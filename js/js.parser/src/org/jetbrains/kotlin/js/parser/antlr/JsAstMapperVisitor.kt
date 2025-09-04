@@ -302,18 +302,18 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsTry {
-        val jsTry = JsTry().apply {
+        return JsTry().apply {
             tryBlock = visit<JsBlock>(ctx.block())
-        }
 
-        val jsCatchProduction = ctx.catchProduction()?.let { visit<JsCatch>(it) }
-        if (jsCatchProduction != null) {
-            jsTry.catches.add(jsCatchProduction)
-        }
+            val jsCatchProduction = ctx.catchProduction()?.let { visit<JsCatch>(it) }
+            if (jsCatchProduction != null) {
+                catches.add(jsCatchProduction)
+            }
 
-        val jsFinallyProduction = ctx.finallyProduction()?.let { visit<JsBlock>(it) }
-        if (jsFinallyProduction != null) {
-            jsTry.finallyBlock = jsFinallyProduction
+            val jsFinallyProduction = ctx.finallyProduction()?.let { visit<JsBlock>(it) }
+            if (jsFinallyProduction != null) {
+                finallyBlock = jsFinallyProduction
+            }
         }
     }
 
@@ -376,11 +376,16 @@ class JsAstMapperVisitor(
     }
 
     override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have a node representing a formal parameter list.
+        return null
     }
 
     override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext): JsParameter {
-        TODO("Not yet implemented")
+        val identifier = ctx.assignable().identifier()
+            ?: TODO("Only identifier parameters are supported yet")
+        val paramName = scopeContext.localNameFor(identifier.text)
+
+        return JsParameter(paramName)
     }
 
     override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
@@ -396,44 +401,68 @@ class JsAstMapperVisitor(
         return mapBlock(statements)
     }
 
-    override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsArrayLiteral {
+        return JsArrayLiteral().apply {
+            expressions.addAll(visitAll<JsExpression>(ctx.elementList().arrayElement()))
+        }
     }
 
     override fun visitElementList(ctx: JavaScriptParser.ElementListContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have a node representing an array elements list.
+        return null
     }
 
-    override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsExpression {
+        assert(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
+
+        return visit<JsExpression>(ctx.singleExpression())
     }
 
-    override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext): JsPropertyInitializer {
+        val jsLabelExpr = visit<JsExpression>(ctx.propertyName())
+        val jsValue = visit<JsExpression>(ctx.singleExpression())
+
+        return JsPropertyInitializer(jsLabelExpr, jsValue)
     }
 
     override fun visitComputedPropertyExpressionAssignment(ctx: JavaScriptParser.ComputedPropertyExpressionAssignmentContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Computed property names are not supported yet")
     }
 
     override fun visitFunctionProperty(ctx: JavaScriptParser.FunctionPropertyContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Function properties are not supported yet")
     }
 
     override fun visitPropertyGetter(ctx: JavaScriptParser.PropertyGetterContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Property getters are not supported yet")
     }
 
     override fun visitPropertySetter(ctx: JavaScriptParser.PropertySetterContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Property setters are not supported yet")
     }
 
     override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Property shorthands are not supported yet")
     }
 
-    override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext): JsExpression {
+        ctx.identifierName()?.let {
+            return JsStringLiteral(it.text)
+        }
+
+        ctx.StringLiteral()?.let {
+            return it.toStringLiteral()
+        }
+
+        ctx.numericLiteral()?.let {
+            return visit<JsNumberLiteral>(it)
+        }
+
+        ctx.singleExpression()?.let {
+            TODO("Computed property names are not supported yet")
+        }
+
+        TODO("Invalid property name: ${ctx.text}")
     }
 
     override fun visitArguments(ctx: JavaScriptParser.ArgumentsContext): JsNode? {
@@ -494,7 +523,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitOptionalChainExpression(ctx: JavaScriptParser.OptionalChainExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Optional chain expressions are not supported yet")
     }
 
     override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext): JsNode? {
@@ -621,7 +650,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsNode? {
@@ -660,8 +689,12 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitObjectLiteral(ctx: JavaScriptParser.ObjectLiteralContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitObjectLiteral(ctx: JavaScriptParser.ObjectLiteralContext): JsObjectLiteral {
+        return JsObjectLiteral().apply {
+            visitAll<JsPropertyInitializer>(ctx.propertyAssignment()).forEach {
+                propertyInitializers.add(it)
+            }
+        }
     }
 
     override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsFunction {
@@ -705,19 +738,39 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Template strings are not supported yet")
     }
 
     override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Template strings are not supported yet")
     }
 
-    override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNumberLiteral {
+        ctx.BinaryIntegerLiteral()?.run {
+            TODO("Binary integer literals are not supported yet")
+        }
+
+        ctx.OctalIntegerLiteral()?.run {
+            TODO("Octal integer literals are not supported yet")
+        }
+
+        ctx.OctalIntegerLiteral2()?.run {
+            TODO("Octal integer literals are not supported yet")
+        }
+
+        ctx.DecimalLiteral()?.let { decimalTerminal ->
+            return decimalTerminal.toDecimalLiteral()
+        }
+
+        ctx.HexIntegerLiteral()?.let { hexTerminal ->
+            return hexTerminal.toDecimalLiteral()
+        }
+
+        TODO("Invalid numeric literal '${ctx.text}'")
     }
 
     override fun visitBigintLiteral(ctx: JavaScriptParser.BigintLiteralContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Big integers are not supported yet")
     }
 
     override fun visitGetter(ctx: JavaScriptParser.GetterContext): JsNode? {
@@ -850,34 +903,27 @@ class JsAstMapperVisitor(
     }
 
     private fun mapFunction(
-        name: String?,
-        body: JavaScriptParser.FunctionBodyContext,
+        functionName: String?,
+        functionBody: JavaScriptParser.FunctionBodyContext,
         params: List<JavaScriptParser.FormalParameterArgContext>,
         isGenerator: Boolean,
     ): JsFunction {
-        val functionName = when {
-            name.isNullOrEmpty() -> null
-            else -> scopeContext.localNameFor(name)
-        }
+        return scopeContext.enterFunction().apply {
+            name = when {
+                functionName.isNullOrEmpty() -> null
+                else -> scopeContext.localNameFor(functionName)
+            }
 
-        val function = scopeContext.enterFunction()
-        function.name = functionName
+            if (isGenerator)
+                modifiers.add(JsFunction.Modifier.GENERATOR)
 
-        if (isGenerator)
-            function.modifiers.add(JsFunction.Modifier.GENERATOR)
+            params.forEach {
+                val jsParam = visit<JsParameter>(it)
+                parameters.add(jsParam.applyLocation(fileName, it))
+            }
 
-        params.forEach { paramNode ->
-            val identifier = paramNode.assignable().identifier()
-                ?: TODO("Only identifier parameters are supported yet")
+            body = visit<JsBlock>(functionBody)
 
-            val paramName = scopeContext.localNameFor(identifier.text)
-            function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
-        }
-
-        val block = visit<JsBlock>(body)
-        function.body = block
-
-        return function.also {
             scopeContext.exitFunction()
         }
     }
@@ -893,6 +939,32 @@ class JsAstMapperVisitor(
 
         val labelName = scopeContext.localNameFor(identifier.text)
         return labelName.makeRef()
+    }
+
+    private fun unwrapStringLiteral(literal: TerminalNode): String {
+        if (literal.text.startsWith("'") && literal.text.endsWith("'"))
+            return literal.text.removeSurrounding("'")
+
+        if (literal.text.startsWith("\"") && literal.text.endsWith("\""))
+            return literal.text.removeSurrounding("\"")
+
+        return literal.text
+    }
+
+    private fun TerminalNode.toStringLiteral(): JsStringLiteral {
+        return JsStringLiteral(unwrapStringLiteral(this))
+    }
+
+    private fun TerminalNode.toDecimalLiteral(): JsNumberLiteral {
+        val intValue = text.toIntOrNull()
+        if (intValue != null)
+            return JsIntLiteral(intValue)
+
+        return JsDoubleLiteral(text.toDouble())
+    }
+
+    private fun TerminalNode.toHexLiteral(): JsIntLiteral {
+        return JsIntLiteral(text.removePrefix("0x").toInt(16))
     }
 
     private inline fun <reified T> visit(node: ParseTree): T =
