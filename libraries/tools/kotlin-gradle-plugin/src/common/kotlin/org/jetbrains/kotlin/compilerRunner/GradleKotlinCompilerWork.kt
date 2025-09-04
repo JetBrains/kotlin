@@ -122,21 +122,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 kotlinLanguageVersion = config.kotlinLanguageVersion,
                 changedFiles = config.incrementalCompilationEnvironment?.changedFiles,
                 compilerArguments = if (config.reportingSettings.includeCompilerArguments) config.compilerArgs else emptyArray(),
-                tags = collectStatTags(),
+                tags = config.incrementalCompilationEnvironment?.collectIcTags().orEmpty(),
             )
             metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
             TaskExecutionResults[config.taskPath] = result
         }
-    }
-
-    private fun collectStatTags(): Set<StatTag> {
-        val statTags = HashSet<StatTag>()
-        config.incrementalCompilationEnvironment?.icFeatures?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
-        if (config.incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-            statTags.add(StatTag.ARTIFACT_TRANSFORM)
-        }
-        return statTags
     }
 
     private fun compileWithDaemonOrFallbackImpl(
