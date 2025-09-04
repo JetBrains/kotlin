@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
@@ -69,6 +72,11 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Com
     }
 }
 
+private val runCatchingCallableId = CallableId(
+    FqName("kotlin"),
+    Name.identifier("runCatching"),
+);
+
 /**
  * Check if `expression` - a call to a composable function or access to a composable property -
  * is allowed in the current context. It is allowed if:
@@ -76,6 +84,9 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Com
  * - It is executed as part of the body of a composable function.
  * - It is not executed as part of the body of a lambda annotated with `@DisallowComposableCalls`.
  * - It is not inside of a `try` block.
+ * - It is not inside of the body of a lambda passed to a `runCatching` call. (As for references to
+ *   `@Composable` functions, the type system prevents those from being passed to `runCatching`
+ *   calls.)
  * - It is a call to a readonly composable function if it is executed in the body of a function
  *   that is annotated with `@ReadOnlyComposable`.
  *
@@ -156,6 +167,17 @@ private fun checkComposableCall(
                 )
             }
         },
+        visitFunctionCall = { functionCall ->
+            if (functionCall.calleeReference.toResolvedCallableSymbol()?.callableId == runCatchingCallableId) {
+                // If we have reached this point, it means that the composable call under scrutiny
+                // happens inside of the body of a lambda passed to a `runCatching` call.
+                reporter.reportOn(
+                    functionCall.source,
+                    ComposeErrors.ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE,
+                    context
+                )
+            }
+        }
     )
     reporter.reportOn(
         expression.calleeReference.source,
@@ -273,6 +295,7 @@ private inline fun CheckerContext.visitCurrentScope(
     visitAnonymousFunction: (FirAnonymousFunction) -> Unit = {},
     visitFunction: (FirFunction) -> Unit = {},
     visitTryExpression: (FirTryExpression, FirElement) -> Unit = { _, _ -> },
+    visitFunctionCall: (FirFunctionCall) -> Unit = {},
 ) {
     for ((elementIndex, element) in containingElements.withIndex().reversed()) {
         when (element) {
@@ -295,6 +318,9 @@ private inline fun CheckerContext.visitCurrentScope(
                 val container = containingElements.getOrNull(elementIndex + 1)
                     ?: continue
                 visitTryExpression(element, container)
+            }
+            is FirFunctionCall -> {
+                visitFunctionCall(element)
             }
             is FirProperty -> {
                 // Coming from an initializer or delegate expression, otherwise we'd

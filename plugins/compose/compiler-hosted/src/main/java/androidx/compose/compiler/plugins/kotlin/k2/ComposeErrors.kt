@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTryExpression
 
@@ -50,6 +51,9 @@ object ComposeErrors : KtDiagnosticsContainer() {
     val ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE by error0<KtTryExpression>(
         ComposeSourceElementPositioningStrategies.TRY_KEYWORD
     )
+
+    // error goes on the `runCatching` call
+    val ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE by error0<KtCallExpression>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     val MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION by error3<
             PsiElement,

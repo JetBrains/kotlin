@@ -53,6 +53,11 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
+            ComposeErrors.ILLEGAL_RUN_CATCHING_AROUND_COMPOSABLE,
+            "runCatching call is not allowed to contain @Composable function invocations"
+        )
+
+        map.put(
             ComposeErrors.MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION,
             "Parameter {0} cannot be inlined inside of lambda argument {1} of {2} " +
                     "without also being annotated with @DisallowComposableCalls",
