@@ -109,12 +109,8 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
 
                 // Output is combined with previous build, but we are only interested in the compilation
                 // from second build to avoid false positive test failure
-                val filteredOutput = output
-                    .lineSequence()
-                    .filter { it.contains("[KOTLIN] compile iteration:") }
-                    .drop(1)
-                    .joinToString(separator = "/n")
-                assertCompiledKotlinSources(listOf(androidModuleKt).relativizeTo(projectPath), output = filteredOutput)
+                val compilationTaskOutput = getOutputForTask(":app:compileDebugKotlin")
+                assertCompiledKotlinSources(listOf(androidModuleKt).relativizeTo(projectPath), output = compilationTaskOutput)
             }
         }
     }
