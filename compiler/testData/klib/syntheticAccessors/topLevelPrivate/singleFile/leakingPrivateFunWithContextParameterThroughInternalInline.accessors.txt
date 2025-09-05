@@ -4,12 +4,8 @@
 
 /* TARGET declaration */ context(scope: Scope) private fun privateFun(): String
 internal inline fun internalInlineFun(): String
-    /* LOCAL declaration @0 */ local fun <anonymous>($this$with: Scope): String
-        /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope = $this$with)
-    /* INVOKE @0 */ local fun <anonymous>($this$with: Scope): String
+    /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope = $this$with)
 public fun box(): String
-    /* LOCAL declaration @1 */ local fun <anonymous>($this$with: Scope): String
-        /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope = $this$with)
-    /* INVOKE @1 */ local fun <anonymous>($this$with: Scope): String
+    /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope = $this$with)
 /* ACCESSOR declaration */ internal fun access$privateFun$tLeakingPrivateFunWithContextParameterThroughInternalInlineKt(scope: Scope): String
     /* TARGET use-site */ privateFun(/* scope = scope */)

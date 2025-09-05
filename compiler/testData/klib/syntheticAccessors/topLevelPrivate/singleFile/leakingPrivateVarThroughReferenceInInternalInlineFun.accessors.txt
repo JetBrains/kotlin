@@ -24,16 +24,18 @@ internal inline fun transitiveInlineFunction(): KMutableProperty0<String>
         /* LOCAL declaration @5 */ local fun <set-privateVar>(p0: String)
             /* ACCESSOR use-site */ access$<set-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(<set-?> = p0)
 public fun box(): String
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @6 */ local fun <get-privateVar>(): String
-            /* ACCESSOR use-site */ access$<get-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt()
-        /* LOCAL declaration @7 */ local fun <set-privateVar>(p0: String)
-            /* ACCESSOR use-site */ access$<set-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(<set-?> = p0)
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @8 */ local fun <get-privateVar>(): String
-            /* ACCESSOR use-site */ access$<get-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt()
-        /* LOCAL declaration @9 */ local fun <set-privateVar>(p0: String)
-            /* ACCESSOR use-site */ access$<set-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(<set-?> = p0)
+    val tmp0: Any? =
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @6 */ local fun <get-privateVar>(): String
+                /* ACCESSOR use-site */ access$<get-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt()
+            /* LOCAL declaration @7 */ local fun <set-privateVar>(p0: String)
+                /* ACCESSOR use-site */ access$<set-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(<set-?> = p0)
+    val tmp0: Any? =
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @8 */ local fun <get-privateVar>(): String
+                /* ACCESSOR use-site */ access$<get-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt()
+            /* LOCAL declaration @9 */ local fun <set-privateVar>(p0: String)
+                /* ACCESSOR use-site */ access$<set-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(<set-?> = p0)
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(): String
     /* TARGET use-site */ <get-privateVar>()
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tLeakingPrivateVarThroughReferenceInInternalInlineFunKt(<set-?>: String)

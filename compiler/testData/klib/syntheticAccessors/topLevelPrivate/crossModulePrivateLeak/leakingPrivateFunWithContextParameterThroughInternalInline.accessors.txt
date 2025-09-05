@@ -4,9 +4,7 @@
 
 /* TARGET declaration */ context(scope: Scope) private fun privateFun(): String
 internal inline fun internalInlineFun(): String
-    /* LOCAL declaration @0 */ local fun <anonymous>($this$with: Scope): String
-        /* ACCESSOR use-site */ access$privateFun$tAKt(scope = $this$with)
-    /* INVOKE @0 */ local fun <anonymous>($this$with: Scope): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt(scope = $this$with)
 /* ACCESSOR declaration */ internal fun access$privateFun$tAKt(scope: Scope): String
     /* TARGET use-site */ privateFun(/* scope = scope */)
 
@@ -16,6 +14,4 @@ internal inline fun internalInlineFun(): String
 /* FILE package=<root> fileName=B.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local fun <anonymous>($this$with: Scope): String
-        /* ACCESSOR use-site */ access$privateFun$tAKt(scope = $this$with)
-    /* INVOKE @0 */ local fun <anonymous>($this$with: Scope): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt(scope = $this$with)
