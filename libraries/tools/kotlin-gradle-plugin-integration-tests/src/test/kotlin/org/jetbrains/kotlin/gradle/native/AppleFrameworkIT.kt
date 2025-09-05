@@ -574,6 +574,8 @@ class AppleFrameworkIT : KGPBaseTest() {
     }
 
     @DisplayName("Smoke test with apple gradle plugin")
+    // AppleGradle plugin is not supported by Gradle 9.0+ due to Project.exec use
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14)
     @GradleTest
     fun smokeTestWithAppleGradlePlugin(gradleVersion: GradleVersion) {
         nativeProject(
