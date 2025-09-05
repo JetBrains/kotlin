@@ -146,8 +146,11 @@ internal abstract class ConvertPbxprojToJsonTask : DefaultTask() {
                     pbxprojFile.get().asFile.absolutePath
                 )
             }
-        } catch (e: Exception) {
-            logger.error("Failed to execute 'plutil' on '${pbxprojFile.get().asFile.path}'. The file might be malformed or 'plutil' is not in PATH.")
+        } catch (exception: Exception) {
+            logger.error(
+                "Failed to execute 'plutil' on '${pbxprojFile.get().asFile.path}'. The file might be malformed or 'plutil' is not in PATH.",
+                exception
+            )
             jsonFile.get().asFile.writeText("{}") // Write empty JSON on failure
         }
     }
@@ -235,9 +238,10 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
                 parseSingleNativeTarget(targetId, objects, projectConfigs, gson)
             }.toSet()
 
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             logger.error(
-                "Failed to parse the JSON file for '${xcodeProjectPath.getFile().path}'. The file might be malformed.\nError: ${e.message ?: "Unknown"}"
+                "Failed to parse the JSON file for '${xcodeProjectPath.getFile().path}'. The file might be malformed.",
+                exception
             )
             return null
         }
