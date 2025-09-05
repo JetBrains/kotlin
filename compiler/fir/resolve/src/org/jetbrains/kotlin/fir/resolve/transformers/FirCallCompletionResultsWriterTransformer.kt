@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -1289,12 +1291,16 @@ class FirCallCompletionResultsWriterTransformer(
             hasAdditionalResolutionErrors() -> ConeConstraintSystemHasContradiction(candidate)
             else -> null
         }
+        val isPropertyWithExplicitField = (candidateSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true
 
         return when (errorDiagnostic) {
-            null -> buildResolvedNamedReference {
-                source = this@toResolvedReference.source
-                name = this@toResolvedReference.name
-                resolvedSymbol = this@toResolvedReference.candidateSymbol
+            null -> when {
+                isPropertyWithExplicitField -> buildExplicitBackingFieldReference(source, name, candidate)
+                else -> buildResolvedNamedReference {
+                    source = this@toResolvedReference.source
+                    name = this@toResolvedReference.name
+                    resolvedSymbol = this@toResolvedReference.candidateSymbol
+                }
             }
 
             else -> toErrorReference(errorDiagnostic)
