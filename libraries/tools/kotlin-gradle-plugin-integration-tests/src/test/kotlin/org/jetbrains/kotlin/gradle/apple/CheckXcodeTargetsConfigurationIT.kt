@@ -19,7 +19,7 @@ import kotlin.io.path.appendText
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Xcode project configuration checker task")
 @NativeGradlePluginTests
-class XcodeProjectConfigurationIT : KGPBaseTest() {
+class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
 
     private val convertPbxprojToJsonTask = ":${ConvertPbxprojToJsonTask.TASK_NAME}"
     private val xcodeCheckTask = ":${CheckXcodeTargetsConfigurationTask.TASK_NAME}"
