@@ -11,35 +11,20 @@ import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildGetter
-import org.jetbrains.kotlin.sir.builder.buildInit
-import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
-import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
-import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule.kotlinBridgeable
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
-import org.jetbrains.kotlin.sir.providers.withSessions
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.sir.util.SirSwiftModule.caseIterable
-import org.jetbrains.kotlin.sir.util.SirSwiftModule.losslessStringConvertible
-import org.jetbrains.kotlin.sir.util.SirSwiftModule.rawRepresentable
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -62,14 +47,6 @@ internal fun createSirClassFromKtSymbol(
     sirSession
 )
 
-internal fun createSirEnumFromKtSymbol(
-    ktSymbol: KaNamedClassSymbol,
-    sirSession: SirSession,
-): SirEnum = SirEnumFromKtSymbol(
-    ktSymbol,
-    sirSession
-)
-
 private class SirClassFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
     sirSession: SirSession,
@@ -86,229 +63,6 @@ internal class SirStubClassFromKtSymbol(
     sirSession
 ) {
     override val declarations: List<SirDeclaration> = emptyList()
-}
-
-internal class SirEnumFromKtSymbol(
-    override val ktSymbol: KaNamedClassSymbol,
-    override val sirSession: SirSession,
-) : SirEnum(), SirFromKtSymbol<KaNamedClassSymbol> {
-    override val origin: KotlinSource by lazy {
-        KotlinSource(ktSymbol)
-    }
-    override val visibility: SirVisibility by lazy {
-        SirVisibility.PUBLIC
-    }
-    override val documentation: String? by lazy {
-        ktSymbol.documentation()
-    }
-    override val name: String by lazyWithSessions {
-        (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
-    }
-    override val protocols: List<SirProtocol> by lazyWithSessions {
-        listOf(kotlinBridgeable, caseIterable, losslessStringConvertible, rawRepresentable)
-    }
-    override var parent: SirDeclarationParent
-        get() = withSessions {
-            ktSymbol.getSirParent()
-        }
-        set(_) = Unit
-    override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
-        mutableListOf<SirDeclaration>().apply {
-            addAll(childDeclarations)
-            addAll(syntheticDeclarations())
-        }
-    }
-    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
-    override val cases: List<SirEnumCase> get() = childDeclarations.filterIsInstance<SirEnumCase>()
-    val childDeclarations: List<SirDeclaration> by lazyWithSessions {
-        ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations()
-            .toList()
-    }
-
-    private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
-        kotlinBaseInitDeclaration(),
-        kotlinBridgeableExternalRcRef(),
-        description(),
-        rawValue(),
-        failableInitFromInteger(),
-    )
-
-    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
-        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
-        parameters[0] = SirParameter(
-            argumentName = "__externalRCRefUnsafe",
-            type = unsafeMutableRawPointerFlexibleType()
-        )
-        val caseSelector = if (cases.isEmpty()) {
-            "default: fatalError()"
-        } else {
-            cases.joinToString(separator = "\n                    ") {
-                val condition =
-                    if (it === cases.last()) "default" else "case ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
-                "$condition: self = .${it.name}"
-            }
-        }
-        body = SirFunctionBody(
-            listOf(
-                """
-                    switch __externalRCRefUnsafe {
-                    $caseSelector
-                    }
-                """.trimIndent()
-            )
-        )
-    }.also { it.parent = this }
-
-    private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(kotlinBridgeableExternalRcRef) {
-        origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
-        returnType = unsafeMutableRawPointerFlexibleType()
-        val caseSelector = if (cases.isEmpty()) {
-            "default: fatalError()"
-        } else {
-            cases.joinToString(separator = "\n                    ") {
-                val condition = if (it === cases.last()) "default" else "case .${it.name}"
-                "$condition: ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
-            }
-        }
-        body = SirFunctionBody(
-            listOf(
-                """
-                    return switch self {
-                    $caseSelector
-                    }
-                """.trimIndent()
-            )
-        )
-    }.also { it.parent = this }
-
-    private fun unsafeMutableRawPointerFlexibleType(): SirNominalType =
-        SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
-
-    private fun ClassId.underscoredRepresentation(): String = buildString {
-        if (!packageFqName.isRoot) {
-            appendUnderscoredRepresentation(packageFqName)
-            append("_")
-        }
-        appendUnderscoredRepresentation(relativeClassName)
-    }
-
-    private fun StringBuilder.appendUnderscoredRepresentation(fqName: FqName) {
-        if (fqName.isRoot) return
-        val parent = fqName.parent()
-        if (!parent.isRoot) {
-            appendUnderscoredRepresentation(parent)
-            append("_")
-        }
-        append(fqName.shortName().asString())
-    }
-
-    private fun description(): SirVariable = buildVariable {
-        name = "description"
-        type = SirNominalType(SirSwiftModule.string)
-        getter = buildGetter {
-            val caseSelector = if (cases.isEmpty()) {
-                "default: fatalError()"
-            } else cases.joinToString(separator = "\n                        ") {
-                val condition = if (it === cases.last()) "default" else "case .${it.name}"
-                "$condition: \"${it.name}\""
-            }
-            body = SirFunctionBody(
-                listOf(
-                    """
-                        switch self {
-                        $caseSelector
-                        }
-                    """.trimIndent()
-                )
-            )
-        }
-    }.also { it.parent = this }
-
-    private fun rawValue(): SirVariable = buildVariable {
-        name = "rawValue"
-        type = SirNominalType(SirSwiftModule.int32)
-        getter = buildGetter {
-            val caseSelector = if (cases.isEmpty()) {
-                "default: fatalError()"
-            } else {
-                var index = 0
-                cases.joinToString(separator = "\n                        ") {
-                    val condition = if (it === cases.last()) "default" else "case .${it.name}"
-                    "$condition: ${index++}"
-                }
-            }
-            body = SirFunctionBody(
-                listOf(
-                    """
-                        switch self {
-                        $caseSelector
-                        }
-                    """.trimIndent()
-                )
-            )
-        }
-    }.also { it.parent = this }
-
-    private fun failableInitFromInteger(): SirInit = buildInit {
-        isFailable = true
-        parameters.add(
-            SirParameter(
-                argumentName = "rawValue",
-                type = SirNominalType(SirSwiftModule.int32),
-            )
-        )
-        body = SirFunctionBody(
-            listOf(
-                """
-                    guard 0..<${cases.size} ~= rawValue else { return nil }
-                    self = $name.allCases[Int(rawValue)]
-                """.trimIndent()
-            )
-        )
-    }.also { it.parent = this }
-}
-
-public class SirEnumCaseFromKtSymbol(
-    override val ktSymbol: KaEnumEntrySymbol,
-    override val sirSession: SirSession,
-) : SirEnumCase(), SirFromKtSymbol<KaEnumEntrySymbol> {
-    override val name: String = ktSymbol.name.asString()
-    override val enum: SirEnum = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
-    override val origin: SirOrigin = KotlinSource(ktSymbol)
-
-    override val visibility: SirVisibility
-        get() = SirVisibility.PUBLIC
-    override val documentation: String?
-        get() = enum.documentation
-    override var parent: SirDeclarationParent
-        get() = enum
-        set(arg) {
-            if (arg === enum) return
-            error("Changing SirEnumCase.parent is prohibited")
-        }
-    override val attributes: List<SirAttribute>
-        get() = emptyList()
-
-    private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
-        val fqName = bridgeFqName ?: return@lazyWithSessions null
-        val baseName = fqName.forBridge.joinToString("_")
-        generateFunctionBridge(
-            baseBridgeName = baseName,
-            explicitParameters = emptyList(),
-            returnType = SirType.any,
-            kotlinFqName = fqName,
-            selfParameter = null,
-            extensionReceiverParameter = null,
-            errorParameter = null,
-        )
-    }
-
-    override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(bridgeProxy?.createSirBridge {
-            buildCall("")
-        })
-    }
 }
 
 internal abstract class SirAbstractClassFromKtSymbol(
