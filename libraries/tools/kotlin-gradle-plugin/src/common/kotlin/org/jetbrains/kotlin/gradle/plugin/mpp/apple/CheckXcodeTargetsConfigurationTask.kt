@@ -18,12 +18,11 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -42,18 +41,16 @@ import javax.inject.Inject
  * This ensures the expensive `plutil` command is only run when the Xcode project changes,
  * while the cheap validation task runs whenever the JSON changes, consistently re-issuing warnings.
  */
-internal val CheckXcodeTargetsConfigurationSetupAction = KotlinProjectSetupAction {
-    launch {
-        if (!shouldSetupXcodeConfiguration()) {
-            return@launch
-        }
-
-        val appleTargets = getAppleTargetsWithFrameworkBinaries()
-        val projectPath = project.xcodeProjectPath ?: return@launch
-
-        val convertTask = registerConvertPbxprojToJsonTask(projectPath)
-        registerCheckXcodeTargetsConfigurationTask(appleTargets, projectPath, convertTask)
+internal val CheckXcodeTargetsConfigurationSetupAction = KotlinProjectSetupCoroutine {
+    if (!shouldSetupXcodeConfiguration()) {
+        return@KotlinProjectSetupCoroutine
     }
+
+    val appleTargets = getAppleTargetsWithFrameworkBinaries()
+    val projectPath = project.xcodeProjectPath ?: return@KotlinProjectSetupCoroutine
+
+    val convertTask = registerConvertPbxprojToJsonTask(projectPath)
+    registerCheckXcodeTargetsConfigurationTask(appleTargets, projectPath, convertTask)
 }
 
 private suspend fun Project.shouldSetupXcodeConfiguration(): Boolean {
