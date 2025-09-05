@@ -271,9 +271,6 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                         workArguments.compilerFullClasspath.joinToString(File.pathSeparator) { it.normalize().absolutePath }
                     "Kotlin compiler classpath: $compilerClasspath"
                 }
-                logCompilerArgumentsMessage(workArguments.compilerArgumentsLogLevel) {
-                    "${workArguments.taskPath} Kotlin compiler args: ${workArguments.compilerArgs.joinToString(" ")}"
-                }
             }
 
             val executionStrategy = workArguments.compilerExecutionSettings.strategy
