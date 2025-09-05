@@ -7,6 +7,8 @@ package server.core
 
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import common.copyDirectoryRecursively
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,16 +33,28 @@ class WorkspaceManager {
         return outputPath
     }
 
-    fun copyFileToProject(cachedFilePath: String, clientFilePath: String, userId: String, projectName: String): File {
+    // in scenario where .jar file is part of classpath and also part compiler plugins
+    // we can end up with FileAlreadyExist exception because multiple coroutines attempt to copy the
+    // same file and copying file is not atomic operation
+    suspend fun copyFileToProject(
+        cachedFilePath: String,
+        clientFilePath: String,
+        userId: String,
+        projectName: String,
+        fileLockMap: MutableMap<Path, Mutex>
+    ): File {
         val projectDir = getUserProjectFolder(userId, projectName)
         val targetPath = Paths.get(projectDir, clientFilePath)
-        Files.createDirectories(targetPath.parent)
+        val mutex = fileLockMap.computeIfAbsent(targetPath) { Mutex() }
 
-        return if (File(cachedFilePath).isDirectory) {
-            copyDirectoryRecursively(Paths.get(cachedFilePath), targetPath)
-        } else {
-            // TODO: .copy is not atomic operation, in case the same user will try to compile this file multiple times
-            Files.copy(Paths.get(cachedFilePath), targetPath, StandardCopyOption.REPLACE_EXISTING).toFile()
+        return mutex.withLock {
+            Files.createDirectories(targetPath.parent)
+
+            if (File(cachedFilePath).isDirectory) {
+                copyDirectoryRecursively(Paths.get(cachedFilePath), targetPath, overwrite = true)
+            } else {
+                Files.copy(Paths.get(cachedFilePath), targetPath, StandardCopyOption.REPLACE_EXISTING).toFile()
+            }
         }
     }
 
