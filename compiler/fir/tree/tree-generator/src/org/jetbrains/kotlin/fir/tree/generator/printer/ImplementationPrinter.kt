@@ -135,10 +135,8 @@ internal class ImplementationPrinter(
                                 }
 
                                 // For most of the cases dispatch/extension receivers are handled with the `explicitReceiver` case above
-                                // But FirSuperReceiverExpressionImpl doesn't have explicitReceiver
-                                "dispatchReceiver" if (this.typeName != "FirSuperReceiverExpressionImpl") -> {}
-                                "extensionReceiver", "companionObject" -> {
-                                }
+                                in setOf("dispatchReceiver", "extensionReceiver") if (walkableFields.any { it.name == "explicitReceiver" }) -> {}
+                                "companionObject" -> {}
 
                                 else -> {
                                     when (field) {
