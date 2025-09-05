@@ -372,7 +372,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitPrivateIdentifier(ctx: JavaScriptParser.PrivateIdentifierContext): JsNode? {
-        TODO("Classes are not supported yet")
+        TODO("Private fields are not supported yet")
     }
 
     override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
@@ -466,11 +466,22 @@ class JsAstMapperVisitor(
     }
 
     override fun visitArguments(ctx: JavaScriptParser.ArgumentsContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have a node representing an arguments list.'
+        return null
     }
 
-    override fun visitArgument(ctx: JavaScriptParser.ArgumentContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitArgument(ctx: JavaScriptParser.ArgumentContext): JsExpression {
+        assert(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
+
+        ctx.singleExpression()?.let {
+            return visit<JsExpression>(it)
+        }
+
+        ctx.identifier()?.let {
+            return makeRefNode(it.text)
+        }
+
+        TODO("Invalid argument: ${ctx.text}")
     }
 
     override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsExpression {
@@ -547,14 +558,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext): JsNode? {
-        val anonymousFunction = ctx.anonymousFunction() ?: return null
-
-        return when (anonymousFunction) {
-            is JavaScriptParser.AnonymousFunctionDeclContext -> visitAnonymousFunctionDecl(anonymousFunction)
-            is JavaScriptParser.ArrowFunctionContext -> visitArrowFunction(anonymousFunction)
-            is JavaScriptParser.NamedFunctionContext -> visitNamedFunction(anonymousFunction)
-            else -> TODO("Branch not supported yet")
-        }
+        return super.visitFunctionExpression(ctx)
     }
 
     override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext): JsNode? {
@@ -633,8 +637,18 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNew {
+        val jsNewPlainIdentifier = ctx.identifier()?.let { makeRefNode(it.text) }
+        val jsNewSingleExpression = ctx.singleExpressionImpl()?.let { visit<JsExpression>(it) }
+        val jsNewExpression = when {
+            jsNewPlainIdentifier != null -> jsNewPlainIdentifier
+            else -> jsNewSingleExpression
+        }
+
+        val jsArguments = visitAll<JsExpression>(ctx.arguments().argument())
+        return JsNew(jsNewExpression).apply {
+            arguments.addAll(jsArguments)
+        }
     }
 
     override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext): JsNode? {
@@ -646,15 +660,27 @@ class JsAstMapperVisitor(
     }
 
     override fun visitMemberDotExpression(ctx: JavaScriptParser.MemberDotExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        assert(ctx.QuestionMark() == null) { "Optional chain expressions are not supported yet" }
+        assert(ctx.Hashtag() == null) { "Private member access expressions are not supported yet" }
+
+        val jsLeft = visit<JsExpression>(ctx.singleExpressionImpl())
+        val jsRight = scopeContext.referenceFor(ctx.identifierName().text)
+
+        return jsRight.apply {
+            qualifier = jsLeft
+        }
     }
 
     override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext): JsNode? {
         TODO("Classes are not supported yet")
     }
 
-    override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsArrayAccess {
+        assert(ctx.QuestionMarkDot() == null) { "Optional chain expressions are not supported yet" }
+        val jsObjectExpr = visit<JsExpression>(ctx.singleExpressionImpl())
+        val jsMemberExpr = visit<JsExpression>(ctx.expressionSequence())
+
+        return JsArrayAccess(jsObjectExpr, jsMemberExpr)
     }
 
     override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext): JsNode? {
@@ -782,15 +808,18 @@ class JsAstMapperVisitor(
     }
 
     override fun visitIdentifierName(ctx: JavaScriptParser.IdentifierNameContext): JsNode? {
-        TODO("Not yet implemented")
+        // There is no JS node that represents identifier name.
+        return null
     }
 
     override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext): JsNode? {
-        TODO("Not yet implemented")
+        // There is no JS node that represents identifier.
+        return null
     }
 
     override fun visitReservedWord(ctx: JavaScriptParser.ReservedWordContext): JsNode? {
-        TODO("Not yet implemented")
+        // There is no JS node that represents reserved word.
+        return null
     }
 
     override fun visitKeyword(ctx: JavaScriptParser.KeywordContext): JsNode? {
@@ -939,6 +968,10 @@ class JsAstMapperVisitor(
 
         val labelName = scopeContext.localNameFor(identifier.text)
         return labelName.makeRef()
+    }
+
+    private fun makeRefNode(identifier: String): JsNameRef {
+        return scopeContext.referenceFor(identifier)
     }
 
     private fun unwrapStringLiteral(literal: TerminalNode): String {
