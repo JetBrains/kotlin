@@ -11,17 +11,17 @@ open class Owner {
     protected class ProtectedDerived : Base() {
         // public is NOT redundant here, as it allows foo to be used in scope "Owner & its inheritors",
         // but without modifier at all foo is usable in scope "Base & its inheritors" which is narrower
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+        public override fun foo() {}
 
         // public is NOT redundant here, as it allows foo to be used in scope "Owner & its inheritors, including other module inheritors",
         // but without modifier at all foo is usable only in module scope which is narrower
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun bar() {}
+        public override fun bar() {}
     }
 
     internal class InternalDerived : Base() {
         // public is NOT redundant here, as it allows foo to be used in module scope,
         // but without modifier at all foo is usable in scope "Base & its inheritors" which is narrower
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+        public override fun foo() {}
 
         // public is redundant, bar is still usable only in module scope
         <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun bar() {}
