@@ -1236,6 +1236,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(resolvable)
 
         +field("calleeReference", thisReference)
+        +field("kind", inaccessibleReceiverKindType)
     }
 
     val whenExpression: Element by element(Expression) {

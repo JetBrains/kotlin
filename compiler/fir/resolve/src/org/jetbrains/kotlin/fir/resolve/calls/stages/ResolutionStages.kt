@@ -261,13 +261,13 @@ object CheckContextArguments : ResolutionStage() {
                     .groupBy(
                         keySelector = { it.boundSymbol.containingDeclarationIfParameter() },
                         valueTransform = { it.computeExpression() })
-                    .values
+                    .values.map { it.filterNot(FirExpression::isInaccessibleFromOuterClass) }
                     .reversed()
             } else {
                 // Old logic from context receivers where extension receivers are in a separate group from context receivers.
                 // TODO(KT-72994) Remove when context receivers are removed
                 context.bodyResolveContext.towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
-                    towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
+                    towerDataElement.implicitReceiver?.receiverExpression?.takeUnless(FirExpression::isInaccessibleFromOuterClass)?.let(::listOf)
                         ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
                 }
             }
