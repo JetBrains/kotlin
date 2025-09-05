@@ -6,7 +6,7 @@
 fun Int.lazyDecl() = toString()
 
 class C1 {
-    val lazyDecl by lazy { 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>lazyDecl<!>() }
+    val lazyDecl by lazy { 42.lazyDecl() }
 }
 
 class C2 {
