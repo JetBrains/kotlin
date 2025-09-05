@@ -191,6 +191,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             JavaExecTaskParametersCompatibility.Factory::class,
             DefaultJavaExecTaskParametersCompatibility.Factory()
         )
+
+        factories.putIfAbsent(
+            CopySpecAccessor.Factory::class,
+            DefaultCopySpecAccessor.Factory(),
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(

@@ -823,7 +823,7 @@ fun Project.registerKotlinSourceForVersionRange(
             (sourceSet.extensions.getByName("kotlin") as SourceDirectorySet).srcDir(sourcesDirectory)
             val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
             val compilation = kotlinJvmTarget.compilations.getByName(sourceSet.name)
-            tasks.named<KotlinCompile>(compilation.compileKotlinTaskName).configure {
+            compilation.compileJavaTaskProvider.configure {
                 doFirst {
                     if (sourcesDirectory.asFileTree.isEmpty) {
                         error("Ranged Gradle version sources directory\n$sourcesDirectory\nis empty. Remove ranged version or add sources to the directory")

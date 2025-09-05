@@ -9,12 +9,7 @@ import org.gradle.api.Project
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG82
-import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationCacheStartParameterAccessorG82
-import org.jetbrains.kotlin.gradle.plugin.internal.MavenPublicationComponentAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.MavenPublicationComponentAccessorG82
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessorG82
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
 
 private const val PLUGIN_VARIANT_NAME = "gradle82"
@@ -78,4 +73,5 @@ private fun Project.registerVariantImplementations() {
         factories[MavenPublicationComponentAccessor.Factory::class] =
             MavenPublicationComponentAccessorG82.Factory()
     }
+    factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
 }
