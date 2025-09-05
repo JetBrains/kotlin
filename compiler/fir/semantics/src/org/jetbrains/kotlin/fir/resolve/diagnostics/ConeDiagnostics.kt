@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -319,6 +320,10 @@ class ConeOuterClassArgumentsRequired(
 
 class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic {
     override val reason: String get() = "Cannot access ''${target}'' before the instance has been initialized"
+}
+
+class ConeInaccessibleOuterClass(val symbol: FirClassSymbol<*>) : ConeDiagnostic {
+    override val reason: String get() = "Cannot access outer class ''${symbol.classId}'' of non-inner class"
 }
 
 class ConeUnsupportedCallableReferenceTarget(override val candidate: AbstractCallCandidate<*>) : ConeDiagnosticWithSingleCandidate {

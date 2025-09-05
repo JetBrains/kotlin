@@ -152,6 +152,15 @@ class CandidateFactory private constructor(
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
         }
+
+        if (dispatchReceiver.isInaccessibleFromOuterClass()) {
+            result.addDiagnostic(InaccessibleOuterClassReceiver(dispatchReceiver.calleeReference.boundSymbol as FirClassSymbol))
+        }
+
+        givenExtensionReceiverOptions.firstOrNull { it.isInaccessibleFromOuterClass() }?.let {
+            result.addDiagnostic(InaccessibleOuterClassReceiver((it as FirInaccessibleReceiverExpression).calleeReference.boundSymbol as FirClassSymbol))
+        }
+
         return result
     }
 

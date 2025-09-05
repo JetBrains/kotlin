@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -33,6 +34,12 @@ internal object CheckArguments : ResolutionStage() {
         val contextArgumentsOfInvoke = candidate.expectedContextParameterCountForInvoke ?: 0
         for ((index, argument) in candidate.arguments.withIndex()) {
             if (index < contextArgumentsOfInvoke) continue
+
+            val expression = argument.expression
+            if (expression.isInaccessibleFromOuterClass()) {
+                sink.reportDiagnostic(InaccessibleOuterClassReceiver(expression.calleeReference.boundSymbol as FirClassSymbol))
+            }
+
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
                 candidate.callInfo,

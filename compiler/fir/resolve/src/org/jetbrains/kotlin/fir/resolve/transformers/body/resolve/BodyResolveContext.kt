@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
@@ -357,8 +358,9 @@ class BodyResolveContext(
             implicitReceiverValue = InaccessibleImplicitReceiverValue(
                 owningClass.symbol,
                 owningClass.defaultType(),
+                InaccessibleReceiverKind.SecondaryConstructor,
                 holder.session,
-                holder.scopeSession
+                holder.scopeSession,
             )
         )
     }
@@ -617,10 +619,18 @@ class BodyResolveContext(
         val scopeForEnumEntries = forConstructorHeader
 
         val newTowerDataContextForStaticNestedClasses =
-            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
+            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true) {
                 forMembersResolution
-            else
-                staticsAndCompanion
+            } else {
+                val inaccessibleImplicitReceiverValue = InaccessibleImplicitReceiverValue(
+                    owner.symbol,
+                    type,
+                    InaccessibleReceiverKind.OuterClassOfNonInner,
+                    holder.session,
+                    holder.scopeSession,
+                )
+                staticsAndCompanion.addReceiver(labelName, inaccessibleImplicitReceiverValue)
+            }
 
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
