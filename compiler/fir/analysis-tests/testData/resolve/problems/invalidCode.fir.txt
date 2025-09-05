@@ -59,13 +59,13 @@ FILE: e.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var bar: <ERROR TYPE REF: Expression 'bar' of type '<ERROR CLASS: Recursive implicit type>' cannot be invoked as a function> = R|e/A.EmptyContinuation.EmptyContinuation<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): e/A.EmptyContinuation.EmptyContinuation>#|(ERROR_EXPR(Argument is absent)).<Expression 'bar' of type '<ERROR CLASS: Recursive implicit type>' cannot be invoked as a function>#(ERROR_EXPR(No right operand))
-            public get(): <ERROR TYPE REF: Expression 'bar' of type '<ERROR CLASS: Recursive implicit type>' cannot be invoked as a function>
-            public set(value: <ERROR TYPE REF: Expression 'bar' of type '<ERROR CLASS: Recursive implicit type>' cannot be invoked as a function>): R|kotlin/Unit|
+        public final var bar: <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: Recursive implicit type' cannot be invoked as a function> = R|e/A.EmptyContinuation.EmptyContinuation<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): e/A.EmptyContinuation.EmptyContinuation>#|(ERROR_EXPR(Argument is absent)).<Expression 'bar' of type 'ERROR CLASS: Recursive implicit type' cannot be invoked as a function>#(ERROR_EXPR(No right operand))
+            public get(): <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: Recursive implicit type' cannot be invoked as a function>
+            public set(value: <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: Recursive implicit type' cannot be invoked as a function>): R|kotlin/Unit|
 
-        public final class EmptyContinuation : R|e/A<<ERROR CLASS: Incomplete code>>| {
+        public final class EmptyContinuation : R|e/A<ERROR CLASS: Incomplete code>| {
             public constructor(): R|e/A.EmptyContinuation| {
-                super<R|e/A<<ERROR CLASS: Incomplete code>>|>()
+                super<R|e/A<ERROR CLASS: Incomplete code>|>()
             }
 
         }

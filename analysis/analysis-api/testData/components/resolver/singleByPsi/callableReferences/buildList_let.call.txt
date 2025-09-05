@@ -41,7 +41,7 @@ KtCallableReferenceExpression(246,251): '::add'
             KaVariableSignature:
               name = element
               receiverType = null
-              returnType = <ERROR CLASS: Cannot infer type for parameter E>
+              returnType = ERROR CLASS: Cannot infer type for parameter E
               symbol = element: E
               contextParameters = []
               callableId = null

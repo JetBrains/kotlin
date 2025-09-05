@@ -167,7 +167,7 @@ open class ConeTypeRenderer(
     }
 
     open fun renderDiagnostic(diagnostic: ConeDiagnostic, prefix: String = "", suffix: String = ""): String {
-        return "<$prefix${diagnostic.reason}>$suffix"
+        return "$prefix${diagnostic.reason}$suffix"
     }
 
     private fun ConeClassLikeType.renderTypeArguments() {

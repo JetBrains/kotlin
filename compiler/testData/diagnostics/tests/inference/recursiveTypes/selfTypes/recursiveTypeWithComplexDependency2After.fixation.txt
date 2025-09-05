@@ -5,5 +5,5 @@ CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
 TypeVariable(Id) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
 ********************************
 CHOSEN for fixation: TypeVariable(Id) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-    FIXED TO: <ERROR CLASS: Cannot infer argument for type parameter Id>
+    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter Id
 ********************************

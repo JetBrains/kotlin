@@ -18,8 +18,8 @@ KtCallExpression(81,87): 'foo(x)'
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
-            returnType = <ERROR CLASS: Symbol not found for Unresolved>
-            symbol = /foo(x: kotlin.Int): <ERROR CLASS: Symbol not found for Unresolved>
+            returnType = ERROR CLASS: Symbol not found for Unresolved
+            symbol = /foo(x: kotlin.Int): ERROR CLASS: Symbol not found for Unresolved
             valueParameters = [
               KaVariableSignature:
                 name = x
@@ -32,7 +32,7 @@ KtCallExpression(81,87): 'foo(x)'
             contextParameters = []
             callableId = /foo
         typeArgumentsMapping = {
-          T -> (<ERROR CLASS: Cannot infer argument for type parameter T>)
+          T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
     ]
     diagnostic = ERROR<OTHER_ERROR: CS errors: /foo>

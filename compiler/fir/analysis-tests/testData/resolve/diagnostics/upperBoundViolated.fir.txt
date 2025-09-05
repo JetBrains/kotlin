@@ -23,7 +23,7 @@ FILE: upperBoundViolated.kt
         lval b2: R|B<C>| = R|/B.B|<R|C|>()
         lval b3: R|B<kotlin/Any?>| = R|/B.B<Inapplicable(INAPPLICABLE): /B.B>#|<R|kotlin/Any?|>()
         lval b4: <ERROR TYPE REF: Unresolved name: NumberPhile> = R|/B.B<Inapplicable(INAPPLICABLE): /B.B>#|<<ERROR TYPE REF: Symbol not found for UnexistingType>>().<Unresolved name: NL>#(ERROR_EXPR(No right operand)).<Unresolved name: Int>#(<Call has no callee>#()).<Unresolved name: NumberPhile>#(ERROR_EXPR(No right operand))
-        lval b5: R|B<B<<ERROR CLASS: Symbol not found for UnexistingType>>>| = R|/B.B<Inapplicable(INAPPLICABLE): /B.B>#|<R|B<<ERROR CLASS: Symbol not found for UnexistingType>>|>()
+        lval b5: R|B<B<ERROR CLASS: Symbol not found for UnexistingType>>| = R|/B.B<Inapplicable(INAPPLICABLE): /B.B>#|<R|B<ERROR CLASS: Symbol not found for UnexistingType>|>()
         R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|kotlin/Boolean|>()
         R|/fest|<R|C|>()
         R|/fest|<R|{HHH=} C|>()
@@ -83,8 +83,8 @@ FILE: upperBoundViolated.kt
     }
     public final val np1: R|NumberPhile<kotlin/Int>| = R|/NumberPhile.NumberPhile|<R|kotlin/Int|>(Int(10))
         public get(): R|NumberPhile<kotlin/Int>|
-    public final val np2: R|NumberPhile<<ERROR CLASS: Cannot infer argument for type parameter T>>| = R|/NumberPhile.NumberPhile<Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(String(Test))
-        public get(): R|NumberPhile<<ERROR CLASS: Cannot infer argument for type parameter T>>|
+    public final val np2: R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>| = R|/NumberPhile.NumberPhile<Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(String(Test))
+        public get(): R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>|
     public final class Test1<S1 : R|Test1<S1, K>|, K : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<S1 : R|Test1<S1, K>|, K : R|kotlin/Any|>(): R|Test1<S1, K>| {
             super<R|kotlin/Any|>()
