@@ -1,0 +1,4 @@
+CAN_BE_CALLED_AS_EXTENSION_ON: true
+CALLABLE: val kotlin.Int.foo: kotlin.Int
+  get()
+TYPE: kotlin.Int
