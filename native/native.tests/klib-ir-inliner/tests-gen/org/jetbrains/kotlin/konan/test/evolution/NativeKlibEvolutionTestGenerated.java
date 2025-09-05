@@ -174,12 +174,6 @@ public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutio
   }
 
   @Test
-  @TestMetadata("inlineBodyChange.kt")
-  public void testInlineBodyChange() {
-    runTest("compiler/testData/klib/evolution/inlineBodyChange.kt");
-  }
-
-  @Test
   @TestMetadata("inlineFunction.kt")
   public void testInlineFunction() {
     runTest("compiler/testData/klib/evolution/inlineFunction.kt");

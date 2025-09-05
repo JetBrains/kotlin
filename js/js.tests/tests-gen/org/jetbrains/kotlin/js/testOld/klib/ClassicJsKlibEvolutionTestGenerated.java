@@ -157,11 +157,6 @@ public class ClassicJsKlibEvolutionTestGenerated extends AbstractClassicJsKlibEv
     runTest("compiler/testData/klib/evolution/deletePrivateMembers.kt");
   }
 
-  @TestMetadata("inlineBodyChange.kt")
-  public void testInlineBodyChange() {
-    runTest("compiler/testData/klib/evolution/inlineBodyChange.kt");
-  }
-
   @TestMetadata("inlineFunction.kt")
   public void testInlineFunction() {
     runTest("compiler/testData/klib/evolution/inlineFunction.kt");
