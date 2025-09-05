@@ -473,7 +473,9 @@ extension ExportedKotlinPackages.packagewithprotocols {
             }
         }
         public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
-            return nil
+            return switch self {
+            default: fatalError()
+            }
         }
     }
     public protocol ContainerProtocol: KotlinRuntime.KotlinBase {

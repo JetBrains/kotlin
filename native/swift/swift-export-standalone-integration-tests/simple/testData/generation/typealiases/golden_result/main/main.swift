@@ -62,13 +62,17 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __externalRCRefUnsafe {
-        case ENUM.A.__externalRCRef(): self = .A
-        case ENUM.B.__externalRCRef(): self = .B
+        case ENUM_A(): self = .A
+        case ENUM_B(): self = .B
         default: self = .C
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
-        return nil
+        return switch self {
+        case .A: ENUM_A()
+        case .B: ENUM_B()
+        default: ENUM_C()
+        }
     }
 }
 public typealias DefaultInteger = main.RegularInteger

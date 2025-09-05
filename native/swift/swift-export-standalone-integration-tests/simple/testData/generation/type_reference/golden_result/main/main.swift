@@ -663,7 +663,9 @@ extension ExportedKotlinPackages.ignored {
             }
         }
         public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
-            return nil
+            return switch self {
+            default: ignored_ENUM_A()
+            }
         }
     }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {

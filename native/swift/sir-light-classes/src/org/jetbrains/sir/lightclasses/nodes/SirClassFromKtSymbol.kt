@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -142,7 +144,8 @@ internal class SirEnumFromKtSymbol(
             "default: fatalError()"
         } else {
             cases.joinToString(separator = "\n                    ") {
-                val condition = if (it === cases.last()) "default" else "case $name.${it.name}.__externalRCRef()"
+                val condition =
+                    if (it === cases.last()) "default" else "case ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
                 "$condition: self = .${it.name}"
             }
         }
@@ -160,10 +163,42 @@ internal class SirEnumFromKtSymbol(
     private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef) {
         origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
         returnType = unsafeMutableRawPointerFlexibleType()
+        val caseSelector = if (cases.isEmpty()) {
+            "default: fatalError()"
+        } else {
+            cases.joinToString(separator = "\n                    ") {
+                val condition = if (it === cases.last()) "default" else "case .${it.name}"
+                "$condition: ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
+            }
+        }
         body = SirFunctionBody(
-            listOf("return nil")
+            listOf(
+                """
+                    return switch self {
+                    $caseSelector
+                    }
+                """.trimIndent()
+            )
         )
     }.also { it.parent = this }
+
+    private fun ClassId.underscoredRepresentation(): String = buildString {
+        if (!packageFqName.isRoot) {
+            appendUnderscoredRepresentation(packageFqName)
+            append("_")
+        }
+        appendUnderscoredRepresentation(relativeClassName)
+    }
+
+    private fun StringBuilder.appendUnderscoredRepresentation(fqName: FqName) {
+        if (fqName.isRoot) return
+        val parent = fqName.parent()
+        if (!parent.isRoot) {
+            appendUnderscoredRepresentation(parent)
+            append("_")
+        }
+        append(fqName.shortName().asString())
+    }
 
     private fun description(): SirVariable = buildVariable {
         name = "description"
