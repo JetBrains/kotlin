@@ -41,7 +41,7 @@ import java.io.File
  * mergedDump.print(File("/path/to/merged.klib.api"))
  * ```
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 public interface KlibDump {
     /**

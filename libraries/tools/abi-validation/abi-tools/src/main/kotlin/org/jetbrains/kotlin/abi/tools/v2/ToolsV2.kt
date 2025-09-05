@@ -12,17 +12,19 @@ import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
 import org.jetbrains.kotlin.abi.tools.filtering.compileMatcher
 import org.jetbrains.kotlin.abi.tools.v2.klib.KlibDumpImpl
 import java.io.File
+import java.io.InputStream
+import java.util.jar.JarFile
 
 internal object ToolsV2 : AbiToolsV2 {
+
     override fun <T : Appendable> printJvmDump(
         appendable: T,
-        classfiles: Iterable<File>,
-        filters: AbiFilters,
+        inputFiles: Iterable<File>,
+        filters: AbiFilters
     ) {
         val filtersMatcher = compileMatcher(filters)
 
-        val signatures = classfiles.asSequence()
-            .map { classfile -> classfile.inputStream() }
+        val signatures = streamsForInputFiles(inputFiles)
             .loadApiFromJvmClasses()
             .filterByMatcher(filtersMatcher)
 
@@ -43,11 +45,34 @@ internal object ToolsV2 : AbiToolsV2 {
 
     override fun extractKlibAbi(
         klib: File,
-        target: KlibTarget,
+        target: KlibTarget?,
         filters: AbiFilters,
     ): KlibDump {
         val dump = KlibDumpImpl.fromKlib(klib, filters)
-        dump.renameSingleTarget(target)
+        if (target != null) {
+            dump.renameSingleTarget(target)
+        }
         return dump
+    }
+
+    private fun streamsFromJar(jarFile: File): Sequence<InputStream> {
+        val jar = JarFile(jarFile)
+        return jar.entries().iterator().asSequence()
+            .filter { file ->
+                !file.isDirectory && file.name.endsWith(".class") && !file.name.startsWith("META-INF/")
+            }.map { entry -> jar.getInputStream(entry) }
+    }
+
+    private fun streamsForInputFiles(inputFiles: Iterable<File>): Sequence<InputStream> {
+        return inputFiles.asSequence().flatMap { file ->
+            if (!file.exists() || !file.isFile) {
+                return@flatMap emptySequence()
+            }
+            when (file.extension) {
+                "jar" -> streamsFromJar(file)
+                "class" -> sequenceOf(file.inputStream())
+                else -> emptySequence()
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.abi.tools.api
 /**
  * An abstract factory for obtaining an instance of [AbiToolsInterface] - main class for using the capabilities of ABI Validation tool.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 public interface AbiToolsFactory {
     /**

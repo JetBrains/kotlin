@@ -25,6 +25,14 @@ class PrecompiledCasesTest {
     @Test
     fun parcelable() = snapshotAPIAndCompare()
 
+    @Test
+    fun jar() {
+        val testDir = baseOutputPath.resolve(testName.methodName)
+        val target = testDir.resolve(testName.methodName + ".txt")
+
+        doCheck(listOf(testDir), target, AbiFilters.EMPTY)
+    }
+
     @OptIn(ExperimentalPathApi::class)
     private fun snapshotAPIAndCompare(
         includedClasses: Set<String> = emptySet(),
@@ -32,11 +40,10 @@ class PrecompiledCasesTest {
         includedAnnotatedWith: Set<String> = emptySet(),
         excludedAnnotatedWith: Set<String> = emptySet(),
     ) {
-        val testClassRelativePath = testName.methodName
+        val testDir = baseOutputPath.resolve(testName.methodName)
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
+        val target = testDir.resolve(testName.methodName + ".txt")
 
-        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
-
-        doCheck(listOf(baseOutputPath), target, filters)
+        doCheck(listOf(testDir), target, filters)
     }
 }

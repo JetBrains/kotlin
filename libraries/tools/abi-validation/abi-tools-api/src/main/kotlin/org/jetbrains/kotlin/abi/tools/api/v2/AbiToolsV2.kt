@@ -12,16 +12,25 @@ import java.io.File
  * A set of features for working with legacy format dumps,
  * used in previous [Binary Compatibility Validator plugin](https://github.com/Kotlin/binary-compatibility-validator).
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 public interface AbiToolsV2 {
     /**
-     * Print ABI dump for JVM class-files into specified [appendable].
+     * Print ABI dump for JVM from [inputFiles] into specified [appendable].
+     * It is possible to pass class-files or jar files in [inputFiles].
+     *
+     * To control which declarations are passed to the dump, [filters] could be used. By default, no filters will be applied.
+     *
+     * A class declaration with internal visibility will be printed as public if [internalDeclarationsAsPublic] returns `true` for its name.
      */
-    public fun <T : Appendable> printJvmDump(appendable: T, classfiles: Iterable<File>, filters: AbiFilters)
+    public fun <T : Appendable> printJvmDump(
+        appendable: T,
+        inputFiles: Iterable<File>,
+        filters: AbiFilters
+    )
 
     /**
-     * Create empty KLib dump without any declarations and targets.
+     * Create an empty KLib dump without any declarations and targets.
      */
     public fun createKlibDump(): KlibDump
 
@@ -43,12 +52,14 @@ public interface AbiToolsV2 {
     public fun loadKlibDump(dump: CharSequence): KlibDump
 
     /**
-     * Get an ABI from a zipped or unpacked KLib specified in [klib] with specified [target].
+     * Get an ABI from a zipped or unpacked KLib specified in [klib].
+     *
+     * Original target will be overridden by [target] if it's not `null`.
      *
      * To control which declarations are passed to the dump, [filters] could be used. By default, no filters will be applied.
      *
      * @throws IllegalStateException if a KLib could not be loaded from [klib].
      * @throws java.io.FileNotFoundException if file or directory [klib] does not exist.
      */
-    public fun extractKlibAbi(klib: File, target: KlibTarget, filters: AbiFilters = AbiFilters.Companion.EMPTY): KlibDump
+    public fun extractKlibAbi(klib: File, target: KlibTarget? = null, filters: AbiFilters = AbiFilters.EMPTY): KlibDump
 }
