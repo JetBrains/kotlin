@@ -1,0 +1,70 @@
+FILE: inaccessibleReceiver.kt
+    public abstract interface Foo : R|kotlin/Any| {
+    }
+    context(t: R|T|)
+    public final fun <T : R|Foo|> test(): R|T| {
+        ^test R|<local>/t|
+    }
+    public final val functional: R|@ContextFunctionTypeParams(2) context(kotlin/String, Foo) () -> Foo| = context(<unused var>: R|kotlin/String|, <unused var>: R|Foo|) fun <anonymous>(): R|Foo| <inline=NoInline>  {
+        ^ context(R|<local>/<unused var>|) R|kotlin/contextOf|<R|Foo|>()
+    }
+
+        public get(): R|@ContextFunctionTypeParams(2) context(kotlin/String, Foo) () -> Foo|
+    public open class Base : R|kotlin/Any| {
+        public constructor(f: R|Foo|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object O : R|Foo| {
+        private constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class FooImpl : R|Base|, R|Foo| {
+            public constructor(): R|O.FooImpl| {
+                super<R|Base|>(context(this@R|/O|) R|/test|<R|O|>())
+            }
+
+            public final class Bar : R|kotlin/Any| {
+                public constructor(): R|O.FooImpl.Bar| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun bar(): R|kotlin/Unit| {
+                    lval o: R|O| = context(this@R|/O|) R|/test|<R|O|>()
+                    R|kotlin/with|<R|kotlin/String|, R|Foo|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|Foo| <inline=Inline, kind=EXACTLY_ONCE>  {
+                        ^ R|/functional|.R|SubstitutionOverride<kotlin/Function2.invoke: R|Foo|>|(this@R|special/anonymous|, this@R|/O|)
+                    }
+                    )
+                }
+
+            }
+
+        }
+
+    }
+    public final class FooImpl2 : R|Base|, R|Foo| {
+        public constructor(): R|FooImpl2| {
+            super<R|Base|>(context(R|FooImpl2|this@R|/FooImpl2|) R|/test|<R|FooImpl2|>())
+        }
+
+        public constructor(s: R|kotlin/String|): R|FooImpl2| {
+            super<R|Base|>(R|kotlin/with|<R|kotlin/String|, R|Foo|>(R|<local>/s|, <L> = with@fun R|kotlin/String|.<anonymous>(): R|Foo| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ R|/functional|.R|SubstitutionOverride<kotlin/Function2.invoke: R|Foo|>|(this@R|special/anonymous|, R|FooImpl2|this@R|/FooImpl2|)
+            }
+            ))
+        }
+
+        public final class Bar : R|kotlin/Any| {
+            public constructor(): R|FooImpl2.Bar| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+                R|/test<Inapplicable(INAPPLICABLE): /test>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+            }
+
+        }
+
+    }
