@@ -194,8 +194,13 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
         val gson = Gson()
         val xcodeTargets = parseXcodeTargets(pbxprojContent, gson, logger) ?: return
 
+        // We are only interested in Xcode targets that produce a runnable application,
+        // as these are the targets that will consume the Kotlin framework.
+        // These strings are Apple's official "Product Type Identifiers".
         val xcodeAppTargets = xcodeTargets.filter {
+            // Standard identifier for iOS, macOS, and tvOS applications.
             it.productType == "com.apple.product-type.application" ||
+                    // Special identifier for the iOS application that acts as a container for a watchOS app.
                     it.productType == "com.apple.product-type.application.watchapp2-container"
         }
 
