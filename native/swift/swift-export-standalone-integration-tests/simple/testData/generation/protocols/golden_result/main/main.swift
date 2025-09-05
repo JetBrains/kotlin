@@ -459,9 +459,7 @@ extension ExportedKotlinPackages.packagewithprotocols {
         public init?(
             rawValue: Swift.Int32
         ) {
-            if (rawValue < 0 && rawValue >= 0) {
-                return nil
-            }
+            guard 0..<0 ~= rawValue else { return nil }
             self = ENUM_WITH_INTERFACE_INHERITANCE.allCases[Int(rawValue)]
         }
         public init(

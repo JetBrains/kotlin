@@ -258,9 +258,7 @@ internal class SirEnumFromKtSymbol(
         body = SirFunctionBody(
             listOf(
                 """
-                    if (rawValue < 0 && rawValue >= ${cases.size}) {
-                        return nil
-                    }
+                    guard 0..<${cases.size} ~= rawValue else { return nil }
                     self = $name.allCases[Int(rawValue)]
                 """.trimIndent()
             )

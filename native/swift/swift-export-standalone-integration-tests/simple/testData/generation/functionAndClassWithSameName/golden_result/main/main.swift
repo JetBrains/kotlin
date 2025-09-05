@@ -32,9 +32,7 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     public init?(
         rawValue: Swift.Int32
     ) {
-        if (rawValue < 0 && rawValue >= 1) {
-            return nil
-        }
+        guard 0..<1 ~= rawValue else { return nil }
         self = EnumWithFactory.allCases[Int(rawValue)]
     }
     public init(

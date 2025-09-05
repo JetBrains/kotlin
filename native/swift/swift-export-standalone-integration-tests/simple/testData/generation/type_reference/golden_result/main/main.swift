@@ -649,9 +649,7 @@ extension ExportedKotlinPackages.ignored {
         public init?(
             rawValue: Swift.Int32
         ) {
-            if (rawValue < 0 && rawValue >= 1) {
-                return nil
-            }
+            guard 0..<1 ~= rawValue else { return nil }
             self = ENUM.allCases[Int(rawValue)]
         }
         public init(

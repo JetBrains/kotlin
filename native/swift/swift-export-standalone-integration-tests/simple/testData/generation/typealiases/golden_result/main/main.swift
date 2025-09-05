@@ -52,9 +52,7 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
     public init?(
         rawValue: Swift.Int32
     ) {
-        if (rawValue < 0 && rawValue >= 3) {
-            return nil
-        }
+        guard 0..<3 ~= rawValue else { return nil }
         self = ENUM.allCases[Int(rawValue)]
     }
     public init(

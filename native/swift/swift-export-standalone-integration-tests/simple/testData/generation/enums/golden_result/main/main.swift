@@ -42,9 +42,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
     public init?(
         rawValue: Swift.Int32
     ) {
-        if (rawValue < 0 && rawValue >= 2) {
-            return nil
-        }
+        guard 0..<2 ~= rawValue else { return nil }
         self = Enum.allCases[Int(rawValue)]
     }
     public init(
@@ -101,9 +99,7 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
     public init?(
         rawValue: Swift.Int32
     ) {
-        if (rawValue < 0 && rawValue >= 3) {
-            return nil
-        }
+        guard 0..<3 ~= rawValue else { return nil }
         self = EnumSimple.allCases[Int(rawValue)]
     }
     public init(
@@ -164,9 +160,7 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
     public init?(
         rawValue: Swift.Int32
     ) {
-        if (rawValue < 0 && rawValue >= 3) {
-            return nil
-        }
+        guard 0..<3 ~= rawValue else { return nil }
         self = EnumWithAbstractMembers.allCases[Int(rawValue)]
     }
     public init(
@@ -232,9 +226,7 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     public init?(
         rawValue: Swift.Int32
     ) {
-        if (rawValue < 0 && rawValue >= 2) {
-            return nil
-        }
+        guard 0..<2 ~= rawValue else { return nil }
         self = EnumWithMembers.allCases[Int(rawValue)]
     }
     public init(

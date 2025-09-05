@@ -94,9 +94,7 @@ extension ExportedKotlinPackages.a.b.c {
         public init?(
             rawValue: Swift.Int32
         ) {
-            if (rawValue < 0 && rawValue >= 3) {
-                return nil
-            }
+            guard 0..<3 ~= rawValue else { return nil }
             self = E.allCases[Int(rawValue)]
         }
         public init(
