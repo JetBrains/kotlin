@@ -25,16 +25,19 @@ type_parameters/function|function(0:0){0§<kotlin.CharSequence>;1§<kotlin.colle
 type_parameters/property.<get-property>|<get-property>@0:0(){0§<kotlin.Number>}[0]
 type_parameters/property|@0:0{0§<kotlin.Number>}property[0]
 
-// Imported signatures: 15
+// Imported signatures: 18
 kotlin.collections/Collection|null[0]
 kotlin.collections/List|null[0]
 kotlin.collections/MutableCollection|null[0]
 kotlin.collections/MutableMap|null[0]
 kotlin.collections/MutableSet|null[0]
 kotlin.collections/Set|null[0]
+kotlin.internal.ir/EQEQ|EQEQ(kotlin.Any?;kotlin.Any?){}[0]
 kotlin.text/Appendable|null[0]
 kotlin/Any.<init>|<init>(){}[0]
+kotlin/Any.toString|toString(){}[0]
 kotlin/Any|null[0]
+kotlin/Boolean|null[0]
 kotlin/CharSequence|null[0]
 kotlin/Nothing|null[0]
 kotlin/Number|null[0]

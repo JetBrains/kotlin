@@ -23,8 +23,9 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): String
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-        /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: String)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
+    val tmp0: Any? =
+        /* RICH PROPERTY REFERENCE */
+            /* LOCAL declaration @0 */ local fun <get-privateVar>(<this>: A): String
+                /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+            /* LOCAL declaration @1 */ local fun <set-privateVar>(<this>: A, p0: String)
+                /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = p0)
