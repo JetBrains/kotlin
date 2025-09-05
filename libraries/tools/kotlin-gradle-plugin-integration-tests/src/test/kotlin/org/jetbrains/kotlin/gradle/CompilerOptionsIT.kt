@@ -169,9 +169,12 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 // we do not allow modifying free args for K/N at execution time
             )
             build(*compileTasks.toTypedArray()) {
+                // TODO: get rid of this duplication of output
                 if (output.contains("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1")) {
+                    // output from BTA
                     assertOutputContainsExactlyTimes("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1", 1)
-                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * (compileTasks.size - 1) + 1) // 3 times per task
+                    // output from KGP
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * (compileTasks.size) + 1) // 3 times per task + 1 additional from BTA (JVM)
                 } else {
                     assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
                 }
