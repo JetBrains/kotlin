@@ -307,6 +307,15 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     fun associateWith(other: KotlinCompilation<*>)
 
     /**
+     * @suppress
+     */
+    @Deprecated(
+        "Used in IDEA Import",
+        level = DeprecationLevel.HIDDEN
+    )
+    val associateWith: List<KotlinCompilation<*>> get() = associatedCompilations.toList()
+
+    /**
      * A list of all compilations that were previously associated with this compilation using [associateWith].
      *
      * For exmaple, 'test' compilations return 'setOf(main)' by default.
