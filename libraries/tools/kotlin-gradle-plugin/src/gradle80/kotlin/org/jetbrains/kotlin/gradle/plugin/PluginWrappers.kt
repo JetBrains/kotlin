@@ -71,4 +71,5 @@ private fun Project.registerVariantImplementations() {
         JavaExecTaskParametersCompatibilityG80.Factory()
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG80.Factory()
+    factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
 }
