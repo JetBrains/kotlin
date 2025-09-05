@@ -4963,6 +4963,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
       }
 
+      @Test
+      @TestMetadata("RedundantVisibilityOfProtectedOverride.kt")
+      public void testRedundantVisibilityOfProtectedOverride() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityOfProtectedOverride.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker")
       @TestDataPath("$PROJECT_ROOT")
