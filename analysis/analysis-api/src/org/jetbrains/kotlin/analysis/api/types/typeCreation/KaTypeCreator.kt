@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 /**
@@ -491,7 +492,7 @@ public interface KaIntersectionTypeBuilder : KaTypeBuilder {
 public interface KaDynamicTypeBuilder : KaTypeBuilderWithAnnotations
 
 /**
- * A builder for function types.
+ * A builder for [KaFunctionType].
  *
  * @see KaTypeCreator.functionType
  */
@@ -499,7 +500,7 @@ public interface KaDynamicTypeBuilder : KaTypeBuilderWithAnnotations
 @OptIn(KaImplementationDetail::class)
 public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
-     * Whether the type is marked as nullable, i.e., the type is represented as `T?`.
+     * Whether the type is marked as nullable, i.e., the type is represented as `(R.(T) -> S)?`.
      *
      * Default value: `false`.
      *
@@ -531,7 +532,7 @@ public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
     public var isReflectType: Boolean
 
     /**
-     * List of context receivers for the function type.
+     * List of context parameters for the function type.
      *
      * Note that Kotlin prohibits context parameters in reflection types.
      * So all context parameters passed to the builder are discarded when [isReflectType] is `true`.
@@ -559,6 +560,8 @@ public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * Function receiver type.
      *
+     * Default value: `null`.
+     *
      * @see KaFunctionType.receiverType
      */
     public var receiverType: KaType?
@@ -569,16 +572,6 @@ public interface KaFunctionTypeBuilder : KaTypeBuilderWithAnnotations {
      * @see KaFunctionType.parameters
      */
     public val valueParameters: List<KaFunctionValueParameter>
-
-    /**
-     * Adds the given [parameter] to the [valueParameters] list.
-     */
-    public fun valueParameter(parameter: KaFunctionValueParameter)
-
-    /**
-     * Adds the value parameter produced by [parameter] to the [valueParameters] list.
-     */
-    public fun valueParameter(parameter: () -> KaFunctionValueParameter)
 
     /**
      * Adds a value parameter with the given [name] and [type] to the [valueParameters] list.

@@ -240,7 +240,7 @@ internal class KaFe10TypeCreator(
     override fun functionType(
         init: KaFunctionTypeBuilder.() -> Unit,
     ): KaFunctionType = withValidityAssertion {
-        buildFunctionType(KaBaseFunctionTypeBuilder.Base(this, analysisSession).apply(init))
+        buildFunctionType(KaBaseFunctionTypeBuilder(this, analysisSession).apply(init))
     }
 
     private fun buildFunctionType(builder: KaBaseFunctionTypeBuilder): KaFunctionType {

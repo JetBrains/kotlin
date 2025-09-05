@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
@@ -252,7 +254,7 @@ class KaBaseDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTy
     KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
 
 @KaImplementationDetail
-sealed class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
     KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
@@ -288,32 +290,19 @@ sealed class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, sessi
         backingContextParameters += contextParameter
     }
 
-    override fun contextParameter(contextParameter: () -> KaType) = withValidityAssertion {
-        backingContextParameters += contextParameter()
-    }
+    override fun contextParameter(contextParameter: () -> KaType) = contextParameter(contextParameter())
 
     private val backingValueParameters: MutableList<KaFunctionValueParameter> = mutableListOf()
 
     override val valueParameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion { backingValueParameters }
 
-    override fun valueParameter(parameter: KaFunctionValueParameter) = withValidityAssertion {
-        backingValueParameters += parameter
-    }
-
     override fun valueParameter(name: Name?, type: KaType) = withValidityAssertion {
         val valueParameter = KaBaseFunctionValueParameter(name, type)
         backingValueParameters += valueParameter
     }
 
-    override fun valueParameter(name: Name?, type: () -> KaType) = withValidityAssertion {
-        val valueParameter = KaBaseFunctionValueParameter(name, type())
-        backingValueParameters += valueParameter
-    }
-
-    override fun valueParameter(parameter: () -> KaFunctionValueParameter) = withValidityAssertion {
-        backingValueParameters += parameter()
-    }
+    override fun valueParameter(name: Name?, type: () -> KaType) = valueParameter(name, type())
 
     override var receiverType: KaType? = null
         get() = withValidityAssertion { field }
@@ -326,8 +315,4 @@ sealed class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, sessi
         set(value) {
             withValidityAssertion { field = value }
         }
-
-    class Base(typeCreatorDelegate: KaTypeCreator, session: KaSession) :
-        KaBaseFunctionTypeBuilder(typeCreatorDelegate, session) {
-    }
 }

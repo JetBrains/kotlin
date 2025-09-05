@@ -226,7 +226,7 @@ internal class KaFirTypeCreator(
     override fun functionType(
         init: KaFunctionTypeBuilder.() -> Unit,
     ): KaFunctionType = withValidityAssertion {
-        return buildFunctionType(KaBaseFunctionTypeBuilder.Base(this, analysisSession).apply(init)) as KaFunctionType
+        return buildFunctionType(KaBaseFunctionTypeBuilder(this, analysisSession).apply(init)) as KaFunctionType
     }
 
 
@@ -250,7 +250,7 @@ internal class KaFirTypeCreator(
         val refinedClassId =
             analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotation)
                 ?.let { functionClassKind ->
-                    ClassId(functionClassKind.packageFqName, functionClassKind.numberedClassName(builder.valueParameters.size))
+                    ClassId(functionClassKind.packageFqName, functionClassKind.numberedClassName(numberOfParameters))
                 } ?: baseClassId
 
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(refinedClassId)
@@ -278,13 +278,14 @@ internal class KaFirTypeCreator(
             add(returnType)
         }
 
-        val constructedAttributes = constructAttributes(builder.annotations).let { attributes ->
-            if (contextParameters.isNotEmpty()) {
-                attributes + CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size)
-            } else {
-                attributes
+        val constructedAttributes = constructAnnotationAttributesList(builder.annotations)
+            .let { attributes ->
+                if (contextParameters.isNotEmpty()) {
+                    attributes + CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size)
+                } else {
+                    attributes
+                }
             }
-        }
 
         val typeContext = rootModuleSession.typeContext
         val coneType = typeContext.createSimpleType(
@@ -303,13 +304,17 @@ internal class KaFirTypeCreator(
     }
 
     private fun constructAnnotationAttributes(annotationClassIds: List<ClassId>): ConeAttributes {
+        return ConeAttributes.create(constructAnnotationAttributesList(annotationClassIds))
+    }
+
+    private fun constructAnnotationAttributesList(annotationClassIds: List<ClassId>): List<ConeAttribute<*>> {
         if (annotationClassIds.isEmpty()) {
-            return ConeAttributes.Empty
+            return emptyList()
         }
 
         val customAttribute = CustomAnnotationTypeAttribute(annotationClassIds.mapNotNull(::constructAnnotation))
 
-        return ConeAttributes.create(listOf(customAttribute))
+        return listOf(customAttribute)
     }
 
     private fun constructAnnotation(classId: ClassId): FirAnnotation? {
