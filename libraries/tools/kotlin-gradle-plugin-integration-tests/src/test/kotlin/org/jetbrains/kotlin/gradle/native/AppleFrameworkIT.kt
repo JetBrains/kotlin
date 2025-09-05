@@ -581,7 +581,6 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "appleGradlePluginConsumesAppleFrameworks",
             gradleVersion,
-            buildJdk = jdk11Info.javaHome,
             buildOptions = defaultBuildOptions.copy(
                 // Apple plugin doesn't support configuration cache
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
