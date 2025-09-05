@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.noarg.NoArgPluginKey
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val NO_ARG_CONSTRUCTOR_HIDDEN_DEPRECATED_MESSAGE: String =
     "No-arg constructor is hidden from direct usage"
@@ -102,7 +103,7 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
         val isJavaDeprecationAvailable =
             session.symbolProvider.getClassLikeSymbolByClassId(JvmStandardClassIds.Annotations.Java.Deprecated) != null
 
-        val javaDeprecationAnnotation = if (isJavaDeprecationAvailable) {
+        val javaDeprecationAnnotation = runIf(isJavaDeprecationAvailable) {
             buildAnnotation {
                 annotationTypeRef = buildResolvedTypeRef {
                     coneType = JvmStandardClassIds.Annotations.Java.Deprecated.toLookupTag()
@@ -111,8 +112,6 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
 
                 argumentMapping = buildAnnotationArgumentMapping()
             }
-        } else {
-            null
         }
 
         val annotations = listOfNotNull(
