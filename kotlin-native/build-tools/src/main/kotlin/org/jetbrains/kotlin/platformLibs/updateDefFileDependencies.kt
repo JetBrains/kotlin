@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.platformLibs
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -26,8 +27,35 @@ import java.nio.file.Paths
 import javax.inject.Inject
 import kotlin.io.path.exists
 
-fun Project.familyDefFiles(family: Family) = fileTree("src/platform/${family.visibleName}")
+/**
+ * We want to reduce Kotlin/Native distribution build time on CI and locally.
+ * To do so, we can remove Xcode SDK platform libraries that are not used by any of the tests.
+ *
+ * AppKit for macOS and UIKit for the rest seems to be a good trade-off.
+ */
+private fun FileCollection.minimalSet(family: Family, project: Project): FileCollection {
+    if (project.getBooleanProperty("kotlin.native.platformLibs.minimalSet") == false) {
+        return this
+    }
+    val rootModule = when (family) {
+        Family.OSX -> "AppKit"
+        Family.IOS, Family.TVOS, Family.WATCHOS -> "UIKit"
+        Family.LINUX, Family.MINGW, Family.ANDROID -> null
+    }
+    return if (rootModule != null) {
+        val rootModuleFile = this.single { it.name == "$rootModule.def" }
+        val dependencies = rootModuleFile.bufferedReader().use {
+            it.readLine().substringAfter("depends = ").split(' ').map { it.trim() }
+        }
+        this.filter { it.nameWithoutExtension in dependencies + rootModule }
+    } else {
+        this
+    }
+}
+
+fun Project.familyDefFiles(family: Family): FileCollection = fileTree("src/platform/${family.visibleName}")
         .filter { it.name.endsWith(".def") }
+        .minimalSet(family, this)
 
 fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask: TaskProvider<*>): Map<Family, TaskProvider<*>> {
     val shouldUpdate = project.getBooleanProperty(updateDefFileDependenciesFlag) ?: false
