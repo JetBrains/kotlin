@@ -23,21 +23,60 @@
 package kotlin.text.regex
 
 /**
+ * Computes the length of a deterministic pattern starting at [this] and terminated by [terminator], in chars.
+ *
+ * This function only consider [LeafSet]s as deterministic patterns with a known match length, presence
+ * of any other sets will result in the whole chain considered nondeterministic.
+ *
+ * If a chain is nondeterministic, this function returns `-1`.
+ */
+private fun AbstractSet.computeMatchLengthInChars(terminator: FSet): Int {
+    var length = 0
+    var set = this
+    while (set !== terminator) {
+        if (set !is LeafSet) return -1
+        length += set.charCount
+        set = set.next
+    }
+    return length
+}
+
+internal abstract class LookBehindSetBase(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
+    // For leaf sets, we only have to scan a fixed-length prefix of the input;
+    // this array contains the length of this prefix, or -1 if it is unknown.
+    val prefixLengths = IntArray(children.size) {
+        children[it].computeMatchLengthInChars(fSet)
+    }
+
+    protected fun matchPrefix(childIndex: Int, startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
+        val child = children[childIndex]
+        val prefixLength = prefixLengths[childIndex]
+        return when {
+            // the prefix length is unknown, so lets fallback to a generic matching
+            prefixLength < 0 -> child.findBack(0, startIndex, testString, matchResult)
+            // the pattern has a known length, but the prefix is shorter, so the regular expression will never match
+            startIndex - prefixLength < 0 -> -1
+            // the pattern has a known length and it fits the into input's prefix, so let's test it!
+            else -> child.matches(startIndex - prefixLength, testString, matchResult)
+        }
+    }
+}
+
+/**
  * Positive lookbehind node.
  */
-internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
-
+internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : LookBehindSetBase(children, fSet) {
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
-        children.forEach {
-            if (it.findBack(0, startIndex, testString, matchResult) >= 0) {
+        for (idx in children.indices) {
+            if (matchPrefix(idx, startIndex, testString, matchResult) >= 0) {
                 matchResult.setConsumed(groupIndex, -1)
                 return next.matches(startIndex, testString, matchResult)
             }
         }
 
-         return -1
+        return -1
     }
 
     override val name: String
@@ -54,15 +93,12 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
 /**
  * Negative look behind node.
  */
-internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : LookAroundSet(children, fSet) {
-
+internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : LookBehindSetBase(children, fSet) {
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
-
-        children.forEach {
-            val shift = it.findBack(0, startIndex, testString, matchResult)
-            if (shift >= 0) {
+        for (idx in children.indices) {
+            if (matchPrefix(idx, startIndex,testString, matchResult) >= 0) {
                 return -1
             }
         }
