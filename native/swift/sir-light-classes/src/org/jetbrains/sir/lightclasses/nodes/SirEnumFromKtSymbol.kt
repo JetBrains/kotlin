@@ -96,7 +96,7 @@ private class SirEnumFromKtSymbol(
         }
     }
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
-    override val cases: List<SirEnumCase> get() = childDeclarations.filterIsInstance<SirEnumCase>()
+    private val cases: List<SirEnumCase> get() = childDeclarations.filterIsInstance<SirEnumCase>()
     private val childDeclarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations()

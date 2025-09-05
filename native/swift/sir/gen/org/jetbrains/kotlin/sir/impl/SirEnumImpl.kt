@@ -20,7 +20,6 @@ internal class SirEnumImpl(
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
     override val protocols: MutableList<SirProtocol>,
-    override val cases: MutableList<SirEnumCase>,
 ) : SirEnum() {
     override lateinit var parent: SirDeclarationParent
 }

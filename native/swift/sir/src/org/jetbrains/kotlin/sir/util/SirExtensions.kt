@@ -42,6 +42,9 @@ val SirSubscript.accessors: List<SirAccessor>
         setter,
     )
 
+val SirEnum.cases: List<SirEnumCase>
+    get() = declarations.filterIsInstance<SirEnumCase>()
+
 val SirParameter.name: String? get() = parameterName ?: argumentName
 
 val SirType.isVoid: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.void

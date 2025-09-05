@@ -22,7 +22,6 @@ abstract class SirEnum : SirElementBase(), SirNamedDeclaration, SirDeclarationCo
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
     abstract override val protocols: List<SirProtocol>
-    abstract val cases: List<SirEnumCase>
     override fun toString(): String {
         return this.debugString
     }

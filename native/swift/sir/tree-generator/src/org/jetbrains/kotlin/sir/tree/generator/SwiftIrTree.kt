@@ -107,8 +107,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(namedDeclaration)
         parent(declarationContainer)
         parent(protocolConformingDeclaration)
-
-        +listField("cases", enumCaseType)
     }
 
     val enumCase: Element by element {
