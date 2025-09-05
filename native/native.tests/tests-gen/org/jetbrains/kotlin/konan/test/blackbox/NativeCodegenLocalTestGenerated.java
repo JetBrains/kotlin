@@ -444,7 +444,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     public class CCallDirect {
       @Test
       public void testAllFilesPresentInCCallDirect() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -479,7 +479,7 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
       public class FlagInteraction {
         @Test
         public void testAllFilesPresentInFlagInteraction() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @Test

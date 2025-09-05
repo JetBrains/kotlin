@@ -9903,7 +9903,7 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
 
         @Test
         public void testAllFilesPresentInExpectActual() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crv/expectActual"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true, "multiplatform");
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crv/expectActual"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
         }
 
         @Test
