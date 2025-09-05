@@ -1234,6 +1234,18 @@ class Collections {
         }
 
         @Sample
+        fun getOrElse() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.getOrElse(0) { 42 }, "1")
+            assertPrints(list.getOrElse(2) { 42 }, "3")
+            assertPrints(list.getOrElse(3) { 42 }, "42")
+            assertPrints(list.getOrElse(-1) { 42 }, "42")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.getOrElse(0) { "no int" }, "no int")
+        }
+
+        @Sample
         fun getOrNull() {
             val list = listOf(1, 2, 3)
             assertPrints(list.getOrNull(0), "1")
