@@ -44,11 +44,12 @@ internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIn
         dstIndex = this.high.formatBytesInto(dst, dstIndex, startIndex, endIndex.coerceAtMost(4))
     }
     if (endIndex > 4) {
-        val _ = this.low.formatBytesInto(dst, dstIndex, (startIndex - 4).coerceAtLeast(0), endIndex - 4)
+        this.low.formatBytesInto(dst, dstIndex, (startIndex - 4).coerceAtLeast(0), endIndex - 4)
     }
 }
 
 @OptIn(ExperimentalStdlibApi::class)
+@IgnorableReturnValue
 private fun Int.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int): Int {
     var dstIndex = dstOffset
     for (reversedIndex in 3 - startIndex downTo 4 - endIndex) {

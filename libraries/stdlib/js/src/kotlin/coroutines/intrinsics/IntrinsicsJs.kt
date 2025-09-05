@@ -326,7 +326,7 @@ internal fun <T> promisify(fn: suspend () -> T): Promise<T> =
 
 @UsedFromCompilerGeneratedCode
 internal suspend fun <T> await(promise: Promise<T>): T = suspendCoroutine { continuation ->
-    promise.then(
+    val _ = promise.then(
         onFulfilled = { result -> continuation.resume(result) },
         onRejected = { error -> continuation.resumeWithException(error) }
     )

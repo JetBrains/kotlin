@@ -286,7 +286,6 @@ internal class Lexer(val patternString: String, flags: Int) {
     // Special functions called from [movePointer] function to process chars in different modes ========================
     /**
      * Processing an escaped sequence like "\Q foo \E". Just skip a character if it is not \E.
-     * Returns whether we need to reread the character or not
      */
     private fun processInEscapeMode() {
         if (lookAhead == '\\'.toInt()) {
