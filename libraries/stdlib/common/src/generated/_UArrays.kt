@@ -2534,10 +2534,7 @@ public fun UIntArray.takeLast(n: Int): List<UInt> {
     val size = size
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
-    val list = ArrayList<UInt>(n)
-    for (index in size - n until size)
-        list.add(this[index])
-    return list
+    return copyOfRange(size - n, size).asList()
 }
 
 /**
@@ -2555,10 +2552,7 @@ public fun ULongArray.takeLast(n: Int): List<ULong> {
     val size = size
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
-    val list = ArrayList<ULong>(n)
-    for (index in size - n until size)
-        list.add(this[index])
-    return list
+    return copyOfRange(size - n, size).asList()
 }
 
 /**
@@ -2576,10 +2570,7 @@ public fun UByteArray.takeLast(n: Int): List<UByte> {
     val size = size
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
-    val list = ArrayList<UByte>(n)
-    for (index in size - n until size)
-        list.add(this[index])
-    return list
+    return copyOfRange(size - n, size).asList()
 }
 
 /**
@@ -2597,10 +2588,7 @@ public fun UShortArray.takeLast(n: Int): List<UShort> {
     val size = size
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
-    val list = ArrayList<UShort>(n)
-    for (index in size - n until size)
-        list.add(this[index])
-    return list
+    return copyOfRange(size - n, size).asList()
 }
 
 /**
