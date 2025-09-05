@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
+import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.*
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -83,7 +83,7 @@ internal class KaFirTypeCreator(
         init: KaCapturedTypeBuilder.() -> Unit,
     ): KaCapturedType {
         withValidityAssertion {
-            val builder = KaBaseCapturedTypeBuilder.Base(this).apply(init)
+            val builder = KaBaseCapturedTypeBuilder(this).apply(init)
             return type.coneType.withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
                 .asKaType() as KaCapturedType
         }
@@ -102,49 +102,40 @@ internal class KaFirTypeCreator(
                     }
                 }
 
-                val builder = KaBaseCapturedTypeBuilder.Base(this@KaFirTypeCreator).apply(init)
-                return ConeCapturedType(
-                    isMarkedNullable = builder.isMarkedNullable,
-                    constructor = ConeCapturedTypeConstructor(
-                        projection = projection.coneTypeProjection,
-                        lowerType = null,
-                        captureStatus = CaptureStatus.FROM_EXPRESSION,
-                        supertypes = projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
-                        typeParameterMarker = (projection.type as? KaTypeParameterType)?.symbol?.firSymbol?.toLookupTag()
-                    )
-                ).asKaType() as KaCapturedType
+                val builder = KaBaseCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
+                val capturedType = firSession.typeContext.createCapturedType(
+                    projection.coneTypeProjection,
+                    projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
+                    lowerType = null,
+                    CaptureStatus.FROM_EXPRESSION
+                ) as ConeCapturedType
+
+                return capturedType.withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
+                    .asKaType() as KaCapturedType
             }
         }
     }
 
     override fun definitelyNotNullType(
-        type: KaType,
-        init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
-    ): KaDefinitelyNotNullType {
-        withValidityAssertion {
-            with(analysisSession) {
-                val builder = KaBaseDefinitelyNotNullTypeBuilder.Base(this@KaFirTypeCreator).apply(init)
-                if (type !is KaCapturedType && type !is KaTypeParameterType) {
-                    errorWithAttachment("`KaDefinitelyNotNullType` can only wrap `KaCapturedType` or `KaTypeParameterType`") {
-                        withConeTypeEntry("type", type.coneType)
-                    }
-                }
+        type: KaTypeParameterType
+    ): KaType = withValidityAssertion { buildDefinitelyNotNullType(type) }
 
-                val coneType = type.coneType as ConeSimpleKotlinType
-                val definitelyNotNullConeType =
-                    ConeDefinitelyNotNullType.create(coneType, analysisSession.firSession.typeContext, avoidComprehensiveCheck = true)
-                        ?: errorWithAttachment("Unable to create a definitely not null type") {
-                            withConeTypeEntry("type", coneType)
-                        }
-                return definitelyNotNullConeType.asKaType() as KaDefinitelyNotNullType
-            }
-        }
+    override fun definitelyNotNullType(
+        type: KaCapturedType
+    ): KaType = withValidityAssertion { buildDefinitelyNotNullType(type) }
+
+    private fun buildDefinitelyNotNullType(type: KaType): KaType {
+        val coneType = type.coneType as ConeSimpleKotlinType
+        val definitelyNotNullConeType =
+            ConeDefinitelyNotNullType.create(coneType, analysisSession.firSession.typeContext)
+                ?: coneType
+        return definitelyNotNullConeType.asKaType()
     }
 
     override fun flexibleType(
         type: KaFlexibleType,
         init: KaFlexibleTypeBuilder.() -> Unit,
-    ): KaFlexibleType {
+    ): KaType? {
         withValidityAssertion {
             val builder = KaBaseFlexibleTypeBuilder.ByFlexibleType(type, this).apply(init)
             return buildFlexibleType(builder)
@@ -152,66 +143,56 @@ internal class KaFirTypeCreator(
     }
 
     override fun flexibleType(
-        lowerBound: KaType,
-        upperBound: KaType,
         init: KaFlexibleTypeBuilder.() -> Unit,
-    ): KaFlexibleType {
+    ): KaType? {
         withValidityAssertion {
-            val builder = KaBaseFlexibleTypeBuilder.ByBounds(lowerBound, upperBound, this).apply(init)
+            val builder = KaBaseFlexibleTypeBuilder.WithDefaults(analysisSession, this).apply(init)
             return buildFlexibleType(builder)
         }
     }
 
-    private fun buildFlexibleType(builder: KaFlexibleTypeBuilder): KaFlexibleType {
+    private fun buildFlexibleType(builder: KaFlexibleTypeBuilder): KaType? {
         withValidityAssertion {
-            val lowerBound = builder.lowerBound.coneType.lowerBoundIfFlexible()
-            val upperBound = builder.upperBound.coneType.upperBoundIfFlexible()
+            with(analysisSession) {
+                val lowerBound = builder.lowerBound.lowerBoundIfFlexible()
+                val upperBound = builder.upperBound.upperBoundIfFlexible()
 
-            if (AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound)) {
-                errorWithAttachment("Lower and upper bounds are equal") {
-                    withConeTypeEntry("lowerBound", lowerBound)
-                    withConeTypeEntry("upperBound", upperBound)
+                if (lowerBound == upperBound) {
+                    return lowerBound
                 }
-            }
 
-            if (!lowerBound.isSubtypeOf(upperBound, rootModuleSession)) {
-                errorWithAttachment("Lower bound must be a subtype of upper bound") {
-                    withConeTypeEntry("lowerBound", lowerBound)
-                    withConeTypeEntry("upperBound", upperBound)
+                if (!lowerBound.isSubtypeOf(upperBound)) {
+                    return null
                 }
-            }
 
-            val coneType = typeContext.createFlexibleType(lowerBound, upperBound) as ConeKotlinType
-            return coneType.asKaType() as KaFlexibleType
+                val coneLowerBound = lowerBound.coneType as ConeRigidType
+                val coneUpperBound = upperBound.coneType as ConeRigidType
+
+                val coneType = typeContext.createFlexibleType(coneLowerBound, coneUpperBound) as ConeKotlinType
+                return coneType.asKaType() as KaFlexibleType
+            }
         }
     }
 
     override fun intersectionType(
-        type: KaIntersectionType,
         init: KaIntersectionTypeBuilder.() -> Unit,
-    ): KaIntersectionType {
+    ): KaType {
         withValidityAssertion {
-            val builder = KaBaseIntersectionTypeBuilder.ByIntersectionType(type, this).apply(init)
-            return buildIntersectionType(builder)
+            with(analysisSession) {
+                val builder = KaBaseIntersectionTypeBuilder(this@KaFirTypeCreator).apply(init)
+                val conjuncts = builder.conjuncts
+
+                if (conjuncts.isEmpty()) {
+                    return builtinTypes.nullableAny
+                }
+
+                val coneType = ConeTypeIntersector.intersectTypes(
+                    firSession.typeContext,
+                    conjuncts.map { it.coneType }
+                )
+                return coneType.asKaType()
+            }
         }
-    }
-
-    override fun intersectionType(
-        conjuncts: List<KaType>,
-        init: KaIntersectionTypeBuilder.() -> Unit,
-    ): KaIntersectionType {
-        withValidityAssertion {
-            val builder = KaBaseIntersectionTypeBuilder.ByConjuncts(conjuncts, this).apply(init)
-            return buildIntersectionType(builder)
-        }
-    }
-
-    private fun buildIntersectionType(builder: KaIntersectionTypeBuilder): KaIntersectionType {
-        val conjuncts = builder.conjuncts
-        assert(conjuncts.isNotEmpty()) { "Intersection type must have at least one conjunct" }
-
-        val coneType = ConeIntersectionType(conjuncts.map { it.coneType })
-        return coneType.asKaType() as KaIntersectionType
     }
 
     override fun dynamicType(): KaDynamicType {

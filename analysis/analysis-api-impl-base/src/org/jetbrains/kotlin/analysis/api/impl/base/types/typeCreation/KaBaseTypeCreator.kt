@@ -152,7 +152,7 @@ class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBu
 }
 
 @KaImplementationDetail
-sealed class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaTypeCreator by typeCreatorDelegate {
+class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {
@@ -160,16 +160,6 @@ sealed class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaC
                 field = value
             }
         }
-
-    class Base(typeCreatorDelegate: KaTypeCreator) :
-        KaBaseCapturedTypeBuilder(typeCreatorDelegate)
-}
-
-@KaImplementationDetail
-sealed class KaBaseDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
-    KaTypeCreator by typeCreatorDelegate {
-
-    class Base(typeCreatorDelegate: KaTypeCreator) : KaBaseDefinitelyNotNullTypeBuilder(typeCreatorDelegate)
 }
 
 @KaImplementationDetail
@@ -190,16 +180,20 @@ sealed class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, t
     class ByFlexibleType(type: KaFlexibleType, typeCreatorDelegate: KaTypeCreator) :
         KaBaseFlexibleTypeBuilder(type.lowerBound, type.upperBound, typeCreatorDelegate)
 
-    class ByBounds(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) :
-        KaBaseFlexibleTypeBuilder(lowerBound, upperBound, typeCreatorDelegate)
+    class WithDefaults(session: KaSession, typeCreatorDelegate: KaTypeCreator) :
+        KaBaseFlexibleTypeBuilder(
+            session.builtinTypes.nothing,
+            session.builtinTypes.nullableAny,
+            typeCreatorDelegate
+        )
 }
 
 @KaImplementationDetail
-sealed class KaBaseIntersectionTypeBuilder(
-    private val backingConjuncts: MutableSet<KaType> = mutableSetOf(),
+class KaBaseIntersectionTypeBuilder(
     typeCreatorDelegate: KaTypeCreator
-) :
-    KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
+) : KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
+
+    private val backingConjuncts: MutableSet<KaType> = mutableSetOf()
 
     private fun KaType.unwrapConjunct(): List<KaType> = (this as? KaIntersectionType)?.conjuncts ?: listOf(this)
 
@@ -209,21 +203,11 @@ sealed class KaBaseIntersectionTypeBuilder(
         backingConjuncts += conjunct.unwrapConjunct()
     }
 
-    override fun conjunct(conjunct: () -> KaType) = withValidityAssertion {
-        backingConjuncts += conjunct().unwrapConjunct()
-    }
+    override fun conjunct(conjunct: () -> KaType) = conjunct(conjunct())
 
-    override fun conjuncts(conjuncts: () -> Iterable<KaType>) = withValidityAssertion {
-        backingConjuncts += conjuncts().flatMap { it.unwrapConjunct() }
-    }
+    override fun conjuncts(conjuncts: () -> Iterable<KaType>) = conjuncts(conjuncts())
 
     override fun conjuncts(conjuncts: Iterable<KaType>) = withValidityAssertion {
         backingConjuncts += conjuncts.flatMap { it.unwrapConjunct() }
     }
-
-    class ByIntersectionType(type: KaIntersectionType, typeCreatorDelegate: KaTypeCreator) :
-        KaBaseIntersectionTypeBuilder(type.conjuncts.toMutableSet(), typeCreatorDelegate)
-
-    class ByConjuncts(conjuncts: List<KaType>, typeCreatorDelegate: KaTypeCreator) :
-        KaBaseIntersectionTypeBuilder(conjuncts.toMutableSet(), typeCreatorDelegate)
 }

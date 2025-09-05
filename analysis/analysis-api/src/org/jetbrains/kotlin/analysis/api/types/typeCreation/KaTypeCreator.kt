@@ -95,7 +95,7 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * Builds a [KaCapturedType] with the given [projection].
      *
      * Note that if [projection] is [KaTypeArgumentWithVariance],
-     * it's [KaTypeArgumentWithVariance.variance] must not be [Variance.INVARIANT].
+     * its [KaTypeArgumentWithVariance.variance] must not be [Variance.INVARIANT].
      * Captured types are only intended to capture non-invariant projections.
      * Otherwise, an exception is thrown.
      */
@@ -105,60 +105,69 @@ public interface KaTypeCreator : KaLifetimeOwner {
     /**
      * Builds a [KaDefinitelyNotNullType] wrapping the given [type].
      *
-     * [type] can only be [KaCapturedType] or [KaTypeParameterType].
-     * Otherwise, an exception is thrown.
+     * If [type] is not nullable, the original type is returned,
+     * as wrapping it in [KaDefinitelyNotNullType] is unnecessary.
      */
     @KaExperimentalApi
     public fun definitelyNotNullType(
-        type: KaType,
-        init: KaDefinitelyNotNullTypeBuilder.() -> Unit = {}
-    ): KaDefinitelyNotNullType
+        type: KaCapturedType,
+    ): KaType
 
     /**
-     * Builds a [KaFlexibleType] based on the given [type].
+     * Builds a [KaDefinitelyNotNullType] wrapping the given [type].
      *
-     * The caller is supposed to provide a correct pair of bounds, i.e., these types must be different, and
-     * the lower bound must be a subtype of the upper bound.
+     * If [type] is not nullable, the original type is returned,
+     * as wrapping it in [KaDefinitelyNotNullType] is unnecessary.
+     */
+    @KaExperimentalApi
+    public fun definitelyNotNullType(
+        type: KaTypeParameterType,
+    ): KaType
+
+    /**
+     * Builds a [KaFlexibleType] with initial bounds taken from the given [type].
+     *
      * If either of the bounds is [KaFlexibleType] itself, then the corresponding bound of this type is considered instead.
-     * I.e., if the upperbound is a [KaFlexibleType], then it's upperbound is taken as the resulting upperbound.
+     * I.e., if the upper bound is a [KaFlexibleType], then it's upper bound is taken as the resulting upper bound.
+     *
+     * If the lower bound is not a subtype of the upper bound, `null` is returned.
+     *
+     * If both bounds are equal, the bound type is returned,
+     * as it's unnecessary to create a flexible type in this case.
      */
     @KaExperimentalApi
-    public fun flexibleType(type: KaFlexibleType, init: KaFlexibleTypeBuilder.() -> Unit = {}): KaFlexibleType
+    public fun flexibleType(type: KaFlexibleType, init: KaFlexibleTypeBuilder.() -> Unit = {}): KaType?
 
     /**
-     * Builds a [KaFlexibleType] with the given [lowerBound] and [upperBound] bounds.
+     * Builds a [KaFlexibleType].
      *
-     * The caller is supposed to provide a correct pair of bounds, i.e., these types must be different, and
-     * the lower bound must be a subtype of the upper bound.
      * If either of the bounds is [KaFlexibleType] itself, then the corresponding bound of this type is considered instead.
-     * I.e., if the [upperBound] is a [KaFlexibleType], then it's upperbound is taken as the resulting upperbound.
+     * I.e., if the upper bound is a [KaFlexibleType], then it's upper bound is taken as the resulting upper bound.
+     *
+     * If the lower bound is not a subtype of the upper bound, `null` is returned.
+     *
+     * If both bounds are equal, the bound type is returned,
+     * as it's unnecessary to create a flexible type in this case.
      */
     @KaExperimentalApi
-    public fun flexibleType(lowerBound: KaType, upperBound: KaType, init: KaFlexibleTypeBuilder.() -> Unit = {}): KaFlexibleType
+    public fun flexibleType(init: KaFlexibleTypeBuilder.() -> Unit = {}): KaType?
 
     /**
-     * Builds an [KaIntersectionType] based on the given [type].
+     * Builds an [KaIntersectionType].
      *
-     * [KaIntersectionType] must be flat by its contract, i.e., not contain any other intersection type.
-     * To achieve this, all intersection types passed to the builder are unwrapped.
+     * The builder returns a normalized version of the intersection,
+     * i.e., all duplicated types are removed, nested intersection types are unwrapped, etc.
      *
-     * The set of conjuncts must contain at least one element.
-     * Otherwise, an exception is thrown.
+     * If there is a [KaFlexibleType] among conjuncts, the intersector might return another [KaFlexibleType]
+     * with [KaIntersectionType]s as bounds.
+     * That's due to the distributive property of intersection as a mathematical operation: `(A..B) & C = (A & C)..(B & C)`.
+     *
+     * If there are no conjuncts, returns [Any?][org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes.nullableAny]
+     * as a neutral element of intersection operation.
+     * If a single conjunct is passed, returns that conjunct.
      */
     @KaExperimentalApi
-    public fun intersectionType(type: KaIntersectionType, init: KaIntersectionTypeBuilder.() -> Unit = {}): KaIntersectionType
-
-    /**
-     * Builds an [KaIntersectionType] with the provided [conjuncts].
-     *
-     * [KaIntersectionType] must be flat by its contract, i.e., not contain any other intersection type.
-     * To achieve this, all intersection types passed to the builder are unwrapped.
-     *
-     * The set of conjuncts must contain at least one element.
-     * Otherwise, an exception is thrown.
-     */
-    @KaExperimentalApi
-    public fun intersectionType(conjuncts: List<KaType> = listOf(), init: KaIntersectionTypeBuilder.() -> Unit = {}): KaIntersectionType
+    public fun intersectionType(init: KaIntersectionTypeBuilder.() -> Unit = {}): KaType
 
     /**
      * Builds a [KaDynamicType].
@@ -317,7 +326,7 @@ public interface KaArrayTypeBuilder : KaTypeBuilder {
 }
 
 /**
- * A builder for captured types.
+ * A builder for [KaCapturedType].
  *
  * @see KaTypeCreator.capturedType
  */
@@ -335,7 +344,7 @@ public interface KaCapturedTypeBuilder : KaTypeBuilder {
 }
 
 /**
- * A builder for definitely-not-null types.
+ * A builder for [KaDefinitelyNotNullType].
  *
  * @see KaTypeCreator.definitelyNotNullType
  */
@@ -344,7 +353,7 @@ public interface KaCapturedTypeBuilder : KaTypeBuilder {
 public interface KaDefinitelyNotNullTypeBuilder : KaTypeBuilder
 
 /**
- * A builder for flexible types.
+ * A builder for [KaFlexibleType].
  *
  * @see KaTypeCreator.flexibleType
  */
@@ -353,17 +362,25 @@ public interface KaDefinitelyNotNullTypeBuilder : KaTypeBuilder
 public interface KaFlexibleTypeBuilder : KaTypeBuilder {
     /**
      * The lower bound, such as `String` in `String!`.
+     *
+     * Default value: [Nothing][org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes.nothing].
+     *
+     * @see KaFlexibleType.lowerBound
      */
     public var lowerBound: KaType
 
     /**
      * The upper bound, such as `String?` in `String!`.
+     *
+     * Default value: [Any?][org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes.nullableAny].
+     *
+     * @see KaFlexibleType.upperBound
      */
     public var upperBound: KaType
 }
 
 /**
- * A builder for intersection types.
+ * A builder for [KaIntersectionType].
  *
  * @see KaTypeCreator.intersectionType
  */
