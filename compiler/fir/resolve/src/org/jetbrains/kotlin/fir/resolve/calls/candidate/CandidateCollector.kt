@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
@@ -29,11 +30,14 @@ open class CandidateCollector(
 
     private var bestGroup = TowerGroup.Last
 
+    private val forwardedDiagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+
     fun newDataSet() {
         groupNumbers.clear()
         candidates.clear()
         currentApplicability = CandidateApplicability.HIDDEN
         bestGroup = TowerGroup.Last
+        forwardedDiagnostics.clear()
     }
 
     open fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
@@ -73,6 +77,12 @@ open class CandidateCollector(
 
         return applicability
     }
+
+    fun addForwardedDiagnostic(diagnostic: ResolutionDiagnostic) {
+        forwardedDiagnostics.add(diagnostic)
+    }
+
+    fun forwardedDiagnostics(): List<ResolutionDiagnostic> = forwardedDiagnostics
 
     fun bestCandidates(): List<Candidate> = candidates
 
