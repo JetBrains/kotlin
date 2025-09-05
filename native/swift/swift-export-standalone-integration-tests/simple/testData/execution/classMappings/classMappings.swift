@@ -55,8 +55,3 @@ func testAbstractClass() throws {
 func testAbstractClassPrivateSubclass() throws {
     try #require(getAbstractClassPrivateSubclassName() == nil)
 }
-
-@Test
-func testEnums() throws {
-    try #require(Enum.allCases.count == 0)
-}

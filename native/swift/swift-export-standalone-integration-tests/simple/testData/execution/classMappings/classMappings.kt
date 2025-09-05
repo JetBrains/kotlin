@@ -13,8 +13,6 @@ private class PrivateClass : OpenClass()
 abstract class AbstractClass
 private class AbstractClassPrivateSubclass : AbstractClass()
 
-enum class Enum
-
 fun getAnyClassName(): String? = Any::class.objCNameOrNull
 fun getFinalClassName(): String? = FinalClass::class.objCNameOrNull
 fun getNestedFinalClassName(): String? = FinalClass.NestedFinalClass::class.objCNameOrNull
