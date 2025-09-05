@@ -56,7 +56,8 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     protected fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
         val elements = functionSymbols()
         require(elements.isNotEmpty()) { "No function $this found" }
-        require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
+        require(elements.size == 1) {
+            "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
         return elements.single()
     }
 
@@ -190,7 +191,7 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
         override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
 
-        override val jsCode: IrSimpleFunctionSymbol = CallableIds.jsCall.functionSymbol()
+        override val jsCode by CallableIds.jsCall.functionSymbol() { !it.isExpect }
         override val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = ClassIds.JsOutlinedFunction.classSymbol()
 
         companion object {
