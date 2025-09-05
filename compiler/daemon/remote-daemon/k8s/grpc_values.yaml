@@ -134,11 +134,11 @@ serviceAccountAnnotations: {}
 # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 resources:
    requests:
-     cpu: 100m
-     memory: 256Mi
+     cpu: 5000m
+     memory: 16Gi
    limits:
-     cpu: 1000m
-     memory: 1024Mi
+     cpu: 5000m
+     memory: 40Gi
 
 # Added specifically for choosing GPU model - can be used for other things
 # Example usage: cloud.google.com/gke-accelerator: nvidia-tesla-t4
