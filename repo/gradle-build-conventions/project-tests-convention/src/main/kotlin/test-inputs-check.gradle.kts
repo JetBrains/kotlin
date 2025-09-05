@@ -116,6 +116,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                     } else if (file.extension == "jar") {
                         listOf(
                             """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                            """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
                             """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                         )
                     } else if (file.extension == "klib") {
