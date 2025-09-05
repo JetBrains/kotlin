@@ -963,6 +963,58 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    // based on https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0385-kdoc-links-to-extensions.md
+    @Test
+    @OnlySymbols("#3555")
+    fun `links to extensions with type parameters should be resolved correctly`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |/**
+            | * all should be resolved to extensions on Iterable
+            | * - [Iterable.map]
+            | * - [Iterable.flatMap]
+            | * - [Iterable.flatten]
+            | * - [Iterable.min]
+            | * - [List.map]
+            | * - [List.flatMap]
+            | * - [List.flatten]
+            | * - [List.min]
+            | */
+            |fun usage() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val links = module.getAllLinkDRIFrom("usage").toMap()
+
+                fun assertResolvesTo(link: String, functionName: String) {
+                    val dri = links.getValue(link)
+
+                    // we do assert only required properties, ignoring type and callable parameters
+                    assertEquals("kotlin.collections", dri.packageName)
+                    assertEquals(null, dri.classNames)
+                    assertEquals(functionName, dri.callable?.name)
+                    assertEquals("kotlin.collections.Iterable", (dri.callable?.receiver as? TypeConstructor)?.fullyQualifiedName)
+                    assertEquals(PointingToDeclaration, dri.target)
+                    assertEquals(null, dri.extra)
+                }
+
+                // there should be all 8 resolved links
+                assertEquals(links.size, 8)
+                assertResolvesTo("Iterable.map", "map")
+                assertResolvesTo("Iterable.flatMap", "flatMap")
+                assertResolvesTo("Iterable.flatten", "flatten")
+                assertResolvesTo("Iterable.min", "min")
+                assertResolvesTo("List.map", "map")
+                assertResolvesTo("List.flatMap", "flatMap")
+                assertResolvesTo("List.flatten", "flatten")
+                assertResolvesTo("List.min", "min")
+            }
+        }
+    }
+
     @Test
     fun `full link should not lead to members of typealias #3521`() {
         testInline(
