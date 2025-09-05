@@ -5,11 +5,11 @@ if (second(1, "OK") != "OK") throw new Error("Unexpected result from `second` fu
 if (simpleWithConstraint(42) != 42) throw new Error("Unexpected result from `simpleConstraint` function")
 if (JSON.stringify(complexConstraint({ foo: 1n, bar: "bar" })) != "{\"baz\":true}") throw new Error("Unexpected result from `complexConstraint` function")
 
-var thrown = false;
+var thrown = void(0);
 try {
-    nothingInTypeArgument().boo();
-    thrown = false;
+    const booImpl = { boo: function() { throw 'Booooo!' } };
+    nothingInTypeArgument(booImpl).boo();
 } catch(e) {
-    thrown = true;
+    thrown = e;
 }
-if (!thrown) throw new Error("Unexpected result from `nothingInTypeArgument` function");
+if (thrown != 'Booooo!') throw new Error("Unexpected result from `nothingInTypeArgument` function");

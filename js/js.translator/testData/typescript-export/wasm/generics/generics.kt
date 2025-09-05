@@ -30,7 +30,6 @@ fun <A, B> complexConstraint(x: A): B where A: Foo<JsBigInt>, A: Bar, B: Baz = g
 external interface Boo<T: JsAny> {
     fun boo(): T
 }
-fun getBoo(): Boo<Nothing> = js("({ boo: function() { throw 'Booooo!' } })")
 
 @JsExport
-fun nothingInTypeArgument(): Boo<Nothing> = getBoo()
+fun nothingInTypeArgument(x: Boo<Nothing>): Boo<Nothing> = x
