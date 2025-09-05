@@ -643,7 +643,7 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefNullrefType -> g.buildRefNull(WasmHeapType.Simple.None, location)
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
-            is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            is WasmExternRef, WasmSharedExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location) // TODO add shared extern?
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }
