@@ -16,5 +16,6 @@ import kotlin.wasm.internal.findAssociatedObject
  */
 @ExperimentalAssociatedObjects
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+@kotlin.internal.DoNotInlineOnFirstStage
 public actual inline fun <reified T : Annotation> KClass<*>.findAssociatedObject(): Any? =
     findAssociatedObject(this, wasmTypeId<T>())
