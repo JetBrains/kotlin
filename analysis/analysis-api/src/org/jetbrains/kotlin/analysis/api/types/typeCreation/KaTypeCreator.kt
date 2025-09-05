@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
@@ -24,21 +21,22 @@ import org.jetbrains.kotlin.types.Variance
  * Must only be accessed via [org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider].
  */
 @KaExperimentalApi
+@KaTypeCreatorDslMarker
 public interface KaTypeCreator : KaLifetimeOwner {
     /**
      * Builds a class type with the given class ID.
      *
      * A generic class type can be built by providing type arguments using the [init] block.
-     * The caller is supposed to provide the correct number of type arguments for the class.
-     *
-     * For Kotlin built-in types, consider using the overload that accepts a [KaClassLikeSymbol] instead:
-     * `classType(builtinTypes.string)`.
+     * The caller should provide the correct number of type arguments for the class.
+     * If the number of provided type arguments is lower, missing types arguments are
+     * filled with [star projections][KaStarTypeProjection].
+     * If there are more type arguments than required, extra arguments are ignored.
      *
      *  #### Example
      *
      * ```kotlin
-     * classType(ClassId.fromString("kotlin/collections/List")) {
-     *     argument(classType(ClassId.fromString("kotlin/String")))
+     * classType(StandardClassIds.List) {
+     *     argument(builtinTypes.string)
      * }
      * ```
      */
@@ -51,10 +49,13 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * A generic class type can be built by providing type arguments using the [init] block.
      * The caller is supposed to provide the correct number of type arguments for the class.
      *
+     * For Kotlin built-in types, consider using the overload that accepts a [ClassId] instead:
+     * `classType(StandardClassIds.String)`.
+     *
      * #### Example
      *
      * ```kotlin
-     * classType(builtinTypes.string)
+     * classType(builtinTypes.string.symbol)
      * ```
      */
     @KaExperimentalApi
@@ -67,13 +68,18 @@ public interface KaTypeCreator : KaLifetimeOwner {
     public fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType
 
     /**
-     * Builds a boxed / primitive (depending on the [init] block) array type from the given [elementType].
+     * Builds an array type from the given [elementType].
+     * For primitive element types, the [KaArrayTypeBuilder.shouldPreferPrimitiveTypes] option determines
+     * whether the array type will be a [primitive array type](https://kotlinlang.org/docs/arrays.html#primitive-type-arrays).
+     *
+     * Array types are essentially class types and could be built manually via [classType].
+     * This builder just provides a more convenient way to construct them.
      */
     @KaExperimentalApi
     public fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType
 
     /**
-     * Builds the underlying array type of [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
+     * Builds the underlying array type of a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
      * function parameter with the given [elementType].
      */
     @KaExperimentalApi
@@ -87,14 +93,24 @@ public interface KaTypeCreator : KaLifetimeOwner {
 }
 
 /**
+ * A DSL marker used to annotate entities related to the type building infrastructure in [KaTypeCreator].
+ */
+@DslMarker
+@KaExperimentalApi
+public annotation class KaTypeCreatorDslMarker
+
+/**
  * A base interface for all concrete type builders.
+ *
+ * [KaTypeBuilder] is derived from [KaTypeCreator] to extend its type building API
+ * while keeping all base endpoints accessible.
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeBuilder : KaTypeCreator
 
 /**
- * A builder for class types.
+ * A builder for [KaClassType].
  *
  * @see KaTypeCreator.classType
  */
@@ -112,48 +128,48 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
 
     /**
      * List of type arguments that are currently registered in the builder.
-     * A type argument can be added using [typeArgument] or [invariantTypeArgument].
+     * A type argument can be added using [typeArgument], [typeArguments] or [invariantTypeArgument].
      */
     public val typeArguments: List<KaTypeProjection>
 
     /**
-     * Adds an invariant [type] argument to the class type with [Variance.INVARIANT] variance.
+     * Adds [type] as an [invariant][Variance.INVARIANT] type argument to the class type.
      */
     public fun invariantTypeArgument(type: KaType)
 
     /**
-     * Adds a [type] argument to the class type with the given [variance].
+     * Adds [type] as a type argument to the class type with the given [variance].
      */
     public fun typeArgument(variance: Variance, type: KaType)
 
     /**
-     * Adds an invariant type argument produced by [type] to the class type with [Variance.INVARIANT] variance.
+     * Adds [type] as an [invariant][Variance.INVARIANT] type argument to the class type.
      */
     public fun invariantTypeArgument(type: () -> KaType)
 
     /**
-     * Adds a type argument produced by [type] to the class type with the given [variance].
+     * Adds [type] as a type argument to the class type with the given [variance].
      */
     public fun typeArgument(variance: Variance, type: () -> KaType)
 
     /**
-     * Adds type [argument] to the class type.
+     * Adds [argument] as a type argument to the class type.
      */
     public fun typeArgument(argument: KaTypeProjection)
 
     /**
-     * Adds a type argument produced by [typeProjection] to the class type.
+     * Adds [argument] as a type argument to the class type.
      */
-    public fun typeArgument(typeProjection: () -> KaTypeProjection)
+    public fun typeArgument(argument: () -> KaTypeProjection)
 
     /**
-     * Adds type [arguments] to the class type.
+     * Adds [arguments] as type arguments to the class type.
      */
     public fun typeArguments(arguments: () -> Iterable<KaTypeProjection>)
 }
 
 /**
- * A builder for type parameter types.
+ * A builder for [KaTypeParameterType].
  *
  * @see KaTypeCreator.typeParameterType
  */
@@ -179,7 +195,7 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaArrayTypeBuilder : KaTypeBuilder {
     /**
-     * Whether the resulting array type is marked as nullable, i.e., the type is represented as `T?`.
+     * Whether the resulting array type is marked as nullable, i.e., the type is represented as `Array<T>?`.
      *
      * Default value: `false`.
      *

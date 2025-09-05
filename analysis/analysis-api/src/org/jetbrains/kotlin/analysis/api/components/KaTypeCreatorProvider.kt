@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator
@@ -20,3 +21,12 @@ public interface KaTypeCreatorProvider : KaSessionComponent {
      */
     public val typeCreator: KaTypeCreator
 }
+
+/**
+ * @see KaTypeCreatorProvider.typeCreator
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeCreatorProvider)
+public val typeCreator: KaTypeCreator
+    get() = with(context) { typeCreator }

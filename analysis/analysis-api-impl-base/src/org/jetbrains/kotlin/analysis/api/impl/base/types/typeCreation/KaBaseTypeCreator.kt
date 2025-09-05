@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -27,32 +25,33 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
 @KaImplementationDetail
-abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeCreator {
+abstract class KaBaseTypeCreator<T : KaSession>(val analysisSession: T) : KaTypeCreator {
+    override val token: KaLifetimeToken
+        get() = analysisSession.token
+
     override fun starTypeProjection(): KaStarTypeProjection = withValidityAssertion {
         KaBaseStarTypeProjection(token)
     }
 
     override fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         with(analysisSession) {
-            val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, this@KaBaseTypeCreator).apply(init)
+            val builder = KaBaseArrayTypeBuilder(this@KaBaseTypeCreator).apply(init)
 
-            val builderElementType = builder.elementType
-
-            if (builderElementType is KaClassType && builder.shouldPreferPrimitiveTypes && !builderElementType.isMarkedNullable) {
-                val classId = builderElementType.classId
+            if (elementType is KaClassType && builder.shouldPreferPrimitiveTypes && !elementType.isMarkedNullable) {
+                val classId = elementType.classId
                 val primitiveArrayId =
                     StandardClassIds.primitiveArrayTypeByElementType[classId]
                         ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
                 if (primitiveArrayId != null) {
-                    return buildClassType(primitiveArrayId) {
+                    return classType(primitiveArrayId) {
                         isMarkedNullable = builder.isMarkedNullable
                     }
                 }
             }
 
-            return buildClassType(StandardClassIds.Array) {
+            return classType(StandardClassIds.Array) {
                 isMarkedNullable = builder.isMarkedNullable
-                argument(builderElementType, builder.variance)
+                typeArgument(builder.variance, elementType)
             }
         }
     }
@@ -83,19 +82,11 @@ sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClas
         backingTypeArguments += argument
     }
 
-    override fun invariantTypeArgument(type: () -> KaType) = withValidityAssertion {
-        val type = type()
-        backingTypeArguments += KaBaseTypeArgumentWithVariance(type, Variance.INVARIANT, type.token)
-    }
+    override fun invariantTypeArgument(type: () -> KaType) = invariantTypeArgument(type())
 
-    override fun invariantTypeArgument(type: KaType) = withValidityAssertion {
-        backingTypeArguments += KaBaseTypeArgumentWithVariance(type, Variance.INVARIANT, type.token)
-    }
+    override fun invariantTypeArgument(type: KaType) = typeArgument(Variance.INVARIANT, type)
 
-    override fun typeArgument(variance: Variance, type: () -> KaType) = withValidityAssertion {
-        val type = type()
-        backingTypeArguments += KaBaseTypeArgumentWithVariance(type, variance, type.token)
-    }
+    override fun typeArgument(variance: Variance, type: () -> KaType) = typeArgument(variance, type())
 
     override fun typeArgument(variance: Variance, type: KaType) = withValidityAssertion {
         backingTypeArguments += KaBaseTypeArgumentWithVariance(type, variance, type.token)
@@ -105,21 +96,15 @@ sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClas
         backingTypeArguments += arguments()
     }
 
-    override fun typeArgument(typeProjection: () -> KaTypeProjection) = withValidityAssertion {
-        backingTypeArguments += typeProjection()
-    }
+    override fun typeArgument(argument: () -> KaTypeProjection) = typeArgument(argument())
 
-    class ByClassId(classId: ClassId, typeCreatorDelegate: KaTypeCreator) : KaBaseClassTypeBuilder(typeCreatorDelegate) {
-        val classId: ClassId by validityAsserted(classId)
-    }
+    class ByClassId(val classId: ClassId, typeCreatorDelegate: KaTypeCreator) : KaBaseClassTypeBuilder(typeCreatorDelegate)
 
-    class BySymbol(symbol: KaClassLikeSymbol, typeCreatorDelegate: KaTypeCreator) : KaBaseClassTypeBuilder(typeCreatorDelegate) {
-        val symbol: KaClassLikeSymbol by validityAsserted(symbol)
-    }
+    class BySymbol(val symbol: KaClassLikeSymbol, typeCreatorDelegate: KaTypeCreator) : KaBaseClassTypeBuilder(typeCreatorDelegate)
 }
 
 @KaImplementationDetail
-sealed class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder,
+class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder,
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -128,15 +113,10 @@ sealed class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) 
                 field = value
             }
         }
-
-    class BySymbol(symbol: KaTypeParameterSymbol, typeCreatorDelegate: KaTypeCreator) :
-        KaBaseTypeParameterTypeBuilder(typeCreatorDelegate) {
-        val symbol: KaTypeParameterSymbol by validityAsserted(symbol)
-    }
 }
 
 @KaImplementationDetail
-sealed class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder,
+class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder,
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -161,8 +141,4 @@ sealed class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArra
                 field = value
             }
         }
-
-    class ByElementType(elementType: KaType, typeCreatorDelegate: KaTypeCreator) : KaBaseArrayTypeBuilder(typeCreatorDelegate) {
-        val elementType: KaType by validityAsserted(elementType)
-    }
 }

@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
+import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.KaBaseTypeCreator
@@ -16,8 +17,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -25,8 +28,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirTypeCreator(
-    override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseTypeCreator<KaFirSession>(), KaFirSessionComponent {
+    analysisSession: KaFirSession,
+) : KaBaseTypeCreator<KaFirSession>(analysisSession) {
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, this).apply(init))
     }
@@ -48,10 +51,19 @@ internal class KaFirTypeCreator(
             }
         }
 
+        val expectedNumberOfParameters = with(analysisSession.firSession.typeContext) { lookupTag.parametersCount() }
+        val builderTypeArguments = builder.typeArguments
+        val arguments = List(expectedNumberOfParameters) { index ->
+            when (val builderArgument = builderTypeArguments.getOrNull(index)) {
+                null -> ConeStarProjection
+                else -> builderArgument.coneTypeProjection
+            }
+        }
+
         val typeContext = rootModuleSession.typeContext
         val coneType = typeContext.createSimpleType(
             lookupTag,
-            builder.typeArguments.map { it.coneTypeProjection },
+            arguments,
             builder.isMarkedNullable
         ) as ConeClassLikeType
 
@@ -60,10 +72,17 @@ internal class KaFirTypeCreator(
 
     override fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =
         withValidityAssertion {
-            val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, this).apply(init)
-            val symbol = builder.symbol
+            val builder = KaBaseTypeParameterTypeBuilder(this).apply(init)
             val coneType = symbol.firSymbol.toConeType()
                 .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
             return coneType.asKaType() as KaTypeParameterType
         }
+
+    private fun ConeKotlinType.asKaType(): KaType = asKaType(analysisSession)
+
+    private val KaTypeProjection.coneTypeProjection: ConeTypeProjection
+        get() = coneTypeProjection(analysisSession)
+
+    private val rootModuleSession: FirSession get() = analysisSession.resolutionFacade.useSiteFirSession
+    private val typeContext: ConeInferenceContext get() = rootModuleSession.typeContext
 }
