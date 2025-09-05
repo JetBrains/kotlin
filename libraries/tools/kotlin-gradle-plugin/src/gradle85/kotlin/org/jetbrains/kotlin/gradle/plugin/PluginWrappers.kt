@@ -64,4 +64,5 @@ private fun Project.registerVariantImplementations() {
     factories[ProblemsReporter.Factory::class] =
         ProblemsReporterG85.Factory()
     factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
+    factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
 }
