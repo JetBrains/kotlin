@@ -257,6 +257,7 @@ kotlin {
                 listOf(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
+                    "-Xklib-ir-inliner=intra-module",
                 )
             )
         }
@@ -284,6 +285,7 @@ kotlin {
                 listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
+                    "-Xklib-ir-inliner=intra-module",
                     "-source-map=false",
                     "-source-map-embed-sources=",
                     diagnosticNamesArg

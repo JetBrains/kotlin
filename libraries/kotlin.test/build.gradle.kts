@@ -99,7 +99,10 @@ kotlin {
         }
         nodejs {}
         compilations["main"].compileTaskProvider.configure {
-            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
+            compilerOptions.freeCompilerArgs.addAll(
+                "-Xklib-ir-inliner=intra-module",
+                "-Xir-module-name=$KOTLINTEST_MODULE_NAME",
+            )
         }
     }
 
@@ -107,8 +110,11 @@ kotlin {
     wasmJs {
         nodejs()
         (this as KotlinJsTargetDsl).compilerOptions {
-            freeCompilerArgs.add("-source-map=false")
-            freeCompilerArgs.add("-source-map-embed-sources=")
+            freeCompilerArgs.addAll(
+                "-Xklib-ir-inliner=intra-module",
+                "-source-map=false",
+                "-source-map-embed-sources=",
+            )
         }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
@@ -118,8 +124,11 @@ kotlin {
     wasmWasi {
         nodejs()
         (this as KotlinJsTargetDsl).compilerOptions {
-            freeCompilerArgs.add("-source-map=false")
-            freeCompilerArgs.add("-source-map-embed-sources=")
+            freeCompilerArgs.addAll(
+                "-Xklib-ir-inliner=intra-module",
+                "-source-map=false",
+                "-source-map-embed-sources=",
+            )
         }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
