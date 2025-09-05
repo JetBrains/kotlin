@@ -17,6 +17,7 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local fun privateMethod(<this>: A): String
-        /* ACCESSOR use-site */ access$privateMethod($this = <this>)
-    /* INVOKE @0 */ local fun privateMethod(<this>: A): String
+    val tmp0: Any? =
+        /* LOCAL declaration @0 */ local fun privateMethod(<this>: A): String
+            /* ACCESSOR use-site */ access$privateMethod($this = <this>)
+        /* INVOKE @0 */ local fun privateMethod(<this>: A): String
