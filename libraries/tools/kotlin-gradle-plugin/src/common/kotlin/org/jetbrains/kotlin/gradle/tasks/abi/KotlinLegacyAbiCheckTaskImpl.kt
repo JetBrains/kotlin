@@ -9,7 +9,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
+import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
@@ -34,7 +34,7 @@ internal abstract class KotlinLegacyAbiCheckTaskImpl : AbiToolsTask(), KotlinLeg
     private val rootDir = project.rootDir
 
 
-    override fun runTools(tools: AbiToolsInterface) {
+    override fun runTools(tools: AbiTools) {
         val referenceDir = referenceDir.get().asFile
         val actualDir = actualDir.get().asFile
         val pathPrefix = if (projectPath == ":") ":" else "$projectPath:"

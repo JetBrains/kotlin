@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks.abi
 
-import org.jetbrains.kotlin.abi.tools.api.AbiToolsFactory
+import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
 import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
@@ -42,8 +42,8 @@ internal object SharedClassLoaderProvider : ParentClassLoaderProvider {
 
     private fun createSharedClassLoader(): ClassLoader {
         return SharedClassLoader(
-            AbiToolsFactory::class.java.classLoader,
-            AbiToolsFactory::class.java.`package`.name,
+            AbiTools::class.java.classLoader,
+            AbiTools::class.java.`package`.name,
         )
     }
 }

@@ -12,9 +12,9 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.abi.tools.api.AbiFilters
-import org.jetbrains.kotlin.abi.tools.api.AbiToolsInterface
-import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
+import org.jetbrains.kotlin.abi.tools.AbiFilters
+import org.jetbrains.kotlin.abi.tools.AbiTools
+import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -78,7 +78,7 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
     val projectName: String = project.name
 
 
-    override fun runTools(tools: AbiToolsInterface) {
+    override fun runTools(tools: AbiTools) {
         val abiDir = dumpDir.get().asFile
 
         val jvmTargets = jvm.get()
@@ -123,16 +123,16 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
             val dumpFile = dirForDump.resolve(jvmDumpName)
 
             dumpFile.bufferedWriter().use { writer ->
-                tools.v2.printJvmDump(writer, classfiles, filters)
+                tools.printJvmDump(writer, classfiles, filters)
             }
         }
 
         if (klibIsEnabled.get() && (klibTargets.isNotEmpty() || unsupported.isNotEmpty())) {
-            val mergedDump = tools.v2.createKlibDump()
+            val mergedDump = tools.createKlibDump()
             klibTargets.forEach { suite ->
                 val klibDir = suite.klibFiles.files.first()
                 if (klibDir.exists()) {
-                    val dump = tools.v2.extractKlibAbi(klibDir, KlibTarget(suite.canonicalTargetName, suite.targetName), filters)
+                    val dump = tools.extractKlibAbi(klibDir, KlibTarget(suite.canonicalTargetName, suite.targetName), filters)
                     mergedDump.merge(dump)
                 }
             }
@@ -140,9 +140,9 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
             val referenceFile = referenceKlibDump.get().asFile
             if (unsupported.isNotEmpty()) {
                 val referenceDump = if (referenceFile.exists() && referenceFile.isFile) {
-                    tools.v2.loadKlibDump(referenceFile)
+                    tools.loadKlibDump(referenceFile)
                 } else {
-                    tools.v2.createKlibDump()
+                    tools.createKlibDump()
                 }
 
                 unsupported.map { unsupportedTarget ->
