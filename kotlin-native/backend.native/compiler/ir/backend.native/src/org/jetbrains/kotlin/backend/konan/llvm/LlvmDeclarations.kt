@@ -295,7 +295,16 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     LLVMArrayType(llvm.int8PtrType, context.getLayoutBuilder(declaration).vtableEntries.size)!!
             )
 
-            typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoSymbolName, declaration.isExported())
+            typeInfoGlobal = staticData.createGlobal(
+                    typeInfoWithVtableType, typeInfoSymbolName,
+                    declaration.isExported()
+                            // This is required because internal inline functions can access private classes.
+                            // So, in the generated code, the class type info can be accessed outside the file.
+                            // With per-file caches involved, this can mean accessing from a different object file.
+                            // Therefore, the class type info has to have external linkage in that case.
+                            // Hopefully, this can be removed after fixing KT-69666.
+                            || context.config.producePerFileCache && declaration.isConstructedFromExportedInlineFunctions
+            )
 
             // Other LLVM modules might import this global as a TypeInfo global.
             // This works only if there is no gap between the beginning of the global and the TypeInfo part,
@@ -303,20 +312,6 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             // Still, better be safe than sorry, checking this explicitly:
             val typeInfoOffsetInGlobal = LLVMOffsetOfElement(llvmTargetData, typeInfoWithVtableType, 0)
             check(typeInfoOffsetInGlobal == 0L) { "Offset for $typeInfoSymbolName TypeInfo is $typeInfoOffsetInGlobal" }
-
-            if (context.config.producePerFileCache && declaration.isConstructedFromExportedInlineFunctions) {
-                // This is required because internal inline functions can access private classes.
-                // So, in the generated code, the class type info can be accessed outside the file.
-                // With per-file caches involved, this can mean accessing from a different object file.
-                // Therefore, the class type info has to have external linkage in that case.
-                // Check e.g. `nestedInPrivateClass2.kt` test (it should fail if you remove setting linkage to external).
-                //
-                // This case should be reflected in the `isExported` parameter of `createGlobal` above, instead of
-                // patching the linkage ad hoc.
-                // The problem is: such globals in fact can have clashing names, which makes createGlobal fail.
-                // See https://youtrack.jetbrains.com/issue/KT-61428.
-                typeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
-            }
 
             typeInfoPtr = typeInfoGlobal.pointer.getElementPtr(llvm, typeInfoWithVtableType, 0)
 
