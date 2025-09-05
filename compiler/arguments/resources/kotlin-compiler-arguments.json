@@ -784,6 +784,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "default",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.3.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         }
@@ -6398,7 +6407,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Enable experimental IR inliner during KLIB generation.",
+                                    "current": "Set the mode of the experimental IR inliner on the first compilation stage.\n- `intra-module` mode enforces inlining of the functions only from the compiled module\n- `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)\n   Warning: This mode will trigger setting the `pre-release` flag for the compiled library.\n- `disabled` mode completely disables the IR inliner\n- `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version\n        ",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
@@ -6409,12 +6418,12 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": "disabled",
+                                        "current": "default",
                                         "valueInVersions": []
                                     }
                                 },
                                 "valueDescription": {
-                                    "current": "{intra-module|full|disabled}",
+                                    "current": "{intra-module|full|disabled|default}",
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {

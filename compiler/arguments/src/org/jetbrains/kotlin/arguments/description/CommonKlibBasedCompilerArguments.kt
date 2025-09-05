@@ -84,7 +84,13 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
     compilerArgument {
         name = "Xklib-ir-inliner"
         compilerName = "irInlinerBeforeKlibSerialization"
-        description = "Enable experimental IR inliner during KLIB generation.".asReleaseDependent()
+        description = """Set the mode of the experimental IR inliner on the first compilation stage.
+- `intra-module` mode enforces inlining of the functions only from the compiled module
+- `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+   Warning: This mode will trigger setting the `pre-release` flag for the compiled library.
+- `disabled` mode completely disables the IR inliner
+- `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
+        """.asReleaseDependent()
         valueType = KlibIrInlinerModeType()
         valueDescription = ReleaseDependent(
             current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }

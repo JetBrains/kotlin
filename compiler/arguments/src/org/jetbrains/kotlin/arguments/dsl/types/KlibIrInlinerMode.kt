@@ -34,4 +34,10 @@ enum class KlibIrInlinerMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         ),
     ),
+    default(
+        modeState = "default",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        ),
+    ),
 }

@@ -20,14 +20,21 @@ open class CommonKlibBasedCompilerArgumentsConfigurator : CommonCompilerArgument
 
         val klibIrInlinerMode = KlibIrInlinerMode.fromString(arguments.irInlinerBeforeKlibSerialization)
         when (klibIrInlinerMode) {
+            KlibIrInlinerMode.DEFAULT -> {
+                // Do nothing. Rely on the default language feature states.
+            }
             KlibIrInlinerMode.INTRA_MODULE -> {
                 map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+                map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
             }
             KlibIrInlinerMode.FULL -> {
                 map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
                 map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
             }
-            KlibIrInlinerMode.DISABLED -> {}
+            KlibIrInlinerMode.DISABLED -> {
+                map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
+                map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
+            }
             null -> {
                 collector.report(
                     CompilerMessageSeverity.ERROR,

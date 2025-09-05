@@ -74,8 +74,14 @@ where advanced options include:
                              Define the compile-time log level for partial linkage.
   -Xklib-duplicated-unique-name-strategy={deny|allow-all-with-warning|allow-first-with-warning}
                              Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
-  -Xklib-ir-inliner={intra-module|full|disabled}
-                             Enable experimental IR inliner during KLIB generation.
+  -Xklib-ir-inliner={intra-module|full|disabled|default}
+                             Set the mode of the experimental IR inliner on the first compilation stage.
+                             - `intra-module` mode enforces inlining of the functions only from the compiled module
+                             - `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+                                Warning: This mode will trigger setting the `pre-release` flag for the compiled library.
+                             - `disabled` mode completely disables the IR inliner
+                             - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
+
   -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
                              Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
                              The only observable effect is that a custom ABI version is written to KLIB manifest file.

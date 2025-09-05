@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config
 
 enum class KlibIrInlinerMode(val state: String) {
+    DEFAULT("default"),
     DISABLED("disabled"),
     FULL("full"),
     INTRA_MODULE("intra-module");

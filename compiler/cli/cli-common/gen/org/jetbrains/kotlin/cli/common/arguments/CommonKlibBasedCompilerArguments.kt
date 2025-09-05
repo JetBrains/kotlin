@@ -74,10 +74,16 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xklib-ir-inliner",
-        valueDescription = "{intra-module|full|disabled}",
-        description = "Enable experimental IR inliner during KLIB generation.",
+        valueDescription = "{intra-module|full|disabled|default}",
+        description = """Set the mode of the experimental IR inliner on the first compilation stage.
+- `intra-module` mode enforces inlining of the functions only from the compiled module
+- `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+   Warning: This mode will trigger setting the `pre-release` flag for the compiled library.
+- `disabled` mode completely disables the IR inliner
+- `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
+        """,
     )
-    var irInlinerBeforeKlibSerialization: String = "disabled"
+    var irInlinerBeforeKlibSerialization: String = "default"
         set(value) {
             checkFrozen()
             field = value
