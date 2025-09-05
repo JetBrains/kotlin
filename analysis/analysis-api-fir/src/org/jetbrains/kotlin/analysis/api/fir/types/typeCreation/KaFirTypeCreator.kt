@@ -16,10 +16,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
+import org.jetbrains.kotlin.descriptors.isAnnotationClass
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -47,7 +50,9 @@ internal class KaFirTypeCreator(
         val lookupTag = when (builder) {
             is KaBaseClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).withAttributes(builder.annotations).asKaType()
+                    ?: return ConeErrorType(
+                        ConeUnresolvedSymbolError(builder.classId)
+                    ).withAnnotationAttributes(builder.annotations).asKaType()
                 classSymbol.toLookupTag()
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
@@ -72,7 +77,7 @@ internal class KaFirTypeCreator(
             builder.isMarkedNullable
         ) as ConeClassLikeType
 
-        return coneType.withAttributes(builder.annotations).asKaType()
+        return coneType.withAnnotationAttributes(builder.annotations).asKaType()
     }
 
     override fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =
@@ -80,7 +85,7 @@ internal class KaFirTypeCreator(
             val builder = KaBaseTypeParameterTypeBuilder(this).apply(init)
             val coneType = symbol.firSymbol.toConeType()
                 .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
-            return coneType.withAttributes(builder.annotations).asKaType() as KaTypeParameterType
+            return coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaTypeParameterType
         }
 
     override fun capturedType(
@@ -89,7 +94,7 @@ internal class KaFirTypeCreator(
     ): KaCapturedType {
         withValidityAssertion {
             val builder = KaBaseCapturedTypeBuilder(this).apply(init)
-            return type.coneType.withAttributes(builder.annotations)
+            return type.coneType.withAnnotationAttributes(builder.annotations)
                 .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
                 .asKaType() as KaCapturedType
         }
@@ -118,7 +123,7 @@ internal class KaFirTypeCreator(
 
                 return capturedType
                     .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
-                    .withAttributes(builder.annotations)
+                    .withAnnotationAttributes(builder.annotations)
                     .asKaType() as KaCapturedType
             }
         }
@@ -127,19 +132,23 @@ internal class KaFirTypeCreator(
     override fun definitelyNotNullType(
         type: KaTypeParameterType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
-    ): KaType = withValidityAssertion { buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder().apply(init)) }
+    ): KaType = withValidityAssertion {
+        buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder(this).apply(init))
+    }
 
     override fun definitelyNotNullType(
         type: KaCapturedType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
-    ): KaType = withValidityAssertion { buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder().apply(init)) }
+    ): KaType = withValidityAssertion {
+        buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder(this).apply(init))
+    }
 
     private fun buildDefinitelyNotNullType(type: KaType, builder: KaDefinitelyNotNullTypeBuilder): KaType {
         val coneType = type.coneType as ConeSimpleKotlinType
         val definitelyNotNullConeType =
             ConeDefinitelyNotNullType.create(coneType, analysisSession.firSession.typeContext)
                 ?: coneType
-        return definitelyNotNullConeType.withAttributes(builder.annotations).asKaType()
+        return definitelyNotNullConeType.withAnnotationAttributes(builder.annotations).asKaType()
     }
 
     override fun flexibleType(
@@ -168,7 +177,7 @@ internal class KaFirTypeCreator(
                 val upperBound = builder.upperBound.coneType.upperBoundIfFlexible()
 
                 if (lowerBound == upperBound) {
-                    return lowerBound.withAttributes(builder.annotations).asKaType()
+                    return lowerBound.withAnnotationAttributes(builder.annotations).asKaType()
                 }
 
                 if (!lowerBound.isSubtypeOf(upperBound, firSession)) {
@@ -176,7 +185,7 @@ internal class KaFirTypeCreator(
                 }
 
                 val coneType = typeContext.createFlexibleType(lowerBound, upperBound) as ConeKotlinType
-                return coneType.withAttributes(builder.annotations).asKaType() as KaFlexibleType
+                return coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaFlexibleType
             }
         }
     }
@@ -190,14 +199,14 @@ internal class KaFirTypeCreator(
                 val conjuncts = builder.conjuncts
 
                 if (conjuncts.isEmpty()) {
-                    return builtinTypes.nullableAny.coneType.withAttributes(builder.annotations).asKaType()
+                    return builtinTypes.nullableAny.coneType.asKaType()
                 }
 
                 val coneType = ConeTypeIntersector.intersectTypes(
                     firSession.typeContext,
                     conjuncts.map { it.coneType }
                 )
-                return coneType.withAttributes(builder.annotations).asKaType()
+                return coneType.asKaType()
             }
         }
     }
@@ -205,32 +214,39 @@ internal class KaFirTypeCreator(
     override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType {
         withValidityAssertion {
             val builder = KaBaseDynamicTypeBuilder(this).apply(init)
-            val coneType = ConeDynamicType.create(rootModuleSession, attributes = constructConeAttributes(builder.annotations))
+            val coneType = ConeDynamicType.create(rootModuleSession, attributes = constructAnnotationAttributes(builder.annotations))
             return coneType.asKaType() as KaDynamicType
         }
     }
 
-    private fun ConeKotlinType.withAttributes(annotationClassIds: List<ClassId>): ConeKotlinType {
-        return this.withAttributes(constructConeAttributes(annotationClassIds))
+    private fun ConeKotlinType.withAnnotationAttributes(annotationClassIds: List<ClassId>): ConeKotlinType {
+        return this.withAttributes(constructAnnotationAttributes(annotationClassIds))
     }
 
-    private fun constructConeAttributes(annotationClassIds: List<ClassId>): ConeAttributes {
-        return ConeAttributes.create(constructAttributes(annotationClassIds))
-    }
-
-    private fun constructAttributes(annotationClassIds: List<ClassId>): List<ConeAttribute<*>> {
+    private fun constructAnnotationAttributes(annotationClassIds: List<ClassId>): ConeAttributes {
         if (annotationClassIds.isEmpty()) {
-            return emptyList()
+            return ConeAttributes.Empty
         }
 
         val customAttribute = CustomAnnotationTypeAttribute(annotationClassIds.mapNotNull(::constructAnnotation))
 
-        return listOf(customAttribute)
+        return ConeAttributes.create(listOf(customAttribute))
     }
 
     private fun constructAnnotation(classId: ClassId): FirAnnotation? {
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return null
+
+        if (classSymbol.classKind?.isAnnotationClass != true) {
+            return null
+        }
+
+        val firSession = analysisSession.firSession
+        val primaryConstructor = classSymbol.getPrimaryConstructorSymbol(firSession, firSession.getScopeSession()) ?: return null
+
+        if (primaryConstructor.valueParameterSymbols.isNotEmpty()) {
+            return null
+        }
 
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {

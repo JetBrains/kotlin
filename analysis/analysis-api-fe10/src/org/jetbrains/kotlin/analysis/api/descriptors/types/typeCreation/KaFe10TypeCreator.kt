@@ -18,18 +18,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.annotations
 import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -150,12 +146,16 @@ internal class KaFe10TypeCreator(
     override fun definitelyNotNullType(
         type: KaTypeParameterType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit
-    ): KaType = withValidityAssertion { buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder().apply(init)) }
+    ): KaType = withValidityAssertion {
+        buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder(this).apply(init))
+    }
 
     override fun definitelyNotNullType(
         type: KaCapturedType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit
-    ): KaType = withValidityAssertion { buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder().apply(init)) }
+    ): KaType = withValidityAssertion {
+        buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder(this).apply(init))
+    }
 
     private fun buildDefinitelyNotNullType(type: KaType, builder: KaDefinitelyNotNullTypeBuilder): KaType {
         with(analysisSession) {
@@ -215,10 +215,10 @@ internal class KaFe10TypeCreator(
 
             if (conjuncts.isEmpty()) {
                 val nullableAny = analysisSession.builtinTypes.nullableAny
-                return (nullableAny as KaFe10Type).fe10Type.withAnnotations(builder.annotations).toKtType(analysisContext)
+                return (nullableAny as KaFe10Type).fe10Type.toKtType(analysisContext)
             }
 
-            return intersectTypes(conjuncts).withAnnotations(builder.annotations).toKtType(analysisContext)
+            return intersectTypes(conjuncts).toKtType(analysisContext)
         }
     }
 
@@ -252,6 +252,14 @@ internal class KaFe10TypeCreator(
     private fun constructAnnotationDescriptor(annotationClassId: ClassId): AnnotationDescriptor? {
         val descriptor: ClassDescriptor =
             analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(annotationClassId) ?: return null
+
+        if (!descriptor.kind.isAnnotationClass) {
+            return null
+        }
+
+        if (descriptor.unsubstitutedPrimaryConstructor?.valueParameters?.isEmpty() != true) {
+            return null
+        }
 
         return AnnotationDescriptorImpl(
             descriptor.defaultType,

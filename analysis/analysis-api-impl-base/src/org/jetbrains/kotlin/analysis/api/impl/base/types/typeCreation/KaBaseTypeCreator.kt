@@ -74,7 +74,7 @@ abstract class KaBaseTypeCreator<T : KaSession>(val analysisSession: T) : KaType
 }
 
 @KaImplementationDetail
-sealed class KaBaseTypeBuilder : KaTypeBuilder {
+abstract class KaBaseTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
     val backingAnnotations = mutableListOf<ClassId>()
 
     override val annotations: List<ClassId>
@@ -100,7 +100,7 @@ sealed class KaBaseTypeBuilder : KaTypeBuilder {
 }
 
 @KaImplementationDetail
-sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaBaseTypeBuilder(),
+sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     private val backingTypeArguments = mutableListOf<KaTypeProjection>()
 
@@ -141,7 +141,7 @@ sealed class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClas
 }
 
 @KaImplementationDetail
-class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaBaseTypeBuilder(),
+class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -153,7 +153,7 @@ class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTyp
 }
 
 @KaImplementationDetail
-class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaBaseTypeBuilder(),
+class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -181,7 +181,7 @@ class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBu
 }
 
 @KaImplementationDetail
-class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaBaseTypeBuilder(),
+class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -193,12 +193,13 @@ class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCaptured
 }
 
 @KaImplementationDetail
-sealed class KaBaseDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder, KaBaseTypeBuilder(),
+class KaBaseDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
+    KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate
 
 @KaImplementationDetail
 sealed class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
-    KaBaseTypeBuilder(), KaTypeCreator by typeCreatorDelegate {
+    KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate {
     override var lowerBound: KaType = lowerBound
         get() = withValidityAssertion { field }
         set(value) {
@@ -225,7 +226,7 @@ sealed class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, t
 @KaImplementationDetail
 class KaBaseIntersectionTypeBuilder(
     typeCreatorDelegate: KaTypeCreator
-) : KaIntersectionTypeBuilder, KaBaseTypeBuilder(), KaTypeCreator by typeCreatorDelegate {
+) : KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
 
     private val backingConjuncts: MutableSet<KaType> = mutableSetOf()
 
@@ -248,4 +249,4 @@ class KaBaseIntersectionTypeBuilder(
 
 @KaImplementationDetail
 class KaBaseDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
-    KaBaseTypeBuilder(), KaTypeCreator by typeCreatorDelegate
+    KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
