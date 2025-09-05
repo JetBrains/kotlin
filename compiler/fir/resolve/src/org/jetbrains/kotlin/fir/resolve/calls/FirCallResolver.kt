@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -107,6 +108,9 @@ class FirCallResolver(
         )
 
         functionCall.replaceCalleeReference(nameReference)
+        if (result.forwardedDiagnostics.isNotEmpty()) {
+            functionCall.replaceNonFatalDiagnostics(functionCall.nonFatalDiagnostics + convertForwardedDiagnostics(result))
+        }
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         candidate?.updateSourcesOfReceivers()
 
@@ -140,8 +144,18 @@ class FirCallResolver(
         return resultFunctionCall
     }
 
+    private fun convertForwardedDiagnostics(result: ResolutionResult): List<ConeDiagnostic> =
+        result.forwardedDiagnostics.map {
+            when (it) {
+                else -> shouldNotBeCalled("Implement conversion of the $it forwarded diagnostic")
+            }
+        }
+
     private data class ResolutionResult(
-        val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>,
+        val info: CallInfo,
+        val applicability: CandidateApplicability,
+        val candidates: Collection<Candidate>,
+        val forwardedDiagnostics: List<ResolutionDiagnostic>,
     )
 
     /** WARNING: This function is public for the analysis API and should only be used there. */
@@ -220,11 +234,11 @@ class FirCallResolver(
         )
         towerResolver.reset()
 
-        val result = towerResolver.runResolver(info, resolutionContext, collector)
-        var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
+        val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector)
+        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, explicitReceiver, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
-        return ResolutionResult(info, applicability, reducedCandidates)
+        return ResolutionResult(info, applicability, reducedCandidates, resultCollector.forwardedDiagnostics())
     }
 
     /**
@@ -651,7 +665,7 @@ class FirCallResolver(
 
             val resolutionResult = constructorSymbol
                 ?.let { runResolutionForGivenSymbol(callInfo, it) }
-                ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
+                ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, candidates = emptyList(), forwardedDiagnostics = emptyList())
             createResolvedNamedReference(
                 reference,
                 reference.name,
@@ -723,7 +737,7 @@ class FirCallResolver(
             scope = null
         )
         val applicability = components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
-        return ResolutionResult(callInfo, applicability, listOf(candidate))
+        return ResolutionResult(callInfo, applicability, candidates = listOf(candidate), forwardedDiagnostics = emptyList())
     }
 
     private fun selectDelegatingConstructorCall(
