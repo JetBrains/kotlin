@@ -51,7 +51,7 @@ import kotlin.metadata.internal.toKmClass
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
-import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
@@ -231,7 +231,7 @@ internal class KClassImpl<T : Any>(
             val kotlinTypes = descriptor.typeConstructor.supertypes
             val result = ArrayList<KType>(kotlinTypes.size)
             kotlinTypes.mapTo(result) { kotlinType ->
-                KTypeImpl(kotlinType) {
+                DescriptorKType(kotlinType) {
                     val superClass = kotlinType.constructor.declarationDescriptor
                     if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
 
