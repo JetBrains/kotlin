@@ -1,7 +1,5 @@
-import java.io.File
-import java.io.IOException
-import java.util.HashSet
 import org.gradle.internal.os.OperatingSystem
+import java.io.IOException
 
 dependencies {
     "testImplementation"(project(":compiler:test-security-manager"))
@@ -116,6 +114,7 @@ tasks.withType<Test>().configureEach {
                 } else if (file.extension == "jar") {
                     listOf(
                         """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                        """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
                 } else if (file.extension == "klib") {
