@@ -29,7 +29,7 @@ object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(
                         expression == extensionReceiver ||
                         expression in contextArguments ||
                         // Receiver can migrate here into an argument, see AbstractRawFirBuilder.convertFirSelector
-                        this is FirImplicitInvokeCall && expression == arguments.first()
+                        this is FirImplicitInvokeCall && expression in arguments
             ) {
                 "Inaccessible receiver ${expression.render()} isn't found in receivers of a call/access ${this.render()}"
             }
