@@ -20,6 +20,9 @@ import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
+import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheInKotlinVersion
+import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
+import java.net.URI
 
 /**
  * A base class representing a final binary produced by the Kotlin/Native compiler
@@ -75,6 +79,21 @@ sealed class NativeBinary(
         linkerOpts.addAll(options)
     }
 
+    /**
+     * Disables the Kotlin/Native cache for a specific Kotlin version and provides a reason for the action.
+     * Optionally, a related issue tracker URL can be specified to provide more context.
+     *
+     * @param version The Kotlin version for which the native cache should be disabled.
+     *                Only predefined versions available in `DisableCacheInKotlinVersion` are supported.
+     * @param reason A descriptive explanation clarifying why the native cache is being disabled.
+     * @param issueUrl An optional issue tracker URL that provides additional context or links to a documented issue.
+     */
+    @Suppress("unused")
+    @KotlinNativeCacheApi
+    fun disableNativeCache(version: DisableNativeCacheInKotlinVersion, reason: String, issueUrl: URI? = null) {
+        disableCacheSettings.set(DisableNativeCacheSettings(version, reason, issueUrl))
+    }
+
     var binaryOptions: MutableMap<String, String> = mutableMapOf()
 
     fun binaryOption(name: String, value: String) {
@@ -120,6 +139,10 @@ sealed class NativeBinary(
     private val outputFileProvider: Provider<File> by lazy {
         linkTaskProvider.flatMap { it.outputFile }
     }
+
+    @OptIn(KotlinNativeCacheApi::class)
+    internal val disableCacheSettings: Property<DisableNativeCacheSettings> =
+        project.objects.property(DisableNativeCacheSettings::class.java)
 
     val outputFile: File
         get() = outputFileProvider.get()

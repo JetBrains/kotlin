@@ -4986,6 +4986,16 @@ public class org/jetbrains/kotlin/gradle/targets/native/DefaultSimulatorTestRun 
 	public fun setDeviceId (Ljava/lang/String;)V
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/native/DisableNativeCacheInKotlinVersion : java/io/Serializable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/native/DisableNativeCacheInKotlinVersion$Companion;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/native/DisableNativeCacheInKotlinVersion$Companion {
+	public final fun get2_3_0 ()Lorg/jetbrains/kotlin/gradle/targets/native/DisableNativeCacheInKotlinVersion;
+	public final fun get2_4_0 ()Lorg/jetbrains/kotlin/gradle/targets/native/DisableNativeCacheInKotlinVersion;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/targets/native/KonanPropertiesBuildService : org/gradle/api/services/BuildService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/native/KonanPropertiesBuildService$Companion;
 	public fun <init> ()V
@@ -4997,6 +5007,9 @@ public final class org/jetbrains/kotlin/gradle/targets/native/KonanPropertiesBui
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/native/KotlinNativeBinaryTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinTargetTestRun {
 	public abstract fun setExecutionSourceFrom (Lorg/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable;)V
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/native/KotlinNativeCacheApi : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/native/KotlinNativeHostTestRun : org/jetbrains/kotlin/gradle/targets/native/KotlinNativeBinaryTestRun {
