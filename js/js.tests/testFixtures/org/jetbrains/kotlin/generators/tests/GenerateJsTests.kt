@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
 import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Disabled
@@ -33,9 +32,6 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
-            testClass<AbstractClassicJsKlibEvolutionTest>(annotations = listOf(*legacyFrontend())) {
-                model(targetBackend = TargetBackend.JS_IR)
-            }
             testClass<AbstractFirJsKlibEvolutionTest> {
                 model(targetBackend = TargetBackend.JS_IR)
             }
