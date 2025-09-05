@@ -128,14 +128,8 @@ internal fun runToolInSeparateProcess(
         }
     }
 
-    if (logger is GradleKotlinLogger) {
-        process.inputStream!!.bufferedReader().forEachLine {
-            logger.lifecycle(it)
-        }
-    } else {
-        process.inputStream!!.bufferedReader().forEachLine {
-            println(it)
-        }
+    process.inputStream!!.bufferedReader().forEachLine {
+        logger.lifecycle(it)
     }
 
     readErrThread.join()
