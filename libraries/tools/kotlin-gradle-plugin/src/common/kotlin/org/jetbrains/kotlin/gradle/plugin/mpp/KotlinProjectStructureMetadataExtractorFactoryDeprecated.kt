@@ -10,14 +10,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CurrentBuildIdentifier
-import org.jetbrains.kotlin.gradle.utils.buildNameCompat
-import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactoryDeprecated: KotlinProjectStructureMetadataExtractorFactoryDeprecated
@@ -32,7 +32,8 @@ private constructor(
     private val currentBuild: CurrentBuildIdentifier,
     private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>>>,
     private val currentBuildProjectStructureMetadataProviders: Map<String, Lazy<KotlinProjectStructureMetadata?>>,
-): IKotlinProjectStructureMetadataExtractorFactory {
+    private val buildIdentifierCompatAccessor: Provider<BuildIdentifierAccessor.Factory>,
+) : IKotlinProjectStructureMetadataExtractorFactory {
     fun create(
         metadataArtifact: ResolvedArtifactResult
     ): MppDependencyProjectStructureMetadataExtractor {
@@ -55,8 +56,14 @@ private constructor(
                 In order for 1.9.20 projects to consume included builds with lesser KGP versions,
                 we will still query this 'legacy key' which is the key we expect older KGP versions to use.
                 */
-                val pre1920Key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildNameCompat)
-                val key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildPathCompat)
+                val pre1920Key = ProjectPathWithBuildPath(
+                    moduleId.projectPath,
+                    moduleId.build.compatAccessor(buildIdentifierCompatAccessor).buildName,
+                )
+                val key = ProjectPathWithBuildPath(
+                    moduleId.projectPath,
+                    moduleId.build.compatAccessor(buildIdentifierCompatAccessor).buildPath
+                )
 
                 IncludedBuildMppDependencyProjectStructureMetadataExtractor(
                     primaryArtifact = metadataArtifact.file,
@@ -78,7 +85,8 @@ private constructor(
                 KotlinProjectStructureMetadataExtractorFactoryDeprecated(
                     currentBuild = project.currentBuild,
                     lazy { GlobalProjectStructureMetadataStorage.getProjectStructureMetadataProvidersFromAllGradleBuilds(project) },
-                    collectAllProjectStructureMetadataInCurrentBuild(project)
+                    collectAllProjectStructureMetadataInCurrentBuild(project),
+                    project.variantImplementationFactoryProvider()
                 )
             }
     }

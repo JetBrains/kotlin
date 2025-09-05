@@ -21,7 +21,10 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -70,6 +73,9 @@ abstract class MetadataDependencyTransformationTask
     //region Task Configuration State & Inputs
     @get:Internal
     internal val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
+
+    @get:Internal
+    internal val buildIdentifierCompatAccessor: Provider<BuildIdentifierAccessor.Factory> = project.variantImplementationFactoryProvider()
 
     @Suppress("unused") // task inputs for up-to-date checks
     @get:Nested
@@ -134,7 +140,7 @@ abstract class MetadataDependencyTransformationTask
     private fun MetadataDependencyResolution.KeepOriginalDependency.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
         return transformationParameters.resolvedMetadataConfiguration.getArtifacts(dependency).map {
             TransformedMetadataLibraryRecord(
-                moduleId = dependency.id.serializableUniqueKey,
+                moduleId = dependency.id.serializableUniqueKey(buildIdentifierCompatAccessor),
                 file = it.file.absolutePath,
                 sourceSetName = null
             )
@@ -142,7 +148,7 @@ abstract class MetadataDependencyTransformationTask
     }
 
     private fun MetadataDependencyResolution.ChooseVisibleSourceSets.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
-        val moduleId = dependency.id.serializableUniqueKey
+        val moduleId = dependency.id.serializableUniqueKey(buildIdentifierCompatAccessor)
         val transformedLibraries = transformMetadataLibrariesForBuild(this, outputsDir, true)
         return transformedLibraries.flatMap { (sourceSetName, libraryFiles) ->
             libraryFiles.map { file ->
@@ -167,8 +173,8 @@ abstract class MetadataDependencyTransformationTask
 
         val transformation = GranularMetadataTransformation(
             params = transformationParameters,
-            parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { identifier: ComponentIdentifier ->
-                val serializableKey = identifier.serializableUniqueKey
+            parentSourceSetVisibilityProvider = { identifier: ComponentIdentifier ->
+                val serializableKey = identifier.serializableUniqueKey(buildIdentifierCompatAccessor)
                 visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
             },
         )
@@ -212,9 +218,10 @@ private typealias SerializableComponentIdentifierKey = String
  * This unique key can be used to lookup various info for related Resolved Dependency
  * that gets serialized
  */
-private val ComponentIdentifier.serializableUniqueKey
-    get(): SerializableComponentIdentifierKey = when (this) {
-        is ProjectComponentIdentifier -> "project ${build.buildPathCompat}$projectPath"
-        is ModuleComponentIdentifier -> "module $group:$module:$version"
-        else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
-    }
+private fun ComponentIdentifier.serializableUniqueKey(
+    buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+): SerializableComponentIdentifierKey = when (this) {
+    is ProjectComponentIdentifier -> "project ${build.compatAccessor(buildIdentifierAccessor).buildPath}$projectPath"
+    is ModuleComponentIdentifier -> "module $group:$module:$version"
+    else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
+}

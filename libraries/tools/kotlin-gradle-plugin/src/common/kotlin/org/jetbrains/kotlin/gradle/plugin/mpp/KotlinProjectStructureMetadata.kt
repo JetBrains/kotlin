@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -414,7 +415,7 @@ internal object GlobalProjectStructureMetadataStorage {
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
         project.compositeBuildRootProject {
             (it as ExtensionAware).extensions.extraProperties.set(
-                propertyName(project.currentBuildId().buildPathCompat, project.path),
+                propertyName(project.currentBuildId().compatAccessor(project).buildPath, project.path),
                 { metadataProvider().toJson() }
             )
         }
