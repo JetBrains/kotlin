@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.sir.SirEnumCase
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.enumNamed

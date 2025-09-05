@@ -1,6 +1,6 @@
 // KIND: STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
-// MODULE: Enum(deps)
+// MODULE: Enum
 // FILE: Enum.kt
 
 enum class Enum(var i: Int, internal val s: String) {
