@@ -78,6 +78,7 @@ val cacheMap: Map<String, String> = mapOf(
     "https://archive.mozilla.org/pub/firefox/releases" to "https://cache-redirector.jetbrains.com/archive.mozilla.org/pub/firefox/releases",
     "https://github.com/WasmEdge/WasmEdge/releases/download" to "https://cache-redirector.jetbrains.com/github.com/WasmEdge/WasmEdge/releases/download",
     "https://storage.googleapis.com/chromium-v8/official/canary" to "https://cache-redirector.jetbrains.com/storage.googleapis.com/chromium-v8/official/canary",
+    "https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies" to "https://cache-redirector.jetbrains.com/packages.jetbrains.team/files/p/kt/kotlin-file-dependencies",
     "https://download.visualstudio.microsoft.com/download/pr" to "https://cache-redirector.jetbrains.com/download.visualstudio.microsoft.com/download/pr",
     "https://jetbrains.bintray.com/intellij-plugin-service" to "https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-plugin-service",
     "https://jetbrains.bintray.com/intellij-plugin-service" to "https://cache-redirector.jetbrains.com/intellij-plugin-service",
