@@ -171,12 +171,18 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         }
 
         // Adding Gradle API to separate configuration, so version will not leak into variants
-        val commonGradleApiConfiguration = configurations.create("commonGradleApiCompileOnly") {
-            isVisible = false
-            isCanBeConsumed = false
-            isCanBeResolved = true
+        val commonGradleApiConfiguration = configurations.dependencyScope("commonGradleApiCompileOnly")
+
+        configurations.named(compileClasspathConfigurationName) {
+            extendsFrom(commonGradleApiConfiguration.get())
+            // Overriding current project Gradle version to the version common sources compiled against
+            attributes {
+                attribute(
+                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                    objects.named(GradlePluginVariant.GRADLE_COMMON_COMPILE_API_VERSION),
+                )
+            }
         }
-        configurations[compileClasspathConfigurationName].extendsFrom(commonGradleApiConfiguration)
 
         dependencies {
             compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")

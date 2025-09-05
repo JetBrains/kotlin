@@ -1,16 +1,14 @@
 import gradle.GradlePluginVariant
+import gradle.commonSourceSetName
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
-import org.jetbrains.dokka.gradle.tasks.DokkaGenerateTask
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -89,18 +87,24 @@ class GradlePluginTests {
             ),
         )
 
-        assertEquals(
-            listOf(
-                listOf("producerPlugin", "build", "classes", "java", "common"),
-                listOf("producerPlugin", "build", "classes", "kotlin", "common"),
-                listOf("producerPluginDependency", "build", "classes", "java", "common"),
-                listOf("producerPluginDependency", "build", "classes", "kotlin", "common"),
-            ),
-            consumerPlugin.actualCompilationClasspath(
-                variantSourceSetName = "common",
-                dependencyPathsToCheck = dependencyPathsToCheck,
-            )
+        val actualCompilationClasspath = consumerPlugin.actualCompilationClasspath(
+            variantSourceSetName = commonSourceSetName,
+            dependencyPathsToCheck = dependencyPathsToCheck,
         )
+
+        listOf(
+            listOf("producerPlugin", "build", "classes", "java", "common"),
+            listOf("producerPlugin", "build", "classes", "kotlin", "common"),
+            listOf("producerPluginDependency", "build", "classes", "java", "common"),
+            listOf("producerPluginDependency", "build", "classes", "kotlin", "common"),
+        ).forEachIndexed { index, expected ->
+            assertEquals(
+                expected,
+                actualCompilationClasspath[index],
+                "Expected $expected is not equal to actual ${actualCompilationClasspath[index]}.\n" +
+                        "All actual are: ${actualCompilationClasspath.joinToString(separator = "\n")}"
+            )
+        }
     }
 
     @Test
@@ -151,13 +155,15 @@ class GradlePluginTests {
     private fun Project.actualCompilationClasspath(
         variantSourceSetName: String,
         dependencyPathsToCheck: List<Path>,
-    ) = sourceSets.getByName(variantSourceSetName).compileClasspath.files.map { it.toPath() }.mapNotNull { compilationPath ->
-        val subprojectPath = dependencyPathsToCheck.firstOrNull { compilationPath.startsWith(it) }
-        if (subprojectPath == null) {
-            return@mapNotNull null
+    ) = sourceSets.getByName(variantSourceSetName).compileClasspath.files
+        .map { it.toPath() }
+        .mapNotNull { compilationPath ->
+            val subprojectPath = dependencyPathsToCheck.firstOrNull { compilationPath.startsWith(it) }
+            if (subprojectPath == null) {
+                return@mapNotNull null
+            }
+            compilationPath.drop(subprojectPath.count() - 1).map { it.pathString }
         }
-        compilationPath.drop(subprojectPath.count() - 1).map { it.pathString }
-    }
 
     private fun createKotlinSubproject(named: String, root: Project): ProjectInternal = ProjectBuilder.builder()
         .also {
