@@ -23,7 +23,7 @@ STEP 5:
     dependencies: lib1, lib2
 STEP 6..9:
     dependencies: lib1, lib2
-    updated imports: m.kt
+    modified ir: m.kt
 STEP 10:
     modifications:
         U : m.0.kt -> m.kt

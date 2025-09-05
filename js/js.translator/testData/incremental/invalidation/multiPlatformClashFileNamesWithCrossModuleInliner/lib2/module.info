@@ -6,7 +6,7 @@ STEP 0:
     added file: l2js.kt, l2common.kt
 STEP 1:
     dependencies: lib1
-    updated imports: l2js.kt
+    modified ir: l2js.kt
 STEP 2:
     dependencies: lib1
-    updated imports: l2common.kt
+    modified ir: l2common.kt
