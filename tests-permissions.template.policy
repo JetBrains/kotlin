@@ -25,6 +25,8 @@ grant {
     // IdeaSystemPropertiesForParallelRunConfigurator
     permission java.util.PropertyPermission "java.io.tmpdir", "write";
     permission java.util.PropertyPermission "ANDROID_SDK_HOME", "write";
+    // DebugAttachDetectorArgs.findDebugArgs
+    permission java.lang.management.ManagementPermission "monitor";
     // KotlinTestWithEnvironmentManagement
     permission java.util.PropertyPermission "java.awt.headless", "write";
     // ReplCompilerJava8Test.testIncompatibleScriptJvmTargetProperty
