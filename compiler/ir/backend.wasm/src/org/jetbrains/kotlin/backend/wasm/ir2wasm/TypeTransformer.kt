@@ -101,6 +101,10 @@ class WasmTypeTransformer(
                 return WasmI64
             }
 
+            if (useSharedObjects && klass.name.identifier == "JsReference") {
+                return WasmSharedExternRef
+            }
+
             if (klass.name.identifier != "JsStringRef") {
                 WasmExternRef
             } else {

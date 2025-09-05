@@ -181,6 +181,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.EQREF -> WasmEqRef
                 TypeTags.EXTERN_REF_TYPE -> WasmExnRefType
                 TypeTags.EXTERN_REF -> WasmExternRef
+                TypeTags.SHARED_EXTERN_REF -> WasmSharedExternRef
                 TypeTags.F32 -> WasmF32
                 TypeTags.F64 -> WasmF64
                 TypeTags.FUNC_REF -> WasmFuncRef
@@ -191,6 +192,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.I8 -> WasmI8
                 TypeTags.NULL_EXTERN_REF_TYPE -> WasmNullExnRefType
                 TypeTags.REF_NULL_EXTERN_REF_TYPE -> WasmRefNullExternrefType
+                TypeTags.REF_NULL_SHARED_EXTERN_REF_TYPE -> WasmRefNullSharedExternrefType
                 TypeTags.REF_NULL_REF_TYPE -> WasmRefNullrefType
                 TypeTags.STRUCT_REF -> WasmStructRef
                 TypeTags.UNREACHABLE_TYPE -> WasmUnreachableType
@@ -206,8 +208,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.ANY -> WasmHeapType.Simple.Any
                 HeapTypeTags.EQ -> WasmHeapType.Simple.Eq
                 HeapTypeTags.EXTERN -> WasmHeapType.Simple.Extern
+                HeapTypeTags.SHARED_EXTERN -> WasmHeapType.Simple.SharedExtern
                 HeapTypeTags.FUNC -> WasmHeapType.Simple.Func
                 HeapTypeTags.NO_EXTERN -> WasmHeapType.Simple.NoExtern
+                HeapTypeTags.SHARED_NO_EXTERN -> WasmHeapType.Simple.SharedNoExtern
                 HeapTypeTags.NONE -> WasmHeapType.Simple.None
                 HeapTypeTags.NO_FUNC -> WasmHeapType.Simple.NoFunc
                 HeapTypeTags.STRUCT -> WasmHeapType.Simple.Struct

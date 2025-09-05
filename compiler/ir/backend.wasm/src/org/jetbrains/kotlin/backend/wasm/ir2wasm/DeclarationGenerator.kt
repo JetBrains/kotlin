@@ -623,7 +623,8 @@ class DeclarationGenerator(
                 wasmExpressionGenerator,
                 wasmFileCodegenContext,
                 backendContext,
-                initValue.getSourceLocation(declaration.symbol, sourceFile)
+                initValue.getSourceLocation(declaration.symbol, sourceFile),
+                useSharedObjects
             )
         } else {
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
@@ -651,8 +652,10 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefType -> g.buildRefNull(type.heapType, location)
             is WasmRefNullrefType -> g.buildRefNull(WasmHeapType.Simple.None, location)
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
+            is WasmRefNullSharedExternrefType -> g.buildRefNull(WasmHeapType.Simple.SharedNoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            is WasmSharedExternRef -> g.buildRefNull(WasmHeapType.Simple.SharedExtern, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }
@@ -675,12 +678,18 @@ fun generateConstExpression(
     body: WasmExpressionBuilder,
     context: WasmFileCodegenContext,
     backendContext: WasmBackendContext,
-    location: SourceLocation
+    location: SourceLocation,
+    useSharedObjects: Boolean,
 ) =
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound.isExternal
-            val bottomType = if (isExternal) WasmRefNullExternrefType else WasmRefNullrefType
+            val bottomType = if (isExternal) {
+                if (useSharedObjects && expression.type.getClass()?.name?.identifier == "JsReference")
+                    WasmRefNullSharedExternrefType
+                else
+                    WasmRefNullExternrefType
+            } else WasmRefNullrefType
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (expression.value as Boolean) 1 else 0, location)
