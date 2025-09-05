@@ -1237,7 +1237,7 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
 }
 
 private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? {
-    val forbiddenFunctions = listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")
+    val forbiddenFunctions = listOf("dec", "inc", "trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")
     if (forbiddenFunctions.contains(name)) return null
 
     return evalUnaryOp(name, type, value).also { result ->

@@ -1696,6 +1696,16 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Double]
       FUN[fqName=kotlin.Byte.inc, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inc]
         MODIFIER_LIST[public final operator MustUseReturnValue]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=internal]
+                  REFERENCE_EXPRESSION[referencedName=IntrinsicConstEvaluation]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -1704,6 +1714,16 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Byte]
       FUN[fqName=kotlin.Byte.dec, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dec]
         MODIFIER_LIST[public final operator MustUseReturnValue]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=internal]
+                  REFERENCE_EXPRESSION[referencedName=IntrinsicConstEvaluation]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

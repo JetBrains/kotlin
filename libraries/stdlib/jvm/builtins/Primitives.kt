@@ -244,6 +244,7 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Byte
 
     /**
@@ -251,6 +252,7 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Byte
 
     /** Returns this value. */
@@ -614,6 +616,7 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Short
 
     /**
@@ -621,6 +624,7 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Short
 
     /** Returns this value. */
@@ -982,6 +986,7 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Int
 
     /**
@@ -989,6 +994,7 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Int
 
     /** Returns this value. */
@@ -1396,6 +1402,7 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Long
 
     /**
@@ -1403,6 +1410,7 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Long
 
     /** Returns this value. */
@@ -1828,6 +1836,7 @@ public actual class Float private constructor() : Number(), Comparable<Float> {
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Float
 
     /**
@@ -1835,6 +1844,7 @@ public actual class Float private constructor() : Number(), Comparable<Float> {
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Float
 
     /** Returns this value. */
@@ -2161,6 +2171,7 @@ public actual class Double private constructor() : Number(), Comparable<Double> 
      *
      * @sample samples.misc.Builtins.inc
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun inc(): Double
 
     /**
@@ -2168,6 +2179,7 @@ public actual class Double private constructor() : Number(), Comparable<Double> 
      *
      * @sample samples.misc.Builtins.dec
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun dec(): Double
 
     /** Returns this value. */
