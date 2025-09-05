@@ -34890,6 +34890,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("noImplicitPropertyTypeThatMakesBehaviorOrderDependant.kt")
+      public void testNoImplicitPropertyTypeThatMakesBehaviorOrderDependant() {
+        runTest("compiler/testData/diagnostics/tests/resolve/noImplicitPropertyTypeThatMakesBehaviorOrderDependant.kt");
+      }
+
+      @Test
       @TestMetadata("noStopOnReceiverUnstableSmartCast.kt")
       public void testNoStopOnReceiverUnstableSmartCast() {
         runTest("compiler/testData/diagnostics/tests/resolve/noStopOnReceiverUnstableSmartCast.kt");
