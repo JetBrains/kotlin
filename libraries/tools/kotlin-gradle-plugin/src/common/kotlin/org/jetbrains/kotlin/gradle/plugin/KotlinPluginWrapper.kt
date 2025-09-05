@@ -179,6 +179,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             CopySpecAccessor.Factory::class,
             DefaultCopySpecAccessor.Factory(),
         )
+
+        factories.putIfAbsent(
+            BuildIdentifierAccessor.Factory::class,
+            DefaultBuildIdentifierAccessor.Factory(),
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
