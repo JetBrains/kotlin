@@ -308,7 +308,7 @@ __attribute__((objc_subclassing_restricted))
 
 /**
  * @note annotations
- *   kotlin.SinceKotlin(version="1.9")
+ *   kotlin.SinceKotlin(version="1.4")
 */
 - (void)toCharArrayDestination:(KotlinCharArray *)destination destinationOffset:(int32_t)destinationOffset startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("toCharArray(destination:destinationOffset:startIndex:endIndex:)")));
 - (NSString *)description __attribute__((swift_name("description()")));
