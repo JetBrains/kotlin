@@ -467,7 +467,7 @@ void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
 void initObjectPool() noexcept;
 void compactObjectPoolInCurrentThread() noexcept;
 
-std::shared_lock<std::shared_mutex> gcSuspendLock() noexcept;
+std::shared_lock<std::shared_timed_mutex> gcSuspendLock() noexcept;
 
 } // namespace kotlin
 

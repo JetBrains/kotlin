@@ -7,6 +7,7 @@
 #include "ThreadSuspension.hpp"
 
 #include <condition_variable>
+#include <mutex>
 #include <shared_mutex>
 
 #include "CallsChecker.hpp"
@@ -21,8 +22,8 @@ namespace {
 [[clang::no_destroy]] thread_local std::optional<mm::SafePointActivator> gSafePointActivator = std::nullopt;
 [[clang::no_destroy]] std::mutex gSuspensionRequestMutex;
 [[clang::no_destroy]] std::condition_variable gSuspensionCondVar;
-[[clang::no_destroy]] std::shared_mutex gSuspensionMutex2;
-[[clang::no_destroy]] std::unique_lock<std::shared_mutex> gSuspensionLock;
+[[clang::no_destroy]] std::shared_timed_mutex gSuspensionMutex2;
+[[clang::no_destroy]] std::unique_lock<std::shared_timed_mutex> gSuspensionLock;
 
 } // namespace
 
@@ -144,6 +145,10 @@ void kotlin::mm::ResumeThreads() noexcept {
     gSuspensionLock.unlock();
 }
 
-std::shared_lock<std::shared_mutex> kotlin::gcSuspendLock() noexcept {
+std::shared_lock<std::shared_timed_mutex> kotlin::gcSuspendLock() noexcept {
     return std::shared_lock{gSuspensionMutex2};
+}
+
+std::unique_lock<std::shared_timed_mutex> kotlin::mm::gcMarkTerminationLock() noexcept {
+    return std::unique_lock{gSuspensionMutex2, std::defer_lock};
 }

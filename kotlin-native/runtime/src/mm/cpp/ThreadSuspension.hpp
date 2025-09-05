@@ -7,6 +7,7 @@
 #define RUNTIME_MM_THREAD_SUSPENSION_H
 
 #include <atomic>
+#include <shared_mutex>
 
 #include "Memory.h"
 #include "Utils.hpp"
@@ -92,6 +93,8 @@ void WaitForThreadsSuspension() noexcept;
  * Does not wait until all such threads are actually resumed.
  */
 void ResumeThreads() noexcept;
+
+std::unique_lock<std::shared_timed_mutex> gcMarkTerminationLock() noexcept;
 
 } // namespace mm
 } // namespace kotlin

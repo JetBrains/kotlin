@@ -8,6 +8,7 @@
 #include "MarkAndSweepUtils.hpp"
 #include "GCStatistics.hpp"
 #include "GCImpl.hpp"
+#include "ThreadSuspension.hpp"
 
 using namespace kotlin;
 
@@ -96,7 +97,7 @@ void gc::mark::ConcurrentMark::markInSTW() {
             stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
             terminateInSTW = true;
         }
-    } while (!tryTerminateMark(everSharedBatches));
+    } while (!tryTerminateMark(everSharedBatches, terminateInSTW));
 
     // By this point mutator mark queues may not be populated anymore.
     // However, some threads may still try to enqueue a marked object, before they observe the barrier disablement.
@@ -138,9 +139,14 @@ void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTra
 }
 
 /** Terminates the mark loop if possible, otherwise returns `false`. */
-bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) noexcept {
+bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches, bool terminateInSTW) noexcept {
     // prevent unwanted mutations (such as weak-reachable resurrection) during termination detection
-    std::unique_lock markTerminationGuard(markTerminationMutex_);
+    auto markTerminationGuard = mm::gcMarkTerminationLock();
+    if (terminateInSTW) {
+        // This lock is already taken by the suspension machinery.
+    } else if (!markTerminationGuard.try_lock_for(std::chrono::milliseconds(1))) {
+        return false;
+    }
 
     // has to happen under the termination lock guard
     if (!flushMutatorQueues())

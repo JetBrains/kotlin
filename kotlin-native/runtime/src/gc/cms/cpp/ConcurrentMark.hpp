@@ -124,18 +124,6 @@ public:
 
     void requestShutdown() { /* no-op */ }
 
-    /**
-     * Weak reference reads may be mutually exclusive with certain parts of mark oprocess.
-     * Every read must be guarded by the object returned by this method.
-     */
-    auto weakReadProtector() noexcept {
-        auto markTerminationGuard = std::shared_lock{markTerminationMutex_, std::defer_lock};
-        while (!markTerminationGuard.try_lock()) {
-            mm::safePoint();
-        }
-        return markTerminationGuard;
-    }
-
     /** Ensures that the mark phase would not be run during the execution of the guarded code. Use with care. */
     auto markMutex() noexcept {
         return std::shared_lock{markMutex_};
@@ -146,7 +134,7 @@ private:
 
     void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
-    bool tryTerminateMark(std::size_t& everSharedBatches) noexcept;
+    bool tryTerminateMark(std::size_t& everSharedBatches, bool terminateInSTW) noexcept;
     bool flushMutatorQueues() noexcept;
     void endMarkingEpoch();
 
@@ -156,7 +144,6 @@ private:
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
     ManuallyScoped<ParallelProcessor, true> parallelProcessor_{};
 
-    RWSpinLock markTerminationMutex_;
     RWSpinLock markMutex_;
 };
 

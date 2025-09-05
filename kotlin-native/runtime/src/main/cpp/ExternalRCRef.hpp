@@ -194,6 +194,7 @@ inline OBJ_GETTER(tryRefExternalRCRef, RawExternalRCRef* ref) noexcept {
     AssertThreadState(ThreadState::kRunnable);
     if (!ref) RETURN_OBJ(nullptr);
     if (auto obj = externalRCRefAsPermanentObject(ref)) RETURN_OBJ(obj);
+    // TODO: lock
     RETURN_RESULT_OF0(ExternalRCRefImpl::fromRaw(ref)->tryRef);
 }
 
