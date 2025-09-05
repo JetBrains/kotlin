@@ -14,6 +14,7 @@ STEP 2:
 STEP 3:
     updated exports <js>: l1.kt
 STEP 4:
+    updated exports: l1.kt
 STEP 5:
     modifications:
         U : l1.5.kt -> l1.kt
@@ -23,6 +24,7 @@ STEP 6:
         U : l1.6.kt -> l1.kt
     modified ir: l1.kt
 STEP 7:
+    updated exports: l1.kt
 STEP 8:
     modifications:
         U : l1.8.kt -> l1.kt

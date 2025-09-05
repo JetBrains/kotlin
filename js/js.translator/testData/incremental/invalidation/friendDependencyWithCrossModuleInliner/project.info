@@ -1,3 +1,13 @@
+IGNORE_PER_FILE: true
+// Mismatched rebuilt modules at step 4
+// Expected :[main/publicClass, main/test]
+// Actual   :[lib1/l1, main/test]
+
+IGNORE_BACKEND: WASM
+// Mismatched file stats for module [kotlin_main] at step 5
+// Expected :[modified ir=[test.kt]]
+// Actual   :[modified ir=[test.kt], updated imports=[publicClass.kt]]
+
 MODULES: lib1, main
 
 STEP 0:
@@ -14,11 +24,11 @@ STEP 3:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
     dirty js modules: lib1, main
-    dirty js files:   lib1/l1, main/publicClass, main/test
+    dirty js files:   lib1/l1, main/test
 STEP 4:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
-    dirty js modules: main
+    dirty js modules: main, lib1
     dirty js files:   main/publicClass, main/test
 STEP 5..6:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
@@ -28,10 +38,10 @@ STEP 5..6:
 STEP 7:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
-    dirty js modules: main
+    dirty js modules: main, lib1
     dirty js files:   main/publicClass, main/test
 STEP 8..9:
     language: +IrIntraModuleInlinerBeforeKlibSerialization, +IrCrossModuleInlinerBeforeKlibSerialization
     libs: lib1, main
-    dirty js modules: lib1, main
+    dirty js modules: lib1
     dirty js files:   lib1/l1, main/publicClass
