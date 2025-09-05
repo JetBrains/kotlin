@@ -5,9 +5,9 @@ open class P(val z: B)
 
 class B : A {
     override fun f() {}
-    class C : A by <!NO_THIS!>this<!> {}
-    class D(val x : B = <!NO_THIS!>this<!>)
-    class E : P(<!NO_THIS!>this<!>)
+    class C : A by <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this<!> {}
+    class D(val x : B = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this<!>)
+    class E : P(<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>this<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, nestedClass,

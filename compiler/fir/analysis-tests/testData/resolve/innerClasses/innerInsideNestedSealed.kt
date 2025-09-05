@@ -3,7 +3,7 @@
 
 class Graph {
     sealed class <!REDECLARATION!>Node<!> {
-        inner class Start : <!FINAL_SUPERTYPE, INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Node<!>()
+        inner class Start : <!FINAL_SUPERTYPE, INACCESSIBLE_OUTER_CLASS_RECEIVER!>Node<!>()
     }
 
     inner class <!REDECLARATION!>Node<!>

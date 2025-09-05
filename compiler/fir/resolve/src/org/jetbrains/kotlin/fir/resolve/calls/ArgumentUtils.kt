@@ -9,13 +9,19 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind.OuterClassOfNonInner
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal fun prepareCapturedType(argumentType: ConeKotlinType, session: FirSession): ConeKotlinType {
     if (argumentType.isRaw()) return argumentType
@@ -107,4 +113,18 @@ private fun ConeKotlinType.hasSupertypeWithGivenClassId(classId: ClassId, contex
             typeConstructor is ConeClassLikeLookupTag && typeConstructor.classId == classId
         }
     }
+}
+
+/**
+ * [InaccessibleReceiverKind.SecondaryConstructor] should produce a successful candidate, but INSTANCE_ACCESS_BEFORE_SUPER_CALL
+ * will be reported in a checker, whereas [InaccessibleReceiverKind.OuterClassOfNonInner] should produce an inapplicable candidate.
+ */
+@OptIn(ExperimentalContracts::class)
+internal fun FirExpression?.isInaccessibleFromStaticNestedClass(): Boolean {
+    contract { returns(true) implies (this@isInaccessibleFromStaticNestedClass is FirInaccessibleReceiverExpression) }
+    return this is FirInaccessibleReceiverExpression && this.kind == OuterClassOfNonInner
+}
+
+internal fun FirInaccessibleReceiverExpression.toInaccessibleReceiverDiagnostic(): InaccessibleOuterClassReceiver {
+    return InaccessibleOuterClassReceiver(calleeReference.boundSymbol as FirClassSymbol)
 }
