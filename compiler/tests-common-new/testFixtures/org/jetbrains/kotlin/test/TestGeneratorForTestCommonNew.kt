@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreter
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     val mainClassName = TestGeneratorUtil.getMainClassName()
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
     val k1BoxTestDir = listOf("multiplatform/k1")
@@ -29,7 +30,7 @@ fun main(args: Array<String>) {
     val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
-        testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
+        testGroup(testsRoot, testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)

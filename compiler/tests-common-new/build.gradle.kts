@@ -137,7 +137,7 @@ projectTests {
         )
     )
 
-    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt")
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt", generateTestsInBuildDirectory = true)
 }
 
 testsJarToBeUsedAlongWithFixtures()
