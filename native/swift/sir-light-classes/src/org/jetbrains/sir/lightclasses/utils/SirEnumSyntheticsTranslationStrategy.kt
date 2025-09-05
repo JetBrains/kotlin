@@ -19,9 +19,8 @@ public sealed class SirEnumSyntheticsTranslationStrategy(public val kaSymbol: Ka
     public companion object {
         public operator fun invoke(kaSymbol: KaSymbol): SirEnumSyntheticsTranslationStrategy? =
             (kaSymbol as? KaNamedFunctionSymbol)
-                ?.takeIf { true }
                 ?.let { symbol ->
-                    when (val name = symbol.name.identifier) {
+                    when (symbol.name.identifier) {
                         "valueOf" if symbol.isStatic -> AsFailableInit(kaSymbol)
                         else -> null
                     }
