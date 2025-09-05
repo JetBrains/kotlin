@@ -33,20 +33,41 @@ public class AdaptedFunctionReference implements FunctionBase, Serializable {
     private final String signature;
     private final boolean isTopLevel;
     private final int arity;
+
+    /**
+     * Bitmask where bits represent the following flags:<br/>
+     * <li>
+     *     <ul>0 - whether the vararg to element parameter type conversion happened:<pre>
+     *         fun target(vararg xs: Int) {}
+     *         fun use(f: (Int, Int, Int) -> Unit) {}
+     *         use(::target)
+     *     </pre></ul>
+     *     <ul>1 - whether coercion of return type to Unit happened:<pre>
+     *         fun target(): Boolean = true
+     *         fun use(f: () -> Unit) {}
+     *         use(::target)
+     *     </pre></ul>
+     *     <ul>2 - whether suspend conversion happened:<pre>
+     *         fun target() {}
+     *         fun useSuspend(f: suspend () -> Unit) {}
+     *         useSuspend(::target)
+     *     </pre></ul>
+     * </li>
+     */
     private final int flags;
 
-    public AdaptedFunctionReference(int arity, Class owner, String name, String signature, int flags) {
-        this(arity, NO_RECEIVER, owner, name, signature, flags);
+    public AdaptedFunctionReference(int arity, Class owner, String name, String signature, int flagsWithIsTopLevel) {
+        this(arity, NO_RECEIVER, owner, name, signature, flagsWithIsTopLevel);
     }
 
-    public AdaptedFunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flags) {
+    public AdaptedFunctionReference(int arity, Object receiver, Class owner, String name, String signature, int flagsWithIsTopLevel) {
         this.receiver = receiver;
         this.owner = owner;
         this.name = name;
         this.signature = signature;
-        this.isTopLevel = (flags & 1) == 1;
+        this.isTopLevel = (flagsWithIsTopLevel & 1) == 1;
         this.arity = arity;
-        this.flags = flags >> 1;
+        this.flags = flagsWithIsTopLevel >> 1;
     }
 
     @Override
