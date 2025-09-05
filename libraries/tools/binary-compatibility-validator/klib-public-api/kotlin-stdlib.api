@@ -14114,7 +14114,13 @@ final fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotl
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines/SuspendFunction2<#A, #B, #C>, #A, #B, kotlin.coroutines/Continuation<#C>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2|startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines.SuspendFunction2<0:0,0:1,0:2>;0:0;0:1;kotlin.coroutines.Continuation<0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.coroutines/SuspendFunction1<#A, #B>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl(#A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl|startCoroutineUninterceptedOrReturnImpl@kotlin.coroutines.SuspendFunction1<0:0,0:1>(0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic1(kotlin.coroutines/SuspendFunction1<#A, #B>, #A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic1|startCoroutineUninterceptedOrReturnIntrinsic1(kotlin.coroutines.SuspendFunction1<0:0,0:1>;0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?> (kotlin.coroutines/SuspendFunction0<#A>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl(kotlin.coroutines/Continuation<#A>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl|startCoroutineUninterceptedOrReturnImpl@kotlin.coroutines.SuspendFunction0<0:0>(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/createSimpleCoroutineFromSuspendFunction(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/CoroutineImpl // kotlin.coroutines.intrinsics/createSimpleCoroutineFromSuspendFunction|createSimpleCoroutineFromSuspendFunction(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
@@ -14135,7 +14141,7 @@ final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValueOfIntrinsic(kotlin
 final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValuesIntrinsic(): kotlin/Array<#A> // kotlin.wasm.internal/enumValuesIntrinsic|enumValuesIntrinsic(){0§<kotlin.Enum<0:0>>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin/Long): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.Long){}[0]
+final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin.reflect/KClass<*>): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.reflect.KClass<*>){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.wasm.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
