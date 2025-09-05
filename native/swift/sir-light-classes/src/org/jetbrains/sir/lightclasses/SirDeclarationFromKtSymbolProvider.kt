@@ -67,7 +67,7 @@ public class SirDeclarationFromKtSymbolProvider(
                     ).let(SirTranslationResult::RegularFunction)
             }
             is KaEnumEntrySymbol -> {
-                SirTranslationResult.EnumCase(SirEnumCaseFromKtSymbol(ktSymbol, sirSession))
+                SirTranslationResult.EnumCase(createSirEnumCaseFromKtSymbol(ktSymbol, sirSession))
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {
