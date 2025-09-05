@@ -25526,6 +25526,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("noTypeArgumentsOnInner.kt")
+      public void testNoTypeArgumentsOnInner() {
+        runTest("compiler/testData/diagnostics/tests/inner/noTypeArgumentsOnInner.kt");
+      }
+
+      @Test
       @TestMetadata("outerGenericParam.kt")
       public void testOuterGenericParam() {
         runTest("compiler/testData/diagnostics/tests/inner/outerGenericParam.kt");

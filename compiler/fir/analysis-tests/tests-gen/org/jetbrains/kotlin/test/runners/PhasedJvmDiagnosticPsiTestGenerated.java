@@ -24652,6 +24652,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("noTypeArgumentsOnInner.kt")
+      public void testNoTypeArgumentsOnInner() {
+        runTest("compiler/testData/diagnostics/tests/inner/noTypeArgumentsOnInner.kt");
+      }
+
+      @Test
       @TestMetadata("outerGenericParam.kt")
       public void testOuterGenericParam() {
         runTest("compiler/testData/diagnostics/tests/inner/outerGenericParam.kt");
