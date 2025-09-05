@@ -244,7 +244,7 @@ internal class FirInvokeResolveTowerExtension(
 
         // Resolving to the property from a call site in its body can cause a recursive problem.
         // However, the declaration order in this case is trivial, and it can't affect resolution.
-        if (context.bodyResolveContext.containerIfAny?.symbol == symbol) return
+        if (context.bodyResolveContext.containers.asReversed().any { it.symbol == symbol }) return
 
         collector.addForwardedDiagnostic(ImplicitPropertyTypeMakesBehaviorOrderDependant(symbol))
     }
