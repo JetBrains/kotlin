@@ -152,6 +152,18 @@ class CandidateFactory private constructor(
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
         }
+
+        if (dispatchReceiver.isInaccessibleFromStaticNestedClass()) {
+            result.addDiagnostic(dispatchReceiver.toInaccessibleReceiverDiagnostic())
+        }
+
+        for (receiver in givenExtensionReceiverOptions) {
+            if (receiver.isInaccessibleFromStaticNestedClass()) {
+                result.addDiagnostic(receiver.toInaccessibleReceiverDiagnostic())
+                break
+            }
+        }
+
         return result
     }
 

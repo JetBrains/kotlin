@@ -12,21 +12,21 @@ class A {
 
     class B {
         fun t(s: String) {
-            <!UNRESOLVED_REFERENCE!>test<!>()
-            s.<!UNRESOLVED_REFERENCE!>test2<!>()
-            <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(s) {
-                <!UNRESOLVED_REFERENCE!>test2<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test<!>()
+            s.<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test2<!>()
+            with(s) {
+                <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test2<!>()
             }
 
             val x: String = test3()
-            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test4<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test4<!>()
         }
 
         inner class C {
             fun t() {
-                <!UNRESOLVED_REFERENCE!>test<!>()
-                "".<!UNRESOLVED_REFERENCE!>test2<!>()
-                <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>test4<!>()
+                <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test<!>()
+                "".<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test2<!>()
+                <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>test4<!>()
             }
         }
     }

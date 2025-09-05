@@ -160,3 +160,5 @@ val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKi
 val firResolvedArgumentListType = type("fir.expressions.impl", "FirResolvedArgumentList", kind = TypeKind.Class)
 
 val toSymbolUtilityFunction = type("fir.types", "toLookupTag")
+
+val inaccessibleReceiverKindType = type("fir.expressions", "InaccessibleReceiverKind")
