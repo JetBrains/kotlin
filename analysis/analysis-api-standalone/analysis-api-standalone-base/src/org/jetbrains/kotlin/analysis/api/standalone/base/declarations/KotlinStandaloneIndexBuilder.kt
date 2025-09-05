@@ -209,8 +209,10 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         }
 
         // This call is required to bind the view provider, its file and the psi manager together
-        viewProvider.forceCachedPsi(ktFile)
-        return IndexableFile(virtualFile = virtualFile, ktFile = ktFile, isShared = true)
+        return ApplicationManager.getApplication().runWriteAction<_> {
+            viewProvider.forceCachedPsi(ktFile)
+            IndexableFile(virtualFile = virtualFile, ktFile = ktFile, isShared = true)
+        }
     }
 
     private val decompiledFilesFromBuiltins = mutableSetOf<IndexableFile>()
