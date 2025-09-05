@@ -20,8 +20,8 @@ import kotlin.wasm.internal.*
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of the suspended
  * coroutine using a reference to the suspending function.
  */
-@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
-@kotlin.internal.InlineOnly
+@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING", "NOTHING_TO_INLINE")
+@kotlin.internal.DoNotInlineOnFirstStage
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
