@@ -25,6 +25,7 @@ abstract class FirInaccessibleReceiverExpression : FirExpression(), FirResolvabl
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirThisReference
+    abstract val kind: InaccessibleReceiverKind
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitInaccessibleReceiverExpression(this, data)

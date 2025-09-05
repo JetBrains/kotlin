@@ -401,6 +401,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_I
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
@@ -976,6 +977,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
             "Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:{0}",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            INACCESSIBLE_OUTER_CLASS_RECEIVER,
+            "Outer class ''{0}'' of non-inner class cannot be used as receiver.",
+            SYMBOL,
         )
         map.put(
             UNRESOLVED_IMPORT,

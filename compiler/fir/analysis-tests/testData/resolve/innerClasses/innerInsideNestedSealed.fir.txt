@@ -11,7 +11,7 @@ FILE: innerInsideNestedSealed.kt
 
             public final inner class Start : R|Graph.Node| {
                 public Graph.Node.constructor(): R|Graph.Node.Start| {
-                    super<R|Graph.Node|>()
+                    R|Graph|this@R|/Graph|.super<R|Graph.Node|>()
                 }
 
             }

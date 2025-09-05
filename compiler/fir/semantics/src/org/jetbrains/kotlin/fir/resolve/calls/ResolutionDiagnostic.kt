@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -210,3 +211,5 @@ val Collection<ResolutionDiagnostic>.anyUnsuccessful: Boolean get() = !allSucces
 
 @OptIn(ApplicabilityDetail::class)
 val ResolutionDiagnostic.isSuccess: Boolean get() = applicability.isSuccess
+
+class InaccessibleOuterClassReceiver(val symbol: FirClassSymbol<*>) : ResolutionDiagnostic(INAPPLICABLE)

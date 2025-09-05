@@ -18,7 +18,7 @@ FILE: receiverConsistency.kt
             }
 
             public final fun test(): R|kotlin/Unit| {
-                <Unresolved name: err>#()
+                R|C|this@R|/C|.R|/C.err<Inapplicable(INAPPLICABLE): /C.err>#|()
             }
 
         }

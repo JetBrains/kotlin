@@ -348,6 +348,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER) { firDiagnostic ->
+        InaccessibleOuterClassReceiverImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNRESOLVED_IMPORT) { firDiagnostic ->
         UnresolvedImportImpl(
             firDiagnostic.a,

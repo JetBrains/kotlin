@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
@@ -42,6 +43,7 @@ class BodyResolveContext(
     @set:PrivateForInline
     var returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
+    private val isContextCollectorMode: Boolean
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
@@ -353,8 +355,9 @@ class BodyResolveContext(
             implicitReceiverValue = InaccessibleImplicitReceiverValue(
                 owningClass.symbol,
                 owningClass.defaultType(),
+                InaccessibleReceiverKind.SecondaryConstructor,
                 holder.session,
-                holder.scopeSession
+                holder.scopeSession,
             )
         )
     }
@@ -613,10 +616,24 @@ class BodyResolveContext(
         val scopeForEnumEntries = forConstructorHeader
 
         val newTowerDataContextForStaticNestedClasses =
-            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
+            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true) {
                 forMembersResolution
-            else
+            } else if (!isContextCollectorMode) {
+                // ContextCollector is used by the IDE for completion, reference shortening, etc.
+                // Creating the inaccessible receiver in this mode would lead to the appearance of new completion items that would always
+                // lead to red code unless we specifically filter it out in all relevant call-sites.
+                // Instead, we just don't create it when running in ContextCollector mode.
+                val inaccessibleImplicitReceiverValue = InaccessibleImplicitReceiverValue(
+                    owner.symbol,
+                    type,
+                    InaccessibleReceiverKind.OuterClassOfNonInner,
+                    holder.session,
+                    holder.scopeSession,
+                )
+                staticsAndCompanion.addReceiver(labelName, inaccessibleImplicitReceiverValue)
+            } else {
                 staticsAndCompanion
+            }
 
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =

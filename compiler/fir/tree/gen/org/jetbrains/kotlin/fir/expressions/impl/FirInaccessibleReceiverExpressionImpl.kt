@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -30,6 +31,7 @@ internal class FirInaccessibleReceiverExpressionImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirThisReference,
+    override val kind: InaccessibleReceiverKind,
 ) : FirInaccessibleReceiverExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

@@ -7,7 +7,7 @@ class C {
 
     class Nested {
         fun test() {
-            <!UNRESOLVED_REFERENCE!>err<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>err<!>()
         }
     }
 }
