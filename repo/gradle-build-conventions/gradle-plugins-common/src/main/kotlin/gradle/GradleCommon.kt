@@ -228,6 +228,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         // Common outputs will also produce '${project.name}.kotlin_module' file, so we need to avoid
         // files clash
         compilerOptions.moduleName.set("${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}")
+        // Workaround for https://youtrack.jetbrains.com/issue/KT-80750
+        compilerOptions.freeCompilerArgs.add("-Xjspecify-annotations=ignore")
         configureGradleCompatibility()
     }
 
