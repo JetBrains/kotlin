@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -123,7 +122,6 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
         noArgsConstructor.replaceDeprecationsProvider(annotations.getDeprecationsProviderFromAnnotations(session, fromJava = false))
     }
 
-    @OptIn(SymbolInternals::class)
     private fun shouldGenerateNoArgConstructor(
         classSymbol: FirClassSymbol<*>,
         classDeclaredMemberScope: FirClassDeclaredMemberScope
