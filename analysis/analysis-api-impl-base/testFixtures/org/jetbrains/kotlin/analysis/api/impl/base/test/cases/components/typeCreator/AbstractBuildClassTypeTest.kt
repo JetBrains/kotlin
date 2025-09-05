@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCr
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
-import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -68,15 +67,16 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
 
             val isMarkedNullable = Directives.NULLABLE in mainModule.testModule.directives
 
-            val builderConfiguration: KaClassTypeBuilder.() -> Unit = {
+            @Suppress("DEPRECATION")
+            val builderConfiguration: org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.() -> Unit = {
                 this.isMarkedNullable = isMarkedNullable
 
                 argumentDirectives.forEach { typeArgument ->
                     when (typeArgument) {
-                        is TypeArgument.StarProjection -> typeArgument(typeCreator.starTypeProjection())
+                        is TypeArgument.StarProjection -> argument(buildStarTypeProjection())
                         is TypeArgument.TypeArgumentWithVariance -> {
                             val type = allTypesById[typeArgument.caretId] ?: error("No type with id ${typeArgument.caretId}")
-                            typeArgument(typeArgument.variance, type)
+                            argument(type, typeArgument.variance)
                         }
                     }
                 }
@@ -91,7 +91,8 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                 if (classId == null) {
                     appendLine("   ClassId is null")
                 } else {
-                    val classTypeByClassId = typeCreator.classType(classId, builderConfiguration)
+                    @Suppress("DEPRECATION")
+                    val classTypeByClassId = buildClassType(classId, builderConfiguration)
 
                     appendLine(
                         "   ${KaType::class.simpleName}: ${
@@ -103,7 +104,8 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                     )
                 }
 
-                val classTypeBySymbol = typeCreator.classType(symbol, builderConfiguration)
+                @Suppress("DEPRECATION")
+                val classTypeBySymbol = buildClassType(symbol, builderConfiguration)
 
                 appendLine("CLASS_TYPE_BY_SYMBOL")
                 appendLine(

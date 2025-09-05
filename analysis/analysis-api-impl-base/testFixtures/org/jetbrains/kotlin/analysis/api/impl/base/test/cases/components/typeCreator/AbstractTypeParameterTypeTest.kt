@@ -51,7 +51,8 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
                 Pair(targetExpression.text, targetExpression.symbol)
             }
 
-            val ktType = typeCreator.typeParameterType(typeParameterSymbol) {
+            @Suppress("DEPRECATION")
+            val ktType = buildTypeParameterType(typeParameterSymbol) {
                 isMarkedNullable = false
             }
 

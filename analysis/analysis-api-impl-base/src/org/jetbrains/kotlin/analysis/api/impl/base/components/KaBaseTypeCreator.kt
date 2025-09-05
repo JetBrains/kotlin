@@ -48,15 +48,15 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
                     StandardClassIds.primitiveArrayTypeByElementType[classId]
                         ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
                 if (primitiveArrayId != null) {
-                    return typeCreator.classType(primitiveArrayId) {
+                    return buildClassType(primitiveArrayId) {
                         isMarkedNullable = builder.isMarkedNullable
                     }
                 }
             }
 
-            return typeCreator.classType(StandardClassIds.Array) {
+            return buildClassType(StandardClassIds.Array) {
                 isMarkedNullable = builder.isMarkedNullable
-                typeArgument(builder.variance, builderElementType)
+                argument(builderElementType, builder.variance)
             }
         }
     }
