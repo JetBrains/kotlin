@@ -21,6 +21,4 @@ public class A
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
-        /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* INVOKE @0 */ local fun <anonymous>($this$run: A)
+    /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)

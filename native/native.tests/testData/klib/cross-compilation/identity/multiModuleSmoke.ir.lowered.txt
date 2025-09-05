@@ -69,8 +69,21 @@ MODULE_FRAGMENT name:<lib2>
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.Object.PrivateObject
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Nothing declared in lib2.Object.PrivateObject'
-              CALL 'kotlin/error|error(kotlin.Any){}[0]' type=kotlin.Nothing origin=null
-                ARG 1: CONST String type=kotlin.String value="Dead end"
+              BLOCK type=kotlin.Nothing origin=INLINE_ARGS_CONTAINER
+                VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Any [val]
+                  BLOCK type=kotlin.Any origin=null
+                    TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                      CONST String type=kotlin.String value="Dead end"
+                RETURNABLE_BLOCK type=kotlin.Nothing origin=null
+                  INLINED_BLOCK type=kotlin.Nothing origin=null
+                    inlinedFunctionSymbol: kotlin/error|error(kotlin.Any){}[0]
+                    inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Preconditions.kt
+                    VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:message type:kotlin.Any [val]
+                      GET_VAR 'val tmp0: kotlin.Any [val] declared in lib2.Object.PrivateObject.foo' type=kotlin.Any origin=null
+                    THROW type=kotlin.Nothing
+                      CONSTRUCTOR_CALL 'kotlin/IllegalStateException.<init>|<init>(kotlin.String?){}[0]' type=kotlin.IllegalStateException origin=null
+                        ARG 1: CALL 'kotlin/Any.toString|toString(){}[0]' type=kotlin.String origin=null
+                          ARG 1: GET_VAR 'val message: kotlin.Any [val] declared in lib2.Object.PrivateObject.foo' type=kotlin.Any origin=null
     CLASS INTERFACE name:SealedInterface signature:lib2/SealedInterface|null[0] modality:SEALED visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib2.SealedInterface
       PROPERTY name:v signature:lib2/SealedInterface.v|{}v[0] visibility:public modality:ABSTRACT [val]
@@ -102,8 +115,14 @@ MODULE_FRAGMENT name:<lib2>
                   TYPE_ARG 1: kotlin.Pair<kotlin.String, kotlin.Number>
                   ARG 1: CALL 'kotlin.collections/toMutableSet|toMutableSet@kotlin.collections.Iterable<0:0>(){0§<kotlin.Any?>}[0]' type=kotlin.collections.MutableSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
                     TYPE_ARG 1: kotlin.Pair<kotlin.String, kotlin.Number>
-                    ARG 1: CALL 'kotlin.collections/setOf|setOf(){0§<kotlin.Any?>}[0]' type=kotlin.collections.Set<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
-                      TYPE_ARG 1: kotlin.Pair<kotlin.String, kotlin.Number>
+                    ARG 1: RETURNABLE_BLOCK type=kotlin.collections.Set<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
+                      INLINED_BLOCK type=kotlin.collections.Set<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
+                        inlinedFunctionSymbol: kotlin.collections/setOf|setOf(){0§<kotlin.Any?>}[0]
+                        inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/collections/Sets.kt
+                        RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                          TYPE_OP type=kotlin.collections.Set<kotlin.Pair<kotlin.String, kotlin.Number>> origin=IMPLICIT_CAST typeOperand=kotlin.collections.Set<kotlin.Pair<kotlin.String, kotlin.Number>>
+                            CALL 'kotlin.collections/emptySet|emptySet(){0§<kotlin.Any?>}[0]' type=kotlin.collections.Set<kotlin.Any?> origin=null
+                              TYPE_ARG 1: kotlin.Any?
         FUN ENUM_CLASS_SPECIAL_MEMBER name:values signature:lib2/SealedInterface.Enum.values|values#static(){}[0] visibility:public modality:FINAL returnType:kotlin.Array<lib2.SealedInterface.Enum>
           SYNTHETIC_BODY kind=ENUM_VALUES
         FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf signature:lib2/SealedInterface.Enum.valueOf|valueOf#static(kotlin.String){}[0] visibility:public modality:FINAL returnType:lib2.SealedInterface.Enum
@@ -128,8 +147,22 @@ MODULE_FRAGMENT name:<lib2>
                   overriddenFunctionSymbol: kotlin/Function0.invoke|invoke(){}[0]
                   invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
                     BLOCK_BODY
-                      CALL 'kotlin/TODO|TODO(kotlin.String){}[0]' type=kotlin.Nothing origin=null
-                        ARG 1: CONST String type=kotlin.String value="Never would be implemented"
+                      BLOCK type=kotlin.Nothing origin=INLINE_ARGS_CONTAINER
+                        VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.String [val]
+                          BLOCK type=kotlin.String origin=null
+                            TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                              CONST String type=kotlin.String value="Never would be implemented"
+                        RETURNABLE_BLOCK type=kotlin.Nothing origin=null
+                          INLINED_BLOCK type=kotlin.Nothing origin=null
+                            inlinedFunctionSymbol: kotlin/TODO|TODO(kotlin.String){}[0]
+                            inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Standard.kt
+                            VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:reason type:kotlin.String [val]
+                              GET_VAR 'val tmp0: kotlin.String [val] declared in lib2.SealedInterface.Object.v$delegate.<anonymous>' type=kotlin.String origin=null
+                            THROW type=kotlin.Nothing
+                              CONSTRUCTOR_CALL 'kotlin/NotImplementedError.<init>|<init>(kotlin.String){}[0]' type=kotlin.NotImplementedError origin=null
+                                ARG 1: STRING_CONCATENATION type=kotlin.String
+                                  CONST String type=kotlin.String value="An operation is not implemented: "
+                                  GET_VAR 'val reason: kotlin.String [val] declared in lib2.SealedInterface.Object.v$delegate.<anonymous>' type=kotlin.String origin=null
           FUN DELEGATED_PROPERTY_ACCESSOR name:<get-v> signature:lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0] visibility:public modality:OPEN returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
             correspondingProperty: PROPERTY name:v signature:lib2/SealedInterface.Object.v|{}v[0] visibility:public modality:OPEN [delegated,val]
@@ -137,18 +170,40 @@ MODULE_FRAGMENT name:<lib2>
               lib2/SealedInterface.v.<get-v>|<get-v>(){}[0]
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]'
-                CALL 'kotlin/getValue|getValue@kotlin.Lazy<0:0>(kotlin.Any?;kotlin.reflect.KProperty<*>){0§<kotlin.Any?>}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
-                  TYPE_ARG 1: kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
-                  ARG 1: GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>] ] type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=null
-                    receiver: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=IMPLICIT_ARGUMENT
-                  ARG 2: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=null
-                  ARG 3: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<lib2.SealedInterface.Object, kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='lib2/SealedInterface.Object.v|{}v[0]'
-                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-v> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
-                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:lib2.SealedInterface.Object
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <get-v> (p0: lib2.SealedInterface.Object): kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> declared in lib2.SealedInterface.Object.<get-v>'
-                          CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
-                            ARG <this>: GET_VAR 'p0: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>.<get-v>' type=lib2.SealedInterface.Object origin=null
+                BLOCK type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=INLINE_ARGS_CONTAINER
+                  VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Lazy<kotlin.Any?> [val]
+                    BLOCK type=kotlin.Lazy<kotlin.Any?> origin=null
+                      TYPE_OP type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.Lazy<kotlin.Any?>
+                        GET_FIELD 'FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>] ] type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final] declared in lib2.SealedInterface.Object' type=kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=null
+                          receiver: GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=IMPLICIT_ARGUMENT
+                  VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Any? [val]
+                    BLOCK type=kotlin.Any? origin=null
+                      TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+                        GET_VAR '<this>: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>' type=lib2.SealedInterface.Object origin=null
+                  VAR IR_TEMPORARY_VARIABLE name:tmp4 type:kotlin.reflect.KProperty<*> [val]
+                    BLOCK type=kotlin.reflect.KProperty<*> origin=null
+                      TYPE_OP type=kotlin.reflect.KProperty<*> origin=IMPLICIT_CAST typeOperand=kotlin.reflect.KProperty<*>
+                        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty1<lib2.SealedInterface.Object, kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='lib2/SealedInterface.Object.v|{}v[0]'
+                          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-v> visibility:local modality:FINAL returnType:kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
+                            VALUE_PARAMETER kind:Regular name:p0 index:0 type:lib2.SealedInterface.Object
+                            BLOCK_BODY
+                              RETURN type=kotlin.Nothing from='local final fun <get-v> (p0: lib2.SealedInterface.Object): kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> declared in lib2.SealedInterface.Object.<get-v>'
+                                CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
+                                  ARG <this>: GET_VAR 'p0: lib2.SealedInterface.Object declared in lib2.SealedInterface.Object.<get-v>.<get-v>' type=lib2.SealedInterface.Object origin=null
+                  RETURNABLE_BLOCK type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
+                    INLINED_BLOCK type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=null
+                      inlinedFunctionSymbol: kotlin/getValue|getValue@kotlin.Lazy<0:0>(kotlin.Any?;kotlin.reflect.KProperty<*>){0§<kotlin.Any?>}[0]
+                      inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Lazy.kt
+                      VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:kotlin.Lazy<kotlin.Any?> [val]
+                        GET_VAR 'val tmp0: kotlin.Lazy<kotlin.Any?> [val] declared in lib2.SealedInterface.Object.<get-v>' type=kotlin.Lazy<kotlin.Any?> origin=null
+                      VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:thisRef type:kotlin.Any? [val]
+                        GET_VAR 'val tmp2: kotlin.Any? [val] declared in lib2.SealedInterface.Object.<get-v>' type=kotlin.Any? origin=null
+                      VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:property type:kotlin.reflect.KProperty<*> [val]
+                        GET_VAR 'val tmp4: kotlin.reflect.KProperty<*> [val] declared in lib2.SealedInterface.Object.<get-v>' type=kotlin.reflect.KProperty<*> origin=null
+                      RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                        TYPE_OP type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=IMPLICIT_CAST typeOperand=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>
+                          CALL 'kotlin/Lazy.value.<get-value>|<get-value>(){}[0]' type=kotlin.Any? origin=GET_PROPERTY
+                            ARG 1: GET_VAR 'val this: kotlin.Lazy<kotlin.Any?> [val] declared in lib2.SealedInterface.Object.<get-v>' type=kotlin.Lazy<kotlin.Any?> origin=null
         FUN GENERATED_DATA_CLASS_MEMBER name:toString signature:lib2/SealedInterface.Object.toString|toString(){}[0] visibility:public modality:OPEN returnType:kotlin.String
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:lib2.SealedInterface.Object
           overridden:
@@ -223,9 +278,29 @@ MODULE_FRAGMENT name:<lib3>
         BLOCK_BODY
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             CALL 'kotlin.math/tanh|tanh(kotlin.Double){}[0]' type=kotlin.Double origin=null
-              ARG 1: CALL 'kotlin/Double.times|times(kotlin.Int){}[0]' type=kotlin.Double origin=MUL
-                ARG 1: CONST Double type=kotlin.Double value=3.141592653589793
-                ARG 2: GET_VAR 'default: kotlin.Int declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
+              ARG 1: BLOCK type=kotlin.Double origin=INLINE_ARGS_CONTAINER
+                VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Double [val]
+                  BLOCK type=kotlin.Double origin=null
+                    TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                      CONST Double type=kotlin.Double value=3.141592653589793
+                VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Int [val]
+                  BLOCK type=kotlin.Int origin=null
+                    TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                      GET_VAR 'default: kotlin.Int declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
+                RETURNABLE_BLOCK type=kotlin.Double origin=null
+                  INLINED_BLOCK type=kotlin.Double origin=null
+                    inlinedFunctionSymbol: kotlin/Double.times|times(kotlin.Int){}[0]
+                    inlinedFunctionFileEntry: FILE_ENTRY path:src/main/kotlin/kotlin/Primitives.kt
+                    VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:kotlin.Double [val]
+                      GET_VAR 'val tmp0: kotlin.Double [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Double origin=null
+                    VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:other type:kotlin.Int [val]
+                      GET_VAR 'val tmp2: kotlin.Int [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
+                    RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                      TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                        CALL 'kotlin/Double.times|times(kotlin.Double){}[0]' type=kotlin.Double origin=MUL
+                          ARG 1: GET_VAR 'val this: kotlin.Double [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Double origin=null
+                          ARG 2: CALL 'kotlin/Int.toDouble|toDouble(){}[0]' type=kotlin.Double origin=null
+                            ARG 1: GET_VAR 'val other: kotlin.Int [val] declared in lib3.IImpl.interfaceFun' type=kotlin.Int origin=null
     FUN name:doStuff signature:lib3/doStuff|doStuff(){}[0] visibility:public modality:FINAL returnType:kotlin.Unit [inline]
       annotations:
         Suppress(1 = ["NOTHING_TO_INLINE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
@@ -233,27 +308,93 @@ MODULE_FRAGMENT name:<lib3>
         CALL 'lib1/take|take(0:0){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
           TYPE_ARG 1: kotlin.Int
           ARG 1: CONST Int type=kotlin.Int value=42
-        CALL 'kotlin/check|check(kotlin.Boolean){}[0]' type=kotlin.Unit origin=null
-          ARG 1: CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
+        BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+          VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
+            BLOCK type=kotlin.Boolean origin=null
+              TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
+          RETURNABLE_BLOCK type=kotlin.Unit origin=null
+            INLINED_BLOCK type=kotlin.Unit origin=null
+              inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
+              inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Preconditions.kt
+              VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:value type:kotlin.Boolean [val]
+                GET_VAR 'val tmp0: kotlin.Boolean [val] declared in lib3.doStuff' type=kotlin.Boolean origin=null
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'kotlin/Boolean.not|not(){}[0]' type=kotlin.Boolean origin=null
+                    ARG 1: GET_VAR 'val value: kotlin.Boolean [val] declared in lib3.doStuff' type=kotlin.Boolean origin=null
+                  then: BLOCK type=kotlin.Unit origin=null
+                    THROW type=kotlin.Nothing
+                      CONSTRUCTOR_CALL 'kotlin/IllegalStateException.<init>|<init>(kotlin.String?){}[0]' type=kotlin.IllegalStateException origin=null
+                        ARG 1: CONST String type=kotlin.String value="Check failed."
+              RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
         CALL 'lib1/functionCalls|functionCalls(lib1.I){}[0]' type=kotlin.Unit origin=null
           ARG 1: CONSTRUCTOR_CALL 'lib3/IImpl.<init>|<init>(){}[0]' type=lib3.IImpl origin=null
         CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
           ARG 1: CALL 'lib2/Object.toString|toString(){}[0]' type=kotlin.String origin=null
             ARG 1: GET_OBJECT 'lib2/Object|null[0]' type=lib2.Object
-        CALL 'kotlin.collections/forEach|forEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
-          TYPE_ARG 1: lib2.SealedInterface.Enum
-          ARG 1: CALL 'lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0]' type=kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> origin=GET_PROPERTY
-          ARG 2: RICH_FUNCTION_REFERENCE type=kotlin.Function1<lib2.SealedInterface.Enum, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
-            overriddenFunctionSymbol: kotlin/Function1.invoke|invoke(1:0){}[0]
-            invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-              VALUE_PARAMETER kind:Regular name:it index:0 type:lib2.SealedInterface.Enum
-              BLOCK_BODY
-                CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
-                  ARG 1: GET_VAR 'it: lib2.SealedInterface.Enum declared in lib3.doStuff.<anonymous>' type=lib2.SealedInterface.Enum origin=null
-        CALL 'kotlin/check|check(kotlin.Boolean){}[0]' type=kotlin.Unit origin=null
-          ARG 1: CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
-            ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
-              ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
+        BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+          VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.collections.Iterable<kotlin.Any?> [val]
+            BLOCK type=kotlin.collections.Iterable<kotlin.Any?> origin=null
+              TYPE_OP type=kotlin.collections.Iterable<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.collections.Iterable<kotlin.Any?>
+                CALL 'lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0]' type=kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> origin=GET_PROPERTY
+          RETURNABLE_BLOCK type=kotlin.Unit origin=null
+            INLINED_BLOCK type=kotlin.Unit origin=null
+              inlinedFunctionSymbol: kotlin.collections/forEach|forEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+              inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/common/src/generated/_Collections.kt
+              VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:kotlin.collections.Iterable<kotlin.Any?> [val]
+                GET_VAR 'val tmp0: kotlin.collections.Iterable<kotlin.Any?> [val] declared in lib3.doStuff' type=kotlin.collections.Iterable<kotlin.Any?> origin=null
+              BLOCK type=kotlin.Unit origin=FOR_LOOP
+                VAR FOR_LOOP_ITERATOR name:<iterator> type:kotlin.collections.Iterator<kotlin.Any?> [val]
+                  CALL 'kotlin.collections/Iterable.iterator|iterator(){}[0]' type=kotlin.collections.Iterator<kotlin.Any?> origin=FOR_LOOP_ITERATOR
+                    ARG 1: GET_VAR 'val this: kotlin.collections.Iterable<kotlin.Any?> [val] declared in lib3.doStuff' type=kotlin.collections.Iterable<kotlin.Any?> origin=null
+                WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                  condition: CALL 'kotlin.collections/Iterator.hasNext|hasNext(){}[0]' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                    ARG 1: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.Any?> [val] declared in lib3.doStuff' type=kotlin.collections.Iterator<kotlin.Any?> origin=null
+                  body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+                    VAR FOR_LOOP_VARIABLE name:element type:kotlin.Any? [val]
+                      CALL 'kotlin.collections/Iterator.next|next(){}[0]' type=kotlin.Any? origin=FOR_LOOP_NEXT
+                        ARG 1: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.Any?> [val] declared in lib3.doStuff' type=kotlin.collections.Iterator<kotlin.Any?> origin=null
+                    BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+                      VAR IR_TEMPORARY_VARIABLE name:tmp0 type:lib2.SealedInterface.Enum [val]
+                        BLOCK type=lib2.SealedInterface.Enum origin=null
+                          TYPE_OP type=lib2.SealedInterface.Enum origin=IMPLICIT_CAST typeOperand=lib2.SealedInterface.Enum
+                            GET_VAR 'val element: kotlin.Any? [val] declared in lib3.doStuff' type=kotlin.Any? origin=null
+                      RETURNABLE_BLOCK type=kotlin.Unit origin=null
+                        INLINED_BLOCK type=kotlin.Unit origin=null
+                          inlinedFunctionFileEntry: FILE_ENTRY path:lib3.kt
+                          VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:it type:lib2.SealedInterface.Enum [val]
+                            GET_VAR 'val tmp0: lib2.SealedInterface.Enum [val] declared in lib3.doStuff' type=lib2.SealedInterface.Enum origin=null
+                          CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
+                            ARG 1: GET_VAR 'val it: lib2.SealedInterface.Enum [val] declared in lib3.doStuff' type=lib2.SealedInterface.Enum origin=null
+                          RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                            GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
+              RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
+        BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+          VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
+            BLOCK type=kotlin.Boolean origin=null
+              TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
+                  ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
+                    ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
+          RETURNABLE_BLOCK type=kotlin.Unit origin=null
+            INLINED_BLOCK type=kotlin.Unit origin=null
+              inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
+              inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Preconditions.kt
+              VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:value type:kotlin.Boolean [val]
+                GET_VAR 'val tmp0: kotlin.Boolean [val] declared in lib3.doStuff' type=kotlin.Boolean origin=null
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'kotlin/Boolean.not|not(){}[0]' type=kotlin.Boolean origin=null
+                    ARG 1: GET_VAR 'val value: kotlin.Boolean [val] declared in lib3.doStuff' type=kotlin.Boolean origin=null
+                  then: BLOCK type=kotlin.Unit origin=null
+                    THROW type=kotlin.Nothing
+                      CONSTRUCTOR_CALL 'kotlin/IllegalStateException.<init>|<init>(kotlin.String?){}[0]' type=kotlin.IllegalStateException origin=null
+                        ARG 1: CONST String type=kotlin.String value="Check failed."
+              RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
 
 // MODULE: app
 MODULE_FRAGMENT name:<app>
@@ -263,31 +404,97 @@ MODULE_FRAGMENT name:<app>
         RETURNABLE_BLOCK type=kotlin.Unit origin=null
           INLINED_BLOCK type=kotlin.Unit origin=null
             inlinedFunctionSymbol: lib3/doStuff|doStuff(){}[0]
-            inlinedFunctionFileEntry: FILE_ENTRY path:/lib3.kt
+            inlinedFunctionFileEntry: FILE_ENTRY path:lib3.kt
             CALL 'lib1/take|take(0:0){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
               TYPE_ARG 1: kotlin.Int
               ARG 1: CONST Int type=kotlin.Int value=42
-            CALL 'kotlin/check|check(kotlin.Boolean){}[0]' type=kotlin.Unit origin=null
-              ARG 1: CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
+            BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
+                BLOCK type=kotlin.Boolean origin=null
+                  TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                    CALL 'lib1/getBoolean|getBoolean(){}[0]' type=kotlin.Boolean origin=null
+              RETURNABLE_BLOCK type=kotlin.Unit origin=null
+                INLINED_BLOCK type=kotlin.Unit origin=null
+                  inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
+                  inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Preconditions.kt
+                  VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:value type:kotlin.Boolean [val]
+                    GET_VAR 'val tmp0: kotlin.Boolean [val] declared in app.main' type=kotlin.Boolean origin=null
+                  WHEN type=kotlin.Unit origin=IF
+                    BRANCH
+                      if: CALL 'kotlin/Boolean.not|not(){}[0]' type=kotlin.Boolean origin=null
+                        ARG 1: GET_VAR 'val value: kotlin.Boolean [val] declared in app.main' type=kotlin.Boolean origin=null
+                      then: BLOCK type=kotlin.Unit origin=null
+                        THROW type=kotlin.Nothing
+                          CONSTRUCTOR_CALL 'kotlin/IllegalStateException.<init>|<init>(kotlin.String?){}[0]' type=kotlin.IllegalStateException origin=null
+                            ARG 1: CONST String type=kotlin.String value="Check failed."
+                  RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                    GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
             CALL 'lib1/functionCalls|functionCalls(lib1.I){}[0]' type=kotlin.Unit origin=null
               ARG 1: CONSTRUCTOR_CALL 'lib3/IImpl.<init>|<init>(){}[0]' type=lib3.IImpl origin=null
             CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
               ARG 1: CALL 'lib2/Object.toString|toString(){}[0]' type=kotlin.String origin=null
                 ARG 1: GET_OBJECT 'lib2/Object|null[0]' type=lib2.Object
-            CALL 'kotlin.collections/forEach|forEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]' type=kotlin.Unit origin=null
-              TYPE_ARG 1: lib2.SealedInterface.Enum
-              ARG 1: CALL 'lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0]' type=kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> origin=GET_PROPERTY
-              ARG 2: RICH_FUNCTION_REFERENCE type=kotlin.Function1<lib2.SealedInterface.Enum, kotlin.Unit> origin=LAMBDA reflectionTarget='null'
-                overriddenFunctionSymbol: kotlin/Function1.invoke|invoke(1:0){}[0]
-                invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                  VALUE_PARAMETER kind:Regular name:it index:0 type:lib2.SealedInterface.Enum
-                  BLOCK_BODY
-                    CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
-                      ARG 1: GET_VAR 'it: lib2.SealedInterface.Enum declared in app.main.<anonymous>' type=lib2.SealedInterface.Enum origin=null
-            CALL 'kotlin/check|check(kotlin.Boolean){}[0]' type=kotlin.Unit origin=null
-              ARG 1: CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
-                ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
-                  ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
+            BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.collections.Iterable<kotlin.Any?> [val]
+                BLOCK type=kotlin.collections.Iterable<kotlin.Any?> origin=null
+                  TYPE_OP type=kotlin.collections.Iterable<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.collections.Iterable<kotlin.Any?>
+                    CALL 'lib2/SealedInterface.Enum.entries.<get-entries>|<get-entries>#static(){}[0]' type=kotlin.enums.EnumEntries<lib2.SealedInterface.Enum> origin=GET_PROPERTY
+              RETURNABLE_BLOCK type=kotlin.Unit origin=null
+                INLINED_BLOCK type=kotlin.Unit origin=null
+                  inlinedFunctionSymbol: kotlin.collections/forEach|forEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
+                  inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/common/src/generated/_Collections.kt
+                  VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:kotlin.collections.Iterable<kotlin.Any?> [val]
+                    GET_VAR 'val tmp0: kotlin.collections.Iterable<kotlin.Any?> [val] declared in app.main' type=kotlin.collections.Iterable<kotlin.Any?> origin=null
+                  BLOCK type=kotlin.Unit origin=FOR_LOOP
+                    VAR FOR_LOOP_ITERATOR name:<iterator> type:kotlin.collections.Iterator<kotlin.Any?> [val]
+                      CALL 'kotlin.collections/Iterable.iterator|iterator(){}[0]' type=kotlin.collections.Iterator<kotlin.Any?> origin=FOR_LOOP_ITERATOR
+                        ARG 1: GET_VAR 'val this: kotlin.collections.Iterable<kotlin.Any?> [val] declared in app.main' type=kotlin.collections.Iterable<kotlin.Any?> origin=null
+                    WHILE label=null origin=FOR_LOOP_INNER_WHILE
+                      condition: CALL 'kotlin.collections/Iterator.hasNext|hasNext(){}[0]' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+                        ARG 1: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.Any?> [val] declared in app.main' type=kotlin.collections.Iterator<kotlin.Any?> origin=null
+                      body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+                        VAR FOR_LOOP_VARIABLE name:element type:kotlin.Any? [val]
+                          CALL 'kotlin.collections/Iterator.next|next(){}[0]' type=kotlin.Any? origin=FOR_LOOP_NEXT
+                            ARG 1: GET_VAR 'val <iterator>: kotlin.collections.Iterator<kotlin.Any?> [val] declared in app.main' type=kotlin.collections.Iterator<kotlin.Any?> origin=null
+                        BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+                          VAR IR_TEMPORARY_VARIABLE name:tmp0 type:lib2.SealedInterface.Enum [val]
+                            BLOCK type=lib2.SealedInterface.Enum origin=null
+                              TYPE_OP type=lib2.SealedInterface.Enum origin=IMPLICIT_CAST typeOperand=lib2.SealedInterface.Enum
+                                GET_VAR 'val element: kotlin.Any? [val] declared in app.main' type=kotlin.Any? origin=null
+                          RETURNABLE_BLOCK type=kotlin.Unit origin=null
+                            INLINED_BLOCK type=kotlin.Unit origin=null
+                              inlinedFunctionFileEntry: FILE_ENTRY path:lib3.kt
+                              VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:it type:lib2.SealedInterface.Enum [val]
+                                GET_VAR 'val tmp0: lib2.SealedInterface.Enum [val] declared in app.main' type=lib2.SealedInterface.Enum origin=null
+                              CALL 'kotlin.io/println|println(kotlin.Any?){}[0]' type=kotlin.Unit origin=null
+                                ARG 1: GET_VAR 'val it: lib2.SealedInterface.Enum [val] declared in app.main' type=lib2.SealedInterface.Enum origin=null
+                              RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                                GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
+                  RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                    GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
+            BLOCK type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+              VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Boolean [val]
+                BLOCK type=kotlin.Boolean origin=null
+                  TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                    CALL 'kotlin.collections/HashSet.isEmpty|isEmpty(){}[0]' type=kotlin.Boolean origin=null
+                      ARG 1: CALL 'lib2/SealedInterface.Object.v.<get-v>|<get-v>(){}[0]' type=kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>> origin=GET_PROPERTY
+                        ARG 1: GET_OBJECT 'lib2/SealedInterface.Object|null[0]' type=lib2.SealedInterface.Object
+              RETURNABLE_BLOCK type=kotlin.Unit origin=null
+                INLINED_BLOCK type=kotlin.Unit origin=null
+                  inlinedFunctionSymbol: kotlin/check|check(kotlin.Boolean){}[0]
+                  inlinedFunctionFileEntry: FILE_ENTRY path:stdlib/src/kotlin/util/Preconditions.kt
+                  VAR IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:value type:kotlin.Boolean [val]
+                    GET_VAR 'val tmp0: kotlin.Boolean [val] declared in app.main' type=kotlin.Boolean origin=null
+                  WHEN type=kotlin.Unit origin=IF
+                    BRANCH
+                      if: CALL 'kotlin/Boolean.not|not(){}[0]' type=kotlin.Boolean origin=null
+                        ARG 1: GET_VAR 'val value: kotlin.Boolean [val] declared in app.main' type=kotlin.Boolean origin=null
+                      then: BLOCK type=kotlin.Unit origin=null
+                        THROW type=kotlin.Nothing
+                          CONSTRUCTOR_CALL 'kotlin/IllegalStateException.<init>|<init>(kotlin.String?){}[0]' type=kotlin.IllegalStateException origin=null
+                            ARG 1: CONST String type=kotlin.String value="Check failed."
+                  RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                    GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
             RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
               GET_OBJECT 'kotlin/Unit|null[0]' type=kotlin.Unit
 
