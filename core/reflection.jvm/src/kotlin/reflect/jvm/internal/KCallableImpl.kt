@@ -22,7 +22,7 @@ import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
-import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray
@@ -117,7 +117,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
-        KTypeImpl(descriptor.returnType!!) {
+        DescriptorKType(descriptor.returnType!!) {
             extractContinuationArgument() ?: caller.returnType
         }
     }
@@ -267,7 +267,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
     private fun getParameterTypeSize(parameter: KParameter): Int {
         require(parametersNeedMFVCFlattening.value) { "Check if parametersNeedMFVCFlattening is true before" }
         return if (parameter.type.needsMultiFieldValueClassFlattening) {
-            val type = (parameter.type as KTypeImpl).type.asSimpleType()
+            val type = (parameter.type as DescriptorKType).type.asSimpleType()
             getMfvcUnboxMethods(type)!!.size
         } else {
             1

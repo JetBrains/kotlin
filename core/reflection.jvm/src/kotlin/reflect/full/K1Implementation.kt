@@ -12,12 +12,12 @@ import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal fun KClassifier.createK1KType(
     arguments: List<KTypeProjection>,
     nullable: Boolean,
-): KTypeImpl {
+): DescriptorKType {
     val descriptor = when (this) {
         is KClassImpl<*> -> descriptor
         is KTypeParameterImpl -> descriptor
@@ -26,13 +26,13 @@ internal fun KClassifier.createK1KType(
 
     checkArgumentsSize(descriptor.typeConstructor.parameters.size, arguments.size)
 
-    return KTypeImpl(createKotlinType(descriptor.typeConstructor, arguments, nullable))
+    return DescriptorKType(createKotlinType(descriptor.typeConstructor, arguments, nullable))
 }
 
 private fun createKotlinType(typeConstructor: TypeConstructor, arguments: List<KTypeProjection>, nullable: Boolean): SimpleType {
     val parameters = typeConstructor.parameters
     return KotlinTypeFactory.simpleType(TypeAttributes.Empty, typeConstructor, arguments.mapIndexed { index, typeProjection ->
-        val type = (typeProjection.type as KTypeImpl?)?.type
+        val type = (typeProjection.type as DescriptorKType?)?.type
         when (typeProjection.variance) {
             KVariance.INVARIANT -> TypeProjectionImpl(Variance.INVARIANT, type!!)
             KVariance.IN -> TypeProjectionImpl(Variance.IN_VARIANCE, type!!)

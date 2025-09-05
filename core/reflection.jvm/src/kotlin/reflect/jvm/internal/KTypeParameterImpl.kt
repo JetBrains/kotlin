@@ -29,7 +29,7 @@ import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
-import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,
@@ -54,7 +54,7 @@ internal class KTypeParameterImpl private constructor(
         descriptor.variance.toKVariance(),
         descriptor.isReified,
     ) {
-        upperBounds = descriptor.upperBounds.map(::KTypeImpl)
+        upperBounds = descriptor.upperBounds.map(::DescriptorKType)
     }
 
     private val _descriptor: TypeParameterDescriptor? = descriptor

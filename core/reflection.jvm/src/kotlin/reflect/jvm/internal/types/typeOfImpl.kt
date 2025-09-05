@@ -20,10 +20,10 @@ import kotlin.reflect.jvm.internal.useK1Implementation
 
 internal fun createPlatformKType(lowerBound: KType, upperBound: KType): KType =
     if (useK1Implementation)
-        KTypeImpl(
+        DescriptorKType(
             KotlinTypeFactory.flexibleType(
-                (lowerBound as KTypeImpl).type as SimpleType,
-                (upperBound as KTypeImpl).type as SimpleType,
+                (lowerBound as DescriptorKType).type as SimpleType,
+                (upperBound as DescriptorKType).type as SimpleType,
             )
         )
     else
@@ -36,11 +36,11 @@ internal fun createPlatformKType(lowerBound: KType, upperBound: KType): KType =
 
 internal fun createMutableCollectionKType(type: KType): KType {
     if (useK1Implementation) {
-        val kotlinType = (type as KTypeImpl).type
+        val kotlinType = (type as DescriptorKType).type
         require(kotlinType is SimpleType) { "Non-simple type cannot be a mutable collection type: $type" }
         val classifier = kotlinType.constructor.declarationDescriptor as? ClassDescriptor
             ?: throw IllegalArgumentException("Non-class type cannot be a mutable collection type: $type")
-        return KTypeImpl(
+        return DescriptorKType(
             KotlinTypeFactory.simpleType(kotlinType, constructor = classifier.readOnlyToMutable().typeConstructor)
         )
     }
@@ -72,9 +72,9 @@ private fun ClassDescriptor.readOnlyToMutable(): ClassDescriptor {
 
 internal fun createNothingType(type: KType): KType {
     if (useK1Implementation) {
-        val kotlinType = (type as KTypeImpl).type
+        val kotlinType = (type as DescriptorKType).type
         require(kotlinType is SimpleType) { "Non-simple type cannot be a Nothing type: $type" }
-        return KTypeImpl(
+        return DescriptorKType(
             KotlinTypeFactory.simpleType(kotlinType, constructor = kotlinType.builtIns.nothing.typeConstructor)
         )
     }

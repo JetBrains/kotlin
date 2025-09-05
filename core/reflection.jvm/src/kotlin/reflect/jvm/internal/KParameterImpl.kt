@@ -22,7 +22,7 @@ import java.lang.reflect.Type
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.ValueClassAwareCaller
-import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KParameterImpl(
     val callable: KCallableImpl<*>,
@@ -64,7 +64,7 @@ internal class KParameterImpl(
     }
 
     override val type: KType
-        get() = KTypeImpl(descriptor.type) {
+        get() = DescriptorKType(descriptor.type) {
             val descriptor = descriptor
 
             if (descriptor is ReceiverParameterDescriptor &&

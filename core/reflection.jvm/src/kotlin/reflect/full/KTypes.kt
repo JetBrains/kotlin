@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.types.AbstractKType
-import kotlin.reflect.jvm.internal.types.KTypeImpl
+import kotlin.reflect.jvm.internal.types.DescriptorKType
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
 import kotlin.reflect.jvm.internal.useK1Implementation
 
@@ -44,7 +44,7 @@ fun KType.withNullability(nullable: Boolean): KType {
 @SinceKotlin("1.1")
 fun KType.isSubtypeOf(other: KType): Boolean {
     if (useK1Implementation) {
-        return (this as KTypeImpl).type.isSubtypeOf((other as KTypeImpl).type)
+        return (this as DescriptorKType).type.isSubtypeOf((other as DescriptorKType).type)
     }
     val state = TypeCheckerState(
         isErrorTypeEqualsToAnything = false,
