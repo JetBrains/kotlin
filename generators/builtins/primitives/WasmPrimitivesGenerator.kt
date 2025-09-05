@@ -47,7 +47,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     }
 
     override fun MethodBuilder.modifyGeneratedCompareTo(thisKind: PrimitiveType, otherKind: PrimitiveType) {
-        if (thisKind != otherKind || thisKind !in PrimitiveType.floatingPoint) {
+        if (thisKind != otherKind) {
             modifySignature { isInline = true }
         }
 
@@ -66,8 +66,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 """.trimIndent().setAsBlockBody()
             } else {
                 val body = when (thisKind) {
-                    PrimitiveType.BYTE -> "wasm_i32_compareTo(this.toInt(), $parameterName.toInt())"
-                    PrimitiveType.SHORT -> "this.toInt().compareTo($parameterName.toInt())"
+                    PrimitiveType.BYTE, PrimitiveType.SHORT -> "wasm_i32_compareTo(this.toInt(), $parameterName.toInt())"
                     PrimitiveType.INT, PrimitiveType.LONG -> "wasm_${thisKind.prefixLowercase}_compareTo(this, $parameterName)"
                     else -> throw IllegalArgumentException("Unsupported type $thisKind for generation `compareTo` method")
                 }

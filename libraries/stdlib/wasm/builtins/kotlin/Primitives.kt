@@ -45,7 +45,7 @@ public actual class Byte private constructor(private val value: Byte) : Number()
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual override inline operator fun compareTo(other: Byte): Int =
+    public actual override operator fun compareTo(other: Byte): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
     /**
@@ -487,8 +487,8 @@ public actual class Short private constructor(private val value: Short) : Number
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual override inline operator fun compareTo(other: Short): Int =
-        this.toInt().compareTo(other.toInt())
+    public actual override operator fun compareTo(other: Short): Int =
+        wasm_i32_compareTo(this.toInt(), other.toInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -927,7 +927,7 @@ public actual class Int private constructor(private val value: Int) : Number(), 
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual override inline operator fun compareTo(other: Int): Int =
+    public actual override operator fun compareTo(other: Int): Int =
         wasm_i32_compareTo(this, other)
 
     /**
@@ -1452,7 +1452,7 @@ public actual class Long private constructor(private val value: Long) : Number()
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual override inline operator fun compareTo(other: Long): Int =
+    public actual override operator fun compareTo(other: Long): Int =
         wasm_i64_compareTo(this, other)
 
     /**

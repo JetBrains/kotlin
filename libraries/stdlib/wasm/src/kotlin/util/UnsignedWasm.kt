@@ -30,11 +30,11 @@ internal actual fun ulongDivide(v1: ULong, v2: ULong): ULong = implementedAsIntr
 
 @PublishedApi
 @InlineOnly
-internal actual inline fun uintCompare(v1: Int, v2: Int): Int = wasm_u32_compareTo(v1, v2)
+internal actual fun uintCompare(v1: Int, v2: Int): Int = wasm_u32_compareTo(v1, v2)
 
 @PublishedApi
 @InlineOnly
-internal actual inline fun ulongCompare(v1: Long, v2: Long): Int = wasm_u64_compareTo(v1, v2)
+internal actual fun ulongCompare(v1: Long, v2: Long): Int = wasm_u64_compareTo(v1, v2)
 
 @PublishedApi
 @WasmOp(WasmOp.I64_EXTEND_I32_U)

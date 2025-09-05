@@ -2149,6 +2149,7 @@ final class kotlin/BooleanArray { // kotlin/BooleanArray|null[0]
 }
 
 final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kotlin/Byte|null[0]
+    final fun compareTo(kotlin/Byte): kotlin/Int // kotlin/Byte.compareTo|compareTo(kotlin.Byte){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin/Byte.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // kotlin/Byte.hashCode|hashCode(){}[0]
     final fun rangeTo(kotlin/Byte): kotlin.ranges/IntRange // kotlin/Byte.rangeTo|rangeTo(kotlin.Byte){}[0]
@@ -2293,9 +2294,6 @@ final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kot
     final inline fun unaryPlus(): kotlin/Int // kotlin/Byte.unaryPlus|unaryPlus(){}[0]
 
     // Targets: [js, native]
-    final fun compareTo(kotlin/Byte): kotlin/Int // kotlin/Byte.compareTo|compareTo(kotlin.Byte){}[0]
-
-    // Targets: [js, native]
     final fun dec(): kotlin/Byte // kotlin/Byte.dec|dec(){}[0]
 
     // Targets: [js, native]
@@ -2306,9 +2304,6 @@ final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kot
 
     // Targets: [wasmJs, wasmWasi]
     final fun reinterpretAsInt(): kotlin/Int // kotlin/Byte.reinterpretAsInt|reinterpretAsInt(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final inline fun compareTo(kotlin/Byte): kotlin/Int // kotlin/Byte.compareTo|compareTo(kotlin.Byte){}[0]
 
     // Targets: [wasmJs, wasmWasi]
     final inline fun dec(): kotlin/Byte // kotlin/Byte.dec|dec(){}[0]
@@ -3128,6 +3123,7 @@ final class kotlin/FloatArray { // kotlin/FloatArray|null[0]
 
 final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotlin/Int|null[0]
     final fun and(kotlin/Int): kotlin/Int // kotlin/Int.and|and(kotlin.Int){}[0]
+    final fun compareTo(kotlin/Int): kotlin/Int // kotlin/Int.compareTo|compareTo(kotlin.Int){}[0]
     final fun dec(): kotlin/Int // kotlin/Int.dec|dec(){}[0]
     final fun div(kotlin/Int): kotlin/Int // kotlin/Int.div|div(kotlin.Int){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin/Int.equals|equals(kotlin.Any?){}[0]
@@ -3262,9 +3258,6 @@ final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotli
     final inline fun toInt(): kotlin/Int // kotlin/Int.toInt|toInt(){}[0]
 
     // Targets: [js, native]
-    final fun compareTo(kotlin/Int): kotlin/Int // kotlin/Int.compareTo|compareTo(kotlin.Int){}[0]
-
-    // Targets: [js, native]
     final fun inc(): kotlin/Int // kotlin/Int.inc|inc(){}[0]
 
     // Targets: [js, native]
@@ -3290,9 +3283,6 @@ final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotli
 
     // Targets: [wasmJs, wasmWasi]
     final fun reinterpretAsShort(): kotlin/Short // kotlin/Int.reinterpretAsShort|reinterpretAsShort(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final inline fun compareTo(kotlin/Int): kotlin/Int // kotlin/Int.compareTo|compareTo(kotlin.Int){}[0]
 
     // Targets: [wasmJs, wasmWasi]
     final inline fun inc(): kotlin/Int // kotlin/Int.inc|inc(){}[0]
@@ -3448,6 +3438,7 @@ final class kotlin/KotlinVersion : kotlin/Comparable<kotlin/KotlinVersion> { // 
 
 final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kotlin/Long|null[0]
     final fun and(kotlin/Long): kotlin/Long // kotlin/Long.and|and(kotlin.Long){}[0]
+    final fun compareTo(kotlin/Long): kotlin/Int // kotlin/Long.compareTo|compareTo(kotlin.Long){}[0]
     final fun div(kotlin/Long): kotlin/Long // kotlin/Long.div|div(kotlin.Long){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin/Long.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // kotlin/Long.hashCode|hashCode(){}[0]
@@ -3518,9 +3509,6 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
     final inline fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 
     // Targets: [js, native]
-    final fun compareTo(kotlin/Long): kotlin/Int // kotlin/Long.compareTo|compareTo(kotlin.Long){}[0]
-
-    // Targets: [js, native]
     final fun dec(): kotlin/Long // kotlin/Long.dec|dec(){}[0]
 
     // Targets: [js, native]
@@ -3552,9 +3540,6 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
 
     // Targets: [native]
     final fun equals(kotlin/Long): kotlin/Boolean // kotlin/Long.equals|equals(kotlin.Long){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final inline fun compareTo(kotlin/Long): kotlin/Int // kotlin/Long.compareTo|compareTo(kotlin.Long){}[0]
 
     // Targets: [wasmJs, wasmWasi]
     final inline fun dec(): kotlin/Long // kotlin/Long.dec|dec(){}[0]
@@ -3612,6 +3597,7 @@ final class kotlin/NotImplementedError : kotlin/Error { // kotlin/NotImplemented
 final class kotlin/Nothing // kotlin/Nothing|null[0]
 
 final class kotlin/Short : kotlin/Comparable<kotlin/Short>, kotlin/Number { // kotlin/Short|null[0]
+    final fun compareTo(kotlin/Short): kotlin/Int // kotlin/Short.compareTo|compareTo(kotlin.Short){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin/Short.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // kotlin/Short.hashCode|hashCode(){}[0]
     final fun rangeTo(kotlin/Byte): kotlin.ranges/IntRange // kotlin/Short.rangeTo|rangeTo(kotlin.Byte){}[0]
@@ -3755,9 +3741,6 @@ final class kotlin/Short : kotlin/Comparable<kotlin/Short>, kotlin/Number { // k
     final inline fun unaryPlus(): kotlin/Int // kotlin/Short.unaryPlus|unaryPlus(){}[0]
 
     // Targets: [js, native]
-    final fun compareTo(kotlin/Short): kotlin/Int // kotlin/Short.compareTo|compareTo(kotlin.Short){}[0]
-
-    // Targets: [js, native]
     final fun dec(): kotlin/Short // kotlin/Short.dec|dec(){}[0]
 
     // Targets: [js, native]
@@ -3771,9 +3754,6 @@ final class kotlin/Short : kotlin/Comparable<kotlin/Short>, kotlin/Number { // k
 
     // Targets: [wasmJs, wasmWasi]
     final fun reinterpretAsInt(): kotlin/Int // kotlin/Short.reinterpretAsInt|reinterpretAsInt(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final inline fun compareTo(kotlin/Short): kotlin/Int // kotlin/Short.compareTo|compareTo(kotlin.Short){}[0]
 
     // Targets: [wasmJs, wasmWasi]
     final inline fun dec(): kotlin/Short // kotlin/Short.dec|dec(){}[0]
@@ -6690,9 +6670,11 @@ final fun kotlin.text/checkRadix(kotlin/Int): kotlin/Int // kotlin.text/checkRad
 final fun kotlin/createFailure(kotlin/Throwable): kotlin/Any // kotlin/createFailure|createFailure(kotlin.Throwable){}[0]
 final fun kotlin/doubleToUInt(kotlin/Double): kotlin/UInt // kotlin/doubleToUInt|doubleToUInt(kotlin.Double){}[0]
 final fun kotlin/doubleToULong(kotlin/Double): kotlin/ULong // kotlin/doubleToULong|doubleToULong(kotlin.Double){}[0]
+final fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
 final fun kotlin/uintDivide(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintDivide|uintDivide(kotlin.UInt;kotlin.UInt){}[0]
 final fun kotlin/uintRemainder(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintRemainder|uintRemainder(kotlin.UInt;kotlin.UInt){}[0]
 final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
+final fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // kotlin/ulongCompare|ulongCompare(kotlin.Long;kotlin.Long){}[0]
 final fun kotlin/ulongDivide(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongDivide|ulongDivide(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongRemainder(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongRemainder|ulongRemainder(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongToDouble(kotlin/Long): kotlin/Double // kotlin/ulongToDouble|ulongToDouble(kotlin.Long){}[0]
@@ -9698,12 +9680,6 @@ final fun (kotlin/Long).kotlin/countOneBits(): kotlin/Int // kotlin/countOneBits
 
 // Targets: [js, native]
 final fun (kotlin/Long).kotlin/countTrailingZeroBits(): kotlin/Int // kotlin/countTrailingZeroBits|countTrailingZeroBits@kotlin.Long(){}[0]
-
-// Targets: [js, native]
-final fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [js, native]
-final fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // kotlin/ulongCompare|ulongCompare(kotlin.Long;kotlin.Long){}[0]
 
 // Targets: [js, native]
 final inline fun (kotlin/Byte).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Byte(kotlin.Int){}[0]
@@ -14150,12 +14126,6 @@ final fun kotlin.wasm.internal/throwUninitializedPropertyAccessException(kotlin/
 final fun kotlin.wasm.internal/throwUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.wasm.internal/throwUnsupportedOperationException|throwUnsupportedOperationException(kotlin.String){}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i32_compareTo(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.internal/wasm_i32_compareTo|wasm_i32_compareTo(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_i64_compareTo(kotlin/Long, kotlin/Long): kotlin/Int // kotlin.wasm.internal/wasm_i64_compareTo|wasm_i64_compareTo(kotlin.Long;kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i64_ctz(kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_ctz|wasm_i64_ctz(kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
@@ -14169,12 +14139,6 @@ final fun kotlin.wasm.internal/wasm_i64_shr_s(kotlin/Long, kotlin/Long): kotlin/
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/wasm_i64_shr_u(kotlin/Long, kotlin/Long): kotlin/Long // kotlin.wasm.internal/wasm_i64_shr_u|wasm_i64_shr_u(kotlin.Long;kotlin.Long){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_u32_compareTo(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.wasm.internal/wasm_u32_compareTo|wasm_u32_compareTo(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/wasm_u64_compareTo(kotlin/Long, kotlin/Long): kotlin/Int // kotlin.wasm.internal/wasm_u64_compareTo|wasm_u64_compareTo(kotlin.Long;kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.unsafe/createAllocatorInTheNewScope(): kotlin.wasm.unsafe/ScopedMemoryAllocator // kotlin.wasm.unsafe/createAllocatorInTheNewScope|createAllocatorInTheNewScope(){}[0]
@@ -14211,12 +14175,6 @@ final inline fun kotlin/check(kotlin/Boolean, kotlin/Function0<kotlin/String>) /
 
 // Targets: [wasmJs, wasmWasi]
 final inline fun kotlin/error(kotlin/String): kotlin/Nothing // kotlin/error|error(kotlin.String){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final inline fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final inline fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // kotlin/ulongCompare|ulongCompare(kotlin.Long;kotlin.Long){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
