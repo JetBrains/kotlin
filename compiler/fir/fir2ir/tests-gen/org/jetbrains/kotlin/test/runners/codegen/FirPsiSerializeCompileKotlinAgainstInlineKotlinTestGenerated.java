@@ -57508,6 +57508,12 @@ public class FirPsiSerializeCompileKotlinAgainstInlineKotlinTestGenerated extend
         }
 
         @Test
+        @TestMetadata("typeAliasedTypeInSupertype.kt")
+        public void testTypeAliasedTypeInSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/types/typeAliasedTypeInSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("typeArguments.kt")
         public void testTypeArguments() {
           runTest("compiler/testData/codegen/box/reflection/types/typeArguments.kt");

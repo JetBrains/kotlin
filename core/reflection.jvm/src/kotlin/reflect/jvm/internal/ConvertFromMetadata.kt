@@ -119,7 +119,7 @@ private fun KmClassifier.toClassifier(
         else
             classLoader.loadKClass(name) ?: throw KotlinReflectionInternalError("Class not found: $name")
     is KmClassifier.TypeAlias ->
-        error("Type alias is not supported as a classifier of a type: $name")
+        KTypeAliasImpl(name.toClassId().asSingleFqName())
     is KmClassifier.TypeParameter ->
         typeParameterTable[id] ?: throw KotlinReflectionInternalError("Type parameter not found: $id")
 }

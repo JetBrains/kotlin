@@ -47926,178 +47926,6 @@ public class FirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopesGen
         public void testUserDefinedContainsExtension() {
           runTest("compiler/testData/codegen/box/ranges/contains/userDefinedContainsExtension.kt");
         }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Generated {
-          @Test
-          public void testAllFilesPresentInGenerated() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/contains/generated"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR_SERIALIZE, true);
-          }
-
-          @Test
-          @TestMetadata("arrayIndices.kt")
-          public void testArrayIndices() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/arrayIndices.kt");
-          }
-
-          @Test
-          @TestMetadata("charDownTo.kt")
-          public void testCharDownTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/charDownTo.kt");
-          }
-
-          @Test
-          @TestMetadata("charRangeTo.kt")
-          public void testCharRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("charRangeUntil.kt")
-          public void testCharRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/charRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("charSequenceIndices.kt")
-          public void testCharSequenceIndices() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/charSequenceIndices.kt");
-          }
-
-          @Test
-          @TestMetadata("charUntil.kt")
-          public void testCharUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/charUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("collectionIndices.kt")
-          public void testCollectionIndices() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/collectionIndices.kt");
-          }
-
-          @Test
-          @TestMetadata("doubleRangeTo.kt")
-          public void testDoubleRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("doubleRangeUntil.kt")
-          public void testDoubleRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/doubleRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("floatRangeTo.kt")
-          public void testFloatRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("floatRangeUntil.kt")
-          public void testFloatRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/floatRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("intDownTo.kt")
-          public void testIntDownTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/intDownTo.kt");
-          }
-
-          @Test
-          @TestMetadata("intRangeTo.kt")
-          public void testIntRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("intRangeUntil.kt")
-          public void testIntRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/intRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("intUntil.kt")
-          public void testIntUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/intUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("longDownTo.kt")
-          public void testLongDownTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/longDownTo.kt");
-          }
-
-          @Test
-          @TestMetadata("longRangeTo.kt")
-          public void testLongRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("longRangeUntil.kt")
-          public void testLongRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/longRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("longUntil.kt")
-          public void testLongUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/longUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("uintDownTo.kt")
-          public void testUintDownTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/uintDownTo.kt");
-          }
-
-          @Test
-          @TestMetadata("uintRangeTo.kt")
-          public void testUintRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("uintRangeUntil.kt")
-          public void testUintRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/uintRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("uintUntil.kt")
-          public void testUintUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/uintUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("ulongDownTo.kt")
-          public void testUlongDownTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongDownTo.kt");
-          }
-
-          @Test
-          @TestMetadata("ulongRangeTo.kt")
-          public void testUlongRangeTo() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeTo.kt");
-          }
-
-          @Test
-          @TestMetadata("ulongRangeUntil.kt")
-          public void testUlongRangeUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongRangeUntil.kt");
-          }
-
-          @Test
-          @TestMetadata("ulongUntil.kt")
-          public void testUlongUntil() {
-            runTest("compiler/testData/codegen/box/ranges/contains/generated/ulongUntil.kt");
-          }
-        }
       }
 
       @Nested
@@ -57505,6 +57333,12 @@ public class FirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopesGen
         @TestMetadata("typeAliasedType.kt")
         public void testTypeAliasedType() {
           runTest("compiler/testData/codegen/box/reflection/types/typeAliasedType.kt");
+        }
+
+        @Test
+        @TestMetadata("typeAliasedTypeInSupertype.kt")
+        public void testTypeAliasedTypeInSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/types/typeAliasedTypeInSupertype.kt");
         }
 
         @Test
