@@ -165,7 +165,7 @@ internal class KClassImpl<T : Any>(
                 TypeParameterTable.EMPTY
             else
                 TypeParameterTable(
-                    kmClass?.typeParameters?.withIndex()?.associate { (index, km) -> km.id to typeParameters[index] }.orEmpty(),
+                    kmClass!!.typeParameters.withIndex().associate { (index, km) -> km.id to typeParameters[index] },
                     (jClass.enclosingClass?.takeIf { kmClass!!.isInner }?.kotlin as? KClassImpl<*>)?.data?.value?.typeParameterTable,
                 )
         }
@@ -182,17 +182,19 @@ internal class KClassImpl<T : Any>(
             if (kmTypes != null) {
                 kmTypes.mapTo(result) { kmType ->
                     val superClassId = (kmType.classifier as? KmClassifier.Class)?.name?.toClassId()
-                        ?: throw KotlinReflectionInternalError("Supertype not a class: ${kmType.classifier}")
+                        ?: throw KotlinReflectionInternalError("Supertype of ${this@KClassImpl} not a class: ${kmType.classifier}")
 
                     val superJavaClass = jClass.safeClassLoader.loadClass(superClassId)
-                        ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClassId")
+                        ?: throw KotlinReflectionInternalError("Unsupported superclass of ${this@KClassImpl}: $superClassId")
 
                     kmType.toKType(jClass.safeClassLoader, typeParameterTable) {
                         if (jClass.superclass == superJavaClass) {
                             jClass.genericSuperclass
                         } else {
                             val index = jClass.interfaces.indexOf(superJavaClass)
-                            if (index < 0) throw KotlinReflectionInternalError("No superclass of $this in Java reflection for $superClassId")
+                            if (index < 0) throw KotlinReflectionInternalError(
+                                "No superclass of ${this@KClassImpl} in Java reflection for $superClassId"
+                            )
                             jClass.genericInterfaces[index]
                         }
                     }
@@ -234,13 +236,15 @@ internal class KClassImpl<T : Any>(
                     if (superClass !is ClassDescriptor) throw KotlinReflectionInternalError("Supertype not a class: $superClass")
 
                     val superJavaClass = superClass.toJavaClass()
-                        ?: throw KotlinReflectionInternalError("Unsupported superclass of $this: $superClass")
+                        ?: throw KotlinReflectionInternalError("Unsupported superclass of ${this@KClassImpl}: $superClass")
 
                     if (jClass.superclass == superJavaClass) {
                         jClass.genericSuperclass
                     } else {
                         val index = jClass.interfaces.indexOf(superJavaClass)
-                        if (index < 0) throw KotlinReflectionInternalError("No superclass of $this in Java reflection for $superClass")
+                        if (index < 0) throw KotlinReflectionInternalError(
+                            "No superclass of ${this@KClassImpl} in Java reflection for $superClass"
+                        )
                         jClass.genericInterfaces[index]
                     }
                 }
