@@ -26,9 +26,12 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -88,14 +91,29 @@ internal fun PhaseContext.fir2Ir(
 
     @OptIn(DelicateDeclarationStorageApi::class)
     val usedPackages = buildSet {
-        fun addExternalPackage(it: IrSymbol) {
+        val queue = ArrayDeque<IrSymbol>()
+        val processed = mutableSetOf<IrSymbol>()
+
+        fun queueSymbol(symbol: IrSymbol) {
+            if (processed.add(symbol)) {
+                queue.add(symbol)
+            }
+        }
+
+        actualizedResult.components.declarationStorage.forEachCachedDeclarationSymbol(::queueSymbol)
+        actualizedResult.components.classifierStorage.forEachCachedDeclarationSymbol(::queueSymbol)
+
+        while (queue.isNotEmpty()) {
+            val symbol = queue.removeFirst()
+
             // FIXME(KT-64742): Fir2IrDeclarationStorage caches may contain unbound IR symbols, so we filter them out.
-            val p = it.takeIf { it.isBound }?.owner as? IrDeclaration ?: return
-            val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return
+            val p = symbol.takeIf { it.isBound }?.owner as? IrDeclaration ?: continue
+            val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: continue
+            if (symbol is IrClassifierSymbol) {
+                symbol.superTypes().forEach { it.classOrNull?.let(::queueSymbol) }
+            }
             add(fragment.packageFqName)
         }
-        actualizedResult.components.declarationStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
-        actualizedResult.components.classifierStorage.forEachCachedDeclarationSymbol(::addExternalPackage)
 
         // These packages exist in all platform libraries, but can contain only synthetic declarations.
         // These declarations are not really located in klib, so we don't need to depend on klib to use them.
