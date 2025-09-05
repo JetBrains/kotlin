@@ -31,9 +31,10 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.types.KTypeImpl
 
-internal class KTypeParameterImpl(
+internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,
-    computeContainer: () -> KTypeParameterOwnerImpl,
+    private val _container: KTypeParameterOwnerImpl?,
+    private val computeContainer: (() -> KTypeParameterOwnerImpl)?,
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
@@ -43,11 +44,12 @@ internal class KTypeParameterImpl(
         name: String,
         variance: KVariance,
         isReified: Boolean,
-    ) : this(descriptor = null, { container }, name, variance, isReified)
+    ) : this(descriptor = null, container, null, name, variance, isReified)
 
     constructor(container: KTypeParameterOwnerImpl?, descriptor: TypeParameterDescriptor) : this(
         descriptor,
-        container?.let { { it } } ?: descriptor.toContainer(),
+        container,
+        ReflectProperties.lazySoft { descriptor.toContainer() },
         descriptor.name.asString(),
         descriptor.variance.toKVariance(),
         descriptor.isReified,
@@ -62,7 +64,8 @@ internal class KTypeParameterImpl(
     @Volatile
     override lateinit var upperBounds: List<KType>
 
-    private val container: KTypeParameterOwnerImpl by ReflectProperties.lazySoft(computeContainer)
+    private val container: KTypeParameterOwnerImpl
+        get() = _container ?: computeContainer!!()
 
     override fun equals(other: Any?) =
         other is KTypeParameterImpl && container == other.container && name == other.name
@@ -81,7 +84,7 @@ private fun Variance.toKVariance(): KVariance =
         Variance.OUT_VARIANCE -> KVariance.OUT
     }
 
-private fun TypeParameterDescriptor.toContainer(): () -> KTypeParameterOwnerImpl = {
+private fun TypeParameterDescriptor.toContainer(): KTypeParameterOwnerImpl =
     when (val declaration = containingDeclaration) {
         is ClassDescriptor -> {
             declaration.toKClassImpl()
@@ -100,7 +103,7 @@ private fun TypeParameterDescriptor.toContainer(): () -> KTypeParameterOwnerImpl
             declaration.accept(CreateKCallableVisitor(callableContainerClass), Unit)
         }
         else -> throw KotlinReflectionInternalError("Unknown type parameter container: $declaration")
-    }}
+    }
 
 private fun ClassDescriptor.toKClassImpl(): KClassImpl<*> =
     toJavaClass()?.kotlin as KClassImpl<*>?
