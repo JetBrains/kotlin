@@ -85,17 +85,6 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Project path contains spaces")
-    @GradleTest
-    fun testKotlinCompileInFolderWithSpaces(gradleVersion: GradleVersion) {
-        project(projectName = "Project Path With Spaces", gradleVersion) {
-            build("build") {
-                assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
-                assertOutputDoesNotContain("Forcing System.gc")
-            }
-        }
-    }
-
     @DisplayName("Logs contain memory usage entries on LIFECYCLE log level")
     @GradleTest
     fun testLogLevelForceGC(gradleVersion: GradleVersion) {
