@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -97,5 +98,9 @@ internal class KaFe10TypeRelationChecker(
         // `NewKotlinTypeCheckerImpl` is inconsistent with its error type leniency: `isSubtypeOf` is lenient by default while `equalTypes`
         // isn't. Hence, even without a `LENIENT` policy, we need to wrap `typeChecker` to achieve consistent strictness.
         return IsErrorTypeEqualToAnythingTypeChecker(typeChecker, errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT)
+    }
+
+    override fun KaCallableSymbol.canBeCalledAsExtensionOn(receiverType: KaType): Boolean = withValidityAssertion {
+        throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 }

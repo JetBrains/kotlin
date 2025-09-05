@@ -651,6 +651,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
             model(it, "subtypingAndEquality")
         }
+
+        test<AbstractCanBeCalledAsExtensionOnTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "canBeCalledAsExtensionOn")
+        }
     }
 
     component("referenceResolveProvider") {

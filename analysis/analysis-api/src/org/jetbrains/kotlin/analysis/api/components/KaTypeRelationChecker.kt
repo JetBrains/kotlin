@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -83,6 +86,16 @@ public interface KaTypeRelationChecker : KaSessionComponent {
         symbol: KaClassLikeSymbol,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
     ): Boolean
+
+
+    /**
+     * Returns whether the given [receiverType] can be used as an extension receiver for [this].
+     *
+     * If [this] is not an extension callable, the result is `false`.
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public fun KaCallableSymbol.canBeCalledAsExtensionOn(receiverType: KaType): Boolean
 }
 
 /**
@@ -163,4 +176,14 @@ public fun KaType.isSubtypeOf(
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
     return with(context) { isSubtypeOf(symbol, errorTypePolicy) }
+}
+
+/**
+ * @see KaTypeRelationChecker.canBeCalledAsExtensionOn
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeRelationChecker)
+public fun KaCallableSymbol.canBeCalledAsExtensionOn(receiverType: KaType): Boolean {
+    return with(context) { canBeCalledAsExtensionOn(receiverType) }
 }
