@@ -81,6 +81,16 @@ val SirDeclarationParent.swiftFqNameOrNull: String?
 val SirNamedDeclaration.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName.swiftIdentifier}" } ?: name.swiftSanitizedName.swiftIdentifier
 
+val SirNominalType.isValueType: Boolean
+    get() = when (typeDeclaration) {
+        is SirEnum -> true
+        is SirStruct -> true
+        is SirProtocol -> false
+        is SirClass -> false
+        is SirTypealias -> (typeDeclaration.expandedType as? SirNominalType)?.isValueType == true
+        is SirEnumCase -> error("SirEnumCase shouldn't be used to describe types")
+    }
+
 val SirFunction.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName}" } ?: name.swiftSanitizedName
 

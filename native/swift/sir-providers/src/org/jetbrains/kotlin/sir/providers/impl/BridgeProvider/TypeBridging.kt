@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isNever
+import org.jetbrains.kotlin.sir.util.isValueType
 import org.jetbrains.kotlin.sir.util.name
 
 internal fun bridgeType(type: SirType): Bridge = when (type) {
@@ -216,10 +217,10 @@ internal sealed class Bridge(
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 val swiftFqName = typeNamer.swiftFqName(swiftType)
-                if (swiftType.typeDeclaration is SirEnum) {
-                    return "$swiftFqName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)"
+                return if (swiftType.isValueType) {
+                    "$swiftFqName(__externalRCRefUnsafe: $valueExpression, options: .asBestFittingWrapper)"
                 } else {
-                    return "$swiftFqName.__createClassWrapper(externalRCRef: $valueExpression)"
+                    "$swiftFqName.__createClassWrapper(externalRCRef: $valueExpression)"
                 }
             }
         }
