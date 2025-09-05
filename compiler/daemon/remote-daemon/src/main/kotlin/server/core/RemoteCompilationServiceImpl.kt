@@ -15,6 +15,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import model.CompilationMetadata
 import model.CompilationResult
 import model.CompilationResultSource
@@ -69,10 +70,12 @@ class RemoteCompilationServiceImpl(
             val filesReceivedCounter = AtomicInteger(0)
             var totalFilesExpected = -1
 
-            // <ClientPath, FileFromUserWorkspace>
+            // <PathFromClientComputer, FileFromUserWorkspace>
             val sourceFiles = ConcurrentHashMap<Path, File>()
             val dependencyFiles = ConcurrentHashMap<Path, File>()
             val compilerPluginFiles = ConcurrentHashMap<Path, File>()
+
+            val fileLockMap = ConcurrentHashMap<Path, Mutex>()
 
             val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
@@ -112,7 +115,8 @@ class RemoteCompilationServiceImpl(
                                                 cachedFilePath = cachedFile.absolutePath,
                                                 clientFilePath = it.filePath,
                                                 userId,
-                                                compilationMetadata.projectName
+                                                compilationMetadata.projectName,
+                                                fileLockMap
                                             )
                                             fileAvailable(Paths.get(it.filePath).toAbsolutePath().normalize(), projectFile, it.artifactType)
                                             FileTransferReply(
@@ -147,7 +151,8 @@ class RemoteCompilationServiceImpl(
                                             cachedFile.absolutePath,
                                             it.filePath,
                                             userId,
-                                            compilationMetadata.projectName
+                                            compilationMetadata.projectName,
+                                            fileLockMap
                                         )
                                         debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactType}, clientPath=${it.filePath}")
                                         fileAvailable(Paths.get(it.filePath).toAbsolutePath().normalize(), projectFile, it.artifactType)
