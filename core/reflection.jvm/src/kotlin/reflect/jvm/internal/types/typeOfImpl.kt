@@ -80,6 +80,7 @@ internal fun createNothingType(type: KType): KType {
     }
 
     type as SimpleKType
+    require(type.classifier == Void::class) { "Nothing type's classifier must be Void::class: $type" }
     return SimpleKType(
         type.classifier,
         type.arguments,

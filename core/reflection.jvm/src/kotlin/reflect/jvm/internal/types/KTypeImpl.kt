@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
@@ -71,6 +70,17 @@ internal class KTypeImpl(
 
         typeArguments.mapIndexed { i, typeProjection ->
             typeProjection.toKTypeProjection(if (computeJavaType == null) null else convertTypeArgumentToJavaType({ this }, i))
+        }
+    }
+
+    private fun TypeProjection.toKTypeProjection(computeJavaType: (() -> Type)? = null): KTypeProjection {
+        if (isStarProjection) return KTypeProjection.STAR
+
+        val result = KTypeImpl(type, computeJavaType)
+        return when (projectionKind) {
+            Variance.INVARIANT -> KTypeProjection.invariant(result)
+            Variance.IN_VARIANCE -> KTypeProjection.contravariant(result)
+            Variance.OUT_VARIANCE -> KTypeProjection.covariant(result)
         }
     }
 
@@ -151,24 +161,4 @@ internal class KTypeImpl(
         if (useK1Implementation) {
             (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
         } else super.hashCode()
-}
-
-internal fun TypeProjection.toKTypeProjection(computeJavaType: (() -> Type)? = null): KTypeProjection {
-    if (isStarProjection) return KTypeProjection.STAR
-
-    val type = type
-    val result = if (type is NewCapturedType) {
-        CapturedKType(
-            type.lowerType?.let(::KTypeImpl),
-            CapturedKTypeConstructor(type.constructor.projection.toKTypeProjection()),
-            type.isMarkedNullable,
-        )
-    } else {
-        KTypeImpl(type, computeJavaType)
-    }
-    return when (projectionKind) {
-        Variance.INVARIANT -> KTypeProjection.invariant(result)
-        Variance.IN_VARIANCE -> KTypeProjection.contravariant(result)
-        Variance.OUT_VARIANCE -> KTypeProjection.covariant(result)
-    }
 }
