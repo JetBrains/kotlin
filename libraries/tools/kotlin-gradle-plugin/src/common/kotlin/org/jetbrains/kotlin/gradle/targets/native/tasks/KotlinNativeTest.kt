@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSetti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.SystemGetEnvSource.Companion.getAllEnvironmentVariables
 import org.jetbrains.kotlin.gradle.utils.getExecOperations
@@ -35,6 +36,8 @@ abstract class KotlinNativeTest
 internal constructor(
     createdWithPublicConstructor: ObjectFactory?,
 ) : KotlinTest(createdWithPublicConstructor) {
+    @Deprecated(message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    constructor() : this(null)
 
     private val providers: ProviderFactory = project.providers
 
@@ -218,6 +221,9 @@ internal constructor(
 ) : KotlinNativeTest(
     createdWithPublicConstructor
 ) {
+    @Deprecated(message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    constructor() : this(null)
+
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -244,6 +250,8 @@ internal constructor(
 ) : KotlinNativeTest(
     createdWithPublicConstructor
 ) {
+    @Deprecated(message = "Extending this class is deprecated. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
+    constructor() : this(null)
 
     @Deprecated("Use the property 'device' instead. Scheduled for removal in Kotlin 2.3.", level = DeprecationLevel.ERROR)
     @get:Internal
