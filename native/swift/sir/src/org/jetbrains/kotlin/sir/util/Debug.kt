@@ -41,7 +41,7 @@ private val SirProtocolConformingDeclaration.renderProtocols: String get() = pro
 
 private val SirType.render: String
     get() = when (this) {
-        is SirImplicitlyUnwrappedOptionalType -> "${wrappedType.render}!"
+        is SirImplicitlyUnwrappedOptionalType if wrappedType is SirWrappedType -> "${wrappedType.render}!"
         is SirOptionalType -> "${wrappedType.render}?"
         is SirArrayType -> "[${elementType.render}]"
         is SirDictionaryType -> "[${keyType.render} : ${valueType.render}]"
