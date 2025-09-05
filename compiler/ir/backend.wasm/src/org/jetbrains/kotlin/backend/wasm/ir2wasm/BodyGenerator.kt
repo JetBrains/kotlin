@@ -535,7 +535,7 @@ class BodyGenerator(
     }
 
     override fun visitConst(expression: IrConst): Unit =
-        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation())
+        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation(), useSharedObjects)
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
@@ -1394,9 +1394,14 @@ class BodyGenerator(
 
         // NOTHING? -> TYPE? -> (NOTHING?)NULL
         if (actualType.isNullableNothing() && expectedType.isNullable()) {
-            if (expectedType.getClass()?.isExternal == true) {
+            val expectedClass = expectedType.getClass()
+            if (expectedClass?.isExternal == true) {
                 body.buildDrop(location)
-                body.buildRefNull(WasmHeapType.Simple.NoExtern, location)
+                val baseWasmType = if (useSharedObjects && expectedClass.name.identifier == "JsReference")
+                    WasmHeapType.Simple.SharedNoExtern
+                else
+                    WasmHeapType.Simple.NoExtern
+                body.buildRefNull(baseWasmType, location)
             }
             return
         }
@@ -1405,7 +1410,7 @@ class BodyGenerator(
         if (actualType.isNullable() && expectedType.isNullableNothing()) {
             val type =
                 if (expectedType.getClass()?.isExternal == true)
-                    WasmHeapType.Simple.NoExtern
+                    WasmHeapType.Simple.NoExtern // fixme support shared
                 else
                     WasmHeapType.Simple.None
 
