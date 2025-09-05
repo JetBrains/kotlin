@@ -54169,6 +54169,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("inaccessibleReceiver.kt")
+      public void testInaccessibleReceiver() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inaccessibleReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("inferringContextOfType.kt")
       public void testInferringContextOfType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inferringContextOfType.kt");
