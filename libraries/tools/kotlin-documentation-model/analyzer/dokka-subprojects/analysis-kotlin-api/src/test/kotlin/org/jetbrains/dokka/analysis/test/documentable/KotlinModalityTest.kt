@@ -134,4 +134,56 @@ class KotlinModalityTest {
         assertEquals(KotlinModifier.Empty, classlike.modifier.values.single())
     }
 
+    @Test
+    fun `test redundant open modifier in an interface member`() {
+        val project = kotlinJvmTestProject {
+            ktFile("Foo.kt") {
+                +"""
+                interface Foo {
+                    val propertyDefault: String
+                    open val propertyWithOpen: String
+                    open val propertyWithOpenAndBody: String get() = ""
+                
+                    fun funDefault(): Unit
+                    open fun funWithOpen(): Unit
+                    open fun funWithOpenAndBody() { }
+                }"""
+            }
+        }
+
+        val module = project.parse()
+        val pkg = module.packages.single()
+        val cls = pkg.classlikes.single()
+
+        assertTrue(cls is DInterface)
+        assertEquals("Foo", cls.name)
+
+        val expectedPropertyModality = mapOf(
+            "propertyDefault" to KotlinModifier.Abstract,
+            "propertyWithOpen" to KotlinModifier.Abstract,
+            "propertyWithOpenAndBody" to KotlinModifier.Open,
+        )
+        cls.properties.forEach { property ->
+            if (property.name !in expectedPropertyModality) return@forEach
+
+            assertEquals(
+                expectedPropertyModality[property.name]!!, property.modifier.values.single(),
+                """Expected property modality for ${property.name} to be ${expectedPropertyModality[property.name]}, but was ${property.modifier}"""
+            )
+        }
+
+        val expectedFunctionModality = mapOf(
+            "funDefault" to KotlinModifier.Abstract,
+            "funWithOpen" to KotlinModifier.Abstract,
+            "funWithOpenAndBody" to KotlinModifier.Open,
+        )
+        cls.functions.forEach { function ->
+            if (function.name !in expectedFunctionModality) return@forEach
+
+            assertEquals(
+                expectedFunctionModality[function.name]!!, function.modifier.values.single(),
+                """Expected function modality for ${function.name} to be ${expectedFunctionModality[function.name]}, but was ${function.modifier}"""
+            )
+        }
+    }
 }
