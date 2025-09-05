@@ -265,6 +265,7 @@ public class KtTestUtil {
 
     private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
+    // TODO: remove when KTIJ-35531 is fixed
     @kotlin.Deprecated(message = "Kept for compatibility with tests in intellij repo", level = DeprecationLevel.ERROR)
     public static void assertAllTestsPresentByMetadataWithExcluded(
             @NotNull Class<?> testCaseClass,
