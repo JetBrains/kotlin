@@ -6,10 +6,10 @@ STEP 1:
     removed direct depends: m.kt
 STEP 2:
     dependencies: lib1-new
-    updated imports: m.kt
+    modified ir: m.kt
 STEP 3:
     dependencies: lib1
-    removed direct depends: m.kt
+    modified ir: m.kt
 STEP 4..5:
     dependencies: lib1
-    updated imports: m.kt
+    modified ir: m.kt

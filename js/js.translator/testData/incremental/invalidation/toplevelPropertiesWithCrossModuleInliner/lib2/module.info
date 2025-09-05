@@ -19,7 +19,7 @@ STEP 4:
     added file: l2inlineGlobalVal.kt
 STEP 5:
     dependencies: lib1
-    updated imports: l2inlineGlobalVal.kt, l2.kt
+    modified ir: l2inlineGlobalVal.kt, l2.kt
 STEP 6:
     dependencies: lib1
     modified ir: l2inlineGlobalVal.kt, l2.kt
@@ -39,7 +39,7 @@ STEP 9:
     modified ir: l2globalVar.kt l2.kt
 STEP 10:
     dependencies: lib1
-    updated imports: l2inlineGlobalVal.kt, l2.kt
+    modified ir: l2inlineGlobalVal.kt, l2.kt
 STEP 11:
     dependencies: lib1
     modifications:
@@ -56,7 +56,7 @@ STEP 13:
     dependencies: lib1
 STEP 14..15:
     dependencies: lib1
-    updated imports: l2inlineGlobalVar.kt, l2.kt
+    modified ir: l2inlineGlobalVar.kt, l2.kt
 STEP 16:
     dependencies: lib1
     modifications:

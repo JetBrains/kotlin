@@ -46,7 +46,7 @@ STEP 8:
     modified ir: l2a.kt
 STEP 9:
     dependencies: lib1
-    updated imports: l2a.kt
+    modified ir: l2a.kt
 STEP 10:
     dependencies: lib1
     modifications:
@@ -54,7 +54,7 @@ STEP 10:
     modified ir: l2a.kt
 STEP 11:
     dependencies: lib1
-    updated imports: l2a.kt
+    modified ir: l2a.kt
 STEP 12:
     dependencies: lib1
     modifications:
