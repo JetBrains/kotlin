@@ -15,16 +15,13 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
-import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
 
     private val syntheticCallGenerator: FirSyntheticCallGenerator get() = components.syntheticCallGenerator
-    private val whenExhaustivenessTransformer = FirWhenExhaustivenessTransformer(components)
-
 
     // ------------------------------- Loops -------------------------------
 
@@ -62,7 +59,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubjectVariable(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subjectVariable?.initializer?.resolvedType?.fullyExpandedType()
             var completionNeeded = false
             when {
                 whenExpression.branches.isEmpty() -> {
@@ -93,7 +89,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     completionNeeded = true
                 }
             }
-            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+            val exhaustivenessStatus = FirWhenExhaustivenessComputer.computeExhaustivenessStatus(whenExpression, session, context.file)
+            whenExpression.replaceExhaustivenessStatus(exhaustivenessStatus)
 
             // This is necessary to perform outside the place where the synthetic call is created because
             // exhaustiveness is not yet computed there, but at the same time to compute it properly
