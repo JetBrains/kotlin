@@ -72,16 +72,12 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
 
     override val enabledLanguageFeatures: Set<String>
         get() = if (compilationCompilerOptions.isCompleted) {
-            val freeArgs = compilationCompilerOptions.getOrThrow()
+            compilationCompilerOptions.getOrThrow()
                 .freeCompilerArgs
                 .get()
-
-            fun process(prefix: String): Set<String> = freeArgs
-                .filter { it.startsWith(prefix) }
-                .map { it.substringAfter(prefix) }
+                .filter { it.startsWith("-XXLanguage:+") }
+                .map { it.substringAfter("-XXLanguage:+") }
                 .toSet()
-
-            process("-XXLanguage:+") + process("-XXLanguage=+")
         } else {
             enabledLanguageFeaturesField.toSet()
         }
@@ -91,7 +87,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
         project.launch {
             compilationCompilerOptions.await()
                 .freeCompilerArgs
-                .add("-XXLanguage=+$name")
+                .add("-XXLanguage:+$name")
         }
     }
 

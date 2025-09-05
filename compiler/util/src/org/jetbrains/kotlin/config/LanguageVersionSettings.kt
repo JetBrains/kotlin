@@ -34,12 +34,12 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
  *   construction immediately instead of a going through complete deprecation cycle is fine.
  *
  * @property forcesPreReleaseBinaries
- * If 'true', then enabling this feature (e.g. by '-XXLanguage=', or dedicated '-X'-flag)
+ * If 'true', then enabling this feature (e.g. by '-XXLanguage:', or dedicated '-X'-flag)
  * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
  * Use it for features that involve generation of non-trivial low-level code with non-finalized design.
  *
  * @property testOnly
- * If 'true', then it's impossible to enable this feature using `-XXLanguage=+FeatureName` CLI flag.
+ * If 'true', then it's impossible to enable this feature using `-XXLanguage:+FeatureName` CLI flag.
  * Should be used for features which are already added to the compiler, but are not ready to be shown to users.
  *
  * @property [issue] YouTrack issue about the change related to specific feature

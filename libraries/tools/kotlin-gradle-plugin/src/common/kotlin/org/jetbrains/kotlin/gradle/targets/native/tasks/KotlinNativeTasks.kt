@@ -373,7 +373,7 @@ internal constructor(
     val enabledLanguageFeatures: Set<String>
         @Internal get() = compilerOptions
             .freeCompilerArgs.get()
-            .filter { it.startsWith("-XXLanguage:+") || it.startsWith("-XXLanguage=+") }
+            .filter { it.startsWith("-XXLanguage:+") }
             .toSet()
 
     @Deprecated(

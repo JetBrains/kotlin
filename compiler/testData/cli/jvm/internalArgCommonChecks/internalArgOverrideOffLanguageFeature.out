@@ -1,6 +1,7 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
+-XXLanguage:+NullableNothingInReifiedPosition
 -XXLanguage:-NullableNothingInReifiedPosition
 
 This mode is not recommended for production use,

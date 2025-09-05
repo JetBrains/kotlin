@@ -13,8 +13,6 @@ object LanguageSettingsParser {
 
     private val wholePrefix: String = "${INTERNAL_ARGUMENT_PREFIX}Language"
 
-    fun canParse(arg: String): Boolean = arg.startsWith(wholePrefix)
-
     fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
         if (!arg.startsWith(wholePrefix)) return null
 
@@ -22,19 +20,7 @@ object LanguageSettingsParser {
         if (tail.getOrNull(0) != ':') {
             return errors.reportAndReturnNull("Incorrect internal argument syntax, missing colon: $arg")
         }
-        val parsedFeature = parseLanguageFeature(tail.substring(1), arg, errors)
-        if (parsedFeature != null) {
-            val sign = when (parsedFeature.state) {
-                LanguageFeature.State.ENABLED -> "+"
-                LanguageFeature.State.DISABLED -> "-"
-            }
-            errors.reportAndReturnNull(
-                "This syntax for `-XXLanguage` is deprecated, please use `-XXLanguage=$sign${parsedFeature.languageFeature.name}`",
-                CompilerMessageSeverity.STRONG_WARNING,
-            )
-        }
-
-        return parsedFeature
+        return parseLanguageFeature(tail.substring(1), arg, errors)
     }
 
     // Expected tail form: ':(+|-)<language feature name>'
