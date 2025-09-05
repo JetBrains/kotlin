@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinShareableDataAsSecondaryVariant
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinSecondaryVariantsDataSharing
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleIds
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
-import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.currentBuildId
 
 /**
@@ -55,7 +55,7 @@ internal fun KotlinSecondaryVariantsDataSharing.consumeRootModuleCoordinates(sou
 
 private suspend fun Project.collectKotlinProjectCoordinates(): KotlinProjectCoordinatesData {
     return KotlinProjectCoordinatesData(
-        buildPath = project.currentBuildId().buildPathCompat,
+        buildPath = project.currentBuildId().compatAccessor(project).buildPath,
         projectPath = project.path,
         moduleId = ModuleIds.idOfRootModuleSafe(this)
     )
