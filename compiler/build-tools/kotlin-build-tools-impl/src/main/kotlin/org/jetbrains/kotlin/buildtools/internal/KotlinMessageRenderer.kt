@@ -17,7 +17,7 @@ internal object KotlinMessageRenderer : MessageRenderer {
                 val fileUri = File(path).toPath().toUri()
                 append("$fileUri")
                 if (line > 0 && column > 0) {
-                    append(":$line:$column")
+                    append(":$line:$column:$lineEnd:$columnEnd")
                 }
                 append(' ')
             }
