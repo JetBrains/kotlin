@@ -42,26 +42,26 @@ class A(val x: String = "x") {
 }
 
 fun usage(a: A) {
-    <!RETURN_VALUE_NOT_USED!>a.test1()<!>
-    <!RETURN_VALUE_NOT_USED!>a.x<!>
-    <!RETURN_VALUE_NOT_USED!>A()<!>
-    <!RETURN_VALUE_NOT_USED!>A("", "")<!>
+    a.<!RETURN_VALUE_NOT_USED!>test1<!>()
+    a.<!RETURN_VALUE_NOT_USED!>x<!>
+    <!RETURN_VALUE_NOT_USED!>A<!>()
+    <!RETURN_VALUE_NOT_USED!>A<!>("", "")
     with("context") {
-        <!RETURN_VALUE_NOT_USED!>a.test2()<!>
-        <!RETURN_VALUE_NOT_USED!>a.e<!>
+        a.<!RETURN_VALUE_NOT_USED!>test2<!>()
+        a.<!RETURN_VALUE_NOT_USED!>e<!>
         Unit
     }
     with(a) {
-        <!RETURN_VALUE_NOT_USED!>"".test3()<!>
-        <!RETURN_VALUE_NOT_USED!>"".f<!>
+        "".<!RETURN_VALUE_NOT_USED!>test3<!>()
+        "".<!RETURN_VALUE_NOT_USED!>f<!>
         Unit
     }
     a.test4()
-    <!RETURN_VALUE_NOT_USED!>a.c<!>
-    <!RETURN_VALUE_NOT_USED!>a.d<!>
+    a.<!RETURN_VALUE_NOT_USED!>c<!>
+    a.<!RETURN_VALUE_NOT_USED!>d<!>
     a.d = ""
-    <!RETURN_VALUE_NOT_USED!>a.g<!>
-    <!RETURN_VALUE_NOT_USED!>a.h<!>
+    a.<!RETURN_VALUE_NOT_USED!>g<!>
+    a.<!RETURN_VALUE_NOT_USED!>h<!>
     <!UNUSED_EXPRESSION!>A.MyTypealias<!>
 }
 

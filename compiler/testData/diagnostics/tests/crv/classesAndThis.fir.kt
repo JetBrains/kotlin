@@ -53,8 +53,8 @@ annotation class Bar(
 )
 
 fun main() {
-    <!RETURN_VALUE_NOT_USED!>A()<!>
-    <!RETURN_VALUE_NOT_USED!>A().foo("x")<!>
+    <!RETURN_VALUE_NOT_USED!>A<!>()
+    A().<!RETURN_VALUE_NOT_USED!>foo<!>("x")
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, asExpression, classDeclaration,

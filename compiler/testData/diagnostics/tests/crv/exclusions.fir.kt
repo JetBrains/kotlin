@@ -8,16 +8,16 @@ fun unitF(): Unit = Unit
 
 fun exlusionPropagation(cond: Boolean, m: MutableList<String>) {
     if (cond) m.add("x") else throw IllegalStateException()
-    if (cond) <!RETURN_VALUE_NOT_USED!>stringF()<!> else throw IllegalStateException()
+    if (cond) <!RETURN_VALUE_NOT_USED!>stringF<!>() else throw IllegalStateException()
 }
 
 @IgnorableReturnValue
 fun discardable(): String = ""
 
 fun unused(cond: Boolean) {
-    <!RETURN_VALUE_NOT_USED!>stringF()<!>
+    <!RETURN_VALUE_NOT_USED!>stringF<!>()
     discardable()
-    if (cond) discardable() else <!RETURN_VALUE_NOT_USED!>stringF()<!>
+    if (cond) discardable() else <!RETURN_VALUE_NOT_USED!>stringF<!>()
     if (cond) discardable() else unitF()
 }
 

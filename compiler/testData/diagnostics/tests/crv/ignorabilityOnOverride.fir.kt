@@ -45,13 +45,13 @@ class DerivedFromAnnotatedWithOverride : BaseWithAnnotation {
 fun usage() {
     Derived().foo()
     Derived().a
-    <!RETURN_VALUE_NOT_USED!>DerivedWithOverride().foo()<!>
-    <!RETURN_VALUE_NOT_USED!>DerivedWithOverride().a<!>
+    DerivedWithOverride().<!RETURN_VALUE_NOT_USED!>foo<!>()
+    DerivedWithOverride().<!RETURN_VALUE_NOT_USED!>a<!>
     DerivedWithOverride().baz()
-    <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotated().foo()<!>
-    <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotated().a<!>
-    <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotatedWithOverride().foo()<!>
-    <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotatedWithOverride().a<!>
+    DerivedFromAnnotated().<!RETURN_VALUE_NOT_USED!>foo<!>()
+    DerivedFromAnnotated().<!RETURN_VALUE_NOT_USED!>a<!>
+    DerivedFromAnnotatedWithOverride().<!RETURN_VALUE_NOT_USED!>foo<!>()
+    DerivedFromAnnotatedWithOverride().<!RETURN_VALUE_NOT_USED!>a<!>
     DerivedFromAnnotatedWithOverride().baz()
 }
 

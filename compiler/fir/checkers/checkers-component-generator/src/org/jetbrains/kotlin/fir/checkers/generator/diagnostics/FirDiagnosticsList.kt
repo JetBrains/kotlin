@@ -1764,7 +1764,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SENSELESS_NULL_IN_WHEN by warning<KtElement>()
         val TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM by error<KtExpression>()
 
-        val RETURN_VALUE_NOT_USED by warning<KtElement> {
+        val RETURN_VALUE_NOT_USED by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Name?>("functionName")
         }
     }

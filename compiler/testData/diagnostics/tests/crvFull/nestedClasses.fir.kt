@@ -7,7 +7,7 @@
 class Lib {
     fun getStuff(): String {
         fun localStuff(): String = ""
-        <!RETURN_VALUE_NOT_USED!>localStuff()<!>
+        <!RETURN_VALUE_NOT_USED!>localStuff<!>()
         return ""
     }
 
@@ -22,9 +22,9 @@ class Lib {
 
 fun foo(): Lib.LibInner {
     val lib = Lib()
-    <!RETURN_VALUE_NOT_USED!>lib.getStuff()<!>
-    <!RETURN_VALUE_NOT_USED!>Lib.LibNested().getStuff2()<!>
-    <!RETURN_VALUE_NOT_USED!>lib.LibInner().getStuff3()<!>
+    lib.<!RETURN_VALUE_NOT_USED!>getStuff<!>()
+    Lib.LibNested().<!RETURN_VALUE_NOT_USED!>getStuff2<!>()
+    lib.LibInner().<!RETURN_VALUE_NOT_USED!>getStuff3<!>()
     return lib.LibInner()
 }
 
@@ -34,14 +34,14 @@ fun foo(): Lib.LibInner {
 
 fun bar(): Lib.LibInner {
     val lib = Lib()
-    <!RETURN_VALUE_NOT_USED!>lib.getStuff()<!>
-    <!RETURN_VALUE_NOT_USED!>Lib.LibNested().getStuff2()<!>
-    <!RETURN_VALUE_NOT_USED!>lib.LibInner().getStuff3()<!>
+    lib.<!RETURN_VALUE_NOT_USED!>getStuff<!>()
+    Lib.LibNested().<!RETURN_VALUE_NOT_USED!>getStuff2<!>()
+    lib.LibInner().<!RETURN_VALUE_NOT_USED!>getStuff3<!>()
     return foo()
 }
 
 fun main() {
-    <!RETURN_VALUE_NOT_USED!>bar()<!>
+    <!RETURN_VALUE_NOT_USED!>bar<!>()
     val x = bar()
 }
 

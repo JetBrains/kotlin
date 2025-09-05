@@ -6,63 +6,63 @@ import java.util.Optional
 
 fun list(m: MutableList<String>) {
     m.add("")
-    <!RETURN_VALUE_NOT_USED!>m.isEmpty()<!>
-    <!RETURN_VALUE_NOT_USED!>m.toString()<!>
+    m.<!RETURN_VALUE_NOT_USED!>isEmpty<!>()
+    m.<!RETURN_VALUE_NOT_USED!>toString<!>()
 }
 
 fun javaList(m: ArrayList<String>) {
     m.add("x")
-    <!RETURN_VALUE_NOT_USED!>m.isEmpty()<!>
+    m.<!RETURN_VALUE_NOT_USED!>isEmpty<!>()
 }
 
 fun javaSet(s: LinkedHashSet<String>) {
     s.add("x")
-    <!RETURN_VALUE_NOT_USED!>s.isEmpty()<!>
-    <!RETURN_VALUE_NOT_USED!>s.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>s.first()<!>
+    s.<!RETURN_VALUE_NOT_USED!>isEmpty<!>()
+    s.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    s.<!RETURN_VALUE_NOT_USED!>first<!>()
 }
 
 fun map(s: MutableMap<String, String>) {
-    <!RETURN_VALUE_NOT_USED!>s.get("")<!>
-    <!RETURN_VALUE_NOT_USED!>s.getOrDefault("", "")<!>
+    s.<!RETURN_VALUE_NOT_USED!>get<!>("")
+    s.<!RETURN_VALUE_NOT_USED!>getOrDefault<!>("", "")
     s.put("", "")
     s.putIfAbsent("", "")
     s.merge("", "") { a, b -> a + b }
 }
 
 fun javaMap(s: LinkedHashMap<String, String>) {
-    <!RETURN_VALUE_NOT_USED!>s.get("")<!>
-    <!RETURN_VALUE_NOT_USED!>s.getOrDefault("", "")<!>
+    s.<!RETURN_VALUE_NOT_USED!>get<!>("")
+    s.<!RETURN_VALUE_NOT_USED!>getOrDefault<!>("", "")
     s.put("", "")
     s.putIfAbsent("", "")
     s.merge("", "") { a, b -> a + b }
 }
 
 fun iterable(i: Iterable<String>) {
-    <!RETURN_VALUE_NOT_USED!>i.iterator()<!>
-    <!RETURN_VALUE_NOT_USED!>i.spliterator()<!>
+    i.<!RETURN_VALUE_NOT_USED!>iterator<!>()
+    i.<!RETURN_VALUE_NOT_USED!>spliterator<!>()
 }
 
 fun collection(i: Collection<String>) {
-    <!RETURN_VALUE_NOT_USED!>i.iterator()<!>
-    <!RETURN_VALUE_NOT_USED!>i.stream()<!>
-    <!RETURN_VALUE_NOT_USED!>i.parallelStream()<!>
+    i.<!RETURN_VALUE_NOT_USED!>iterator<!>()
+    i.<!RETURN_VALUE_NOT_USED!>stream<!>()
+    i.<!RETURN_VALUE_NOT_USED!>parallelStream<!>()
 }
 
 fun optional(s: String?) {
-    <!RETURN_VALUE_NOT_USED!>Optional.of(s!!)<!>
-    <!RETURN_VALUE_NOT_USED!>Optional.empty<String>()<!>
-    <!RETURN_VALUE_NOT_USED!>Optional.ofNullable(s)<!>
+    Optional.<!RETURN_VALUE_NOT_USED!>of<!>(s!!)
+    Optional.<!RETURN_VALUE_NOT_USED!>empty<!><String>()
+    Optional.<!RETURN_VALUE_NOT_USED!>ofNullable<!>(s)
     val o = Optional.ofNullable(s)
-    <!RETURN_VALUE_NOT_USED!>o.get()<!>
+    o.<!RETURN_VALUE_NOT_USED!>get<!>()
 }
 
 fun stringBuilder(sb: StringBuilder, ss: CharSequence) {
     sb.append("")
-    <!RETURN_VALUE_NOT_USED!>sb.length<!>
-    <!RETURN_VALUE_NOT_USED!>sb.get(0)<!>
-    <!RETURN_VALUE_NOT_USED!>ss.length<!>
-    <!RETURN_VALUE_NOT_USED!>ss.get(0)<!>
+    sb.<!RETURN_VALUE_NOT_USED!>length<!>
+    sb.<!RETURN_VALUE_NOT_USED!>get<!>(0)
+    ss.<!RETURN_VALUE_NOT_USED!>length<!>
+    ss.<!RETURN_VALUE_NOT_USED!>get<!>(0)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, inProjection, lambdaLiteral, nullableType, outProjection, samConversion,

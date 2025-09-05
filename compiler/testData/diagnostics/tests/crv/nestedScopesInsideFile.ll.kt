@@ -22,8 +22,8 @@ class Outer {
             }
             fun inner() = ""
         }
-        <!RETURN_VALUE_NOT_USED!>Inner()<!>
-        <!RETURN_VALUE_NOT_USED!>Inner().inner()<!>
+        <!RETURN_VALUE_NOT_USED!>Inner<!>()
+        Inner().<!RETURN_VALUE_NOT_USED!>inner<!>()
         Inner().bar()
         return ""
     }
@@ -32,8 +32,8 @@ class Outer {
 }
 
 fun main() {
-    <!RETURN_VALUE_NOT_USED!>Outer().foo()<!>
-    <!RETURN_VALUE_NOT_USED!>Outer().bar()<!>
+    Outer().<!RETURN_VALUE_NOT_USED!>foo<!>()
+    Outer().<!RETURN_VALUE_NOT_USED!>bar<!>()
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, integerLiteral, localFunction */

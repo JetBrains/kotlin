@@ -18,8 +18,8 @@ fun main() {
     E.<!UNRESOLVED_REFERENCE!>UNRESOLVED<!>
     C().<!UNRESOLVED_REFERENCE!>u<!>()
     C().<!UNRESOLVED_REFERENCE!>u<!>
-    <!RETURN_VALUE_NOT_USED!>C()<!>
-    <!RETURN_VALUE_NOT_USED!>intF() <!NONE_APPLICABLE!>><!> "32L"<!>
+    <!RETURN_VALUE_NOT_USED!>C<!>()
+    intF() <!NONE_APPLICABLE, RETURN_VALUE_NOT_USED!>><!> "32L"
     <!UNRESOLVED_REFERENCE!>Kek<!>::class
     <!NONE_APPLICABLE!>overload<!>('c')
 }

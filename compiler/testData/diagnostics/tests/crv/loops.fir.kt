@@ -37,7 +37,7 @@ fun forLoop() {
         <!UNUSED_EXPRESSION!>c<!> // unused, but OK because it is local
     }
     for (i in 1..10) {
-        <!RETURN_VALUE_NOT_USED!>i + 1<!>
+        i <!RETURN_VALUE_NOT_USED!>+<!> 1
     }
 }
 
@@ -46,8 +46,8 @@ var nonLocal: Int = 0
 fun operators() {
     nonLocal++ // unused, but discardable
     --nonLocal // unused, but discardable
-    <!RETURN_VALUE_NOT_USED!>-nonLocal<!> // unary minus — unused, should be reported
-    <!RETURN_VALUE_NOT_USED!>nonLocal + nonLocal<!> // unused, should be reported
+    <!RETURN_VALUE_NOT_USED!>-<!>nonLocal // unary minus — unused, should be reported
+    nonLocal <!RETURN_VALUE_NOT_USED!>+<!> nonLocal // unused, should be reported
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationUseSiteTargetFile, asExpression, assignment,

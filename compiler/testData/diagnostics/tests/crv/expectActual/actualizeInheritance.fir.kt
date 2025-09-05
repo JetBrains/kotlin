@@ -12,8 +12,8 @@ expect class Foo() {
 }
 
 fun commonMain() {
-    <!RETURN_VALUE_NOT_USED!>Foo()<!>
-    <!RETURN_VALUE_NOT_USED!>Foo().x()<!>
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
 }
 
@@ -35,7 +35,7 @@ actual class <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' de
 fun main() {
     Foo()
     Foo().x()
-    <!RETURN_VALUE_NOT_USED!>Foo().ign()<!>
+    Foo().<!RETURN_VALUE_NOT_USED!>ign<!>()
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, secondaryConstructor */

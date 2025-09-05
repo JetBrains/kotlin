@@ -44,19 +44,19 @@ class K2: JavaI2 {
 }
 
 fun testX(b: KotlinBase, j1: JavaI1, j2: JavaI2, k1: K1, k2: K2) {
-    <!RETURN_VALUE_NOT_USED!>b.x()<!>
-    <!RETURN_VALUE_NOT_USED!>j1.x()<!>
-    <!RETURN_VALUE_NOT_USED!>k1.x()<!>
+    b.<!RETURN_VALUE_NOT_USED!>x<!>()
+    j1.<!RETURN_VALUE_NOT_USED!>x<!>()
+    k1.<!RETURN_VALUE_NOT_USED!>x<!>()
     j2.x()
     k2.x()
 }
 
 fun testP(b: KotlinBase, j1: JavaI1, j2: JavaI2, k1: K1, k2: K2) {
-    <!RETURN_VALUE_NOT_USED!>b.p<!>
-    <!RETURN_VALUE_NOT_USED!>j1.p<!>
-    <!RETURN_VALUE_NOT_USED!>k1.p<!>
-    <!RETURN_VALUE_NOT_USED!>j2.p<!>
-    <!RETURN_VALUE_NOT_USED!>k2.p<!>
+    b.<!RETURN_VALUE_NOT_USED!>p<!>
+    j1.<!RETURN_VALUE_NOT_USED!>p<!>
+    k1.<!RETURN_VALUE_NOT_USED!>p<!>
+    j2.<!RETURN_VALUE_NOT_USED!>p<!>
+    k2.<!RETURN_VALUE_NOT_USED!>p<!>
 }
 
 fun testIgn(b: KotlinBase, j1: JavaI1, j2: JavaI2, k1: K1, k2: K2) {
@@ -68,11 +68,11 @@ fun testIgn(b: KotlinBase, j1: JavaI1, j2: JavaI2, k1: K1, k2: K2) {
 }
 
 fun testToString(b: KotlinBase, j1: JavaI1, j2: JavaI2, k1: K1, k2: K2) {
-    <!RETURN_VALUE_NOT_USED!>b.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>j1.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>k1.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>j2.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>k2.toString()<!>
+    b.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    j1.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    k1.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    j2.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    k2.<!RETURN_VALUE_NOT_USED!>toString<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaFunction, javaType, override,

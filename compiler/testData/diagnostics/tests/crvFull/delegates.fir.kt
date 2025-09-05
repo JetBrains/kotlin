@@ -12,8 +12,8 @@ class Y(val i: I): I by i {
 }
 
 fun test(x: X, y: Y) {
-    <!RETURN_VALUE_NOT_USED!>x.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>y.foo()<!>
+    x.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    y.<!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,

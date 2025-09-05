@@ -32,7 +32,7 @@ fun lhs(map: MutableMap<String, String>, map2: MyMap<String, String>) {
     map[stringF()] = "a"
     <!RETURN_VALUE_NOT_USED!>map["a"]<!>
     map2["a"] = stringF() // always ignore operator form
-    <!RETURN_VALUE_NOT_USED!>map2.set("a", stringF())<!> // report regular form
+    map2.<!RETURN_VALUE_NOT_USED!>set<!>("a", stringF()) // report regular form
     <!RETURN_VALUE_NOT_USED!>map2["a"]<!>
 }
 
@@ -42,8 +42,8 @@ fun nested(map: List<MutableMap<String, String>>, l2: MyList<MyMap<String, Strin
     <!RETURN_VALUE_NOT_USED!>map[0]["b"]<!>
     l2[0]["b"] = stringF()
     l2[0] = MyMap()
-    <!RETURN_VALUE_NOT_USED!>l2[0].set(stringF(), "a")<!>
-    <!RETURN_VALUE_NOT_USED!>l2.set(1, MyMap())<!>
+    l2[0].<!RETURN_VALUE_NOT_USED!>set<!>(stringF(), "a")
+    l2.<!RETURN_VALUE_NOT_USED!>set<!>(1, MyMap())
     <!RETURN_VALUE_NOT_USED!>l2[0]["b"]<!>
 }
 

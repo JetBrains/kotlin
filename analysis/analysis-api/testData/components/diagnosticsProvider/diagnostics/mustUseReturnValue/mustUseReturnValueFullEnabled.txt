@@ -3,26 +3,26 @@ Diagnostics from Dep.kt:
 
 Diagnostics from main.kt:
   for PSI element of type KtCallExpression at (38,5-15)
-    RETURN_VALUE_NOT_USED      text ranges: [(96,106)]
+    RETURN_VALUE_NOT_USED      text ranges: [(96,104)]
       PSI: KtCallExpression at (38,5-15)
   for PSI element of type KtCallExpression at (42,5-13)
-    RETURN_VALUE_NOT_USED      text ranges: [(182,190)]
+    RETURN_VALUE_NOT_USED      text ranges: [(182,188)]
       PSI: KtCallExpression at (42,5-13)
   for PSI element of type KtDotQualifiedExpression at (39,5-26)
-    RETURN_VALUE_NOT_USED      text ranges: [(111,132)]
+    RETURN_VALUE_NOT_USED      text ranges: [(122,130)]
       PSI: KtDotQualifiedExpression at (39,5-26)
   for PSI element of type KtDotQualifiedExpression at (40,5-20)
-    RETURN_VALUE_NOT_USED      text ranges: [(137,152)]
+    RETURN_VALUE_NOT_USED      text ranges: [(148,152)]
       PSI: KtDotQualifiedExpression at (40,5-20)
   for PSI element of type KtDotQualifiedExpression at (43,5-30)
-    RETURN_VALUE_NOT_USED      text ranges: [(195,220)]
+    RETURN_VALUE_NOT_USED      text ranges: [(204,218)]
       PSI: KtDotQualifiedExpression at (43,5-30)
   for PSI element of type KtDotQualifiedExpression at (44,5-18)
-    RETURN_VALUE_NOT_USED      text ranges: [(225,238)]
+    RETURN_VALUE_NOT_USED      text ranges: [(234,238)]
       PSI: KtDotQualifiedExpression at (44,5-18)
   for PSI element of type KtDotQualifiedExpression at (45,5-14)
-    RETURN_VALUE_NOT_USED      text ranges: [(243,252)]
+    RETURN_VALUE_NOT_USED      text ranges: [(247,250)]
       PSI: KtDotQualifiedExpression at (45,5-14)
   for PSI element of type KtDotQualifiedExpression at (46,5-8)
-    RETURN_VALUE_NOT_USED      text ranges: [(257,260)]
+    RETURN_VALUE_NOT_USED      text ranges: [(259,260)]
       PSI: KtDotQualifiedExpression at (46,5-8)

@@ -43,7 +43,7 @@ fun useBox(box: Box<String>, b: B, c: C, d: D, i: BoxImpl) {
     // questionable, but let's leave it for now:
     c.foo()
     d.foo()
-    <!RETURN_VALUE_NOT_USED!>i.add("")<!>
+    i.<!RETURN_VALUE_NOT_USED!>add<!>("")
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, stringLiteral, typeParameter */

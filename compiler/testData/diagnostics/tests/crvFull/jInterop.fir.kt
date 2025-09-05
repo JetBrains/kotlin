@@ -27,8 +27,8 @@ class LibKotlin {
 
 fun foo() {
     LibJava1().method()
-    <!RETURN_VALUE_NOT_USED!>LibJava2().method()<!>
-    <!RETURN_VALUE_NOT_USED!>LibKotlin().method()<!>
+    LibJava2().<!RETURN_VALUE_NOT_USED!>method<!>()
+    LibKotlin().<!RETURN_VALUE_NOT_USED!>method<!>()
 }
 
 // MODULE: main(lib1)
@@ -36,8 +36,8 @@ fun foo() {
 // FILE: App.kt
 fun bar() {
     LibJava1().method()
-    <!RETURN_VALUE_NOT_USED!>LibJava2().method()<!>
-    <!RETURN_VALUE_NOT_USED!>LibKotlin().method()<!>
+    LibJava2().<!RETURN_VALUE_NOT_USED!>method<!>()
+    LibKotlin().<!RETURN_VALUE_NOT_USED!>method<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

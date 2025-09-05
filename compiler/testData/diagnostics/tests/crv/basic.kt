@@ -36,7 +36,7 @@ class Inits {
 
     val unused: String
         get() {
-            <!RETURN_VALUE_NOT_USED!>stringF()<!>
+            <!RETURN_VALUE_NOT_USED!>stringF<!>()
             return ""
         }
 
@@ -50,7 +50,7 @@ fun defaultValue(param: String = stringF()) {}
 fun basic() {
     val used = stringF() // used
     println(stringF()) // used
-    <!RETURN_VALUE_NOT_USED!>stringF()<!> // unused
+    <!RETURN_VALUE_NOT_USED!>stringF<!>() // unused
     val (first, second) = returnPair()  //used
     val [destructuring, declaration] = returnPair()  //used
 }
@@ -68,14 +68,14 @@ fun stringConcat(): String {
 class ISE: Exception()
 
 fun throws(): Nothing {
-    <!RETURN_VALUE_NOT_USED!>ISE()<!> // unused
+    <!RETURN_VALUE_NOT_USED!>ISE<!>() // unused
     throw ISE()
 }
 
 fun createE() = IllegalStateException() // used
 
 fun throws2() {
-    <!RETURN_VALUE_NOT_USED!>createE()<!> // unused
+    <!RETURN_VALUE_NOT_USED!>createE<!>() // unused
     throw createE() // used
 }
 
@@ -85,7 +85,7 @@ fun usesNothing() {
 
 fun arrays() {
     val a = intArrayOf(1, 2, 3)
-    <!RETURN_VALUE_NOT_USED!>arrayOf(1, 2)<!>
+    <!RETURN_VALUE_NOT_USED!>arrayOf<!>(1, 2)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, checkNotNullCall, classDeclaration,

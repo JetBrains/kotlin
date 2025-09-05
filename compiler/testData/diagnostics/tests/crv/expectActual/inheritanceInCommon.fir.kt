@@ -15,8 +15,8 @@ interface B : A {
 }
 
 fun testCommon(b: B) {
-    <!RETURN_VALUE_NOT_USED!>b.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>b.bar()<!>
+    b.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    b.<!RETURN_VALUE_NOT_USED!>bar<!>()
 }
 
 
@@ -29,7 +29,7 @@ actual interface A {
 }
 
 fun testPlatform(b: B) {
-    <!RETURN_VALUE_NOT_USED!>b.foo()<!>
+    b.<!RETURN_VALUE_NOT_USED!>foo<!>()
     b.bar()
 }
 

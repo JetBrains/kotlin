@@ -5,7 +5,7 @@ class Lib {
     val anon = object {
         fun f1() = ""
         fun f2(): String {
-            <!RETURN_VALUE_NOT_USED!>f1()<!>
+            <!RETURN_VALUE_NOT_USED!>f1<!>()
             return ""
         }
     }
@@ -14,24 +14,24 @@ class Lib {
         val x = object {
             fun f3() = ""
             fun f4(): String {
-                <!RETURN_VALUE_NOT_USED!>f3()<!>
+                <!RETURN_VALUE_NOT_USED!>f3<!>()
                 return ""
             }
         }
-        <!RETURN_VALUE_NOT_USED!>x.f3()<!>
-        <!RETURN_VALUE_NOT_USED!>x.f4()<!>
+        x.<!RETURN_VALUE_NOT_USED!>f3<!>()
+        x.<!RETURN_VALUE_NOT_USED!>f4<!>()
         return x
     }
 
     fun outer2() {
         fun f5(): String = ""
-        <!RETURN_VALUE_NOT_USED!>f5()<!>
+        <!RETURN_VALUE_NOT_USED!>f5<!>()
     }
 }
 
 fun outer1() {
     fun f6(): String = ""
-    <!RETURN_VALUE_NOT_USED!>f6()<!>
+    <!RETURN_VALUE_NOT_USED!>f6<!>()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localFunction, localProperty,

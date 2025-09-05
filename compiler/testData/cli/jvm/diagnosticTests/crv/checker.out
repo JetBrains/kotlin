@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:10:5: warning: unused return value of 'annotated'.
+compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:10:15: warning: unused return value of 'annotated'.
     Annotated.annotated()
-    ^^^^^^^^^^^^^^^^^^^^^
+              ^^^^^^^^^
 OK

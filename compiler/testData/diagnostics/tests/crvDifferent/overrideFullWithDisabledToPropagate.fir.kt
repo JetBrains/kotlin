@@ -55,13 +55,13 @@ class C3: C1() {
 }
 
 fun testFoo(d1: D1, d2: D2, d3: D3, d4: D4, c1: C1, c2: C2, c3: C3) {
-    <!RETURN_VALUE_NOT_USED!>d1.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>d2.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>d3.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>d4.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>c1.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>c2.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>c3.foo()<!>
+    d1.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    d2.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    d3.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    d4.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c1.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c2.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c3.<!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 fun testBar(d1: D1, d2: D2, d3: D3, d4: D4, c1: C1, c2: C2, c3: C3) {
@@ -71,7 +71,7 @@ fun testBar(d1: D1, d2: D2, d3: D3, d4: D4, c1: C1, c2: C2, c3: C3) {
     d4.bar()
     c1.bar()
     c2.bar()
-    <!RETURN_VALUE_NOT_USED!>c3.bar()<!>
+    c3.<!RETURN_VALUE_NOT_USED!>bar<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,
