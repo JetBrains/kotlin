@@ -39,6 +39,12 @@ tasks.test {
     useJUnit {
         exclude("**/*LincheckTest.class")
     }
+    val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+    val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
+    doFirst {
+        systemProperty("jdk8Home", jdk8Provider.get())
+        systemProperty("jdk11Home", jdk11Provider.get())
+    }
 }
 
 tasks.register<Test>("lincheckTest") {

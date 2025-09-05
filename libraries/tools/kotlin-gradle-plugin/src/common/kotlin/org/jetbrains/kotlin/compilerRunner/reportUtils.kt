@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
-import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
@@ -44,7 +44,6 @@ import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
@@ -97,6 +96,13 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     return result ?: "<unknown>"
 }
 
+private val JavaVersion.supportsArgsFile: Boolean
+    get() = isJava9Compatible
+
+/**
+ * @param explicitJdk Optional pair of JDK path and its Java version to explicitly use for process execution;
+ *                    defaults to null meaning using the current `java.home`.
+ */
 internal fun runToolInSeparateProcess(
     argsArray: Array<String>,
     compilerClassName: String,
@@ -104,20 +110,38 @@ internal fun runToolInSeparateProcess(
     logger: KotlinLogger,
     buildDir: File,
     jvmArgs: List<String> = emptyList(),
+    explicitJdk: Pair<File, Int>? = null,
 ): ExitCode {
-    val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
+    val javaHome = explicitJdk?.first?.toString() ?: System.getProperty("java.home")
+    val javaVersion = explicitJdk?.second?.let { JavaVersion.toVersion(it) } ?: JavaVersion.current()
+    val javaBin = javaHome + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.joinToString(separator = File.pathSeparator) { it.absolutePath }
-
-    val compilerOptions = writeArgumentsToFile(buildDir, argsArray)
-
-    val builder = ProcessBuilder(
-        javaBin,
+    val javaCommandArgs = listOf(
         *(jvmArgs.toTypedArray()),
         "-cp",
         classpathString,
         compilerClassName,
-        "@${compilerOptions.absolutePath}"
     )
+    val argsList = argsArray.toList()
+
+    val processBuilderArgs = if (javaVersion.supportsArgsFile) {
+        val fullArgsFile = writeArgumentsToFile(ArgumentsFileKind.JVM_ARGS, buildDir, javaCommandArgs + argsList)
+        logger.debug("Using JVM args file to run the compiler")
+        listOf(
+            javaBin,
+            "@${fullArgsFile.absolutePath}",
+        )
+    } else {
+        val compilerOptions = writeArgumentsToFile(ArgumentsFileKind.KOTLIN_COMPILER_ARGS, buildDir, argsList)
+        logger.debug("Using regular JVM arguments to run the compiler")
+        buildList {
+            add(javaBin)
+            addAll(javaCommandArgs)
+            add("@${compilerOptions.absolutePath}")
+        }
+    }
+
+    val builder = ProcessBuilder(processBuilderArgs)
     val messageCollector = GradleErrorMessageCollector(logger, createLoggingMessageCollector(logger))
     val process = builder.start()
 
@@ -128,14 +152,8 @@ internal fun runToolInSeparateProcess(
         }
     }
 
-    if (logger is GradleKotlinLogger) {
-        process.inputStream!!.bufferedReader().forEachLine {
-            logger.lifecycle(it)
-        }
-    } else {
-        process.inputStream!!.bufferedReader().forEachLine {
-            println(it)
-        }
+    process.inputStream!!.bufferedReader().forEachLine {
+        logger.lifecycle(it)
     }
 
     readErrThread.join()
@@ -145,15 +163,20 @@ internal fun runToolInSeparateProcess(
     return exitCodeFromProcessExitCode(logger, exitCode)
 }
 
-private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
+private enum class ArgumentsFileKind(val suffix: String) {
+    KOTLIN_COMPILER_ARGS(".compiler.options"),
+    JVM_ARGS(".jvm.args"),
+}
+
+private fun writeArgumentsToFile(kind: ArgumentsFileKind, directory: File, args: List<String>): File {
     val prefix = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_"
-    val suffix = ".compiler.options"
+    val suffix = kind.suffix
     val compilerOptions = if (directory.exists())
         Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
     else
         Files.createTempFile(prefix, suffix).toFile()
     compilerOptions.writeText(
-        argsArray.joinToString(" ") {
+        args.joinToString(" ") {
             "\"${it.escapeJavaStyleString()}\""
         }
     )
