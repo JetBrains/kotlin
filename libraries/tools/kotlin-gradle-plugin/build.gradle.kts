@@ -45,6 +45,11 @@ registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_86,
 )
 
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_811,
+)
+
 tasks.test {
     useJUnit {
         exclude("**/*LincheckTest.class")
