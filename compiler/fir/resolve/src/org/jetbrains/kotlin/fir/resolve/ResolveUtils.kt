@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.builder.FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
@@ -815,6 +816,19 @@ fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic):
         }
     }
 }
+
+fun buildExplicitBackingFieldReference(
+    source: KtSourceElement?,
+    name: Name,
+    candidate: Candidate,
+): FirPropertyWithExplicitBackingFieldResolvedNamedReference =
+    FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder().apply {
+        this.source = source
+        this.name = name
+        this.resolvedSymbol = candidate.symbol
+        hasVisibleBackingField = candidate.hasVisibleBackingField
+        resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
+    }.build()
 
 val FirTypeParameterSymbol.defaultType: ConeTypeParameterType
     get() = ConeTypeParameterTypeImpl(toLookupTag(), isMarkedNullable = false)

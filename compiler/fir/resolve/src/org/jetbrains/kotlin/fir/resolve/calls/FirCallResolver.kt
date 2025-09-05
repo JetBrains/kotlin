@@ -884,13 +884,7 @@ class FirCallResolver(
             }
         }
         if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
-            return FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder().apply {
-                this.source = source
-                this.name = name
-                this.resolvedSymbol = candidate.symbol
-                hasVisibleBackingField = candidate.hasVisibleBackingField
-                resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
-            }.build()
+            return buildExplicitBackingFieldReference(source, name, candidate)
         }
         /*
          * This `if` is an optimization for local variables and properties without type parameters.
