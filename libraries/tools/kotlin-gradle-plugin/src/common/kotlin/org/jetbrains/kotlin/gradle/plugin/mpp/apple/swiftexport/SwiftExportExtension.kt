@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.plugin.internal.ProjectByPath
+import org.jetbrains.kotlin.gradle.plugin.internal.ProjectDependencyAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
@@ -64,8 +65,12 @@ interface SwiftExportAdvancedConfiguration {
     val freeCompilerArgs: ListProperty<String>
 }
 
-internal fun ObjectFactory.SwiftExportExtension(dependencies: DependencyHandler): SwiftExportExtension =
-    newInstance(SwiftExportExtension::class.java, dependencies)
+internal fun ObjectFactory.SwiftExportExtension(
+    dependencies: DependencyHandler,
+    projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
+    projectByPath: ProjectByPath,
+): SwiftExportExtension =
+    newInstance(SwiftExportExtension::class.java, dependencies, projectDependencyAccessor, projectByPath)
 
 /**
  * An *experimental* plugin DSL extension to configure Swift Export.
@@ -99,6 +104,8 @@ abstract class SwiftExportExtension @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencyHandler: DependencyHandler,
+    private val projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
+    private val projectByPath: ProjectByPath,
 ) : SwiftExportedModuleMetadata {
     /**
      * Configure Link task.
@@ -183,17 +190,15 @@ abstract class SwiftExportExtension @Inject constructor(
 
     private val _exportedModules = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
 
-    private fun addDependencyToExportedModules(dependency: Provider<*>, configure: SwiftExportedModuleMetadata.() -> Unit) {
+    private fun addDependencyToExportedModules(
+        dependency: Provider<*>,
+        configure: SwiftExportedModuleMetadata.() -> Unit
+    ) {
         val dependencyId = dependency.map { dep ->
             when (dep) {
                 is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
                 is ProjectDependency -> {
-                    val projectPath = if (GradleVersion.current() < GradleVersion.version("8.11")) {
-                        @Suppress("DEPRECATION")
-                        dep.dependencyProject.path
-                    } else {
-                        dep.path
-                    }
+                    val projectPath = dep.compatAccessor(projectDependencyAccessor, projectByPath).dependencyProject().path
 
                     SwiftExportedDependency.Project(objectFactory, projectPath)
                 }
