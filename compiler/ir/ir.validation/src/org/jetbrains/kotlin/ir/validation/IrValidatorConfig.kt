@@ -57,7 +57,7 @@ fun IrValidatorConfig.withAllChecks() = withBasicChecks()
     .withCheckers(
         IrCallValueArgumentCountChecker,
         IrCallTypeArgumentCountChecker,
-        IrVisibilityChecker,
+        IrVisibilityChecker.Strict,
         IrValueAccessScopeChecker,
         IrTypeParameterScopeChecker,
         IrCrossFileFieldUsageChecker,

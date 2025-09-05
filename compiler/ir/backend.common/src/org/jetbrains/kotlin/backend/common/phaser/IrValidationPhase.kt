@@ -43,7 +43,7 @@ abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(contex
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             //.withCheckers(IrTypeParameterScopeChecker) // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker)
+                withCheckers(IrVisibilityChecker.Strict)
             }
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
@@ -90,7 +90,7 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
             .withBasicChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker, IrCrossFileFieldUsageChecker, IrValueAccessScopeChecker)
+                withCheckers(IrVisibilityChecker.Relaxed, IrCrossFileFieldUsageChecker, IrValueAccessScopeChecker)
             }
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()

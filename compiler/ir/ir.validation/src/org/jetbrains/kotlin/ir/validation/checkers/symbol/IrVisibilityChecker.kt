@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.IrSymbolChecker
 import org.jetbrains.kotlin.ir.validation.checkers.checkVisibility
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 
-object IrVisibilityChecker : IrSymbolChecker {
+class IrVisibilityChecker private constructor(private val treatInternalAsPublic: Boolean) : IrSymbolChecker {
     override fun check(
         symbol: IrSymbol,
         container: IrElement,
@@ -21,6 +21,26 @@ object IrVisibilityChecker : IrSymbolChecker {
         if (context.withinScripOrScriptClass)
             return
 
-        checkVisibility(symbol, container, context)
+        checkVisibility(symbol, container, context, treatInternalAsPublic)
+    }
+
+    companion object {
+        /**
+         * Checks visibilities in "strict" mode: Treats `internal` non-`@PublishedApi` declarations
+         * as internal declarations, and `internal @PublishedApi` as public ones.
+         *
+         * This is the default visibility validation mode.
+         */
+        val Strict = IrVisibilityChecker(treatInternalAsPublic = false)
+
+        /**
+         * Checks visibilities in "relaxed" mode: Treats all `internal` declarations as public declarations.
+         *
+         * This mode is intended to be used only on the second stage of a KLIB-based compilation
+         * and only after all inline functions have been actually inlined.
+         * Since there might be access to `internal` non-`@PublishedApi` declarations from other modules,
+         * which happens during inlining of `@DoNotInlineOnFirstStage`-marked inline functions.
+         */
+        val Relaxed = IrVisibilityChecker(treatInternalAsPublic = true)
     }
 }

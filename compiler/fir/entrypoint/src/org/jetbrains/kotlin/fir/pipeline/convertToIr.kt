@@ -509,7 +509,7 @@ private class Fir2IrPipeline(
                 .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVisibilityChecks) { // KT-80071
                     // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
                     // so visibility checks are only performed if requested via a flag, and in tests.
-                    withCheckers(IrVisibilityChecker)
+                    withCheckers(IrVisibilityChecker.Strict)
                 }
                 .applyIf(extension == null) {
                     // KT-80065: This checker is known to trigger on a lot of internal and external compiler plugins,

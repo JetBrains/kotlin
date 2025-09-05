@@ -98,39 +98,22 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
     return file.fileEntry == fileOrNull?.fileEntry
 }
 
-/**
- * The set of declarations' fully qualified names references to which we don't want to check for visibility violations.
- *
- * FIXME: We need to get rid of this list of exceptions (KT-69947).
- */
-private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
-    "kotlin.wasm.internal.wasmTypeId",        // TODO: stop it leaking through kotlin.reflect.findAssociatedObject() inline function from Kotlin/Wasm stdlib, KT-76285
-    "kotlin.coroutines.CoroutineImpl",        // TODO: stop it leaking through kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn() inline function in Kotlin/Wasm stdlib, KT-76285
-).mapTo(hashSetOf(), ::FqName)
-
 // Most of the internal annotations declared in these packages make visibility checks fail (KT-78100)
 private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
     listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
-
-private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
-    return FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS.any { excludedFqName -> hasEqualFqName(excludedFqName) }
-}
 
 context(checker: IrChecker)
 internal fun checkVisibility(
     referencedDeclarationSymbol: IrSymbol,
     reference: IrElement,
     context: CheckerContext,
+    treatInternalAsPublic: Boolean, // To relax the validation on the 2nd compilation stage.
 ) {
     if ((reference as? IrOverridableDeclaration<*>)?.isFakeOverride == true && referencedDeclarationSymbol in reference.overriddenSymbols) {
         return
     }
 
     if (reference is IrClass && referencedDeclarationSymbol in reference.sealedSubclasses) {
-        return
-    }
-
-    if (referencedDeclarationSymbol.isExcludedFromVisibilityChecks()) {
         return
     }
 
@@ -149,7 +132,7 @@ internal fun checkVisibility(
     val effectiveVisibility = visibility.toEffectiveVisibilityOrNull(
         container = classOfReferenced?.symbol,
         forClass = true,
-        ownerIsPublishedApi = referencedDeclaration.isPublishedApi(),
+        ownerIsPublishedApi = treatInternalAsPublic || referencedDeclaration.isPublishedApi(),
     )
 
     val isVisible = when (effectiveVisibility) {
