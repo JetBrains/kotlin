@@ -54,8 +54,12 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
         return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
     }
 
+    // JS stdlib compilation needs `.filter { !it.isBound || !it.owner.isExpect }`:
+    //   - Expect declarations like `kotlin/js/js` are removed from IR by Actualizer
+    //   - However, they are not removed from FIR.
+    //   - SymbolFinder finds in FIR both expect and actual, and the "expect" one should be filtered out
     protected fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
-        val elements = functionSymbols()
+        val elements = functionSymbols().filter { !it.isBound || !it.owner.isExpect }
         require(elements.isNotEmpty()) { "No function $this found" }
         require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
         return elements.single()
