@@ -74,4 +74,5 @@ private fun Project.registerVariantImplementations() {
             MavenPublicationComponentAccessorG82.Factory()
     }
     factories[CopySpecAccessor.Factory::class] = CopySpecAccessorG85.Factory()
+    factories[ProjectDependencyAccessor.Factory::class] = ProjectDependencyAccessorG88.Factory()
 }

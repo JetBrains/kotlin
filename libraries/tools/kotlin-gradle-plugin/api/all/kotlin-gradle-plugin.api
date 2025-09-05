@@ -1562,7 +1562,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swi
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;Lorg/gradle/api/artifacts/dsl/DependencyHandler;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;Lorg/gradle/api/artifacts/dsl/DependencyHandler;Lorg/gradle/api/provider/Provider;Lkotlin/jvm/functions/Function1;)V
 	public final fun configure (Lkotlin/jvm/functions/Function1;)V
 	public final fun configure (Lorg/gradle/api/Action;)V
 	public static synthetic fun configure$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V

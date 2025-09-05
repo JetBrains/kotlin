@@ -12,8 +12,8 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.future
@@ -21,12 +21,8 @@ import org.jetbrains.kotlin.gradle.utils.future
 internal object ModuleIds {
     fun fromDependency(project: Project, dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
         is ProjectDependency -> {
-            val dependencyProject = if (GradleVersion.current().baseVersion < GradleVersion.version("9.0")) {
-                // This API was removed in 9.0-M4 - https://github.com/gradle/gradle/commit/3a27d546a713568343413f622c872b2f052ea757
-                @Suppress("DEPRECATION") dependency.dependencyProject
-            } else {
-                project.project(dependency.path)
-            }
+            val dependencyProject = dependency.compatAccessor(project).dependencyProject()
+
             @Suppress("DEPRECATION_ERROR")
             idOfRootModule(dependencyProject)
         }
