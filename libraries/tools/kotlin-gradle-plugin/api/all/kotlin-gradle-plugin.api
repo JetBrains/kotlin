@@ -3424,12 +3424,10 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency : or
 	public fun because (Ljava/lang/String;)V
 	public final fun component1 ()Lorg/gradle/api/model/ObjectFactory;
 	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-	public fun contentEquals (Lorg/gradle/api/artifacts/Dependency;)Z
 	public fun copy ()Lorg/gradle/api/artifacts/Dependency;
 	public final fun copy (Lorg/gradle/api/model/ObjectFactory;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;Lorg/gradle/api/model/ObjectFactory;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency;
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getBuildDependencies ()Lorg/gradle/api/tasks/TaskDependency;
 	public fun getFiles ()Lorg/gradle/api/file/FileCollection;
 	public fun getGroup ()Ljava/lang/String;
 	public fun getName ()Ljava/lang/String;
@@ -3439,8 +3437,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency : or
 	public fun getTargetComponentId ()Lorg/gradle/api/artifacts/component/ComponentIdentifier;
 	public fun getVersion ()Ljava/lang/String;
 	public fun hashCode ()I
-	public fun resolve ()Ljava/util/Set;
-	public fun resolve (Z)Ljava/util/Set;
 	public fun toString ()Ljava/lang/String;
 }
 

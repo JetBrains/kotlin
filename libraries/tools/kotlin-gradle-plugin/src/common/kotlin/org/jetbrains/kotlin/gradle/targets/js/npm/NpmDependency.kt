@@ -11,7 +11,6 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.TaskDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import java.io.File
 
@@ -38,17 +37,9 @@ data class NpmDependency(
 
     override fun getVersion() = version
 
-    override fun resolve(transitive: Boolean): Set<File> =
-        resolve()
-
     override fun getTargetComponentId(): ComponentIdentifier? = null
-    override fun resolve(): MutableSet<File> = mutableSetOf()
 
     override fun getFiles(): FileCollection = objectFactory.fileCollection()
-
-    override fun getBuildDependencies(): TaskDependency = TaskDependency { mutableSetOf() }
-
-    override fun contentEquals(dependency: Dependency) = this == dependency
 
     override fun copy(): Dependency = this.copy(name = name)
 
