@@ -15,11 +15,11 @@ expect fun toplvl(): String
 @IgnorableReturnValue expect fun ignToplvl(): String
 
 fun commonMain() {
-    <!RETURN_VALUE_NOT_USED!>toplvl()<!>
-    <!RETURN_VALUE_NOT_USED!>Foo()<!>
-    <!RETURN_VALUE_NOT_USED!>Foo().x()<!>
+    <!RETURN_VALUE_NOT_USED!>toplvl<!>()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
-    <!RETURN_VALUE_NOT_USED!>Foo().p<!>
+    Foo().<!RETURN_VALUE_NOT_USED!>p<!>
     ignToplvl()
 }
 
@@ -45,11 +45,11 @@ actual fun ignToplvl(): String = "" // Ignorable -> Unspecified is allowed
 
 fun main() {
     toplvl()
-    <!RETURN_VALUE_NOT_USED!>Foo()<!>
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
     Foo().x()
-    <!RETURN_VALUE_NOT_USED!>Foo().ign()<!>
-    <!RETURN_VALUE_NOT_USED!>Foo().p<!>
-    <!RETURN_VALUE_NOT_USED!>Foo().notActual()<!>
+    Foo().<!RETURN_VALUE_NOT_USED!>ign<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>p<!>
+    Foo().<!RETURN_VALUE_NOT_USED!>notActual<!>()
     ignToplvl()
 }
 

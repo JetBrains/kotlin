@@ -49,7 +49,7 @@ fun test() {
     val kotlinVoidProcessorImpl = KotlinVoidProcessorImpl()
     val kotlinNullableProcessorImpl = KotlinNullableProcessorImpl()
     useProcessor(kotlinVoidProcessorImpl) // Void!
-    <!RETURN_VALUE_NOT_USED!>kotlinNullableProcessorImpl.process(null)<!> // Void? is not ignorable just as Unit?
+    kotlinNullableProcessorImpl.<!RETURN_VALUE_NOT_USED!>process<!>(null) // Void? is not ignorable just as Unit?
     kotlinVoidProcessorImpl.process(getVoid()) // Void
 
     id(Processor.makePlatform(Unit))
@@ -64,7 +64,7 @@ fun testApp() {
     val kotlinVoidProcessorImpl = KotlinVoidProcessorImpl()
     val kotlinNullableProcessorImpl = KotlinNullableProcessorImpl()
     useProcessor(kotlinVoidProcessorImpl) // Void!
-    <!RETURN_VALUE_NOT_USED!>kotlinNullableProcessorImpl.process(null)<!> // Void? is not ignorable just as Unit?
+    kotlinNullableProcessorImpl.<!RETURN_VALUE_NOT_USED!>process<!>(null) // Void? is not ignorable just as Unit?
     kotlinVoidProcessorImpl.process(getVoid()) // Void
 
     id(Processor.makePlatform(Unit))

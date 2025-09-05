@@ -12,8 +12,8 @@ expect class Foo() {
 }
 
 fun commonMain() {
-    <!RETURN_VALUE_NOT_USED!>Foo()<!>
-    <!RETURN_VALUE_NOT_USED!>Foo().x()<!>
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
 }
 

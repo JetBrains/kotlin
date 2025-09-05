@@ -18,8 +18,8 @@ fun returnsString(): String {
 }
 
 fun main() {
-    <!RETURN_VALUE_NOT_USED!>stringF().myLet { it }<!>
-    <!RETURN_VALUE_NOT_USED!>stringF().myLet { 2 }<!>
+    stringF().<!RETURN_VALUE_NOT_USED!>myLet<!> { it }
+    stringF().<!RETURN_VALUE_NOT_USED!>myLet<!> { 2 }
     stringF().let { 2 }
 }
 

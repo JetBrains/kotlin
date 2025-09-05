@@ -25,10 +25,10 @@ interface I5: I2 // result should be the same as I3 because we resolve to base f
 
 fun testFoo(i1: I1, i2: I2, i3: I3, i4: I4, i5: I5) {
     i1.foo()
-    <!RETURN_VALUE_NOT_USED!>i2.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>i3.foo()<!>
+    i2.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    i3.<!RETURN_VALUE_NOT_USED!>foo<!>()
     i4.foo()
-    <!RETURN_VALUE_NOT_USED!>i5.foo()<!>
+    i5.<!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 fun testBar(i1: I1, i2: I2, i3: I3, i4: I4, i5: I5) {

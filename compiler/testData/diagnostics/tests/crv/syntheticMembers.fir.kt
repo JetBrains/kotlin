@@ -19,9 +19,9 @@ fun data() {
     MyData("")
     val test = MyData("")
     test.value
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(MyData(""))<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(MyData(""))
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
     test.component1()
 }
 
@@ -29,26 +29,26 @@ fun value() {
     MyValue("")
     val test = MyValue("")
     test.value
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(MyValue(""))<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(MyValue(""))
 }
 
 fun clazz() {
     MyClass("")
     val test = MyClass("")
     test.value
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(MyClass(""))<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(MyClass(""))
 }
 
 fun explicit() {
     ExplicitAnyOverride()
     val test = ExplicitAnyOverride()
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(ExplicitAnyOverride())<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(ExplicitAnyOverride())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, localProperty, primaryConstructor,

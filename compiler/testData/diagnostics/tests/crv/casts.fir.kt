@@ -45,8 +45,8 @@ fun whenInstance() {
     }
 
     when (nonLocal) {
-        is String -> <!RETURN_VALUE_NOT_USED!>intF()<!>
-        is Boolean -> <!RETURN_VALUE_NOT_USED!>getAny()<!>
+        is String -> <!RETURN_VALUE_NOT_USED!>intF<!>()
+        is Boolean -> <!RETURN_VALUE_NOT_USED!>getAny<!>()
         else -> <!RETURN_VALUE_NOT_USED!>nonLocal<!>
     }
 }
@@ -54,7 +54,7 @@ fun whenInstance() {
 fun castsInIf() {
     val x = if (intF() > 10) getAny() as String else ""
     val y = if (intF() > 10) {
-        <!RETURN_VALUE_NOT_USED!>getAny()<!> // unused
+        <!RETURN_VALUE_NOT_USED!>getAny<!>() // unused
         getAny() as String // used
     } else {
         ""

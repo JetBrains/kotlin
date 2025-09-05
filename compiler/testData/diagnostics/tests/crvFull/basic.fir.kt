@@ -26,19 +26,19 @@ enum class E {
 }
 
 fun foo(): String {
-    <!RETURN_VALUE_NOT_USED!>Lib()<!>
-    <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
-    <!RETURN_VALUE_NOT_USED!>Lib().prop<!>
+    <!RETURN_VALUE_NOT_USED!>Lib<!>()
+    Lib().<!RETURN_VALUE_NOT_USED!>getStuff<!>()
+    Lib().<!RETURN_VALUE_NOT_USED!>prop<!>
     Lib().prop = ""
-    <!RETURN_VALUE_NOT_USED!>toplvl()<!>
-    <!RETURN_VALUE_NOT_USED!>E.A<!>
-    <!RETURN_VALUE_NOT_USED!>E.A.foo()<!>
+    <!RETURN_VALUE_NOT_USED!>toplvl<!>()
+    E.<!RETURN_VALUE_NOT_USED!>A<!>
+    E.A.<!RETURN_VALUE_NOT_USED!>foo<!>()
     return Lib().getStuff()
 }
 
 fun withLocal() {
     fun local(): String = ""
-    <!RETURN_VALUE_NOT_USED!>local()<!>
+    <!RETURN_VALUE_NOT_USED!>local<!>()
 }
 
 // MODULE: main(lib1)
@@ -46,20 +46,20 @@ fun withLocal() {
 // FILE: App.kt
 
 fun bar(): String {
-    <!RETURN_VALUE_NOT_USED!>Lib()<!>
-    <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
-    <!RETURN_VALUE_NOT_USED!>Lib().prop<!>
+    <!RETURN_VALUE_NOT_USED!>Lib<!>()
+    Lib().<!RETURN_VALUE_NOT_USED!>getStuff<!>()
+    Lib().<!RETURN_VALUE_NOT_USED!>prop<!>
     Lib().prop = ""
-    <!RETURN_VALUE_NOT_USED!>foo()<!>
-    <!RETURN_VALUE_NOT_USED!>toplvl()<!>
-    <!RETURN_VALUE_NOT_USED!>E.A<!>
-    <!RETURN_VALUE_NOT_USED!>E.A.foo()<!>
+    <!RETURN_VALUE_NOT_USED!>foo<!>()
+    <!RETURN_VALUE_NOT_USED!>toplvl<!>()
+    E.<!RETURN_VALUE_NOT_USED!>A<!>
+    E.A.<!RETURN_VALUE_NOT_USED!>foo<!>()
     return foo()
 }
 
 fun main() {
-    <!RETURN_VALUE_NOT_USED!>bar()<!>
-    <!RETURN_VALUE_NOT_USED!>A().alreadyApplied()<!>
+    <!RETURN_VALUE_NOT_USED!>bar<!>()
+    A().<!RETURN_VALUE_NOT_USED!>alreadyApplied<!>()
     val x = bar()
 }
 

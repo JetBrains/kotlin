@@ -31,7 +31,7 @@ interface I3: Base {
 
 fun checkLib(i1: I1, i2: I2, i3: I3) {
     i1.foo()
-    <!RETURN_VALUE_NOT_USED!>i2.foo()<!>
+    i2.<!RETURN_VALUE_NOT_USED!>foo<!>()
     i3.foo()
 }
 
@@ -64,10 +64,10 @@ class C5: C3() {
 
 fun check(c1: C1, c2: C2, c3: C3, c4: C4, c5: C5) {
     c1.foo()
-    <!RETURN_VALUE_NOT_USED!>c2.foo()<!>
+    c2.<!RETURN_VALUE_NOT_USED!>foo<!>()
     c3.foo()
-    <!RETURN_VALUE_NOT_USED!>c4.foo()<!>
-    <!RETURN_VALUE_NOT_USED!>c5.foo()<!>
+    c4.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c5.<!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

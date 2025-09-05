@@ -32,8 +32,8 @@ class KotlinUsage {
 }
 
 fun usage() {
-    <!RETURN_VALUE_NOT_USED!>Usage().method()<!>
-    <!RETURN_VALUE_NOT_USED!>KotlinUsage().method()<!>
+    Usage().<!RETURN_VALUE_NOT_USED!>method<!>()
+    KotlinUsage().<!RETURN_VALUE_NOT_USED!>method<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, stringLiteral */

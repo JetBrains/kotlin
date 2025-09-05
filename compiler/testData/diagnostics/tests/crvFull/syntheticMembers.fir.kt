@@ -14,39 +14,39 @@ class ExplicitAnyOverride() {
 }
 
 fun data() {
-    <!RETURN_VALUE_NOT_USED!>MyData("")<!>
+    <!RETURN_VALUE_NOT_USED!>MyData<!>("")
     val test = MyData("")
-    <!RETURN_VALUE_NOT_USED!>test.value<!>
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(MyData(""))<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.component1()<!>
+    test.<!RETURN_VALUE_NOT_USED!>value<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(MyData(""))
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>component1<!>()
 }
 
 fun value() {
-    <!RETURN_VALUE_NOT_USED!>MyValue("")<!>
+    <!RETURN_VALUE_NOT_USED!>MyValue<!>("")
     val test = MyValue("")
-    <!RETURN_VALUE_NOT_USED!>test.value<!>
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(MyValue(""))<!>
+    test.<!RETURN_VALUE_NOT_USED!>value<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(MyValue(""))
 }
 
 fun clazz() {
-    <!RETURN_VALUE_NOT_USED!>MyClass("")<!>
+    <!RETURN_VALUE_NOT_USED!>MyClass<!>("")
     val test = MyClass("")
-    <!RETURN_VALUE_NOT_USED!>test.value<!>
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(MyClass(""))<!>
+    test.<!RETURN_VALUE_NOT_USED!>value<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(MyClass(""))
 }
 
 fun explicit() {
-    <!RETURN_VALUE_NOT_USED!>ExplicitAnyOverride()<!>
+    <!RETURN_VALUE_NOT_USED!>ExplicitAnyOverride<!>()
     val test = ExplicitAnyOverride()
-    <!RETURN_VALUE_NOT_USED!>test.toString()<!>
-    <!RETURN_VALUE_NOT_USED!>test.hashCode()<!>
-    <!RETURN_VALUE_NOT_USED!>test.equals(ExplicitAnyOverride())<!>
+    test.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    test.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    test.<!RETURN_VALUE_NOT_USED!>equals<!>(ExplicitAnyOverride())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, localProperty, primaryConstructor,
