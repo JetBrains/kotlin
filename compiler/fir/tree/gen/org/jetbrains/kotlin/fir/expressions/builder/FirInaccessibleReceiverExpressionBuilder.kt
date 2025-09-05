@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirInaccessibleReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -28,6 +29,7 @@ class FirInaccessibleReceiverExpressionBuilder : FirAnnotationContainerBuilder, 
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var calleeReference: FirThisReference
+    lateinit var kind: InaccessibleReceiverKind
 
     override fun build(): FirInaccessibleReceiverExpression {
         return FirInaccessibleReceiverExpressionImpl(
@@ -35,6 +37,7 @@ class FirInaccessibleReceiverExpressionBuilder : FirAnnotationContainerBuilder, 
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             calleeReference,
+            kind,
         )
     }
 
@@ -58,5 +61,6 @@ inline fun buildInaccessibleReceiverExpressionCopy(original: FirInaccessibleRece
     copyBuilder.coneTypeOrNull = original.coneTypeOrNull
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.calleeReference = original.calleeReference
+    copyBuilder.kind = original.kind
     return copyBuilder.apply(init).build()
 }

@@ -60,7 +60,7 @@ class Y: B() {
         val b_s: B_S = null!!
 
         init {
-            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B_<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>B_<!>()
             B_S()
         }
     }
@@ -84,7 +84,7 @@ class Z: C() {
 
         init {
             <!UNRESOLVED_REFERENCE!>A_S<!>()
-            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B_<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>B_<!>()
             B_S()
         }
     }

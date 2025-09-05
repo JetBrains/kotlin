@@ -215,6 +215,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeCannotInferReceiverParameterType -> FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE.createOn(source, session)
     is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(callOrAssignmentSource ?: source, session)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target, session)
+    is ConeInaccessibleOuterClass -> FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER.createOn(source, this.symbol, session)
     is ConeUnreportedDuplicateDiagnostic -> null // Unreported because we always report something different
     is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason, session)
@@ -571,6 +572,12 @@ private fun mapInapplicableCandidateError(
             is WrongNumberOfTypeArguments -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(
                 qualifiedAccessSource ?: source,
                 rootCause.desiredCount, rootCause.symbol, session
+            )
+
+            is InaccessibleOuterClassReceiver -> FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER.createOn(
+                qualifiedAccessSource ?: source,
+                rootCause.symbol,
+                session
             )
 
             else -> genericDiagnostic

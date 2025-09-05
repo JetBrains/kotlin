@@ -1,8 +1,8 @@
-@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number
+@R|Anno|(position = <strcat>(String(bound ), R|<local>/OriginalClass<T>|this@R|<local>/OriginalClass|.R|<local>/prop<Inapplicable(INAPPLICABLE): <local>/prop>#|))  kotlin/Number
   context -> FirTypeParameterSymbol A from FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias
   anchor -> [FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias]
 
-@R|Anno|(position = <strcat>(String(type ), <Unresolved name: prop>#))  <local>/OriginalClass<A>
+@R|Anno|(position = <strcat>(String(type ), R|<local>/OriginalClass<T>|this@R|<local>/OriginalClass|.R|<local>/prop<Inapplicable(INAPPLICABLE): <local>/prop>#|))  <local>/OriginalClass<A>
   context -> FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias
   anchor -> [FirTypeAliasSymbol <local>/OriginalClass.NestedTypeAlias]
 
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClass.kt
             public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](position = <strcat>(String(alias ), <Unresolved name: prop>#)) local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), <Unresolved name: prop>#)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), <Unresolved name: prop>#))  <local>/OriginalClass<A>|
+            @R|Anno|[Types](position = <strcat>(String(alias ), R|<local>/OriginalClass<T>|this@R|<local>/OriginalClass|.R|<local>/prop<Inapplicable(INAPPLICABLE): <local>/prop>#|)) local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] typealias NestedTypeAlias<@R|Anno|[Types](position = <strcat>(String(type param ), R|<local>/OriginalClass<T>|this@R|<local>/OriginalClass|.R|<local>/prop<Inapplicable(INAPPLICABLE): <local>/prop>#|)) [ResolvedTo(BODY_RESOLVE)] A : R|@R|Anno|(position = <strcat>(String(bound ), R|<local>/OriginalClass<T>|this@R|<local>/OriginalClass|.R|<local>/prop<Inapplicable(INAPPLICABLE): <local>/prop>#|))  kotlin/Number|, [ResolvedTo(BODY_RESOLVE)] Outer(T)> = R|@R|Anno|(position = <strcat>(String(type ), R|<local>/OriginalClass<T>|this@R|<local>/OriginalClass|.R|<local>/prop<Inapplicable(INAPPLICABLE): <local>/prop>#|))  <local>/OriginalClass<A>|
 
         }
 
