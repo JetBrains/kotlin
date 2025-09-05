@@ -8,11 +8,11 @@ package kotlin.reflect.jvm.internal.types
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 object ReflectTypeSystemContext : TypeSystemContext {
     override fun KotlinTypeMarker.asRigidType(): RigidTypeMarker? {
@@ -360,4 +360,11 @@ object ReflectTypeSystemContext : TypeSystemContext {
 
     override fun KotlinTypeMarker.isDynamic(): Boolean =
         false
+
+    private fun Any.shouldNotBeCalled(): Nothing {
+        throw KotlinReflectionInternalError(
+            "This method should not be called on $this with a new kotlin-reflect implementation. " +
+                    "Please file an issue at https://kotl.in/issue"
+        )
+    }
 }
