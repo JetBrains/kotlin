@@ -18,7 +18,8 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Class 'DerivedClass1' is not abstract and does not implement abstract base class member public/*package*/ abstract fun myAbs(): Unit defined in BaseClass
+Class 'DerivedClass1' is not abstract and does not implement abstract base class member:
+fun myAbs(): Unit
 
 ================ Step #2 =================
 
@@ -65,7 +66,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-'doSmth' hides member of supertype 'BaseClass' and needs 'override' modifier
+'doSmth' hides member of supertype 'BaseClass' and needs an 'override' modifier.
 
 ================ Step #5 =================
 
@@ -80,15 +81,6 @@ Exit code: OK
 Compiling files:
   src/BaseClass.java
 End of files
-Cleaning output files:
-  out/production/module/DerivedClass1.class
-  out/production/module/META-INF/module.kotlin_module
-End of files
-Compiling files:
-  src/DerivedClass1.kt
-End of files
-Exit code: OK
-------------------------------------------
 
 ================ Step #6 =================
 
@@ -122,4 +114,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Return type of 'doSmthAnother' is not a subtype of the return type of the overridden member 'public/*package*/ open fun doSmthAnother(): String! defined in BaseClass'
+Return type of 'fun doSmthAnother(): Unit' is not a subtype of the return type of the overridden member 'fun doSmthAnother(): String!' defined in 'BaseClass'.
