@@ -309,7 +309,7 @@ fun generateAsyncJsWrapper(
         }
 
     val initExternrefTableIfNeeded = if (useSharedObjects) """
-    const externrefTable = new WebAssembly.Table({ element: "externref", initial: 0 });"""
+    const externrefTable = new WebAssembly.Table({ element: "externref", initial: 1 });"""
     else ""
     val importExternrefTableIfNeeded = if (useSharedObjects) "            externrefTable: externrefTable," else ""
 
