@@ -998,7 +998,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageCont
 	public fun getIncludeIntoProjectStructureMetadata ()Z
 	public fun getMavenScope ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinUsageContext$MavenScope;
 	public fun getName ()Ljava/lang/String;
-	public fun getUsage ()Lorg/gradle/api/attributes/Usage;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/DefaultKotlinUsageContext$PublishOnlyIf {

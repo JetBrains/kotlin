@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.ComponentWithCoordinates
@@ -195,13 +194,6 @@ class DefaultKotlinUsageContext(
 
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
-
-    @Deprecated(
-        message = "Usage is no longer supported. Use `usageScope`",
-        replaceWith = ReplaceWith("usageScope"),
-        level = DeprecationLevel.ERROR
-    )
-    override fun getUsage(): Usage = error("Usage is no longer supported. Use `usageScope`")
 
     override fun getName(): String = dependencyConfigurationName
 
