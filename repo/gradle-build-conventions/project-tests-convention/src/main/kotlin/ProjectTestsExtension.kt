@@ -21,6 +21,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.build.project.tests.CollectTestDataTask
 import java.io.File
 
 abstract class ProjectTestsExtension(val project: Project) {
@@ -258,28 +260,13 @@ abstract class ProjectTestsExtension(val project: Project) {
     }
 
     private fun configureCollectTestDataTask(generatorTask: TaskProvider<out Task>) {
-        val collectTestDataTask = project.tasks.register("collectTestData") {
-            val targetFile = project.layout.buildDirectory.file("testDataInfo/testDataFilesList.txt").get().asFile
-            outputs.file(targetFile)
-            outputs.upToDateWhen { false }
-
-            val testDataDirectories = testDataFiles.get()
-            if (testDataDirectories.isEmpty()) {
-                throw GradleException("No testData directories provided for $project")
-            }
-            val rootDir = project.rootDir
-            doLast {
-                targetFile.parentFile.mkdirs() // Ensure the directory exists
-                val text= testDataDirectories.flatMap { directory ->
-                    directory.asFileTree.matching { include("**/*.kt") }.files
-                }.sorted().joinToString("\n") {
-                    it.relativeTo(rootDir).path.toSystemIndependentPath()
-                }
-
-                targetFile.writeText(text)
-            }
+        val collectTestDataTask = project.tasks.register<CollectTestDataTask>("collectTestData") {
+            projectName.set(project.name)
+            rootDirPath.set(project.rootDir.absolutePath)
+            targetFile.set(project.layout.buildDirectory.file("testDataInfo/testDataFilesList.txt"))
+            testDataFiles.set(this@ProjectTestsExtension.testDataFiles)
         }
-        generatorTask.configure { inputs.file(collectTestDataTask.map { it.outputs.files.singleFile }) }
+        generatorTask.configure { inputs.file(collectTestDataTask.map { it.targetFile }) }
         project.tasks.named("compileTestKotlin") {
             inputs.dir(generatorTask.map { it.outputs.files.singleFile })
         }
