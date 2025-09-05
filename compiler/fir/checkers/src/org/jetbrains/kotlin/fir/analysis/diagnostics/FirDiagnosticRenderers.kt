@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -227,6 +228,29 @@ object FirDiagnosticRenderers {
 
     val RENDER_CLASS_OR_OBJECT_NAME_QUOTED =
         RENDER_CLASS_OR_OBJECT(quoted = true) { classId -> classId.relativeClassName.shortName().asString() }
+
+    val STAR_PROJECTED_CLASS = Renderer { symbol: FirClassLikeSymbol<*> ->
+        val list = buildList {
+            var current: FirClassLikeSymbol<*>? = symbol
+            var requiresParameters = true
+            while (current != null) {
+                add(buildString {
+                    append(current.classId.shortClassName)
+
+                    val parameterCount = current.ownTypeParameterSymbols.size
+                    if (requiresParameters && parameterCount > 0) {
+                        append("<")
+                        Array(parameterCount) { "*" }.joinTo(this, ", ")
+                        append(">")
+                    }
+                })
+
+                requiresParameters = current.isInner
+                current = current.getContainingClassSymbol()
+            }
+        }
+        list.reversed().joinToString(".")
+    }
 
     val RENDER_TYPE = ContextDependentRenderer { t: ConeKotlinType, ctx ->
         // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.

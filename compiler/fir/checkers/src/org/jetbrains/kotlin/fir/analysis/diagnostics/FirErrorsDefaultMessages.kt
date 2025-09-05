@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_FQ_NAME_WITH_PREFIX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REQUIRE_KOTLIN_VERSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.STAR_PROJECTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEWLINE_WITH_INDENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS_ON_NEXT_LINES
@@ -1900,9 +1901,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_TYPE_ARGUMENTS_ON_RHS,
-            "$wrongNumberOfTypeArguments. Use {1} if you do not intend to pass type arguments.",
+            "$wrongNumberOfTypeArguments. Use ''{1}'' if you do not intend to pass type arguments.",
             null,
-            RENDER_CLASS_OR_OBJECT_NAME_QUOTED,
+            STAR_PROJECTED_CLASS,
         )
         map.put(
             OUTER_CLASS_ARGUMENTS_REQUIRED,
