@@ -117,6 +117,8 @@ object CompilerUtils {
             parsed.fragmentSources = remoteFragmentSources.toTypedArray()
         }
 
+        // TODO, this is just a workaround, the JDK-HOME will be inferred from $JAVA_HOME env variable
+        parsed.jdkHome = null
         return parsed
     }
 
