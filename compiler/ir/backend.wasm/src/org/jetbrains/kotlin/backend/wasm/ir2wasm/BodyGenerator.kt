@@ -584,6 +584,9 @@ class BodyGenerator(
         if (receiver != null) {
             generateExpression(receiver)
             generateExpression(expression.value)
+            if (useIndirectVirtualCalls && field.hasManagedExternrefAnnotation()) {
+                // TODO call intrinsic(?) to set field via a pointer to a Wasm table slot
+            }
             body.buildStructSet(
                 struct = wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
                 fieldId = getStructFieldRef(field),
