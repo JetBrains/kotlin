@@ -272,12 +272,24 @@ internal class SirEnumFromKtSymbol(
 public class SirEnumCaseFromKtSymbol(
     override val ktSymbol: KaEnumEntrySymbol,
     override val sirSession: SirSession,
-) : SirEnumCase(
-    name = ktSymbol.name.asString(),
-    parameters = emptyList(),
-    enum = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum },
-    origin = KotlinSource(ktSymbol),
-), SirFromKtSymbol<KaEnumEntrySymbol> {
+) : SirEnumCase(), SirFromKtSymbol<KaEnumEntrySymbol> {
+    override val name: String = ktSymbol.name.asString()
+    override val enum: SirEnum = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
+    override val origin: SirOrigin = KotlinSource(ktSymbol)
+
+    override val visibility: SirVisibility
+        get() = SirVisibility.PUBLIC
+    override val documentation: String?
+        get() = enum.documentation
+    override var parent: SirDeclarationParent
+        get() = enum
+        set(arg) {
+            if (arg === enum) return
+            error("Changing SirEnumCase.parent is prohibited")
+        }
+    override val attributes: List<SirAttribute>
+        get() = emptyList()
+
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = bridgeFqName ?: return@lazyWithSessions null
         val baseName = fqName.forBridge.joinToString("_")

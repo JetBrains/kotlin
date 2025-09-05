@@ -8,7 +8,6 @@ package org.jetbrains.sir.lightclasses
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.sir.SirEnum
-import org.jetbrains.kotlin.sir.SirEnumCase
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
