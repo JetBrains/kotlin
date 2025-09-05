@@ -280,7 +280,7 @@ class WasmCompiledModuleFragment(
         val importedTables = if (useSharedObjects) {
             listOf(
                 WasmTable(
-                    limits = WasmLimits(0.toUInt(), null),
+                    limits = WasmLimits(1.toUInt(), null),
                     elementType = WasmExternRef,
                     importPair = WasmImportDescriptor("intrinsics", WasmSymbol("externrefTable"))
                 )

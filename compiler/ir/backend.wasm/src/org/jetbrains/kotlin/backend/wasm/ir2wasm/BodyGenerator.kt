@@ -546,6 +546,9 @@ class BodyGenerator(
                 // Doing nothing.
             } else {
                 generateInstanceFieldAccess(field, location)
+                if (useIndirectVirtualCalls && field.hasManagedExternrefAnnotation()) {
+                    body.buildInstr(WasmOp.TABLE_GET, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
+                }
             }
         } else {
             body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalField(field.symbol), location)
