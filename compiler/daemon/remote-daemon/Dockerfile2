@@ -7,6 +7,8 @@ FROM eclipse-temurin:21-jdk
 COPY compiler/daemon/remote-daemon/build/install/kotlin-remote-daemon /kotlin/compiler/daemon/remote-daemon/build/install/kotlin-remote-daemon
 COPY compiler/daemon/remote-daemon/src/main/kotlin/server/auth/auth.json /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/auth/auth.json
 COPY compiler/daemon/remote-daemon/src/main/kotlin/server/auth/uuid.json /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/auth/uuid.json
+COPY compiler/daemon/remote-daemon/src/main/kotlin/server/libsworkaround /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/libsworkaround
+
 WORKDIR /kotlin/compiler/daemon/remote-daemon
 
 RUN mkdir -p /kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server \
