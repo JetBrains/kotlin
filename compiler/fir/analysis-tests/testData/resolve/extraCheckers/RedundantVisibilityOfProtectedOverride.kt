@@ -7,7 +7,9 @@ open class Owner {
     }
 
     protected class Derived : Base() {
-        <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun foo() {}
+        // public is NOT redundant here, as it allows foo to be used in scope "Owner & its inheritors",
+        // but without modifier at all foo is usable in scope "Base & its inheritors" which is narrower
+        public override fun foo() {}
     }
 }
 

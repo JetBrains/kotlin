@@ -188,6 +188,12 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return true
         }
 
+        if (containerVisibility == Visibilities.Protected) {
+            // With protected everything is too complex, as different variations of protected visibility exist
+            // See test 'RedundantVisibilityOfProtectedOverride.kt' as an example
+            return false
+        }
+
         val difference = this.compareTo(containerVisibility) ?: return false
         return difference > 0
     }
