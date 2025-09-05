@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("project-tests-convention")
 }
 
@@ -11,6 +10,14 @@ kotlin {
 publish()
 
 standardPublicJars()
+
+tasks.compileTestKotlin {
+    // override default mode from common `common-configuration`
+    // we can't use `jvmDefault` because it has lower priority than `freeCompilerArgs`
+    compilerOptions {
+        freeCompilerArgs.add("-jvm-default=enable")
+    }
+}
 
 sourceSets.named("test") {
     java.srcDir("src/test/kotlin")
