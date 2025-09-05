@@ -23,7 +23,7 @@ class Owner {
         }
 
         fun err() {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>foo<!>()
             this.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
     }
