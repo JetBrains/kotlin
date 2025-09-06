@@ -268,7 +268,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
     private fun ClassBuilder.generateReinterpret(otherKind: PrimitiveType) {
         method {
             annotations += "WasmNoOpCast"
-            annotations += "PublishedApi"
             expectActual = ExpectActualModifier.Unspecified
             signature {
                 visibility = MethodVisibility.INTERNAL

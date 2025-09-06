@@ -440,7 +440,6 @@ public actual class Byte private constructor(private val value: Byte) : Number()
         this.toInt()
 
     @WasmNoOpCast
-    @PublishedApi
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
 }
@@ -871,7 +870,6 @@ public actual class Short private constructor(private val value: Short) : Number
         this.toInt()
 
     @WasmNoOpCast
-    @PublishedApi
     internal fun reinterpretAsInt(): Int =
         implementedAsIntrinsic
 }
@@ -1372,22 +1370,18 @@ public actual class Int private constructor(private val value: Int) : Number(), 
         this
 
     @WasmNoOpCast
-    @PublishedApi
     internal fun reinterpretAsBoolean(): Boolean =
         implementedAsIntrinsic
 
     @WasmNoOpCast
-    @PublishedApi
     internal fun reinterpretAsByte(): Byte =
         implementedAsIntrinsic
 
     @WasmNoOpCast
-    @PublishedApi
     internal fun reinterpretAsShort(): Short =
         implementedAsIntrinsic
 
     @WasmNoOpCast
-    @PublishedApi
     internal fun reinterpretAsChar(): Char =
         implementedAsIntrinsic
 }

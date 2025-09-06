@@ -2303,9 +2303,6 @@ final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kot
     final fun equals(kotlin/Byte): kotlin/Boolean // kotlin/Byte.equals|equals(kotlin.Byte){}[0]
 
     // Targets: [wasmJs, wasmWasi]
-    final fun reinterpretAsInt(): kotlin/Int // kotlin/Byte.reinterpretAsInt|reinterpretAsInt(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
     final inline fun dec(): kotlin/Byte // kotlin/Byte.dec|dec(){}[0]
 
     // Targets: [wasmJs, wasmWasi]
@@ -3273,18 +3270,6 @@ final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotli
     final fun equals(kotlin/Int): kotlin/Boolean // kotlin/Int.equals|equals(kotlin.Int){}[0]
 
     // Targets: [wasmJs, wasmWasi]
-    final fun reinterpretAsBoolean(): kotlin/Boolean // kotlin/Int.reinterpretAsBoolean|reinterpretAsBoolean(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final fun reinterpretAsByte(): kotlin/Byte // kotlin/Int.reinterpretAsByte|reinterpretAsByte(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final fun reinterpretAsChar(): kotlin/Char // kotlin/Int.reinterpretAsChar|reinterpretAsChar(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final fun reinterpretAsShort(): kotlin/Short // kotlin/Int.reinterpretAsShort|reinterpretAsShort(){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
     final inline fun inc(): kotlin/Int // kotlin/Int.inc|inc(){}[0]
 
     // Targets: [wasmJs, wasmWasi]
@@ -3751,9 +3736,6 @@ final class kotlin/Short : kotlin/Comparable<kotlin/Short>, kotlin/Number { // k
 
     // Targets: [native]
     final fun equals(kotlin/Short): kotlin/Boolean // kotlin/Short.equals|equals(kotlin.Short){}[0]
-
-    // Targets: [wasmJs, wasmWasi]
-    final fun reinterpretAsInt(): kotlin/Int // kotlin/Short.reinterpretAsInt|reinterpretAsInt(){}[0]
 
     // Targets: [wasmJs, wasmWasi]
     final inline fun dec(): kotlin/Short // kotlin/Short.dec|dec(){}[0]
