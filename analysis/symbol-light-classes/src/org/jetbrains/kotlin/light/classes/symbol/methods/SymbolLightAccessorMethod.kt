@@ -531,40 +531,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
             if (!generationResult.isAnyMethodRequired) return
 
-            // [KtFakeSourceElementKind.DelegatedPropertyAccessor] is not allowed as source PSI, e.g.,
-            //
-            //   val p by delegate(...)
-            //
-            // However, we also lose the source PSI of a custom property accessor, e.g.,
-            //
-            //   val p by delegate(...)
-            //     get() = ...
-            //
-            // We go upward to the property's source PSI and attempt to find/bind accessor's source PSI.
-            fun sourcePsiFromProperty(): KtPropertyAccessor? {
-                if (accessor.origin != KaSymbolOrigin.SOURCE) return null
-                val propertyPsi = property.psi as? KtProperty ?: return null
-                return if (accessor is KaPropertyGetterSymbol)
-                    propertyPsi.getter
-                else
-                    propertyPsi.setter
-            }
-
-            fun KaPropertySymbol.sourceMemberGeneratedLightMemberOrigin() =
-                this.takeIf { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }?.psiSafe<KtDeclaration>()?.let {
-                    LightMemberOriginForDeclaration(
-                        originalElement = it,
-                        originKind = JvmDeclarationOriginKind.OTHER
-                    )
-                }
-
-            val lightMemberOrigin = property.sourcePsiSafe<KtDeclaration>()?.let {
-                LightMemberOriginForDeclaration(
-                    originalElement = it,
-                    originKind = JvmDeclarationOriginKind.OTHER,
-                    auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
-                )
-            } ?: property.sourceMemberGeneratedLightMemberOrigin()
+            val lightMemberOrigin = getLightMemberOriginForAccessor(accessor)
 
             if (generationResult.isBoxedMethodRequired) {
                 result += SymbolLightAccessorMethod(
@@ -588,6 +555,46 @@ internal class SymbolLightAccessorMethod private constructor(
                     suppressStatic = context.suppressStatic,
                     isJvmExposedBoxed = false,
                 )
+            }
+        }
+
+        context(context: Context)
+        private fun getLightMemberOriginForAccessor(accessor: KaPropertyAccessorSymbol): LightMemberOriginForDeclaration? {
+            val originalElement = property.psiSafe<KtDeclaration>() ?: return null
+
+            return when (property.origin) {
+                KaSymbolOrigin.SOURCE -> {
+                    /**
+                     * [org.jetbrains.kotlin.KtFakeSourceElementKind.DelegatedPropertyAccessor] is not allowed as source PSI, e.g.,
+                     * ```
+                     * val p by delegate(...)
+                     * ```
+                     *
+                     * However, we also lose the source PSI of a custom property accessor, e.g.,
+                     * ```
+                     * val p by delegate(...)
+                     *   get() = ...
+                     * ```
+                     *
+                     * We go upward to the property's source PSI and attempt to find/bind accessor's source PSI.
+                     */
+                    fun sourcePsiFromProperty(): KtPropertyAccessor? {
+                        if (accessor.origin != KaSymbolOrigin.SOURCE) return null
+                        if (originalElement !is KtProperty) return null
+                        return if (accessor is KaPropertyGetterSymbol) originalElement.getter else originalElement.setter
+                    }
+
+                    LightMemberOriginForDeclaration(
+                        originalElement = originalElement,
+                        originKind = JvmDeclarationOriginKind.OTHER,
+                        auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
+                    )
+                }
+
+                KaSymbolOrigin.SOURCE_MEMBER_GENERATED ->
+                    LightMemberOriginForDeclaration(originalElement, originKind = JvmDeclarationOriginKind.OTHER)
+
+                else -> null
             }
         }
 
