@@ -1081,6 +1081,8 @@ private fun parseIsoStringFormat(
 
         val longStartIndex = index
         val sign: Int
+        // In case of overflow, LongParser.iso.parse will return MAX_MILLIS, which is ultimately
+        // equivalent to INFINITE, we don't need to handle overflow specially here.
         val longValue = LongParser.iso.parse(value, index) { longEndIndex, localSign, _ ->
             index = longEndIndex
             // A numerical value should not be empty, and it has to be followed by a unit (i.e., it cannot terminate a string)
