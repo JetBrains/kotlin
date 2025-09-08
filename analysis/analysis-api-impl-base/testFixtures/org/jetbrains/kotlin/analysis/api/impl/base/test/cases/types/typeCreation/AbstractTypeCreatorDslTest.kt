@@ -32,9 +32,9 @@ import kotlin.reflect.full.primaryConstructor
  * The test builds a `caret -> type` mapping from the test data and then runs a corresponding DSL test from [TestCases].
  * Each `caret` in the test file should mark a `KtExpression`, return type of which should be used in the type construction.
  *
- * If the test file is named `A.kt` and is placed inside `analysis/analysis-api/testData/types/typeCreation/byDsl/classType`,
- * then there should be a function called `testA` in the `ClassType` inner class in [TestCases], which retrieves types from
- * [TestCases.caretToType] mapping and returns some value constructed from them using the type-building DSL.
+ * If the test file is named `A.kt` and is placed inside `analysis/analysis-api/testData/types/typeCreation/byDsl/c  lassType`,
+ * then there should be a function called `testA` in the `ClassTypeCreatorDslTestCases` subclass of [TestCases],
+ * which retrieves types from [TestCases.caretToType] mapping and returns some value constructed from them using the type-building DSL.
  * The returned value is then rendered in the output file `A.txt`.
  */
 abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
@@ -54,7 +54,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
             val directoryName = testServices.testInfo.className.substringAfterLast("$")
 
             val result =
-                TestCases(this@analyzeForTest, caretToType).runTest(directoryName, testName)
+                TestCases.runTest(directoryName, testName, this, caretToType)
 
             render(result)
         }
@@ -62,7 +62,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
 
-    private fun KaSession.render(value: Any): String {
+    private fun KaSession.render(value: Any?): String {
         val renderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
             this.capturedTypeRenderer = KaCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
         }
@@ -102,34 +102,39 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 is KaStarTypeProjection -> {
                     appendLine("KaStarTypeProjection")
                 }
+                null -> {
+                    appendLine("null")
+                }
                 else -> error("Unable to render ${value::class}")
             }
         }
     }
 
-    @Suppress("UNUSED")
-    class TestCases(private val session: KaSession, private val caretToType: Map<String, KaType>) {
-        fun runTest(directoryName: String, name: String): Any {
-            val testClass = this::class.nestedClasses.single {
-                it.simpleName == directoryName
+    sealed class TestCases(protected val session: KaSession, private val caretToType: Map<String, KaType>) {
+        companion object {
+            fun runTest(directoryName: String, testName: String, session: KaSession, caretToType: Map<String, KaType>): Any? {
+                val testClass = TestCases::class.sealedSubclasses.single {
+                    it.simpleName?.startsWith(directoryName) == true
+                }
+
+                val testClassInstance =
+                    testClass.primaryConstructor?.call(session, caretToType) ?: error("Cannot construct test class for $directoryName")
+
+                val testCase = testClass.members.filterIsInstance<KFunction<*>>().single { it.name == testName }
+
+                return testCase.call(testClassInstance)
             }
-
-            val testClassInstance = testClass.primaryConstructor?.call(this) ?: error("Cannot construct test class for $directoryName")
-
-            val testCase = testClass.members.filterIsInstance<KFunction<*>>().single { it.name == name }
-
-            return testCase.call(testClassInstance) as Any
         }
 
-        private fun getTypeByCaret(label: String): KaType {
+        protected fun getTypeByCaret(label: String): KaType {
             return caretToType[label] ?: error("No type for `$label`")
         }
 
-        private fun getClassLikeSymbolByCaret(label: String): KaClassLikeSymbol {
+        protected fun getClassLikeSymbolByCaret(label: String): KaClassLikeSymbol {
             return caretToType[label]?.symbol ?: error("No symbol for `$label`")
         }
 
-        private fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
+        protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
     }
