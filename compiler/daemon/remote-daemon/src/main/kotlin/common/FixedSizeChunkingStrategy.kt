@@ -10,34 +10,70 @@ import kotlinx.coroutines.flow.flow
 import model.FileChunk
 import model.ArtifactType
 import java.io.File
+import java.io.InputStream
 
 class FixedSizeChunkingStrategy(
     val chunkSize: Int = FOUR_MB
 ) : FileChunkingStrategy() {
 
     // note: default gRPC message size limit is 4MB but it can be overridden
-    override fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String?): Flow<FileChunk> {
+    override fun chunk(
+        inputStream: InputStream,
+        isDirectory: Boolean,
+        artifactType: ArtifactType,
+        filePath: String,
+    ): Flow<FileChunk> {
         return flow {
-            if (file.length() <= chunkSize) {
-                emit(FileChunk(filePath ?: file.path, artifactType, file.readBytes(), isDirectory, isLast = true))
-            } else {
-                val chunks = file
-                    .readBytes()
-                    .asList()
-                    .chunked(chunkSize)
+            inputStream.buffered().use { stream ->
+                val buffer = ByteArray(chunkSize)
+                var bytesRead: Int
 
-                chunks.forEachIndexed { index, chunk ->
+                while (true) {
+                    bytesRead = stream.read(buffer)
+                    if (bytesRead == -1) break
+
+                    // only send the actual bytes read, not the full buffer
+                    val chunkData = if (bytesRead < chunkSize) {
+                        buffer.copyOf(bytesRead)
+                    } else {
+                        buffer.copyOf()
+                    }
+
+                    val isLast = if (bytesRead < chunkSize) {
+                        true
+                    } else {
+                        stream.mark(1)
+                        val nextByte = stream.read()
+                        if (nextByte == -1) {
+                            true
+                        } else {
+                            stream.reset()
+                            false
+                        }
+                    }
+
                     emit(
                         FileChunk(
-                            filePath ?: file.path,
+                            filePath,
                             artifactType,
-                            chunk.toByteArray(),
+                            chunkData,
                             isDirectory,
-                            isLast = (index == chunks.size - 1)
+                            isLast = isLast
                         )
                     )
+
+                    if (isLast) break
                 }
             }
         }
+    }
+
+    override fun chunk(
+        file: File,
+        isDirectory: Boolean,
+        artifactType: ArtifactType,
+        filePath: String,
+    ): Flow<FileChunk> {
+        return chunk(file.inputStream(), isDirectory, artifactType, filePath)
     }
 }
