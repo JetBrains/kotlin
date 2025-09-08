@@ -289,7 +289,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
          * @sample samples.time.Durations.parse
          */
         public fun parse(value: String): Duration = try {
-            parseDuration(value, strictIso = false)
+            parseDuration(value, strictIso = false).apply { check(this != INVALID) { "invariant failed" } }
         } catch (e: IllegalArgumentException) {
             throw IllegalArgumentException("Invalid duration string format: '$value'.", e)
         }
@@ -310,7 +310,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
          * @sample samples.time.Durations.parseIsoString
          */
         public fun parseIsoString(value: String): Duration = try {
-            parseDuration(value, strictIso = true)
+            parseDuration(value, strictIso = true).apply { check(this != INVALID) { "invariant failed" } }
         } catch (e: IllegalArgumentException) {
             throw IllegalArgumentException("Invalid ISO duration string format: '$value'.", e)
         }
