@@ -1349,7 +1349,7 @@ internal object FractionalParser {
  * Handles infinite values and ensures the result stays within the valid range.
  *
  * @param other the value in milliseconds to add
- * @return the sum in milliseconds clamped to `[-MAX_MILLIS, MAX_MILLIS]` range, or [Duration.INVALID_RAW_VALUE] for invalid operations
+ * @return the sum in milliseconds clamped to `[-[MAX_MILLIS], [MAX_MILLIS]]` range, or [Duration.INVALID_RAW_VALUE] for invalid operations
  */
 private fun Long.addMillisWithoutOverflow(other: Long): Long = when {
     isInfinite() -> if (other.isFinite() || sameSign(this, other)) this else Duration.INVALID_RAW_VALUE
@@ -1370,7 +1370,7 @@ private inline fun Long.isInfinite(): Boolean = this == MAX_MILLIS || this == -M
 /**
  * Checks if this Long value represents a finite duration.
  *
- * @return true if this value is not infinite (not equal to `MAX_MILLIS` or `-MAX_MILLIS`), false otherwise
+ * @return true if this value is not infinite (not equal to `[MAX_MILLIS]` or `-[MAX_MILLIS]`), false otherwise
  */
 @kotlin.internal.InlineOnly
 private inline fun Long.isFinite(): Boolean = !isInfinite()

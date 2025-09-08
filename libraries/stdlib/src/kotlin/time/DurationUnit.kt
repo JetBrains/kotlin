@@ -81,7 +81,7 @@ internal fun convertDurationUnitToMilliseconds(value: Long, unit: DurationUnit):
  * - Clamping to [MAX_MILLIS] when overflow is detected
  *
  * @param other the Long value to multiply by (always positive)
- * @return the product clamped to the range [0, MAX_MILLIS]
+ * @return the product clamped to the range [0, [MAX_MILLIS]]
  */
 private fun Long.multiplyNonNegativeWithoutOverflow(other: Long): Long = when {
     this == 0L -> 0L
