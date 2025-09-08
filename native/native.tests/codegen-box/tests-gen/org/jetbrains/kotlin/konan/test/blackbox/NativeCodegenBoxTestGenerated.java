@@ -11385,6 +11385,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("invokeMultipleContextParametersOfSameType.kt")
+      public void testInvokeMultipleContextParametersOfSameType() {
+        runTest("compiler/testData/codegen/box/contextParameters/invokeMultipleContextParametersOfSameType.kt");
+      }
+
+      @Test
       @TestMetadata("invokeOnTypeWithContext.kt")
       public void testInvokeOnTypeWithContext() {
         runTest("compiler/testData/codegen/box/contextParameters/invokeOnTypeWithContext.kt");
