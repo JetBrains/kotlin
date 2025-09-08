@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
         } catch (_: IllegalArgumentException) {
             parseLastKotlinReleaseVersion(argVersionString)
         }
-    }.also { println("Generating BTA compiler arguments for Kotlin version $it") }
+    }
     val apiArgsStart = args.indexOf("api").let { if (it == -1) null else it }
     val implArgsStart = args.indexOf("impl").let { if (it == -1) null else it }
 
