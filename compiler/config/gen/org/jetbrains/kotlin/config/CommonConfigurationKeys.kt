@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.util.PerformanceManager
 
 object CommonConfigurationKeys {
@@ -130,6 +131,9 @@ object CommonConfigurationKeys {
     // See the description of `-Xdetailed-perf` for more details
     @JvmField
     val DETAILED_PERF = CompilerConfigurationKey.create<Boolean>("Enables detailed performance stats that might slow down the general compiler performance")
+
+    @JvmField
+    val TARGET_PLATFORM = CompilerConfigurationKey.create<TargetPlatform>("target platform")
 
 }
 
@@ -268,4 +272,8 @@ var CompilerConfiguration.perfManager: PerformanceManager?
 var CompilerConfiguration.detailedPerf: Boolean
     get() = getBoolean(CommonConfigurationKeys.DETAILED_PERF)
     set(value) { put(CommonConfigurationKeys.DETAILED_PERF, value) }
+
+var CompilerConfiguration.targetPlatform: TargetPlatform?
+    get() = get(CommonConfigurationKeys.TARGET_PLATFORM)
+    set(value) { put(CommonConfigurationKeys.TARGET_PLATFORM, requireNotNull(value) { "nullable values are not allowed" }) }
 
