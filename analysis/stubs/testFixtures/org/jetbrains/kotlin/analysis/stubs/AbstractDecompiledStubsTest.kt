@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.PsiFileStub
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 
 
@@ -20,15 +21,17 @@ import org.jetbrains.kotlin.psi.KtFile
  * @see AbstractCompiledStubsTest
  * @see org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
  */
-abstract class AbstractDecompiledStubsTest : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = DecompiledStubsTestConfigurator()
+abstract class AbstractDecompiledStubsTest(defaultTargetPlatform: TargetPlatform) : AbstractStubsTest() {
+    override val configurator: AnalysisApiTestConfigurator = DecompiledStubsTestConfigurator(defaultTargetPlatform)
     override fun computeStub(file: KtFile): PsiFileStub<*> {
         requireIsInstance<KtDecompiledFile>(file)
 
         return file.calcStubTree().root
     }
 
-    internal open class DecompiledStubsTestConfigurator : AbstractCompiledStubsTest.CompiledStubsTestConfigurator() {
-        override val testPrefixes: List<String> get() = listOf("decompiled") + super.testPrefixes
+    internal open class DecompiledStubsTestConfigurator(
+        defaultTargetPlatform: TargetPlatform,
+    ) : AbstractCompiledStubsTest.CompiledStubsTestConfigurator(defaultTargetPlatform) {
+        override val testPrefixes: List<String> get() = "decompiled".let { listOf("$platformPrefix.$it", it) } + super.testPrefixes
     }
 }
