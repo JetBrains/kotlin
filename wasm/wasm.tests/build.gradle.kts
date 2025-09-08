@@ -117,7 +117,7 @@ val jscOsDependentVersion = when (currentOsType.name) {
     else -> error("unsupported os type $currentOsType")
 }.get()
 
-//https://youtrack.jetbrains.com/articles/KT-A-950/JavaScript-Core-Update-unstruction
+//https://youtrack.jetbrains.com/articles/KT-A-950/JavaScript-Core-Update-instruction
 val jscOsDependentClassifier = when (currentOsType.name) {
     OsName.MAC -> "sequoia"
     OsName.LINUX -> "linux64"
