@@ -498,23 +498,31 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Template string literals are not supported yet")
     }
 
-    override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext): JsConditional {
+        val conditionExpression = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val thenExpression = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val elseCondition = visit<JsExpression>(ctx.singleExpressionImpl(2))
+
+        return JsConditional(conditionExpression, thenExpression, elseCondition)
     }
 
-    override fun visitLogicalAndExpression(ctx: JavaScriptParser.LogicalAndExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitLogicalAndExpression(ctx: JavaScriptParser.LogicalAndExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.AND, left, right)
     }
 
     override fun visitPowerExpression(ctx: JavaScriptParser.PowerExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Power expressions are not supported yet")
     }
 
-    override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.INC, expression)
     }
 
     override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext): JsNode? {
@@ -522,15 +530,21 @@ class JsAstMapperVisitor(
     }
 
     override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Meta expressions are not supported yet")
     }
 
-    override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.INOP, left, right)
     }
 
-    override fun visitLogicalOrExpression(ctx: JavaScriptParser.LogicalOrExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitLogicalOrExpression(ctx: JavaScriptParser.LogicalOrExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.OR, left, right)
     }
 
     override fun visitOptionalChainExpression(ctx: JavaScriptParser.OptionalChainExpressionContext): JsNode? {
@@ -538,11 +552,13 @@ class JsAstMapperVisitor(
     }
 
     override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.NOT, expression)
     }
 
-    override fun visitPreDecreaseExpression(ctx: JavaScriptParser.PreDecreaseExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitPreDecreaseExpression(ctx: JavaScriptParser.PreDecreaseExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.DEC, expression)
     }
 
     override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext): JsNode? {
@@ -550,91 +566,166 @@ class JsAstMapperVisitor(
     }
 
     override fun visitAwaitExpression(ctx: JavaScriptParser.AwaitExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("async/await statements are not supported yet")
     }
 
-    override fun visitThisExpression(ctx: JavaScriptParser.ThisExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitThisExpression(ctx: JavaScriptParser.ThisExpressionContext): JsThisRef {
+        return JsThisRef()
     }
 
     override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext): JsNode? {
         return super.visitFunctionExpression(ctx)
     }
 
-    override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.NEG, expression)
     }
 
     override fun visitAssignmentExpression(ctx: JavaScriptParser.AssignmentExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.ASG, left, right)
     }
 
-    override fun visitPostDecreaseExpression(ctx: JavaScriptParser.PostDecreaseExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitPostDecreaseExpression(ctx: JavaScriptParser.PostDecreaseExpressionContext): JsPostfixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPostfixOperation(JsUnaryOperator.DEC, expression)
     }
 
-    override fun visitTypeofExpression(ctx: JavaScriptParser.TypeofExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitTypeofExpression(ctx: JavaScriptParser.TypeofExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.TYPEOF, expression)
     }
 
-    override fun visitInstanceofExpression(ctx: JavaScriptParser.InstanceofExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitInstanceofExpression(ctx: JavaScriptParser.InstanceofExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.INSTANCEOF, left, right)
     }
 
-    override fun visitUnaryPlusExpression(ctx: JavaScriptParser.UnaryPlusExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitUnaryPlusExpression(ctx: JavaScriptParser.UnaryPlusExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.POS, expression)
     }
 
-    override fun visitDeleteExpression(ctx: JavaScriptParser.DeleteExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitDeleteExpression(ctx: JavaScriptParser.DeleteExpressionContext): JsExpression {
+        val target = visit<JsExpression>(ctx.singleExpressionImpl())
+        if (target is JsNameRef || target is JsArrayAccess)
+            return JsPrefixOperation(JsUnaryOperator.DELETE, target)
+        return JsNullLiteral()
     }
 
     override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import expressions are not supported yet")
     }
 
-    override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return ctx.run {
+            val operator = when {
+                Equals_() != null -> JsBinaryOperator.EQ
+                NotEquals() != null -> JsBinaryOperator.NEQ
+                IdentityEquals() != null -> JsBinaryOperator.REF_EQ
+                IdentityNotEquals() != null -> JsBinaryOperator.REF_NEQ
+                else -> TODO("Invalid binary operation: ${ctx.text}")
+            }
+
+            JsBinaryOperation(operator, left, right)
+        }
     }
 
-    override fun visitBitXOrExpression(ctx: JavaScriptParser.BitXOrExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBitXOrExpression(ctx: JavaScriptParser.BitXOrExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.BIT_XOR, left, right)
     }
 
     override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Super calls are not supported yet")
     }
 
-    override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return ctx.run {
+            val operator = when {
+                Multiply() != null -> JsBinaryOperator.MUL
+                Divide() != null -> JsBinaryOperator.DIV
+                Modulus() != null -> JsBinaryOperator.MOD
+                else -> TODO("Invalid binary operation: ${ctx.text}")
+            }
+            JsBinaryOperation(operator, left, right)
+        }
     }
 
-    override fun visitBitShiftExpression(ctx: JavaScriptParser.BitShiftExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBitShiftExpression(ctx: JavaScriptParser.BitShiftExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return ctx.run {
+            val operator = when {
+                RightShiftArithmetic() != null -> JsBinaryOperator.SHR
+                LeftShiftArithmetic() != null -> JsBinaryOperator.SHL
+                RightShiftLogical() != null -> JsBinaryOperator.SHRU
+                else -> TODO("Invalid binary operation: ${ctx.text}")
+            }
+            JsBinaryOperation(operator, left, right)
+        }
     }
 
     override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAdditiveExpression(ctx: JavaScriptParser.AdditiveExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitAdditiveExpression(ctx: JavaScriptParser.AdditiveExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return ctx.run {
+            val operator = when {
+                Plus() != null -> JsBinaryOperator.ADD
+                Minus() != null -> JsBinaryOperator.SUB
+                else -> TODO("Invalid binary operation: ${ctx.text}")
+            }
+            JsBinaryOperation(operator, left, right)
+        }
     }
 
-    override fun visitRelationalExpression(ctx: JavaScriptParser.RelationalExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitRelationalExpression(ctx: JavaScriptParser.RelationalExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return ctx.run {
+            val operator = when {
+                LessThan() != null -> JsBinaryOperator.LT
+                MoreThan() != null -> JsBinaryOperator.GT
+                LessThanEquals() != null -> JsBinaryOperator.LTE
+                GreaterThanEquals() != null -> JsBinaryOperator.GTE
+                else -> TODO("Invalid binary operation: ${ctx.text}")
+            }
+            JsBinaryOperation(operator, left, right)
+        }
     }
 
-    override fun visitPostIncrementExpression(ctx: JavaScriptParser.PostIncrementExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitPostIncrementExpression(ctx: JavaScriptParser.PostIncrementExpressionContext): JsPostfixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPostfixOperation(JsUnaryOperator.INC, expression)
     }
 
     override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Yield expressions are not supported yet")
     }
 
-    override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.BIT_NOT, expression)
     }
 
     override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNew {
@@ -687,24 +778,53 @@ class JsAstMapperVisitor(
         TODO("Not yet implemented")
     }
 
-    override fun visitBitAndExpression(ctx: JavaScriptParser.BitAndExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBitAndExpression(ctx: JavaScriptParser.BitAndExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.BIT_AND, left, right)
     }
 
-    override fun visitBitOrExpression(ctx: JavaScriptParser.BitOrExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBitOrExpression(ctx: JavaScriptParser.BitOrExpressionContext): JsBinaryOperation {
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return JsBinaryOperation(JsBinaryOperator.BIT_OR, left, right)
     }
 
     override fun visitAssignmentOperatorExpression(ctx: JavaScriptParser.AssignmentOperatorExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+
+        return ctx.assignmentOperator().run {
+            val jsOperator = when {
+                MultiplyAssign() != null -> JsBinaryOperator.ASG_MUL
+                DivideAssign() != null -> JsBinaryOperator.ASG_DIV
+                ModulusAssign() != null -> JsBinaryOperator.ASG_MOD
+                PlusAssign() != null -> JsBinaryOperator.ASG_ADD
+                MinusAssign() != null -> JsBinaryOperator.ASG_SUB
+                LeftShiftArithmeticAssign() != null -> JsBinaryOperator.ASG_SHL
+                RightShiftArithmeticAssign() != null -> JsBinaryOperator.ASG_SHR
+                RightShiftLogicalAssign() != null -> JsBinaryOperator.ASG_SHRU
+                BitAndAssign() != null -> JsBinaryOperator.ASG_BIT_AND
+                BitXorAssign() != null -> JsBinaryOperator.ASG_BIT_XOR
+                BitOrAssign() != null -> JsBinaryOperator.ASG_BIT_OR
+                PowerAssign() != null -> TODO("Power assignment expressions are not supported yet")
+                NullishCoalescingAssign() != null -> TODO("Null-coalescing assignment expressions are not supported yet")
+                else -> TODO("Invalid binary operation: ${ctx.text}")
+            }
+
+            JsBinaryOperation(jsOperator, left, right)
+        }
     }
 
-    override fun visitVoidExpression(ctx: JavaScriptParser.VoidExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitVoidExpression(ctx: JavaScriptParser.VoidExpressionContext): JsPrefixOperation {
+        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        return JsPrefixOperation(JsUnaryOperator.VOID, expression)
     }
 
     override fun visitCoalesceExpression(ctx: JavaScriptParser.CoalesceExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Null-coalescing expressions are not supported yet")
     }
 
     override fun visitInitializer(ctx: JavaScriptParser.InitializerContext): JsNode? {
@@ -756,19 +876,52 @@ class JsAstMapperVisitor(
     }
 
     override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have specific nodes for assignment operators
+        return null
     }
 
-    override fun visitLiteral(ctx: JavaScriptParser.LiteralContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitLiteral(ctx: JavaScriptParser.LiteralContext): JsLiteral {
+        ctx.NullLiteral()?.run {
+            return JsNullLiteral()
+        }
+
+        ctx.BooleanLiteral()?.let { bool ->
+            return when(bool.text) {
+                "true" -> JsBooleanLiteral(true)
+                "false" -> JsBooleanLiteral(false)
+                else -> TODO("Invalid boolean literal: ${bool.text}")
+            }
+        }
+
+        ctx.StringLiteral()?.run {
+            return JsStringLiteral(text)
+        }
+
+        ctx.RegularExpressionLiteral()?.run {
+            // TODO[seclerp]: Improve grammar to have pattern and flags as a separate terminals in regex rule to remove splitting here
+            return JsRegExp().apply {
+                // We perform reversing here to always split on the latest / and prevent reversing on escaped /
+                val parts = text
+                    .removePrefix("/")
+                    .reversed()
+                    .split("/", limit = 2)
+                    .reversed()
+                pattern = parts[0]
+                parts.getOrNull(1)?.let {
+                    flags = it
+                }
+            }
+        }
+
+        return super.visitLiteral(ctx) as JsLiteral
     }
 
     override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext): JsNode? {
-        TODO("Template strings are not supported yet")
+        TODO("Template string literals are not supported yet")
     }
 
     override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsNode? {
-        TODO("Template strings are not supported yet")
+        TODO("Template string literals are not supported yet")
     }
 
     override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNumberLiteral {
@@ -812,9 +965,8 @@ class JsAstMapperVisitor(
         return null
     }
 
-    override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext): JsNode? {
-        // There is no JS node that represents identifier.
-        return null
+    override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext): JsNameRef {
+        return makeRefNode(ctx.text)
     }
 
     override fun visitReservedWord(ctx: JavaScriptParser.ReservedWordContext): JsNode? {
