@@ -9730,6 +9730,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("booleanShortcut.kt")
+      public void testBooleanShortcut() {
+        runTest("compiler/testData/diagnostics/tests/crv/booleanShortcut.kt");
+      }
+
+      @Test
       @TestMetadata("callableReferences.kt")
       public void testCallableReferences() {
         runTest("compiler/testData/diagnostics/tests/crv/callableReferences.kt");
