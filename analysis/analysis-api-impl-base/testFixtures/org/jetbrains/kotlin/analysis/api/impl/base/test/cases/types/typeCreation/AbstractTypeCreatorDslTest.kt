@@ -138,52 +138,5 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
-
-        inner class VarargArrayType {
-            fun testBoxedArray(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testErrorType(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testFlexibleInt(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testNullableInt(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testNullableUserType(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testPrimitiveArray(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testSimpleUserType(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testTypeParameter(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-
-            fun testTypeParameterWithIntUpperBound(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.varargArrayType(type)
-            }
-        }
     }
 }
