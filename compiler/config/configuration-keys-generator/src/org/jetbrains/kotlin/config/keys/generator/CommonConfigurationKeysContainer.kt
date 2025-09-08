@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.util.PerformanceManager
 
 @Suppress("unused")
@@ -82,4 +83,6 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
         description = "Enables detailed performance stats that might slow down the general compiler performance",
         comment = "See the description of `-Xdetailed-perf` for more details"
     )
+
+    val TARGET_PLATFORM by key<TargetPlatform>("target platform")
 }
