@@ -9,13 +9,15 @@ import kotlinx.coroutines.flow.Flow
 import model.FileChunk
 import model.ArtifactType
 import java.io.File
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
 
 abstract class FileChunkingStrategy {
 
-    abstract fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String? = null): Flow<FileChunk>
+    abstract fun chunk(inputStream: InputStream, isDirectory: Boolean, artifactType: ArtifactType, filePath: String): Flow<FileChunk>
+    abstract fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String): Flow<FileChunk>
 
     fun reconstruct(fileChunks: Collection<FileChunk>, folderPath: Path, fileName: String? = null): File {
         try {
