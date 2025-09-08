@@ -95,6 +95,7 @@ class RemoteCompilationServiceImpl(
             val fileChunkStrategy = FixedSizeChunkingStrategy()
             var compilationMetadata: CompilationMetadata? = null
 
+            // TODO
             val userId = AuthServerInterceptor.USER_ID_CONTEXT_KEY.get() ?: "3489439j"
 
             // here we consume request stream
@@ -213,7 +214,7 @@ class RemoteCompilationServiceImpl(
                     .filter { !Files.isDirectory(it.toPath()) }
                     .forEach { file ->
                         val clientCleanedPath = cleanCompilationResultPath(file.path)
-                        fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
+                        fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT, file.path).collect { chunk ->
                             send(
                                 FileChunk(
                                     clientCleanedPath,

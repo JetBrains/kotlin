@@ -14,7 +14,7 @@ import common.CompilerUtils
 import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationService
 import common.computeSha256
-import common.createTarArchive
+import common.createTarArchiveStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -118,15 +118,17 @@ class RemoteCompilationClient(
                                 launch(Dispatchers.IO) {
                                     val file = File(it.filePath)
                                     if (Files.isDirectory(file.toPath())) {
-                                        Files.createDirectories(CLIENT_TMP_DIR.resolve(file.parent))
-                                        val tarFile =
-                                            CLIENT_TMP_DIR.resolve(file.parent).resolve("${file.nameWithoutExtension}.tar").toFile()
-                                        createTarArchive(file, tarFile)
-                                        fileChunkStrategy.chunk(tarFile, true, it.artifactType, it.filePath)
-                                            .collect { chunk ->
-                                                requestChannel.send(chunk)
-                                            }
-                                        tarFile.delete()
+                                        createTarArchiveStream(file).use { tarStream ->
+                                            fileChunkStrategy
+                                                .chunk(
+                                                    tarStream,
+                                                    true,
+                                                    it.artifactType,
+                                                    it.filePath
+                                                ).collect { chunk ->
+                                                    requestChannel.send(chunk)
+                                                }
+                                        }
                                     } else {
                                         fileChunkStrategy.chunk(file, isDirectory = false, it.artifactType, it.filePath)
                                             .collect { chunk ->

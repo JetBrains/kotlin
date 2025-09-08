@@ -9,9 +9,17 @@ import model.FileChunk
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
+import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
+import java.io.BufferedOutputStream
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
@@ -102,26 +110,27 @@ fun copyDirectoryRecursively(source: Path, target: Path, overwrite: Boolean = fa
     return target.toFile()
 }
 
-fun createTarArchive(sourceDir: File, destFile: File): File {
-    TarArchiveOutputStream(FileOutputStream(destFile)).use { tarOut ->
-        sourceDir.walkTopDown().forEach { file ->
-            if (file == sourceDir) return@forEach
-
-            // enable file name size > 100 bytes
+fun createTarArchiveStream(sourceDir: File): InputStream {
+    val tempTar = kotlin.io.path.createTempFile("archive-", ".tar").toFile().apply { deleteOnExit() }
+    FileOutputStream(tempTar).use { fos ->
+        TarArchiveOutputStream(BufferedOutputStream(fos)).use { tarOut ->
             tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX)
-
-            val entryName = sourceDir.toPath().relativize(file.toPath()).toString()
-            val entry = TarArchiveEntry(file, entryName)
-
-            tarOut.putArchiveEntry(entry)
-
-            if (file.isFile) {
-                file.inputStream().use { it.copyTo(tarOut) }
+            sourceDir.walkTopDown().forEach { file ->
+                if (file == sourceDir) return@forEach
+                val entryName = sourceDir.toPath().relativize(file.toPath()).toString()
+                val entry = TarArchiveEntry(file, entryName).apply {
+                    if (file.isFile) size = file.length()
+                }
+                tarOut.putArchiveEntry(entry)
+                if (file.isFile) {
+                    file.inputStream().use { it.copyTo(tarOut) }
+                }
+                tarOut.closeArchiveEntry()
             }
-            tarOut.closeArchiveEntry()
+            tarOut.finish()
         }
     }
-    return destFile
+    return FileInputStream(tempTar)
 }
 
 
