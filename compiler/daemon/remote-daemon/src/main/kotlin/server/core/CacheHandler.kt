@@ -11,10 +11,13 @@ import common.SERVER_TMP_CACHE_DIR
 import common.calculateCompilationInputHash
 import common.computeSha256
 import common.copyDirectoryRecursively
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import model.ArtifactType
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
 class CacheHandler {
@@ -52,30 +55,36 @@ class CacheHandler {
         return File(artifacts[fingerprint])
     }
 
-    fun cacheFile(
+    suspend fun cacheFile(
         tmpFile: File,
         artifactType: ArtifactType,
         deleteOriginalFile: Boolean,
-        remoteCompilerArguments: K2JVMCompilerArguments? = null
+        fileLockMap: MutableMap<Path, Mutex>,
+        remoteCompilerArguments: K2JVMCompilerArguments? = null,
     ): File {
         val fingerprint = computeSha256(tmpFile)
         val targetPath = SERVER_ARTIFACTS_CACHE_DIR.resolve(fingerprint)
-        when {
-            tmpFile.isDirectory -> {
-                copyDirectoryRecursively(
-                    source = tmpFile.toPath(),
-                    target = targetPath,
-                    overwrite = true
-                )
-            }
-            tmpFile.isFile -> {
-                Files.copy(
-                    tmpFile.toPath(),
-                    targetPath,
-                    StandardCopyOption.REPLACE_EXISTING
-                )
+        val mutex = fileLockMap.computeIfAbsent(targetPath) { Mutex() }
+
+        mutex.withLock {
+            when {
+                tmpFile.isDirectory -> {
+                    copyDirectoryRecursively(
+                        source = tmpFile.toPath(),
+                        target = targetPath,
+                        overwrite = true
+                    )
+                }
+                tmpFile.isFile -> {
+                    Files.copy(
+                        tmpFile.toPath(),
+                        targetPath,
+                        StandardCopyOption.REPLACE_EXISTING
+                    )
+                }
             }
         }
+
         artifacts[fingerprint] = targetPath.toAbsolutePath().toString()
 
         if (tmpFile.isDirectory && artifactType == ArtifactType.RESULT && remoteCompilerArguments != null) {
@@ -88,7 +97,6 @@ class CacheHandler {
             val symlink = Files.createSymbolicLink(SERVER_ARTIFACTS_CACHE_DIR.resolve(compilationInputHash), targetPath.fileName)
             artifacts[compilationInputHash] = symlink.toAbsolutePath().toString()
         }
-
 
         // TODO we want to delete temp files, but this tmpFile does not have to be necessarily in tmp directory
 //        if (deleteOriginalFile) {
