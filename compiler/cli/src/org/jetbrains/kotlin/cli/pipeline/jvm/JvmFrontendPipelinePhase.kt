@@ -9,13 +9,6 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
-import com.intellij.util.xmlb.XmlSerializer
-import org.jdom.Attribute
-import org.jdom.Document
-import org.jdom.Element
-import org.jdom.output.Format
-import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
@@ -38,6 +31,7 @@ import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -55,6 +49,8 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
+import javax.xml.stream.XMLOutputFactory
+import javax.xml.stream.XMLStreamWriter
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
@@ -66,63 +62,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         configuration: CompilerConfiguration,
         arguments: CommonCompilerArguments,
     ) {
-        val modules = Element("modules").apply {
-            // Just write out all compiler arguments as is
-            addContent(
-                Element("compilerArguments").apply {
-                    val skipDefaultsFilter = SkipDefaultsSerializationFilter()
-                    val element = XmlSerializer.serialize(arguments, skipDefaultsFilter)
-                    addContent(element)
-                }
-            )
-            for (module in chunk) {
-                addContent(Element("module").apply {
-                    attributes.add(
-                        Attribute("timestamp", System.currentTimeMillis().toString())
-                    )
-
-                    attributes.add(
-                        Attribute("name", module.getModuleName())
-                    )
-                    attributes.add(
-                        Attribute("type", module.getModuleType())
-                    )
-                    attributes.add(
-                        Attribute("outputDir", module.getOutputDirectory())
-                    )
-
-                    for (friendDir in module.getFriendPaths()) {
-                        addContent(Element("friendDir").setAttribute("path", friendDir))
-                    }
-                    for (source in module.getSourceFiles()) {
-                        addContent(Element("sources").setAttribute("path", source))
-                    }
-                    for (javaSourceRoots in module.getJavaSourceRoots()) {
-                        addContent(
-                            Element("javaSourceRoots").apply {
-                                setAttribute("path", javaSourceRoots.path)
-                                javaSourceRoots.packagePrefix?.let { setAttribute("packagePrefix", it) }
-                            }
-                        )
-                    }
-                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
-                        if (classpath is JvmClasspathRoot) {
-                            addContent(Element("classpath").setAttribute("path", classpath.file.absolutePath))
-                        } else if (classpath is JvmModulePathRoot) {
-                            addContent(Element("modulepath").setAttribute("path", classpath.file.absolutePath))
-                        }
-                    }
-                    for (commonSources in module.getCommonSourceFiles()) {
-                        addContent(Element("commonSources").setAttribute("path", commonSources))
-                    }
-                    module.modularJdkRoot?.let {
-                        addContent(Element("modularJdkRoot").setAttribute("path", module.modularJdkRoot))
-                    }
-                })
-            }
-        }
-        val document = Document(modules)
-        val outputter = XMLOutputter(Format.getPrettyFormat())
         val dirFile = File(dir)
         if (!dirFile.exists()) {
             dirFile.mkdirs()
@@ -139,10 +78,78 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             outputFile = file()
             counter++
         } while (outputFile.exists())
-        outputFile.bufferedWriter().use {
-            outputter.output(document, it)
-        }
 
+        // Write XML using StAX
+        outputFile.bufferedWriter().use { writer ->
+            val xmlFactory = XMLOutputFactory.newInstance()
+            with(xmlFactory.createXMLStreamWriter(writer)) {
+                writeStartDocument("UTF-8", "1.0")
+                val depth = PrettyPrintDepth(0)
+
+                // <modules>
+                start("modules", depth)
+
+                // compilerArguments
+                start("compilerArguments", depth)
+                for (arg in ArgumentUtils.convertArgumentsToStringList(arguments)) {
+                    empty("arg", depth)
+                    writeAttribute("value", arg)
+                }
+                end(depth) // compilerArguments
+
+                // modules
+                for (module in chunk) {
+                    start("module", depth)
+                    writeAttribute("timestamp", System.currentTimeMillis().toString())
+                    writeAttribute("name", module.getModuleName())
+                    writeAttribute("type", module.getModuleType())
+                    writeAttribute("outputDir", module.getOutputDirectory())
+
+                    for (friendDir in module.getFriendPaths()) {
+                        empty("friendDir", depth)
+                        writeAttribute("path", friendDir)
+                    }
+                    for (source in module.getSourceFiles()) {
+                        empty("sources", depth)
+                        writeAttribute("path", source)
+                    }
+                    for (javaSourceRoots in module.getJavaSourceRoots()) {
+                        start("javaSourceRoots", depth)
+                        writeAttribute("path", javaSourceRoots.path)
+                        javaSourceRoots.packagePrefix?.let { writeAttribute("packagePrefix", it) }
+                        end(depth)
+                    }
+                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
+                        when (classpath) {
+                            is JvmClasspathRoot -> {
+                                empty("classpath", depth)
+                                writeAttribute("path", classpath.file.absolutePath)
+                            }
+                            is JvmModulePathRoot -> {
+                                empty("modulepath", depth)
+                                writeAttribute("path", classpath.file.absolutePath)
+                            }
+                        }
+                    }
+                    for (commonSources in module.getCommonSourceFiles()) {
+                        empty("commonSources", depth)
+                        writeAttribute("path", commonSources)
+                    }
+                    module.modularJdkRoot?.let {
+                        empty("modularJdkRoot", depth)
+                        writeAttribute("path", it)
+                    }
+
+                    end(depth) // module
+                }
+
+                end(depth) // modules
+                writeCharacters("\n")
+                writeEndDocument()
+                flush()
+                close()
+            }
+        }
     }
 
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
@@ -472,4 +479,30 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         )
     }
+}
+
+
+// Pretty-printing helpers for StAX writer
+private data class PrettyPrintDepth(var value: Int)
+
+private fun XMLStreamWriter.indent(depth: PrettyPrintDepth) {
+    writeCharacters("\n")
+    if (depth.value > 0) writeCharacters("  ".repeat(depth.value))
+}
+
+private fun XMLStreamWriter.start(name: String, depth: PrettyPrintDepth) {
+    indent(depth)
+    writeStartElement(name)
+    depth.value++
+}
+
+private fun XMLStreamWriter.end(depth: PrettyPrintDepth) {
+    depth.value--
+    indent(depth)
+    writeEndElement()
+}
+
+private fun XMLStreamWriter.empty(name: String, depth: PrettyPrintDepth) {
+    indent(depth)
+    writeEmptyElement(name)
 }
