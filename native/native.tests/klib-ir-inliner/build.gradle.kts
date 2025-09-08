@@ -65,3 +65,7 @@ projectTests {
 }
 
 testsJar {}
+
+tasks.withType<Test>().configureEach {
+    maxHeapSize = "6G" // KT-80742 to investigate why we need to change heap size
+}
