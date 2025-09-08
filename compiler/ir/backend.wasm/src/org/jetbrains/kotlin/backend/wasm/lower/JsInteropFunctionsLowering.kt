@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl
 val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl
@@ -409,6 +410,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
         if (isReturn && this == builtIns.unitType)
             return null
+
+        if (isReturn && this.erasedUpperBound.name.identifier == "JsReference" && context.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)) {
+            // FIXME currently adapters only work for non-shared types
+            return null
+        }
 
         val notNullType = makeNotNull()
         val valueAdapter = notNullType.jsToKotlinAdapterIfNeededNotNullable(isReturn)
