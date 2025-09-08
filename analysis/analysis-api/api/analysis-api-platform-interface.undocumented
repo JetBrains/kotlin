@@ -100,6 +100,7 @@ org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivityTracke
 org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService.Companion.areStatisticsEnabled
 org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.statistics.KotlinObjectSizeCalculator.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.statistics.KotlinOpenTelemetryProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.statistics.KotlinOpenTelemetryProvider.openTelemetry
 org.jetbrains.kotlin.analysis.api.platform.utils.KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME
