@@ -138,21 +138,5 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
-
-        inner class TypeArgumentWithVariance {
-            fun testIntWithInVariance(): KaTypeArgumentWithVariance {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.typeArgumentWithVariance(Variance.IN_VARIANCE, type)
-            }
-
-            fun testInvariantStringTypeMarkedNullable(): KaTypeArgumentWithVariance {
-                val symbol = getClassLikeSymbolByCaret("type")
-                return session.typeCreator.typeArgumentWithVariance(Variance.INVARIANT) {
-                    classType(symbol) {
-                        isMarkedNullable = true
-                    }
-                }
-            }
-        }
     }
 }
