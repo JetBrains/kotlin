@@ -172,9 +172,6 @@ include ":benchmarks",
         ":js:typescript-printer",
         ":native:kotlin-native-utils",
         ":native:frontend.native",
-        ":native:kotlin-klib-commonizer",
-        ":native:kotlin-klib-commonizer-api",
-        ":native:kotlin-klib-commonizer-embeddable",
         ":native:executors",
         ":native:base",
         ":native:binary-options",
@@ -833,9 +830,6 @@ project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-
 project(':kotlin-util-klib-abi').projectDir = "$rootDir/compiler/util-klib-abi" as File
 project(':native:kotlin-native-utils').projectDir = "$rootDir/native/utils" as File
 project(':native:frontend.native').projectDir = "$rootDir/native/frontend" as File
-project(':native:kotlin-klib-commonizer').projectDir = "$rootDir/native/commonizer" as File
-project(":native:kotlin-klib-commonizer-api").projectDir = "$rootDir/native/commonizer-api" as File
-project(':native:kotlin-klib-commonizer-embeddable').projectDir = "$rootDir/native/commonizer-embeddable" as File
 project(':native:objcexport-header-generator-k1').projectDir = "$rootDir/native/objcexport-header-generator/impl/k1" as File
 project(':native:objcexport-header-generator-analysis-api').projectDir = "$rootDir/native/objcexport-header-generator/impl/analysis-api" as File
 project(':native:external-projects-test-utils:testLibraryA').projectDir = "$rootDir/native/external-projects-test-utils/testDependencies/testLibraryA" as File
@@ -1016,6 +1010,12 @@ if (buildProperties.isKotlinNativeEnabled) {
     includeBuild("kotlin-native/build-tools") {
         name = "native-build-tools"
     }
+    include ':native:kotlin-klib-commonizer'
+    project(':native:kotlin-klib-commonizer').projectDir = "$rootDir/native/commonizer" as File
+    include ':native:kotlin-klib-commonizer-api'
+    project(":native:kotlin-klib-commonizer-api").projectDir = "$rootDir/native/commonizer-api" as File
+    include ':native:kotlin-klib-commonizer-embeddable'
+    project(':native:kotlin-klib-commonizer-embeddable').projectDir = "$rootDir/native/commonizer-embeddable" as File
     include ':kotlin-native:dependencies'
     include ':kotlin-native:endorsedLibraries:kotlinx.cli'
     include ':kotlin-native:Interop:StubGenerator'
