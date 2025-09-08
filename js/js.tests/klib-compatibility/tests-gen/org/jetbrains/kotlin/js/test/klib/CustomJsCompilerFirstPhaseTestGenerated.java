@@ -35794,6 +35794,12 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
         }
 
         @Test
+        @TestMetadata("lowerUpper.kt")
+        public void testLowerUpper() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/lowerUpper.kt");
+        }
+
+        @Test
         @TestMetadata("nullableEnumName.kt")
         public void testNullableEnumName() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/nullableEnumName.kt");

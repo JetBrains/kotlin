@@ -124,6 +124,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "trimIndent" -> return (value as String).trimIndent()
             "trimMargin" -> return (value as String).trimMargin()
             "trimStart" -> return (value as String).trimStart()
+            "lowercase" -> return (value as String).lowercase()
+            "uppercase" -> return (value as String).uppercase()
         }
         else -> {}
     }

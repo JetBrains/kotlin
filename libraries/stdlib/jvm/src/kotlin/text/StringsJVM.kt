@@ -143,6 +143,7 @@ public actual inline fun String.toUpperCase(): String = (this as java.lang.Strin
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun String.uppercase(): String = (this as java.lang.String).toUpperCase(Locale.ROOT)
 
 /**
@@ -163,6 +164,7 @@ public actual inline fun String.toLowerCase(): String = (this as java.lang.Strin
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public actual inline fun String.lowercase(): String = (this as java.lang.String).toLowerCase(Locale.ROOT)
 
 /**
@@ -765,6 +767,7 @@ public inline fun String.toUpperCase(locale: java.util.Locale): String = upperca
  */
 @SinceKotlin("1.5")
 @kotlin.internal.InlineOnly
+@kotlin.internal.IntrinsicConstEvaluation
 public inline fun String.uppercase(locale: Locale): String = (this as java.lang.String).toUpperCase(locale)
 
 /**

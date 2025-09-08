@@ -28,6 +28,7 @@ public expect fun String.toUpperCase(): String
  * @sample samples.text.Strings.uppercase
  */
 @SinceKotlin("1.5")
+@kotlin.internal.IntrinsicConstEvaluation
 public expect fun String.uppercase(): String
 
 /**
@@ -46,6 +47,7 @@ public expect fun String.toLowerCase(): String
  * @sample samples.text.Strings.lowercase
  */
 @SinceKotlin("1.5")
+@kotlin.internal.IntrinsicConstEvaluation
 public expect fun String.lowercase(): String
 
 /**

@@ -70,7 +70,7 @@ fun generate(): String {
 
     unaryOperationsMap.add(Triple("code", listOf(builtIns.charType), false))
 
-    for (name in listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")) {
+    for (name in listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart", "lowercase", "uppercase")) {
         unaryOperationsMap.add(Triple(name, listOf(builtIns.stringType), true))
     }
     binaryOperationsMap.add("trimMargin" to listOf(builtIns.stringType, builtIns.stringType))
