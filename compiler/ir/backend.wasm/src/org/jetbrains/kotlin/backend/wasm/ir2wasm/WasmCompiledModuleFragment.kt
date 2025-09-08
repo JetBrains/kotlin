@@ -57,6 +57,7 @@ class WasmStringsElements(
     var createStringLiteralLatin1: WasmSymbol<WasmFunction> = WasmSymbol(),
     var createStringLiteralJsString: WasmSymbol<WasmFunction> = WasmSymbol(),
     var createStringLiteralType: WasmSymbol<WasmFunctionType> = WasmSymbol(),
+    var createStringLiteralJsStringType: WasmSymbol<WasmFunctionType> = WasmSymbol(),
 )
 
 class WasmCompiledFileFragment(
@@ -771,6 +772,14 @@ class WasmCompiledModuleFragment(
         val isJsString = stringLiteralType == StringLiteralType.JsString
         val isLatin1 = stringLiteralType == StringLiteralType.Latin1
 
+        val args: MutableList<WasmType> = mutableListOf(WasmI32)
+        if (isJsString) {
+            args.add(WasmRefType(WasmHeapType.Simple.Extern))
+        }
+
+        val stringLiteralFunctionType = WasmFunctionType(args, listOf(kotlinStringType))
+        additionalTypes.add(stringLiteralFunctionType)
+
         val byteArray = WasmArrayDeclaration("byte_array", WasmStructFieldDeclaration("byte", WasmI8, false))
         additionalTypes.add(byteArray)
 
@@ -804,13 +813,12 @@ class WasmCompiledModuleFragment(
                 )
                 buildBrInstr(WasmOp.BR_ON_NON_NULL, blockResult, serviceCodeLocation)
 
+                // cache miss
                 if (isJsString) {
                     buildGetLocal(jsString ?: error("jsString is not set"), serviceCodeLocation)
                     val jsToKotlinStringAdapter = tryFindBuiltInFunction { it.jsToKotlinStringAdapter }
                     buildCall(WasmSymbol(jsToKotlinStringAdapter), serviceCodeLocation)
-                    buildSetLocal(temporary, serviceCodeLocation)
                 } else {
-                    // cache miss
                     buildGetGlobal(WasmSymbol(stringAddressesAndLengthsGlobal), serviceCodeLocation)
                     buildGetLocal(poolIdLocal, serviceCodeLocation)
                     buildInstr(
@@ -903,8 +911,8 @@ class WasmCompiledModuleFragment(
                     }
 
                     buildCall(WasmSymbol(stringEntities.createStringFunction), serviceCodeLocation)
-                    buildSetLocal(temporary, serviceCodeLocation)
                 }
+                buildSetLocal(temporary, serviceCodeLocation)
 
                 //remember and return string
                 buildGetGlobal(WasmSymbol(stringPoolGlobalField), serviceCodeLocation)
@@ -932,6 +940,7 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.forEach { fragment ->
             if (isJsString) {
                 fragment.wasmStringsElements?.createStringLiteralJsString?.bind(stringLiteralFunction)
+                fragment.wasmStringsElements?.createStringLiteralJsStringType?.bind(stringLiteralFunctionType)
             } else if (isLatin1) {
                 fragment.wasmStringsElements?.createStringLiteralLatin1?.bind(stringLiteralFunction)
                 fragment.wasmStringsElements?.createStringLiteralType?.bind(stringLiteralFunctionType)
@@ -1001,12 +1010,19 @@ class WasmCompiledModuleFragment(
                 val stringId: Int
                 val storedValues = literalGlobalMap[stringValue]
                 if (storedValues == null) {
+                    val symbol: WasmSymbolReadOnly<String>
+                    if (stringValue.fitsLatin1) {
+                        symbol = WasmSymbol(stringValue)
+                    } else {
+                        val bytes = stringValue.toByteArray(Charsets.UTF_8)
+                        symbol = WasmSymbol(String(bytes))
+                    }
                     literalGlobal = WasmGlobal(
                         name = "global_$literalCounter",
                         type = WasmRefType(WasmHeapType.Simple.Extern), // createStringFn.type.owner.resultTypes[0], // WasmRefType(WasmHeapType.Simple.Extern),
                         isMutable = false,
                         init = emptyList(),
-                        importPair = WasmImportDescriptor("strings", WasmSymbol(stringValue))
+                        importPair = WasmImportDescriptor("strings", symbol)
                     )
                     stringId = literalCounter
                     literalGlobalMap[stringValue] = Pair(literalGlobal, stringId)

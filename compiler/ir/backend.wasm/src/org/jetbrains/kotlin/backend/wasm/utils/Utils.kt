@@ -39,4 +39,4 @@ internal val String.fitsLatin1
     get() = this.all { it.code in 0..255 }
 
 internal val String.fitsWasmImportName
-    get() = this.fitsLatin1 && this.length <= 100000
+    get() = this.length <= 100000

@@ -169,22 +169,20 @@ private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileC
         irFile == it.owner.fileOrNull
     }
 
-    val jsToKotlinAnyAdapter: IrFunctionSymbol?
-    if (isWasmJsTarget) {
-        jsToKotlinAnyAdapter = wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter.takeIf {
+    val jsToKotlinAnyAdapter: IrFunctionSymbol? = if (isWasmJsTarget) {
+        wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter.takeIf {
             irFile == it.owner.fileOrNull
         }
     } else {
-        jsToKotlinAnyAdapter = null
+        null
     }
 
-    val jsToKotlinStringAdapter: IrFunctionSymbol?
-    if (isWasmJsTarget) {
-        jsToKotlinStringAdapter = wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.takeIf {
+    val jsToKotlinStringAdapter: IrFunctionSymbol? = if (isWasmJsTarget) {
+        wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.takeIf {
             irFile == it.owner.fileOrNull
         }
     } else {
-        jsToKotlinStringAdapter = null
+        null
     }
 
     val unitGetInstance = findUnitGetInstanceFunction().takeIf {

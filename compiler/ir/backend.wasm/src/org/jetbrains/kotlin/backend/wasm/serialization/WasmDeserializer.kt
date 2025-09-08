@@ -665,6 +665,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             createStringLiteralLatin1 = deserializeSymbol(::deserializeFunction),
             createStringLiteralJsString = deserializeSymbol(::deserializeFunction),
             createStringLiteralType = deserializeSymbol(::deserializeFunctionType),
+            createStringLiteralJsStringType = deserializeSymbol(::deserializeFunctionType),
         )
     }
 
