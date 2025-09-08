@@ -138,56 +138,5 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
-
-        inner class CapturedType {
-            fun testFromAnotherCapturedTypeMarkedNullable(): KaType {
-                val projection = session.typeCreator.starTypeProjection()
-                val capturedType = session.typeCreator.capturedType(projection)
-                return session.typeCreator.capturedType(capturedType) {
-                    isMarkedNullable = true
-                }
-            }
-
-            fun testOutIntProjection(): KaType {
-                val type = getTypeByCaret("type")
-                val projection = session.typeCreator.typeArgumentWithVariance(Variance.OUT_VARIANCE, type)
-                return session.typeCreator.capturedType(projection)
-            }
-
-            fun testStarProjection(): KaType {
-                val projection = session.typeCreator.starTypeProjection()
-                return session.typeCreator.capturedType(projection)
-            }
-
-            fun testStarProjectionMarkedNullable(): KaType {
-                val projection = session.typeCreator.starTypeProjection()
-                return session.typeCreator.capturedType(projection) {
-                    isMarkedNullable = true
-                }
-            }
-
-            fun testUserTypeInProjection(): KaType {
-                val type = getTypeByCaret("type")
-                val projection = session.typeCreator.typeArgumentWithVariance(Variance.IN_VARIANCE, type)
-                return session.typeCreator.capturedType(projection)
-            }
-
-            fun testTypeParameterOutProjection(): KaType {
-                val type = getTypeByCaret("type")
-                val projection = session.typeCreator.typeArgumentWithVariance(Variance.OUT_VARIANCE, type)
-                return session.typeCreator.capturedType(projection)
-            }
-
-            fun testStarProjectionWithAnnotations(): KaType {
-                val annotationClassId1 = ClassId.fromString("MyAnno1")
-                val annotationClassId2 = ClassId.fromString("MyAnno2")
-                val annotationClassId3 = ClassId.fromString("MyAnno3")
-
-                val projection = session.typeCreator.starTypeProjection()
-                return session.typeCreator.capturedType(projection) {
-                    annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
-                }
-            }
-        }
     }
 }
