@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_EXTERNAL_DECLARATION
@@ -77,6 +78,10 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
 
         map.put(NESTED_JS_EXPORT, "'@JsExport' is only allowed on files and top-level declarations.")
+        map.put(
+            MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE,
+            "Only one declaration with '@JsExport.Default' is allowed per file."
+        )
 
         map.put(JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "An argument for the 'js()' function must be a constant string expression.")
         map.put(NAMED_COMPANION_IN_EXTERNAL_INTERFACE, "Named companions are not allowed inside external interfaces.")

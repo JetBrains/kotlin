@@ -7211,6 +7211,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirWebCommonErrors.MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE) { firDiagnostic ->
+        MultipleJsExportDefaultInOneFileImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.DELEGATION_BY_DYNAMIC) { firDiagnostic ->
         DelegationByDynamicImpl(
             firDiagnostic as KtPsiDiagnostic,

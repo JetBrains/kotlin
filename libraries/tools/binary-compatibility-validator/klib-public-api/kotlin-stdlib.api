@@ -9699,13 +9699,12 @@ final inline fun kotlin/ulongToFloat(kotlin/Long): kotlin/Float // kotlin/ulongT
 open annotation class kotlin.js/JsExport : kotlin/Annotation { // kotlin.js/JsExport|null[1]
     constructor <init>() // kotlin.js/JsExport.<init>|<init>(){}[1]
 
-    open annotation class Ignore : kotlin/Annotation { // kotlin.js/JsExport.Ignore|null[1]
-        constructor <init>() // kotlin.js/JsExport.Ignore.<init>|<init>(){}[1]
-    }
-
-    // Targets: [wasmWasi]
     open annotation class Default : kotlin/Annotation { // kotlin.js/JsExport.Default|null[1]
         constructor <init>() // kotlin.js/JsExport.Default.<init>|<init>(){}[1]
+    }
+
+    open annotation class Ignore : kotlin/Annotation { // kotlin.js/JsExport.Ignore|null[1]
+        constructor <init>() // kotlin.js/JsExport.Ignore.<init>|<init>(){}[1]
     }
 }
 
