@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBi
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -23,8 +24,8 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * @see AbstractDecompiledStubsTest
  */
-abstract class AbstractCompiledStubsTest : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = CompiledStubsTestConfigurator()
+abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) : AbstractStubsTest() {
+    override val configurator: AnalysisApiTestConfigurator = CompiledStubsTestConfigurator(defaultTargetPlatform)
 
     override fun computeStub(file: KtFile): PsiFileStub<*>? = ClsClassFinder.allowMultifileClassPart {
         requireIsInstance<KtDecompiledFile>(file)
@@ -36,8 +37,12 @@ abstract class AbstractCompiledStubsTest : AbstractStubsTest() {
             ?.let { it as PsiFileStub<*> }
     }
 
-    internal open class CompiledStubsTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
+    internal open class CompiledStubsTestConfigurator(
+        override val defaultTargetPlatform: TargetPlatform,
+    ) : AnalysisApiFirBinaryTestConfigurator() {
+        val platformPrefix: String get() = defaultTargetPlatform.single().platformName
+
         override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
-        override val testPrefixes: List<String> get() = listOf("compiled")
+        override val testPrefixes: List<String> get() = "compiled".let { listOf("$platformPrefix.$it", it) }
     }
 }

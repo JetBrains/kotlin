@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.stubs;
+package org.jetbrains.kotlin.analysis.stubs.jvm;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/psi")
 @TestDataPath("$PROJECT_ROOT")
-public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
+public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest {
   @Test
   @TestMetadata("AbsentInnerType.kt")
   public void testAbsentInnerType() {
