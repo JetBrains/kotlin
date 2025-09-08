@@ -468,7 +468,7 @@ public class IrJsES6TypeScriptExportTestGenerated extends AbstractIrJsES6TypeScr
   public class Js_export_default {
     @Test
     public void testAllFilesPresentInJs_export_default() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
     }
 
     @Test

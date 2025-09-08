@@ -49,6 +49,7 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
 
     val EXPORT by object : DiagnosticGroup("Export") {
         val NESTED_JS_EXPORT by error<KtElement>()
+        val MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE by error<KtElement>()
     }
 
     val JSCODE by object : DiagnosticGroup("JsCode") {
