@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.packageFqName
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
+import org.jetbrains.kotlinx.dataframe.plugin.utils.ALLOWED_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
@@ -39,7 +41,9 @@ class ImportedSchemasGenerator(
     private val predicateBasedProvider = session.predicateBasedProvider
 
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(predicate).filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(predicate)
+            .filterIsInstance<FirRegularClassSymbol>()
+            .filter { it.effectiveVisibility in ALLOWED_DECLARATION_VISIBILITY }
     }
 
     val topLevelSchemas: Map<Name, ImportedDataSchema> get() = session.importedSchemasService.topLevelSchemas

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
@@ -25,11 +26,7 @@ import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
-import org.jetbrains.kotlinx.dataframe.plugin.utils.CallableIdOrSymbol
-import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
-import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
-import org.jetbrains.kotlinx.dataframe.plugin.utils.isDataRow
-import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.utils.*
 
 /**
  * extensions inside scope classes are generated here:
@@ -42,7 +39,9 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(predicate).filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(predicate)
+            .filterIsInstance<FirRegularClassSymbol>()
+            .filter { it.effectiveVisibility in ALLOWED_DECLARATION_VISIBILITY }
     }
 
     private val predicate: LookupPredicate = LookupPredicate.BuilderContext.annotated(dataSchema)

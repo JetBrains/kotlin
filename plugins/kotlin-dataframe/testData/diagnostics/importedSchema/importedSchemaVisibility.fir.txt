@@ -1,0 +1,21 @@
+FILE: importedSchemaVisibility.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() private abstract interface A : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() internal abstract interface B : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() public abstract interface C : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() public abstract interface D : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
