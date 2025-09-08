@@ -30,7 +30,7 @@ import kotlin.experimental.ExperimentalNativeApi
  */
 open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : AbstractSet() {
 
-    protected var children: MutableList<AbstractSet> = mutableListOf<AbstractSet>().apply { addAll(children) }
+    private var children = children.toTypedArray()
 
     var fSet: FSet = fSet
         protected set
@@ -79,8 +79,12 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
             assert(newFSet == fSet)
         }
 
-        @OptIn(ExperimentalNativeApi::class)
-        children.replaceAll { child -> if (!child.secondPassVisited) child.processSecondPass() else child }
+        children.forEachIndexed { index, child ->
+            if (!child.secondPassVisited) {
+                children[index] = child.processSecondPass()
+            }
+        }
+
         return super.processSecondPassInternal()
     }
 
@@ -89,5 +93,11 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
         properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
         properties.capturesGroups = true
         fSet.reportOwnProperties(properties)
+    }
+
+    protected inline fun forEachChildrenIndexed(action: (index: Int, child: AbstractSet) -> Unit) {
+        for (index in children.indices) {
+            action(index, children[index])
+        }
     }
 }

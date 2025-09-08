@@ -31,8 +31,8 @@ open internal class AtomicJointSet(children: List<AbstractSet>, fSet: FSet) : No
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         val start = matchResult.getConsumed(groupIndex)
         matchResult.setConsumed(groupIndex, startIndex)
-        children.forEach {
-            val shift = it.matches(startIndex, testString, matchResult)
+        forEachChildrenIndexed { _, child ->
+            val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 // AtomicFset always returns true, but saves the index to run this next.match() from;
                 return next.matches((fSet as AtomicFSet).index, testString, matchResult)

@@ -29,8 +29,8 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        children.forEach {
-            val shift = it.matches(startIndex, testString, matchResult)
+        forEachChildrenIndexed { _, child ->
+            val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 // PosLookaheadFset always returns true, position remains the same next.match() from;
                 return next.matches(startIndex, testString, matchResult)
@@ -56,8 +56,8 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        children.forEach {
-            if (it.matches(startIndex, testString, matchResult) >= 0) {
+        forEachChildrenIndexed { _, child ->
+            if (child.matches(startIndex, testString, matchResult) >= 0) {
                 return -1
             }
         }
