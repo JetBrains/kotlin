@@ -13,7 +13,6 @@ import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirBinaryTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -105,12 +104,6 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
     protected open fun renderStub(stub: PsiFileStub<*>?): String = stub?.serializeToString().toString()
 
     abstract fun computeStub(file: KtFile): PsiFileStub<*>?
-}
-
-abstract class AbstractSourceStubsTest : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
-
-    override fun computeStub(file: KtFile): PsiFileStub<*> = file.calcStubTree().root
 }
 
 abstract class AbstractCompiledStubsTest : AbstractStubsTest() {
