@@ -1237,7 +1237,10 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
 }
 
 private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? {
-    val forbiddenFunctions = listOf("dec", "inc", "trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")
+    var forbiddenFunctions = mutableListOf("dec", "inc", "trim", "trimEnd", "trimIndent", "trimMargin", "trimStart", "lowercase", "uppercase")
+    if (listOf(BYTE, SHORT).contains(type)) {
+        forbiddenFunctions.addAll(listOf("inv"))
+    }
     if (forbiddenFunctions.contains(name)) return null
 
     return evalUnaryOp(name, type, value).also { result ->
@@ -1255,7 +1258,10 @@ private fun evaluateBinaryAndCheck(
     parameterValue: Any,
     reportIntegerOverflow: () -> Unit,
 ): Any? {
-    val forbiddenFunctions = listOf("trimMargin")
+    var forbiddenFunctions = mutableListOf("trimMargin")
+    if (listOf(BYTE, SHORT).contains(receiverType)) {
+        forbiddenFunctions.addAll(listOf("and", "or", "xor"))
+    }
     if (forbiddenFunctions.contains(name)) return null
 
     val actualResult = try {

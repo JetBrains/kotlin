@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -426,7 +427,9 @@ private class FirConstCheckVisitor(
 
     // --- Utils ---
     private fun FirBasedSymbol<*>.canBeEvaluated(): Boolean {
-        return intrinsicConstEvaluation && this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session)
+        // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
+        val isFutureIntrinsicConst = this is FirCallableSymbol<*> && listOf("kotlin.text.lowercase", "kotlin.text.uppercase").contains("${this.packageFqName()}.${this.name.asString()}")
+        return intrinsicConstEvaluation && (this.hasAnnotation(StandardClassIds.Annotations.IntrinsicConstEvaluation, session) || isFutureIntrinsicConst)
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
