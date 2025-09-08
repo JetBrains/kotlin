@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -101,23 +102,22 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     ): Boolean {
         if (!hasSideEffects) return false // Do not report anything FirUnusedExpressionChecker already reported
 
-        // Ignore Unit or Nothing
         if (expression.resolvedType.isIgnorable()) return false
 
         val calleeReference = expression.toReference(context.session)
         val resolvedReference = calleeReference?.resolved
 
         val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()?.originalOrSelf()
-
         if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
-
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
 
         // Special case for `x[y] = z` assigment:
         if ((expression is FirFunctionCall) && expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
 
-        val functionName = resolvedSymbol?.name
+        // Special case for `condition() || throw/return` or `condition() && throw/return`:
+        if (expression is FirBooleanOperatorExpression && expression.rightOperand.resolvedType.isIgnorable()) return false
 
+        val functionName = resolvedSymbol?.name
         reporter.reportOn(
             expression.source,
             FirErrors.RETURN_VALUE_NOT_USED,
