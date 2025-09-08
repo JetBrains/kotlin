@@ -10,3 +10,6 @@ fun test(inv: Inv1<out Number>) {
     inv { }
     inv.invoke { }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, operator, outProjection, typeParameter, typeWithExtension */

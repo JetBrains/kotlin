@@ -36,3 +36,18 @@ fun Path.replaceWithVersion(versionSuffix: String): Path {
     otherVersion.copyTo(this, overwrite = true)
     return this
 }
+
+fun Path.resolveRepoPath(group: String, name: String, version: String): Path =
+    resolve("${group.replace(".", "/")}/$name/$version")
+
+fun Path.resolveRepoArtifactPath(
+    group: String,
+    name: String,
+    version: String,
+    filename: String = "$name-$version",
+    classifier: String? = null,
+    extension: String = "jar",
+): Path {
+    val suffix = if (classifier != null) "-$classifier" else ""
+    return resolveRepoPath(group, name, version).resolve("$filename$suffix.$extension")
+}

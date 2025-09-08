@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
@@ -254,7 +253,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
                     symbol.fir.ownerGenerator = extension
                     if (classSymbol.isLocal) {
-                        (symbol.fir as? FirRegularClass)?.containingClassForLocalAttr = classSymbol.toLookupTag()
+                        symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
                 }
             }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
@@ -16,11 +17,14 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap.mapKotlinToJava
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.VersionIndependentOpcodes
+import org.jetbrains.kotlin.codegen.addRecordComponent
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -45,6 +49,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -64,11 +69,12 @@ class ClassCodegen private constructor(
     val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentFunction: IrFunction?,
+    val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
 ) {
     // We need to avoid recursive calls to getOrCreate() from within the constructor to prevent lockups
     // in ConcurrentHashMap context.classCodegens.
     private val parentClassCodegen by lazy {
-        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context) }
+        (parentFunction?.parentClassOrNull ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context, intrinsicExtensions) }
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
@@ -173,7 +179,7 @@ class ClassCodegen private constructor(
         //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
-                getOrCreate(declaration, context).generate()
+                getOrCreate(declaration, context, intrinsicExtensions).generate()
             }
         }
 
@@ -322,7 +328,9 @@ class ClassCodegen private constructor(
                     else -> error("Cannot serialize class metadata without containing file: ${irClass.render()}")
                 }
                 metadataSerializer.serialize(metadata, containingFile)?.let { (proto, stringTable) ->
-                    DescriptorAsmUtil.writeAnnotationData(av, proto, stringTable)
+                    AsmUtil.writeAnnotationData(
+                        av, JvmProtoBufUtil.writeData(proto, stringTable), ArrayUtil.toStringArray(stringTable.strings),
+                    )
                 }
             }
 
@@ -447,7 +455,8 @@ class ClassCodegen private constructor(
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
             val continuationClass = method.continuationClass() // null if `SuspendLambda.invokeSuspend` - `this` is continuation itself
-            val continuationClassCodegen = lazy { if (continuationClass != null) getOrCreate(continuationClass, context, method) else this }
+            val continuationClassCodegen =
+                lazy { if (continuationClass != null) getOrCreate(continuationClass, context, intrinsicExtensions, method) else this }
 
             // For suspend lambdas continuation class is null, and we need to use containing class to put L$ fields
             val spilledFieldsOwner = continuationClass ?: irClass
@@ -507,7 +516,7 @@ class ClassCodegen private constructor(
 
         for (klass in innerClasses.sortedBy { it.fqNameWhenAvailable?.asString() }) {
             val innerJavaClassId = klass.mapToJava()
-            val innerClass = innerJavaClassId?.internalName ?: typeMapper.classInternalName(klass)
+            val innerClass = innerJavaClassId?.internalName ?: typeMapper.classLikeDeclarationInternalName(klass)
             val outerClass =
                 if (klass.isSamWrapper || klass.isAnnotationImplementation || klass.isEnclosedInConstructor)
                     null
@@ -518,7 +527,7 @@ class ClassCodegen private constructor(
                             if (innerJavaClassId?.packageFqName != outerJavaClassId?.packageFqName) {
                                 continue
                             }
-                            outerJavaClassId?.internalName ?: typeMapper.classInternalName(parent)
+                            outerJavaClassId?.internalName ?: typeMapper.classLikeDeclarationInternalName(parent)
                         }
 
                         else -> null
@@ -568,6 +577,7 @@ class ClassCodegen private constructor(
         fun getOrCreate(
             irClass: IrClass,
             context: JvmBackendContext,
+            intrinsicExtensions: List<JvmIrIntrinsicExtension>,
             // The `parentFunction` is only set for classes nested inside of functions. This is usually safe, since there is no
             // way to refer to (inline) members of such a class from outside of the function unless the function in question is
             // itself declared as inline. In that case, the function will be compiled before we can refer to the nested class.
@@ -579,7 +589,7 @@ class ClassCodegen private constructor(
                 it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =
-            irClass.classCodegen ?: ClassCodegen(irClass, context, parentFunction).also {
+            irClass.classCodegen ?: ClassCodegen(irClass, context, parentFunction, intrinsicExtensions).also {
                 assert(parentFunction == null || it.parentFunction == parentFunction) {
                     "inconsistent parent function for ${irClass.render()}:\n" +
                             "New: ${parentFunction!!.render()}\n" +

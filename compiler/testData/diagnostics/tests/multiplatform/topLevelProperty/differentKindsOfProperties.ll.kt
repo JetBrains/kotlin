@@ -42,3 +42,7 @@ fun test(): String {
 }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: assignment, const, expect, functionDeclaration, getter, lateinit, localProperty, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter, stringLiteral,
+typeParameter */

@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOnAnonymousFunction.kt
-    public final [ResolvedTo(BODY_RESOLVE)] val t3: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+    public final [ResolvedTo(BODY_RESOLVE)] val t3: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
     }
 
         public [ResolvedTo(BODY_RESOLVE)] get(): R|() -> kotlin/Unit|

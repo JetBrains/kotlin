@@ -10,3 +10,6 @@ package one
 
 @Target(AnnotationTarget.FILE)
 annotation class Anno(val s: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, anonymousFunction, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

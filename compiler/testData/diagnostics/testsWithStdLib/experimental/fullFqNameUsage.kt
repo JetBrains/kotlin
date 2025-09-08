@@ -13,3 +13,5 @@ fun f() {}
 
 @test.abc.E
 fun g() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

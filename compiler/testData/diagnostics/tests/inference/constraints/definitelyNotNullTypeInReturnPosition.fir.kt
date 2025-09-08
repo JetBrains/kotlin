@@ -278,3 +278,9 @@ class Inv1<T>
 class Inv2<T>
 fun <K : Comparable<K>> Inv1<K>.assertStableSorted() {}
 fun <K : Comparable<K>> Inv2<K>.assertStableSorted() = Inv1<K>().assertStableSorted()
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, checkNotNullCall, classDeclaration, dnnType, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression, in, inProjection, init,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, smartcast, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

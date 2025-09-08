@@ -1,8 +1,8 @@
 <caret_1>:
   KDocName(68,71): 'Foo'
     KDocReference:
-      0: (in dep1) class Foo
-      1: (in dep2) class Foo
+      0: (in dep2) class Foo
+      1: (in dep1) class Foo
 
 <caret_2>:
   KDocName(80,88): 'dep1.Foo'

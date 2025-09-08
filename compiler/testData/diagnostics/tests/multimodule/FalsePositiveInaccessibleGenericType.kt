@@ -28,3 +28,6 @@ fun test2(some: Some<String>) {
     val a = some.g
     register(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, starProjection, typeParameter */

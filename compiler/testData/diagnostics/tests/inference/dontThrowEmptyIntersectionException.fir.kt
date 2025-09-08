@@ -21,3 +21,5 @@ fun main(z: I<String>) {
     z as <!UNRESOLVED_REFERENCE!>Any2<!>
     println(z)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, intersectionType, javaType, smartcast, starProjection */

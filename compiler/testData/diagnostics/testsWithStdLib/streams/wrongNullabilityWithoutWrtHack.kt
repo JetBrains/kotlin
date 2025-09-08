@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // JVM_TARGET: 1.8
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.function.IntPredicate
 import java.util.stream.Stream
@@ -24,3 +24,7 @@ fun run(filter: IntPredicate, allProcesses: Stream<Process>): List<IntLongPair> 
         else null
     }.toList()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+inProjection, interfaceDeclaration, javaFunction, lambdaLiteral, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, samConversion, smartcast */

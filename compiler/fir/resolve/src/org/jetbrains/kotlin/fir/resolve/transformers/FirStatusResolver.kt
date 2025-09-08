@@ -1,56 +1,40 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import java.util.*
 
 class FirStatusResolver(
-    val session: FirSession,
-    val scopeSession: ScopeSession
-) {
+    override val session: FirSession,
+    override val scopeSession: ScopeSession
+) : SessionAndScopeSessionHolder {
     companion object {
-        private val NOT_INHERITED_MODIFIERS: List<FirDeclarationStatusImpl.Modifier> = listOf(
-            FirDeclarationStatusImpl.Modifier.ACTUAL,
-            FirDeclarationStatusImpl.Modifier.EXPECT,
-            FirDeclarationStatusImpl.Modifier.CONST,
-            FirDeclarationStatusImpl.Modifier.LATEINIT,
-            FirDeclarationStatusImpl.Modifier.TAILREC,
-            FirDeclarationStatusImpl.Modifier.EXTERNAL,
-            FirDeclarationStatusImpl.Modifier.OVERRIDE,
-            FirDeclarationStatusImpl.Modifier.SUSPEND,
+        private val MODIFIERS_FROM_OVERRIDDEN = EnumSet.of(
+            FirDeclarationStatusImpl.Modifier.OPERATOR,
+            FirDeclarationStatusImpl.Modifier.INFIX,
         )
-
-        private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =
-            FirDeclarationStatusImpl.Modifier.entries - NOT_INHERITED_MODIFIERS
     }
 
     private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions
@@ -182,6 +166,8 @@ class FirStatusResolver(
             is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass?.symbol, isLocal) }
             else -> firClass.status
         }
+
+        classLikeStatusValidation(newStatus = status, declaration = firClass)
         return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
     }
 
@@ -193,7 +179,26 @@ class FirStatusResolver(
         val status = typeAlias.applyExtensionTransformers {
             transformStatus(it, typeAlias, containingClass?.symbol, isLocal)
         }
+
+        classLikeStatusValidation(newStatus = status, declaration = typeAlias)
         return resolveStatus(typeAlias, status, containingClass, null, isLocal, emptyList())
+    }
+
+    private fun classLikeStatusValidation(newStatus: FirDeclarationStatus, declaration: FirClassLikeDeclaration) {
+        val originalVisibility = declaration.status.visibility
+        requireWithAttachment(
+            originalVisibility != Visibilities.Unknown,
+            { "Visibility has to be provided for a class-like declaration (${declaration::class.simpleName}) during its initialization" },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
+
+        requireWithAttachment(
+            newStatus.visibility == originalVisibility,
+            { "Attempt to change visibility of a class-like declaration (${declaration::class.simpleName}), original visibility: $originalVisibility, new visibility: ${declaration.visibility}" },
+        ) {
+            withFirEntry("declaration", declaration)
+        }
     }
 
     fun resolveStatus(
@@ -269,7 +274,6 @@ class FirStatusResolver(
                     acc || (overriddenStatus as FirDeclarationStatusImpl)[modifier]
                 }
             }
-            status[FirDeclarationStatusImpl.Modifier.OVERRIDE] = true
         }
 
         val parentEffectiveVisibility = when {
@@ -309,7 +313,7 @@ class FirStatusResolver(
             status.isExpect = true
         }
 
-        status.hasMustUseReturnValue = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty)
+        status.returnValueStatus = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
 
         return status.resolved(visibility, modality, effectiveVisibility)
     }
@@ -319,31 +323,18 @@ class FirStatusResolver(
         isLocal: Boolean,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
-    ): Boolean {
-        if (declaration !is FirCallableDeclaration) return false
-        val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
-        if (analysisMode == ReturnValueCheckerMode.DISABLED) return false
+        overriddenStatuses: List<FirResolvedDeclarationStatus>,
+    ): ReturnValueStatus {
+        if (declaration !is FirCallableDeclaration) return ReturnValueStatus.Unspecified
 
-        if (isLocal) {
-            return declaration is FirFunction
-        }
-
-        if (declaration.hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)) return false
-        if (declaration.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
-        if (analysisMode == ReturnValueCheckerMode.FULL) return true
-
-        fun List<ClassId>?.hasMurv() = this?.any { it == StandardClassIds.Annotations.MustUseReturnValue } ?: false
-
-        // Checking the most probable places for annotation one-by-one to avoid computing unnecessary empty annotations lists:
-        if (containingClass?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
-        if (session.firProvider.getFirCallableContainerFile(declaration.symbol)?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
-        if (containingProperty?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
-        // Outer classes:
-        fun FirClassLikeSymbol<*>.hasMurvOrOuter(): Boolean {
-            if (this.resolvedAnnotationClassIds.hasMurv()) return true
-            return this.getContainingDeclaration(session)?.hasMurvOrOuter() ?: false
-        }
-        return containingClass?.getContainingDeclaration(session)?.symbol?.hasMurvOrOuter() ?: false
+        return session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForCallable(
+            session,
+            declaration.symbol,
+            isLocal,
+            containingClass?.symbol,
+            containingProperty?.symbol,
+            overriddenStatuses
+        )
     }
 
     private fun resolveVisibility(
@@ -367,7 +358,7 @@ class FirStatusResolver(
             return when {
                 containingClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) ->
                     Visibilities.Public
-                session.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility) ||
+                LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled() ||
                         containingClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session) ->
                     containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
                 else -> fallbackVisibility

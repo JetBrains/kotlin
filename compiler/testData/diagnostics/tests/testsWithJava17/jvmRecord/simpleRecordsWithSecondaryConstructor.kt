@@ -16,3 +16,5 @@ fun foo(mr: MyRecord) {
     MyRecord("", 1)
     MyRecord(4L, "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, stringLiteral */

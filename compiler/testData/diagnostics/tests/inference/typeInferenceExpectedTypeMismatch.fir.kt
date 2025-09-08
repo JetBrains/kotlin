@@ -40,3 +40,6 @@ fun test2(outA: Out<A>, inC: In<C>) {
 }
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, in, interfaceDeclaration, javaFunction, localProperty,
+nullableType, out, outProjection, propertyDeclaration, stringLiteral, typeParameter, vararg */

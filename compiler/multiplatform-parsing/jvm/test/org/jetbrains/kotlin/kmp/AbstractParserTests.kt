@@ -129,7 +129,7 @@ finally
     @Test
     open fun testIsExpressions() {
         checkOnKotlinCode(
-            """val y = x is Int <= true""", // Correct syntax: `<=` (COMPARISON) precedence is lower than `is`
+            """val y = x is Int <= true""", // Correct syntax: `<=` (COMPARISON) priority is lower than `is`
 
             """kotlin.FILE `val y = x is Int <= true` [1:1..25)
   PACKAGE_DIRECTIVE `` [1:1..1)
@@ -161,7 +161,7 @@ finally
         true [1:21..25)""")
 
         checkOnKotlinCode(
-            """val y = x is Int is Boolean""", // Correct syntax: `is` precedence equals `is`
+            """val y = x is Int is Boolean""", // Correct syntax: `is` priority equals `is`
 
             """kotlin.FILE `val y = x is Int is Boolean` [1:1..28)
   PACKAGE_DIRECTIVE `` [1:1..1)
@@ -196,7 +196,7 @@ finally
 
 
         checkOnKotlinCode(
-            """val y = x is Int .. true""", // Incorrect syntax: `..` (RANGE) precedence higher than `is`
+            """val y = x is Int .. true""", // Incorrect syntax: `..` (RANGE) priority is higher than `is`
 
             """kotlin.FILE `val y = x is Int .. true` [1:1..25)
   PACKAGE_DIRECTIVE `` [1:1..1)

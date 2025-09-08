@@ -1,4 +1,13 @@
-Diagnostics from file:
+Diagnostics from anno1.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from annotation.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from anno2.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from usage.kt:
   for PSI element of type KtConstructorCalleeExpression at (33,2-12)
     NO_VALUE_FOR_PARAMETER      text ranges: [(114,124)]
       PSI: KtConstructorCalleeExpression at (33,2-12)

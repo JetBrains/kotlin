@@ -1,5 +1,5 @@
 public open class InnerClassTypeMultipleGeneric : R|kotlin/Any| {
-    public open fun staticType(): R|ft<test/InnerClassTypeMultipleGeneric.Outer.Inner<kotlin/Byte!, kotlin/Char!, kotlin/Boolean!>, test/InnerClassTypeMultipleGeneric.Outer.Inner<kotlin/Byte!, kotlin/Char!, kotlin/Boolean!>?>|
+    public open fun staticType(): R|test/InnerClassTypeMultipleGeneric.Outer.Inner<kotlin/Byte!, kotlin/Char!, kotlin/Boolean!>!|
 
     public constructor(): R|test/InnerClassTypeMultipleGeneric|
 
@@ -12,7 +12,7 @@ public open class InnerClassTypeMultipleGeneric : R|kotlin/Any| {
         }
     }
     public open inner class Outer<E1 : R|kotlin/Any!|, E2 : R|kotlin/Any!|> : R|test/InnerClassTypeMultipleGeneric.BaseOuter<kotlin/Int!, E1!>| {
-        public open fun bar(): R|ft<test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<ft<java/lang/Class<*>, java/lang/Class<*>?>, kotlin/CharSequence!, kotlin/Int!, E1!>, test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<ft<java/lang/Class<*>, java/lang/Class<*>?>, kotlin/CharSequence!, kotlin/Int!, E1!>?>|
+        public open fun bar(): R|test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<java/lang/Class<*>!, kotlin/CharSequence!, kotlin/Int!, E1!>!|
 
         public test/InnerClassTypeMultipleGeneric.constructor<E1 : R|kotlin/Any!|, E2 : R|kotlin/Any!|>(): R|test/InnerClassTypeMultipleGeneric.Outer<E1, E2>|
 

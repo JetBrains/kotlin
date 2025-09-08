@@ -12,3 +12,6 @@ open class Base(
 class Derived(
     <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Deprecated<Nested><!> val b: String,
 ) : Base("")
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nestedClass, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

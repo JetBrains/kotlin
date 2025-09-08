@@ -21,3 +21,5 @@ class A {
     val g: Number
         <!WRONG_MODIFIER_TARGET!>tailrec<!> field = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration */

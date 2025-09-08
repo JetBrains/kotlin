@@ -36,3 +36,6 @@ object SeparateTypes {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, nestedClass, nullableType, objectDeclaration, smartcast, starProjection, typeParameter */

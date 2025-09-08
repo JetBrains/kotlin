@@ -18,3 +18,6 @@ value class Foo(val x: Int) {
         val f = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, init, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, value */

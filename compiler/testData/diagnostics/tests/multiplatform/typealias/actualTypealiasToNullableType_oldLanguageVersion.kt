@@ -15,3 +15,5 @@ typealias MyNullable = String?
 
 actual typealias E01 = String?
 <!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias E02 = MyNullable<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nullableType, typeAliasDeclaration */

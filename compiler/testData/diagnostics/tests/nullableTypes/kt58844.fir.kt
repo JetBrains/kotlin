@@ -11,3 +11,5 @@ fun main(args: Array<String>) {
     intFun(<!ARGUMENT_TYPE_MISMATCH("Int?; Int")!>intVar?.toInt()<!>)
     byteFun(<!ARGUMENT_TYPE_MISMATCH("Byte?; Byte")!>byteVar?.toByte()<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall */

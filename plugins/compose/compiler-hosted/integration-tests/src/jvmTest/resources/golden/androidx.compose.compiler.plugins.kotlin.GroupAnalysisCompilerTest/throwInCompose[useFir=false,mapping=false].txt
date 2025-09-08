@@ -1,0 +1,52 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(param: String): String =
+    TODO("test")
+
+@Composable
+fun TestConditional(param: String): String =
+    if (param.isEmpty()) {
+        Test("")
+        TODO("test")
+    } else {
+        Test(param)
+    }
+
+@Composable
+fun TestFunctionThrow(param: String): String =
+    throwError() // this will generate `throw NothingValueException()`
+
+private fun throwError(): Nothing = TODO()
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 6 }
+    TestConditional(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <key>, line: 10 }
+        ReplaceGroup { key: <key>, line: 13 }
+        Root { key: <key>, line: 10 }
+    TestFunctionThrow(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 19 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <key>, line: 6 }
+    TestConditional(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <key>, line: 10 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 10 }
+    TestFunctionThrow(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <key>, line: 19 }
+}

@@ -211,6 +211,4 @@ open class DeepCopySymbolRemapper(
         returnableBlocks.getReferenced(symbol)
 
     override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol = typeParameters.getReferenced(symbol)
-
-    override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)
 }

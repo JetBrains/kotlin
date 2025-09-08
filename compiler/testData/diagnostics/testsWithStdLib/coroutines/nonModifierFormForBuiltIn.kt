@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
+// LANGUAGE: -ParseLambdaWithSuspendModifier
 
 fun bar() {
     suspend {
@@ -44,3 +45,6 @@ fun main(suspend: WLambdaInvoke) {
 class WLambdaInvoke {
     operator fun invoke(l: () -> Unit) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, suspend */

@@ -19,3 +19,5 @@
 <!DUPLICATE_CLASS_NAMES!>class B<!>
 
 <!DUPLICATE_CLASS_NAMES!>class C<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

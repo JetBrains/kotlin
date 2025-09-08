@@ -10,7 +10,7 @@ context(<!WRONG_MODIFIER_TARGET!>noinline<!> a: ()->String)
 context(<!WRONG_MODIFIER_TARGET!>crossinline<!> a: ()->String)
 <!NOTHING_TO_INLINE!>inline<!> fun test3() {}
 
-context(<!WRONG_MODIFIER_CONTAINING_DECLARATION, WRONG_MODIFIER_TARGET!>vararg<!> a: String)
+context(<!WRONG_MODIFIER_TARGET!>vararg<!> a: String)
 val property1: String
     get() = ""
 
@@ -21,3 +21,6 @@ val property2: String
 context(<!WRONG_MODIFIER_TARGET!>crossinline<!> a: ()->String)
 val property3: String
     inline get() = ""
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionDeclarationWithContext, functionalType, getter, inline,
+noinline, propertyDeclaration, propertyDeclarationWithContext, stringLiteral, vararg */

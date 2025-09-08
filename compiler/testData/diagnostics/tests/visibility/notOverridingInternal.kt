@@ -23,3 +23,5 @@ fun foo() {
     Impl().foo()
     Impl().internalFoo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

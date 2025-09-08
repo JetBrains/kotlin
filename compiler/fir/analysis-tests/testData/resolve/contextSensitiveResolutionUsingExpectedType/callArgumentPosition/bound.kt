@@ -23,3 +23,6 @@ fun testFunBound2() {
 fun <T: MyEnum> testFunBound(value: T) {
     value == EnumValue1
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, inline, typeConstraint,
+typeParameter */

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
@@ -194,17 +195,19 @@ class KotlinMetadataTargetConfigurator :
 
             configureMetadataDependenciesForCompilation(this@apply)
 
-            if (isHostSpecific) {
-                // This logic can be simplified, see KT-64523
-                val shouldBeDisabled = platformCompilations
-                    .filterIsInstance<KotlinNativeCompilation>()
-                    .none { it.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider) }
-                if (shouldBeDisabled) {
-                    // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
-                    compileTaskProvider.configure { it.enabled = false }
-                    // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
-                    // not resolved:
-                    compileDependencyFiles = project.files()
+            project.launch {
+                if (isHostSpecific) {
+                    // This logic can be simplified, see KT-64523
+                    val shouldBeDisabled = platformCompilations
+                        .filterIsInstance<KotlinNativeCompilation>()
+                        .none { it.crossCompilationOnCurrentHostSupported.await() }
+                    if (shouldBeDisabled) {
+                        // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
+                        compileTaskProvider.configure { it.enabled = false }
+                        // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
+                        // not resolved:
+                        compileDependencyFiles = project.files()
+                    }
                 }
             }
         }
@@ -214,28 +217,44 @@ class KotlinMetadataTargetConfigurator :
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
-        val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(sourceSet)
-
         compilation.compileDependencyFiles = project.files()
 
         // Metadata from visible source sets within dependsOn closure
         compilation.compileDependencyFiles += sourceSet.dependsOnClosureCompilePath
 
-        // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
-        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.resolvedArtifacts
-        compilation.compileDependencyFiles += project.files(artifacts.map { it.filterNot { it.isMpp }.map { it.file } })
-
-        // Transformed Multiplatform Libraries based on source set visibility
-        compilation.compileDependencyFiles += project.files(transformationTask.map { it.allTransformedLibraries() })
-
-        if (sourceSet is DefaultKotlinSourceSet && sourceSet.sharedCommonizerTarget.await() is SharedCommonizerTarget) {
-            compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
-        }
+        compilation.compileDependencyFiles += sourceSet.retrieveExternalDependencies(transitive = true)
     }
-
-    private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
-            || isFromUklib
 }
+
+/**
+ * @param transitive Specifies whether it should contain dependencies from other related source sets of the hierarchy
+ */
+internal suspend fun KotlinSourceSet.retrieveExternalDependencies(transitive: Boolean): ConfigurableFileCollection {
+    val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(this)
+
+    val dependencies = project.files()
+    // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
+    val artifacts = internal.resolvableMetadataConfiguration.incoming.artifacts.resolvedArtifacts
+    dependencies.from(project.files(artifacts.map { artifactsSet -> artifactsSet.filterNot { it.isMpp }.map { it.file } }))
+
+    // Transformed Multiplatform Libraries based on source set visibility
+    dependencies.from(
+        if (transitive) {
+            project.files(transformationTask.map { it.allTransformedLibraries() })
+        } else {
+            project.files(transformationTask.map { it.ownTransformedLibraries() })
+        }
+    )
+
+    if (this is DefaultKotlinSourceSet && this.sharedCommonizerTarget.await() is SharedCommonizerTarget) {
+        dependencies.from(project.createCInteropMetadataDependencyClasspath(this, transitive))
+    }
+    return dependencies
+}
+
+private val ResolvedArtifactResult.isMpp: Boolean
+    get() = variant.attributes.containsMultiplatformAttributes
+            || isFromUklib
 
 internal fun Project.locateOrRegisterGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
     project.locateOrRegisterTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->

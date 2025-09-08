@@ -11,3 +11,6 @@ class MyClass {
         private const val prop = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, init, integerLiteral,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

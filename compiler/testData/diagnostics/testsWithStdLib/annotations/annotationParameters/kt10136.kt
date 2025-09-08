@@ -8,3 +8,5 @@ annotation class B(
         val x: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>A1(42).x<!>,
         val aa: Array<A> = arrayOf(A())
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, integerLiteral, primaryConstructor, propertyDeclaration */

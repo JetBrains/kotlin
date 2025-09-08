@@ -29,3 +29,5 @@ fun usage() {
     anonim(foo())
 }
 
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, vararg */

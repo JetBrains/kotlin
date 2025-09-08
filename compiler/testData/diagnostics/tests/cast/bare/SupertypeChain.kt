@@ -16,3 +16,6 @@ fun main() {
     val w = foo() as? TableDerived ?: return
     w.bar().b()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, elvisExpression, functionDeclaration, interfaceDeclaration,
+localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint, typeParameter */

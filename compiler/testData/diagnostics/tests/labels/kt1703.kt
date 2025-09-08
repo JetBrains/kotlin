@@ -14,3 +14,7 @@ fun <T> Array<out T>.forEach(operation: (T) -> Unit) {
 }
 
 fun use(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, capturedType, equalityExpression, forLoop, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType,
+outProjection, propertyDeclaration, smartcast, thisExpression, typeParameter */

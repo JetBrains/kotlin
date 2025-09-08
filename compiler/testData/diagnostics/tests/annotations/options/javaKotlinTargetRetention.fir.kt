@@ -9,3 +9,5 @@ annotation class my
 <!DEPRECATED_JAVA_ANNOTATION!>@java.lang.annotation.Retention(RetentionPolicy.SOURCE)<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class your
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, javaProperty */

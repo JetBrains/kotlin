@@ -110,6 +110,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractSwiftExportExecut
   }
 
   @Test
+  @TestMetadata("operators")
+  public void testOperators() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/operators/");
+  }
+
+  @Test
   @TestMetadata("properties")
   public void testProperties() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/execution/properties/");

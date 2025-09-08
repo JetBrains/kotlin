@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -9,5 +10,8 @@ class Data {
 }
 
 fun use() {
-    val (<!DEPRECATION!>x<!>, y) = Data()
+    val [<!DEPRECATION!>x<!>, y] = Data()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, localProperty, operator,
+propertyDeclaration, stringLiteral */

@@ -20,3 +20,5 @@ fun test(a: A<out CharSequence>) {
     a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, javaType, nullableType, outProjection, safeCall */

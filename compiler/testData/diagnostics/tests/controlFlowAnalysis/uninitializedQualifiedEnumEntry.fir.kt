@@ -54,3 +54,6 @@ enum class SomeEnum3(var x: Int) {
         }
     };
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, init, integerLiteral, primaryConstructor,
+propertyDeclaration */

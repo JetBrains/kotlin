@@ -19,3 +19,5 @@ annotation class ConfigField()
 annotation class ConfigField()
 
 class ConfigurationTarget(<!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@ConfigField<!> val target: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration */

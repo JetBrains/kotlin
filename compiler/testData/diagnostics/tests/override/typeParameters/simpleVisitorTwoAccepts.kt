@@ -10,3 +10,5 @@ interface B {
 interface C : B {
     override fun <R> accept(visitor: A<R>): R
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, typeParameter */

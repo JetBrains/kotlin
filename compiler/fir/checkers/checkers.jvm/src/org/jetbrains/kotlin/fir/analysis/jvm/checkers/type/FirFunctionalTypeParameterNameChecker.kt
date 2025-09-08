@@ -17,13 +17,14 @@ object FirFunctionalTypeParameterNameChecker : FirFunctionTypeRefChecker(MppChec
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirFunctionTypeRef) {
         for (parameter in typeRef.parameters) {
-            check(parameter, context, reporter)
+            check(parameter)
         }
     }
 
-    private fun check(typeRef: FirFunctionTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun check(typeRef: FirFunctionTypeParameter, ) {
         val name = typeRef.name ?: return
         val typeRefSource = typeRef.source
-        FirJvmNamesChecker.checkNameAndReport(name, typeRefSource, context, reporter)
+        FirJvmNamesChecker.checkNameAndReport(name, typeRefSource)
     }
 }

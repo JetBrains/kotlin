@@ -16,3 +16,6 @@ val property2: String
     get() = ""
 
 fun inTypePosition(a: context(<!SYNTAX!><!>) ()-> Unit) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, functionalType, getter, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral */

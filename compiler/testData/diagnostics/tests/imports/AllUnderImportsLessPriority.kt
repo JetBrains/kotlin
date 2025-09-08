@@ -17,3 +17,5 @@ import a.X
 import b.*
 
 class Y : X()
+
+/* GENERATED_FIR_TAGS: classDeclaration */

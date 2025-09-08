@@ -64,3 +64,6 @@ class NegativesHolder {
     fun <!EXPOSED_FUNCTION_RETURN_TYPE!>testJGenericProtectedInnerTAResolution<!>(<!EXPOSED_PARAMETER_TYPE!>i: JGenericProtectedInnerTA<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!>><!>): JGeneric<<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!>>.ProtectedInner = i
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

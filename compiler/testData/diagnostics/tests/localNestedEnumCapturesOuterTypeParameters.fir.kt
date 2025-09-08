@@ -10,3 +10,6 @@ fun foo() {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, localClass,
+nestedClass, nullableType, typeParameter */

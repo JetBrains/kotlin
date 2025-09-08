@@ -11,3 +11,5 @@ class A {
 operator fun A.plus(o: A) = o
 operator fun A.component1() = 1
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun A.componentN() = 1
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, operator */

@@ -16,7 +16,7 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval x: R|Base|
+                FirLocalPropertySymbol lval x: R|Base|
 
 FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
     public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(TYPES)] class Derived : R|Base| {
+    public final? [ResolvedTo(SUPER_TYPES)] class Derived : R|Base| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Derived| {
             LAZY_super<Base>
         }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
         public? final? [ResolvedTo(RAW_FIR)] fun boo(): Int { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/4) #1] fun main(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval x: R|Base| = R|/Base.Base|()
         String().R|kotlin/String.toString|()
         when () {
@@ -46,5 +46,5 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
             }
         }
 
-        String().R|kotlin/String.toString|()
+        String().toString#()
     }

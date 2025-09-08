@@ -256,14 +256,19 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.USELESS_ELVIS
     )
 
+    val USELESS_ELVIS_LEFT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.USELESS_ELVIS_LEFT,
+        PositioningStrategies.USELESS_ELVIS_LEFT
+    )
+
     val RETURN_WITH_LABEL = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.RETURN_WITH_LABEL,
         PositioningStrategies.RETURN_WITH_LABEL
     )
 
-    val PROPERTY_INITIALIZER = SourceElementPositioningStrategy(
+    val VARIABLE_INITIALIZER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.LAST_CHILD,
-        PositioningStrategies.PROPERTY_INITIALIZER
+        PositioningStrategies.VARIABLE_INITIALIZER
     )
 
     val WHOLE_ELEMENT = SourceElementPositioningStrategy(
@@ -284,6 +289,11 @@ object SourceElementPositioningStrategies {
     val TYPE_PARAMETERS_LIST = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.TYPE_PARAMETERS_LIST,
         PositioningStrategies.TYPE_PARAMETERS_LIST
+    )
+
+    val FUNCTION_TYPE_RECEIVER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.FUNCTION_TYPE_RECEIVER,
+        PositioningStrategies.FUNCTION_TYPE_RECEIVER
     )
 
     val NAME_IDENTIFIER = SourceElementPositioningStrategy(

@@ -18,6 +18,7 @@ import kotlin.internal.*
  * @return the result of [block] function invoked on this resource.
  */
 @InlineOnly
+@IgnorableReturnValue
 public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

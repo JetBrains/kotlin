@@ -8,3 +8,6 @@ fun bar() {
         println(<!TYPE_MISMATCH!>this<!>.plus(1)[0])
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, intersectionType, lambdaLiteral, stringLiteral,
+thisExpression */

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirJvmTargetProvider
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmBuiltinsSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbolProvider
@@ -44,7 +43,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
      */
     fun createSharedLibrarySession(
         mainModuleName: Name,
-        sessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
         extensionRegistrars: List<FirExtensionRegistrar>,
         packagePartProvider: PackagePartProvider,
@@ -55,7 +53,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         return createSharedLibrarySession(
             mainModuleName,
             context,
-            sessionProvider,
             languageVersionSettings,
             extensionRegistrars
         )
@@ -84,7 +81,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
      * See documentation to [FirAbstractSessionFactory.createLibrarySession]
      */
     fun createLibrarySession(
-        sessionProvider: FirProjectSessionProvider,
         sharedLibrarySession: FirSession,
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
@@ -99,7 +95,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         return createLibrarySession(
             context,
             sharedLibrarySession,
-            sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
@@ -144,7 +139,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
      */
     fun createSourceSession(
         moduleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
         javaSourcesScope: AbstractProjectFileSearchScope,
         projectEnvironment: AbstractProjectEnvironment,
         createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
@@ -160,7 +154,6 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Lib
         return createSourceSession(
             moduleData,
             context = context,
-            sessionProvider,
             extensionRegistrars,
             configuration,
             isForLeafHmppModule,

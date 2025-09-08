@@ -99,7 +99,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Test1 [val]
-          TYPE_OP type=<root>.Test1 origin=CAST typeOperand=<root>.Test1
+          TYPE_OP type=<root>.Test1 origin=IMPLICIT_CAST typeOperand=<root>.Test1
             GET_VAR 'other: kotlin.Any? declared in <root>.Test1.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -234,7 +234,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test2'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Test2 [val]
-          TYPE_OP type=<root>.Test2 origin=CAST typeOperand=<root>.Test2
+          TYPE_OP type=<root>.Test2 origin=IMPLICIT_CAST typeOperand=<root>.Test2
             GET_VAR 'other: kotlin.Any? declared in <root>.Test2.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -401,7 +401,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test3'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Test3 [val]
-          TYPE_OP type=<root>.Test3 origin=CAST typeOperand=<root>.Test3
+          TYPE_OP type=<root>.Test3 origin=IMPLICIT_CAST typeOperand=<root>.Test3
             GET_VAR 'other: kotlin.Any? declared in <root>.Test3.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

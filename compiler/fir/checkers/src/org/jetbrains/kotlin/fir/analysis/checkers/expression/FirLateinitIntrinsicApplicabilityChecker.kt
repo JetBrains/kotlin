@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -53,7 +53,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         }
 
         // property must be declared in one of the outer lexical scopes
-        val containingSymbol = calleeVariableSymbol.containingClassOrFile(context)
+        val containingSymbol = calleeVariableSymbol.containingClassOrFile()
         if (context.containingDeclarations.none { it == containingSymbol }) {
             reporter.reportOn(
                 source,
@@ -69,11 +69,11 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         }
     }
 
+    context(context: CheckerContext)
     /**
      * Returns the containing class or file if the property is top-level.
      */
     private fun FirVariableSymbol<*>.containingClassOrFile(
-        context: CheckerContext
     ): FirBasedSymbol<*>? {
         return getContainingClassSymbol()
             ?: context.session.firProvider.getFirCallableContainerFile(this)?.symbol

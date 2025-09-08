@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-67999
 
 // FILE: J.java
@@ -14,3 +14,5 @@ fun main() {
         x<!UNSAFE_CALL!>.<!>length // Should not be unsafe call
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, lambdaLiteral, nullableType */

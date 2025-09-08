@@ -15,3 +15,5 @@ fun test(b: B, c: C) {
         select(b, c)
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, stringLiteral, typeParameter */

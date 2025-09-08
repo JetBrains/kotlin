@@ -16,3 +16,6 @@ fun test() {
     val r3 = Foo ? ? :: bar
     checkSubtype<(Foo?) -> Unit>(r3)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

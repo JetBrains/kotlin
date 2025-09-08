@@ -1,8 +1,9 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -18,15 +19,19 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    compileOnly(project(":compiler:frontend.common.jvm"))
+    compileOnly(project(":compiler:config.jvm"))
 
     compileOnly(intellijCore())
 
     testCompileOnly(kotlinTest("junit"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -55,49 +60,55 @@ optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
-    dependsOn(":dist")
-    workingDir = rootDir
     useJUnitPlatform {
         configureJUnit()
     }
 }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
-) {
-    configure()
-}
+projectTests {
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler:tests-spec").isolated, "testData/codegen")
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
+    ) {
+        configure()
+    }
 
-if (kotlinBuildProperties.isTeamcityBuild) {
-    projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
+    testTask("aggregateTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         configure {
             excludeTags("FirPsiCodegenTest")
         }
+
     }
 
-    projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
+    testTask("nightlyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         configure {
             includeTags("FirPsiCodegenTest")
         }
     }
-} else {
-    /*
-     * There is no much sense in those configurations in the local development
-     * They actually reduce the UX of running tests, as IDEA suggests choosing one of three
-     *   test tasks when you run any test
-     * So to fix this inconvenience in local environment, those
-     *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them
-    */
-    tasks.register("aggregateTests")
-    tasks.register("nightlyTests")
+
+    testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFir2IrTestsKt")
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
 }
 
-testsJar()
+testsJarToBeUsedAlongWithFixtures()

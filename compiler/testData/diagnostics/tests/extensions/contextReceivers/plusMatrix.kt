@@ -16,3 +16,6 @@ fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix) {
     m1.plus(m2)
     m2.plus(m1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration */

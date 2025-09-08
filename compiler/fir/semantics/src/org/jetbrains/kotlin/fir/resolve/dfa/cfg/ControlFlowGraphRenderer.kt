@@ -153,8 +153,21 @@ private class ControlFlowGraphRenderer(
     }
 
     private fun PersistentFlow.renderHtmlLike(): String {
-        return buildString {
-            for ((variable, variableName) in allVariablesForDebug.map { it to it.renderHtmlLike() }.sortedBy { it.second }) {
+        // Flow entities come from unordered maps, so, to ensure a consistent output, we need to sort them.
+        // Even though there might be several items with the same (often synthetic) name, the text may still differ.
+        class OutputEntity(val name: String, val text: String) : Comparable<OutputEntity> {
+            override fun compareTo(other: OutputEntity): Int {
+                return compareValuesBy(this, other, { it.name }, { it.text })
+            }
+        }
+
+        val variables = allVariablesForDebug
+        val variableOutputs = ArrayList<OutputEntity>(variables.size)
+
+        for (variable in variables) {
+            val variableName = variable.renderHtmlLike()
+
+            val variableText = buildString {
                 append("<BR/>")
                 append("<B>").append(variableName).append("</B>")
                 if (variable is RealVariable) {
@@ -169,13 +182,32 @@ private class ControlFlowGraphRenderer(
                 } else if (variable is SyntheticVariable) {
                     append(" = '").append(variable.fir.render().renderHtmlLike()).append("'")
                 }
-                getImplications(variable)?.forEach {
-                    append("<BR/> ").append(it.condition.operation.renderHtmlLike())
-                    append(" =&gt; ").append(it.effect.renderHtmlLike())
+
+                val implications = getImplications(variable).orEmpty()
+                val implicationOutputs = ArrayList<OutputEntity>(implications.size)
+
+                for (implication in implications) {
+                    val implicationName = implication.effect.variable.renderHtmlLike()
+
+                    val implicationText = buildString {
+                        append("<BR/> ").append(implication.condition.operation.renderHtmlLike())
+                        append(" =&gt; ").append(implication.effect.renderHtmlLike())
+                    }
+
+                    implicationOutputs.add(OutputEntity(implicationName, implicationText))
                 }
+
+                implicationOutputs.sort()
+                implicationOutputs.joinTo(this, separator = "") { it.text }
+
                 append("<BR/>")
             }
+
+            variableOutputs.add(OutputEntity(variableName, variableText))
         }
+
+        variableOutputs.sort()
+        return variableOutputs.joinToString(separator = "") { it.text }
     }
 
     private val firElementIndices = mutableMapOf<FirElement, Int>()

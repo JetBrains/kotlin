@@ -42,7 +42,7 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
         CALL 'public final fun box (): kotlin.String declared in bar.Foo' type=kotlin.String origin=null
           ARG <this>: CALL 'public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo' type=bar.Foo origin=null
             ARG <this>: GET_VAR 'val nestedFoo: foo.AllOpenGenerated.NestedFoo declared in bar.testNestedClasses' type=foo.AllOpenGenerated.NestedFoo origin=null
-FILE fqName:foo fileName:__GENERATED DECLARATIONS__.kt
+FILE fqName:foo fileName:foo/AllOpenGenerated.kt
   CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:AllOpenGenerated modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.AllOpenGenerated
     CLASS GENERATED[org.jetbrains.kotlin.plugin.sandbox.fir.generators.ExternalClassGenerator.Key] CLASS name:NestedFoo modality:FINAL visibility:public superTypes:[kotlin.Any]

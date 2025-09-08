@@ -18,3 +18,5 @@ val ItemKey = 42
 fun main() {
     ItemKey // K1: ok, K2: NO_COMPANION_OBJECT
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration, typeAliasDeclaration */

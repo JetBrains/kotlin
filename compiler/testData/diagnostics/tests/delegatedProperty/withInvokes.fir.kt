@@ -21,3 +21,7 @@ fun foo(a: A<String>, c: C<String>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y1<!>
     y1.length
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration, localProperty,
+nullableType, operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, starProjection,
+typeParameter */

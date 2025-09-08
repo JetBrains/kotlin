@@ -4,6 +4,7 @@
  */
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
+// WITH_PLATFORM_LIBS
 
 // MODULE: cinterop
 // FILE: conversion.def
@@ -44,11 +45,11 @@ import kotlinx.cinterop.*
 import kotlin.test.*
 
 class ANativeHeir : A() {
-    companion object
+    companion object : AMeta()
 }
 
 class BNativeHeir : B() {
-    companion object
+    companion object : BMeta()
 }
 
 fun testExternalObjCMetaClassCast() {

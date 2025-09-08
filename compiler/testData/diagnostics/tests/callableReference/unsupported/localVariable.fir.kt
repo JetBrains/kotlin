@@ -14,3 +14,5 @@ fun test(param: String) {
 
     eat(::<!UNSUPPORTED!>param<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral */

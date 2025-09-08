@@ -9,3 +9,5 @@ open class Bar() {
 }
 
 class Barr() : Bar() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

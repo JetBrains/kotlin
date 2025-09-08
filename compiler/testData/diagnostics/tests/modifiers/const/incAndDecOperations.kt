@@ -14,3 +14,5 @@ const val decrement3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>a++<!>
 const val decrement4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>++a<!>
 const val decrement5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.dec()<!>
 const val decrement6 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>a.dec()<!>
+
+/* GENERATED_FIR_TAGS: assignment, const, incrementDecrementExpression, integerLiteral, propertyDeclaration */

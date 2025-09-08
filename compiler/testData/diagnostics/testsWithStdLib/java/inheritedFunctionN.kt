@@ -42,3 +42,6 @@ fun foo() {
     <!UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION!>object<!> : A2() {}
     <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION!>object<!> : A3() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, javaType, starProjection */

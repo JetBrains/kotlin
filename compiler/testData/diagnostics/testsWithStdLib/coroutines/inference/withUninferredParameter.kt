@@ -20,3 +20,6 @@ val test2 = generate<Int> {
 val test3 = generate { bar: Int ->
     yield(4)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

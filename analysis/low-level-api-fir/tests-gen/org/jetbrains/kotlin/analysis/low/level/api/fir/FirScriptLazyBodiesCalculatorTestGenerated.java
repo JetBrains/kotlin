@@ -88,6 +88,28 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     }
 
     @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+      @Test
+      public void testAllFilesPresentInDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringScript.kts")
+      public void testNameBasedDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringScript.kts");
+      }
+
+      @Test
+      @TestMetadata("positionalDestructuringScript.kts")
+      public void testPositionalDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringScript.kts");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode")
     @TestDataPath("$PROJECT_ROOT")
     public class InvalidCode {
@@ -115,6 +137,12 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
     @Test
     public void testAllFilesPresentInExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("suspendLambdaScript.kts")
+    public void testSuspendLambdaScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambdaScript.kts");
     }
 
     @Nested

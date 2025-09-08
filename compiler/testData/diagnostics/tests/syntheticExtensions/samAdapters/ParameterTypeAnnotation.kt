@@ -12,3 +12,6 @@ import org.jetbrains.annotations.*;
 public interface JavaInterface {
     void doIt(@NotNull String s, @NotNull Runnable runnable);
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, nullableType, samConversion,
+stringLiteral */

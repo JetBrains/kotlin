@@ -7,3 +7,6 @@ internal class Z<K> {
         return map.getOrPut(key, ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS, USAGE_IS_NOT_INLINABLE!>producer<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, nullableType, propertyDeclaration,
+typeParameter */

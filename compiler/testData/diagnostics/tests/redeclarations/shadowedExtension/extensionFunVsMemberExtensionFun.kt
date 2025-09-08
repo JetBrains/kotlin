@@ -5,3 +5,5 @@ class C {
 }
 
 fun C.foo() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

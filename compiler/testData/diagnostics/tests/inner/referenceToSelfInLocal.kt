@@ -30,3 +30,6 @@ val closure = {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, lambdaLiteral, localClass, localProperty,
+objectDeclaration, primaryConstructor, propertyDeclaration */

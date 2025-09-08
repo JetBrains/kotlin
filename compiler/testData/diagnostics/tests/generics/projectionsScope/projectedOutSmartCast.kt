@@ -21,3 +21,6 @@ fun foo(x: Any?, y: C<*>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType,
+smartcast, starProjection, stringLiteral, thisExpression, typeParameter */

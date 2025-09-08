@@ -11,3 +11,6 @@ fun test1() {
 fun test2() {
     1.bar { 2.bar { if (it == 2) return<!UNRESOLVED_REFERENCE!>@foo<!> } }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+inline, integerLiteral, lambdaLiteral */

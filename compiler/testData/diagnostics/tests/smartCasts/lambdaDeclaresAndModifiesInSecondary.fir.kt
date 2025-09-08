@@ -9,3 +9,6 @@ class My {
         }   
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, secondaryConstructor, smartcast */

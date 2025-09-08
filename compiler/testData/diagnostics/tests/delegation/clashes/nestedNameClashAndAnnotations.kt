@@ -21,3 +21,7 @@ class MyClass(val prop: @Anno(0 + inner) second.Base<@Anno(1 + inner) second.Bas
         const val inner = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, companionObject, const,
+functionDeclaration, inheritanceDelegation, integerLiteral, interfaceDeclaration, nestedClass, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

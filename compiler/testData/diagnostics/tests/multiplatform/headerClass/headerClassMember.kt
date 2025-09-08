@@ -15,3 +15,6 @@ actual class Foo {
 
     actual fun bar(x: Int): Int = x + 1
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, functionDeclaration, integerLiteral,
+propertyDeclaration, stringLiteral */

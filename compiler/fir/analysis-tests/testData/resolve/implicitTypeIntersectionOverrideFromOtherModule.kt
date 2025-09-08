@@ -26,3 +26,6 @@ fun usage(b : B?) {
         b.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+nullableType, smartcast */

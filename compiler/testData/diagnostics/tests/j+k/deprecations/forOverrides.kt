@@ -22,3 +22,5 @@ fun main(j: J, j2: J2, a: A) {
     j2.foo()
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction, javaType, override */

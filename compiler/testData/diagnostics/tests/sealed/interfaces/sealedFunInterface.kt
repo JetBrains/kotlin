@@ -15,3 +15,5 @@ sealed interface IBase {
         fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, nestedClass, sealed */

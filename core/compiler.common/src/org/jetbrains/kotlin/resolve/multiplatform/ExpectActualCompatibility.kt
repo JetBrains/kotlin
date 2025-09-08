@@ -36,7 +36,7 @@ sealed class ExpectActualMatchingCompatibility {
  *
  * @see ExpectActualMatchingCompatibility
  */
-sealed class ExpectActualIncompatibility<out D>(val reason: String) {
+sealed class ExpectActualIncompatibility<out D>(open val reason: String) {
     object ClassTypeParameterCount : ExpectActualIncompatibility<Nothing>(TYPE_PARAMETER_COUNT)
 
     // Callables
@@ -52,6 +52,11 @@ sealed class ExpectActualIncompatibility<out D>(val reason: String) {
 
     object ValueParameterCrossinline :
         ExpectActualIncompatibility<Nothing>("some value parameter is crossinline in one declaration and not crossinline in the other")
+
+    // Reason is not really required because the renderer for ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT doesn't use it, but it is here just in case.
+    object IgnorabilityIsDifferent : ExpectActualIncompatibility<Nothing>("") {
+        override val reason: Nothing get() = error("This incompatibility should be reported with ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT diagnostic")
+    }
 
     // Functions
     object FunctionModifiersDifferent : ExpectActualIncompatibility<Nothing>("the modifiers are different (suspend)")

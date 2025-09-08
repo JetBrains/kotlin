@@ -20,3 +20,6 @@ value class UIntArray(private val storage: IntArray) : Collection<UInt> {
     override fun containsAll(elements: Collection<UInt>): Boolean = TODO()
     override fun isEmpty(): Boolean = TODO()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, operator, override,
+primaryConstructor, propertyDeclaration, value */

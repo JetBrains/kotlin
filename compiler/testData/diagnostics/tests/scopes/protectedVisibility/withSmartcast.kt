@@ -64,3 +64,7 @@ class Derived : Base() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, isExpression, localProperty, nullableType, override, propertyDeclaration,
+smartcast */

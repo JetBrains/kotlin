@@ -16,3 +16,6 @@ actual annotation class Measurement(actual val iterations: Int)
 fun test() {
     Inline() // KT-60476 Fixed in K2
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral, value */

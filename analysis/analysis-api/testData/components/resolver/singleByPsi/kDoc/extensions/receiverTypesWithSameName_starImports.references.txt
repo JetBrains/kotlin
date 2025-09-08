@@ -6,20 +6,20 @@
 <caret_2>:
   KDocName(99,102): 'Foo'
     KDocReference:
-      0: (in dep1) class Foo
-      1: (in dep2) class Foo
+      0: (in dep2) class Foo
+      1: (in dep1) class Foo
 
 <caret_3>:
   KDocName(115,131): 'Foo.depExtShared'
     KDocReference:
-      0: (in dep1) fun dep1.Foo.depExtShared()
-      1: (in dep2) fun dep2.Foo.depExtShared()
+      0: (in dep2) fun dep2.Foo.depExtShared()
+      1: (in dep1) fun dep1.Foo.depExtShared()
 
 <caret_4>:
   KDocName(137,140): 'Foo'
     KDocReference:
-      0: (in dep1) class Foo
-      1: (in dep2) class Foo
+      0: (in dep2) class Foo
+      1: (in dep1) class Foo
 
 <caret_5>:
   KDocName(162,173): 'Foo.depExt1'

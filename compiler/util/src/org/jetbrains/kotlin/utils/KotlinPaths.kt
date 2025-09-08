@@ -50,7 +50,11 @@ interface KotlinPaths {
     val jsStdLibKlibPath: File
         get() = klib(Jar.JsStdLib)
 
-//    @Deprecated("Obsolete API", ReplaceWith("sourcesJar(KotlinPaths.Jars.JsStdLib)!!"))
+    val wasmJsStdLibKlibPath: File
+        // TODO KT-78650: Include Wasm/stdlib into dist and replace this hardcode to something similar to how jsStdLibKlibPath is specified
+        get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main")
+
+    //    @Deprecated("Obsolete API", ReplaceWith("sourcesJar(KotlinPaths.Jars.JsStdLib)!!"))
     val jsStdLibSrcJarPath: File
         get() = sourcesJar(Jar.JsStdLib)!!
 

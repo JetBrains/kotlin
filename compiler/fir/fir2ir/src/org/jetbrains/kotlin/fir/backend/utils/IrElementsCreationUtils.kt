@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
+import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.name.*
 
+context(c: Fir2IrComponents)
 internal fun IrDeclarationParent.declareThisReceiverParameter(
-    c: Fir2IrComponents,
     thisType: IrType,
     thisOrigin: IrDeclarationOrigin,
     kind: IrParameterKind,
@@ -72,13 +72,13 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     }
 }
 
-internal fun IrClass.setThisReceiver(c: Fir2IrComponents, typeParameters: List<FirTypeParameterRef>) {
+context(c: Fir2IrComponents)
+internal fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
     val typeArguments = typeParameters.map {
         val typeParameter = c.classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT)
         IrSimpleTypeImpl(typeParameter, hasQuestionMark = false, emptyList(), emptyList())
     }
     thisReceiver = declareThisReceiverParameter(
-        c,
         kind = IrParameterKind.DispatchReceiver,
         thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
         thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
@@ -96,28 +96,39 @@ fun Fir2IrComponents.createSafeCallConstruction(
     val resultType = expressionOnNotNull.type.makeNullable()
     return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
         statements += receiverVariable
-        statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
-            val condition = IrCallImplWithShape(
-                startOffset, endOffset, builtins.booleanType,
-                builtins.eqeqSymbol,
-                valueArgumentsCount = 2,
-                typeArgumentsCount = 0,
-                contextParameterCount = 0,
-                hasDispatchReceiver = false,
-                hasExtensionReceiver = false,
-                origin = IrStatementOrigin.EQEQ
-            ).apply {
-                arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
-                arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
-            }
-            branches += IrBranchImpl(
-                condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
-            )
-            branches += IrElseBranchImpl(
-                IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
-                expressionOnNotNull
-            )
+        statements += createWhenForSafeFall(resultType, receiverVariableSymbol, expressionOnNotNull)
+    }
+}
+
+fun Fir2IrComponents.createWhenForSafeFall(
+    resultType: IrType,
+    receiverVariableSymbol: IrValueSymbol,
+    expressionOnNotNull: IrExpression,
+): IrWhenImpl {
+    val startOffset = expressionOnNotNull.startOffset
+    val endOffset = expressionOnNotNull.endOffset
+
+    return IrWhenImpl(startOffset, endOffset, resultType).apply {
+        val condition = IrCallImplWithShape(
+            startOffset, endOffset, builtins.booleanType,
+            builtins.eqeqSymbol,
+            valueArgumentsCount = 2,
+            typeArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false,
+            origin = IrStatementOrigin.EQEQ
+        ).apply {
+            arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+            arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
         }
+        branches += IrBranchImpl(
+            condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
+        )
+        branches += IrElseBranchImpl(
+            IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
+            expressionOnNotNull
+        )
     }
 }
 
@@ -150,15 +161,50 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     val symbolProvider = generatedDeclarationsSymbolProvider ?: return emptyList()
     val declarationGenerators = extensionService.declarationGenerators
 
-    return createSyntheticFiles(
-        this@createFilesWithGeneratedDeclarations.moduleData,
-        "__GENERATED DECLARATIONS__.kt",
-        FirDeclarationOrigin.Synthetic.PluginFile,
-        symbolProvider,
-        topLevelClasses = declarationGenerators.flatMap { it.topLevelClassIdsCache.getValue() }.groupBy { it.packageFqName },
-        topLevelCallables = declarationGenerators.flatMap { it.topLevelCallableIdsCache.getValue() }.groupBy { it.packageName },
-    )
+    val fileModuleData = this@createFilesWithGeneratedDeclarations.moduleData
+
+    return buildList {
+        val generatedClasses = declarationGenerators.flatMap { it.topLevelClassIdsCache.getValue() }
+            .mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
+
+        // classes go to a specific file each
+        for (firClass in generatedClasses) {
+            val classId = firClass.symbol.classId
+            this += createSyntheticFile(
+                fileName = "${classId.packageFqName.toPath()}/${classId.relativeClassName.asString()}.kt",
+                packageFqName = classId.packageFqName,
+                fileModuleData,
+                FirDeclarationOrigin.Synthetic.PluginFile,
+            ) {
+                declarations += firClass
+            }
+        }
+
+        // callables are grouped per package
+        val generatedCallables = declarationGenerators.flatMap { it.topLevelCallableIdsCache.getValue() }
+            .flatMap { symbolProvider.getTopLevelCallableSymbols(it.packageName, it.callableName) }
+
+        val generatedCallablesPerPackage = generatedCallables.groupBy { it.callableId.packageName }
+        for ((packageName, packageGeneratedCallables) in generatedCallablesPerPackage) {
+            val callablesPerFileName = packageGeneratedCallables.groupBy {
+                val name = it.fir.fileNameForPluginGeneratedCallable ?: "__GENERATED__CALLABLES__.kt"
+                if (name.endsWith(".kt")) name else "$name.kt"
+            }
+            for ((fileName, callables) in callablesPerFileName) {
+                this += createSyntheticFile(
+                    fileName = "${packageName.toPath()}/$fileName",
+                    packageFqName = packageName,
+                    fileModuleData,
+                    FirDeclarationOrigin.Synthetic.PluginFile,
+                ) {
+                    declarations += callables.map { it.fir }
+                }
+            }
+        }
+    }
 }
+
+private fun FqName.toPath(): String = this.asString().replace('.', '/')
 
 const val generatedBuiltinsDeclarationsFileName: String = "__GENERATED BUILTINS DECLARATIONS__.kt"
 
@@ -172,40 +218,33 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     }
     val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 
-    return createSyntheticFiles(
-        this@createFilesWithBuiltinsSyntheticDeclarationsIfNeeded.moduleData,
-        generatedBuiltinsDeclarationsFileName,
-        FirDeclarationOrigin.Synthetic.Builtins,
-        symbolProvider,
-        topLevelClasses = symbolProvider.generatedClassIds.groupBy { it.packageFqName },
-        topLevelCallables = emptyMap(),
-    )
+    return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { (packageFqName, classIds) ->
+        createSyntheticFile(
+            fileName = generatedBuiltinsDeclarationsFileName,
+            packageFqName = packageFqName,
+            fileModuleData = moduleData,
+            fileOrigin = FirDeclarationOrigin.Synthetic.Builtins,
+        ) {
+            declarations += classIds.mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
+        }
+    }
 }
 
-private fun createSyntheticFiles(
-    fileModuleData: FirModuleData,
+private fun createSyntheticFile(
     fileName: String,
+    packageFqName: FqName,
+    fileModuleData: FirModuleData,
     fileOrigin: FirDeclarationOrigin,
-    symbolProvider: FirSymbolProvider,
-    topLevelClasses: Map<FqName, List<ClassId>>,
-    topLevelCallables: Map<FqName, List<CallableId>>,
-): List<FirFile> {
-    return buildList {
-        for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
-            this += buildFile {
-                origin = fileOrigin
-                moduleData = fileModuleData
-                packageDirective = buildPackageDirective {
-                    this.packageFqName = packageFqName
-                }
-                name = fileName
-                declarations += topLevelCallables.getOrDefault(packageFqName, emptyList())
-                    .flatMap { symbolProvider.getTopLevelCallableSymbols(packageFqName, it.callableName) }
-                    .map { it.fir }
-                declarations += topLevelClasses.getOrDefault(packageFqName, emptyList())
-                    .mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
-            }
+    init: FirFileBuilder.() -> Unit,
+): FirFile {
+    return buildFile {
+        origin = fileOrigin
+        moduleData = fileModuleData
+        packageDirective = buildPackageDirective {
+            this.packageFqName = packageFqName
         }
+        name = fileName
+        init()
     }
 }
 

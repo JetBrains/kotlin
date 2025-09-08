@@ -27,3 +27,6 @@ val testIt : (Any) -> Unit = {
         doSmth(<!DEBUG_INFO_SMARTCAST!>it<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, ifExpression,
+integerLiteral, isExpression, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, smartcast */

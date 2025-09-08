@@ -16,3 +16,6 @@ class C : A {
         value = this
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, override, propertyDeclaration, thisExpression, typeParameter, typeWithExtension */

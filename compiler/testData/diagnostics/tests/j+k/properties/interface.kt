@@ -33,4 +33,5 @@ fun foo() {
     D().foo = D().foo + 2
 }
 
-
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, javaFunction, javaProperty, javaType, override, propertyDeclaration */

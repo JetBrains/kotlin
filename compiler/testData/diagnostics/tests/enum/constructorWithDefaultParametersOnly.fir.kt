@@ -20,3 +20,6 @@ enum class TestVarargs(val x: Int) {
     TEST;
     constructor(vararg xs: Any) : this(xs.size)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, outProjection, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral, vararg */

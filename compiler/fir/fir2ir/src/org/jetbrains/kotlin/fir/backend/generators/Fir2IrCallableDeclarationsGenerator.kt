@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.generatedContextParameterName
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -507,9 +507,13 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         get() = when {
             hasExplicitBackingField -> backingField?.visibility ?: status.visibility
             isConst -> status.visibility
-            hasJvmFieldAnnotation(session) -> status.visibility
-            origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
-            else -> Visibilities.Private
+            else -> {
+                extensions.specialBackingFieldVisibility(this, session)?.let { return it }
+                when {
+                    origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
+                    else -> Visibilities.Private
+                }
+            }
         }
 
     internal fun createIrField(
@@ -658,7 +662,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 val isLocal = function is FirSimpleFunction && function.isLocal
                 if (function !is FirAnonymousFunction && dispatchReceiverType != null && !isStatic && !isLocal) {
                     this += declareThisReceiverParameter(
-                        c,
                         thisType = dispatchReceiverType,
                         thisOrigin = IrDeclarationOrigin.DEFINED,
                         kind = IrParameterKind.DispatchReceiver,
@@ -669,7 +672,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 val outerClass = containingClass?.parentClassOrNull
                 if (containingClass?.isInner == true && outerClass != null) {
                     this += declareThisReceiverParameter(
-                        c,
                         thisType = outerClass.thisReceiver!!.type,
                         thisOrigin = IrDeclarationOrigin.DEFINED,
                         kind = IrParameterKind.DispatchReceiver,
@@ -696,7 +698,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                         Name.identifier($$"$this$$$suffix")
                     } ?: SpecialNames.THIS
                     declareThisReceiverParameter(
-                        c,
                         thisType = receiver.typeRef.toIrType(typeOrigin),
                         thisOrigin = IrDeclarationOrigin.DEFINED,
                         startOffset = startOffset,
@@ -750,7 +751,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 startOffset = startOffset,
                 endOffset = endOffset,
                 origin = origin,
-                name = valueParameter.name,
+                name = valueParameter.generatedContextParameterName ?: valueParameter.name,
                 type = type,
                 isAssignable = valueParameter.containingDeclarationSymbol.fir.let { it is FirCallableDeclaration && it.shouldParametersBeAssignable(c) },
                 symbol = IrValueParameterSymbolImpl(),
@@ -789,7 +790,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 if (!skipDefaultParameter && defaultValue != null) {
                     this.defaultValue = when {
                         forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
-                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter(c)
+                            defaultValue.asCompileTimeIrInitializerForAnnotationParameter()
                         useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
                             factory.createExpressionBody(
                                 IrErrorExpressionImpl(
@@ -833,8 +834,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                     startOffset, endOffset, IrDeclarationOrigin.PROPERTY_DELEGATE,
                     NameUtils.propertyDelegateName(property.name), property.delegate!!.resolvedType.toIrType(),
                     isVar = false, isConst = false, isLateinit = false
-                )
-                delegate.parent = irParent
+                ).also {
+                    it.parent = irParent
+                }
                 getter = createIrPropertyAccessor(
                     property.getter, property, this, symbols.getterSymbol, type, irParent, false,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR, startOffset, endOffset

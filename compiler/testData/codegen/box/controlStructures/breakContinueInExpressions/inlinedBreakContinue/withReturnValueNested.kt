@@ -3,8 +3,10 @@
 // Reason: break/continue in inline lambdas unsupported
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun foo(block: () -> Int): Int  = block()
 
+// FILE: main.kt
 fun box(): String {
     val resultNonLabeled = testNonLabeledBreaks()
     if (resultNonLabeled != (1)+(1+2)+(1+2)+(1+2)) return "FAIL testNonLabeledBreaks: $resultNonLabeled"

@@ -49,3 +49,6 @@ annotation class D3(val value: Array<B3>, val other1: String = "", val other2: I
 @R(D4::class)
 annotation class B4
 annotation class D4(val value1: Array<B4> = [], val value: Array<B4>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

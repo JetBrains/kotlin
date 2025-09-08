@@ -21,3 +21,6 @@ fun foo() {
     }
     bar(<!TYPE_MISMATCH!>z<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, break, equalityExpression, functionDeclaration, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, whileLoop */

@@ -16,3 +16,6 @@ fun test(d: DataClass) {
     val (x) = d
     val c = d.component1()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetProperty, classDeclaration, data,
+destructuringDeclaration, functionDeclaration, localProperty, primaryConstructor, propertyDeclaration */

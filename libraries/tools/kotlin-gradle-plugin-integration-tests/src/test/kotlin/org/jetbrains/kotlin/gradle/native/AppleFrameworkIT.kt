@@ -574,12 +574,13 @@ class AppleFrameworkIT : KGPBaseTest() {
     }
 
     @DisplayName("Smoke test with apple gradle plugin")
+    // AppleGradle plugin is not supported by Gradle 9.0+ due to Project.exec use
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14)
     @GradleTest
     fun smokeTestWithAppleGradlePlugin(gradleVersion: GradleVersion) {
         nativeProject(
             "appleGradlePluginConsumesAppleFrameworks",
             gradleVersion,
-            buildJdk = jdk11Info.javaHome,
             buildOptions = defaultBuildOptions.copy(
                 // Apple plugin doesn't support configuration cache
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
@@ -609,7 +610,74 @@ class AppleFrameworkIT : KGPBaseTest() {
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
-                assertOutputDoesNotContain("mainStaticReleaseFrameworkIos")
+                assertOutputContains("Could not resolve project :iosLib")
+            }
+        }
+    }
+
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @DisplayName("Framework contains Kdoc documentation")
+    @GradleTest
+    fun shouldGenerateKdoc(gradleVersion: GradleVersion) {
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion
+        ) {
+            val environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to "no use",
+                "FRAMEWORKS_FOLDER_PATH" to "no use",
+                "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
+            )
+
+            val getDeviceInfo = projectPath
+                .resolve("kdocs/getDeviceInfo")
+                .readText()
+
+            val isFeatureSupported = projectPath
+                .resolve("kdocs/isFeatureSupported")
+                .readText()
+
+            build(":shared:assembleDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
+                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
+
+                val headerText = projectPath
+                    .resolve("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework/Headers/sdk.h")
+                    .readText()
+
+                assert(headerText.contains(getDeviceInfo)) {
+                    "Expected Kdoc for getDeviceInfo function not found in sdk.ht"
+                }
+
+                assert(headerText.contains(isFeatureSupported)) {
+                    "Expected Kdoc for isFeatureSupported function not found in sdk.h"
+                }
+            }
+
+            subProject("shared").buildGradleKts.replaceText(
+                "baseName = \"sdk\"",
+                """
+                    baseName = "sdk"
+                    exportKdoc.set(false)
+                """.trimIndent()
+            )
+
+            build(":shared:assembleDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
+                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
+
+                val headerText = projectPath
+                    .resolve("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework/Headers/sdk.h")
+                    .readText()
+
+                assert(headerText.contains(getDeviceInfo).not()) {
+                    "Expected no Kdoc for getDeviceInfo function in sdk.ht"
+                }
+
+                assert(headerText.contains(isFeatureSupported).not()) {
+                    "Expected no Kdoc for isFeatureSupported function in sdk.h"
+                }
             }
         }
     }

@@ -24,3 +24,5 @@ fun bar() {
     foo()
     I()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

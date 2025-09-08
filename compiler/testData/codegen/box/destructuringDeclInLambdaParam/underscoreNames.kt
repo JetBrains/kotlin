@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 class A {
     operator fun component1() = "O"
     operator fun component2(): String = throw RuntimeException("fail 0")
@@ -6,4 +7,4 @@ class A {
 
 fun foo(a: A, block: (A) -> String): String = block(a)
 
-fun box() = foo(A()) { (x, _, y) -> x + y }
+fun box() = foo(A()) { [x, _, y] -> x + y }

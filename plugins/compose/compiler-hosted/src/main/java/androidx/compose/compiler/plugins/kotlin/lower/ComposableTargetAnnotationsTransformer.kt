@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.inference.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -217,7 +216,7 @@ class ComposableTargetAnnotationsTransformer(
         if (declaration.type.isOrHasComposableLambda) {
             // Find the inference variable for the delegate which should have been created
             // when visiting the delegate node. If not, then ignore this declaration
-            val variable = variableDeclarations[declaration.delegate.symbol] ?: return result
+            val variable = variableDeclarations[declaration.delegate?.symbol ?: return result] ?: return result
 
             // Allow the variable to be found from the getter as this is what is used to access
             // the variable, not the delegate directly.
@@ -1014,7 +1013,7 @@ private val IrConstructorCall.isComposableOpenTarget
 
 private fun IrType.samOwnerOrNull() =
     classOrNull?.let { cls ->
-        if (cls.owner.kind == ClassKind.INTERFACE) {
+        if (cls.owner.isInterface && cls.owner.isFun) {
             cls.functions.singleOrNull {
                 it.owner.modality == Modality.ABSTRACT
             }?.owner

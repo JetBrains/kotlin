@@ -8,3 +8,6 @@ val test: Int = if (true) <!TYPE_MISMATCH!>{
 else {
     2
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, ifExpression, integerLiteral, propertyDeclaration, whenExpression,
+whenWithSubject */

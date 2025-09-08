@@ -15,3 +15,5 @@ fun test() {
     foo(KRunnable {})
     foo(KRunnableAlias {})
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, typeAliasDeclaration */

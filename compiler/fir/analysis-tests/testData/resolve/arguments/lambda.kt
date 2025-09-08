@@ -33,3 +33,5 @@ fun test() {
     baz<!NO_VALUE_FOR_PARAMETER!>()<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
     baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */

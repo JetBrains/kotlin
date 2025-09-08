@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
@@ -15,12 +14,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemToolchainPath
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
 import java.io.File
 
 /**
@@ -32,15 +29,8 @@ import java.io.File
  * See more at https://github.com/swiftlang/swift-testing/tree/main/Documentation/ABI.
  * Harness is at native/native.tests/testData/framework/main-testing.swift
  */
-abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
+abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
-
-    @BeforeEach
-    fun checkHost() {
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
-        // TODO: KT-75530
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
-    }
 
     override fun runCompiledTest(
         testPathFull: File,
@@ -81,14 +71,16 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
                 "-L", it.rootDir.absolutePath,
                 "-l${it.moduleName}",
             )
-        } + listOf(
+        } + listOfNotNull(
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
             "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.removePrefix("lib")}",
 
             "-F", testRunSettings.systemFrameworksPath,
             "-Xlinker", "-rpath", "-Xlinker", testRunSettings.systemFrameworksPath,
-            "-framework", "Testing"
+            "-framework", "Testing",
+            testRunSettings.systemToolchainPath?.let { "-plugin-path" },
+            testRunSettings.systemToolchainPath?.let { "${it}/usr/lib/swift/host/plugins/testing/" },
         )
 
         val success = SwiftCompilation(

@@ -13,3 +13,5 @@ public class A {
 fun main() {
     A().foo().length
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

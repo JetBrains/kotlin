@@ -17,3 +17,6 @@ fun test(i: Int) {
         val p = send(i)
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

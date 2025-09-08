@@ -127,8 +127,12 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     }
 
     private fun afterLeavingAnalysis(session: KaSession) {
-        writeActionStartedChecker.afterLeavingAnalysis()
-        lifetimeTracker.afterLeavingAnalysis(session)
+        try {
+            // `writeActionStartedChecker` might throw an "illegal write action" exception.
+            writeActionStartedChecker.afterLeavingAnalysis()
+        } finally {
+            lifetimeTracker.afterLeavingAnalysis(session)
+        }
     }
 }
 

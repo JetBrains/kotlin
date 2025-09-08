@@ -16,3 +16,7 @@ fun test(ab: A) {
         z.fooB(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, capturedType, checkNotNullCall, classDeclaration, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, localProperty, nullableType, outProjection,
+propertyDeclaration, smartcast, typeParameter, vararg */

@@ -102,12 +102,19 @@ class IrSourceCompilerForInline(
                 state
             )
         }
-        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
+        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context, codegen.classCodegen.intrinsicExtensions)
+            .generateMethodNode(callee)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
-    override fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?) {
+    override fun generateFinallyBlocks(
+        finallyNode: MethodNode,
+        curFinallyDepth: Int,
+        returnType: Type,
+        afterReturnLabel: Label,
+        target: Label?,
+    ) {
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
             sourceMapper, codegen.reifiedTypeParametersUsages

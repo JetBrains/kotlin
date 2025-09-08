@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,6 +57,7 @@ internal fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("
 private val ROOT_PATH_PREFIX: String = System.getProperty("fir.bench.prefix", "/")
 private val OUTPUT_DIR_REGEX_FILTER: String = System.getProperty("fir.bench.filter", ".*")
 private val MODULE_NAME_FILTER: String? = System.getProperty("fir.bench.filter.name")
+private val MODULE_NAME_REGEX_OUT: String? = System.getProperty("fir.bench.filter.out.name")
 internal val ENABLE_SLOW_ASSERTIONS: Boolean = System.getProperty("fir.bench.enable.slow.assertions") == "true"
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
@@ -169,16 +173,35 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         println("BASE PATH: ${root.absolutePath}")
 
+        val additionalMessages = mutableListOf<String>()
+
         val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
         val moduleName = MODULE_NAME_FILTER
+        val moduleNameRegexOutFilter = MODULE_NAME_REGEX_OUT?.toRegex()
         val files = root.listFiles() ?: emptyArray()
-        val modules = files.filter { it.extension == "xml" }
+        val modules = files.filter {
+            it.extension == "xml" && (moduleNameRegexOutFilter == null || !it.name.matches(moduleNameRegexOutFilter))
+        }
             .sortedBy { it.lastModified() }
             .flatMap { loadModuleDumpFile(it) }
             .sortedBy { it.timestamp }
+            .also { additionalMessages += "Discovered ${it.size} modules" }
             .filter { it.rawOutputDir.matches(filterRegex) }
+            .also { additionalMessages += "Filtered by regex to ${it.size} modules" }
             .filter { (moduleName == null) || it.name == moduleName }
+            .also { additionalMessages += "Filtered by module name to ${it.size} modules" }
             .filter { !it.isCommon }
+            .also { additionalMessages += "Filtered by common flag to ${it.size} modules" }
+
+        if (modules.isEmpty() && IS_UNDER_TEAMCITY) {
+            println("------------------------ Flakiness diagnostic ------------------------")
+            println("No modules found for pattern `$OUTPUT_DIR_REGEX_FILTER` in `$testDataPath`")
+            println("TestData root exists: ${root.exists()}")
+            println(files.joinToString(prefix = "Content of testdata root:\n", separator = "\n") { it.absolutePath })
+            println()
+            additionalMessages.forEach { println(it) }
+            println("------------------------------------------------")
+        }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
@@ -196,4 +219,24 @@ internal fun K2JVMCompilerArguments.jvmTargetIfSupported(): JvmTarget? {
     val specified = jvmTarget?.let { JvmTarget.fromString(it) } ?: return null
     if (specified != JvmTarget.JVM_1_6) return specified
     return null
+}
+
+fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
+    val file = File(path)
+    val paths = PathUtil.kotlinPathsForDistDirectoryForTests
+    return when {
+        file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
+            paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        file.name.startsWith("kotlin-sam-with-receiver") -> paths.jar(KotlinPaths.Jar.SamWithReceiver)
+        file.name.startsWith("kotlin-allopen") -> paths.jar(KotlinPaths.Jar.AllOpenPlugin)
+        file.name.startsWith("kotlin-noarg") -> paths.jar(KotlinPaths.Jar.NoArgPlugin)
+        file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
+        file.name.startsWith("kotlin-compose-compiler-plugin") -> {
+            // compose plugin is not a part of the dist yet, so we have to go an extra mile to get it
+            System.getProperty("fir.bench.compose.plugin.classpath")?.split(File.pathSeparator)?.firstOrNull()?.let(::File)
+        }
+        // Assuming that the rest is the custom compiler plugins, that cannot be kept stable with the new compiler, so we're skipping them
+        // If the module is compillable without it - fine, otherwise at least it will hopefully be a stable failure.
+        else -> null
+    }
 }

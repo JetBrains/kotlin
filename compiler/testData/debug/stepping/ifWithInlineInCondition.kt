@@ -1,4 +1,4 @@
-// IGNORE_INLINER: IR
+
 // FILE: test.kt
 fun box() {
     if (inlineFun()) {
@@ -91,5 +91,4 @@ fun nop() {}
 // test.kt:28 $box (37, 38)
 // test.kt:20 $box (8)
 // test.kt:31 $nop (12)
-// test.kt:20 $box (8)
 // test.kt:22 $box (1)

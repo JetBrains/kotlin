@@ -24,3 +24,5 @@ fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
         Sam.Result.<!CANNOT_INFER_PARAMETER_TYPE!>create<!>(e)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

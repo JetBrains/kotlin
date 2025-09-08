@@ -92,3 +92,6 @@ fun top(base: Base, derived: Derived) {
     derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     derived.<!UNRESOLVED_REFERENCE!>gav<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, functionDeclaration, inner, integerLiteral,
+nestedClass, objectDeclaration, propertyDeclaration */

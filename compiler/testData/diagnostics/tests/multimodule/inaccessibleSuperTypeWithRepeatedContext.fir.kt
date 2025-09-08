@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75553
-// LATEST_LV_DIFFERENCE
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: a
 // FILE: a.kt
@@ -27,3 +26,6 @@ fun Implementation.test() {
     val x2 = <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_SUPERCLASS, MISSING_DEPENDENCY_SUPERCLASS_WARNING!>allHierarchy<!>
     x1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver */

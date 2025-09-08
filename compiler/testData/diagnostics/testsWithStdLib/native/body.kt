@@ -24,3 +24,6 @@ fun test() {
         <!EXTERNAL_DECLARATION_CANNOT_HAVE_BODY!>external fun foo()<!> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, external, functionDeclaration,
+localClass, objectDeclaration */

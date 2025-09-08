@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChe
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -33,11 +34,10 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirDeclaration,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (element is FirPropertyAccessor || element is FirValueParameter) {
             return
@@ -48,76 +48,68 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         }
 
         when (element) {
-            is FirProperty -> checkPropertyAndReport(element, context, reporter)
+            is FirProperty -> checkPropertyAndReport(element)
             else -> {
                 val defaultVisibility = element.symbol.resolvedStatus?.defaultVisibility ?: Visibilities.DEFAULT_VISIBILITY
-                checkElementAndReport(element, defaultVisibility, context, reporter)
+                checkElementAndReport(element, defaultVisibility)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkPropertyAndReport(
         property: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         var setterImplicitVisibility: Visibility? = null
 
         property.setter?.let { setter ->
             val defaultVisibility = setter.symbol.resolvedStatus.defaultVisibility
-            val visibility = setter.implicitVisibility(context, defaultVisibility)
+            val visibility = setter.implicitVisibility(defaultVisibility)
             setterImplicitVisibility = visibility
-            checkElementAndReport(setter, visibility, property.symbol, context, reporter)
+            checkElementAndReport(setter, visibility, property.symbol)
         }
 
         property.getter?.let { getter ->
-            checkElementAndReport(getter, getter.symbol.resolvedStatus.defaultVisibility, property.symbol, context, reporter)
+            checkElementAndReport(getter, getter.symbol.resolvedStatus.defaultVisibility, property.symbol)
         }
 
         property.backingField?.let { field ->
-            checkElementAndReport(field, field.symbol.resolvedStatus.defaultVisibility, property.symbol, context, reporter)
+            checkElementAndReport(field, field.symbol.resolvedStatus.defaultVisibility, property.symbol)
         }
 
         if (property.canMakeSetterMoreAccessible(setterImplicitVisibility)) {
             return
         }
 
-        checkElementAndReport(property, property.symbol.resolvedStatus.defaultVisibility, context, reporter)
+        checkElementAndReport(property, property.symbol.resolvedStatus.defaultVisibility)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkElementAndReport(
         element: FirDeclaration,
         defaultVisibility: Visibility,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) = checkElementAndReport(
         element,
         defaultVisibility,
-        context.findClosest(),
-        context,
-        reporter
+        context.findClosest()
     )
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkElementAndReport(
         element: FirDeclaration,
         defaultVisibility: Visibility,
         containingDeclarationSymbol: FirBasedSymbol<*>?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) = checkElementWithImplicitVisibilityAndReport(
         element,
-        element.implicitVisibility(context, defaultVisibility),
-        containingDeclarationSymbol,
-        context,
-        reporter
+        element.implicitVisibility(defaultVisibility),
+        containingDeclarationSymbol
     )
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkElementWithImplicitVisibilityAndReport(
         element: FirDeclaration,
         implicitVisibility: Visibility,
         containingDeclarationSymbol: FirBasedSymbol<*>?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (element.source?.kind is KtFakeSourceElementKind && !element.isPropertyFromParameter) {
             return
@@ -130,7 +122,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         val explicitVisibility = element.source?.explicitVisibility
         val isHidden = explicitVisibility.isEffectivelyHiddenBy(containingDeclarationSymbol)
         if (isHidden) {
-            reportElement(element, context, reporter)
+            reportElement(element)
             return
         }
 
@@ -141,15 +133,16 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         }
 
         if (explicitVisibility == implicitVisibility) {
-            reportElement(element, context, reporter)
+            reportElement(element)
         }
     }
 
     private val FirElement.isPropertyFromParameter: Boolean
         get() = this is FirProperty && source?.kind == KtFakeSourceElementKind.PropertyFromParameter
 
-    private fun reportElement(element: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(element.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportElement(element: FirDeclaration) {
+        reporter.reportOn(element.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
     }
 
     private fun FirProperty.canMakeSetterMoreAccessible(setterImplicitVisibility: Visibility?): Boolean {
@@ -199,22 +192,24 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return difference > 0
     }
 
-    private fun FirDeclaration.implicitVisibility(context: CheckerContext, defaultVisibility: Visibility): Visibility {
+    context(context: CheckerContext)
+    private fun FirDeclaration.implicitVisibility(defaultVisibility: Visibility): Visibility {
         return when {
             this is FirPropertyAccessor
                     && isSetter
                     && context.containingDeclarations.last() is FirClassSymbol
-                    && propertySymbol.isOverride -> findPropertyAccessorVisibility(this, context)
+                    && propertySymbol.isOverride -> findPropertyAccessorVisibility(this)
 
             this is FirPropertyAccessor -> propertySymbol.visibility
 
             this is FirConstructor -> {
                 val classSymbol = this.getContainingClassSymbol()
-                if (
-                    classSymbol is FirRegularClassSymbol
-                    && (classSymbol.isEnumClass || classSymbol.isSealed)
-                ) {
-                    Visibilities.Private
+                if (classSymbol is FirRegularClassSymbol) {
+                    when {
+                        classSymbol.isSealed -> Visibilities.Protected
+                        classSymbol.isEnumClass -> Visibilities.Private
+                        else -> defaultVisibility
+                    }
                 } else {
                     defaultVisibility
                 }
@@ -222,11 +217,11 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
             this is FirSimpleFunction
                     && context.containingDeclarations.last() is FirClassSymbol
-                    && this.isOverride -> findFunctionVisibility(this, context)
+                    && this.isOverride -> findFunctionVisibility(this)
 
             this is FirProperty
                     && context.containingDeclarations.last() is FirClassSymbol
-                    && this.isOverride -> findPropertyVisibility(this, context)
+                    && this.isOverride -> findPropertyVisibility(this)
 
             else -> defaultVisibility
         }
@@ -250,24 +245,27 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return current
     }
 
-    private fun findPropertyAccessorVisibility(accessor: FirPropertyAccessor, context: CheckerContext): Visibility {
+    context(context: CheckerContext)
+    private fun findPropertyAccessorVisibility(accessor: FirPropertyAccessor): Visibility {
         val propertySymbol = accessor.propertySymbol
         return findBiggestVisibility { checkVisibility ->
-            propertySymbol.processOverriddenPropertiesWithActionSafe(context) { property ->
+            propertySymbol.processOverriddenPropertiesWithActionSafe { property ->
                 checkVisibility(property.setterSymbol ?: property)
             }
         }
     }
 
-    private fun findPropertyVisibility(property: FirProperty, context: CheckerContext): Visibility {
+    context(context: CheckerContext)
+    private fun findPropertyVisibility(property: FirProperty): Visibility {
         return findBiggestVisibility {
-            property.symbol.processOverriddenPropertiesWithActionSafe(context, it)
+            property.symbol.processOverriddenPropertiesWithActionSafe(it)
         }
     }
 
-    private fun findFunctionVisibility(function: FirSimpleFunction, context: CheckerContext): Visibility {
+    context(context: CheckerContext)
+    private fun findFunctionVisibility(function: FirSimpleFunction): Visibility {
         return findBiggestVisibility {
-            function.symbol.processOverriddenFunctionsWithActionSafe(context, it)
+            function.symbol.processOverriddenFunctionsWithActionSafe(it)
         }
     }
 }

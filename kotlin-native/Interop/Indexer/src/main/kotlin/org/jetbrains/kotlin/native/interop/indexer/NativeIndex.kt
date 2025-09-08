@@ -322,9 +322,25 @@ data class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 /**
  * C function declaration.
  */
-class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type,
-                   val isVararg: Boolean,
-                   val parentName: String? = null) {
+class FunctionDecl(
+        /**
+         * The name of the function in the source code.
+         */
+        val name: String,
+
+        val parameters: List<Parameter>,
+        val returnType: Type,
+        val isVararg: Boolean,
+
+        /**
+         * The name of the function in the binary code (i.e. the symbol name as seen by the linker).
+         * It usually equals to `"_$name"` on Apple platforms and `name` on other platforms,
+         * but can be different if some modifiers like `__asm("foo")` are at play.
+         */
+        val binaryName: String,
+
+        val parentName: String? = null
+) {
 
     val fullName: String = parentName?.let { "$parentName::$name" } ?: name
 }

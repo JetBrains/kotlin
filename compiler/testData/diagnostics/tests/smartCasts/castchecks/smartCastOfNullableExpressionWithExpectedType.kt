@@ -8,3 +8,6 @@ fun test(item: Item) {
         val href: String = <!DEBUG_INFO_SMARTCAST!>item.link<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast */

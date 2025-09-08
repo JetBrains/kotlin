@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
@@ -29,8 +28,9 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.parameters) {
-                val lambda = expression.arguments[parameter.indexInParameters]?.unwrapInlineLambda() ?: continue
-                visitInlineLambda(lambda, function, parameter, data!!)
+                val argument = expression.arguments[parameter.indexInParameters]
+                argument?.unwrapInlineLambda()?.let { visitInlineLambda(it, function, parameter, data!!) }
+                argument?.unwrapRichInlineLambda()?.let { visitInlineLambda(it, function, parameter, data!!) }
             }
         }
         return super.visitFunctionAccess(expression, data)
@@ -44,7 +44,18 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
      * @param parameter The parameter of [callee] to which the lambda is passed.
      * @param scope The declaration in scope of which [callee] is being called.
      */
+    // TODO remove after KT-78719
     abstract fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration)
+
+    /**
+     * Called by this visitor whenever a lambda is passed to an inline function.
+     *
+     * @param argument The lambda expression passed as an argument to [callee].
+     * @param callee The inline function.
+     * @param parameter The parameter of [callee] to which the lambda is passed.
+     * @param scope The declaration in scope of which [callee] is being called.
+     */
+    open fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {}
 }
 
 /**
@@ -89,11 +100,25 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
      */
     private val privateInlineFunctionCallSites = mutableMapOf<IrFunction, Set<IrDeclaration>>()
 
+    // TODO remove after KT-78719
     override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
         // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
         // but these lambdas are effectively inline
         inlineCallSites[argument.symbol.owner] =
             CallSite(scope, approximateToPackage = parameter.isCrossinline && !callee.isCoroutineIntrinsic())
+    }
+
+    override fun visitInlineLambda(
+        argument: IrRichFunctionReference,
+        callee: IrFunction,
+        parameter: IrValueParameter,
+        scope: IrDeclaration
+    ) {
+        // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
+        // but these lambdas are effectively inline
+        inlineCallSites[argument.invokeFunction] =
+            CallSite(scope, approximateToPackage = parameter.isCrossinline && !callee.isCoroutineIntrinsic())
+
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
@@ -109,17 +134,6 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
             (privateInlineFunctionCallSites.getOrPut(callee) { mutableSetOf() } as MutableSet).add(data)
         }
         super.visitCall(expression, data)
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration?) {
-        if (inlinedBlock.isFunctionInlining()) {
-            val callee = inlinedBlock.inlineDeclaration
-            if (callee is IrSimpleFunction && callee.isPrivateInline && data != null) {
-                (privateInlineFunctionCallSites.getOrPut(callee) { mutableSetOf() } as MutableSet).add(data)
-            }
-        }
-
-        super.visitInlinedFunctionBlock(inlinedBlock, data)
     }
 
     private inline val IrSimpleFunction.isPrivateInline
@@ -231,6 +245,7 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
  * @param onLambda The closure to execute for each such lambda. Accepts the lambda expression, the inline function being called,
  *   the parameter of that inline function to which the lambda is passed, and the scope in which the inline function is called.
  */
+// TODO remove after KT-78719
 inline fun IrFile.findInlineLambdas(
     context: JvmBackendContext, crossinline onLambda: (IrFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit,
 ) = accept(
@@ -245,8 +260,36 @@ inline fun IrFile.findInlineLambdas(
     null,
 )
 
+inline fun IrFile.findRichInlineLambdas(
+    context: JvmBackendContext, crossinline onLambda: (IrRichFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit,
+) = accept(
+    object : IrInlineReferenceLocator(context) {
+        override fun visitInlineLambda(
+            argument: IrFunctionReference,
+            callee: IrFunction,
+            parameter: IrValueParameter,
+            scope: IrDeclaration,
+        ) {}
+
+        override fun visitInlineLambda(
+            argument: IrRichFunctionReference,
+            callee: IrFunction,
+            parameter: IrValueParameter,
+            scope: IrDeclaration,
+        ) = onLambda(argument, callee, parameter, scope)
+    },
+    null,
+)
+
 /**
  * Runs [IrInlineScopeResolver] on this [IrFile] and returns the scope resolver instance.
  */
+// TODO remove after KT-78719
 fun IrFile.findInlineCallSites(context: JvmBackendContext) =
+    IrInlineScopeResolver(context).apply { accept(this, null) }
+
+/**
+ * Runs [IrInlineScopeResolver] on this [IrFile] and returns the scope resolver instance.
+ */
+fun IrFile.findRichInlineCallSites(context: JvmBackendContext) =
     IrInlineScopeResolver(context).apply { accept(this, null) }

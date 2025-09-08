@@ -43,7 +43,6 @@ open class KtDiagnosticReporterWithContext(
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
             return false
-//            TODO("Not yet implemented")
         }
 
         override val languageVersionSettings: LanguageVersionSettings

@@ -29,7 +29,7 @@ fun <T : Any> TypeCrossfade(
 @Composable
 fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4<BoxScope, T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(TypeCrossfade)P(1)<{>,<Crossf...>:Test.kt")
+  sourceInformation(%composer, "C(TypeCrossfade)N(state,content)<{>,<Crossf...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
@@ -47,7 +47,7 @@ fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4
       traceEventStart(<>, %dirty, -1, <>)
     }
     Crossfade(state, rememberComposableLambda(<>, true, { it: T, %composer: Composer?, %changed: Int ->
-      sourceInformation(%composer, "C*<conten...>:Test.kt")
+      sourceInformation(%composer, "invalid source info at 1: 'CN(it)*10@319L11:Test.kt'")
       val %dirty = %changed
       if (%changed and 0b0110 == 0) {
         %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

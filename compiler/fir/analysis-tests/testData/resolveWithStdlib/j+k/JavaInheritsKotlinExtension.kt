@@ -20,3 +20,6 @@ class Tester : Inheritor(), First {
         foo("abc", 456)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+interfaceDeclaration, javaFunction, javaType, stringLiteral */

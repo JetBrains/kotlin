@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.sir.providers
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.impl.StandaloneSirTypeNamer
 
 
 /**
@@ -32,7 +32,8 @@ public interface SirSession :
     SirModuleProvider,
     SirTypeProvider,
     SirVisibilityChecker,
-    SirChildrenProvider
+    SirChildrenProvider,
+    SirBridgeProvider
 {
     public val sirSession: SirSession
         get() = this
@@ -49,6 +50,7 @@ public interface SirSession :
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
+    public val bridgeProvider: SirBridgeProvider
 
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy
         get() = typeProvider.errorTypeStrategy
@@ -59,11 +61,11 @@ public interface SirSession :
 
     override fun KaDeclarationSymbol.toSir(): SirTranslationResult = with(declarationProvider) { this@toSir.toSir() }
 
-    override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationParent =
-        with(parentProvider) { this@getSirParent.getSirParent(ktAnalysisSession) }
+    override fun KaDeclarationSymbol.getSirParent(): SirDeclarationParent =
+        with(parentProvider) { this@getSirParent.getSirParent() }
 
-    override fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement =
-        with(parentProvider) { this@getOriginalSirParent.getOriginalSirParent(ktAnalysisSession) }
+    override fun KaDeclarationSymbol.getOriginalSirParent(): SirElement =
+        with(parentProvider) { this@getOriginalSirParent.getOriginalSirParent() }
 
     override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = with (trampolineDeclarationsProvider) {
         this@trampolineDeclarations.trampolineDeclarations()
@@ -73,6 +75,7 @@ public interface SirSession :
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
@@ -80,6 +83,7 @@ public interface SirSession :
         with(typeProvider) {
             this@translateType.translateType(
                 ktAnalysisSession,
+                position,
                 reportErrorType,
                 reportUnsupportedType,
                 processTypeImports
@@ -91,11 +95,39 @@ public interface SirSession :
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
 
-    override fun KaDeclarationSymbol.sirAvailability(ktAnalysisSession: KaSession): SirAvailability =
-        with(visibilityChecker) { this@sirAvailability.sirAvailability(ktAnalysisSession) }
+    override fun KaDeclarationSymbol.sirAvailability(): SirAvailability =
+        with(visibilityChecker) { this@sirAvailability.sirAvailability() }
 
-    override fun Sequence<KaDeclarationSymbol>.extractDeclarations(kaSession: KaSession): Sequence<SirDeclaration> =
-        with(childrenProvider) { this@extractDeclarations.extractDeclarations(kaSession) }
+    override fun Sequence<KaDeclarationSymbol>.extractDeclarations(): Sequence<SirDeclaration> =
+        with(childrenProvider) { this@extractDeclarations.extractDeclarations() }
+
+    override fun generateFunctionBridge(
+        baseBridgeName: String,
+        explicitParameters: List<SirParameter>,
+        returnType: SirType,
+        kotlinFqName: List<String>,
+        selfParameter: SirParameter?,
+        extensionReceiverParameter: SirParameter?,
+        errorParameter: SirParameter?
+    ): BridgeFunctionProxy? = with(bridgeProvider) {
+        generateFunctionBridge(
+            baseBridgeName,
+            explicitParameters,
+            returnType,
+            kotlinFqName,
+            selfParameter,
+            extensionReceiverParameter,
+            errorParameter
+        )
+    }
+
+    override fun generateTypeBridge(
+        kotlinFqName: List<String>,
+        swiftFqName: String,
+        swiftSymbolName: String,
+    ): SirTypeBindingBridge? = with(bridgeProvider) {
+        generateTypeBridge(kotlinFqName, swiftFqName, swiftSymbolName)
+    }
 }
 
 /**
@@ -112,6 +144,9 @@ public interface SirEnumGenerator {
 public interface SirDeclarationNamer {
     public fun KaDeclarationSymbol.sirDeclarationName(): String
 }
+
+context(sir: SirSession)
+public fun KaDeclarationSymbol.sirDeclarationName(): String = with(sir) { sirDeclarationName() }
 
 public sealed interface SirTranslationResult {
     public val allDeclarations: List<SirDeclaration>
@@ -156,11 +191,28 @@ public sealed interface SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
+    public data class OperatorFunction(
+        public val declaration: SirFunction,
+        public val supplementaryDeclarations: List<SirDeclaration>
+    ) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration) + supplementaryDeclarations
+        override val primaryDeclaration: SirDeclaration get() = declaration
+    }
+
+    public data class OperatorSubscript(
+        public val declaration: SirSubscript,
+        public val supplementaryDeclarations: List<SirDeclaration>
+    ) : SirTranslationResult {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration) + supplementaryDeclarations
+        override val primaryDeclaration: SirDeclaration get() = declaration
+    }
+
     public data class RegularInterface(
         public val declaration: SirProtocol,
         public val bridgedImplementation: SirExtension?,
         public val markerDeclaration: SirProtocol,
         public val existentialExtension: SirExtension,
+        public val samConverter: SirDeclaration?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
         override val allDeclarations: List<SirDeclaration> =
@@ -168,7 +220,8 @@ public sealed interface SirTranslationResult {
                 declaration,
                 bridgedImplementation,
                 markerDeclaration,
-                existentialExtension
+                existentialExtension,
+                samConverter,
             )
     }
 
@@ -201,6 +254,9 @@ public interface SirDeclarationProvider {
     public fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> = toSir().allDeclarations
 }
 
+context(sir: SirSession)
+public fun KaDeclarationSymbol.toSir(): SirTranslationResult = with(sir) { toSir() }
+
 /**
  * Given [KaDeclarationSymbol] will produce [SirDeclarationParent], representing the parent for corresponding sir node.
  *
@@ -209,7 +265,7 @@ public interface SirDeclarationProvider {
  *
  */
 public interface SirParentProvider {
-    public fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationParent
+    public fun KaDeclarationSymbol.getSirParent(): SirDeclarationParent
 
     /**
      * Get original sir parent
@@ -217,11 +273,16 @@ public interface SirParentProvider {
      * When that is the case, [SirParentProvider] attempts to relocate children declarations into the most appropriate place.
      * This method returns the original intended parent declaration that the receiver may have been relocated from.
      *
-     * @param ktAnalysisSession session
      * @return Sir element for original parent symbol. This is the same as [getSirParent] if the receiver was never relocated.
      */
-    public fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement
+    public fun KaDeclarationSymbol.getOriginalSirParent(): SirElement
 }
+
+context(sir: SirSession)
+public fun KaDeclarationSymbol.getSirParent(): SirDeclarationParent = with(sir) { getSirParent() }
+
+context(sir: SirSession)
+public fun KaDeclarationSymbol.getOriginalSirParent(): SirElement = with(sir) { getOriginalSirParent() }
 
 /**
  *  Provides trampoline declarations for a given [SirDeclaration], if any.
@@ -229,6 +290,9 @@ public interface SirParentProvider {
 public interface SirTrampolineDeclarationsProvider {
     public fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration>
 }
+
+context(sir: SirSession)
+public fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = with(sir) { trampolineDeclarations() }
 
 /**
  * Translates the given [KaModule] to the corresponding [SirModule].
@@ -239,15 +303,24 @@ public interface SirModuleProvider {
     public fun KaModule.sirModule(): SirModule
 }
 
+context(sir: SirSession)
+public fun KaModule.sirModule(): SirModule = with(sir) { sirModule() }
+
 // TODO: SirChildrenProvider probably does not make much sense as a provider,
 //  as it acts as a combination of several other provider (declaration, trampoline, visibility)
 public interface SirChildrenProvider {
 
-    public fun KaScope.extractDeclarations(ktAnalysisSession: KaSession): Sequence<SirDeclaration> =
-        declarations.extractDeclarations(ktAnalysisSession)
+    public fun KaScope.extractDeclarations(): Sequence<SirDeclaration> =
+        declarations.extractDeclarations()
 
-    public fun Sequence<KaDeclarationSymbol>.extractDeclarations(kaSession: KaSession): Sequence<SirDeclaration>
+    public fun Sequence<KaDeclarationSymbol>.extractDeclarations(): Sequence<SirDeclaration>
 }
+
+context(sir: SirSession)
+public fun KaScope.extractDeclarations(): Sequence<SirDeclaration> = with(sir) { extractDeclarations() }
+
+context(sir: SirSession)
+public fun Sequence<KaDeclarationSymbol>.extractDeclarations(): Sequence<SirDeclaration> = with(sir) { extractDeclarations() }
 
 public interface SirTypeProvider {
 
@@ -267,13 +340,83 @@ public interface SirTypeProvider {
      */
     public fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
     ): SirType
 }
 
+context(ka: KaSession, sir: SirSession)
+public fun KaType.translateType(
+    position: SirTypeVariance,
+    reportErrorType: (String) -> Nothing,
+    reportUnsupportedType: () -> Nothing,
+    processTypeImports: (List<SirImport>) -> Unit,
+): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
 
+/**
+ * Generates a list of [SirBridge] for given [SirDeclaration].
+ */
+public interface SirBridgeProvider {
+    public fun generateFunctionBridge(
+        baseBridgeName: String,
+        explicitParameters: List<SirParameter>,
+        returnType: SirType,
+        kotlinFqName: List<String>,
+        selfParameter: SirParameter?,
+        extensionReceiverParameter: SirParameter?,
+        errorParameter: SirParameter?
+    ): BridgeFunctionProxy?
+
+    public fun generateTypeBridge(
+        kotlinFqName: List<String>,
+        swiftFqName: String,
+        swiftSymbolName: String,
+    ): SirTypeBindingBridge?
+}
+
+context(sir: SirSession)
+public fun generateFunctionBridge(
+    baseBridgeName: String,
+    explicitParameters: List<SirParameter>,
+    returnType: SirType,
+    kotlinFqName: List<String>,
+    selfParameter: SirParameter?,
+    extensionReceiverParameter: SirParameter?,
+    errorParameter: SirParameter?
+): BridgeFunctionProxy? = with(sir) {
+    generateFunctionBridge(
+        baseBridgeName,
+        explicitParameters,
+        returnType,
+        kotlinFqName,
+        selfParameter,
+        extensionReceiverParameter,
+        errorParameter
+    )
+}
+
+context(sir: SirSession)
+public fun generateTypeBridge(
+    kotlinFqName: List<String>,
+    swiftFqName: String,
+    swiftSymbolName: String,
+): SirTypeBindingBridge? = with(sir) { generateTypeBridge(kotlinFqName, swiftFqName, swiftSymbolName) }
+
+/**
+ * Matches a [SirType] to its declaration name in either kotlin or swift.
+ */
+public interface SirTypeNamer {
+    public enum class KotlinNameType {
+        FQN, PARAMETRIZED
+    }
+
+    public fun swiftFqName(type: SirType): String
+    public fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String
+}
+
+public fun SirTypeNamer(): SirTypeNamer = StandaloneSirTypeNamer
 
 public interface SirVisibilityChecker {
     /**
@@ -286,20 +429,19 @@ public interface SirVisibilityChecker {
         replaceWith = ReplaceWith("this.sirAvailability(ktAnalysisSession)")
     )
     public fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
-        this.sirAvailability(ktAnalysisSession).visibility
+        this.sirAvailability().visibility
 
     /**
      * Determines availability of the given [KaDeclarationSymbol].
      */
-    public fun KaDeclarationSymbol.sirAvailability(ktAnalysisSession: KaSession): SirAvailability
+    public fun KaDeclarationSymbol.sirAvailability(): SirAvailability
 }
 
-public interface SirAndKaSession : KaSession, SirSession
+context(sir: SirSession)
+public fun KaDeclarationSymbol.sirAvailability(): SirAvailability = with(sir) { sirAvailability() }
 
-public inline fun <T> SirSession.withSessions(crossinline block: SirAndKaSession.() -> T): T {
+public inline fun <T> SirSession.withSessions(crossinline block: context(KaSession, SirSession) () -> T): T {
     return analyze(this.useSiteModule) {
-        object : SirSession by this@withSessions, KaSession by this@analyze, SirAndKaSession {
-            override val useSiteModule: KaModule get() = this@analyze.useSiteModule
-        }.block()
+        block()
     }
 }

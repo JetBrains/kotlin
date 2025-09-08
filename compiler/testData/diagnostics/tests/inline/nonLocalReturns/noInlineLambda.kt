@@ -13,3 +13,6 @@ inline fun <R> inlineFun(p: () -> R) {
         <!NON_LOCAL_RETURN_NOT_ALLOWED!>p<!>()
     }()
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, nullableType,
+typeParameter */

@@ -50,3 +50,6 @@ fun test_2(ejp: EnumJava, ekp: EnumKotlin) {
 
     <!NO_ELSE_IN_WHEN!>when<!> (EnumKotlin.provide()) {}
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+javaProperty, javaType, objectDeclaration, whenExpression, whenWithSubject */

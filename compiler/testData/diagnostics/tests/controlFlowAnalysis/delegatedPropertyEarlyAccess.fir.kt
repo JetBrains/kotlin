@@ -31,3 +31,6 @@ class Kaboom() {
     // No error should be here
     val after = delegated
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, init, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral */

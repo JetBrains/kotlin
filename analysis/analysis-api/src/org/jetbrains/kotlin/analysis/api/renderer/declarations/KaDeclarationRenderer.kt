@@ -105,7 +105,7 @@ public class KaDeclarationRenderer private constructor(
             is KaEnumEntrySymbol -> enumEntryRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaValueParameterSymbol -> valueParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaContextParameterSymbol -> contextParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KaReceiverParameterSymbol -> {}
+            is KaReceiverParameterSymbol -> callableReceiverRenderer.renderReceiver(analysisSession, symbol, this, printer)
             is KaJavaFieldSymbol -> javaFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaLocalVariableSymbol -> localVariableRenderer.renderSymbol(analysisSession, symbol, this, printer)
             is KaKotlinPropertySymbol -> kotlinPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)

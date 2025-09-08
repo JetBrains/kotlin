@@ -82,3 +82,6 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
 
 // DIAGNOSTICS: -JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
 // accidentally reported (K1 only) on x.addFirst/addLast/removeFirst/removeLast (no such diagnostics on y and z)
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, nullableType, override,
+stringLiteral, superExpression, typeParameter */

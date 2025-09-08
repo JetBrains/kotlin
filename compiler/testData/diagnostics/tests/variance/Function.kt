@@ -34,3 +34,6 @@ interface Test<in I, out O, P> {
     fun <X : In<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>> typeParameter4()
     fun <X : In<O>> typeParameter5()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, in, interfaceDeclaration,
+nullableType, out, typeConstraint, typeParameter */

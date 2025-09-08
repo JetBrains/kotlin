@@ -34,7 +34,7 @@ Tower Data Context:
                 FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<pack/MyEnumClass>|
             Properties:
                 FirEnumEntrySymbol public final static enum entry ENTRY: R|pack/MyEnumClass|
-                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
+                FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
                     public get(): R|kotlin/enums/EnumEntries<pack/MyEnumClass>|
 
 FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotation.kt

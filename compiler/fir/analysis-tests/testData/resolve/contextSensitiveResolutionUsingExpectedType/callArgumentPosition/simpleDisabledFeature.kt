@@ -16,3 +16,5 @@ fun main() {
     foo(L)
     foo(<!UNRESOLVED_REFERENCE!>UNRESOLVED<!>)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

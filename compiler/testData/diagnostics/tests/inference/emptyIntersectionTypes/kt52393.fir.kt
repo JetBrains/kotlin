@@ -16,3 +16,6 @@ fun main() {
         wrapper <!NONE_APPLICABLE!>greaterEq<!> number
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

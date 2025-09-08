@@ -54,3 +54,6 @@ fun f3(flag: Boolean) {
         <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, continue, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, tryExpression, whileLoop */

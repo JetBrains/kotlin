@@ -7,7 +7,10 @@ class SomeClass
 
 fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>identifier<!>()
-    <!OPERATOR_MODIFIER_REQUIRED!>identifier<!>(<!TOO_MANY_ARGUMENTS!>123<!>)
-    <!OPERATOR_MODIFIER_REQUIRED!>identifier<!>(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>)
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>identifier<!>(123)
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>identifier<!>(1, 2)
     1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fn<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+typeWithExtension */

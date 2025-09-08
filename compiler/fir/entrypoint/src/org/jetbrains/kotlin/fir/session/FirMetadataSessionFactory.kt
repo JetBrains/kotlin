@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
@@ -38,14 +37,12 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
      */
     fun createSharedLibrarySession(
         mainModuleName: Name,
-        sessionProvider: FirProjectSessionProvider,
         languageVersionSettings: LanguageVersionSettings,
         extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirSession {
         return createSharedLibrarySession(
             mainModuleName,
             context = null,
-            sessionProvider,
             languageVersionSettings,
             extensionRegistrars
         )
@@ -59,7 +56,6 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
      * See documentation to [FirAbstractSessionFactory.createLibrarySession]
      */
     fun createLibrarySession(
-        sessionProvider: FirProjectSessionProvider,
         sharedLibrarySession: FirSession,
         moduleDataProvider: ModuleDataProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -70,7 +66,6 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
         return createLibrarySession(
             context = null,
             sharedLibrarySession,
-            sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
@@ -120,7 +115,6 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
      */
     fun createSourceSession(
         moduleData: FirModuleData,
-        sessionProvider: FirProjectSessionProvider,
         projectEnvironment: AbstractProjectEnvironment,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -131,7 +125,6 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
         return createSourceSession(
             moduleData,
             context = null,
-            sessionProvider,
             extensionRegistrars,
             configuration,
             isForLeafHmppModule,

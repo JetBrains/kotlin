@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("android-sdk-provisioner")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -17,12 +18,12 @@ dependencies {
     testApi(project(":compiler:frontend.java"))
 
     testApi(kotlinStdlib())
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.junit4)
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
 
     testApi(jpsModel())
 
@@ -37,26 +38,32 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
-    dependsOn(":dist")
-    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    doFirst {
-        environment("kotlin.tests.android.timeout", "45")
-        environment("JAVA_HOME", jdkHome.get())
+optInToK1Deprecation()
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":dist")
+        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+        doFirst {
+            environment("kotlin.tests.android.timeout", "45")
+            environment("JAVA_HOME", jdkHome.get())
+        }
+
+        if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
+            systemProperty("kotlin.test.android.teamcity", true)
+        }
+
+        project.findProperty("kotlin.test.android.path.filter")?.let {
+            systemProperty("kotlin.test.android.path.filter", it.toString())
+        }
+
+        workingDir = rootDir
+        androidSdkProvisioner {
+            provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
+        }
     }
 
-    if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
-        systemProperty("kotlin.test.android.teamcity", true)
-    }
-
-    project.findProperty("kotlin.test.android.path.filter")?.let {
-        systemProperty("kotlin.test.android.path.filter", it.toString())
-    }
-
-    workingDir = rootDir
-    androidSdkProvisioner {
-        provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
-    }
+    withJvmStdlibAndReflect()
 }
 
 val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {

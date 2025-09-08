@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidTypeAliasWithMissingDependencyType
 // ISSUE: KT-70179
 
 // MODULE: lib
@@ -22,3 +23,5 @@ import wrapper.KAnn
 
 @KAnn
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

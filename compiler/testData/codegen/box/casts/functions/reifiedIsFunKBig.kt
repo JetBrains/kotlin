@@ -6,6 +6,8 @@
 // This is a big, ugly, semi-auto generated test.
 // Use corresponding 'Small' test for debug.
 
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 fun fn0() {}
 fun fn1(x0: Any) {}
 fun fn2(x0: Any, x1: Any) {}
@@ -56,6 +58,7 @@ inline fun <reified T> assertReifiedIsNot(x: Any, type: String) {
     require(answer) { "$x !is $type: failed" }
 }
 
+// FILE: main.kt
 abstract class TestFnBase(val type: String) {
     abstract fun testGood(x: Any)
     abstract fun testBad(x: Any)

@@ -55,7 +55,6 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
             if (containingClass != null && irFunction.shouldHaveDispatchReceiver(containingClass)) {
                 val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(irFunction, fir, containingClass)
                 this += irFunction.declareThisReceiverParameter(
-                    c,
                     thisType = thisType ?: error("No dispatch receiver receiver for function: ${fir.render()}"),
                     thisOrigin = irFunction.origin,
                     kind = IrParameterKind.DispatchReceiver,
@@ -70,7 +69,6 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
 
             fir.receiverParameter?.let {
                 this += irFunction.declareThisReceiverParameter(
-                    c,
                     thisType = it.typeRef.toIrType(),
                     thisOrigin = irFunction.origin,
                     explicitReceiver = it,
@@ -130,7 +128,6 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
             val outerClass = containingClass?.parentClassOrNull
             if (containingClass?.isInner == true && outerClass != null) {
                 this += irConstructor.declareThisReceiverParameter(
-                    c,
                     thisType = outerClass.thisReceiver!!.type,
                     thisOrigin = irConstructor.origin,
                     kind = IrParameterKind.DispatchReceiver,
@@ -164,7 +161,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         irParent: IrDeclarationParent,
         symbol: IrClassSymbol
     ): Fir2IrLazyClass {
-        val firClassOrigin = firClass.irOrigin(c)
+        val firClassOrigin = firClass.irOrigin()
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyClass(c, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
         }

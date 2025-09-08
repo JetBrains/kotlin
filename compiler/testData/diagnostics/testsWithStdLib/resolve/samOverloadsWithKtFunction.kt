@@ -20,3 +20,6 @@ public class Foo {
 fun bar() {
     Foo().test {} checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, samConversion, typeParameter, typeWithExtension */

@@ -12,3 +12,5 @@ fun foo(x: (Int) -> String) {}
 fun main() {
     foo(JavaClass<*>::<!UNRESOLVED_REFERENCE!>baz<!>)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaCallableReference */

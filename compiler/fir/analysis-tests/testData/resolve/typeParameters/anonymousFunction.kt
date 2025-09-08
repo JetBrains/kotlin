@@ -11,3 +11,6 @@ fun test() {
 }
 
 interface I
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

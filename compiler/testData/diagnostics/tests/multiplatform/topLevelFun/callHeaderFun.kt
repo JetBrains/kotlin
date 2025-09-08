@@ -15,3 +15,5 @@ actual fun foo(x: Int): Int {
 }
 
 fun callFromJVM(x: Int) = foo(x)
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, expect, functionDeclaration, integerLiteral */

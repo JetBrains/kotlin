@@ -17,3 +17,5 @@ fun bar() {
 
 // MODULE: main()()(common2)
 actual fun <!AMBIGUOUS_EXPECTS!>foo<!>(a: Int) {}
+
+/* GENERATED_FIR_TAGS: actual, classReference, expect, functionDeclaration, integerLiteral */

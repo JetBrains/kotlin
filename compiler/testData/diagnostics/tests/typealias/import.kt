@@ -25,3 +25,5 @@ import package2.Outer.A
 val testS: S = ""
 val testI: I = 42
 val testA: A = Any()
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration, stringLiteral, typeAliasDeclaration */

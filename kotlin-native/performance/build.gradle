@@ -21,7 +21,6 @@ buildscript {
     ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
@@ -84,12 +83,8 @@ subprojects { proj ->
     }
 }
 
-def rootBuildDirectory = projectDir.parentFile
-
-tasks.register("buildAnalyzer", GradleBuild) {
-    buildFile = "../tools/benchmarksAnalyzer/build.gradle"
-    tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
-    startParameter.setProjectProperties(this.project.gradle.startParameter.projectProperties)
+tasks.register("buildAnalyzer") {
+    dependsOn(gradle.includedBuild("benchmarksAnalyzer").task(":${getAnalyzerTargetName()}Binaries".toString()))
 }
 
 task konanRun {

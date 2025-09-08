@@ -89,7 +89,6 @@ data class DumpIrTreeOptions(
     val declarationFlagsFilter: FlagsFilter = FlagsFilter.KEEP_ALL_FLAGS,
     val renderOriginForExternalDeclarations: Boolean = true,
     val printSignatures: Boolean = false,
-    val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
@@ -102,7 +101,7 @@ data class DumpIrTreeOptions(
     val printSealedSubclasses: Boolean = true,
     val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
-    val filePathRenderer: (IrFile, String) -> String = { _, name -> name },
+    val filePathRenderer: (IrFileEntry, String) -> String = { _, name -> name },
     val printSourceOffsets: Boolean = false,
     val referenceRenderingStrategy: ReferenceRenderingStrategy = ReferenceRenderingStrategy.Default,
 ) {

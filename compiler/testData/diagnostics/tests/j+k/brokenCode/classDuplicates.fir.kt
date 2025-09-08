@@ -12,3 +12,5 @@ fun test() {
 
 // FILE: Hello.java
 public class Hello {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

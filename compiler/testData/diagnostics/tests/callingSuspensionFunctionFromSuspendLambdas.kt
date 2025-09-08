@@ -12,3 +12,5 @@ fun foo() {
         test()
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaFunction, lambdaLiteral, suspend */

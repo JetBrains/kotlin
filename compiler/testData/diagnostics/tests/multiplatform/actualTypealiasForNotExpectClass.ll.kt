@@ -29,3 +29,6 @@ actual typealias <!ACTUAL_WITHOUT_EXPECT!>A<!> = A_J
 // Indirect subtyping is allowed in K2 KT-59356
 actual class C1 : B_J()
 actual typealias C2 = C2_J
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, primaryConstructor,
+stringLiteral, typeAliasDeclaration */

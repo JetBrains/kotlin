@@ -9,3 +9,5 @@ val fn1: (Int) -> Unit = ::foo
 val fn2: (IntArray) -> Unit = ::foo
 val fn3: (Int, Int) -> Unit = ::<!NONE_APPLICABLE!>foo<!>
 val fn4: (Array<String>) -> Unit = ::foo
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, propertyDeclaration, vararg */

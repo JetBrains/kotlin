@@ -123,3 +123,6 @@ fun main() {
         myRun(::yield)
     }.length
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, suspend, typeParameter, typeWithExtension */

@@ -49,3 +49,7 @@ fun testVarArg(i: MyClass.InheritorClass) {
     receiverVarArg<MyClass>(<!UNRESOLVED_REFERENCE!>func<!>())
     receiverVarArg<MyClass>(<!UNRESOLVED_REFERENCE!>superFunc<!>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, lambdaLiteral, nestedClass,
+nullableType, objectDeclaration, outProjection, propertyDeclaration, propertyDelegate, stringLiteral, typeParameter,
+vararg */

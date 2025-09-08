@@ -66,3 +66,7 @@ fun inPlaceDelegate(block: () -> Unit): ReadOnlyProperty<Any?, String> {
     block()
     return ReadOnlyProperty { _, _ -> "inPlaceDelegate" }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, enumDeclaration, enumEntry, functionDeclaration,
+functionalType, getter, inline, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, stringLiteral */

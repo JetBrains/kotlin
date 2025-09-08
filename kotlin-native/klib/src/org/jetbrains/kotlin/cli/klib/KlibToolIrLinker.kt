@@ -30,7 +30,7 @@ internal class KlibToolIrLinker(
         symbolTable = symbolTable,
         mangler = KonanManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
-        friendModules = emptyMap(),
+        friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 
@@ -53,10 +53,11 @@ internal class KlibToolIrLinker(
         klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
     ) : BasicIrModuleDeserializer(
-        this,
-        module,
-        klib,
-        strategyResolver,
-        klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
+        linker = this,
+        moduleDescriptor = module,
+        klib = klib,
+        strategyResolver = strategyResolver,
+        libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
+        allowErrorNodes = true,
     )
 }

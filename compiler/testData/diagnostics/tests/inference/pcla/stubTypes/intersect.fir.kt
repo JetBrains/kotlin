@@ -48,3 +48,7 @@ fun test() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, classReference, flexibleType, functionDeclaration, functionalType,
+in, integerLiteral, interfaceDeclaration, intersectionType, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension, vararg */

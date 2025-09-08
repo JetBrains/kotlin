@@ -403,6 +403,9 @@ private class MappingExtensions(
             is AnnotationStub.CCall.Symbol -> mapOfNotNull(
                     ("id" to symbolName).asOptionalAnnotationArgument()
             )
+            is AnnotationStub.CCall.Direct -> mapOfNotNull(
+                    ("name" to name).asOptionalAnnotationArgument()
+            )
             is AnnotationStub.CStruct -> mapOfNotNull(
                     ("spelling" to struct).asOptionalAnnotationArgument()
             )

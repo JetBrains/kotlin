@@ -17,3 +17,6 @@ actual interface A<T> {
     actual var y: List<T>
     actual fun f(p: Collection<T>): Map<T, A<T?>>
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, interfaceDeclaration, nullableType, propertyDeclaration,
+typeParameter */

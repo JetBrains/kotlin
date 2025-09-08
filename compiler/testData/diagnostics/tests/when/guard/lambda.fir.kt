@@ -44,3 +44,6 @@ fun LambdaWithWhenExprWithGuardInGuard(x: Any) {
         } } ("11") -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, guardCondition, ifExpression,
+integerLiteral, isExpression, lambdaLiteral, smartcast, stringLiteral, whenExpression, whenWithSubject */

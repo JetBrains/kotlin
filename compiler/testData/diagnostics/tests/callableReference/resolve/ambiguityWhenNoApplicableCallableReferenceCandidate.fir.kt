@@ -9,3 +9,5 @@ fun <T> bar(f: (T) -> Unit) {}
 fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, nullableType, typeParameter */

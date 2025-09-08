@@ -14,3 +14,5 @@ actual open class Foo {
     actual fun <T> foo(t: T) {}
     fun foo(t: String) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, typeParameter */

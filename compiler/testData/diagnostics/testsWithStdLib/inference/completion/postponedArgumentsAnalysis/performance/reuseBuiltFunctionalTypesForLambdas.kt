@@ -37,3 +37,5 @@ class A {
             "" to { a, b, c, d -> }
         )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, lambdaLiteral, propertyDeclaration, stringLiteral */

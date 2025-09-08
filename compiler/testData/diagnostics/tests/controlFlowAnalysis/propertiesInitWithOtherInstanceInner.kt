@@ -20,3 +20,6 @@ class Outer {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, inner, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

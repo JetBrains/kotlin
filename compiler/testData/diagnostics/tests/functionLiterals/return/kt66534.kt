@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-66534, KT-66954
 // WITH_STDLIB
 
@@ -143,3 +142,6 @@ fun test() {
         return@l null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, functionalType, ifExpression,
+integerLiteral, javaFunction, javaProperty, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral */

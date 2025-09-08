@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -22,9 +23,10 @@ internal sealed class SymbolLightMethodForScript(
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
 ) : SymbolLightMethodBase(
-    LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
-    containingClass,
-    methodIndex
+    lightMemberOrigin = LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    isJvmExposedBoxed = false,
 ) {
     abstract override fun getName(): String
 
@@ -66,9 +68,7 @@ internal class SymbolLightMethodForScriptDefaultConstructor(
 ) {
     override fun getName(): String = containingClass.name ?: ""
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptDefaultConstructor,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC)
@@ -93,9 +93,7 @@ internal class SymbolLightMethodForScriptMain(
 ) {
     override fun getName(): String = "main"
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptMain,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)

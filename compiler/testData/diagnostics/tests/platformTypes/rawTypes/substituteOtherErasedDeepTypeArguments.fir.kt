@@ -30,3 +30,5 @@ fun test() {
     t
     t.id // error before
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration */

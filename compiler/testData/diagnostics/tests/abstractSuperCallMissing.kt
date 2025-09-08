@@ -13,3 +13,6 @@ val a = object : Bar {
         super.<!ABSTRACT_SUPER_CALL!>buzz<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration, override,
+propertyDeclaration, superExpression */

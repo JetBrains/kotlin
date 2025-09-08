@@ -2,7 +2,7 @@ FILE: KotlinClass.kt
     public final fun case1(javaClass: R|JavaClass?|): R|kotlin/Unit| {
         lval validType: R|(JavaClass) -> kotlin/Boolean| = when () {
             !=(R|<local>/javaClass|, Null(null)) ->  {
-                fun <anonymous>(it: R|JavaClass|): R|kotlin/Boolean| <inline=Unknown>  {
+                fun <anonymous>(it: R|JavaClass|): R|kotlin/Boolean| <inline=NoInline>  {
                     ^ ==(R|<local>/it|, R|<local>/javaClass|)
                 }
 
@@ -70,7 +70,7 @@ FILE: KotlinClass.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val FILTER: R|(JavaClass) -> kotlin/Boolean| = fun <anonymous>(it: R|JavaClass|): R|kotlin/Boolean| <inline=Unknown>  {
+            public final val FILTER: R|(JavaClass) -> kotlin/Boolean| = fun <anonymous>(it: R|JavaClass|): R|kotlin/Boolean| <inline=NoInline>  {
                 ^ Boolean(true)
             }
 
@@ -95,7 +95,7 @@ FILE: KotlinClass.kt
     public final fun case2(kotlinClass: R|KotlinClass?|): R|kotlin/Unit| {
         lval validType: R|(KotlinClass) -> kotlin/Boolean| = when () {
             !=(R|<local>/kotlinClass|, Null(null)) ->  {
-                fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| <inline=Unknown>  {
+                fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| <inline=NoInline>  {
                     ^ ==(R|<local>/it|, R|<local>/kotlinClass|)
                 }
 
@@ -163,7 +163,7 @@ FILE: KotlinClass.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val FILTER: R|(KotlinClass) -> kotlin/Boolean| = fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| <inline=Unknown>  {
+            public final val FILTER: R|(KotlinClass) -> kotlin/Boolean| = fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| <inline=NoInline>  {
                 ^ Boolean(true)
             }
 

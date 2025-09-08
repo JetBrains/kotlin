@@ -42,3 +42,5 @@ actual class A {
     actual external fun foo()
     actual external fun bar()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, external, functionDeclaration, propertyDeclaration */

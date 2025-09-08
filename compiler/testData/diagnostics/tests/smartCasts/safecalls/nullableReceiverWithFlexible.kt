@@ -25,3 +25,6 @@ fun test() {
         foo?.bar?.length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, safeCall */

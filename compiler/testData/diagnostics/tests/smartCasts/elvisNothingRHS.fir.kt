@@ -10,3 +10,5 @@ fun test(a: C?, nn: () -> Nothing?) {
     a ?: return
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, nullableType, smartcast */

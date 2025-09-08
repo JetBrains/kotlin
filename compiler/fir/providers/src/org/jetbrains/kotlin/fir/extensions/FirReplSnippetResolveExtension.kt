@@ -18,7 +18,7 @@ abstract class FirReplSnippetResolveExtension(
     session: FirSession,
 ) : FirExtension(session) {
     companion object {
-        val NAME: FirExtensionPointName = FirExtensionPointName("ReplSnippetConfigurator")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ReplSnippetResolveExtension")
     }
 
     final override val name: FirExtensionPointName

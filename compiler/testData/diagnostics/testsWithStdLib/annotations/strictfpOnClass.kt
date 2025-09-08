@@ -17,3 +17,6 @@ fun foo() {
 
     <!STRICTFP_ON_CLASS!>@kotlin.jvm.Strictfp<!> object: Any() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+localClass, objectDeclaration */

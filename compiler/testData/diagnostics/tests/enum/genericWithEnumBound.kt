@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59333
+// LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds
 
 interface MyInterface {
     val value: String
@@ -25,3 +26,6 @@ fun test() {
     MyClass(CorrectTypeEnum.CorrectEnum1)
     MyClass(<!TYPE_MISMATCH!>WrongTypeEnum.WrongEnum1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration,
+outProjection, override, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

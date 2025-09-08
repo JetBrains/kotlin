@@ -28,7 +28,6 @@ FUNCTION:
     abbreviation: null
     annotations: []
     classId: A
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: A
@@ -37,6 +36,9 @@ FUNCTION:
     ]
     symbol: KaNamedClassSymbol(A)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -63,7 +65,6 @@ FUNCTION:
         abbreviation: null
         annotations: []
         classId: A
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: A
@@ -72,6 +73,9 @@ FUNCTION:
         ]
         symbol: KaNamedClassSymbol(A)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(alreadyOperator.kt)
       getContainingJvmClassName: A
@@ -83,7 +87,6 @@ FUNCTION:
     abbreviation: null
     annotations: []
     classId: A
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: A
@@ -92,6 +95,9 @@ FUNCTION:
     ]
     symbol: KaNamedClassSymbol(A)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   getContainingFileSymbol: KaFileSymbol(alreadyOperator.kt)
   getContainingJvmClassName: A
   canBeOperator: true

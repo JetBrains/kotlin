@@ -24,3 +24,5 @@ actual open class Foo : Base() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

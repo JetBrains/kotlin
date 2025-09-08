@@ -12,4 +12,4 @@ interface TestDerivedInterfaceDefault : IBase {
     fun replace(key: String, value: String): String? = TODO()
 }
 
-
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType */

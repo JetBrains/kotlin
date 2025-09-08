@@ -29,3 +29,7 @@ public interface JavaClass<T> {
     public T getV();
     public void setV(T v);
 }
+
+/* GENERATED_FIR_TAGS: assignment, capturedType, checkNotNullCall, classDeclaration, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, infix, interfaceDeclaration, javaProperty, javaType,
+lambdaLiteral, nullableType, propertyDeclaration, starProjection, stringLiteral, typeParameter, typeWithExtension */

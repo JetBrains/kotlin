@@ -41,3 +41,7 @@ class SomeClass {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetPropertyGetter,
+classDeclaration, functionDeclaration, getter, integerLiteral, localProperty, nullableType, operator,
+propertyDeclaration, propertyDelegate, secondaryConstructor, starProjection, stringLiteral */

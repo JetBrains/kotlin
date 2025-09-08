@@ -85,3 +85,8 @@ class TestOut<out T> where T: SealedClass {
         is SealedSubObject2 -> 4
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, getter, inline,
+integerLiteral, isExpression, nullableType, objectDeclaration, out, outProjection, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver, reified, sealed, smartcast, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

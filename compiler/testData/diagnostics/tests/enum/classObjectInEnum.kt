@@ -9,3 +9,5 @@ enum class E {
 }
 
 fun bar() = E.entry()
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration */

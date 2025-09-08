@@ -18,3 +18,6 @@ actual tailrec fun tailrec(): Unit = if (true) Unit else tailrec()
 actual inline fun inline() {}
 actual operator fun String.unaryMinus(): String = this
 actual infix fun String.and(other: String): String = this + other
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, expect, external, funWithExtensionReceiver, functionDeclaration,
+ifExpression, infix, inline, operator, tailrec, thisExpression */

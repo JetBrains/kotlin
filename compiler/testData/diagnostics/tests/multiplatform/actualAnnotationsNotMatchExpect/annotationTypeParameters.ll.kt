@@ -103,3 +103,7 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>complexDiffer<!>() {}
     NestedWithSameTypeArgument<A>()
 )
 actual fun explicitVsInfered() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, inProjection,
+nestedClass, nullableType, objectDeclaration, outProjection, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, vararg */

@@ -9,3 +9,5 @@ fun deprecated() {}
 fun test() {
     <!DEPRECATION!>deprecated<!>()
 }
+
+/* GENERATED_FIR_TAGS: const, functionDeclaration, propertyDeclaration, stringLiteral */

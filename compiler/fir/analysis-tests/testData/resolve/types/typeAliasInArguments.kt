@@ -20,3 +20,6 @@ private typealias ImmutableMultimap<K, V> = ImmutableMap<K, ImmutableSet<V>>
 private fun <K, V> ImmutableMultimap<K, V>.put(key: K, value: V, oldSet: ImmutableSet<V>): ImmutableMultimap<K, V> {
     return put(key, oldSet.add(value))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaType, nullableType,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -5,3 +5,5 @@ class My {
             x = <!ASSIGNMENT_TYPE_MISMATCH!>value<!>
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, outProjection, propertyDeclaration, setter, stringLiteral, vararg */

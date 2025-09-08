@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolutionResultOverridesOtherToPreserveCompatibility
 
 object FirCustomEnumEntriesMigrationReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)) return
+        if (LanguageFeature.PrioritizedEnumEntries.isEnabled()) return
         if (expression.calleeReference.name == StandardNames.ENUM_ENTRIES &&
             expression.nonFatalDiagnostics.any { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }
         ) {

@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_FUNC_ARRAY, TABLE_SWITCH_SELECTOR }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR }
 
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
@@ -27,6 +26,7 @@ class WasmFunctionCodegenContext(
     private val backendContext: WasmBackendContext,
     private val wasmFileCodegenContext: WasmFileCodegenContext,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val functionFileEntry: IrFileEntry,
     skipCommentInstructions: Boolean
 ) {
     val bodyGen: WasmExpressionBuilder =
@@ -73,8 +73,8 @@ class WasmFunctionCodegenContext(
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
                 WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)))
-            SyntheticLocalType.IS_INTERFACE_FUNC_ARRAY ->
-                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmFuncArrayType))
+            SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
+                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType))
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
         }
 
@@ -111,7 +111,7 @@ class WasmFunctionCodegenContext(
         get() = inlineContextStack.firstOrNull()?.inlineFunctionSymbol ?: irFunction?.symbol
 
     val currentFileEntry: IrFileEntry?
-        get() = inlineContextStack.firstOrNull()?.irFileEntry ?: irFunction?.fileEntry
+        get() = inlineContextStack.firstOrNull()?.irFileEntry ?: functionFileEntry
 
     fun stepIntoInlinedFunction(inlineFunctionSymbol: IrFunctionSymbol?, irFileEntry: IrFileEntry) {
         inlineContextStack.push(InlineContext(inlineFunctionSymbol, irFileEntry))

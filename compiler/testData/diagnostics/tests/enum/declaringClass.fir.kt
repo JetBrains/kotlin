@@ -15,3 +15,6 @@ fun <E : Enum<E>> foo(values: Array<E>) {
     EnumSet.noneOf(values.first().<!UNRESOLVED_REFERENCE!>declaringClass<!>)
     EnumSet.noneOf(values.first().<!UNRESOLVED_REFERENCE!>getDeclaringClass<!>())
 }
+
+/* GENERATED_FIR_TAGS: capturedType, enumDeclaration, enumEntry, flexibleType, functionDeclaration, javaFunction,
+typeConstraint, typeParameter */

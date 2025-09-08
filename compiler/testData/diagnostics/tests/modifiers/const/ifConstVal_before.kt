@@ -24,3 +24,6 @@ const val multibranchIf = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>if (value == 1
 val nonConstFlag = true
 const val errorConstIf = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>if (nonConstFlag) 1 else 2<!>
 const val errorBranch = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>if (flag) nonConstFlag else false<!>
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, ifExpression, integerLiteral, propertyDeclaration, stringLiteral,
+whenExpression, whenWithSubject */

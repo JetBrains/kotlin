@@ -54,3 +54,6 @@ fun test7(l: List<String?>) {
 fun test8(l: List<Any>?) {
     l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, interfaceDeclaration, nullableType, stringLiteral, thisExpression, typeConstraint, typeParameter */

@@ -26,3 +26,5 @@ fun test() {
            <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!><!UNRESOLVED_REFERENCE!>zz<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!>
            )<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

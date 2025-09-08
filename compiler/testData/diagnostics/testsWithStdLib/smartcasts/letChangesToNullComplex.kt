@@ -10,3 +10,6 @@ fun foo(y: String?) {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.length // Smart cast is not possible
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, safeCall, stringLiteral */

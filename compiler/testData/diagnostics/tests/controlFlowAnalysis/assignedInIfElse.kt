@@ -20,3 +20,6 @@ fun foo(arg: Boolean) {
         return x.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, integerLiteral, localClass,
+localFunction, localProperty, propertyDeclaration */

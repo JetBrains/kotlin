@@ -14,3 +14,6 @@ class D {
     <!MULTIPLE_CONTEXT_LISTS!><!CONTEXT_CLASS_OR_CONSTRUCTOR!>context<!>(String)<!> context(Int)
     constructor()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, secondaryConstructor, stringLiteral */

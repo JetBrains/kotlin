@@ -52,3 +52,6 @@ open class A<T> : J() {
         fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, init, javaFunction,
+javaType, localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

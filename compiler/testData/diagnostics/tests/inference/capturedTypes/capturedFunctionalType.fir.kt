@@ -11,3 +11,6 @@ interface Box<T> where T : CharSequence {
 fun withClues(box: Box<<!UPPER_BOUND_VIOLATED!>out () -> Any?<!>>) {
     arrayOf({ "" }, box.value)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+outProjection, propertyDeclaration, stringLiteral, typeConstraint, typeParameter, vararg */

@@ -214,7 +214,6 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
             private tailrec fun getConstPropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?) : IrRichPropertyReference? {
                 return when {
                     expression == null -> null
-                    expectedReturn == null && expression is IrPropertyReference -> shouldNotBeCalled()
                     expectedReturn == null && expression is IrRichPropertyReference -> expression
                     expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
                     expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)

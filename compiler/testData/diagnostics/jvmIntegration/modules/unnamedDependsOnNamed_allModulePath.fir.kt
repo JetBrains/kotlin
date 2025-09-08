@@ -36,3 +36,5 @@ public class Usage {
         new foo.Foo();
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

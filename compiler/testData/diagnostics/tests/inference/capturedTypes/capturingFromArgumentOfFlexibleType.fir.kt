@@ -17,3 +17,6 @@ fun test() {
     Test.getFoo()
     id(Test.getFoo())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, javaFunction, nullableType,
+outProjection, typeParameter */

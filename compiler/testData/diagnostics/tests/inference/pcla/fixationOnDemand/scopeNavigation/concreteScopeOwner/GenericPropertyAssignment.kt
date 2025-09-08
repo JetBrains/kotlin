@@ -70,3 +70,8 @@ operator fun <Y> Y.setValue(reference: Y, property: Any?, value: Value) {}
 var <B> B.delegatedProperty: Value by Any()
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, safeCall, setter,
+typeParameter */

@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * FeatureC_baz(void * self);
+
 void * FeatureC_state_get(void * self);
 
 void * __root___FeatureC_init_allocate();

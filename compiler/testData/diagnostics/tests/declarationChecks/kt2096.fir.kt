@@ -14,3 +14,6 @@ interface Bar {
     val prop2 <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> <!DELEGATED_PROPERTY_IN_INTERFACE!>TODO()<!>
     val prop3 = <!PROPERTY_INITIALIZER_IN_INTERFACE!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, interfaceDeclaration, propertyDeclaration, propertyDelegate,
+starProjection */

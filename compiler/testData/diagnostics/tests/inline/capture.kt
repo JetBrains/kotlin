@@ -52,3 +52,6 @@ inline fun inlineFunWrongExtension(s: (p: Int) -> Unit) {
         <!USAGE_IS_NOT_INLINABLE!>s<!>.noInlineExt(11)
     } ()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline, integerLiteral,
+lambdaLiteral, noinline, thisExpression */

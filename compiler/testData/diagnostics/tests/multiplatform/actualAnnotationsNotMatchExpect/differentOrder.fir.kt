@@ -30,3 +30,6 @@ actual class AnnotationOrder
 
 @Ann4(arg2 = "2", arg1 = "1")
 actual fun differentArgumentsOrder() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral, vararg */

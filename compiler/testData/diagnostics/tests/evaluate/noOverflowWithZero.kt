@@ -11,3 +11,5 @@ fun test() {
 
     +0
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration, unaryExpression */

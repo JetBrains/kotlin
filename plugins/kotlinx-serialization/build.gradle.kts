@@ -1,6 +1,9 @@
 import org.gradle.api.publish.internal.PublicationInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 
@@ -10,6 +13,8 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
@@ -26,6 +31,39 @@ val coreJsIrRuntimeForTests: Configuration by configurations.creating {
     }
 }
 
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
+val nativeTargetName = HostManager.host.name
+
+val coreNativeRuntimeForTests by configurations.creating {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    }
+}
+
+val jsonNativeRuntimeForTests by configurations.creating {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    }
+}
+
+val serializationPluginForTests by configurations.creating
+
+fun DependencyHandlerScope.implicitKotlinApiDependency(notation: Any) {
+    implicitDependencies(notation) {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+}
+
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.k1")) { isTransitive = false }
@@ -33,41 +71,60 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
 
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(project(":compiler:fir:plugin-utils"))
-    testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(projectTests(":js:js.tests"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(project(":compiler:fir:plugin-utils"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testApi(project(":kotlinx-serialization-compiler-plugin.common"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.k1"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.k2"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.backend"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.common"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k1"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k2"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.backend"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
-    testApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
 
     coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0") { isTransitive = false }
     jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0") { isTransitive = false }
+    coreNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0") { isTransitive = false }
+    jsonNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0") { isTransitive = false }
+    serializationPluginForTests(project(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+
+    // Dependencies for Kotlin/Native test infra:
+    testFixturesApi(testFixtures(project(":native:native.tests")))
+    testFixturesApi(testFixtures(project(":native:native.tests:klib-ir-inliner")))
+
+    // Implicit dependencies on CORE and JSON native artifacts to run native tests on CI
+    listOf(
+        "linuxx64",
+        "macosarm64",
+        "macosx64",
+        "iossimulatorarm64",
+        "mingwx64"
+    ).forEach {
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-core-$it:1.7.0")
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-json-$it:1.7.0")
+    }
 }
 
 optInToExperimentalCompilerApi()
@@ -77,6 +134,9 @@ sourceSets {
     "test" {
         projectDefault()
         generatedTestDir()
+    }
+    "testFixtures" {
+        projectDefault()
     }
 }
 
@@ -116,14 +176,30 @@ artifacts {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    setUpJsIrBoxTests()
-}
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+        useJUnitPlatform {
+            // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
+            excludeTags("serialization-native")
+        }
 
-val generateTests by generator("org.jetbrains.kotlinx.serialization.TestGeneratorKt")
+        dependsOn(":dist")
+        workingDir = rootDir
+        setUpJsIrBoxTests()
+    }
+
+    nativeTestTask(
+        taskName = "nativeTest",
+        tag = "serialization-native", // Include all tests with the "serialization-native" tag
+        requirePlatformLibs = false,
+        customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
+        compilerPluginDependencies = listOf(serializationPluginForTests)
+    )
+
+    testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
+
+    withJvmStdlibAndReflect()
+}
 
 fun Test.setUpJsIrBoxTests() {
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)

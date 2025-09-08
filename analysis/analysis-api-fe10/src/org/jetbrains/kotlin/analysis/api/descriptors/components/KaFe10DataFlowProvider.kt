@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
-import org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
-import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastKind
-import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,7 +25,7 @@ internal class KaFe10DataFlowProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaBaseSessionComponent<KaFe10Session>(), KaDataFlowProvider, KaFe10SessionComponent {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this)
             val stableSmartCasts = bindingContext[BindingContext.SMARTCAST, this]
             val unstableSmartCasts = bindingContext[BindingContext.UNSTABLE_SMARTCAST, this]
@@ -55,7 +51,7 @@ internal class KaFe10DataFlowProvider(
     }
 
     override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this)
             val smartCasts = bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, this] ?: return emptyList()
             val call = bindingContext[BindingContext.CALL, this] ?: return emptyList()
@@ -78,7 +74,9 @@ internal class KaFe10DataFlowProvider(
         return KaBaseImplicitReceiverSmartCast(type.toKtType(analysisContext), kind)
     }
 
-    override fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
+    override fun computeExitPointSnapshot(
+        statements: List<KtExpression>,
+    ): KaDataFlowExitPointSnapshot = withPsiValidityAssertion(statements) {
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 }

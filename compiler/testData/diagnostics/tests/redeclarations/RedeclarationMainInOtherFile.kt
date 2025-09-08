@@ -20,3 +20,5 @@
 <!CONFLICTING_OVERLOADS!>fun main()<!> {}
 
 <!CONFLICTING_OVERLOADS!>fun nonmain()<!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, functionalType, lambdaLiteral, stringLiteral */

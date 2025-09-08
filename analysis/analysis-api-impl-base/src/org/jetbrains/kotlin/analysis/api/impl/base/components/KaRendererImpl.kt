@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaRenderer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -29,7 +28,7 @@ class KaRendererImpl(
 
     override fun KaType.render(renderer: KaTypeRenderer, position: Variance): String = withValidityAssertion {
         return with(analysisSession) {
-            val approximatedType = KaRendererTypeApproximator.TO_DENOTABLE.approximateType(useSiteSession, this@render, position)
+            val approximatedType = renderer.typeApproximator.approximateType(useSiteSession, this@render, position)
             prettyPrint { renderer.renderType(useSiteSession, approximatedType, this) }
         }
     }

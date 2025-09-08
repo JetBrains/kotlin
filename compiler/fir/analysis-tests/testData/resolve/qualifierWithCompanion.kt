@@ -18,3 +18,6 @@ fun test() {
 
     my.<!OPERATOR_MODIFIER_REQUIRED!>xx<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, localFunction,
+localProperty, objectDeclaration, propertyDeclaration */

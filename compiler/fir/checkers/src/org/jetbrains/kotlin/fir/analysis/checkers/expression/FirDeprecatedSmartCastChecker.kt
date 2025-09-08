@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.isDelegated
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 object FirDeprecatedSmartCastChecker : FirSmartCastExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirSmartCastExpression) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.UnstableSmartcastOnDelegatedProperties)) return // No need to run this checker
+        if (LanguageFeature.UnstableSmartcastOnDelegatedProperties.isEnabled()) return // No need to run this checker
         if (!expression.isStable) return // Unstable smartcasts are already errors.
 
         val source = expression.source ?: return

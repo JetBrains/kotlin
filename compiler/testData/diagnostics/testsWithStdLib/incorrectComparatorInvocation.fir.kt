@@ -4,3 +4,5 @@
 fun main(args: Array<String>) {
     val comparator = <!NO_COMPANION_OBJECT!>Comparator<Long?><!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

@@ -51,3 +51,6 @@ fun bar1(a: A?, aOther: A?): A {
     }
     return result
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast */

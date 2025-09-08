@@ -73,6 +73,7 @@ class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>) :
 class ConeUnresolvedNameError(
     val name: Name,
     val operatorToken: String? = null,
+    val receiverType: ConeKotlinType? = null,
 ) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $prettyReference"
@@ -156,10 +157,10 @@ class ConeConstraintSystemHasContradiction(
 class ConeAmbiguityError(
     val name: Name,
     val applicability: CandidateApplicability,
-    override val candidates: Collection<AbstractCandidate>
+    val candidatesWithErrors: Map<out AbstractCandidate, ConeDiagnostic?>
 ) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Ambiguity: $name, ${candidateSymbols.map { describeSymbol(it) }}"
-    override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = candidates.map { it.symbol }
+    override val candidates: Collection<AbstractCandidate> get() = candidatesWithErrors.keys
 }
 
 class ConeOperatorAmbiguityError(override val candidates: Collection<AbstractCallCandidate<*>>) : ConeDiagnosticWithCandidates {
@@ -381,7 +382,7 @@ class ConeUnknownLambdaParameterTypeDiagnostic : ConeDiagnostic {
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()
-        is FirCallableSymbol<*> -> symbol.callableId.toString()
+        is FirCallableSymbol<*> -> symbol.callableIdAsString()
         else -> "$symbol"
     }
 }
@@ -433,11 +434,6 @@ object ConeCallToDeprecatedOverrideOfHidden : ConeDiagnostic {
 class ConeTypeMismatch(val lowerType: ConeKotlinType, val upperType: ConeKotlinType) : ConeDiagnostic {
     override val reason: String
         get() = "Type mismatch: expected $upperType, actual $lowerType"
-}
-
-class ConeNoInferTypeMismatch(val lowerType: ConeKotlinType, val upperType: ConeKotlinType) : ConeDiagnostic {
-    override val reason: String
-        get() = "(@NoInfer) Type mismatch: expected $upperType, actual $lowerType"
 }
 
 /**

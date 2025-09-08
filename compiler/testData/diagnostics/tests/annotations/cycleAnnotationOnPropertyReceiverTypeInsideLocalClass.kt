@@ -10,3 +10,6 @@ fun topLevel() {
         val @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>42.property<!>) Int.property get() = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, integerLiteral, localClass,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver */

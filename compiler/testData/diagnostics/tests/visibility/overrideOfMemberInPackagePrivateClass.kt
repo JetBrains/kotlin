@@ -19,3 +19,5 @@ import test.*
 class KotlinClass : JavaBase2() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

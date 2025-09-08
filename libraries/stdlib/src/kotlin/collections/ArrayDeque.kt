@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -142,6 +142,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the first element from this deque and returns that removed element, or throws [NoSuchElementException] if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeFirst(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
         registerModification()
@@ -156,11 +157,13 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the first element from this deque and returns that removed element, or returns `null` if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeFirstOrNull(): E? = if (isEmpty()) null else removeFirst()
 
     /**
      * Removes the last element from this deque and returns that removed element, or throws [NoSuchElementException] if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeLast(): E {
         if (isEmpty()) throw NoSuchElementException("ArrayDeque is empty.")
         registerModification()
@@ -175,9 +178,11 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the last element from this deque and returns that removed element, or returns `null` if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeLastOrNull(): E? = if (isEmpty()) null else removeLast()
 
     // MutableList, MutableCollection
+    @IgnorableReturnValue
     public override fun add(element: E): Boolean {
         addLast(element)
         return true
@@ -272,6 +277,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         size += elements.size
     }
 
+    @IgnorableReturnValue
     public override fun addAll(elements: Collection<E>): Boolean {
         if (elements.isEmpty()) return false
 
@@ -281,6 +287,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return true
     }
 
+    @IgnorableReturnValue
     public override fun addAll(index: Int, elements: Collection<E>): Boolean {
         AbstractList.checkPositionIndex(index, size)
 
@@ -366,6 +373,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return internalGet(internalIndex(index))
     }
 
+    @IgnorableReturnValue
     public override fun set(index: Int, element: E): E {
         AbstractList.checkElementIndex(index, size)
 
@@ -385,7 +393,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             for (index in head until tail) {
                 if (element == elementData[index]) return index - head
             }
-        } else if (head >= tail) {
+        } else if (isNotEmpty() && head >= tail) {
             for (index in head until elementData.size) {
                 if (element == elementData[index]) return index - head
             }
@@ -404,7 +412,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
             for (index in tail - 1 downTo head) {
                 if (element == elementData[index]) return index - head
             }
-        } else if (head > tail) {
+        } else if (isNotEmpty() && head >= tail) {
             for (index in tail - 1 downTo 0) {
                 if (element == elementData[index]) return index + elementData.size - head
             }
@@ -416,6 +424,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return -1
     }
 
+    @IgnorableReturnValue
     public override fun remove(element: E): Boolean {
         val index = indexOf(element)
         if (index == -1) return false
@@ -423,6 +432,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return true
     }
 
+    @IgnorableReturnValue
     public override fun removeAt(index: Int): E {
         AbstractList.checkElementIndex(index, size)
 
@@ -468,8 +478,10 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
         return element
     }
 
+    @IgnorableReturnValue
     public override fun removeAll(elements: Collection<E>): Boolean = filterInPlace { !elements.contains(it) }
 
+    @IgnorableReturnValue
     public override fun retainAll(elements: Collection<E>): Boolean = filterInPlace { elements.contains(it) }
 
     private inline fun filterInPlace(predicate: (E) -> Boolean): Boolean {

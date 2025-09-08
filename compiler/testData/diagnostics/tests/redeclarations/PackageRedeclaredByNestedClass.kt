@@ -6,3 +6,5 @@ package a.b
 class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>a<!> {
     class b
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

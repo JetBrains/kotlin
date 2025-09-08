@@ -21,7 +21,8 @@ import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.absolute
+import kotlin.io.path.invariantSeparatorsPathString
 
 val DEFAULT_LOG_LEVEL = LogLevel.INFO
 
@@ -32,7 +33,7 @@ data class BuildOptions(
     val warningMode: WarningMode = WarningMode.Fail,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
-    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.DISABLED,
+    val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.AUTO,
     val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
@@ -115,7 +116,7 @@ data class BuildOptions(
 
     enum class IsolatedProjectsMode {
 
-        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.MAX_SUPPORTED]; Disabled in other cases */
+        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.G_8_5]; Disabled in other cases */
         AUTO,
 
         /** Always disable Isolated Projects */
@@ -125,7 +126,8 @@ data class BuildOptions(
         ENABLED;
 
         fun toBooleanFlag(gradleVersion: GradleVersion) = when (this) {
-            AUTO -> gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
+            // according to https://docs.gradle.org/current/userguide/isolated_projects.html#how_do_i_use_it
+            AUTO -> gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)
             DISABLED -> false
             ENABLED -> true
         }
@@ -258,6 +260,7 @@ data class BuildOptions(
         }
 
         if (androidVersion != null) {
+            arguments.add("-Dandroid_tools_version=${androidVersion}")
             arguments.add("-Pandroid_tools_version=${androidVersion}")
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
@@ -327,11 +330,11 @@ data class BuildOptions(
         }
 
         konanDataDir?.let {
-            arguments.add("-Pkonan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+            arguments.add("-Pkonan.data.dir=${konanDataDir.normalize().absolute().invariantSeparatorsPathString}")
         }
 
         if (kotlinUserHome != null) {
-            arguments.add("-Pkotlin.user.home=${kotlinUserHome.absolutePathString()}")
+            arguments.add("-Pkotlin.user.home=${kotlinUserHome.normalize().absolute().invariantSeparatorsPathString}")
         }
 
         if (compilerArgumentsLogLevel != null) {
@@ -394,7 +397,6 @@ data class BuildOptions(
         nativeOptions.enableKlibsCrossCompilation?.let {
             arguments.add("-Pkotlin.native.enableKlibsCrossCompilation=${it}")
         }
-
     }
 
     enum class ConfigurationCacheProblems {
@@ -444,27 +446,28 @@ fun BuildOptions.disableConfigurationCacheForGradle7(
 // TODO: KT-70416 :resolveIdeDependencies doesn't support Configuration Cache & Project Isolation
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
+fun BuildOptions.disableKlibsCrossCompilation() = copy(
+    nativeOptions = nativeOptions.copy(enableKlibsCrossCompilation = false)
+)
+
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
 
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
 
-fun BuildOptions.suppressWarningFromAgpWithGradle813(
-    currentGradleVersion: GradleVersion
-) = suppressDeprecationWarningsSinceGradleVersion(
-    gradleVersion = TestVersions.Gradle.G_8_13,
-    currentGradleVersion = currentGradleVersion,
-    reason =
-        """
-        AGP <8.11.0-alpha01 produced is* Groovy property deprecations warning. Remove this once AGP versions in tests is bump to those
-        containing the fix.
-        AGP issue: https://issuetracker.google.com/399393875
-        Relevant our issue: https://youtrack.jetbrains.com/issue/KT-71879 
-        """.trimIndent()
+/**
+ * Before 8.12 Gradle fails IP CC serialization with "cannot access 'Project.group' functionality on another project"
+ */
+fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(
+    currentGradleVersion: GradleVersion,
+) = copy(
+    isolatedProjects =
+        if (currentGradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_11)) isolatedProjects
+        else IsolatedProjectsMode.DISABLED
 )
 
 fun BuildOptions.suppressWarningForOldKotlinVersion(
-    currentGradleVersion: GradleVersion
+    currentGradleVersion: GradleVersion,
 ) = suppressDeprecationWarningsSinceGradleVersion(
     gradleVersion = TestVersions.Gradle.G_8_14,
     currentGradleVersion = currentGradleVersion,
@@ -476,6 +479,7 @@ fun BuildOptions.suppressWarningForOldKotlinVersion(
 
 // Lint tasks produces deprecation warning since Gradle 8.14: https://issuetracker.google.com/issues/408334529
 // On a non-first run if WarningMode was not changed, the Lint task does not produce a deprecation warning!
+// Fixed in AGP 8.12-alpha06
 fun BuildOptions.suppressAgpWarningSinceGradle814(
     currentGradleVersion: GradleVersion,
     warningMode: WarningMode = WarningMode.Summary,
@@ -490,3 +494,5 @@ fun BuildOptions.suppressAgpWarningSinceGradle814(
         else -> this
     }
 }
+
+fun rerunTask(taskName: String) = arrayOf(taskName, "--rerun")

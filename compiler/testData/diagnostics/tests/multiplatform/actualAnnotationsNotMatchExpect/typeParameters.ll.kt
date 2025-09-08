@@ -34,3 +34,6 @@ class TypealiasParamNotAcceptedImpl<A>
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>TypealiasParamNotAccepted<!><@Ann A> = TypealiasParamNotAcceptedImpl<A>
 
 actual fun <A> <!ACTUAL_WITHOUT_EXPECT!>withIncompatibility<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nullableType,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

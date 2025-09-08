@@ -12,10 +12,10 @@ import org.gradle.tooling.events.task.TaskSuccessResult
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
-import java.util.concurrent.TimeUnit
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
+import java.util.concurrent.TimeUnit
 
 
 internal fun getTaskResult(event: TaskFinishEvent) = when (val result = event.result) {
@@ -83,6 +83,7 @@ internal fun prepareData(
         taskResult = taskResult?.name,
         label = label,
         buildTimesMetrics = filterMetrics(metricsToShow, buildTimesMetrics),
+        dynamicBuildTimesMetrics = buildMetrics.buildTimes.dynamicBuildTimesMapMs(),
         performanceMetrics = filterMetrics(metricsToShow, performanceMetrics),
         projectName = projectName,
         taskName = taskPath,
@@ -140,7 +141,7 @@ private fun collectBuildMetrics(
     gradleTaskStartTime: Long? = null,
     taskFinishEventTime: Long? = null,
 ): Map<GradleBuildTime, Long> {
-    val taskBuildMetrics = HashMap<GradleBuildTime, Long>(buildMetrics?.buildTimes?.asMapMs())
+    val taskBuildMetrics = HashMap<GradleBuildTime, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
     val performanceMetrics = buildMetrics?.buildPerformanceMetrics?.asMap() ?: emptyMap()
     gradleTaskStartTime?.let { startTime ->
         performanceMetrics[GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION]?.let { actionStartTime ->
@@ -195,7 +196,7 @@ private fun collectTaskRecordTags(
 
 private fun getLanguageVersionTag(languageVersion: KotlinVersion): StatTag {
     return when {
-        languageVersion < KotlinVersion.KOTLIN_2_0 -> StatTag.KOTLIN_1
+        languageVersion < @Suppress("DEPRECATION") KotlinVersion.KOTLIN_2_0 -> StatTag.KOTLIN_1
         else -> StatTag.KOTLIN_2
     }
 }

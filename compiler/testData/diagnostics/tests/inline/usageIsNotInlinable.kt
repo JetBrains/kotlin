@@ -34,3 +34,6 @@ typealias TA2 = ((Any) -> Unit)?
 
 inline fun quxxxx1(c: (Any) -> Unit) = quxxx1(c)
 inline fun quxxxx2(c: (Any) -> Unit) = <!USAGE_IS_NOT_INLINABLE!>c<!>.quxxx2()
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, nullableType, safeCall,
+stringLiteral, thisExpression, typeAliasDeclaration */

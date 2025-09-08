@@ -1,7 +1,5 @@
-// FIR_IDENTICAL
 // ISSUE: KT-57192
 // Promise<Unit> wrongly raised NON_EXPORTABLE_TYPE
-// IGNORE_BACKEND_K1: JS_IR
 
 @file:OptIn(ExperimentalJsExport::class)
 import kotlin.js.Promise
@@ -9,11 +7,11 @@ import kotlin.js.Promise
 @JsExport
 fun fooInt(p: Promise<Int>): Promise<Int>? = p
 
-@JsExport
-fun fooUnitReturn(): Promise<Unit>? = null
+<!NON_EXPORTABLE_TYPE!>@JsExport
+fun fooUnitReturn(): Promise<Unit>?<!> = null
 
 @JsExport
-fun fooUnitArgument(p: Promise<Unit>) {
+fun fooUnitArgument(<!NON_EXPORTABLE_TYPE!>p: Promise<Unit><!>) {
     p.then {}
 }
 

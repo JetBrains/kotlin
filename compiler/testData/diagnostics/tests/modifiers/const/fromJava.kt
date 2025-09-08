@@ -26,3 +26,6 @@ fun main2() {}
 val q = A()
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>q.z<!>)
 fun main3() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, javaFunction, javaProperty, javaType,
+primaryConstructor, propertyDeclaration */

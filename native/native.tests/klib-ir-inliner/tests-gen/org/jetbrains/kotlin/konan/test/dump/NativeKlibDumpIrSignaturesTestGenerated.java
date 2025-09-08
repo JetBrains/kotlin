@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.dump;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/dump-signatures")
 @TestDataPath("$PROJECT_ROOT")
-@ClassicPipeline()
 public class NativeKlibDumpIrSignaturesTestGenerated extends AbstractNativeKlibDumpIrSignaturesTest {
   @Test
   public void testAllFilesPresentInDump_signatures() {
@@ -41,6 +39,12 @@ public class NativeKlibDumpIrSignaturesTestGenerated extends AbstractNativeKlibD
   @TestMetadata("imported_from_cinterop.kt")
   public void testImported_from_cinterop() {
     runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctions.kt")
+  public void testInlineFunctions() {
+    runTest("native/native.tests/testData/klib/dump-signatures/inlineFunctions.kt");
   }
 
   @Test

@@ -21,3 +21,6 @@ fun test_2() {
         is Sealed.A -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, isExpression, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration, sealed, whenExpression, whenWithSubject */

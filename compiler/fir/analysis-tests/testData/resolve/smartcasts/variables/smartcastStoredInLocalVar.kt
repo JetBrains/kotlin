@@ -96,3 +96,6 @@ fun test_6(a: String?) {
         a<!UNSAFE_CALL!>.<!>length // not ok
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, whileLoop */

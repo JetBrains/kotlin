@@ -8,3 +8,5 @@ fun <F, G> getMap() : Map<F, G> = throw Exception()
 fun bar123() {
     <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>getMap<!>(
 <!SYNTAX!><!>}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

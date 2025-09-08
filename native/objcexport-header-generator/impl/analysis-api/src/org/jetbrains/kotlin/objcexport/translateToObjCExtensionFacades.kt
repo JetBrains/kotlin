@@ -88,7 +88,7 @@ private fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedOb
             else {
                 /**
                  * Mapped types extensions should be handled as top level facades
-                 * @see [translateToObjCTopLevelFacade] and [isExtensionOfMappedObjCType]
+                 * @see [translateToObjCTopLevelFacade]
                  * @see [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getClassIfCategory] which K1 uses
                  * to differentiate extensions and top level callables
                  */

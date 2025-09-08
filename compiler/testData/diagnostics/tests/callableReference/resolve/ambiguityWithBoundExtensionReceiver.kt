@@ -14,3 +14,6 @@ class A {
         bar(::foo) checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension */

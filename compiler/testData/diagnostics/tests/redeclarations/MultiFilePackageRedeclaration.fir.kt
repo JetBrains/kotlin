@@ -6,3 +6,5 @@ class b {}
 package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
 // FILE: c.kt
 package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

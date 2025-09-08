@@ -5,3 +5,5 @@
 fun test(t: Throwable) {
     t.fillInStackTrace()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

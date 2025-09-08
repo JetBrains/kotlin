@@ -16,3 +16,6 @@ fun test() {
 }
 
 fun getAnswer() = 42
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, in, integerLiteral, lambdaLiteral,
+nullableType, typeParameter, vararg */

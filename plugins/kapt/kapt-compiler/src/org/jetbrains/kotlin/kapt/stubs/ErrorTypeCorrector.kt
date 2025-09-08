@@ -52,7 +52,7 @@ class ErrorTypeCorrector(
     private val typeKind: TypeKind,
     file: KtFile,
 ) {
-    private val defaultType = converter.treeMaker.FqName(Object::class.java.name)
+    private val defaultType = converter.treeMaker.FqName(Any::class.java.name)
 
     private val bindingContext get() = converter.kaptContext.bindingContext
     private val treeMaker get() = converter.treeMaker

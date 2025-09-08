@@ -42,7 +42,7 @@ object FirNamedVarargChecker : FirCallChecker(MppCheckerKind.Common) {
                 }
                 return
             }
-            val type = argument.expression.resolvedType.fullyExpandedType(context.session).lowerBoundIfFlexible()
+            val type = argument.expression.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
             if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 

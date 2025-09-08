@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]
@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=VALUE_PARAMETER]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Anno]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=Anno.position, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=position]
           TYPE_REFERENCE
@@ -68,7 +68,7 @@ PsiJetFileStubImpl[package=]
                                 LITERAL_STRING_TEMPLATE_ENTRY[text=str]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Unresolved]
-  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Foo, superNames=[]]
       CLASS_BODY

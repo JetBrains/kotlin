@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
@@ -405,8 +405,8 @@ private class BackendChecker(
             }
         }
 
-        if (callee.annotations.hasAnnotation(RuntimeNames.cCall))
-            checkCanGenerateCCall(expression, isInvoke = false)
+        if (callee.isCFunctionOrGlobalAccessor())
+            checkCanGenerateCFunctionCallOrGlobalAccess(expression, isInvoke = false)
 
         when (val intrinsicType = tryGetIntrinsicType(expression)) {
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
@@ -431,7 +431,7 @@ private class BackendChecker(
                 checkCanGenerateCFunctionPointer(target as IrSimpleFunction, expression)
             }
             IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
-                checkCanGenerateCCall(expression, isInvoke = true)
+                checkCanGenerateCFunctionCallOrGlobalAccess(expression, isInvoke = true)
             }
             IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 
@@ -457,8 +457,6 @@ private class BackendChecker(
 
                     IntrinsicType.INTEROP_NARROW -> if (receiverTypeIndex < typeOperandIndex)
                         reportError(expression, "unable to narrow ${receiver.type.classFqName} to ${typeOperand.classFqName}")
-
-                    else -> error(intrinsicType)
                 }
             }
             IntrinsicType.INTEROP_CONVERT -> {
@@ -495,7 +493,7 @@ private class BackendChecker(
                             reportError(it, "incorrect value for binary data: $value")
                     }
                 }
-                Symbols.isTypeOfIntrinsic(callee.symbol) ->
+                PreSerializationSymbols.isTypeOfIntrinsic(callee.symbol) ->
                     checkIrKType(expression, expression.typeArguments[0]!!)
             }
         }
@@ -516,7 +514,7 @@ private class BackendChecker(
     private fun checkCanReferenceFunction(callee: IrFunction, expression: IrExpression) {
         // Corresponds to the check in [KotlinToCCallBuilder.handleArgumentForVarargParameter].
         if (callee.parameters.any { it.isVararg }) {
-            if (callee.annotations.hasAnnotation(RuntimeNames.cCall))
+            if (callee.isCFunctionOrGlobalAccessor())
                 reportError(expression, "callable references to variadic C functions are not supported")
             if (callee is IrConstructor && callee.getObjCInitMethod() != null
                     || callee.getObjCFactoryInitMethodInfo() != null
@@ -616,7 +614,7 @@ private class BackendChecker(
     }
 }
 
-private fun BackendChecker.checkCanGenerateCCall(expression: IrCall, isInvoke: Boolean) {
+private fun BackendChecker.checkCanGenerateCFunctionCallOrGlobalAccess(expression: IrCall, isInvoke: Boolean) {
     val callee = expression.symbol.owner
 
     if (isInvoke) {

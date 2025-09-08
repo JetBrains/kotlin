@@ -1,5 +1,10 @@
 import kotlin.reflect.KClass
 
+fun compileLongAsBigInt(): Boolean {
+    val long = 1L
+    return js("typeof long === 'bigint'").unsafeCast<Boolean>()
+}
+
 fun box(): String {
     check(js("Object"), "Any", Any::class)
     check(js("String"), "String", String::class)
@@ -21,7 +26,13 @@ fun box(): String {
     check(js("Int8Array"), "ByteArray", ByteArray::class)
     check(js("Int16Array"), "ShortArray", ShortArray::class)
     check(js("Int32Array"), "IntArray", IntArray::class)
-    check(js("Array"), "LongArray", LongArray::class)
+
+    if (compileLongAsBigInt()) {
+        check(js("BigInt64Array"), "LongArray", LongArray::class)
+    } else {
+        check(js("Array"), "LongArray", LongArray::class)
+    }
+
     check(js("Float32Array"), "FloatArray", FloatArray::class)
     check(js("Float64Array"), "DoubleArray", DoubleArray::class)
 
@@ -38,7 +49,13 @@ fun box(): String {
     check(js("Int8Array"), "ByteArray", byteArrayOf())
     check(js("Int16Array"), "ShortArray", shortArrayOf())
     check(js("Int32Array"), "IntArray", intArrayOf())
-    check(js("Array"), "LongArray", longArrayOf())
+
+    if (compileLongAsBigInt()) {
+        check(js("BigInt64Array"), "LongArray", longArrayOf())
+    } else {
+        check(js("Array"), "LongArray", longArrayOf())
+    }
+
     check(js("Float32Array"), "FloatArray", floatArrayOf())
     check(js("Float64Array"), "DoubleArray", doubleArrayOf())
 

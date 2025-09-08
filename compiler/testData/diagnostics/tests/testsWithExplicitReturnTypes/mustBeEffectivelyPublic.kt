@@ -22,3 +22,6 @@ public fun f() {
     }
     LocalClass().foo = 1
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, localClass, localProperty, override, propertyDeclaration */

@@ -7,3 +7,5 @@ fun foo(d: Any?) {
 }
 
 fun doString(s: String) = s
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, isExpression, nullableType, smartcast */

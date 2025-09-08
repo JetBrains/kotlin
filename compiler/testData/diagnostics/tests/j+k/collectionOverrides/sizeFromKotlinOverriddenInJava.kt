@@ -14,3 +14,5 @@ abstract class MyList<G> : Collection<G> {}
 fun main(a: A<String>) {
     a.size
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, typeParameter */

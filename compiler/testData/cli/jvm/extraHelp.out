@@ -59,7 +59,7 @@ where advanced options include:
                              The default value is 'enable'.
   -Xjspecify-annotations=ignore|strict|warn
                              Specify the behavior of 'jspecify' annotations.
-                             The default value is 'warn'.
+                             The default value is 'strict'.
   -Xjvm-default={all|all-compatibility|disable}
                              This option is deprecated. Migrate to -jvm-default as follows:
                              -Xjvm-default=disable            -> -jvm-default=disable
@@ -134,13 +134,17 @@ where advanced options include:
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xvalue-classes            Enable experimental value classes.
-  -Xir-inliner               Inline functions using the IR inliner instead of the bytecode inliner.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
-  -Xuse-k2-kapt              Enable the experimental support for K2 KAPT.
   -Xcompile-builtins-as-part-of-stdlib
                              Enable behaviour needed to compile builtins as part of JVM stdlib
   -Xoutput-builtins-metadata Output builtins metadata as .kotlin_builtins files
   -Xannotations-in-metadata  Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.
+  -Xwhen-expressions={indy|inline}
+                             Select the code generation scheme for type-checking 'when' expressions:
+                             -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and
+                                                             following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+                             -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+                             The default value is 'inline'.
   -Xrepl                     Run Kotlin REPL (deprecated)
   -Xno-inline                Disable method inlining.
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
@@ -151,13 +155,23 @@ where advanced options include:
   -Xplugin=<path>            Load plugins from the given classpath.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
+  -Xcompiler-plugin-order=<pluginId1>><pluginId2>
+                             Specify an execution order constraint for compiler plugins.
+                             Order constraint can be specified using the 'pluginId' of compiler plugins.
+                             The first specified plugin will be executed before the second plugin.
+                             Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.
   -Xmulti-platform           Enable language support for multiplatform projects.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xinline-classes           Enable experimental inline classes.
   -Xreport-perf              Report detailed performance statistics.
-  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
+  -Xdetailed-perf            Enable more detailed performance statistics (Experimental).
+                             For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+                             For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
+                             Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
+                             Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
@@ -177,7 +191,6 @@ where advanced options include:
   -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xprofile-phases           Profile backend phases.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
-  -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
@@ -205,6 +218,9 @@ where advanced options include:
   -Xcontext-parameters       Enable experimental context parameters.
   -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
+  -Xdata-flow-based-exhaustiveness
+                             Enable `when` exhaustiveness improvements that rely on data-flow analysis.
+  -Xexplicit-backing-fields  Enable experimental language support for explicit backing fields.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
   -Xenable-incremental-compilation
@@ -222,6 +238,11 @@ where advanced options include:
   -Xfragment-dependency=<fragment name>:<path>
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+                             The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+
+  -Xfragment-friend-dependency=<fragment name>:<path>
+                             Declare common klib friend dependencies for the specific fragment.
+                             This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 
   -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
@@ -245,6 +266,17 @@ where advanced options include:
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
+  -Xallow-contracts-on-more-functions
+                             Allow contracts on some operators and accessors, and allow checks for erased types.
+  -Xallow-condition-implies-returns-contracts
+                             Allow contracts that specify a limited conditional returns postcondition.
+  -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
+  -Xname-based-destructuring=only-syntax|name-mismatch|complete
+                             Enables the following destructuring features:
+                             -Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
+                             -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
+                             -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

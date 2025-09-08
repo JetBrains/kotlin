@@ -34,3 +34,7 @@ fun main() {
     E.f() // Resolves to (2) in old FE (Resolves to (1) in FIR)
     E.f.invoke() // Resolves to (1) in old FE and FIR
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localFunction, localProperty, nestedClass, objectDeclaration, operator, propertyDeclaration,
+stringLiteral, typeWithExtension */

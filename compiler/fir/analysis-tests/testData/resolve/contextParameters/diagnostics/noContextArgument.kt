@@ -24,3 +24,6 @@ fun test(f: context(String) () -> Unit) {
     <!NO_CONTEXT_ARGUMENT!>f<!>()
     <!NO_CONTEXT_ARGUMENT!>legacyContextReceiver<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType,
+nullableType, typeParameter, typeWithContext */

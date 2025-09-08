@@ -18,3 +18,4 @@ fun main() {
     reformat(normalizeCase = "first",str = "",<!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>"second"<!>,<!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>false<!>,<!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>true<!>, <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>'s'<!> )
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

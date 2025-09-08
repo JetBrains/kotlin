@@ -8,3 +8,5 @@ suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendCoroutine
     c.resumeWithException(exception)
     COROUTINE_SUSPENDED
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, suspend */

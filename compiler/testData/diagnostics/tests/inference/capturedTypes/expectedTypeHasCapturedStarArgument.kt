@@ -22,3 +22,7 @@ class B<V> {
 fun foo(a: A<*>) {
   B.from(a).bar { C.createA() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, companionObject, funInterface, functionDeclaration,
+interfaceDeclaration, lambdaLiteral, nullableType, objectDeclaration, outProjection, samConversion, starProjection,
+typeParameter */

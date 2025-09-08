@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -47,6 +46,7 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.ImplicitConstructor,
     KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
     KtFakeSourceElementKind.SamConstructor,
+    KtFakeSourceElementKind.JavaRecordComponentFunction,
 )
 
 @OptIn(SuspiciousFakeSourceCheck::class)
@@ -94,13 +94,22 @@ internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiEleme
 }
 
 internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
-    get() = kaSymbolModalityByModifiers ?: when {
-        isTopLevel || isLocal -> KaSymbolModality.FINAL
+    get() {
+        val modalityByModifiers = kaSymbolModalityByModifiers
+        return when {
+            modalityByModifiers != null -> when {
+                // KT-80178: interface members with no body have implicit ABSTRACT modality
+                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                else -> modalityByModifiers
+            }
 
-        // Green code cannot have those modifiers with other modalities
-        hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+            isTopLevel || isLocal -> KaSymbolModality.FINAL
 
-        else -> null
+            // Green code cannot have those modifiers with other modalities
+            hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+
+            else -> null
+        }
     }
 
 internal val KtDestructuringDeclarationEntry.entryName: Name
@@ -109,7 +118,7 @@ internal val KtDestructuringDeclarationEntry.entryName: Name
 internal val KtParameter.parameterName: Name
     get() = when {
         destructuringDeclaration != null -> SpecialNames.DESTRUCT
-        isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        name == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
         else -> nameAsSafeName
     }
 
@@ -126,11 +135,20 @@ internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
     }
 
 internal val KtProperty.kaSymbolModality: KaSymbolModality?
-    get() = kaSymbolModalityByModifiers ?: when {
+    get() {
+        val modalityByModifiers = kaSymbolModalityByModifiers
+        return when {
+            modalityByModifiers != null -> when {
+                // KT-80178: interface members with no body have implicit ABSTRACT modality
+                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                else -> modalityByModifiers
+            }
 
-        // Green code cannot have those modifiers with other modalities
-        hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
-        else -> null
+            // Green code cannot have those modifiers with other modalities
+            hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
+
+            else -> null
+        }
     }
 
 internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
@@ -148,10 +166,17 @@ internal val KtNamedFunction.visibility: Visibility?
         else -> visibilityByModifiers
     }
 
-internal val KtClassOrObject.visibility: Visibility?
-    get() = when {
-        isLocal -> Visibilities.Local
-        else -> visibilityByModifiers
+/**
+ * The compiler forces the class-like declarations to have proper visibility right
+ * away during their constructions and forbids its changes later, so the visibility might be
+ * computed from the PSI directly
+ */
+internal val KtClassLikeDeclaration.visibility: Visibility
+    get() = when (this) {
+        // TODO: KT-80716 replaced with native isLocal check
+        is KtTypeAlias if getClassId() == null -> Visibilities.Local
+        is KtClassOrObject if isLocal -> Visibilities.Local
+        else -> visibilityByModifiers ?: Visibilities.Public
     }
 
 internal val KtProperty.visibility: Visibility?
@@ -200,7 +225,7 @@ internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): 
  * The implementation is aligned with [PsiRawFirBuilder][org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirPropertyAccessor]
  */
 internal val KtProperty.hasRegularSetter: Boolean
-    get() = isVar && hasDelegate() || setter?.isRegularAccessor == true
+    get() = isVar && hasDelegate() || setter?.hasBody() == true
 
 /**
  * **true** if for [this] property should be created [KaFirPropertyGetterSymbol][org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertyGetterSymbol]
@@ -209,15 +234,8 @@ internal val KtProperty.hasRegularSetter: Boolean
  * The implementation is aligned with [PsiRawFirBuilder][org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.toFirPropertyAccessor]
  */
 internal val KtProperty.hasRegularGetter: Boolean
-    get() = hasDelegate() || getter?.isRegularAccessor == true
+    get() = hasDelegate() || getter?.hasBody() == true
 
-/**
- * Only [KtPropertyAccessor.hasBody] check should be enough, but we need [KtFile.isCompiled] check
- * to work around the case with [loadProperty][org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirMemberDeserializer.loadProperty]
- * as all deserialized properties should have regular accessors, but they don't have bodies.
- *
- * @see hasRegularGetter
- * @see hasRegularSetter
- */
-private val KtPropertyAccessor.isRegularAccessor: Boolean
-    get() = hasBody() || containingKtFile.isCompiled
+context(callable: KtCallableDeclaration)
+private val KaSymbolModality.isOpenFromInterface: Boolean
+    get() = this == KaSymbolModality.OPEN && (callable.containingClassOrObject as? KtClass)?.isInterface() == true

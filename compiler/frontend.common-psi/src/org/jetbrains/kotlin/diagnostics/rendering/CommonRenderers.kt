@@ -66,6 +66,10 @@ object CommonRenderers {
     }
 
     @JvmStatic
+    fun <T> onNextLines(itemRenderer: ContextIndependentParameterRenderer<T>): ContextIndependentParameterRenderer<Collection<T>> =
+        Renderer { elements -> elements.joinToString(separator = "\n", prefix = "\n", transform = itemRenderer::render) }
+
+    @JvmStatic
     fun <Declaration, Data> renderConflictingSignatureData(
         signatureKind: String,
         sortUsing: Comparator<Declaration>,

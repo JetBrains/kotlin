@@ -75,3 +75,7 @@ class ErrorDestructuring {
     val <!SYNTAX!>(a, b)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
     val <!SYNTAX!>(c, d)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, enumDeclaration,
+funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, nullableType,
+objectDeclaration, override, propertyDeclaration, typeAliasDeclaration, typeConstraint, typeParameter */

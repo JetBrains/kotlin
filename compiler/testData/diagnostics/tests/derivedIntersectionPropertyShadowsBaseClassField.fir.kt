@@ -22,3 +22,6 @@ class Derived : Proxy, Intermediate() {
         x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, javaType,
+propertyDeclaration, stringLiteral */

@@ -18,3 +18,6 @@ fun foo() {
         104
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

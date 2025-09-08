@@ -5,3 +5,5 @@ fun test(x: Int)  {
     while (true)
         <!UNREACHABLE_CODE!><!VAL_REASSIGNMENT!>x<!> =<!> break
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, functionDeclaration, whileLoop */

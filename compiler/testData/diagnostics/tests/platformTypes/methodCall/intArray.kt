@@ -16,3 +16,5 @@ fun test(ia: IntArray) {
     J().intArr(ia)
     J().intArr(null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType */

@@ -44,7 +44,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         val session = context.session
-        val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(session) ?: return
+        val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol() ?: return
 
         if (containingClassSymbol.isParcelize(session, parcelizeAnnotations)) {
             val fromPrimaryConstructor = declaration.fromPrimaryConstructor ?: false

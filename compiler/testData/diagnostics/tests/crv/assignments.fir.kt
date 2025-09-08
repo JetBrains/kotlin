@@ -46,3 +46,6 @@ fun nested(map: List<MutableMap<String, String>>, l2: MyList<MyMap<String, Strin
     <!RETURN_VALUE_NOT_USED!>l2.set(1, MyMap())<!>
     <!RETURN_VALUE_NOT_USED!>l2[0]["b"]<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classDeclaration, functionDeclaration, integerLiteral,
+nullableType, operator, stringLiteral, typeParameter */

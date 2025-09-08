@@ -15,3 +15,6 @@ class Buildee<TV>
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return Buildee<PTV>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, typeParameter, typeWithExtension */

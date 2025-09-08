@@ -15,3 +15,5 @@ public class Foo extends InjectedEmptySuperClass {
     @kotlin.annotations.jvm.KotlinActual
     public void foo(){}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor */

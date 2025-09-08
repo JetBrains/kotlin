@@ -14,3 +14,5 @@ fun setup(configuration: Configuration<*>) {
         directoryPath
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, lambdaLiteral, starProjection */

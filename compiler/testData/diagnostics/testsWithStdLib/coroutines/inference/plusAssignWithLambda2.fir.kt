@@ -19,3 +19,6 @@ fun main() {
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total): A { return A() })
     newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(::foo)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+localProperty, nullableType, operator, propertyDeclaration, typeParameter */

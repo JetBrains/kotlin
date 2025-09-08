@@ -26,6 +26,7 @@ fun test1(): String? {
 fun test2(): String? {
     class Local : I {
         final override val number: Number
+            @Suppress("WRONG_MODIFIER_TARGET")
             internal field = 42
     }
 
@@ -38,8 +39,10 @@ fun test2(): String? {
 
 fun test3(): String? {
     val it = object : I {
+        @Suppress("INCONSISTENT_BACKING_FIELD_TYPE", "NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
         override val number: Number
-            field = "100"
+        field = "100"
+            @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
             get() {
                 return field.length
             }

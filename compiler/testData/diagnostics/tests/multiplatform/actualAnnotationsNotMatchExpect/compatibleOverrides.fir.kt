@@ -17,3 +17,5 @@ actual class CompatibleOverrides {
 
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun foo(withArg: Any) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration */

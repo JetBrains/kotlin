@@ -1096,6 +1096,65 @@ class ArraysTest {
         assertStaticTypeIs<Array<in Number>>(c3)
     }
 
+    @Test fun copyOfWithInitializer() {
+        assertArrayNotSameButEquals(booleanArrayOf(), booleanArrayOf(false, false, false).copyOf(0) { true })
+        assertArrayNotSameButEquals(booleanArrayOf(false, false, false), booleanArrayOf(false, false, false).copyOf(3) { true })
+        assertArrayNotSameButEquals(booleanArrayOf(false, false, false, true, true), booleanArrayOf(false, false, false).copyOf(5) { true })
+        assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf().copyOf(3) { it % 2 == 0 })
+        assertFailsWith<IllegalArgumentException> { booleanArrayOf(false).copyOf(-1) { true } }
+
+        assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).copyOf(0) { -1 })
+        assertArrayNotSameButEquals(intArrayOf(1, 2, 3), intArrayOf(1, 2, 3).copyOf(3) { -1 })
+        assertArrayNotSameButEquals(intArrayOf(1, 2, 3, -1, -1), intArrayOf(1, 2, 3).copyOf(5) { -1 })
+        assertArrayNotSameButEquals(intArrayOf(0, 1, 2), intArrayOf().copyOf(3) { it })
+        assertFailsWith<IllegalArgumentException> { intArrayOf(1, 2, 3).copyOf(-1) { 0 } }
+
+        assertArrayNotSameButEquals(longArrayOf(), longArrayOf(1, 2, 3).copyOf(0) { -1L })
+        assertArrayNotSameButEquals(longArrayOf(1, 2, 3), longArrayOf(1, 2, 3).copyOf(3) { -1L })
+        assertArrayNotSameButEquals(longArrayOf(1, 2, 3, -1, -1), longArrayOf(1, 2, 3).copyOf(5) { -1L })
+        assertArrayNotSameButEquals(longArrayOf(0, 1, 2), longArrayOf().copyOf(3) { it.toLong() })
+        assertFailsWith<IllegalArgumentException> { longArrayOf(1, 2, 3).copyOf(-1) { 0L } }
+
+        assertArrayNotSameButEquals(shortArrayOf(), shortArrayOf(1, 2, 3).copyOf(0) { -1 })
+        assertArrayNotSameButEquals(shortArrayOf(1, 2, 3), shortArrayOf(1, 2, 3).copyOf(3) { -1 })
+        assertArrayNotSameButEquals(shortArrayOf(1, 2, 3, -1, -1), shortArrayOf(1, 2, 3).copyOf(5) { -1 })
+        assertArrayNotSameButEquals(shortArrayOf(0, 1, 2), shortArrayOf().copyOf(3) { it.toShort() })
+        assertFailsWith<IllegalArgumentException> { shortArrayOf(1, 2, 3).copyOf(-1) { 0 } }
+
+        assertArrayNotSameButEquals(byteArrayOf(), byteArrayOf(1, 2, 3).copyOf(0) { -1 })
+        assertArrayNotSameButEquals(byteArrayOf(1, 2, 3), byteArrayOf(1, 2, 3).copyOf(3) { -1 })
+        assertArrayNotSameButEquals(byteArrayOf(1, 2, 3, -1, -1), byteArrayOf(1, 2, 3).copyOf(5) { -1 })
+        assertArrayNotSameButEquals(byteArrayOf(0, 1, 2), byteArrayOf().copyOf(3) { it.toByte() })
+        assertFailsWith<IllegalArgumentException> { byteArrayOf(1, 2, 3).copyOf(-1) { 0 } }
+
+        assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a', 'b', 'c').copyOf(0) { '-' })
+        assertArrayNotSameButEquals(charArrayOf('a', 'b', 'c'), charArrayOf('a', 'b', 'c').copyOf(3) { '-' })
+        assertArrayNotSameButEquals(charArrayOf('a', 'b', 'c', '-', '-'), charArrayOf('a', 'b', 'c').copyOf(5) { '-' })
+        assertArrayNotSameButEquals(charArrayOf('A', 'B', 'C'), charArrayOf().copyOf(3) { ('A'.code + it).toChar() })
+        assertFailsWith<IllegalArgumentException> { charArrayOf('a', 'b', 'c').copyOf(-1) { '-' } }
+
+        assertArrayNotSameButEquals(floatArrayOf(), floatArrayOf(1.0f, 2.0f, 3.0f).copyOf(0) { Float.NaN })
+        assertArrayNotSameButEquals(floatArrayOf(1.0f, 2.0f, 3.0f), floatArrayOf(1.0f, 2.0f, 3.0f).copyOf(3) { Float.NaN })
+        assertArrayNotSameButEquals(floatArrayOf(1.0f, 2.0f, 3.0f, -0.0f), floatArrayOf(1.0f, 2.0f, 3.0f).copyOf(4) { -0.0f })
+        assertArrayNotSameButEquals(floatArrayOf(0.0f, 1.0f, 2.0f), floatArrayOf().copyOf(3) { it.toFloat() })
+        assertFailsWith<IllegalArgumentException> { floatArrayOf(1.0f, 2.0f, 3.0f).copyOf(-1) { 0.0f } }
+
+        assertArrayNotSameButEquals(doubleArrayOf(), doubleArrayOf(1.0, 2.0, 3.0).copyOf(0) { Double.NaN })
+        assertArrayNotSameButEquals(doubleArrayOf(1.0, 2.0, 3.0), doubleArrayOf(1.0, 2.0, 3.0).copyOf(3) { Double.NaN })
+        assertArrayNotSameButEquals(doubleArrayOf(1.0, 2.0, 3.0, -0.0), doubleArrayOf(1.0, 2.0, 3.0).copyOf(4) { -0.0 })
+        assertArrayNotSameButEquals(doubleArrayOf(0.0, 1.0, 2.0), doubleArrayOf().copyOf(3) { it.toDouble() })
+        assertFailsWith<IllegalArgumentException> { doubleArrayOf(1.0, 2.0, 3.0).copyOf(-1) { 0.0 } }
+
+        assertArrayNotSameButEquals(arrayOf(), arrayOf("a", "b", "c").copyOf(0) { "" })
+        assertArrayNotSameButEquals(arrayOf("a", "b", "c"), arrayOf("a", "b", "c").copyOf(3) { "" })
+        assertArrayNotSameButEquals(arrayOf("a", "b", "c", "", ""), arrayOf("a", "b", "c").copyOf(5) { "" })
+        assertArrayNotSameButEquals(arrayOf("0", "1", "2"), arrayOf<String>().copyOf(3) { it.toString() })
+        assertFailsWith<IllegalArgumentException> { arrayOf("zzz").copyOf(-1) { "" } }
+
+        assertArrayNotSameButEquals(arrayOf("a", "b", "c", null), arrayOf<String?>("a", "b", "c").copyOf(4) { null })
+
+    }
+
     @Test fun reduceIndexed() {
         expect(-1) { intArrayOf(1, 2, 3).reduceIndexed { index, a, b -> index + a - b } }
         expect(-1.toLong()) { longArrayOf(1, 2, 3).reduceIndexed { index, a, b -> index + a - b } }

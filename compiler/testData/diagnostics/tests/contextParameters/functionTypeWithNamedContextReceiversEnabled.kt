@@ -6,3 +6,5 @@ fun foo(
 ) {
     foo { <!UNRESOLVED_REFERENCE!>s<!> }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithContext */

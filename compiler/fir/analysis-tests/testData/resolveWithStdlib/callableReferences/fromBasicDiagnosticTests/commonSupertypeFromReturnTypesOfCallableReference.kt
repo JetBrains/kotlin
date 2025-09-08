@@ -11,3 +11,6 @@ fun <K> select(x: K, y: K): K = TODO()
 fun test() {
     val a = select(::foo, ::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, typeParameter */

@@ -131,3 +131,9 @@ fun operatorContainerUsage(s: String, a: AnotherContainer) {
     val res3 = <!OPT_IN_USAGE_ERROR!>res1<!> <!OPT_IN_USAGE_ERROR!>><!> <!OPT_IN_USAGE_ERROR!>res2<!>
     for (c in <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>a<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetProperty,
+anonymousObjectExpression, classDeclaration, classReference, comparisonExpression, data, destructuringDeclaration,
+forLoop, funWithExtensionReceiver, functionDeclaration, integerLiteral, interfaceDeclaration, javaFunction,
+localProperty, nullableType, objectDeclaration, operator, override, primaryConstructor, propertyDeclaration,
+propertyDelegate, stringLiteral, typeAliasDeclaration */

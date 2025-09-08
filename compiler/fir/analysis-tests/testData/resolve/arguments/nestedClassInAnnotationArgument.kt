@@ -10,3 +10,6 @@ class A {
 
     object EmptyList
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, starProjection */

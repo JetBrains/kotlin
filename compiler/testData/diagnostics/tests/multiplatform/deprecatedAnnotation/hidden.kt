@@ -32,3 +32,5 @@ fun main() {
     <!UNRESOLVED_REFERENCE!>B<!>()
     foo("")
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, stringLiteral */

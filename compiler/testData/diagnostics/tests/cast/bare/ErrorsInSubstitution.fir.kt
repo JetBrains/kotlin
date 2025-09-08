@@ -8,3 +8,7 @@ fun f(p: B<<!UNRESOLVED_REFERENCE!>Foo<!>>): Any {
     val v = p as G
     return checkSubtype<G<*>>(v)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, localProperty, nullableType, propertyDeclaration, starProjection, typeParameter,
+typeWithExtension */

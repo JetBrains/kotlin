@@ -1,10 +1,10 @@
 AnnoWithCustomName.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomName, fqName=AnnoWithCustomName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomName, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnoWithCustomName]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomName]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=AnnoWithCustomName.string, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=string]
             TYPE_REFERENCE
@@ -13,12 +13,12 @@ AnnoWithCustomName.kt:
 
 
 AnnoWithCustomNameAndDefaultValue.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomNameAndDefaultValue, fqName=AnnoWithCustomNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomNameAndDefaultValue, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnoWithCustomNameAndDefaultValue]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomNameAndDefaultValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=AnnoWithCustomNameAndDefaultValue.string, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=string]
             TYPE_REFERENCE
@@ -27,12 +27,12 @@ AnnoWithCustomNameAndDefaultValue.kt:
 
 
 AnnoWithDefaultName.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultName, fqName=AnnoWithDefaultName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultName, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnoWithDefaultName]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultName]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=AnnoWithDefaultName.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
             TYPE_REFERENCE
@@ -41,12 +41,12 @@ AnnoWithDefaultName.kt:
 
 
 AnnoWithDefaultNameAndDefaultValue.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultNameAndDefaultValue, fqName=AnnoWithDefaultNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultNameAndDefaultValue, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnoWithDefaultNameAndDefaultValue]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultNameAndDefaultValue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=AnnoWithDefaultNameAndDefaultValue.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
             TYPE_REFERENCE
@@ -55,12 +55,12 @@ AnnoWithDefaultNameAndDefaultValue.kt:
 
 
 AnnoWithVararg.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithVararg, fqName=AnnoWithVararg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVararg, superNames=[]]
       MODIFIER_LIST[public annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnoWithVararg]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVararg]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=AnnoWithVararg.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
             MODIFIER_LIST[vararg]
@@ -70,12 +70,12 @@ AnnoWithVararg.kt:
 
 
 AnnoWithVarargAndDefaultVakue.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithVarargAndDefaultVakue, fqName=AnnoWithVarargAndDefaultVakue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVarargAndDefaultVakue, superNames=[]]
       MODIFIER_LIST[public annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnoWithVarargAndDefaultVakue]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVarargAndDefaultVakue]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=AnnoWithVarargAndDefaultVakue.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
             MODIFIER_LIST[vararg]

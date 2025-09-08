@@ -21,7 +21,7 @@ fun Test(value: InlineClass) {
 @Composable
 fun Test(value: InlineClass, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)P(0:InlineClass)<A()>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(value:InlineClass)<A()>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(value))) 0b0100 else 0b0010

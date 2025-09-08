@@ -7,3 +7,6 @@ internal class Z<K> {
         return map.getOrPut(key, ::<!UNSUPPORTED!>producer<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, nullableType, propertyDeclaration,
+typeParameter */

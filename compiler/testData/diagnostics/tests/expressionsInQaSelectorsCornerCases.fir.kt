@@ -34,3 +34,7 @@ fun rain() {
 
     <!NO_RECEIVER_ALLOWED!>5.(Int::x)()<!>.inv()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+integerLiteral, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver, thisExpression,
+typeParameter, typeWithExtension */

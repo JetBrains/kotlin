@@ -20,3 +20,6 @@ class MyController {
     fun setContext() {
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, functionDeclaration,
+javaProperty, objectDeclaration, primaryConstructor, propertyDeclaration */

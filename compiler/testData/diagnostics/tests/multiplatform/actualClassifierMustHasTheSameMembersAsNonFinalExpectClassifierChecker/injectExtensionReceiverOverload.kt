@@ -15,3 +15,5 @@ actual open class Foo {
 
     fun Int.foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, funWithExtensionReceiver, functionDeclaration */

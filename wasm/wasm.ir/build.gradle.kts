@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     kotlin("plugin.serialization")
+    id("project-tests-convention")
 }
 
 repositories {
@@ -57,7 +58,7 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.kotlinx.serialization.json)
 
     testSuite("webassembly:testsuite:$testSuiteRevision@zip")
@@ -98,12 +99,14 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
-projectTest("test", true) {
-    dependsOn(unzipWabt)
-    dependsOn(unzipTestSuite)
-    systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")
-    systemProperty("wasm.testsuite.path", "$testSuiteDir/WebAssembly-testsuite-$testSuiteRevision")
-    workingDir = projectDir
+projectTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(unzipWabt)
+        dependsOn(unzipTestSuite)
+        systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")
+        systemProperty("wasm.testsuite.path", "$testSuiteDir/WebAssembly-testsuite-$testSuiteRevision")
+        workingDir = projectDir
+    }
 }
 
 testsJar()

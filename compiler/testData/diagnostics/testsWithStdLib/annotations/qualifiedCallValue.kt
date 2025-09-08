@@ -27,3 +27,6 @@ annotation class annArray(val p: Array<String> = kotlin.arrayOf("a"))
 class A {
     annotation class IAnn
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+nestedClass, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -18,3 +18,5 @@ fun takeJ(j: J) {}
 fun test() {
     takeJ(J().j())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

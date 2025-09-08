@@ -6,9 +6,10 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
@@ -17,19 +18,17 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.JAVADOC_ELEMENTS_CONFIGURATION_NAME
 import org.gradle.api.plugins.JavaPlugin.SOURCES_ELEMENTS_CONFIGURATION_NAME
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.internal.component.external.model.TestFixturesSupport
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import plugins.KotlinBuildPublishingPlugin
 import plugins.mainPublicationName
-import java.io.File
 
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
@@ -46,6 +45,36 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }.also {
         project.addArtifact(testsJarCfg.name, it)
+    }
+}
+
+/**
+ * This is a dirty hack that allows depending both on tests and test-fixture
+ * of the module from some other module. Please don't use it.
+ *
+ * The proper approach should be implemented in the scope of KTI-2521.
+ */
+fun Project.testsJarToBeUsedAlongWithFixtures() {
+    // Define a test jar task.
+    val testsJar by tasks.registering(Jar::class) {
+        archiveClassifier.set("tests")
+        from(sourceSets["test"].output)
+    }
+
+    // Create a consumable, non-resolvable configuration with a unique capability.
+    val testsJarConfig by configurations.creating {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        outgoing.capabilities.clear()
+        outgoing.capability("org.jetbrains.kotlin:${project.name}-tests-jar:${project.version}")
+    }
+
+    // Publish the test jar artifact only to this configuration (not to testImplementation/testRuntime)
+    artifacts {
+        add(testsJarConfig.name, testsJar)
     }
 }
 
@@ -72,31 +101,6 @@ fun Project.noDefaultJar() {
     configurations.named("apiElements", removeJarTaskArtifact(jarTask))
     configurations.named("runtimeElements", removeJarTaskArtifact(jarTask))
     configurations.named("archives", removeJarTaskArtifact(jarTask))
-}
-
-@JvmOverloads
-fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
-    project.configurations.findByName(embeddedConfigurationName)?.let { embedded ->
-        dependsOn(embedded)
-        val archiveOperations = project.serviceOf<ArchiveOperations>()
-        from {
-            embedded.map { dependency: File ->
-                check(!dependency.path.contains("kotlin-stdlib")) {
-                    """
-                    |There's an attempt to have an embedded kotlin-stdlib in $project which is likely a misconfiguration
-                    |All embedded dependencies:
-                    |    ${embedded.files.joinToString(separator = "\n|    ")}
-                    """.trimMargin()
-                }
-
-                if (dependency.extension.equals("jar", ignoreCase = true)) {
-                    archiveOperations.zipTree(dependency)
-                } else {
-                    dependency
-                }
-            }
-        }
-    }
 }
 
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
@@ -154,11 +158,6 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
 
     return task
 }
-
-private fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
-private fun Project.mainKotlinSourceSet() =
-    (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
-private fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
 
 @JvmOverloads
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
@@ -327,12 +326,26 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
     }
 }
 
-fun Project.publishTestJarsForIde(projectNames: List<String>) {
+/**
+ * If you need to pack both tests and test fixtures for some module (i.e. xyz) you need to:
+ * - use `testsJarToBeUsedAlongWithFixtures()` instead of `testsJar()` utility in the `build.gradle.kts` of `xyz` project
+ * - pass `xyz` both to [projectWithFixturesNames] and [projectWithRenamedTestJarNames]
+ */
+fun Project.publishTestJarsForIde(
+    projectNames: List<String>,
+    projectWithFixturesNames: List<String> = emptyList(),
+    projectWithRenamedTestJarNames: List<String> = emptyList(),
+) {
     idePluginDependency {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
-        publishTestJar(projectNames, excludedPaths)
+        publishTestJar(
+            projectNames,
+            projectWithFixturesNames,
+            projectWithRenamedTestJarNames,
+            excludedPaths,
+        )
     }
     configurations.all {
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
@@ -340,8 +353,18 @@ fun Project.publishTestJarsForIde(projectNames: List<String>) {
         exclude(module = ideModuleName())
     }
     dependencies {
+        fun declareDependency(notation: Any) {
+            jpsLikeJarDependency(notation, JpsDepScope.COMPILE, exported = true)
+        }
+
         for (projectName in projectNames) {
-            jpsLikeJarDependency(projectTests(projectName), JpsDepScope.COMPILE, exported = true)
+            declareDependency(projectTests(projectName))
+        }
+        for (projectName in projectWithFixturesNames) {
+            declareDependency(testFixtures(project(projectName)))
+        }
+        for (projectName in projectWithRenamedTestJarNames) {
+            declareDependency(project(projectName, "testsJarConfig"))
         }
     }
 }
@@ -391,7 +414,12 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) {
+private fun Project.publishTestJar(
+    projects: List<String>,
+    projectWithFixturesNames: List<String>,
+    projectWithRenamedTestJarNames: List<String>,
+    excludedPaths: List<String>,
+) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
@@ -399,6 +427,14 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
     dependencies {
         for (projectName in projects) {
             fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        }
+
+        for (projectName in projectWithFixturesNames) {
+            fatJarContents(testFixtures(project(projectName)) as ModuleDependency) { isTransitive = false }
+        }
+
+        for (projectName in projectWithRenamedTestJarNames) {
+            fatJarContents(project(projectName, configuration = "testsJarConfig")) { isTransitive = false }
         }
     }
 
@@ -417,36 +453,21 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
     }
 
     sourcesJar {
+        fun registerTestSources(projectNames: List<String>) {
+            from {
+                projectNames.map { project(it).testSourceSet.allSource }
+            }
+        }
+
+        registerTestSources(projects)
+        registerTestSources(projectWithRenamedTestJarNames)
+
         from {
-            projects.map { project(it).testSourceSet.allSource }
+            projectWithFixturesNames.map { project(it).sourceSets.getByName(TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME).allSource }
         }
     }
 
     javadocJar()
-}
-
-fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
-
-fun Jar.setupPublicJar(
-    baseName: String,
-    classifier: String = ""
-) = setupPublicJar(
-    project.provider { baseName },
-    project.provider { classifier }
-)
-
-fun Jar.setupPublicJar(
-    baseName: Provider<String>,
-    classifier: Provider<String> = project.provider { "" }
-) {
-    val buildNumber = project.rootProject.extra["buildNumber"] as String
-    this.archiveBaseName.set(baseName)
-    this.archiveClassifier.set(classifier)
-    manifest.attributes.apply {
-        put("Implementation-Vendor", "JetBrains")
-        put("Implementation-Title", baseName.get())
-        put("Implementation-Version", buildNumber)
-    }
 }
 
 fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) {
@@ -458,15 +479,6 @@ fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: A
 
 fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) =
     addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
-
-fun <T : Task> Project.addArtifact(
-    configurationName: String,
-    task: TaskProvider<T>,
-    body: ConfigurablePublishArtifact.() -> Unit = {}
-): PublishArtifact {
-    configurations.maybeCreate(configurationName)
-    return artifacts.add(configurationName, task, body)
-}
 
 fun <T : Task> Project.addArtifact(
     configurationName: String,

@@ -30,3 +30,6 @@ class A {
         expectFunction1String(<!TYPE_MISMATCH!>::foo<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

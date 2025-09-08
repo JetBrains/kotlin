@@ -201,7 +201,9 @@ class ClassStabilityTransformer(
             classStabilityInferredCollection?.addClass(cls, parameterMask)
         }
 
-        cls.addStabilityMarkerField(stableExpr)
+        if (cls.visibility.isPublicAPI || cls.visibility == DescriptorVisibilities.INTERNAL) {
+            cls.addStabilityMarkerField(stableExpr)
+        }
         return result
     }
 

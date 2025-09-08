@@ -14,3 +14,6 @@ fun test() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localClass, nestedClass, nullableType,
+objectDeclaration, typeConstraint, typeParameter */

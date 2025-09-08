@@ -10,3 +10,6 @@ fun testInvokeWithLambda() {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localFunction, operator, thisExpression */

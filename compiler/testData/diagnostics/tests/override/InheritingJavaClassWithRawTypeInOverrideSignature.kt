@@ -19,3 +19,5 @@ public class C extends B implements A<String> {}
 
 // FILE: Main.kt
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class X<!> : C() // false positive in K1, OK in K2
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

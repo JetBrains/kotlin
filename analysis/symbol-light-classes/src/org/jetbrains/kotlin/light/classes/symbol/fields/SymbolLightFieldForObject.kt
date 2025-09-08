@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,17 +17,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassLike
-import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
-import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
-import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 internal class SymbolLightFieldForObject private constructor(
@@ -39,7 +36,6 @@ internal class SymbolLightFieldForObject private constructor(
     private val isCompanion: Boolean,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
-        ktAnalysisSession: KaSession,
         objectSymbol: KaNamedClassSymbol,
         name: String,
         lightMemberOrigin: LightMemberOrigin?,
@@ -50,7 +46,7 @@ internal class SymbolLightFieldForObject private constructor(
         name = name,
         lightMemberOrigin = lightMemberOrigin,
         kotlinOrigin = objectSymbol.sourcePsiSafe(),
-        objectSymbolPointer = with(ktAnalysisSession) { objectSymbol.createPointer() },
+        objectSymbolPointer = objectSymbol.createPointer(),
         isCompanion = isCompanion,
     )
 
@@ -59,7 +55,7 @@ internal class SymbolLightFieldForObject private constructor(
 
     override fun getName(): String = name
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = if (isCompanion) {
@@ -91,8 +87,6 @@ internal class SymbolLightFieldForObject private constructor(
     }
 
     override fun isDeprecated(): Boolean = _isDeprecated
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _type: PsiType by lazyPub {
         withObjectDeclarationSymbol { objectSymbol ->

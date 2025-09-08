@@ -35,3 +35,6 @@ fun main() {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, outProjection, stringLiteral, typeParameter, typeWithExtension */

@@ -1,16 +1,21 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaExpressionTypeProvider : KaSessionComponent {
     /**
      * The type of the given [KtExpression], or `null` if it does not have a type.
@@ -35,13 +40,31 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
     public val KtExpression.expressionType: KaType?
 
     /**
-     * The return type of the given [KtDeclaration].
+     * The return type of the given [KtDeclarationWithReturnType].
      *
      * Note: For a `vararg foo: T` parameter, the resulting type is the full `Array<out T>` type (unlike
      * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
      * which returns `T`).
+     *
+     * The reasoning behind this is that [KaCallableSymbol.returnType] sees the parameter from the declaration's semantic perspective,
+     * representing the signature of the parameter, which contains just the element type. In this paradigm, `vararg` arrays are
+     * constructed separately under the hood.
+     *
+     * At the same time, [KtDeclaration.returnType][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType]
+     * from [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] represents a
+     * use-site perspective, which has to desugar `vararg` parameters because they are consumed as array types.
      */
+    public val KtDeclarationWithReturnType.returnType: KaType
+
+    /**
+     * The return type of the given [KtDeclaration].
+     *
+     * Note: this property throws an exception if the declaration _can't_ have a return type
+     * (i.e., it is not a [KtDeclarationWithReturnType]).
+     */
+    @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
     public val KtDeclaration.returnType: KaType
+        get() = (this as KtDeclarationWithReturnType).returnType
 
     /**
      * The function type of the given [KtFunction].
@@ -100,3 +123,62 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      */
     public val KtExpression.isDefinitelyNotNull: Boolean
 }
+
+/**
+ * @see KaExpressionTypeProvider.expressionType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtExpression.expressionType: KaType?
+    get() = with(context) { expressionType }
+
+/**
+ * @see KaExpressionTypeProvider.returnType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtDeclarationWithReturnType.returnType: KaType
+    get() = with(context) { returnType }
+
+/**
+ * @see KaExpressionTypeProvider.returnType
+ */
+@KaContextParameterApi
+@Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
+context(context: KaExpressionTypeProvider)
+public val KtDeclaration.returnType: KaType
+    get() = with(context) {
+        (this@returnType as KtDeclarationWithReturnType).returnType
+    }
+
+/**
+ * @see KaExpressionTypeProvider.functionType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtFunction.functionType: KaType
+    get() = with(context) { functionType }
+
+/**
+ * @see KaExpressionTypeProvider.expectedType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val PsiElement.expectedType: KaType?
+    get() = with(context) { expectedType }
+
+/**
+ * @see KaExpressionTypeProvider.isDefinitelyNull
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtExpression.isDefinitelyNull: Boolean
+    get() = with(context) { isDefinitelyNull }
+
+/**
+ * @see KaExpressionTypeProvider.isDefinitelyNotNull
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtExpression.isDefinitelyNotNull: Boolean
+    get() = with(context) { isDefinitelyNotNull }

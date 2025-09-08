@@ -55,3 +55,6 @@ fun main(b: Boolean) {
         Y
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

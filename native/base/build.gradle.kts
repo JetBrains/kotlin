@@ -8,6 +8,8 @@ dependencies {
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
     implementation(project(":native:frontend.native"))
+    // Some binary options are leaking via module API surface
+    api(project(":native:binary-options"))
 }
 
 kotlin {

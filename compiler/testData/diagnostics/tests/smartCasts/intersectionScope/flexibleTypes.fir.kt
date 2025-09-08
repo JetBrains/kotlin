@@ -51,3 +51,7 @@ fun foo(x: Any?) {
         x.foo().checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String?>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, infix, interfaceDeclaration, intersectionType, isExpression, javaType, lambdaLiteral, nullableType,
+smartcast, typeParameter, typeWithExtension */

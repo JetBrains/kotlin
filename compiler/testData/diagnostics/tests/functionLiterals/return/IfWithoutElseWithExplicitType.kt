@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 val flag = true
 
 val a: () -> Int = l@ {
@@ -22,3 +21,5 @@ val d: () -> Int = l@ {
 val e: () -> Int = l@ {
     <!TYPE_MISMATCH!>if (flag) 4<!>
 }
+
+/* GENERATED_FIR_TAGS: functionalType, ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

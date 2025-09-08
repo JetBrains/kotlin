@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
 external interface I {
     <!NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE!>fun foo(): Unit<!> = definedExternally
 

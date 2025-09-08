@@ -17,3 +17,6 @@ fun test() {
 
     <!NONE_APPLICABLE!>take<!>(B::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

@@ -24,3 +24,6 @@ public class JavaA {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration,
+typeConstraint, typeParameter */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -429,6 +429,63 @@ class ArrayDequeTest {
             (0..6).forEach { assertEquals(it, deque.indexOf(it - 4)) }
             assertEquals(-1, deque.indexOf(100))
         }
+
+        testArrayDeque { bufferSize, _, head, tail ->
+            generateArrayDeque(head, tail, bufferSize).let { deque ->
+                deque.forEachIndexed { index, element ->
+                    val actualIndex = deque.indexOf(element)
+                    if (actualIndex != index) {
+                        assertEquals(index, actualIndex, "indexOf($element) for $deque")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun indexOfNull() {
+        val deque = ArrayDeque<Int?>()
+        assertEquals(-1, deque.indexOf(null))
+        deque.addLast(42)
+        assertEquals(-1, deque.indexOf(null))
+        deque.clear()
+        assertEquals(-1, deque.indexOf(null))
+    }
+
+    @Test
+    fun lastIndexOf() {
+        // head < tail
+        generateArrayDeque(0, 7).let { deque ->
+            (0..6).forEach { assertEquals(it, deque.lastIndexOf(it)) }
+            assertEquals(-1, deque.lastIndexOf(100))
+        }
+
+        // head > tail
+        generateArrayDeque(-4, 3).let { deque ->
+            (0..6).forEach { assertEquals(it, deque.lastIndexOf(it - 4)) }
+            assertEquals(-1, deque.lastIndexOf(100))
+        }
+
+        testArrayDeque { bufferSize, _, head, tail ->
+            generateArrayDeque(head, tail, bufferSize).let { deque ->
+                deque.forEachIndexed { index, element ->
+                    val actualIndex = deque.lastIndexOf(element)
+                    if (actualIndex != index) {
+                        assertEquals(index, actualIndex, "lastIndexOf($element) for $deque")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun lastIndexOfNull() {
+        val deque = ArrayDeque<Int?>()
+        assertEquals(-1, deque.lastIndexOf(null))
+        deque.addLast(42)
+        assertEquals(-1, deque.lastIndexOf(null))
+        deque.clear()
+        assertEquals(-1, deque.lastIndexOf(null))
     }
 
     @Test

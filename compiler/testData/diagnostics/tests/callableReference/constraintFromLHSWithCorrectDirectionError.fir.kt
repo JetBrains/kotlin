@@ -17,3 +17,6 @@ class C : A
 fun <R : A> B<R>.test(){
     <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(C::<!INAPPLICABLE_CANDIDATE!>bla<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

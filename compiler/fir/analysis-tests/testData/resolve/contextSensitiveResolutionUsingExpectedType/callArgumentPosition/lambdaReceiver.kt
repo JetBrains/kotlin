@@ -55,3 +55,6 @@ fun testReceivedLambda() {
     receiveLambda<MyClass> { <!UNRESOLVED_REFERENCE!>InheritorClass<!>() }
     receiveLambda<MyClass> { <!UNRESOLVED_REFERENCE!>superFunc<!>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, functionalType, lambdaLiteral,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral, typeParameter */

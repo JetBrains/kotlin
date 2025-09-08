@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isVisible
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCallableDeclarationChecker(kind) {
@@ -47,32 +49,37 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             declaration.receiverParameter.let { it == null || it.typeRef.coneType.canBeNull(context.session) } ||
             declaration.nameOrSpecialName == NO_NAME_PROVIDED ||
             // A common pattern, KT-70012
-            declaration.isActual
+            declaration.isActual ||
+            declaration.isOverride
         ) {
             return
         }
 
         val receiverSymbol = declaration.receiverParameter?.typeRef?.coneType
-            ?.toClassLikeSymbol(context.session)
-            ?.fullyExpandedClass(context.session)
+            ?.toClassLikeSymbol()
+            ?.fullyExpandedClass()
             ?: return
-        val scope = receiverSymbol.unsubstitutedScope(context)
+        val scope = receiverSymbol.unsubstitutedScope()
 
         val shadowingMember = when (declaration) {
             is FirVariable -> findFirstSymbolByCondition<FirVariableSymbol<*>>(
-                condition = { it.isVisible(context) && !it.isExtension },
+                condition = { it.isVisible() && !it.isExtension },
                 processMembers = { scope.processPropertiesByName(declaration.name, it) },
             )
             is FirSimpleFunction -> findFirstSymbolByCondition<FirNamedFunctionSymbol>(
-                condition = { it.isVisible(context) && it.shadows(declaration.symbol, context) },
+                condition = { it.isVisible() && it.shadows(declaration.symbol) },
                 processMembers = { scope.processFunctionsByName(declaration.name, it) },
             )
             else -> return
         }
 
         if (shadowingMember != null) {
-            reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember)
-            return
+            val shadowingMemberDeprecation = shadowingMember.getDeprecation(context.session, declaration)
+
+            if (shadowingMemberDeprecation?.deprecationLevel != DeprecationLevelValue.HIDDEN) {
+                reporter.reportOn(declaration.source, FirErrors.EXTENSION_SHADOWED_BY_MEMBER, shadowingMember)
+                return
+            }
         }
 
         if (declaration !is FirSimpleFunction) {
@@ -81,17 +88,17 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
 
         val shadowingSymbols = findFirstNotNullSymbol(
             transform = { property ->
-                if (!property.isVisible(context)) {
+                if (!property.isVisible()) {
                     return@findFirstNotNullSymbol null
                 }
 
-                val returnTypeScope = property.resolvedReturnType.toClassLikeSymbol(context.session)
-                    ?.fullyExpandedClass(context.session)
-                    ?.unsubstitutedScope(context)
+                val returnTypeScope = property.resolvedReturnType.toClassLikeSymbol()
+                    ?.fullyExpandedClass()
+                    ?.unsubstitutedScope()
                     ?: return@findFirstNotNullSymbol null
 
                 val invoke = findFirstSymbolByCondition(
-                    condition = { it.isVisible(context) && it.isOperator && it.shadows(declaration.symbol, context) },
+                    condition = { it.isVisible() && it.isOperator && it.shadows(declaration.symbol) },
                     processMembers = { returnTypeScope.processFunctionsByName(OperatorNameConventions.INVOKE, it) },
                 )
 
@@ -109,7 +116,8 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         )
     }
 
-    private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun FirCallableSymbol<*>.isVisible(): Boolean {
         val useSiteFile = context.containingFileSymbol ?: error("No containing file present when running a checker for top-level functions")
 
         return context.session.visibilityChecker.isVisible(
@@ -143,12 +151,14 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
         return found
     }
 
+    context(context: CheckerContext)
     /**
      * See [isExtensionFunctionShadowedByMemberFunction][org.jetbrains.kotlin.resolve.ShadowedExtensionChecker.isExtensionFunctionShadowedByMemberFunction]
      */
-    private fun FirFunctionSymbol<*>.shadows(extension: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
+    private fun FirFunctionSymbol<*>.shadows(extension: FirFunctionSymbol<*>): Boolean {
         if (isExtension) return false
 
+        if (extension.contextParameterSymbols.size != contextParameterSymbols.size) return false
         if (extension.valueParameterSymbols.size != valueParameterSymbols.size) return false
         if (extension.varargParameterPosition != varargParameterPosition) return false
         if (extension.isOperator && !isOperator) return false

@@ -6,21 +6,32 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import llvm.LLVMDumpModule
+import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.ALL
+import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.NO
+import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.STRONG
+import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode.YES
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
+import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
+import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
+import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
-import org.jetbrains.kotlin.konan.target.SanitizerKind
+import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
+import kotlin.sequences.forEach
 
 
 internal data class WriteBitcodeFileInput(
@@ -58,15 +69,16 @@ internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase
 
 internal class OptimizationState(
         konanConfig: KonanConfig,
-        val llvmConfig: LlvmPipelineConfig
+        val llvmConfig: LlvmPipelineConfig,
+        override val performanceManager: PerformanceManager?,
 ) : BasicPhaseContext(konanConfig)
 
-internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, LoggingContext) -> LlvmOptimizationPipeline) =
+internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
                 name = name,
                 postactions = getDefaultLlvmModuleActions(),
         ) { context, module ->
-            pipeline(context.llvmConfig, context).use {
+            pipeline(context.llvmConfig, context.performanceManager, context).use {
                 it.execute(module)
             }
         }
@@ -94,7 +106,19 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
 internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
         name = "StackProtectorPhase",
         postactions = getDefaultLlvmModuleActions(),
-        op = ::applySspAttributes
+        op = { context: OptimizationState, module: LLVMModuleRef ->
+            val attribute = when (context.llvmConfig.sspMode) {
+                NO -> null
+                YES -> LlvmFunctionAttribute.Ssp
+                STRONG -> LlvmFunctionAttribute.SspStrong
+                ALL -> LlvmFunctionAttribute.SspReq
+            }
+            attribute?.let { sspAttribute ->
+                getFunctions(module)
+                        .filter { LLVMIsDeclaration(it) == 0 && it.name != "__clang_call_terminate" }
+                        .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
+            }
+        }
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
@@ -143,20 +167,20 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             closedWorld = context.config.isFinalBinary,
             timePasses = context.config.phaseConfig.needProfiling,
     )
-    useContext(OptimizationState(context.config, optimizationConfig)) {
+    useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
-        it.runPhase(StackProtectorPhase, module)
-        it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
-        it.runPhase(ModuleBitcodeOptimizationPhase, module)
-        it.runPhase(LTOBitcodeOptimizationPhase, module)
+        it.runAndMeasurePhase(StackProtectorPhase, module)
+        it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
+        it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
+        it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
         when (context.config.sanitizer) {
-            SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
+            SanitizerKind.THREAD -> it.runAndMeasurePhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
     }
-    runPhase(RemoveRedundantSafepointsPhase)
+    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
-        runPhase(OptimizeTLSDataLoadsPhase)
+        runAndMeasurePhase(OptimizeTLSDataLoadsPhase)
     }
 }

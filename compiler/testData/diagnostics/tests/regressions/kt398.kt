@@ -11,3 +11,6 @@ fun box() : String {
     if(!X<String>().check("lala")) return "fail"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression, lambdaLiteral,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

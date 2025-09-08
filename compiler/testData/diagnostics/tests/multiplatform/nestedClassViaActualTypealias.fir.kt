@@ -30,3 +30,5 @@ class SeveralInnerImpl {
 }
 
 actual typealias SeveralInner = SeveralInnerImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nestedClass, primaryConstructor, typeAliasDeclaration */

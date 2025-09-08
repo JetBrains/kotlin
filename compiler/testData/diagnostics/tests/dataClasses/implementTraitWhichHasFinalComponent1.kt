@@ -5,3 +5,6 @@ interface T {
 }
 
 <!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class A(val x: Int) : T
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration,
+primaryConstructor, propertyDeclaration */

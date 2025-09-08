@@ -34,3 +34,6 @@ fun test(
     <!CANNOT_INFER_PARAMETER_TYPE!>Generic<!>().Inner()
     TA().Inner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, nullableType, typeAliasDeclaration,
+typeParameter */

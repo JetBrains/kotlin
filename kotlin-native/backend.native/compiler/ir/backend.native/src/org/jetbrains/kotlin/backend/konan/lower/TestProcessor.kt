@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
-import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.ir.wrapWithLambdaCall
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -81,36 +79,6 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
         ignored: Boolean
     ) = add(TestFunction(function, kind, ignored))
 
-    fun IrFunction.toReference(parent: IrDeclarationParent) : IrRichFunctionReference {
-        val wrapper = factory.buildFun {
-            setSourceRange(this@toReference)
-            name = this@toReference.name
-            visibility = DescriptorVisibilities.LOCAL
-            returnType = this@toReference.returnType
-        }.apply {
-            this.parent = parent
-            copyParametersFrom(this@toReference)
-            val builder = context.createIrBuilder(this@apply.symbol).at(this@toReference)
-            body = builder.irBlockBody {
-                +irReturn(irCall(this@toReference).apply {
-                    for ((index, param) in parameters.withIndex()) {
-                        arguments[index] = irGet(param)
-                    }
-                })
-            }
-        }
-        val builder = context.createIrBuilder(symbol).at(this@toReference)
-        val referenceType = context.irBuiltIns.functionN(parameters.size).typeWith(parameters.map { it.type } + context.irBuiltIns.unitType)
-        return builder.irRichFunctionReference(
-                superType = referenceType,
-                reflectionTargetSymbol = symbol,
-                overriddenFunctionSymbol = UpgradeCallableReferences.selectSAMOverriddenFunction(referenceType),
-                invokeFunction = wrapper,
-                captures = emptyList(),
-                origin = IrStatementOrigin.LAMBDA,
-        )
-    }
-
     private fun <T : IrElement> IrStatementsBuilder<T>.generateFunctionRegistration(
             receiver: IrValueDeclaration,
             registerTestCase: IrFunction,
@@ -124,7 +92,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                 +irCall(registerTestCase).apply {
                     dispatchReceiver = irGet(receiver)
                     arguments[1] = irString(it.functionName)
-                    arguments[2] = it.function.toReference(parent)
+                    arguments[2] = it.function.wrapWithLambdaCall(parent, this@TestProcessor.context)
                     arguments[3] = irBoolean(it.ignored)
                 }
             } else {
@@ -137,7 +105,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                             it.function.endOffset,
                             symbols.testFunctionKind.typeWithArguments(emptyList()),
                             testKindEntry)
-                    arguments[2] = it.function.toReference(parent)
+                    arguments[2] = it.function.wrapWithLambdaCall(parent, this@TestProcessor.context)
                 }
             }
         }
@@ -465,7 +433,7 @@ internal class TestProcessor(private val context: Context) : FileLoweringPass {
                             registerTestCase,
                             registerFunction,
                             functions,
-                            this@apply
+                            this@apply,
                     )
                 }
             }

@@ -120,7 +120,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     private class FirRecorderData(
         val state: State,
         val file: FirFile,
-        val nameConflictsTracker: FirNameConflictsTrackerComponent?
+        val nameConflictsTracker: FirNameConflictsTracker?
     )
 
     private object FirRecorder : FirDefaultVisitor<Unit, FirRecorderData>() {
@@ -130,7 +130,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             visitClassifier(regularClass, data)
             val classId = regularClass.symbol.classId
 
-            if (!classId.isNestedClass && !classId.isLocal) {
+            if (!classId.isNestedClass && !regularClass.isLocal) {
                 data.state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
                 data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
             }
@@ -172,7 +172,9 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data: FirRecorderData,
             map: MutableMap<CallableId, List<S>>
         ) {
+            // TODO: KT-78984: we shouldn't call this function for symbols with callableId == null
             val callableId = symbol.callableId
+                ?: return // For scripts, we can come here with local variables like <local>/<destruct>
             map.merge(callableId, listOf(symbol)) { a, b -> a + b }
             data.state.callableContainerMap[symbol] = data.file
         }
@@ -219,19 +221,19 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     private val state = State()
 
     private class State {
-        val fileMap: MutableMap<FqName, List<FirFile>> = mutableMapOf<FqName, List<FirFile>>()
+        val fileMap: MutableMap<FqName, List<FirFile>> = hashMapOf()
         val allSubPackages = mutableSetOf<FqName>()
-        val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration>()
-        val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
-        val classifierInPackage = mutableMapOf<FqName, MutableSet<Name>>()
-        val classesInPackage = mutableMapOf<FqName, MutableSet<Name>>()
+        val classifierMap = hashMapOf<ClassId, FirClassLikeDeclaration>()
+        val classifierContainerFileMap = hashMapOf<ClassId, FirFile>()
+        val classifierInPackage = hashMapOf<FqName, MutableSet<Name>>()
+        val classesInPackage = hashMapOf<FqName, MutableSet<Name>>()
         val functionMap = mutableMapOf<CallableId, List<FirNamedFunctionSymbol>>()
         val propertyMap = mutableMapOf<CallableId, List<FirPropertySymbol>>()
-        val constructorMap = mutableMapOf<CallableId, List<FirConstructorSymbol>>()
-        val callableContainerMap = mutableMapOf<FirCallableSymbol<*>, FirFile>()
-        val scriptContainerMap = mutableMapOf<FirScriptSymbol, FirFile>()
-        val scriptByFilePathMap = mutableMapOf<String, FirScriptSymbol>()
-        val snippetContainerMap = mutableMapOf<FirReplSnippetSymbol, FirFile>()
+        val constructorMap = hashMapOf<CallableId, List<FirConstructorSymbol>>()
+        val callableContainerMap = hashMapOf<FirCallableSymbol<*>, FirFile>()
+        val scriptContainerMap = hashMapOf<FirScriptSymbol, FirFile>()
+        val scriptByFilePathMap = hashMapOf<String, FirScriptSymbol>()
+        val snippetContainerMap = hashMapOf<FirReplSnippetSymbol, FirFile>()
 
         fun setFrom(other: State) {
             fileMap.clear()

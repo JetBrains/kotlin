@@ -61,6 +61,12 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   }
 
   @Test
+  @TestMetadata("ContextParameters.kt")
+  public void testContextParameters() {
+    runTest("libraries/tools/kotlinp/jvm/testData/ContextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("ContextReceivers.kt")
   public void testContextReceivers() {
     runTest("libraries/tools/kotlinp/jvm/testData/ContextReceivers.kt");
@@ -154,6 +160,12 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   @TestMetadata("Properties.kt")
   public void testProperties() {
     runTest("libraries/tools/kotlinp/jvm/testData/Properties.kt");
+  }
+
+  @Test
+  @TestMetadata("PropertiesK2.kt")
+  public void testPropertiesK2() {
+    runTest("libraries/tools/kotlinp/jvm/testData/PropertiesK2.kt");
   }
 
   @Test

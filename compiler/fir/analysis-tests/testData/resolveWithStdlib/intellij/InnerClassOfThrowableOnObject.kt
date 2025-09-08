@@ -18,3 +18,6 @@ class Generic<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, inner,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

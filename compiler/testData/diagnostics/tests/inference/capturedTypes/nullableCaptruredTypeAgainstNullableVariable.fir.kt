@@ -37,3 +37,7 @@ fun main(x: Foo<out Number?>, y: Bar<out Number?>, z1: Foo<out Number>, z2: Bar<
     z2.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()
     z2.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, javaType, nullableType, out, outProjection, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

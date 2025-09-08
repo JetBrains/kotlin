@@ -5,3 +5,5 @@ fun testReturn() {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

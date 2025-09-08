@@ -20,3 +20,6 @@ fun bare(x: Outer<*>.Inner<*, *>.Inner2Base, y: Outer<*>.Inner<*, *>.Inner3Base<
     if (y is Outer<String>.Inner.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner3<!>) return
     if (y is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<!>.Inner<String, Int>.Inner3<Double>) return
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, inner, isExpression, nullableType, smartcast,
+starProjection, typeParameter */

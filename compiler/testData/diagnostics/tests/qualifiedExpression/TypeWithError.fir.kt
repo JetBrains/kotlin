@@ -30,3 +30,6 @@ fun test4(a: A.B.<!UNRESOLVED_REFERENCE!>ee<!>): A.B.<!UNRESOLVED_REFERENCE!>ee<
 fun test5(a: A.<!UNRESOLVED_REFERENCE!>ee<!>): A.<!UNRESOLVED_REFERENCE!>ee<!> {
     val aa: A.<!UNRESOLVED_REFERENCE!>ee<!> = null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, localProperty, nestedClass,
+propertyDeclaration */

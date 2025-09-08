@@ -38,3 +38,5 @@ actual interface I2 {
 <!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE!>actual interface ExpectInterface<!> : I1, I2 {
     actual override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>x: Int<!>)
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, interfaceDeclaration, override */

@@ -13,3 +13,6 @@ fun testIt(l: List<Int>) {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+nullableType, typeParameter, typeWithExtension */

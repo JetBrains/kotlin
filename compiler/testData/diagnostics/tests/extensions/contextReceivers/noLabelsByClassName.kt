@@ -27,3 +27,6 @@ class X {
         this<!UNRESOLVED_REFERENCE!>@Int<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+propertyDeclaration, propertyWithExtensionReceiver, setter, thisExpression */

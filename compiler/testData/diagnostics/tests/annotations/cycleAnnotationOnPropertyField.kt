@@ -11,3 +11,6 @@ var variableToResolve = "${42}"
     get() = field + "str"
     @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>variableToResolve<!>)
     set(@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>variableToResolve<!>) value) = Unit
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetField, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, setter, stringLiteral */

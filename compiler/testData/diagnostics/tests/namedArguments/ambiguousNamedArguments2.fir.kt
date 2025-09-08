@@ -23,3 +23,5 @@ fun test(c: C) {
     c.baz(a1 = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0, a3 = "", <!NAME_FOR_AMBIGUOUS_PARAMETER!>b4<!> = 2, a5 = "")
     c.baz(a1 = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>a2<!> = 1.0, a3 = "", <!NAME_FOR_AMBIGUOUS_PARAMETER!>b4<!> = 2, a5 = "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, stringLiteral */

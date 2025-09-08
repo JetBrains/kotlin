@@ -192,3 +192,9 @@ fun <T> testDNN(arg: T& Any) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
 fun isNullable(a: Int?) = <!NO_ELSE_IN_WHEN!>when<!> (a) {
     <!USELESS_IS_CHECK!>is Number?<!> -> false
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, disjunctionExpression, dnnType, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression, integerLiteral, isExpression,
+lambdaLiteral, localProperty, nestedClass, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+safeCall, sealed, smartcast, starProjection, typeAliasDeclaration, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -78,14 +78,6 @@ internal class KaFirNamedClassSymbol private constructor(
             backingPsi?.kaSymbolModality ?: firSymbol.modality.asKaSymbolModality
         }
 
-    override val visibility: KaSymbolVisibility
-        get() = withValidityAssertion {
-            backingPsi?.visibility?.asKaSymbolVisibility ?: when (val visibility = firSymbol.possiblyRawVisibility) {
-                Visibilities.Unknown -> if (firSymbol.fir.isLocal) KaSymbolVisibility.LOCAL else KaSymbolVisibility.PUBLIC
-                else -> visibility.asKaSymbolVisibility
-            }
-        }
-
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
 
@@ -113,7 +105,7 @@ internal class KaFirNamedClassSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }

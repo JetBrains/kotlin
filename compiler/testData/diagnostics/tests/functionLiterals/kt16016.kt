@@ -5,3 +5,5 @@ val las = { a: Int -> }
 
 val larg = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!> -> }(123)
 val twoarg = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, b: String, <!CANNOT_INFER_PARAMETER_TYPE!>c<!> -> }(123, "asdf", 123)
+
+/* GENERATED_FIR_TAGS: integerLiteral, lambdaLiteral, propertyDeclaration, stringLiteral */

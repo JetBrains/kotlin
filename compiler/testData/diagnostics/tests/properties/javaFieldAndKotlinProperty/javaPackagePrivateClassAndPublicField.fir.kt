@@ -30,3 +30,6 @@ private class Final : Intermediate() {
 
 fun box(): String =
     Final().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>foo<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, propertyDeclaration,
+stringLiteral */

@@ -10,3 +10,6 @@ fun main(n: A, f: A) {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, localProperty, operator, propertyDeclaration,
+rangeExpression */

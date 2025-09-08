@@ -7,3 +7,6 @@ sealed class My(open val x: Int?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, ifExpression, init, nullableType, primaryConstructor,
+propertyDeclaration, sealed, smartcast */

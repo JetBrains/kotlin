@@ -59,3 +59,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, lambdaLiteral, stringLiteral,
+unaryExpression */

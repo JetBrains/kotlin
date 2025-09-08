@@ -21,3 +21,6 @@ class Delegate {
     return 1
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+operator, override, propertyDeclaration, propertyDelegate, starProjection */

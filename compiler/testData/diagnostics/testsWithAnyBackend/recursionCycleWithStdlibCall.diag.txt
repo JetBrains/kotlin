@@ -1,0 +1,3 @@
+/recursionCycleWithStdlibCall.kt:6:24: error: The 'g' invocation is a part of inline cycle
+
+/recursionCycleWithStdlibCall.kt:8:30: error: The 'f' invocation is a part of inline cycle

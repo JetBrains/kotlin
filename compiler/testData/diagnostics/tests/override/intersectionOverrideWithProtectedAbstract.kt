@@ -9,3 +9,5 @@ public interface B {
 }
 
 public abstract class C: A(), B
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

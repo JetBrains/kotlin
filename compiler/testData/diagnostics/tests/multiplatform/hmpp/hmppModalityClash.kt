@@ -28,3 +28,5 @@ actual abstract <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class <!NO_ACTUAL_CLASS_
 actual open class Base {
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, primaryConstructor */

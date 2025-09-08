@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -31,18 +32,20 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.text.MessageFormat
 
 @Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object FirDiagnosticRenderers {
-    val SYMBOL = symbolRenderer(modifierRenderer = FirPartialModifierRenderer())
+    val SYMBOL = symbolRenderer(modifierRenderer = ::FirPartialModifierRenderer)
 
     val SYMBOL_WITH_ALL_MODIFIERS = symbolRenderer()
 
     @OptIn(SymbolInternals::class)
     private fun symbolRenderer(
-        modifierRenderer: FirModifierRenderer? = FirAllModifierRenderer(),
+        modifierRenderer: () -> FirModifierRenderer? = ::FirAllModifierRenderer,
     ) = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol, is FirCallableSymbol -> FirRenderer(
@@ -52,7 +55,7 @@ object FirDiagnosticRenderers {
                 bodyRenderer = null,
                 propertyAccessorRenderer = null,
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
-                modifierRenderer = modifierRenderer,
+                modifierRenderer = modifierRenderer(),
                 callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
                 contractRenderer = null,
@@ -92,9 +95,7 @@ object FirDiagnosticRenderers {
     /**
      * Adds a line break before the list, then prints one symbol per line.
      */
-    val SYMBOLS_ON_NEXT_LINES = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
-        symbols.joinToString(separator = "\n", prefix = "\n", transform = SYMBOL::render)
-    }
+    val SYMBOLS_ON_NEXT_LINES = CommonRenderers.onNextLines(SYMBOL)
 
     /**
      * Prepends [singular] or [plural] depending on the elements count.
@@ -140,10 +141,14 @@ object FirDiagnosticRenderers {
         }
     }
 
+    val CALLABLE_FQ_NAME = Renderer { symbol: FirCallableSymbol<*> ->
+        val origin = symbol.containingClassLookupTag()?.classId?.asFqNameString()
+        SYMBOL.render(symbol) + origin?.let { ", defined in $it" }.orEmpty()
+    }
+
     val CALLABLES_FQ_NAMES = object : ContextIndependentParameterRenderer<Collection<FirCallableSymbol<*>>> {
         override fun render(obj: Collection<FirCallableSymbol<*>>) = "\n" + obj.joinToString("\n") { symbol ->
-            val origin = symbol.containingClassLookupTag()?.classId?.asFqNameString()
-            INDENTATION_UNIT + SYMBOL.render(symbol) + origin?.let { ", defined in $it" }.orEmpty()
+            INDENTATION_UNIT + CALLABLE_FQ_NAME.render(symbol)
         } + "\n"
     }
 
@@ -169,7 +174,6 @@ object FirDiagnosticRenderers {
 
     val DECLARATION_NAME = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
-            is FirValueParameterSymbol -> (symbol.resolvedReturnType.parameterName ?: symbol.name).asString()
             is FirCallableSymbol<*> -> symbol.name.asString()
             is FirClassLikeSymbol<*> -> symbol.classId.shortClassName.asString()
             is FirTypeParameterSymbol -> symbol.name.asString()
@@ -203,8 +207,8 @@ object FirDiagnosticRenderers {
         "Enum entry '$name'"
     }
 
-    val RENDER_CLASS_OR_OBJECT_NAME_QUOTED = Renderer { firClassLike: FirClassLikeSymbol<*> ->
-        val name = firClassLike.classId.relativeClassName.shortName().asString()
+    fun RENDER_CLASS_OR_OBJECT(quoted: Boolean, name: (ClassId) -> String) = Renderer { firClassLike: FirClassLikeSymbol<*> ->
+        val name = name(firClassLike.classId)
         val prefix = when (firClassLike) {
             is FirTypeAliasSymbol -> "typealias"
             is FirRegularClassSymbol -> {
@@ -213,18 +217,52 @@ object FirDiagnosticRenderers {
                     firClassLike.isInterface -> "interface"
                     firClassLike.isEnumClass -> "enum class"
                     firClassLike.isFromEnumClass -> "enum entry"
-                    firClassLike.isLocalClassOrAnonymousObject -> "object"
+                    firClassLike.isLocal -> "object"
                     else -> "class"
                 }
             }
             else -> AssertionError("Unexpected class: $firClassLike")
         }
-        "$prefix '$name'"
+        if (quoted) "$prefix '$name'" else "$prefix $name"
+    }
+
+    val RENDER_CLASS_OR_OBJECT_NAME_QUOTED =
+        RENDER_CLASS_OR_OBJECT(quoted = true) { classId -> classId.relativeClassName.shortName().asString() }
+
+    val STAR_PROJECTED_CLASS = Renderer { symbol: FirClassLikeSymbol<*> ->
+        val list = buildList {
+            var current: FirClassLikeSymbol<*>? = symbol
+            var requiresParameters = true
+            while (current != null) {
+                add(buildString {
+                    append(current.classId.shortClassName)
+
+                    val parameterCount = current.ownTypeParameterSymbols.size
+                    if (requiresParameters && parameterCount > 0) {
+                        append("<")
+                        Array(parameterCount) { "*" }.joinTo(this, ", ")
+                        append(">")
+                    }
+                })
+
+                requiresParameters = current.isInner
+                current = current.getContainingClassSymbol()
+            }
+        }
+        list.reversed().joinToString(".")
     }
 
     val RENDER_TYPE = ContextDependentRenderer { t: ConeKotlinType, ctx ->
         // TODO, KT-59811: need a way to tune granuality, e.g., without parameter names in functional types.
         ctx[ADAPTIVE_RENDERED_TYPES].getValue(t)
+    }
+
+    val RENDER_FQ_NAME_WITH_PREFIX = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirCallableSymbol<*> -> CALLABLE_FQ_NAME.render(symbol)
+            is FirClassLikeSymbol<*> -> RENDER_CLASS_OR_OBJECT(quoted = false) { classId -> classId.asFqNameString() }.render(symbol)
+            else -> return@Renderer "???"
+        }
     }
 
     private val ADAPTIVE_RENDERED_TYPES: RenderingContext.Key<Map<ConeKotlinType, String>> =
@@ -313,12 +351,6 @@ object FirDiagnosticRenderers {
     // TODO: properly implement
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE
 
-    val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->
-        candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
-            SYMBOL.render(symbol)
-        }
-    }
-
     private const val WHEN_MISSING_LIMIT = 7
 
     val WHEN_MISSING_CASES = Renderer { missingCases: List<WhenMissingCase> ->
@@ -343,7 +375,7 @@ object FirDiagnosticRenderers {
         if (classId == null) {
             "file"
         } else {
-            "'${classId}'"
+            "'${classId.asFqNameString()}'"
         }
     }
 
@@ -375,12 +407,24 @@ object FirDiagnosticRenderers {
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
     }
 
+    val OF_OPTIONAL_NAME = Renderer { name: Name? ->
+        name?.asString()?.takeIf { it.isNotBlank() }?.let { " of '$it'" } ?: ""
+    }
+
+    val IGNORABILITY_STATUS = Renderer { status: ReturnValueStatus ->
+        when (status) {
+            ReturnValueStatus.MustUse -> "must-use"
+            ReturnValueStatus.ExplicitlyIgnorable -> "ignorable"
+            ReturnValueStatus.Unspecified -> "unspecified (implicitly ignorable)"
+        }
+    }
+
     val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirBasedSymbol<*> ->
         val containingClassId = when (symbol) {
-            is FirCallableSymbol<*> -> symbol.callableId.classId
+            is FirCallableSymbol<*> -> symbol.callableId?.classId
             is FirTypeParameterSymbol -> (symbol.containingDeclarationSymbol as? FirClassLikeSymbol<*>)?.classId
             else -> null
-        }
+        } ?: return@Renderer "'${SYMBOL.render(symbol)}'"
         "'${SYMBOL.render(symbol)}' defined in ${NAME_OF_DECLARATION_OR_FILE.render(containingClassId)}"
     }
 
@@ -423,6 +467,25 @@ object FirDiagnosticRenderers {
             1 -> "target $quotedTargets"
             else -> "targets $quotedTargets"
         }
+    }
+
+    val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
+        buildString {
+            for ((symbol, diagnostics) in list) {
+                append(SYMBOL.render(symbol))
+
+                if (diagnostics.isNotEmpty()) {
+                    appendLine(":")
+
+                    diagnostics.forEach {
+                        append("  ")
+                        appendLine(it)
+                    }
+                }
+
+                appendLine()
+            }
+        }.trim()
     }
 }
 

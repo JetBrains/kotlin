@@ -206,6 +206,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R =
         visitNamedReference(resolvedNamedReference, data)
 
+    override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): R =
+        visitResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): R =
         visitResolvedNamedReference(resolvedCallableReference, data)
 
@@ -277,6 +280,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): R =
         visitContractDescription(legacyRawContractDescription, data)
+
+    override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): R =
+        visitLegacyRawContractDescription(lazyContractDescription, data)
 
     override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): R =
         visitContractDescription(errorContractDescription, data)

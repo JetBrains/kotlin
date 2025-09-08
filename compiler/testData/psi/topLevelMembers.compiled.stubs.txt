@@ -1,5 +1,5 @@
 A.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=File[packageFqName=foo.TopLevelMembers]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -16,7 +16,7 @@ A.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -30,7 +30,7 @@ A.class:
 
 
 D.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=File[packageFqName=foo.TopLevelMembers]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -38,14 +38,14 @@ D.class:
     IMPORT_LIST
     CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=D]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=D]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
 
 
 Nothing.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=File[packageFqName=foo.TopLevelMembers]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -53,14 +53,14 @@ Nothing.class:
     IMPORT_LIST
     CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nothing]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nothing]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
 
 
 TopLevelMembersKt.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=Facade[packageFqName=foo.TopLevelMembers, facadeFqName=foo.TopLevelMembers.TopLevelMembersKt]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -92,8 +92,9 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     PROPERTY[fqName=foo.TopLevelMembers.certainlyNothing, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
       MODIFIER_LIST[private]
       TYPE_REFERENCE
@@ -118,8 +119,9 @@ TopLevelMembersKt.class:
                 REFERENCE_EXPRESSION[referencedName=foo]
               REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
             REFERENCE_EXPRESSION[referencedName=D]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
     PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
       MODIFIER_LIST[internal]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -140,7 +142,7 @@ TopLevelMembersKt.class:
                 REFERENCE_EXPRESSION[referencedName=foo]
               REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
             REFERENCE_EXPRESSION[referencedName=D]
-    FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
+    FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -148,7 +150,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
+    FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -156,7 +158,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=foo.TopLevelMembers.funWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
+    FUN[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -170,7 +172,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=foo.TopLevelMembers.ext, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
+    FUN[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -190,7 +192,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
+    FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -211,7 +213,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
+    FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -224,7 +226,7 @@ TopLevelMembersKt.class:
     TYPEALIAS[classId=foo/TopLevelMembers/Alias, fqName=foo.TopLevelMembers.Alias, isTopLevel=true, name=Alias]
       MODIFIER_LIST[private]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+        TYPE_PARAMETER[fqName=null, name=E]
       TYPE_REFERENCE
         FUNCTION_TYPE
           VALUE_PARAMETER_LIST

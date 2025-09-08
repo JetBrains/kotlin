@@ -40,6 +40,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt")
+    public void testAnnotatedLocalContextParameterWithAnnotatedTypeOnFunction() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotatedLocalContextParameterWithAnnotatedTypeOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt")
+    public void testAnnotatedLocalContextParameterWithAnnotatedTypeOnProperty() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotatedLocalContextParameterWithAnnotatedTypeOnProperty.kt");
+    }
+
+    @Test
     @TestMetadata("annotationApplicationArgument.kt")
     public void testAnnotationApplicationArgument() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationApplicationArgument.kt");
@@ -211,6 +223,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("jvmFieldAnnotationOnConstructorProperty.kt")
     public void testJvmFieldAnnotationOnConstructorProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/jvmFieldAnnotationOnConstructorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("localCompilerRequiredAnnotation.kt")
+    public void testLocalCompilerRequiredAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localCompilerRequiredAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("localCompilerRequiredAnnotationWithLocalAnnotation.kt")
+    public void testLocalCompilerRequiredAnnotationWithLocalAnnotation() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/localCompilerRequiredAnnotationWithLocalAnnotation.kt");
     }
 
     @Test
@@ -759,6 +783,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("superType.kt")
     public void testSuperType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/superType.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/suspendLambda.kt");
     }
 
     @Test
@@ -1438,6 +1468,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+    public void testContextParameterOnErrorPrimaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/contextParameterOnErrorPrimaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedProperty.kt")
     public void testDelegatedProperty() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/delegatedProperty.kt");
@@ -1549,6 +1585,76 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("typeParameterOnAnonymousFunction.kt")
     public void testTypeParameterOnAnonymousFunction() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode/typeParameterOnAnonymousFunction.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis")
+  @TestDataPath("$PROJECT_ROOT")
+  public class PartialBodyAnalysis {
+    @Test
+    public void testAllFilesPresentInPartialBodyAnalysis() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("conditions.kt")
+    public void testConditions() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/conditions.kt");
+    }
+
+    @Test
+    @TestMetadata("conditions2.kt")
+    public void testConditions2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/conditions2.kt");
+    }
+
+    @Test
+    @TestMetadata("contract.kt")
+    public void testContract() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/contract.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallPrimary.kt")
+    public void testDelegatedConstructorCallPrimary() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/delegatedConstructorCallPrimary.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallSecondary.kt")
+    public void testDelegatedConstructorCallSecondary() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/delegatedConstructorCallSecondary.kt");
+    }
+
+    @Test
+    @TestMetadata("fullThenPartial.kt")
+    public void testFullThenPartial() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/fullThenPartial.kt");
+    }
+
+    @Test
+    @TestMetadata("logicalOperators.kt")
+    public void testLogicalOperators() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/logicalOperators.kt");
+    }
+
+    @Test
+    @TestMetadata("partialThenFull.kt")
+    public void testPartialThenFull() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/partialThenFull.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleDataFlow.kt")
+    public void testSimpleDataFlow() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/simpleDataFlow.kt");
     }
   }
 

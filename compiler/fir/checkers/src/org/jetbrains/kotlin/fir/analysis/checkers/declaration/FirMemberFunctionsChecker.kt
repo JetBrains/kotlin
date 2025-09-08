@@ -26,14 +26,13 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
         val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClassSymbol<*>>() ?: return
-        checkFunction(containingDeclaration, declaration, context, reporter)
+        checkFunction(containingDeclaration, declaration)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkFunction(
         containingDeclaration: FirClassSymbol<*>,
         function: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val source = function.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
@@ -49,27 +48,26 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Commo
                     source,
                     FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS,
                     functionSymbol,
-                    containingDeclaration,
-                    context
+                    containingDeclaration
                 )
             }
             if (function.hasBody) {
-                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, functionSymbol, context)
+                reporter.reportOn(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY, functionSymbol)
             }
         }
-        val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
-        val isInsideExternal = isInsideExternalClass(containingDeclaration, context)
+        val isInsideExpectClass = isInsideExpectClass(containingDeclaration)
+        val isInsideExternal = isInsideExternalClass(containingDeclaration)
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
-                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, functionSymbol, context)
+                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, functionSymbol)
                 }
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
-                    reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
+                    reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
                 }
             } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal && !isInsideExternal) {
-                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol, context)
+                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol)
             }
         }
     }

@@ -45,3 +45,6 @@ fun testGeneric() {
     consumeMyClass(test(<!UNRESOLVED_REFERENCE!>InheritorClass<!>()))
     consumeMyClass(test(<!UNRESOLVED_REFERENCE!>func<!>()))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, lambdaLiteral, nestedClass, nullableType,
+objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral, typeParameter */

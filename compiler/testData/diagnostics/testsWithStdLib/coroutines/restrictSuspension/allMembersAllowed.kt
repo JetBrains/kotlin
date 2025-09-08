@@ -98,3 +98,5 @@ fun String.test() {
 
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localFunction, stringLiteral, suspend, typeWithExtension */

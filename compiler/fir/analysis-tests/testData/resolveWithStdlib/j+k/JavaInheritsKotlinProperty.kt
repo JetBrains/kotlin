@@ -20,3 +20,6 @@ class Tester : Inheritor() {
         return x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaProperty, javaType,
+propertyDeclaration */

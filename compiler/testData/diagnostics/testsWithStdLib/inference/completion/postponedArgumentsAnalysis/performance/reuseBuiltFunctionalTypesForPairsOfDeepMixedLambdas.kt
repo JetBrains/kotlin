@@ -47,3 +47,6 @@ class A {
             to(Inv(take({ a, b, c, d -> }, { a, b, c, d -> })), Inv { a, b, c, d -> }),
         )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, out, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

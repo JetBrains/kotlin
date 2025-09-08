@@ -37,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-object CompareTo : IntrinsicMethod() {
+object CompareTo : CallBasedIntrinsicMethod() {
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
             Type.CHAR_TYPE, Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE ->

@@ -17,3 +17,7 @@ inline fun <reified RT: Parent<RT>> Box<RT>.refresh() {
 }
 
 interface Child: Parent<Child>
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, capturedType, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, inline, integerLiteral, interfaceDeclaration, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, reified, starProjection, typeConstraint, typeParameter */

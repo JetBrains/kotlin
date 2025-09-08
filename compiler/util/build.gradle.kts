@@ -4,6 +4,8 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -17,7 +19,7 @@ dependencies {
     compileOnly(jpsModel()) { isTransitive = false }
     compileOnly(jpsModelImpl()) { isTransitive = false }
 
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
@@ -39,6 +41,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 testsJar()
 
-projectTest(parallel = true) {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4)
 }

@@ -28,3 +28,6 @@ fun <PH> PH.fix() {}
 fun <MT> materialize(): MT = null!!
 
 object InferenceTarget
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, objectDeclaration, typeParameter */

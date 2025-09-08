@@ -26,3 +26,6 @@ public enum EJava {
 public @interface AJava {
     EJava e() default EJava.FOO;
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, enumEntry, expect, javaType, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration */

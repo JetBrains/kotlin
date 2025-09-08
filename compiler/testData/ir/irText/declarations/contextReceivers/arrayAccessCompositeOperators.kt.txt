@@ -30,7 +30,7 @@ data class MyContainer {
     when {
       other !is MyContainer -> return false
     }
-    val tmp_0: MyContainer = other as MyContainer
+    val tmp_0: MyContainer = other /*as MyContainer */
     when {
       EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
@@ -95,4 +95,3 @@ operator fun MyContainer.plusAssign(other: MyContainer) {
     tmp_2.<set-i>(<set-?> = tmp_2.<get-i>().plus(other = other.<get-i>()))
   }
 }
-

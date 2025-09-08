@@ -1,2 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
 val a: String = <!INITIALIZER_TYPE_MISMATCH, NO_COMPANION_OBJECT!>Nothing<!>
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

@@ -61,3 +61,6 @@ fun foo8(x: B<String>): Additional {
         else -> { x.convert() }
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, nullableType, typeParameter, whenExpression */

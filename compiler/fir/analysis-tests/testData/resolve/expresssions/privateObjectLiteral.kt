@@ -12,3 +12,6 @@ class C {
 
     val w = z.<!UNRESOLVED_REFERENCE!>foo<!>() // ERROR!
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral,
+propertyDeclaration */

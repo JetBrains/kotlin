@@ -24,3 +24,6 @@ private object NestedTypeVariable {
         bar(foo<String>())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, objectDeclaration,
+stringLiteral, typeParameter */

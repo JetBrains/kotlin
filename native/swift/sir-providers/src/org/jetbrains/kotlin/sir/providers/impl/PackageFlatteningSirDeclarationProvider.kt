@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTrampolineDeclarationsProvider
 import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineFunction
 import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineVariable
+import org.jetbrains.kotlin.sir.providers.utils.containingModule
 
 public class SirTrampolineDeclarationsProviderImpl(
     private val sirSession: SirSession,
@@ -41,11 +42,6 @@ public class SirTrampolineDeclarationsProviderImpl(
 
             return listOfNotNull(declaration.takeIf { shouldExportToRoot }?.trampolineDeclaration())
         }
-    }
-
-    private fun SirDeclaration.containingModule(): SirModule = when (val parent = parent) {
-        is SirModule -> parent
-        is SirDeclaration -> parent.containingModule()
     }
 
     private fun SirDeclaration.trampolineDeclaration(): SirDeclaration? = when (val declaration = this@trampolineDeclaration) {

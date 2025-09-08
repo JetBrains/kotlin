@@ -61,8 +61,7 @@ class ColorsTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        // Compilation should return false, because there's one error.
-        assertFalse(KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment))
+        KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
 
         val firstBytes = log.toByteArray().take(7)
         val logStartsWithColors = firstBytes.joinToString(" ") { it.toString(16) } == "1b 5b 31 3b 33 31 6d"

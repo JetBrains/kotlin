@@ -5,3 +5,6 @@ fun calc(x: List<String>?, y: Int?): Int {
     // y!! above should not provide smart cast here
     return <!RETURN_TYPE_MISMATCH!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, functionDeclaration, integerLiteral, nullableType, safeCall,
+smartcast */

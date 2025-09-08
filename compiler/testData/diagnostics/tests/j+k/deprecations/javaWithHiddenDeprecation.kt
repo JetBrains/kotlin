@@ -26,3 +26,5 @@ fun check(j: <!DEPRECATION_ERROR!>JavaClass<!>) {
     ClassWithMembers.<!UNRESOLVED_REFERENCE!>function<!>()
     ClassWithMembers.<!UNRESOLVED_REFERENCE!>field<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, javaType */

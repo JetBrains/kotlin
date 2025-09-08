@@ -332,7 +332,7 @@ object FirFakeOverrideGenerator {
             newContextParameterTypes ?: List(baseFunction.contextParameters.size) { null }
         ) { contextParameter, newType ->
             buildValueParameterCopy(contextParameter) {
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
             }
         }
@@ -349,7 +349,7 @@ object FirFakeOverrideGenerator {
         this.origin = origin
         this.source = source
         this.returnTypeRef = returnTypeRef
-        symbol = FirValueParameterSymbol(original.name)
+        symbol = FirValueParameterSymbol()
         this.containingDeclarationSymbol = containingDeclarationSymbol
         defaultValue = defaultValue
             ?.takeIf { copyDefaultValues }
@@ -386,11 +386,11 @@ object FirFakeOverrideGenerator {
         return symbolForSubstitutionOverride
     }
 
-    fun createSymbolForSubstitutionOverride(baseSymbol: FirPropertySymbol, derivedClassId: ClassId? = null): FirPropertySymbol {
+    fun createSymbolForSubstitutionOverride(baseSymbol: FirPropertySymbol, derivedClassId: ClassId? = null): FirRegularPropertySymbol {
         return if (derivedClassId == null) {
-            FirPropertySymbol(baseSymbol.callableId)
+            FirRegularPropertySymbol(baseSymbol.callableId!!)
         } else {
-            FirPropertySymbol(CallableId(derivedClassId, baseSymbol.callableId.callableName))
+            FirRegularPropertySymbol(CallableId(derivedClassId, baseSymbol.name))
         }
     }
 
@@ -418,7 +418,6 @@ object FirFakeOverrideGenerator {
         name = baseProperty.name
         isVar = baseProperty.isVar
         this.symbol = newSymbol
-        isLocal = false
         status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect, isOverride = true)
 
         resolvePhase = origin.resolvePhaseForCopy
@@ -709,7 +708,7 @@ object FirFakeOverrideGenerator {
             newContextParameterTypes ?: List(baseVariable.contextParameters.size) { null }
         ) { contextParameter, newType ->
             buildValueParameterCopy(contextParameter) {
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
             }
         }

@@ -120,6 +120,30 @@ class DiagnosticsReportingFunctionalTest {
     }
 
     @Test
+    fun testOncePerProjectAndPerBuildExperimentalFeatureWarning() {
+        val root = buildProject()
+
+        root.applyKotlinJvmPlugin()
+        root.evaluate()
+
+        root.reportDiagnosticOncePerBuild(
+            KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                "My feature A",
+                "https://kotl.in/feature-a",
+            )
+        )
+
+        root.reportDiagnosticOncePerBuild(
+            KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                "My feature B",
+                "https://kotl.in/feature-b",
+            )
+        )
+
+        root.checkDiagnostics("oncePerProjectAndPerBuildExperimentalFeatureWarning")
+    }
+
+    @Test
     fun testSequentialReportAndReportOnceInvocations() {
         val project = buildProject()
 

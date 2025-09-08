@@ -63,7 +63,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single")
     @GradleTest
     fun testPodImportSingle(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -78,7 +81,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single noPodspec")
     @GradleTest
     fun testPodImportSingleNoPodspec(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
 
             buildGradleKts.addCocoapodsBlock("noPodspec()")
 
@@ -95,7 +101,10 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import multiple")
     @GradleTest
     fun testPodImportMultiple(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsMultipleKtPods, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsMultipleKtPods,
+            gradleVersion
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -385,6 +394,18 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addPod("Base64", "extraOpts = listOf(\"-help\")")
             buildWithCocoapodsWrapper("cinteropBase64IOS") {
                 assertOutputContains("Usage: cinterop options_list")
+                assertOutputContains("-compiler-option -fmodules")
+            }
+        }
+    }
+
+    @DisplayName("KT-79429 - Cinterop explicit header and fmodules")
+    @GradleTest
+    fun testCinteropExplicitHeaderAndFmodules(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addPod("AFNetworking", "headers = \"AFNetworking.h\"")
+            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
+                assertOutputDoesNotContain("-compiler-option -fmodules")
             }
         }
     }
@@ -717,7 +738,10 @@ class CocoaPodsIT : KGPBaseTest() {
         val subprojectPodImportTask = ":$subProjectName$podImportTaskName"
         val subprojectPodspecTask = ":$subProjectName$podspecTaskName"
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion
+        ) {
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))

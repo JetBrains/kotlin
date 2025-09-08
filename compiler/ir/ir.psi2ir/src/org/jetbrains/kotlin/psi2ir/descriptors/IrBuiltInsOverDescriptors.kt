@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi2ir.descriptors
 
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
@@ -27,8 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -41,6 +38,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
@@ -143,7 +141,7 @@ class IrBuiltInsOverDescriptors(
             operator.parent = operatorsPackageFragment
             operatorsPackageFragment.declarations += operator
 
-            operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
+            operator.parameters += valueParameterTypes.withIndex().map { (i, valueParameterType) ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
@@ -279,7 +277,7 @@ class IrBuiltInsOverDescriptors(
                 valueParameter.parent = operator
                 typeParameter.parent = operator
 
-                operator.valueParameters += valueParameter
+                operator.parameters += valueParameter
                 operator.typeParameters += typeParameter
             }
         }.symbol
@@ -534,6 +532,11 @@ class IrBuiltInsOverDescriptors(
             KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
         }.toIrSymbol()
 
+    override val intAndSymbol: IrSimpleFunctionSymbol =
+        builtIns.int.unsubstitutedMemberScope.findFirstFunction("and") {
+            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
+        }.toIrSymbol()
+
     override val arrayOf = symbolFinder.findFunctions(Name.identifier("arrayOf")).first {
         it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
                 it.descriptor.valueParameters.size == 1 && it.descriptor.valueParameters[0].varargElementType != null
@@ -548,72 +551,6 @@ class IrBuiltInsOverDescriptors(
 
     override val enumClass = builtIns.enum.toIrSymbol()
 
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
-
-    override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
-        require(lhsType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $lhsType" }
-        val classifier = lhsType.classifier
-        require(classifier is IrClassSymbol && classifier.isBound) {
-            "Expected a bound IrClassSymbol for lhsType in getBinaryOperator, got $classifier"
-        }
-        val key = Triple(name, lhsType, rhsType)
-        return binaryOperatorCache.getOrPut(key) {
-            classifier.functions.single {
-                val function = it.owner
-                function.name == name && function.valueParameters.size == 1 && function.valueParameters[0].type == rhsType
-            }
-        }
-    }
-
-    private val unaryOperatorCache = mutableMapOf<Pair<Name, IrType>, IrSimpleFunctionSymbol>()
-
-    override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
-        require(receiverType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $receiverType" }
-        val classifier = receiverType.classifier
-        require(classifier is IrClassSymbol && classifier.isBound) {
-            "Expected a bound IrClassSymbol for receiverType in getBinaryOperator, got $classifier"
-        }
-        val key = Pair(name, receiverType)
-        return unaryOperatorCache.getOrPut(key) {
-            classifier.functions.single {
-                val function = it.owner
-                function.name == name && function.valueParameters.isEmpty()
-            }
-        }
-    }
-
-    private fun <T : Any> getFunctionsByKey(
-        name: Name,
-        vararg packageNameSegments: String,
-        makeKey: (SimpleFunctionDescriptor) -> T?
-    ): Map<T, IrSimpleFunctionSymbol> {
-        val result = mutableMapOf<T, IrSimpleFunctionSymbol>()
-        for (d in symbolFinder.builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)) {
-            makeKey(d)?.let { key ->
-                result[key] = d.toIrSymbol()
-            }
-        }
-        return result
-    }
-
-    override fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        getFunctionsByKey(name, *packageNameSegments) {
-            if (it.containingDeclaration !is BuiltInsPackageFragment && it.extensionReceiverParameter != null) {
-                symbolTable.referenceClassifier(it.extensionReceiverParameter!!.type.constructor.declarationDescriptor!!)
-            } else null
-        }
-
-    override fun getNonBuiltinFunctionsByReturnType(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        getFunctionsByKey(Name.identifier("getProgressionLastElement"), *packageNameSegments) { d ->
-            if (d.containingDeclaration !is BuiltInsPackageFragment) {
-                d.returnType?.constructor?.declarationDescriptor?.let { symbolTable.referenceClassifier(it) }
-            } else null
-        }
-
     override val extensionToString: IrSimpleFunctionSymbol = symbolFinder.findFunctions(OperatorNameConventions.TO_STRING, "kotlin").first {
         val descriptor = it.descriptor
         descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
@@ -621,13 +558,12 @@ class IrBuiltInsOverDescriptors(
                 KotlinBuiltIns.isNullableAny(descriptor.extensionReceiverParameter!!.type) && descriptor.valueParameters.isEmpty()
     }
 
-    override val memberToString: IrSimpleFunctionSymbol = symbolFinder.findBuiltInClassMemberFunctions(
-        anyClass,
-        OperatorNameConventions.TO_STRING
-    ).single {
-        val descriptor = it.descriptor
-        descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
-    }
+    override val memberToString: IrSimpleFunctionSymbol = symbolFinder
+        .findFunctions(CallableId(builtIns.any.classId!!, OperatorNameConventions.TO_STRING))
+        .single {
+            val descriptor = it.descriptor
+            descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
+        }
 
     override val extensionStringPlus: IrSimpleFunctionSymbol = symbolFinder.findFunctions(OperatorNameConventions.PLUS, "kotlin").first {
         val descriptor = it.descriptor
@@ -638,15 +574,14 @@ class IrBuiltInsOverDescriptors(
                 KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
     }
 
-    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder.findBuiltInClassMemberFunctions(
-        stringClass,
-        OperatorNameConventions.PLUS
-    ).single {
-        val descriptor = it.descriptor
-        descriptor is SimpleFunctionDescriptor &&
-                descriptor.valueParameters.size == 1 &&
-                KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
-    }
+    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder
+        .findFunctions(CallableId(builtIns.string.classId!!, OperatorNameConventions.PLUS))
+        .single {
+            val descriptor = it.descriptor
+            descriptor is SimpleFunctionDescriptor &&
+                    descriptor.valueParameters.size == 1 &&
+                    KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
+        }
 
     override fun functionN(arity: Int): IrClass = functionFactory.functionN(arity)
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
@@ -702,11 +637,6 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
             .orEmpty()
             .map { it.toIrSymbol() }
     }
-
-    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
-        builtInClass.descriptor.unsubstitutedMemberScope
-            .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-            .map { it.toIrSymbol() }
 
     private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
         return symbolTable.descriptorExtension.referenceClass(this)

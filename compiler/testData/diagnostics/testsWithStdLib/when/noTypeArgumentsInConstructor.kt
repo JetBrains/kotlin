@@ -41,3 +41,6 @@ val test7: Collection<Int> =
         listOf(1, 2, 3).flatMapTo(LinkedHashSet()) {
             select(listOf(it), listOf(it))
         }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, integerLiteral, javaFunction, lambdaLiteral,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

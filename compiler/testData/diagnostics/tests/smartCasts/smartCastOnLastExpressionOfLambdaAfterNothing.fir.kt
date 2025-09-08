@@ -13,3 +13,6 @@ fun test(x: String?): Inv<String> {
         x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, nullableType, smartcast, typeParameter */

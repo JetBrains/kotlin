@@ -7,8 +7,11 @@ package kotlin.wasm.internal
 import kotlin.reflect.KClass
 
 internal class KClassImpl<T : Any> @WasmPrimitiveConstructor constructor(internal val rtti: kotlin.wasm.internal.reftypes.structref) : KClass<T> {
-    override val simpleName: String get() = getSimpleName(rtti)
-    override val qualifiedName: String get() = getQualifiedName(rtti)
+    override val simpleName: String?
+        get() = if (isAnonymousClass(rtti)) null else getSimpleName(rtti)
+
+    override val qualifiedName: String?
+        get() = if (isAnonymousClass(rtti) || isLocalClass(rtti)) null else getQualifiedName(rtti)
 
     override fun isInstance(value: Any?): Boolean {
         if (value !is Any) return false
@@ -25,7 +28,7 @@ internal class KClassImpl<T : Any> @WasmPrimitiveConstructor constructor(interna
     override fun equals(other: Any?): Boolean =
         (other !== null) && ((this === other) || (other is KClassImpl<*> && wasm_ref_eq(rtti, other.rtti)))
 
-    override fun hashCode(): Int = qualifiedName.hashCode()
+    override fun hashCode(): Int = getQualifiedName(rtti).hashCode()
 
-    override fun toString(): String = "class $qualifiedName"
+    override fun toString(): String = "class ${getQualifiedName(rtti)}"
 }

@@ -9,3 +9,6 @@ fun bar(a: MutableList<String>, b: Boolean) {
         <!RETURN_TYPE_MISMATCH!>a[0] = ""<!> // should be an error here
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral,
+stringLiteral */

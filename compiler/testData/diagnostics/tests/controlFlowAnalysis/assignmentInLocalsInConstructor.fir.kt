@@ -66,3 +66,7 @@ class Test5 {
         this.y = y
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+init, lambdaLiteral, localProperty, nullableType, propertyDeclaration, secondaryConstructor, stringLiteral,
+thisExpression, typeParameter */

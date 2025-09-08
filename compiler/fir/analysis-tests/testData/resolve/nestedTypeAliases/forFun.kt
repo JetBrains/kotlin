@@ -19,3 +19,6 @@ class TAOwner {
 
     fun testReturnPosition2(): GenericFunTA<String> = {s: String -> true}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

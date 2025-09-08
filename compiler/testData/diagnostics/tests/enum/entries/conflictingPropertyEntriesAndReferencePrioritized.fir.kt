@@ -15,3 +15,6 @@ fun test() {
     val refType: (E) -> Int = E::entries
     val refTypeWithAnyExpectedType: Any = E::entries
 }
+
+/* GENERATED_FIR_TAGS: callableReference, enumDeclaration, functionDeclaration, functionalType, integerLiteral,
+localProperty, propertyDeclaration */

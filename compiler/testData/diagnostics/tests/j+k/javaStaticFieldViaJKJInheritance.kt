@@ -16,3 +16,5 @@ interface MyInterfaceEx : MyInterface
 fun main() {
     MyInterfaceImpl.MY_STATIC_FIELD
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaProperty, javaType */

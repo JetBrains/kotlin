@@ -7,8 +7,8 @@ public class A<T : Any?>
     public constructor()
         /* TARGET use-site */ A<T>(s = "" as T)
     internal inline fun copy(s: String): A<String>
-        /* ACCESSOR use-site */ access$<init><String>(s = s)
-    /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$<init>(s: T): A<T>
+        /* ACCESSOR use-site */ A<String>(s = s, $constructor_marker = null)
+    /* ACCESSOR declaration */ internal constructor(s: T, $constructor_marker: SyntheticConstructorMarker?)
         /* TARGET use-site */ A<T>(s = s)
 public fun box(): String
-    /* ACCESSOR use-site */ access$<init><String>(s = s)
+    /* ACCESSOR use-site */ A<String>(s = s, $constructor_marker = null)

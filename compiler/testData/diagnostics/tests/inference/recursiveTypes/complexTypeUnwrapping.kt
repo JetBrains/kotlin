@@ -18,3 +18,6 @@ interface FieldOrRef<FF : AbstractField<FF>> {
 }
 
 fun bar(y: FieldOrRef<*>) = y.field
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, out, outProjection,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

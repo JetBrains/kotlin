@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSmartCastExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -63,4 +64,21 @@ inline fun buildSmartCastExpression(init: FirSmartCastExpressionBuilder.() -> Un
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirSmartCastExpressionBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
+inline fun buildSmartCastExpressionCopy(original: FirSmartCastExpression, init: FirSmartCastExpressionBuilder.() -> Unit): FirSmartCastExpression {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirSmartCastExpressionBuilder()
+    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.originalExpression = original.originalExpression
+    copyBuilder.upperTypesFromSmartCast = original.upperTypesFromSmartCast
+    copyBuilder.lowerTypesFromSmartCast = original.lowerTypesFromSmartCast
+    copyBuilder.smartcastType = original.smartcastType
+    copyBuilder.smartcastTypeWithoutNullableNothing = original.smartcastTypeWithoutNullableNothing
+    copyBuilder.smartcastStability = original.smartcastStability
+    return copyBuilder.apply(init).build()
 }

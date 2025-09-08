@@ -35,3 +35,5 @@ actual annotation class RepeatedTargetsInExpect
 
 @Target(AnnotationTarget.FUNCTION)
 actual annotation class EmptyTargetsActual
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, collectionLiteral, expect */

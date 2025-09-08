@@ -67,3 +67,6 @@ interface F6Typealias {
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F6<!> = F6Typealias
 
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F7<!> = NotSam
+
+/* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, interfaceDeclaration, javaType,
+typeAliasDeclaration */

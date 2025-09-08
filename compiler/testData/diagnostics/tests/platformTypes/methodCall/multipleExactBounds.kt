@@ -21,3 +21,6 @@ fun <M2: ModuleInfo, A: ResolverForModule> foo(delegateResolver: ResolverForProj
 // HashMap<M2, MDI> :< Map<M, MDI> => M = M2!
 // R = A
 // RFP<M2, A> :< RFP<M, R>
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

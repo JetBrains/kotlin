@@ -1054,6 +1054,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("localClasspathSubstitution.kt")
+    public void testLocalClasspathSubstitution() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/localClasspathSubstitution.kt");
+    }
+
+    @Test
     @TestMetadata("multiFieldValueClass.kt")
     public void testMultiFieldValueClass() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/multiFieldValueClass.kt");
@@ -1287,6 +1293,24 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("constructorDuplicatedContextParameter2.kt")
     public void testConstructorDuplicatedContextParameter2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/constructorDuplicatedContextParameter2.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
+    public void testContextParameterOnErrorPrimaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/contextParameterOnErrorPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnPrimaryConstructor.kt")
+    public void testContextParameterOnPrimaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/contextParameterOnPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterOnPrimaryConstructorAndClass.kt")
+    public void testContextParameterOnPrimaryConstructorAndClass() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/contextParameterOnPrimaryConstructorAndClass.kt");
     }
 
     @Test

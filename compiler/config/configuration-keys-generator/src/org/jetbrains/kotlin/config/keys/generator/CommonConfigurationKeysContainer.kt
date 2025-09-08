@@ -29,6 +29,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val LOOKUP_TRACKER by key<LookupTracker>("lookup tracker", throwOnNull = false)
     val EXPECT_ACTUAL_TRACKER by key<ExpectActualTracker>("expect actual tracker", throwOnNull = false)
     val INLINE_CONST_TRACKER by key<InlineConstTracker>("inline constant tracker", throwOnNull = false)
+    val FILE_MAPPING_TRACKER by key<ICFileMappingTracker>("file mapping tracker", throwOnNull = false)
     val ENUM_WHEN_TRACKER by key<EnumWhenTracker>("enum when tracker", throwOnNull = false)
     val IMPORT_TRACKER by key<ImportTracker>("import tracker", throwOnNull = false)
     val METADATA_VERSION by key<BinaryVersion>("metadata version")
@@ -38,6 +39,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val METADATA_KLIB by key<Boolean>("Produce metadata klib")
     val USE_FIR_EXTRA_CHECKERS by key<Boolean>("fir extra checkers")
     val USE_FIR_EXPERIMENTAL_CHECKERS by key<Boolean>("fir not-public-ready checkers")
+    val DUMP_INFERENCE_LOGS by key<Boolean>("render the inference constraints dump file")
     val PARALLEL_BACKEND_THREADS by key<Int>("Run codegen phase in parallel with N threads")
     val INCREMENTAL_COMPILATION by key<Boolean>("Enable incremental compilation")
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS by key<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
@@ -63,5 +65,10 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val DONT_SORT_SOURCE_FILES by key<Boolean>(
         description = "don't sort source files in FS order",
         comment = "Should be used only in tests, impossible to set via compiler arguments",
+    )
+
+    val SCRIPTING_HOST_CONFIGURATION by key<Any>(
+        description = "scripting host configuration",
+        comment = "Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments"
     )
 }

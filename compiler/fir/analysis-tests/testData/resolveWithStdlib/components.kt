@@ -10,3 +10,6 @@ fun foo(list: List<D>) {
         println(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration, lambdaLiteral,
+localProperty, primaryConstructor, propertyDeclaration */

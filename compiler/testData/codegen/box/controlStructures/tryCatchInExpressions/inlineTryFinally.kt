@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 inline fun <T> tryAndThen(f1: () -> Unit, f2: () -> Unit, f3: () -> T): T {
     try {
         f1()
@@ -11,6 +11,7 @@ inline fun <T> tryAndThen(f1: () -> Unit, f2: () -> Unit, f3: () -> T): T {
     }
 }
 
+// FILE: main.kt
 fun testIt() = "abc" +
                tryAndThen({}, {}, { "def" }) +
                "ghi"

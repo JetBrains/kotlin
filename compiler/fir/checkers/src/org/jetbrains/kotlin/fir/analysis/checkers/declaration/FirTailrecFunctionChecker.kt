@@ -79,7 +79,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     return
                 }
                 val dispatchReceiver = functionCall.dispatchReceiver
-                val dispatchReceiverOwner = declaration.dispatchReceiverType?.toClassSymbol(context.session)
+                val dispatchReceiverOwner = declaration.dispatchReceiverType?.toClassSymbol()
                 val sameReceiver = dispatchReceiver == null ||
                         (dispatchReceiver is FirThisReceiverExpression && dispatchReceiver.calleeReference.boundSymbol == dispatchReceiverOwner) ||
                         dispatchReceiverOwner?.classKind?.isSingleton == true

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -50,25 +51,24 @@ fun compile(
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
+    val (moduleFragment: IrModuleFragment, moduleDependencies, irBuiltIns, symbolTable, deserializer) =
         loadIr(modulesStructure, irFactory, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
-        moduleFragment,
-        modulesStructure.mainModule,
-        mainCallArguments,
-        modulesStructure.compilerConfiguration,
-        dependencyModules,
-        moduleToName,
-        irBuiltIns,
-        symbolTable,
-        deserializer,
-        exportedDeclarations,
-        keep,
-        dceRuntimeDiagnostic,
-        safeExternalBoolean,
-        safeExternalBooleanDiagnostic,
-        granularity,
+        moduleFragment = moduleFragment,
+        mainModule = modulesStructure.mainModule,
+        mainCallArguments = mainCallArguments,
+        configuration = modulesStructure.compilerConfiguration,
+        moduleDependencies = moduleDependencies,
+        irBuiltIns = irBuiltIns,
+        symbolTable = symbolTable,
+        irLinker = deserializer,
+        exportedDeclarations = exportedDeclarations,
+        keep = keep,
+        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
+        safeExternalBoolean = safeExternalBoolean,
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+        granularity = granularity,
     )
 }
 
@@ -77,8 +77,7 @@ fun compileIr(
     mainModule: MainModule,
     mainCallArguments: List<String>?,
     configuration: CompilerConfiguration,
-    dependencyModules: List<IrModuleFragment>,
-    moduleToName: Map<IrModuleFragment, String>,
+    moduleDependencies: IrModuleDependencies,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     irLinker: KotlinIrLinker,
@@ -96,11 +95,6 @@ fun compileIr(
     val irFactory = symbolTable.irFactory
     val shouldGeneratePolyfills = configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
-
-    val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
-        is MainModule.Klib -> dependencyModules
-    }
 
     val context = JsIrBackendContext(
         moduleDescriptor,
@@ -124,6 +118,14 @@ fun compileIr(
     irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
+
+    // Sort dependencies after IR linkage.
+    val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
+
+    val allModules = when (mainModule) {
+        is MainModule.SourceFiles -> sortedModuleDependencies.all + listOf(moduleFragment)
+        is MainModule.Klib -> sortedModuleDependencies.all
+    }
 
     allModules.forEach { module ->
         if (shouldGeneratePolyfills) {
@@ -151,5 +153,5 @@ fun compileIr(
         }
     }
 
-    return LoweredIr(context, moduleFragment, allModules, moduleToName)
+    return LoweredIr(context, moduleFragment, allModules, moduleDependencies.fragmentNames)
 }

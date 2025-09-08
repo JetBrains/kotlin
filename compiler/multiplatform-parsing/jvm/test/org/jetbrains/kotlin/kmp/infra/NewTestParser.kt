@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kmp.infra
 
 import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.lexer.performLexing
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilderFactory
 import com.intellij.platform.syntax.parser.prepareProduction
@@ -193,9 +194,9 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
     ): TestParseNode<out NewParserTestNode> {
         val syntaxTreeBuilder = SyntaxTreeBuilderFactory.builder(
             charSequence,
+            performLexing(charSequence, lexer, cancellationProvider = null, logger = null),
             whitespaces = parser.whitespaces,
             comments = parser.comments,
-            lexer
         ).withStartOffset(start)
             .withWhitespaceOrCommentBindingPolicy(parser.whitespaceOrCommentBindingPolicy)
             .build()

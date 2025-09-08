@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
@@ -27,7 +28,14 @@ import org.jetbrains.kotlin.name.Name
  * @see org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypePointer<out T : KaType> {
+    /**
+     * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
+     *
+     * Do not use this function directly, as it is an implementation detail.
+     * Use [KaSession.restore][org.jetbrains.kotlin.analysis.api.KaSession.restore] instead.
+     */
     @KaImplementationDetail
     public fun restore(session: KaSession): T?
 }
@@ -55,13 +63,40 @@ public interface KaTypePointer<out T : KaType> {
  * @see org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
  * @see org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaType : KaLifetimeOwner, KaAnnotated {
     /**
      * The type's [nullability][KaTypeNullability].
      *
-     * Instead of being applied as a separate wrapper for [KaType]s (e.g. `KaNullableType` to represent a type `?`), type nullability is an
-     * attribute of each [KaType].
+     * [KaTypeNullability] was deprecated due to its questionable meaning, see KT-71101 for more information.
+     *
+     * Now the information about the nullability can be acquired via three properties:
+     *
+     * ##### 1. [org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.isMarkedNullable]
+     * Shows whether some type is marked as nullable, i.e., is represented as `T?` in code. Previously, [nullability] had the same semantics.
+     *
+     * ##### 2. [org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.isNullable]
+     * Shows whether some type can hold `null` value. It unwraps type aliases, checks parameter type bounds, etc. and performs a deep nullability calculation.
+     *
+     * Note the difference between `isMarkedNullable` and `isNullable`. `isMarkedNullable = false` doesn't imply that this type cannot hold `null`. Consider the following example:
+     * ```kotlin
+     * fun <T : String?> foo(something: T) {}
+     * ```
+     *
+     * `isMarkedNullable` for type `T` returns `false`, as it's not marked as nullable. However, it still can hold `null`, as its upper bound is nullable, so `isNullable` is `true`.
+     *
+     * ##### 3. [org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider.hasFlexibleNullability]
+     * Shows whether some type has flexible nullability, i.e., both null-safe and non-null-safe calls are valid on this type.
+     * Such types are error types with unknown nullability or flexible / dynamic types with a non-nullable lower bound and a nullable upper bound. Previously, [nullability] in such cases was [KaTypeNullability.UNKNOWN].
+     *
+     * Note that `isMarkedNullable` for flexible / dynamic types returns `true` only if both of its bounds are marked as nullable, otherwise both bounds can either be non-nullable or the type can have flexible nullability.
+     * The same is applied to error types: `isMarkedNullable` returns `true` only when this error type is definitely nullable, otherwise it can either be non-nullable or have unknown nullability.
      */
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     public val nullability: KaTypeNullability
 
     /**
@@ -126,13 +161,22 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
      */
     public val abbreviation: KaUsualClassType?
 
+    /**
+     * Creates a type pointer.
+     *
+     * Unlike [KaType], a [KaTypePointer] may be safely stored and passed around outside the
+     * (analyze)[org.jetbrains.kotlin.analysis.api.analyze] block. Use the [KaSession.restore] function to get the type instance back.
+     * Note that depending on the use-site session (analysisScope)[KaSession.analysisScope], a type might not be restored.
+     */
     @KaExperimentalApi
+    @KaK1Unsupported
     public fun createPointer(): KaTypePointer<KaType>
 }
 
 /**
  * The [nullability](https://kotlinlang.org/docs/null-safety.html#nullable-types-and-non-nullable-types) of a [KaType].
  */
+@Deprecated("See KDocs for `KaType.nullability` for the migration guide")
 public enum class KaTypeNullability(public val isNullable: Boolean) {
     /**
      * The [KaType] is nullable, i.e. it can hold `null`.
@@ -150,6 +194,7 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
     UNKNOWN(false);
 
     public companion object {
+        @Suppress("Deprecation")
         public fun create(isNullable: Boolean): KaTypeNullability = if (isNullable) NULLABLE else NON_NULLABLE
     }
 }
@@ -159,6 +204,7 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
  *
  * The more specific [KaClassErrorType] has additional information available to work with.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaErrorType : KaType {
     @KaNonPublicApi
     public val errorMessage: String
@@ -176,6 +222,7 @@ public interface KaErrorType : KaType {
  * In Kotlin, function types are class types. This is why the Analysis API differentiates between [function types][KaFunctionType] and
  * [*usual* class types][KaUsualClassType], which encompass all non-function class types.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed class KaClassType : KaType {
     /**
      * The [ClassId] of the class.
@@ -202,6 +249,7 @@ public sealed class KaClassType : KaType {
     public abstract val qualifiers: List<KaResolvedClassTypeQualifier>
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaClassType>
 }
 
@@ -210,6 +258,7 @@ public sealed class KaClassType : KaType {
  * or `suspend () -> List<Any>`.
  */
 @OptIn(KaExperimentalApi::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     /**
      * The [extension receiver](https://kotlinlang.org/docs/extensions.html) type, or `null` if the function type is not an extension
@@ -298,6 +347,7 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val hasContextReceivers: Boolean
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
 }
 
@@ -306,7 +356,8 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
  * Represents a function value parameter
  */
 @KaExperimentalApi
-public abstract class KaFunctionValueParameter {
+@SubclassOptInRequired(KaImplementationDetail::class)
+public abstract class KaFunctionValueParameter : KaLifetimeOwner {
     /**
      * Type of the parameter
      */
@@ -337,14 +388,17 @@ public abstract class KaFunctionValueParameter {
 /**
  * [KaUsualClassType] represents a generic class type, such as `String` or `List<Int>`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaUsualClassType : KaClassType() {
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaUsualClassType>
 }
 
 /**
  * [KaClassErrorType] represents a class type that failed to resolve correctly.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaClassErrorType : KaErrorType {
     /**
      * The list of [KaClassTypeQualifier]s describing the segments of the class error type.
@@ -361,6 +415,7 @@ public abstract class KaClassErrorType : KaErrorType {
     public abstract val candidateSymbols: Collection<KaClassLikeSymbol>
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaClassErrorType>
 }
 
@@ -369,6 +424,7 @@ public abstract class KaClassErrorType : KaErrorType {
  *
  * In that sense, [KaTypeParameterType] is a type used in *unsubstituted* positions to represent an application of a type parameter.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaTypeParameterType : KaType {
     /**
      * The type parameter's simple name.
@@ -381,12 +437,14 @@ public abstract class KaTypeParameterType : KaType {
     public abstract val symbol: KaTypeParameterSymbol
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaTypeParameterType>
 }
 
 /**
  * [KaCapturedType] represents a [captured type](https://kotlinlang.org/spec/type-system.html#type-capturing).
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaCapturedType : KaType {
     /**
      * The source type argument of the captured type.
@@ -394,6 +452,7 @@ public abstract class KaCapturedType : KaType {
     public abstract val projection: KaTypeProjection
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaCapturedType>
 }
 
@@ -401,15 +460,22 @@ public abstract class KaCapturedType : KaType {
  * [KaDefinitelyNotNullType] represents a [definitely not-null type](https://kotlinlang.org/docs/generics.html#definitely-non-nullable-types),
  * such as `T & Any` for a type parameter `T`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaDefinitelyNotNullType : KaType {
     /**
      * The nullable upper bound of the type.
      */
     public abstract val original: KaType
 
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType>
 }
 
@@ -420,6 +486,7 @@ public abstract class KaDefinitelyNotNullType : KaType {
  *
  * A flexible type's [abbreviation] is always `null`, as only [lowerBound] and [upperBound] can actually be expanded types.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaFlexibleType : KaType {
     /**
      * The lower bound, such as `String` in `String!`.
@@ -432,6 +499,7 @@ public abstract class KaFlexibleType : KaType {
     public abstract val upperBound: KaType
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaFlexibleType>
 }
 
@@ -440,6 +508,7 @@ public abstract class KaFlexibleType : KaType {
  * Intersection types cannot be denoted in Kotlin code, but can result from some compiler operations, such as
  * [smart casts](https://kotlinlang.org/spec/type-inference.html#smart-casts).
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaIntersectionType : KaType {
     /**
      * A list of individual types participating in the intersection.
@@ -447,6 +516,7 @@ public abstract class KaIntersectionType : KaType {
     public abstract val conjuncts: List<KaType>
 
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaIntersectionType>
 }
 
@@ -457,7 +527,9 @@ public abstract class KaIntersectionType : KaType {
  * Although this can be viewed as a flexible type (`kotlin.Nothing..kotlin.Any?`), a platform may assign special meaning to the values of a
  * dynamic type, and handle it differently from the regular flexible type.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaDynamicType : KaType {
     @KaExperimentalApi
+    @KaK1Unsupported
     public abstract override fun createPointer(): KaTypePointer<KaDynamicType>
 }

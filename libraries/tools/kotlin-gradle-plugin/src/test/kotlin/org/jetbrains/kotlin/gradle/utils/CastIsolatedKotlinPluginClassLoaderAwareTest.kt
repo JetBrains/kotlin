@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.util.assertThrows
-import org.junit.AssumptionViolatedException
 import java.net.URLClassLoader
+import org.junit.jupiter.api.Assumptions.abort
 import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertSame
@@ -20,10 +20,10 @@ class CastIsolatedKotlinPluginClassLoaderAwareTest {
 
     private val isolatedClassLoader by lazy {
         val thisClassLoader = this::class.java.classLoader as? URLClassLoader
-            ?: throw AssumptionViolatedException(
-                "Test required to load classes with ${URLClassLoader::class.java.name}. " +
-                        "Found ${this::class.java.classLoader.javaClass.name}"
-            )
+            ?: abort {
+                "Test requires loading classes with ${URLClassLoader::class.java.name}, " +
+                        "but found ${this::class.java.classLoader.javaClass.name}"
+            }
 
         URLClassLoader(thisClassLoader.urLs, ClassLoader.getSystemClassLoader().parent)
     }

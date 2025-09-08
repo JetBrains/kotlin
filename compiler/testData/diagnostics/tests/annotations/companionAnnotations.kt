@@ -73,3 +73,5 @@ class TestWithSuperWithCompanionOnly2 : SuperWithCompanion() {
         object Foo
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, nestedClass, objectDeclaration */

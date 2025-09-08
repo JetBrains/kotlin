@@ -67,3 +67,7 @@ class InitializationForbiddenInNonInitSection {
         myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, forLoop, functionDeclaration,
+functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, rangeExpression, smartcast, typeParameter */

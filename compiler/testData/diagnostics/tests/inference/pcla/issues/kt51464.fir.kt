@@ -12,3 +12,6 @@ fun f() {
     fun <T> doEmit(collector: FlowCollector<T>) {}
     flowOf(1).<!CANNOT_INFER_PARAMETER_TYPE!>transform<!> { <!CANNOT_INFER_PARAMETER_TYPE!>doEmit<!>(this) }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, in, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localFunction, nullableType, out, thisExpression, typeParameter, typeWithExtension */

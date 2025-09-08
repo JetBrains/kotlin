@@ -31,6 +31,7 @@ interface IrDeclarationOrigin {
         val FUNCTION_FOR_DEFAULT_PARAMETER by IrDeclarationOriginImpl.Synthetic
         val MASK_FOR_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
         val DEFAULT_CONSTRUCTOR_MARKER by IrDeclarationOriginImpl.Synthetic
+        val SYNTHETIC_CONSTRUCTOR_MARKER by IrDeclarationOriginImpl.Synthetic
         val METHOD_HANDLER_IN_DEFAULT_FUNCTION by IrDeclarationOriginImpl.Synthetic
         val MOVED_DISPATCH_RECEIVER by IrDeclarationOriginImpl
         val MOVED_EXTENSION_RECEIVER by IrDeclarationOriginImpl
@@ -118,6 +119,8 @@ interface IrDeclarationOrigin {
         val FUNCTION_INTERFACE_MEMBER by IrDeclarationOriginImpl
 
         val STUB_FOR_LENIENT by IrDeclarationOriginImpl.Synthetic
+
+        val STUB_FOR_TYPE_SWITCH by IrDeclarationOriginImpl.Synthetic
     }
 
     /**

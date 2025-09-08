@@ -33,3 +33,6 @@ interface Inv<T> {
 }
 
 fun <K> materialize(): Inv<K> = TODO()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, suspend, typeParameter, typeWithExtension */

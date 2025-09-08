@@ -15,3 +15,6 @@ val x by makeIntDelegate(run {
     val x: String = materialize()
     materialize2()
 })
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces -DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
 // JVM_TARGET: 1.8
@@ -96,7 +96,7 @@ fun main() {
     )
 
     val sam4: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
             if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
@@ -110,7 +110,7 @@ fun main() {
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>
@@ -210,3 +210,8 @@ fun test()  {
         <!ARGUMENT_TYPE_MISMATCH!>returnNullableString().foo2()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, checkNotNullCall, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, javaFunction,
+javaType, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, stringLiteral, tryExpression,
+typeAliasDeclaration, typeConstraint, typeParameter, whenExpression, whenWithSubject */

@@ -12,3 +12,5 @@ fun baz() {
         nullStr() ?: unitFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, lambdaLiteral, nullableType */

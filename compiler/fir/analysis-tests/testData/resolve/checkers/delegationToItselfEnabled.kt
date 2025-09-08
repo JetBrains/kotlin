@@ -9,3 +9,6 @@ interface A {
 }
 
 <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_ERROR!>object B<!> : A by B
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inheritanceDelegation, interfaceDeclaration, objectDeclaration,
+propertyDeclaration */

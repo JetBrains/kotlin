@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleInformationProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.CleanableValueReferenceCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirSourceModuleData
@@ -32,14 +32,14 @@ class LLFirSessionCache(
     private val project: Project,
     val storage: LLFirSessionCacheStorage,
 ) : Disposable {
-
     constructor(project: Project) : this(
         project,
         LLFirSessionCacheStorage.createEmpty { LLFirSessionCleaner(it.requestedDisposableOrNull) }
     )
 
-    companion object {
-        fun getInstance(project: Project): LLFirSessionCache = project.service()
+    @KaCachedService
+    private val moduleInformationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinModuleInformationProvider.getInstance(project)
     }
 
     /**
@@ -61,6 +61,17 @@ class LLFirSessionCache(
             is KaDanglingFileModule -> getDanglingFileCachedSession(module)
             else -> getCachedSession(module, storage.sourceCache, factory = ::createSession)
         }
+
+    /**
+     * Returns the [LLFirSession] for [module], to be used as a *dependency*, or `null` if it doesn't make sense to create such a session as
+     * a dependency. This is an optimization for [KaModule]s of certain kinds, like empty modules.
+     *
+     * Dependency sessions are implicitly binary-preferred because sessions used as dependencies do not need to be resolvable.
+     */
+    fun getDependencySession(module: KaModule): LLFirSession? {
+        if (moduleInformationProvider?.isEmpty(module) == true) return null
+        return getSession(module, preferBinary = true)
+    }
 
     private fun getBinaryLibraryCachedSession(module: KaModule, storage: SessionStorage): LLFirSession =
         getCachedSession(module, storage) {
@@ -109,6 +120,7 @@ class LLFirSessionCache(
     private fun checkSessionValidity(session: LLFirSession) {
         requireWithAttachment(session.isValid, { "A session acquired via `getSession` should always be valid." }) {
             withKaModuleEntry("module", session.ktModule)
+            withEntry("invalidationInformation", session.invalidationInformation)
         }
     }
 
@@ -151,6 +163,10 @@ class LLFirSessionCache(
 
     override fun dispose() {
     }
+
+    companion object {
+        fun getInstance(project: Project): LLFirSessionCache = project.service()
+    }
 }
 
 internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession) {
@@ -166,7 +182,7 @@ internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession)
 )
 @OptIn(PrivateSessionConstructor::class)
 fun createEmptySession(): FirSession {
-    return object : FirSession(null, Kind.Source) {}.apply {
+    return object : FirSession(Kind.Source) {}.apply {
         val moduleData = FirSourceModuleData(
             Name.identifier("<stub module>"),
             dependencies = emptyList(),

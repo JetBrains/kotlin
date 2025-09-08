@@ -20,3 +20,5 @@ package test
 import a.b
 
 fun test() = b<String>().getT()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

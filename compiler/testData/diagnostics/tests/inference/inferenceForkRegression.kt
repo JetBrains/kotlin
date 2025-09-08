@@ -25,3 +25,6 @@ fun main() {
         listOf("")
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

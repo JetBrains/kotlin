@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -27,6 +27,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 /**
  * The module-level [FirSymbolProvider] for an [LLFirSession], composing multiple kinds of symbol providers for the module's own content
  * ([providers]) and its dependencies ([dependencyProvider]).
+ *
+ * This class does not implement [LLPsiAwareSymbolProvider] because for specific-module symbol provider access, only own symbol providers
+ * should be considered, but not dependencies. [LLModuleWithDependenciesSymbolProvider] must consider dependencies for all its overridden
+ * symbol provider functions. As such, the class offers alternative functions like [getClassLikeSymbolByPsiWithoutDependencies].
  *
  * ### Module content inclusion
  *
@@ -47,7 +51,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * responsibility, which is the burden of the Analysis API platform.
  */
 internal class LLModuleWithDependenciesSymbolProvider(
-    session: FirSession,
+    session: LLFirSession,
     val providers: List<FirSymbolProvider>,
     val dependencyProvider: LLDependenciesSymbolProvider,
 ) : FirSymbolProvider(session) {
@@ -77,16 +81,12 @@ internal class LLModuleWithDependenciesSymbolProvider(
     fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
-    fun getDeserializedClassLikeSymbolByClassIdWithoutDependencies(
+    @LLModuleSpecificSymbolProviderAccess
+    fun getClassLikeSymbolByPsiWithoutDependencies(
         classId: ClassId,
-        classLikeDeclaration: KtClassLikeDeclaration,
-    ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
-        when (provider) {
-            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
-            is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
-            else -> null
-        }
-    }
+        declaration: PsiElement,
+    ): FirClassLikeSymbol<*>? =
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolMatchingPsi(classId, declaration) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -98,30 +98,27 @@ internal class LLModuleWithDependenciesSymbolProvider(
         LLKotlinStubBasedLibraryMultifileClassPartCallableSymbolProvider(session)
     }
 
-    @FirSymbolProviderInternals
-    fun getTopLevelDeserializedCallableSymbolsToWithoutDependencies(
-        destination: MutableList<FirCallableSymbol<*>>,
+    @OptIn(FirSymbolProviderInternals::class)
+    fun getTopLevelDeserializedCallableSymbolsWithoutDependencies(
         packageFqName: FqName,
         shortName: Name,
         callableDeclaration: KtCallableDeclaration,
-    ) {
-        val sizeBefore = destination.size
-
+    ): List<FirCallableSymbol<*>> = buildList {
         providers.forEach { provider ->
             when (provider) {
                 is LLKotlinStubBasedLibrarySymbolProvider ->
-                    destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
+                    addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
 
                 is AbstractFirDeserializedSymbolProvider ->
-                    provider.getTopLevelCallableSymbolsTo(destination, packageFqName, shortName)
+                    provider.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
 
                 else -> {}
             }
         }
 
         // Must be called after the original search as this is only a fallback solution
-        if (sizeBefore == destination.size && providers.any { it is LLKotlinStubBasedLibrarySymbolProvider }) {
-            multifileClassPartCallableSymbolProvider.addCallableIfNeeded(destination, packageFqName, shortName, callableDeclaration)
+        if (isEmpty() && providers.any { it is LLKotlinStubBasedLibrarySymbolProvider }) {
+            multifileClassPartCallableSymbolProvider.addCallableIfNeeded(this, packageFqName, shortName, callableDeclaration)
         }
     }
 
@@ -161,7 +158,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
 
 internal class LLDependenciesSymbolProvider(
     session: FirSession,
-    val computeProviders: () -> List<FirSymbolProvider>,
+    computeProviders: () -> List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
     /**
      * Dependency symbol providers are lazy to support cyclic dependencies between modules. If a module A and a module B depend on each
@@ -217,6 +214,23 @@ internal class LLDependenciesSymbolProvider(
 
     override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
 
+    /**
+     * Filters out any top-level [FirCallableSymbol]s defined in a facade class which have already been added by a previous symbol provider
+     * for a facade class with the same name.
+     *
+     * We need this handling because we usually have two sources for builtins:
+     *
+     * 1. The builtins from the stdlib library symbol provider.
+     * 2. The fallback builtins from the symbol provider created in
+     *    [LLFirBuiltinsSessionFactory][org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory].
+     *
+     * In contrast to class symbols where we return the first match, for callables we query all symbol providers and build a list of all
+     * candidates. Callables declared in the same facade class, but provided by two different symbol providers, are essentially duplicates.
+     * Hence, we filter them out.
+     *
+     * Regarding builtins, this logic filters out callables from fallback builtins if they have already been added from the stdlib, since
+     * the fallback builtins provider is ordered last.
+     */
     private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
         destination: MutableList<S>,
         newSymbols: List<S>,
@@ -238,10 +252,3 @@ internal class LLDependenciesSymbolProvider(
         facades += newFacades
     }
 }
-
-
-/**
- * Every [LLFirSession] has [LLModuleWithDependenciesSymbolProvider] as a symbol provider
- */
-internal val LLFirSession.symbolProvider: LLModuleWithDependenciesSymbolProvider
-    get() = (this as FirSession).symbolProvider as LLModuleWithDependenciesSymbolProvider

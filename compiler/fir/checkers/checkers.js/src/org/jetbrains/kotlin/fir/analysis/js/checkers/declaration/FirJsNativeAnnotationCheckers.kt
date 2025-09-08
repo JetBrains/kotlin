@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-internal abstract class FirJsAbstractNativeAnnotationChecker(private val requiredAnnotation: ClassId) : FirSimpleFunctionChecker(
-    MppCheckerKind.Common) {
-    protected fun FirFunction.hasRequiredAnnotation(context: CheckerContext) = hasAnnotation(requiredAnnotation, context.session)
+internal abstract class FirJsAbstractNativeAnnotationChecker(
+    private val requiredAnnotation: ClassId
+) : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext)
+    protected fun FirFunction.hasRequiredAnnotation() = hasAnnotation(requiredAnnotation, context.session)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
@@ -35,7 +37,7 @@ internal abstract class FirJsAbstractNativeAnnotationChecker(private val require
         val isMember = !context.isTopLevel && declaration.visibility != Visibilities.Local
         val isExtension = declaration.isExtension
 
-        if (isMember && (isExtension || !declaration.symbol.isNativeObject(context)) || !isMember && !isExtension) {
+        if (isMember && (isExtension || !declaration.symbol.isNativeObject()) || !isMember && !isExtension) {
             reporter.reportOn(
                 declaration.source,
                 FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
@@ -100,7 +102,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
 internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeGetter, "getter", 1) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        if (!declaration.hasRequiredAnnotation(context)) return
+        if (!declaration.hasRequiredAnnotation()) return
         super.check(declaration)
 
         if (!declaration.returnTypeRef.coneType.isMarkedNullable) {
@@ -112,7 +114,7 @@ internal object FirJsNativeGetterChecker : FirJsAbstractNativeIndexerChecker(JsS
 internal object FirJsNativeSetterChecker : FirJsAbstractNativeIndexerChecker(JsStandardClassIds.Annotations.JsNativeSetter, "setter", 2) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        if (!declaration.hasRequiredAnnotation(context)) return
+        if (!declaration.hasRequiredAnnotation()) return
         super.check(declaration)
 
         val returnType = declaration.returnTypeRef.coneType

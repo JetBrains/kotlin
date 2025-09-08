@@ -10,3 +10,6 @@ fun foo() {
         if (x == 1) return
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, forLoop, functionDeclaration, ifExpression,
+integerLiteral, localProperty, propertyDeclaration, rangeExpression */

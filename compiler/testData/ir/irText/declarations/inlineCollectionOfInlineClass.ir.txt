@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IT'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.IT [val]
-          TYPE_OP type=<root>.IT origin=CAST typeOperand=<root>.IT
+          TYPE_OP type=<root>.IT origin=IMPLICIT_CAST typeOperand=<root>.IT
             GET_VAR 'other: kotlin.Any? declared in <root>.IT.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.InlineMutableSet'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.InlineMutableSet [val]
-          TYPE_OP type=<root>.InlineMutableSet origin=CAST typeOperand=<root>.InlineMutableSet
+          TYPE_OP type=<root>.InlineMutableSet origin=IMPLICIT_CAST typeOperand=<root>.InlineMutableSet
             GET_VAR 'other: kotlin.Any? declared in <root>.InlineMutableSet.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

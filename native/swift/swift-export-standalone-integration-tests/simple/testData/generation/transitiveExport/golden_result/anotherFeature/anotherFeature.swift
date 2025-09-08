@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import state
 
-public final class FeatureC: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class FeatureC: KotlinRuntime.KotlinBase {
     public var state: ExportedKotlinPackages.oh.my.state.State {
         get {
             return ExportedKotlinPackages.oh.my.state.State.__createClassWrapper(externalRCRef: FeatureC_state_get(self.__externalRCRef()))
@@ -20,5 +20,8 @@ public final class FeatureC: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func baz() -> ExportedKotlinPackages.oh.my.state.ToExtract {
+        return ExportedKotlinPackages.oh.my.state.ExtractedByTypealias.__createClassWrapper(externalRCRef: FeatureC_baz(self.__externalRCRef()))
     }
 }

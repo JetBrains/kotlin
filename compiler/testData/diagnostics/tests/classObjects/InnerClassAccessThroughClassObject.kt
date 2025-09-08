@@ -50,3 +50,6 @@ fun f() {
     O.O
     O.A()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

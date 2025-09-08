@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/kt52677.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.LoginSuccessPacket'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.LoginSuccessPacket [val]
-          TYPE_OP type=<root>.LoginSuccessPacket origin=CAST typeOperand=<root>.LoginSuccessPacket
+          TYPE_OP type=<root>.LoginSuccessPacket origin=IMPLICIT_CAST typeOperand=<root>.LoginSuccessPacket
             GET_VAR 'other: kotlin.Any? declared in <root>.LoginSuccessPacket.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

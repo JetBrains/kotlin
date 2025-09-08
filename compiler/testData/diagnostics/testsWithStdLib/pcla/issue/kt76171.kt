@@ -45,3 +45,7 @@ class FakeMutableState<T>(var value: T) {
 }
 
 fun <T> fakeMutableStateOf(value: T): FakeMutableState<T> = FakeMutableState(value)
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, operator, override, primaryConstructor,
+propertyDeclaration, propertyDelegate, setter, starProjection, typeParameter */

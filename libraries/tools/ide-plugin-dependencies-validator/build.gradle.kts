@@ -6,11 +6,12 @@ plugins {
     application
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 
 dependencies {
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:cli"))
     implementation(intellijCore())
     implementation(kotlinStdlib())
@@ -26,9 +27,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
+    }
 }
 
 application {

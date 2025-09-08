@@ -13,39 +13,64 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
-import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
-import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.isUnitOrFlexibleUnit
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.unwrapLowerBound
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
-import kotlin.collections.orEmpty
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
+
+object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.DISABLED) return
+
+        // Only check mustUse overrides:
+        if (!declaration.isOverride) return
+        if (declaration.status.returnValueStatus != ReturnValueStatus.MustUse) return
+        val symbol = declaration.symbol
+
+        // Check if any of the overridden symbols have @IgnorableReturnValue
+        val overriddenSymbols = symbol.directOverriddenSymbolsSafe()
+        val ignorableBaseSymbol = overriddenSymbols.find {
+            it.resolvedStatus.returnValueStatus == ReturnValueStatus.ExplicitlyIgnorable
+        } ?: return
+
+        // Report error if an overridden symbol has @IgnorableReturnValue but the current declaration doesn't
+        val containingClass = ignorableBaseSymbol.getContainingClassSymbol()
+            ?: error("Overridden symbol ${ignorableBaseSymbol.callableId} does not have containing class symbol")
+        reporter.reportOn(
+            declaration.source,
+            FirErrors.OVERRIDING_IGNORABLE_WITH_MUST_USE,
+            symbol,
+            containingClass,
+        )
+    }
+}
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
+        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
+
+    private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
+        toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) return
@@ -64,14 +89,14 @@ object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerK
 
 
 object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
-    override fun isEnabled(context: CheckerContext): Boolean =
+    context(context: CheckerContext)
+    override fun isEnabled(): Boolean =
         context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun reportUnusedExpressionIfNeeded(
         expression: FirExpression,
         hasSideEffects: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         source: KtSourceElement?,
     ): Boolean {
         if (!hasSideEffects) return false // Do not report anything FirUnusedExpressionChecker already reported
@@ -91,15 +116,19 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         // Special case for `x[y] = z` assigment:
         if ((expression is FirFunctionCall) && expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
 
+        val functionName = resolvedSymbol?.name
+
         reporter.reportOn(
             expression.source,
             FirErrors.RETURN_VALUE_NOT_USED,
-            context
+            functionName
         )
         return true
     }
 
-    override fun createVisitor(context: CheckerContext, reporter: DiagnosticReporter): UsageVisitorBase = UsageVisitor(context, reporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun createVisitor(): UsageVisitorBase =
+        UsageVisitor(context, reporter)
 
     private class UsageVisitor(
         context: CheckerContext,
@@ -128,6 +157,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
 
 private fun ConeKotlinType.isIgnorable(): Boolean {
+    if (this is ConeErrorType || this.hasError()) return true
     val classId = classId ?: return false
     if (classId == StandardClassIds.Nothing) return true
     if (classId == StandardClassIds.Unit && !isMarkedNullable) return true
@@ -135,74 +165,12 @@ private fun ConeKotlinType.isIgnorable(): Boolean {
     return false
 }
 
-private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
-    toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
-
-private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
-    toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue
-
-
-private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
-    if (this is FirThisReceiverExpression) return true
-    if (this !is FirPropertyAccessExpression) return false
-    return when (calleeReference.symbol) {
-        is FirValueParameterSymbol -> true
-        is FirPropertySymbol -> calleeReference.toResolvedPropertySymbol()?.isLocal == true
-        else -> false
-    }
-}
-
-private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
-    hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
+private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean = session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
-    // TODO KT-71195 : treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
-    // This should be removed after bootstrapping and recompiling stdlib in FULL mode
-    if (this.callableId.packageName.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
-    callableId.ifMappedTypeCollection { return it }
-
-
     // TBD: Do we want to report them unconditionally? Or only in FULL mode?
     // If latter, metadata flag should be added for them too.
     if (this is FirEnumEntrySymbol) return true
 
-    return resolvedStatus.hasMustUseReturnValue
-}
-
-// TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,
-// this list should contain only typealiased Java types (HashSet, StringBuilder, etc.)
-private inline fun CallableId.ifMappedTypeCollection(nonIgnorableCollectionMethod: (Boolean) -> Unit) {
-    val packageName = packageName.asString()
-    if (packageName != "kotlin.collections" && packageName != "java.util") return
-    val className = className?.asString() ?: return
-    if (className !in setOf(
-            "Collection",
-            "MutableCollection",
-            "List",
-            "MutableList",
-            "ArrayList",
-            "Set",
-            "MutableSet",
-            "HashSet",
-            "LinkedHashSet",
-            "Map",
-            "MutableMap",
-            "HashMap",
-            "LinkedHashMap",
-            "ArrayDeque"
-        )
-    ) return
-    nonIgnorableCollectionMethod(
-        callableName.asString() !in setOf(
-            "add",
-            "addAll",
-            "remove",
-            "removeAt",
-            "removeAll",
-            "set",
-            "put",
-            "retainAll",
-            "removeLast"
-        )
-    )
+    return resolvedStatus.returnValueStatus == ReturnValueStatus.MustUse
 }

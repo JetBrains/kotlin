@@ -6,3 +6,6 @@ class A {
         x.length + y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, nullableType, secondaryConstructor,
+smartcast, stringLiteral */

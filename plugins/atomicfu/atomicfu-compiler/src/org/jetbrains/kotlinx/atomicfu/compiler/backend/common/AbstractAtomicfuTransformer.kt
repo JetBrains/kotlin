@@ -149,51 +149,6 @@ abstract class AbstractAtomicfuTransformer(
             }
         }
 
-        /**
-         * This function creates an [AtomicHandler] for a given atomicfu property.
-         * [AtomicHandler] is only created for:
-         * - Atomics: properties of type kotlinx.atomicfu.Atomic(Int|Long|Ref|Boolean)
-         * - AtomicArrays: properties of type kotlinx.atomicfu.Atomic(Int|Long|*)Array
-         * Otherwise, this function returns null.
-         */
-        abstract fun createAtomicHandler(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): AtomicHandler<IrProperty>?
-
-        /**
-         * Creates an [AtomicArray] to replace an atomicfu array:
-         * On JVM: builds a Java atomic array: java.util.concurrent.atomic.Atomic(Integer|Long|Reference)Array.
-         *
-         * On Native: builds a Kotlin Native array: kotlin.concurrent.Atomic(Int|Long|*)Array.
-         *
-         * Generated only for JVM and Native.
-         */
-        protected fun createAtomicArray(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): AtomicArray {
-            with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
-                val atomicArrayField = irAtomicArrayField(atomicfuProperty, parentContainer)
-                val atomicArrayProperty = buildPropertyWithAccessors(
-                    atomicArrayField,
-                    atomicfuProperty.visibility,
-                    isVar = false,
-                    isStatic = parentContainer is IrFile,
-                    parentContainer
-                )
-                return AtomicArray(atomicArrayProperty)
-            }
-        }
-
-        protected fun createVolatileProperty(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): VolatilePropertyReference {
-            with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
-                val volatileField = buildVolatileField(atomicfuProperty, parentContainer)
-                val volatileProperty = buildPropertyWithAccessors(
-                    volatileField,
-                    atomicfuProperty.visibility,
-                    isVar = true,
-                    isStatic = false,
-                    parentContainer
-                )
-                return VolatilePropertyReference(volatileProperty)
-            }
-        }
-
         private fun registerAtomicHandler(
             atomicfuProperty: IrProperty,
             atomicHandler: AtomicHandler<IrProperty>,
@@ -305,12 +260,6 @@ abstract class AbstractAtomicfuTransformer(
             declarations[index] = newProperty
         }
 
-        internal fun IrProperty.isNotDelegatedAtomic(): Boolean =
-            !isDelegated && backingField?.type?.isAtomicType() ?: false
-
-        internal fun IrProperty.isAtomicArray(): Boolean =
-            backingField?.type?.isAtomicArrayType() ?: false
-
         private fun IrCall.isAtomicFactoryCall(): Boolean =
             symbol.owner.isFromKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_VALUE_FACTORY &&
                     type.isAtomicType()
@@ -418,7 +367,7 @@ abstract class AbstractAtomicfuTransformer(
                 if (receiverProperty is IrCall && receiverProperty.isArrayElementGetter())
                     (receiverProperty.dispatchReceiver as? IrCall)?.dispatchReceiver
                 else (receiverProperty as? IrCall)?.dispatchReceiver
-            val atomicHandler = getAtomicHandler(receiverProperty, data)
+            val atomicHandler = getOrBuildAtomicHandler(receiverProperty, data)
             val atomicHandlerExtraArg = atomicHandler.getAtomicHandlerExtraArg(dispatchReceiver, receiverProperty, data)
             val builder = atomicfuSymbols.createBuilder(expression.symbol).also {
                 it.startOffset = receiverProperty.startOffset
@@ -605,13 +554,24 @@ abstract class AbstractAtomicfuTransformer(
             return generateAtomicExtensionSignatureForAtomicHandler(atomicHandlerType, declaration)
         }
 
-        private fun getAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): AtomicHandler<*> =
+        private fun getOrBuildAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): AtomicHandler<*> =
             when {
                 atomicCallReceiver is IrCall -> {
                     val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
                     val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.arguments[0] as IrCall else atomicCallReceiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
+                    /**
+                     * NOTE about JVM backend incremental compilation:
+                     * similar to the generated atomic extension functions, an atomic handler of a property may not be found
+                     * if a call is performed from another module
+                     * which depends on the module where declarations are generated from untransformed metadata (real transformed properties are not there).
+                     * This happens if the call is performed from the test module or in case of incremental compilation.
+                     *
+                     * We build a fake atomic handler here: the underlying property will not be initialized,
+                     * The call will be delegated to this atomic handler and resolved to the real transormed property during compilation.
+                     */
                     atomicfuPropertyToAtomicHandler[atomicProperty]
+                        ?: createAtomicHandler(atomicProperty, atomicProperty.parentDeclarationContainer)
                         ?: error("No atomic handler found for the atomic property ${atomicProperty.atomicfuRender()}, \n" +
                                          "these properties were registered: ${
                                              buildString {
@@ -806,6 +766,21 @@ abstract class AbstractAtomicfuTransformer(
         return action.name.asString() == ACTION &&
                 action.type.classOrNull == irBuiltIns.functionN(1).symbol
     }
+
+    /**
+     * This function creates an [AtomicHandler] for a given atomicfu property.
+     * [AtomicHandler] is only created for:
+     * - Atomics: properties of type kotlinx.atomicfu.Atomic(Int|Long|Ref|Boolean)
+     * - AtomicArrays: properties of type kotlinx.atomicfu.Atomic(Int|Long|*)Array
+     * Otherwise, this function returns null.
+     */
+    abstract fun createAtomicHandler(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): AtomicHandler<IrProperty>?
+
+    internal fun IrProperty.isNotDelegatedAtomic(): Boolean =
+        !isDelegated && backingField?.type?.isAtomicType() ?: false
+
+    internal fun IrProperty.isAtomicArray(): Boolean =
+        backingField?.type?.isAtomicArrayType() ?: false
 
     private fun generateAtomicExtensionSignatureForAtomicHandler(
         atomicHandlerType: AtomicHandlerType,

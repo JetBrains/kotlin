@@ -30,3 +30,6 @@ class Test5 {
         constructor(s: String)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nestedClass, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral, typeWithContext */

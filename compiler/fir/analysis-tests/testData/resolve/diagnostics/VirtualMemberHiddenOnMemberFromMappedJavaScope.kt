@@ -19,3 +19,5 @@ public expect open class Throwable {
     public constructor(cause: Throwable?)
     public constructor(message: String?, cause: Throwable?)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, nullableType, propertyDeclaration, secondaryConstructor */

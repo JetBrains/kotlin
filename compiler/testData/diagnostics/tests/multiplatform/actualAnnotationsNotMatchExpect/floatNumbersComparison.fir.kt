@@ -10,3 +10,6 @@ expect fun floatNumbersComparison()
 // FILE: jvm.kt
 @Ann(0.1 + 0.1 + 0.1)
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun floatNumbersComparison() {}
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, annotationDeclaration, expect, functionDeclaration,
+primaryConstructor, propertyDeclaration */

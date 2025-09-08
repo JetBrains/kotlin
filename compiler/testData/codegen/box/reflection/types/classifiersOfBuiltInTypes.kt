@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 
 // WITH_REFLECT
@@ -40,22 +41,24 @@ fun primitiveArrays(
 ) {}
 
 fun others(
-        p1: Array<*>,
-        p2: Array<String>,
-        p3: Array<Array<Int?>?>,
-        p4: List<*>,
-        p5: List<String>?,
-        p6: Map.Entry<Int, Double>,
-        p7: Unit?,
-        p8: String,
-        p9: Nothing
+        p01: Array<*>,
+        p02: Array<String>,
+        p03: Array<Array<Int?>?>,
+        p04: List<*>,
+        p05: List<String>?,
+        p06: Map.Entry<Int, Double>,
+        p07: Unit?,
+        p08: String,
+        p09: Nothing,
+        p10: Array<Int>,
+        p11: Array<Long>?,
 ) {}
 
 inline fun <reified T : Any> wrapper(): KClass<T> = T::class
 
 fun check(f: KFunction<*>, vararg expected: KClass<*>) {
     val actual = f.parameters.map { it.type.classifier as KClass<*> }
-    for ((e, a) in expected.toList().zip(actual)) {
+    for ([e, a] in expected.toList().zip(actual)) {
         assertEquals(e, a, "$e (${e.java}) != $a (${a.java})")
     }
 }
@@ -107,7 +110,9 @@ fun box(): String {
             Map.Entry::class,
             Unit::class,
             String::class,
-            Nothing::class
+            Nothing::class,
+            Array<Int>::class,
+            Array<Long>::class,
     )
 
     return "OK"

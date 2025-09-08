@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 object FirNativeForwardDeclarationGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirGetClassCall) {
-        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol(context.session) ?: return
+        val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol() ?: return
 
         if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
             return

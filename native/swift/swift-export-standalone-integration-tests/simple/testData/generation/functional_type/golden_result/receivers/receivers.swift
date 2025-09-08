@@ -11,11 +11,11 @@ public func foo(
     }())
 }
 public func fooAny(
-    i: @escaping (KotlinRuntime.KotlinBase) -> Swift.Void
+    i: @escaping (any KotlinRuntimeSupport._KotlinBridgeable) -> Swift.Void
 ) -> Swift.Void {
-    return __root___fooAny__TypesOfArguments__U28KotlinRuntime_KotlinBaseU29202D_U20Swift_Void__({
+    return __root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__KotlinBridgeableU29202D_U20Swift_Void__({
         let originalBlock = i
-        return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: arg0)) }
+        return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any KotlinRuntimeSupport._KotlinBridgeable) }
     }())
 }
 public func fooList(

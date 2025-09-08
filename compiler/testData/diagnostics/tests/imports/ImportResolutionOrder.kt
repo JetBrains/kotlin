@@ -23,3 +23,5 @@ package d
   class X() {
 
   }
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

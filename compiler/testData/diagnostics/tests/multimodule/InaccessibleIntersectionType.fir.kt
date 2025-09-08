@@ -22,3 +22,6 @@ fun test() {
     val x = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>select<!>(c, d)
     <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+intersectionType, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, vararg */

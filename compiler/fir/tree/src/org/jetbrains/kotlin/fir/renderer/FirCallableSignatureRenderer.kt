@@ -50,13 +50,17 @@ open class FirCallableSignatureRenderer {
                     printer.print("@")
                 }
             } else {
-                printer.print(valueParameter.name.toString())
+                printer.print(renderParameterName(valueParameter))
                 renderReturnTypePrefix()
             }
         }
 
         renderCallableType(valueParameter)
         renderDefaultValue(valueParameter)
+    }
+
+    protected open fun renderParameterName(valueParameter: FirValueParameter): String {
+        return valueParameter.name.toString()
     }
 
     open fun renderCallableType(callableDeclaration: FirCallableDeclaration) {

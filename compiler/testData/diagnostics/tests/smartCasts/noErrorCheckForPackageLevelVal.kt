@@ -24,3 +24,6 @@ fun testUseFromOtherPackage() {
 }
 
 fun useInt(i: Int) = i
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, primaryConstructor, propertyDeclaration */

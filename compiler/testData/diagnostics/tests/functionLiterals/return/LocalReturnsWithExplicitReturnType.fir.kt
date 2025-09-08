@@ -8,3 +8,6 @@ fun test(a: Int) {
     run<Int>{ <!RETURN_TYPE_MISMATCH!>""<!> }
     run<Int>{ 1 }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+stringLiteral */

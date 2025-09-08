@@ -17,3 +17,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, integerLiteral,
+lambdaLiteral */

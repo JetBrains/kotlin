@@ -12,3 +12,6 @@ class A(var g: A) {
         val gRef: KMutableProperty1<A, A> = A::g
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration */

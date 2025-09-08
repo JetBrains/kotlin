@@ -14,3 +14,5 @@ fun foo(f: suspend (String) -> Unit) {
 fun bar() {
     foo(context(s: String) <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun () {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, propertyDeclaration, suspend */

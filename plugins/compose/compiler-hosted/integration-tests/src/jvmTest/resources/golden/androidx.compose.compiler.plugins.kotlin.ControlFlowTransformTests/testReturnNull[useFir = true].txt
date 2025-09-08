@@ -83,7 +83,7 @@ fun Test(%composer: Composer?, %changed: Int): String? {
 @Composable
 fun Test2(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Test2):Test.kt")
+  sourceInformation(%composer, "C(Test2)N(b):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -105,7 +105,7 @@ fun Test2(b: Boolean, %composer: Composer?, %changed: Int): String? {
 @Composable
 fun Test3(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Test3):Test.kt")
+  sourceInformation(%composer, "C(Test3)N(b):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -131,7 +131,7 @@ fun Test3(b: Boolean, %composer: Composer?, %changed: Int): String? {
 }
 @Composable
 fun Test4(b: Boolean, %composer: Composer?, %changed: Int): String? {
-  sourceInformationMarkerStart(%composer, <>, "C(Test4):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Test4)N(b):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -175,7 +175,7 @@ fun Test6(%composer: Composer?, %changed: Int): String? {
 @Composable
 fun Test7(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "C(Test7):Test.kt")
+  sourceInformation(%composer, "C(Test7)N(b):Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }

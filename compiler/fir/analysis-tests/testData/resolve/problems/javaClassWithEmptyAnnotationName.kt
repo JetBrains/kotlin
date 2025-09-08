@@ -10,3 +10,5 @@ fun main() {
 
 @()
 public class JavaClass {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

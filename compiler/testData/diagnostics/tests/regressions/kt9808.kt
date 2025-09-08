@@ -8,3 +8,6 @@ val foo: O.() -> Unit  = null!!
 fun test() {
     O.foo()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, objectDeclaration, propertyDeclaration,
+typeWithExtension */

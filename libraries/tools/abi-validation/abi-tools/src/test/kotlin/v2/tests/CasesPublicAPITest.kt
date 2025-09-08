@@ -160,7 +160,7 @@ class CasesPublicAPITest {
         includedClasses: Set<String> = emptySet(),
         excludedClasses: Set<String> = emptySet(),
         includedAnnotatedWith: Set<String> = emptySet(),
-        excludedAnnotatedWith: Set<String> = emptySet(),
+        excludedAnnotatedWith: Set<String> = emptySet()
     ) {
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
@@ -169,20 +169,20 @@ class CasesPublicAPITest {
 
         doCheck(testClassPaths, target, filters)
     }
+}
 
-    private fun doCheck(testClassPaths: List<File>, target: File, filters: AbiFilters) {
-        val testClasses = testClassPaths.flatMap { it.walk() }.filter { it.name.endsWith(".class") }
-        check(testClasses.isNotEmpty()) { "No class files are found in paths: $testClassPaths" }
+internal fun doCheck(testClassPaths: List<File>, target: File, filters: AbiFilters) {
+    val inputFiles = testClassPaths.flatMap { it.walk() }.filter { it.extension == "class" || it.extension == "jar" }
+    check(inputFiles.isNotEmpty()) { "No class or jar files are found in paths: $testClassPaths" }
 
-        if (!target.exists()) {
-            target.bufferedWriter().use { writer ->
-                ToolsV2.printJvmDump(writer, testClasses, filters)
-            }
-            fail("Expected data file did not exist. Generating: $target")
-        } else {
-            val stringBuffer = StringBuffer()
-            ToolsV2.printJvmDump(stringBuffer, testClasses, filters)
-            assertEqualsToFile(target, stringBuffer.toString())
+    if (!target.exists()) {
+        target.bufferedWriter().use { writer ->
+            ToolsV2.printJvmDump(writer, inputFiles, filters)
         }
+        fail("Expected data file did not exist. Generating: $target")
+    } else {
+        val stringBuffer = StringBuffer()
+        ToolsV2.printJvmDump(stringBuffer, inputFiles, filters)
+        assertEqualsToFile(target, stringBuffer.toString())
     }
 }

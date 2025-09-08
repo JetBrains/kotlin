@@ -41,16 +41,15 @@ class FirCommonDeclarationsMappingSymbolProvider(
 ) : FirSymbolProvider(session) {
     private val providers: List<FirSymbolProvider> = listOf(commonSymbolProvider, platformSymbolProvider)
 
-    data class ClassPair(val commonClass: FirClassLikeSymbol<*>, val platformClass: FirClassLikeSymbol<*>)
+    data class ClassPair(val commonClass: FirClassLikeSymbol<*>?, val platformClass: FirClassLikeSymbol<*>?)
 
     val classMapping: Map<ClassId, ClassPair> get() = _classMapping
     private val _classMapping: MutableMap<ClassId, ClassPair> = mutableMapOf()
 
-    private val processedCallables: MutableMap<CallableId, List<FirCallableSymbol<*>>> = mutableMapOf()
+    private val processedCallables: MutableMap<CallableId, List<FirCallableSymbol<*>>> = hashMapOf()
 
     val commonCallableToPlatformCallableMap: Map<FirCallableSymbol<*>, FirCallableSymbol<*>> get() = _commonCallableToPlatformCallableMap
     private val _commonCallableToPlatformCallableMap: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>> = mutableMapOf()
-    private val platformCallableToCommonCallableMap: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>> = mutableMapOf()
 
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeSymbolNamesProvider.Companion.fromSymbolProviders(providers)
 
@@ -58,14 +57,15 @@ class FirCommonDeclarationsMappingSymbolProvider(
         val commonSymbol = commonSymbolProvider.getClassLikeSymbolByClassId(classId)
         val platformSymbol = platformSymbolProvider.getClassLikeSymbolByClassId(classId)
 
+        if (commonSymbol == null && platformSymbol == null) return null
+
+        _classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
+
         return when {
             commonSymbol == null -> platformSymbol
             platformSymbol == null -> commonSymbol
             commonSymbol == platformSymbol -> commonSymbol
-            else -> {
-                _classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
-                platformSymbol
-            }
+            else -> platformSymbol
         }
     }
 
@@ -110,7 +110,6 @@ class FirCommonDeclarationsMappingSymbolProvider(
 
             if (matchingPlatformSymbol != null) {
                 _commonCallableToPlatformCallableMap[commonSymbol] = matchingPlatformSymbol
-                platformCallableToCommonCallableMap[matchingPlatformSymbol] = commonSymbol
             } else {
                 result += commonSymbol
             }

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +AbstractClassMemberNotImplementedWithIntermediateAbstractClass
 interface A {
     fun foo(): Any
 }
@@ -30,3 +29,5 @@ interface DProvider {
 }
 
 open class Impl: DProvider
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, stringLiteral */

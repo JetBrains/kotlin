@@ -44,7 +44,7 @@ private fun IrTypeOperator.callsInstanceOf() =
 private class VariableValues {
     data class Variable(val loop: IrLoop?, val values: MutableSet<IrExpression>)
 
-    val elementData = HashMap<IrValueDeclaration, Variable>()
+    val elementData = mutableMapOf<IrValueDeclaration, Variable>()
 
     fun addEmpty(variable: IrValueDeclaration, loop: IrLoop?) {
         elementData[variable] = Variable(loop, mutableSetOf())
@@ -776,7 +776,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 }
 
                 highestScope!!.nodes += node
-                Scoped(node, highestScope!!)
+                Scoped(node, highestScope)
             }
         }
     }

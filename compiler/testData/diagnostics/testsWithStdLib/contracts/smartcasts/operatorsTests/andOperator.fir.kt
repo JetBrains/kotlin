@@ -79,3 +79,6 @@ fun falsefalse(x: Any?) {
         x.<!NONE_APPLICABLE!>inc<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, functionDeclaration, ifExpression,
+intersectionType, isExpression, lambdaLiteral, nullableType, smartcast */

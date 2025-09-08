@@ -18,3 +18,6 @@ package p
 val y = 1
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, integerLiteral, propertyDeclaration,
+stringLiteral */

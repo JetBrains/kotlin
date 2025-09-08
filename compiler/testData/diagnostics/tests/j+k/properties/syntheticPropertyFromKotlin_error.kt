@@ -26,3 +26,5 @@ fun test_2(x: Impl) {
     x.<!UNRESOLVED_REFERENCE!>bar<!>
     x.<!UNRESOLVED_REFERENCE!>bar<!> = "a"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty, javaType, stringLiteral */

@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // FULL_JDK
 // TARGET_BACKEND: JVM
-// API_VERSION: LATEST
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // PREFER_IN_TEST_OVER_STDLIB
 
 // FILE: Spilling.kt

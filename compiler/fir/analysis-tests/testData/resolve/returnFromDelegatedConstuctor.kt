@@ -9,3 +9,5 @@ abstract class Abs(val a: String)
 class Smth : Abs {
     constructor() : super(<!RETURN_NOT_ALLOWED!>return<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration, secondaryConstructor */

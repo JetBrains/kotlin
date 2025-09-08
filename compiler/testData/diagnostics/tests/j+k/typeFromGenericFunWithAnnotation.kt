@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: GenericFunWithAnnotation.java
 import org.jetbrains.annotations.NotNull;
@@ -130,3 +130,5 @@ fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
 }
 
 fun takeString(a: String){}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType, safeCall, stringLiteral */

@@ -19,3 +19,6 @@ fun main() {
     buildTree(acquireIntervals())
         ?: <!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, elvisExpression, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter */

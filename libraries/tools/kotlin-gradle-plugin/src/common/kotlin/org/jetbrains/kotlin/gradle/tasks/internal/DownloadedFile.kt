@@ -12,7 +12,7 @@ import java.io.File
  */
 class DownloadedFile internal constructor(
     private val store: CleanableStore,
-    private val file: File
+    private val file: File,
 ) {
     fun use(): File {
         store.markUsed()

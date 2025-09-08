@@ -16,3 +16,6 @@ abstract class RealImplementation : Base {
 }
 
 actual object Implementation : RealImplementation(), Base
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, objectDeclaration,
+override */

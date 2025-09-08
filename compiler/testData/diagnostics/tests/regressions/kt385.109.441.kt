@@ -33,3 +33,7 @@ fun main() {
 
     println(run { 1 })
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+incrementDecrementExpression, infix, integerLiteral, javaFunction, javaProperty, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter, whileLoop */

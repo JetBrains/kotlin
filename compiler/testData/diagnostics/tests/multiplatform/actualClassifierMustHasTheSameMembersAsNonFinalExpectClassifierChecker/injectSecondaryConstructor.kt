@@ -17,3 +17,6 @@ actual open class Foo {
 
     constructor(injectedConstructor: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration,
+secondaryConstructor */

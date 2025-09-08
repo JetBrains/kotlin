@@ -13,9 +13,16 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_L
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST
 import java.nio.file.Paths
 
-fun main() {
-    val rootPath = Paths.get("analysis/analysis-api-fir/src").toAbsolutePath()
-    val packageName = "org.jetbrains.kotlin.analysis.api.fir.diagnostics"
+fun main(args: Array<String>) {
+    require(args.size == 2) {
+        """
+        Generator requires the following arguments (in this particular order):
+        - generated classes package name
+        - path to the directory where generated classes will be placed
+        """.trimIndent()
+    }
+    val packageName = args.first()
+    val rootPath = Paths.get(args.last()).toAbsolutePath()
     val diagnostics = DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + JS_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST +
             WEB_COMMON_DIAGNOSTICS_LIST
     generate(rootPath, diagnostics, packageName)

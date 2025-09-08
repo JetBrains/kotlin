@@ -11,3 +11,5 @@ open class Base(p1: Int, p2: Int, p3: Int) {
 }
 
 actual class Foo actual constructor(p: Int) : Base(p, p)
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, primaryConstructor, secondaryConstructor */

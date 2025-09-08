@@ -3,18 +3,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 buildscript {
-    // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
-    // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
-    // see also configureCompilerClasspath@
-    val bootstrapCompilerClasspath by configurations.creating
-    val bootstrapBuildToolsApiClasspath by configurations.creating
-    val gradlePluginsBuildToolsApiClasspath by configurations.creating
-
     dependencies {
-        bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
-        bootstrapBuildToolsApiClasspath(kotlin("build-tools-impl", bootstrapKotlinVersion))
-        gradlePluginsBuildToolsApiClasspath(kotlin("build-tools-impl", libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
-
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
 
@@ -75,6 +64,9 @@ plugins {
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
     id("nodejs-cache-redirector-configuration")
+    id("gradle-plugins-documentation") apply false
+    id("com.autonomousapps.dependency-analysis") version "2.19.0"
+    id("project-tests-convention") apply false
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -122,11 +114,12 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
-    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isTeamcityBuild) {
+        kotlinVersion
+    } else if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
-        "2.2.20-dev-3101"
+        "2.3.0-dev-5665"
     }
 }
 
@@ -142,7 +135,10 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
-    ":wasm:wasm.ir"
+    ":compiler:ir.validation",
+    ":wasm:wasm.ir",
+    ":js:typescript-export-model",
+    ":js:typescript-printer",
 ).also { extra["irCompilerModules"] = it }
 
 val irCompilerModulesForIDE = arrayOf(
@@ -156,10 +152,15 @@ val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
+    ":compiler:ir.validation",
 ).also { extra["irCompilerModulesForIDE"] = it }
 
 val commonCompilerModules = arrayOf(
-    ":compiler:psi",
+    ":compiler:psi:psi-api",
+    ":compiler:psi:psi-impl",
+    ":compiler:psi:psi-utils",
+    ":compiler:psi:psi-frontend-utils",
+    ":compiler:psi:parser",
     ":compiler:frontend.common-psi",
     ":compiler:frontend.common",
     ":compiler:util",
@@ -184,6 +185,7 @@ val commonCompilerModules = arrayOf(
     ":core:util.runtime",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
+    ":analysis:analysis-internal-utils",
     ":analysis:light-classes-base",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
@@ -197,6 +199,7 @@ val commonCompilerModules = arrayOf(
     ":kotlin-util-klib",
     ":kotlin-util-klib-abi",
     ":native:base",
+    ":native:binary-options",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
@@ -303,7 +306,6 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-api-standalone:analysis-api-standalone-base",
                 ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
                 ":analysis:analysis-api-standalone",
-                ":analysis:analysis-internal-utils",
                 ":analysis:analysis-test-framework",
                 ":analysis:decompiled",
                 ":analysis:kt-references",
@@ -382,7 +384,7 @@ val projectsUsedInIntelliJKotlinPlugin =
             ) +
             arrayOf(
                 ":compiler:ir.serialization.native",
-                ":native:analysis-api-klib-reader",
+                ":libraries:tools:analysis-api-based-klib-reader",
                 ":native:base",
                 ":native:objcexport-header-generator",
                 ":native:objcexport-header-generator-analysis-api",
@@ -498,6 +500,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":plugins:parcelize:parcelize-runtime",
+    ":plugins:jvm-abi-gen",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
     ":kotlin-test",
@@ -552,7 +555,6 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
-    ":kotlin-gradle-plugin-model",
     ":kotlin-gradle-plugin-tcs-android",
     ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
@@ -578,7 +580,9 @@ allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
     }
-
+    if (!project.path.startsWith(":compiler:build-tools")) {
+        pluginManager.apply("com.autonomousapps.dependency-analysis")
+    }
     if (kotlinBuildProperties.isInIdeaSync) {
         afterEvaluate {
             configurations.all {
@@ -666,6 +670,7 @@ allprojects {
                 includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
+                includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
             }
         }
 
@@ -745,8 +750,14 @@ tasks.register("createIdeaHomeForTests") {
 
 tasks {
     register("compileAll") {
+        val excludedNativePrefixes = listOf(
+            ":native",
+            ":libraries:tools:analysis-api-based-klib-reader:testProject",
+        )
         allprojects
-            .filter { !it.path.startsWith(":native") || kotlinBuildProperties.isKotlinNativeEnabled }
+            .filter {
+                excludedNativePrefixes.none(it.path::startsWith) || kotlinBuildProperties.isKotlinNativeEnabled
+            }
             .forEach {
                 dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
                 dependsOn(it.tasks.withType<JavaCompile>())
@@ -800,7 +811,6 @@ tasks {
     }
 
     register("jvmCompilerTest") {
-        dependsOn("dist")
         dependsOn(
             ":compiler:tests-common-new:test",
             ":compiler:container:test",
@@ -830,7 +840,6 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-        dependsOn(":wasm:wasm.tests:testK1")
         dependsOn(":wasm:wasm.tests:diagnosticTest")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
@@ -849,19 +858,26 @@ tasks {
     // ...
     register("nativeCompilerTest") {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
-        dependsOn(":native:analysis-api-klib-reader:check")
+        dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
         dependsOn(":native:native.tests:test")
         dependsOn(":native:native.tests:cli-tests:check")
         dependsOn(":native:native.tests:codegen-box:check")
         dependsOn(":native:native.tests:driver:check")
+        dependsOn(":native:native.tests:gc-fuzzing-tests:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
+        dependsOn(":native:native.tests:litmus-tests:check")
+    }
+
+    // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
+    // technically or semantically depend on Xcode SDK.
+    register("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
-        dependsOn(":native:swift:swift-export-standalone:check")
+        dependsOn(":native:swift:swift-export-embeddable:testCoroutinesITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
+        dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-ide:test")
-        dependsOn(":native:native.tests:litmus-tests:check")
         dependsOn(":native:swift:sir-light-classes:check")
     }
 
@@ -936,6 +952,7 @@ tasks {
     register("miscCompilerTest") {
         dependsOn(":compiler:test")
         dependsOn(":compiler:tests-integration:test")
+        dependsOn(":kotlin-compiler-embeddable:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
         dependsOn("jvmCompilerIntegrationTest")
@@ -946,7 +963,6 @@ tasks {
 
     register("miscTest") {
         dependsOn("coreLibsTest")
-        dependsOn("gradlePluginTest")
         dependsOn("toolsTest")
         dependsOn("examplesTest")
         dependsOn(":kotlin-build-common:test")
@@ -985,7 +1001,7 @@ tasks {
     register("toolsTest") {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
-        dependsOn(":native:kotlin-klib-commonizer-api:test")
+//        dependsOn(":native:kotlin-klib-commonizer-api:test")
         dependsOn(":kotlin-tooling-core:check")
         dependsOn(":kotlin-tooling-metadata:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
@@ -1055,6 +1071,12 @@ tasks {
         dependsOn("test")
     }
 
+    register("dependenciesAll") {
+        subprojects.forEach {
+            dependsOn(it.tasks.named("dependencies"))
+        }
+    }
+
     named("checkBuild") {
         if (kotlinBuildProperties.isTeamcityBuild) {
             val bootstrapKotlinVersion = bootstrapKotlinVersion
@@ -1092,17 +1114,36 @@ tasks {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
         }
     }
-    register<Exec>("mvnPublish") {
+    val mvnPublishTask = register<Exec>("mvnPublish") {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf(
-            "clean", "deploy", "--activate-profiles=noTest",
+            "clean", "deploy", "--activate-profiles=noTest,local-bootstrap",
             "-Dinvoker.skip=true", "-DskipTests",
             "-Ddeploy-snapshot-repo=local",
-            "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}"
+            "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}",
+            "-Dlocal-bootstrap-url=file://${rootProject.projectDir.resolve("build/repo")}",
         )
+
+        val jdkToolchain1_8 = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
-            environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
+            environment("JDK_1_8", jdkToolchain1_8.get())
+        }
+    }
+
+    // 'mvnPublish' is required for local bootstrap
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        val localPublishTask = register("publish") {
+            group = "publishing"
+            finalizedBy(mvnPublishTask)
+        }
+
+        subprojects {
+            tasks.configureEach {
+                if (name == "publish") {
+                    localPublishTask.get().dependsOn(this)
+                }
+            }
         }
     }
 

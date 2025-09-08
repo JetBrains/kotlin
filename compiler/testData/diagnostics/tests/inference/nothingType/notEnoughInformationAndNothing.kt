@@ -37,3 +37,7 @@ fun test2() {
         null
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+typeParameter, typeWithExtension, vararg, whenExpression, whenWithSubject */

@@ -70,3 +70,7 @@ fun usage(a: JavaWithOverride, b: JavaWithFakeOverride) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, integerLiteral, interfaceDeclaration,
+javaFunction, javaProperty, javaType, lambdaLiteral, propertyDeclaration, propertyDeclarationWithContext,
+propertyWithExtensionReceiver, stringLiteral */

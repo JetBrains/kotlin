@@ -1,7 +1,7 @@
 FILE: scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
     SCRIPT: <script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             when () {
                 Boolean(true) ->  {
                     @DestrAnno(<strcat>(String(destr 1 ), prop#)) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
@@ -18,4 +18,3 @@ FILE: scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
             }
 
         }
-

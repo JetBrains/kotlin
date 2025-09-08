@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 
 interface Check {
     open var p<caret>rop: Int

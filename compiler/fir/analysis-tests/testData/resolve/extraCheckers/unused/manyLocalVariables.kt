@@ -18,3 +18,6 @@ fun foo() {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, forLoop, functionDeclaration, ifExpression, integerLiteral,
+localProperty, propertyDeclaration, rangeExpression */

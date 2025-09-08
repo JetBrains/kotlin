@@ -13,3 +13,6 @@ fun foo(a: A, b: B, c: C) {
     select(a, b)
     select(a, c)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, outProjection,
+starProjection, typeConstraint, typeParameter */

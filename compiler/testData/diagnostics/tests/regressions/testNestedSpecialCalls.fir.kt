@@ -9,3 +9,6 @@ fun test() {
     }
     x.and(1) // unsafe call
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

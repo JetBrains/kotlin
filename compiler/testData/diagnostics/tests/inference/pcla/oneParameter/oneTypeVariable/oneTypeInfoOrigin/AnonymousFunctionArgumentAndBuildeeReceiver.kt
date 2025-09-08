@@ -36,3 +36,6 @@ fun testMaterialize() {
     })
     checkExactType<Buildee<UserKlass>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>buildee<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, asExpression, classDeclaration, functionDeclaration, functionalType,
+localFunction, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

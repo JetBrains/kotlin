@@ -17,3 +17,7 @@ class Box<T>
 
 @JsExport
 fun box(): Box<*> = null!!
+
+@JsExport
+fun <T> promisify(<!UNUSED_PARAMETER!>x<!>: T): Box<out T> =
+    null!!

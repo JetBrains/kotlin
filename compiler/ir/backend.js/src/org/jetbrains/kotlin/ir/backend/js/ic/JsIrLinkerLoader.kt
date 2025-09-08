@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -32,17 +34,39 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-internal data class LoadedJsIr(
-    val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
+internal class LoadedJsIr(
+    loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
     private val linker: JsIrLinker,
     private val functionTypeInterfacePackages: FunctionTypeInterfacePackages,
 ) {
+    // This property is supposed to be accessed after all symbols have been deserialized.
+    // This way the linked would be able to track all cross-module dependencies, and make the proper module sorting.
+    val orderedFragments: Map<KotlinLibraryFile, IrModuleFragment> by lazy {
+        val unorderedModuleFragments: List<IrModuleFragment> = loadedFragments.values.toList()
+
+        val orderedAndIndexedModuleFragments: Map<IrModuleFragment, Int> = linker.moduleDependencyTracker.reverseTopoOrder(
+            IrModuleDependencies(
+                all = unorderedModuleFragments,
+                stdlib = unorderedModuleFragments.firstOrNull { it.kotlinLibrary?.isAnyPlatformStdlib == true },
+                included = unorderedModuleFragments.last(),
+            )
+        ).all.mapIndexed { index, moduleFragment -> moduleFragment to index }.toMap()
+
+        val orderedLoadedFragments: Map<KotlinLibraryFile, IrModuleFragment> = loadedFragments.entries
+            .map { (libraryFile, moduleFragment) -> libraryFile to moduleFragment }
+            .sortedBy { (_, moduleFragment) -> orderedAndIndexedModuleFragments.getValue(moduleFragment) }
+            .toMap()
+
+        orderedLoadedFragments
+    }
+
     val irBuiltIns = linker.builtIns
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
 
@@ -69,7 +93,7 @@ internal data class LoadedJsIr(
 
     fun getSignatureProvidersForLib(lib: KotlinLibraryFile): List<FileSignatureProvider> {
         return signatureProvidersImpl.getOrPut(lib) {
-            val irFragment = loadedFragments[lib] ?: notFoundIcError("loaded fragment", lib)
+            val irFragment = orderedFragments[lib] ?: notFoundIcError("loaded fragment", lib)
             collectSignatureProviders(lib, irFragment)
         }
     }
@@ -143,7 +167,7 @@ internal class JsIrLinkerLoader(
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
                 builtIns = irBuiltIns,
-                messageCollector = messageCollector
+                messageCollector = messageCollector,
             ),
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

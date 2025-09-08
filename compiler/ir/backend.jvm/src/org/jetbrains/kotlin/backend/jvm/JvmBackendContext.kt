@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
@@ -50,17 +50,17 @@ class JvmBackendContext(
     val irDeserializer: JvmIrDeserializer,
     val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,
+    val evaluatorData: JvmEvaluatorData?
 ) : CommonBackendContext {
-    data class LocalFunctionData(
-        val localContext: LocalDeclarationsLowering.LocalFunctionContext,
-        val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
-        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
+    class SharedLocalDeclarationsData(
+        val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
+        val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration> = mutableMapOf<IrSymbolOwner, IrDeclaration>(),
+        val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf(),
+        val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
+        val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     )
 
     val config: JvmBackendConfig = state.config
-
-    // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
-    var evaluatorData: JvmEvaluatorData? = null
 
     override val irFactory: IrFactory = IrFactoryImpl
 
@@ -72,8 +72,6 @@ class JvmBackendContext(
     val cachedDeclarations = JvmCachedDeclarations(
         this, generatorExtensions.cachedFields
     )
-
-    val allConstructorsWithCapturedConstructorCreated = mutableSetOf<IrConstructor>()
 
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 

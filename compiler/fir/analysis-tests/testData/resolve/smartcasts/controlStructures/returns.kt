@@ -62,3 +62,7 @@ fun test_4(a: Any?) {
         s.length // Should be OK
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, getter, ifExpression, interfaceDeclaration,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver, safeCall,
+smartcast, typeParameter, whenExpression */

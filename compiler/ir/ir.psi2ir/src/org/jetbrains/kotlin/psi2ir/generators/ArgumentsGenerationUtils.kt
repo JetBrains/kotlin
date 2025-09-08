@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import kotlin.math.max
 import kotlin.math.min
 
@@ -415,7 +416,7 @@ private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
                 null, IrStatementOrigin.SUSPEND_CONVERSION
             )
             statements.add(irAdapterFunction)
-            statements.add(irAdapterRef.apply { extensionReceiver = expression })
+            statements.add(irAdapterRef.apply { arguments[0] = expression })
         }
 }
 
@@ -464,12 +465,12 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             isHidden = false,
         )
 
-    irAdapterFun.extensionReceiverParameter = createValueParameter(IrParameterKind.ExtensionReceiver,"\$callee", funType.toIrType())
-    irAdapterFun.valueParameters += suspendFunType.arguments
+    irAdapterFun.parameters += createValueParameter(IrParameterKind.ExtensionReceiver,"\$callee", funType.toIrType())
+    irAdapterFun.parameters += suspendFunType.arguments
         .take(suspendFunType.arguments.size - 1)
         .mapIndexed { index, typeProjection -> createValueParameter(IrParameterKind.Regular, "p$index", typeProjection.type.toIrType()) }
 
-    val valueArgumentsCount = irAdapterFun.valueParameters.size
+    val valueArgumentsCount = irAdapterFun.parameters.size - 1
     val invokeDescriptor = funType.memberScope
         .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
         .find { it.valueParameters.size == valueArgumentsCount }
@@ -487,14 +488,13 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             hasExtensionReceiver = false,
         )
 
-        irAdapteeCall.dispatchReceiverViaCachedCalleeData = irGet(irAdapterFun.extensionReceiverParameter!!)
+        irAdapteeCall.arguments.assignFrom(irAdapterFun.parameters) {
+            irGet(it)
+        }
 
         this@createFunctionForSuspendConversion.context
             .callToSubstitutedDescriptorMap[irAdapteeCall] = invokeDescriptor
 
-        for (irAdapterParameter in irAdapterFun.valueParameters) {
-            irAdapteeCall.putValueArgument(irAdapterParameter.indexInOldValueParameters, irGet(irAdapterParameter))
-        }
         if (suspendFunType.arguments.last().type.isUnit()) {
             +irAdapteeCall
         } else {

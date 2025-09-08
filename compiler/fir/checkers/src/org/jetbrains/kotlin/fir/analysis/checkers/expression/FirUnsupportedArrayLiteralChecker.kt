@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -24,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirArrayLiteral) {
-        if (!isInsideAnnotationCall(context) && !isInsideAnnotationConstructor(context)) {
+        if (!isInsideAnnotationCall() && !isInsideAnnotationConstructor()) {
             reporter.reportOn(
                 expression.source,
                 FirErrors.UNSUPPORTED,
@@ -33,15 +31,17 @@ object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(MppCheckerKind
         }
     }
 
-    private fun isInsideAnnotationCall(context: CheckerContext): Boolean = context.callsOrAssignments.asReversed().any {
+    context(context: CheckerContext)
+    private fun isInsideAnnotationCall(): Boolean = context.callsOrAssignments.asReversed().any {
         when (it) {
-            is FirFunctionCall -> it.resolvedType.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
+            is FirFunctionCall -> it.resolvedType.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
             is FirAnnotationCall -> true
             else -> false
         }
     }
 
-    private fun isInsideAnnotationConstructor(context: CheckerContext): Boolean {
-        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType?.toRegularClassSymbol(context.session)?.classKind == ClassKind.ANNOTATION_CLASS
+    context(context: CheckerContext)
+    private fun isInsideAnnotationConstructor(): Boolean {
+        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType?.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
     }
 }

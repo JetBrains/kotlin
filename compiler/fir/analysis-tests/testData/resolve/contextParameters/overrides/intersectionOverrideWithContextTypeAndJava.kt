@@ -29,3 +29,7 @@ fun usage(a: IntersectionWithContextType) {
 
 context(ctx: T)
 fun <T> implicit(): T = ctx
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionDeclarationWithContext, functionalType,
+interfaceDeclaration, javaType, lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithContext,
+typeWithExtension */

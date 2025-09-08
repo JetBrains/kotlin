@@ -16,3 +16,6 @@ fun test(a: A) {
         foo() checkType { _<Int>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localFunction, nullableType, thisExpression, typeParameter, typeWithExtension */

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -25,8 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 
+context(c: Fir2IrComponents)
 internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
-    c: Fir2IrComponents,
     owner: ConeClassLikeLookupTag? = containingClassLookupTag()
 ): FirCallableSymbol<*> {
     val fir = fir
@@ -34,7 +35,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
     if (fir is FirConstructor) {
         val originalForTypeAlias = fir.typeAliasConstructorInfo?.originalConstructor
         if (originalForTypeAlias != null) {
-            return originalForTypeAlias.symbol.unwrapCallRepresentative(c, owner)
+            return originalForTypeAlias.symbol.unwrapCallRepresentative(owner)
         }
     }
 
@@ -45,7 +46,7 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
         // interface C : A, B // for C.foo we've got an IR fake override
         // for {A & B} we don't have such an IR declaration, so we're unwrapping it
         if (fir.dispatchReceiverType is ConeIntersectionType) {
-            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(c, owner)
+            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(owner)
         }
 
         return this
@@ -53,18 +54,18 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
 
     val originalForOverride = fir.originalForSubstitutionOverride
     if (originalForOverride != null && originalForOverride.containingClassLookupTag() == owner) {
-        return originalForOverride.symbol.unwrapCallRepresentative(c, owner)
+        return originalForOverride.symbol.unwrapCallRepresentative(owner)
     }
 
     return this
 }
 
+context(c: Fir2IrComponents)
 internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     containingClass: FirClass,
-    c: Fir2IrComponents,
     processor: (FirNamedFunctionSymbol) -> Unit
 ) {
-    val scope = containingClass.unsubstitutedScope(c)
+    val scope = containingClass.unsubstitutedScope()
     scope.processFunctionsByName(name) {}
     scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!c.session.visibilityChecker.isVisibleForOverriding(
@@ -111,12 +112,12 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     }
 }
 
+context(c: Fir2IrComponents)
 internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
-    c: Fir2IrComponents,
     processor: (FirPropertySymbol) -> Unit
 ) {
-    val scope = containingClass.unsubstitutedScope(c)
+    val scope = containingClass.unsubstitutedScope()
     scope.processPropertiesByName(name) {}
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!c.session.visibilityChecker.isVisibleForOverriding(
@@ -131,14 +132,17 @@ internal fun FirProperty.processOverriddenPropertySymbols(
     }
 }
 
-internal fun FirClassSymbol<*>.unsubstitutedScope(c: Fir2IrComponents): FirTypeScope {
-    return this.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+context(c: Fir2IrComponents)
+internal fun FirClassSymbol<*>.unsubstitutedScope(): FirTypeScope {
+    return this.unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = FirResolvePhase.STATUS)
 }
 
-internal fun FirClass.unsubstitutedScope(c: Fir2IrComponents): FirTypeScope {
-    return symbol.unsubstitutedScope(c)
+context(c: Fir2IrComponents)
+internal fun FirClass.unsubstitutedScope(): FirTypeScope {
+    return symbol.unsubstitutedScope()
 }
 
-internal fun FirClassSymbol<*>.declaredScope(c: Fir2IrComponents): FirContainingNamesAwareScope {
-    return this.declaredMemberScope(c.session, memberRequiredPhase = null)
+context(c: Fir2IrComponents)
+internal fun FirClassSymbol<*>.declaredScope(): FirContainingNamesAwareScope {
+    return this.declaredMemberScope(c.session, memberRequiredPhase = FirResolvePhase.STATUS)
 }

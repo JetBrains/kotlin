@@ -133,7 +133,7 @@ package test;
  *   // setter: setV(Ljava/lang/String;)V
  *   // synthetic method for annotations: getV$annotations()V
  *   public final var v: kotlin/String
- *     public final (* non-default *) get
+ *     public final get
  *     public final (* non-default *) set(value: kotlin/String)
  *
  *   // module name: main

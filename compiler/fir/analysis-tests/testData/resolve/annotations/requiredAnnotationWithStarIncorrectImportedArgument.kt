@@ -10,3 +10,5 @@ enum class MyTarget {
 
 @Target(<!ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
 annotation class MyAnnotation
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, enumDeclaration, enumEntry */

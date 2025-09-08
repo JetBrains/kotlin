@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.Assert
 import java.io.File
 
@@ -114,7 +115,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
     }
 
     private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
-        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
+        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, ForTestCompileRuntime.runtimeJarForTests(), tmpdir
     ).also {
         loadScriptingPlugin(it, testRootDisposable)
     }

@@ -32,3 +32,6 @@ fun test_3(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+lambdaLiteral, nullableType, smartcast */

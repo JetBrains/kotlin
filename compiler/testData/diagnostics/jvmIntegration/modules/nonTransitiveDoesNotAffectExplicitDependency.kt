@@ -45,3 +45,5 @@ import a.A
 fun usage(): String {
     return A().toString()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

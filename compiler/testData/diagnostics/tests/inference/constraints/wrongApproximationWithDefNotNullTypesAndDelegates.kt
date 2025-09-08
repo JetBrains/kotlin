@@ -15,3 +15,6 @@ class Foo {
         operator fun setValue(thisRef: Foo, property: KProperty<*>, value: T) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

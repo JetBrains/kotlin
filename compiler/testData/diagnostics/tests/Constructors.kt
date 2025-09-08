@@ -34,3 +34,5 @@ class NoCPI {
     get() = 1
     set(v) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, primaryConstructor, propertyDeclaration, setter */

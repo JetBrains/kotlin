@@ -27,3 +27,6 @@ val ev = E.V
 val ov = O.v
 
 val rfoo = foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, localProperty,
+objectDeclaration, propertyDeclaration */

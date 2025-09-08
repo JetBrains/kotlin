@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-66512
 
 typealias MyUnit = Unit
@@ -20,3 +19,6 @@ fun test() {
         return@l <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration, stringLiteral,
+typeAliasDeclaration */

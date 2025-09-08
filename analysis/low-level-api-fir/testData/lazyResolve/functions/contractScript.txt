@@ -4,7 +4,8 @@ FILE: [ResolvedTo(RAW_FIR)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? inline [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -13,7 +14,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? inline [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -22,7 +24,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] block: ( () -> Unit )): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -31,7 +34,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? inline [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? inline [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(COMPANION_GENERATION)] block: ( () -> Unit )): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -40,7 +44,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? inline [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] block: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? inline [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(SUPER_TYPES)] block: ( () -> Unit )): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 TYPES:
@@ -49,7 +54,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? inline [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? inline [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(TYPES)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 STATUS:
@@ -58,7 +64,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final inline [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -67,7 +74,8 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+            [L|Contract description] { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -76,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)
@@ -99,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)
@@ -122,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONSTANT_EVALUATION)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)
@@ -145,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)
@@ -168,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)
@@ -191,7 +199,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contractScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)

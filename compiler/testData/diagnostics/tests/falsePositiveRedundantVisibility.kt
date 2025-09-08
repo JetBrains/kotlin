@@ -9,3 +9,5 @@ public data class Location private constructor(
     internal val ip: String,
     internal val port: Int,
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration */

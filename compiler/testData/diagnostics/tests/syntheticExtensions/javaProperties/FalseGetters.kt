@@ -21,3 +21,5 @@ public class JavaClass {
 
     public int getter() { return 1; }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType */

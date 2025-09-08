@@ -17,3 +17,5 @@ actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_C
     override var foo: String = ""
         <!SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING!>public<!> set
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, override, propertyDeclaration, stringLiteral */

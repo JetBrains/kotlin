@@ -36,3 +36,7 @@ fun main() {
             val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> {}
         }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, operator, out, propertyDeclaration,
+propertyDelegate, starProjection, typeParameter, typeWithExtension */

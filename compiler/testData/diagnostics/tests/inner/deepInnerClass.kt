@@ -13,3 +13,6 @@ class A<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, interfaceDeclaration, localClass,
+nestedClass, nullableType, objectDeclaration, primaryConstructor, typeParameter */

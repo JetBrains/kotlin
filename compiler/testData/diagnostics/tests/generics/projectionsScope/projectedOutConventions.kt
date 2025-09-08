@@ -12,3 +12,6 @@ fun test(a: A<out CharSequence>) {
     a[1] = <!TYPE_MISMATCH!>""<!>
     a[<!TYPE_MISMATCH!>""<!>]
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, capturedType, classDeclaration, functionDeclaration,
+integerLiteral, nullableType, operator, outProjection, stringLiteral, thisExpression, typeParameter */

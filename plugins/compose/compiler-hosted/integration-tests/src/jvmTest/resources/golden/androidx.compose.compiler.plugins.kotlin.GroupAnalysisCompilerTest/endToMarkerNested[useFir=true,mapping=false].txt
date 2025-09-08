@@ -1,0 +1,29 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(text: String) {
+    Wrapper {
+        if (text.isEmpty()) return@Test
+        Text(text)
+
+        SecondWrapper {
+            if (text.isEmpty()) return@Wrapper
+            Text(text)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        ReplaceGroup { key: <key>, line: 7 }
+        ReplaceGroup { key: <key>, line: 11 }
+        RestartGroup { key: <key>, line: 5 }
+}

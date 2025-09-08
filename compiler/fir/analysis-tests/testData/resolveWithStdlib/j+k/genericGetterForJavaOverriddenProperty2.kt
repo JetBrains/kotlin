@@ -20,3 +20,6 @@ fun bar(some: Some) {
     val getFoo = some.<!CANNOT_INFER_PARAMETER_TYPE!>getFoo<!>()
     val getBaz = some.getFoo<String>()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, javaType, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

@@ -1,4 +1,4 @@
-// LANGUAGE: +StrictJavaNullabilityAssertions
+// LANGUAGE: +StrictJavaNullabilityAssertions +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
@@ -8,7 +8,7 @@ import kotlin.test.*
 fun box(): String {
     val actualIndices = mutableListOf<Int>()
     val actualValues = mutableListOf<Int>()
-    for ((index, i: Int) in J.arrayOfMaybeNullable().withIndex()) {
+    for ([index, i: Int] in J.arrayOfMaybeNullable().withIndex()) {
         actualIndices += index
         actualValues += i
     }

@@ -22,3 +22,7 @@ class CacheOwner<T>(
 private class CachedValue<T>(val value: T) {
     fun isUpToDate() = true
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, flexibleType, functionDeclaration,
+functionalType, javaFunction, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, samConversion,
+smartcast, typeParameter, whenExpression */

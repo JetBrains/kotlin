@@ -9,3 +9,6 @@ class BufferUtil {
         }
     private class BufferInfo(private val type: Class<*>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, primaryConstructor, propertyDeclaration,
+starProjection, whenExpression, whenWithSubject */

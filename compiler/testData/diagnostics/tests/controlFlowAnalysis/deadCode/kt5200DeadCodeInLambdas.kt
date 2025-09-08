@@ -25,3 +25,5 @@ fun test2(nonLocal: String, b: Boolean): String {
 }
 
 inline fun doCall(block: ()-> String) = block()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, inline, lambdaLiteral, stringLiteral */

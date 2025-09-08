@@ -682,12 +682,16 @@ class PatternTest2 {
         // One letter codes: L, M, N, P, S, Z, C
         // Two letter codes: Lu, Nd, Sc, Sm, ...
         // See java.lang.Character and Unicode standard for complete list
+
+        val regex = Regex("\\p{IsN}+")
+        assertEquals(listOf("٧٨٩", "०", "๙", "Ⅴ", "Ⅹ", "ⅻ", "123", "½", "¼", "¾", "²", "³", "456"),
+            regex.findAll("٧٨٩ ० ๙ Ⅴ Ⅹ ⅻ 123 ½ ¼ ¾ x² + y³ 中文 العربية456")
+                .map(MatchResult::value)
+                .toList()
+        )
+
         // TODO
         // Test \p{L}
-        // TODO
-
-        // Test \p{N}
-        // TODO
 
         // ... etc
 

@@ -30,3 +30,6 @@ fun test() {
     wat()
     false.watwat()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+objectDeclaration, stringLiteral, typeParameter */

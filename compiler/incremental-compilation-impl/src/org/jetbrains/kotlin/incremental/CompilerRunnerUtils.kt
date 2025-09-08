@@ -32,22 +32,10 @@ var K2JVMCompilerArguments.classpathAsList: List<File>
         classpath = value.joinToString(separator = File.pathSeparator, transform = { it.absolutePath })
     }
 
-val K2JVMCompilerArguments.isK1ForcedByKapt: Boolean
-    // coordinated with org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.shouldRunK2
-    get() {
-        val isK2 = languageVersion?.startsWith('2') != false
-        val isKaptUsed = pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-        return isK2 && isKaptUsed && useK2Kapt == false
-    }
-
 fun K2JVMCompilerArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault: Boolean): Boolean {
     // TODO: This should be removed after implementing of fir-based java tracker (KT-57147).
     //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
-    val languageVersion = if (isK1ForcedByKapt) {
-        LanguageVersion.KOTLIN_1_9
-    } else {
-        LanguageVersion.fromVersionString(languageVersion) ?: LanguageVersion.LATEST_STABLE
-    }
+    val languageVersion = LanguageVersion.fromVersionString(languageVersion) ?: LanguageVersion.LATEST_STABLE
     return !languageVersion.usesK2 && usePreciseJavaTrackingByDefault
 }
 

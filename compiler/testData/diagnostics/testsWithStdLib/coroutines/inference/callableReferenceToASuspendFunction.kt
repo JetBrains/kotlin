@@ -20,3 +20,5 @@ fun test() {
     test0(<!TYPE_MISMATCH!>::bar<!>)
     test1(::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, suspend */

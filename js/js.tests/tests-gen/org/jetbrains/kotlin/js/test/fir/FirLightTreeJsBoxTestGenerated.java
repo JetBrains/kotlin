@@ -945,6 +945,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     }
 
     @Test
+    @TestMetadata("kt61183.kt")
+    public void testKt61183() {
+      runTest("js/js.translator/testData/box/coroutines/kt61183.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithValueClass.kt")
     public void testLambdaWithValueClass() {
       runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
@@ -1883,6 +1889,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     }
 
     @Test
+    @TestMetadata("specialCallableMember.kt")
+    public void testSpecialCallableMember() {
+      runTest("js/js.translator/testData/box/dynamic/specialCallableMember.kt");
+    }
+
+    @Test
     @TestMetadata("unaryOperations.kt")
     public void testUnaryOperations() {
       runTest("js/js.translator/testData/box/dynamic/unaryOperations.kt");
@@ -2295,6 +2307,46 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
       @TestMetadata("topLevelProperty.kt")
       public void testTopLevelProperty() {
         runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelProperty.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("js/js.translator/testData/box/esModules/escapedIdentifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    public class EscapedIdentifiers {
+      @Test
+      public void testAllFilesPresentInEscapedIdentifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("externalEscapedTopLevel.kt")
+      public void testExternalEscapedTopLevel() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/externalEscapedTopLevel.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedClass.kt")
+      public void testTopLevelExportedClass() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedCompanion.kt")
+      public void testTopLevelExportedCompanion() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedFunction.kt")
+      public void testTopLevelExportedFunction() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedVariable.kt")
+      public void testTopLevelExportedVariable() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedVariable.kt");
       }
     }
 
@@ -5733,12 +5785,6 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     }
 
     @Test
-    @TestMetadata("callableReferenceOfLocalFunWithInlinedFunInKlib.kt")
-    public void testCallableReferenceOfLocalFunWithInlinedFunInKlib() {
-      runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalFunWithInlinedFunInKlib.kt");
-    }
-
-    @Test
     @TestMetadata("callableReferenceOfLocalInline.kt")
     public void testCallableReferenceOfLocalInline() {
       runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalInline.kt");
@@ -8836,6 +8882,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
     @TestMetadata("exception.kt")
     public void testException() {
       runTest("js/js.translator/testData/box/native/exception.kt");
+    }
+
+    @Test
+    @TestMetadata("externalLong.kt")
+    public void testExternalLong() {
+      runTest("js/js.translator/testData/box/native/externalLong.kt");
     }
 
     @Test

@@ -1,31 +1,39 @@
-/*
- * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
 // ISSUE: KT-69497
-// WITH_STDLIB
-// IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM
-// ^^^ KT-69497
 // IGNORE_BACKEND: JVM_IR
 // ^^^ KT-75642
+// NO_COMMON_FILES
+// DUMP_IR
+// DUMP_IR_AFTER_INLINE
 
-var counter = 0
+class Pair<T>(val first: T, val second: T)
 
-inline fun <T> runTwice(f: () -> T) = f() to f()
+var globalCounter = 0
+
+inline fun <T> runTwice(f: () -> T) = Pair(f(), f())
 
 inline fun bar(crossinline test: () -> Int): Int {
+    var outsideCounter = 0
     val x = runTwice {
-        object {
-            init { counter++ }
+        var insideCounter = 0
+        val r = object {
+            fun count() {
+                globalCounter++
+                outsideCounter++
+                insideCounter++
+            }
             fun foo() = test()
         }
+        r.count()
+        outsideCounter += insideCounter
+        r
     }
+    globalCounter += outsideCounter
     return x.first.foo() + x.second.foo()
 }
 
 fun box(): String {
     val result = bar { 5 }
-    if (result != 5+5) return "result = $result"
-    if (counter != 1) return "counter = $counter"
+    if (result != 5 + 5) return "result = $result"
+    if (globalCounter != 6) return "globalCounter = $globalCounter"
     return "OK"
 }

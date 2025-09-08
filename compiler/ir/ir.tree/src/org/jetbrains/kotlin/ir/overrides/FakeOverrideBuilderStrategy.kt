@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *   * Creating and registering in appropriate storages of fake override member symbols
  *
  */
-abstract class FakeOverrideBuilderStrategy(
-    private val friendModules: Map<String, Collection<String>>,
-    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
-) {
+abstract class FakeOverrideBuilderStrategy {
 
     /**
      * This flag enables workaround for KT-65504 and KT-42020.
@@ -67,7 +64,7 @@ abstract class FakeOverrideBuilderStrategy(
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         return runIf(isVisibleForOverrideInClass(member, clazz)) {
-            buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
+            buildFakeOverrideMember(superType, member, clazz)
         }
     }
 
@@ -76,9 +73,7 @@ abstract class FakeOverrideBuilderStrategy(
      *
      * It can modify the created fake override, if needed.
      */
-    fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableMember, clazz: IrClass) {
-        unimplementedOverridesStrategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, clazz)
-    }
+    abstract fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass)
 
     /**
      * Create a symbol for the fake override.
@@ -91,15 +86,7 @@ abstract class FakeOverrideBuilderStrategy(
         }
     }
 
-    private fun isInFriendModules(
-        fromModule: ModuleDescriptor,
-        toModule: ModuleDescriptor,
-    ): Boolean {
-        val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
-        val toModuleName = toModule.name.asStringStripSpecialMarkers()
-
-        return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
-    }
+    protected abstract fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean
 
     private fun isVisibleForOverrideInClass(original: IrOverridableMember, clazz: IrClass) : Boolean {
         return when {
@@ -111,7 +98,7 @@ abstract class FakeOverrideBuilderStrategy(
 
                 when {
                     thisModule == memberModule -> true
-                    isInFriendModules(thisModule, memberModule) -> true
+                    shouldSeeInternals(thisModule, memberModule) -> true
                     !isOverrideOfPublishedApiFromOtherModuleDisallowed &&
                             original.hasAnnotation(StandardClassIds.Annotations.PublishedApi) -> true
                     else -> false
@@ -156,13 +143,7 @@ abstract class FakeOverrideBuilderStrategy(
      */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 
-    abstract class BindToPrivateSymbols(
-        friendModules: Map<String, Collection<String>>,
-        unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
-    ) : FakeOverrideBuilderStrategy(
-        friendModules = friendModules,
-        unimplementedOverridesStrategy
-    ) {
+    abstract class BindToPrivateSymbols : FakeOverrideBuilderStrategy() {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             function.acquireSymbol(IrSimpleFunctionSymbolImpl())
         }
@@ -191,7 +172,6 @@ fun buildFakeOverrideMember(
     superType: IrType,
     member: IrOverridableMember,
     clazz: IrClass,
-    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides,
 ): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
     val classifier = superType.classifier
@@ -213,7 +193,7 @@ fun buildFakeOverrideMember(
         substitutionMap[tp.symbol] = ta.type
     }
 
-    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
+    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz)
         .copy()
         .apply { makeExternal(clazz.isExternal) }
 }

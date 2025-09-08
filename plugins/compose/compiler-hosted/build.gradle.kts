@@ -1,5 +1,11 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+
 plugins {
     kotlin("jvm")
+    id("d8-configuration")
+    id("project-tests-convention")
 }
 
 repositories {
@@ -18,6 +24,15 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
 
+val testJsRuntime: Configuration by configurations.creating {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+}
+
 dependencies {
     implementation(project(":kotlin-stdlib"))
     compileOnly(project(":compiler:frontend"))
@@ -33,21 +48,32 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.vintage.engine)
-    testImplementation(projectTests(":analysis:analysis-api-fe10"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-api-standalone"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":generators:analysis-api-generator"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fe10")))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
+    testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
+    testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure")))
+    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
     testApi(project(":compiler:plugin-api"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":js:js.tests")))
 
-    // runtime tests
+    // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }
-    testImplementation(composeRuntimeTestUtils()) { isTransitive = false }
+    testImplementation(composeRuntimeAnnotations()) { isTransitive = false }
     testImplementation(libs.androidx.collections)
+
+    // js runtimes for tests
+    testJsRuntime(composeRuntime()) { isTransitive = false }
+    testJsRuntime(composeRuntimeAnnotations()) { isTransitive = false }
+    testJsRuntime(libs.androidx.collections) {
+        // Avoid kotlin stdlib dependency since we are compiling against the newest one
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    testJsRuntime(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testJsRuntime("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
 
     // other compose
     testImplementationArtifactOnly(compose("foundation", "foundation"))
@@ -99,13 +125,20 @@ val runtimeJar = runtimeJar()
 sourcesJar()
 javadocJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    dependsOn(runtimeJar)
-    systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        dependsOn(runtimeJar)
+        systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
+        systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
+        workingDir = rootDir
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+    }
+
+    testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
+
+    withJvmStdlibAndReflect()
+    withStdlibJsRuntime()
 }
 
-val generateTests by generator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
 testsJar()

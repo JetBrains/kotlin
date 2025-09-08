@@ -18,3 +18,6 @@ fun test() {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+samConversion, suspend */

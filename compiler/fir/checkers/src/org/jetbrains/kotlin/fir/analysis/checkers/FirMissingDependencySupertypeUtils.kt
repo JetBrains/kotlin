@@ -20,7 +20,7 @@ context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkMissingDependencySuperTypes(
     classifierType: ConeKotlinType?,
     source: KtSourceElement?,
-): Boolean = checkMissingDependencySuperTypes(classifierType?.toSymbol(context.session), source, isEagerCheck = false)
+): Boolean = checkMissingDependencySuperTypes(classifierType?.toSymbol(), source, isEagerCheck = false)
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkMissingDependencySuperTypes(

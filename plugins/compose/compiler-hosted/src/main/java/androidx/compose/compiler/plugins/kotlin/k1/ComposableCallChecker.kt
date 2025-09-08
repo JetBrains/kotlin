@@ -290,7 +290,7 @@ open class ComposableCallChecker :
         resolvedCall: ResolvedCall<*>,
         context: CallCheckerContext,
     ) {
-        if (resolvedCall.candidateDescriptor?.hasStableParameterNames() != true) {
+        if (resolvedCall.candidateDescriptor.hasStableParameterNames() != true) {
             for (valueArgument in resolvedCall.call.valueArguments) {
                 val nameReference = valueArgument.getArgumentName()?.referenceExpression
                     ?: continue

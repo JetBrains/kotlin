@@ -31,3 +31,5 @@ public class y {
 package c
 
 fun test() = y().getX()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParam
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -38,14 +37,14 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     manager: PsiManager,
 ) : SymbolLightClassBase(ktModule, manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+    @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: SType,
         manager: PsiManager,
     ) : this(
         classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
-        classSymbolPointer = with(ktAnalysisSession) {
+        classSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             classSymbol.createPointer() as KaSymbolPointer<SType>
         },
@@ -63,7 +62,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         classSymbolPointer.withSymbol(ktModule, action)
 
     /**
-     * Psi-based [org.jetbrains.kotlin.psi.KtClassOrObject.isTopLevel] is needed to properly handle classes inside scripts
+     * Psi-based [KtClassOrObject.isTopLevel] is needed to properly handle classes inside scripts
      * as they are treated as nested.
      */
     override val isTopLevel: Boolean
@@ -139,7 +138,11 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun hashCode(): Int = classOrObjectDeclaration.hashCode()
 
-    override fun getName(): String? = withClassSymbol { it.name?.asString() }
+    private val _name: String? by lazyPub {
+        withClassSymbol { it.name?.asString() }
+    }
+
+    override fun getName(): String? = _name
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
@@ -149,8 +152,6 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun isEnum(): Boolean = classKind() == KaClassKind.ENUM_CLASS
 
     override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classSymbolPointer.isValid(ktModule)
-
-    override fun toString() = "${this::class.java.simpleName}:${classOrObjectDeclaration?.getDebugText()}"
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType

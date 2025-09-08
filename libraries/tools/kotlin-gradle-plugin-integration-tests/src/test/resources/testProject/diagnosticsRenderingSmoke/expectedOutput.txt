@@ -1,18 +1,19 @@
 > Configure project :
-
+#block-separator
 > Configure project :subprojectA
+#block-separator
 e: [PreHMPPFlagsError | ERROR] Deprecated Kotlin Multiplatform Properties
 The following properties are obsolete and no longer supported:
 kotlin.mpp.hierarchicalStructureSupport
 Please remove the deprecated properties from the project.
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
-
+#block-separator
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] Invalid `dependsOn` Configuration in Common Source Set
 commonMain can't declare dependsOn on other source sets
 Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
-
+#block-separator
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Hierarchy Template Not Applied Correctly
 The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectA'':
 Explicit .dependsOn() edges were configured for the following source sets:
@@ -24,7 +25,7 @@ to your gradle.properties
 Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
-
+#block-separator
 w: [InternalKotlinGradlePluginPropertiesUsed | WARNING] Usage of Internal Kotlin Gradle Plugin Properties Detected
 ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
 
@@ -34,14 +35,14 @@ Internal properties are not recommended for production use.
 Stability and future compatibility of the build is not guaranteed.
 Please consider using the public API instead of internal properties.
 #diagnostic-end
-
-
+#block-separator
 > Configure project :subprojectB
+#block-separator
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] Invalid `dependsOn` Configuration in Common Source Set
 commonMain can't declare dependsOn on other source sets
 Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
-
+#block-separator
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] Default Kotlin Hierarchy Template Not Applied Correctly
 The Default Kotlin Hierarchy Template was not applied to 'project ':subprojectB'':
 Explicit .dependsOn() edges were configured for the following source sets:
@@ -53,7 +54,7 @@ to your gradle.properties
 Please remove the dependsOn-calls or disable the default template.
 Learn more about hierarchy templates: https://kotl.in/hierarchy-template
 #diagnostic-end
-
+#block-separator
 w: [UnusedSourceSetsWarning | WARNING] Unused Kotlin Source Sets
 The Kotlin source set unusedCreatedInAfterEvaluate was configured but not added to any Kotlin compilation.
 

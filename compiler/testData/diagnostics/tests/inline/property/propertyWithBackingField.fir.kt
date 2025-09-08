@@ -21,3 +21,6 @@ open class A {
 
     inline <!INLINE_PROPERTY_WITH_BACKING_FIELD!>val z<!> by Delegate()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, integerLiteral, nullableType,
+operator, propertyDeclaration, propertyDelegate, setter, starProjection */

@@ -18,3 +18,6 @@ enum class E {
 fun foo() = E.ENTRY
 fun bar() = E.values()
 fun baz() = E.valueOf("ENTRY")
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral */

@@ -79,3 +79,7 @@ enum class MyEnum {
 }
 
 class MyClass
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, enumDeclaration, enumEntry,
+integerLiteral, nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, stringLiteral,
+vararg */

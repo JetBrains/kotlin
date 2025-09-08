@@ -43,3 +43,6 @@ class TestSuperForGenericBase<T> : GB<T>() {
         super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, superExpression,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -5,6 +5,9 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.js.internal.boxedLong.BoxedLongApi
+
 internal external interface Ctor {
     var `$imask$`: BitMask?
     var `$metadata$`: Metadata
@@ -44,10 +47,12 @@ private fun isInterfaceImpl(obj: dynamic, iface: Int): Boolean {
     return mask.isBitSet(iface)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
     return isInterfaceImpl(obj, iface.`$metadata$`.iid)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     val objTypeOf = jsTypeOf(obj)
 
@@ -69,10 +74,11 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     return result
 }
 
-private fun isJsArray(obj: Any): Boolean {
+internal fun isJsArray(obj: Any): Boolean {
     return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
@@ -84,14 +90,31 @@ internal fun isChar(@Suppress("UNUSED_PARAMETER") c: Any): Boolean {
 }
 
 // TODO: Distinguish Boolean/Byte and Short/Char
+@UsedFromCompilerGeneratedCode
 internal fun isBooleanArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "BooleanArray"
+
+@UsedFromCompilerGeneratedCode
 internal fun isByteArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int8Array"))
+
+@UsedFromCompilerGeneratedCode
 internal fun isShortArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int16Array"))
+
+@UsedFromCompilerGeneratedCode
 internal fun isCharArray(a: dynamic): Boolean = jsInstanceOf(a, js("Uint16Array")) && a.`$type$` === "CharArray"
+
+@UsedFromCompilerGeneratedCode
 internal fun isIntArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int32Array"))
+
+@UsedFromCompilerGeneratedCode
 internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Array"))
+
+@UsedFromCompilerGeneratedCode
 internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
-internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
+
+// TODO: Remove after bootstrap update
+@BoxedLongApi
+@Deprecated("Moved to kotlin.js.internal.boxedLong package", level = DeprecationLevel.HIDDEN)
+internal fun isLongArray(a: dynamic): Boolean = kotlin.js.internal.boxedLong.isLongArray(a)
 
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
@@ -119,9 +142,11 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     return jsInstanceOf(obj, constructor)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun isNumber(a: dynamic) = jsTypeOf(a) == "number" || a is Long
 
 @OptIn(JsIntrinsic::class)
+@UsedFromCompilerGeneratedCode
 internal fun isComparable(value: dynamic): Boolean {
     val type = jsTypeOf(value)
 
@@ -132,10 +157,12 @@ internal fun isComparable(value: dynamic): Boolean {
 }
 
 @OptIn(JsIntrinsic::class)
+@UsedFromCompilerGeneratedCode
 internal fun isCharSequence(value: dynamic): Boolean =
     jsTypeOf(value) == "string" || isInterface(value, jsClassIntrinsic<CharSequence>())
 
 
 @OptIn(JsIntrinsic::class)
+@UsedFromCompilerGeneratedCode
 internal fun isExternalObject(value: dynamic, ktExternalObject: dynamic) =
     jsEqeqeq(value, ktExternalObject) || (jsTypeOf(ktExternalObject) == "function" && jsInstanceOf(value, ktExternalObject))

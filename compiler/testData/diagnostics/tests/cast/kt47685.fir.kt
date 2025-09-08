@@ -28,3 +28,7 @@ fun test_1(namedFunction: KtNamedFunction, functionLiteral: KtFunctionLiteral, c
 
     val myNamedFunction = function as KtNamedFunction
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, intersectionType, isExpression, localProperty, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

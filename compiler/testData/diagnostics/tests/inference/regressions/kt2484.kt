@@ -18,3 +18,6 @@ fun main(args: Array<String>) {
     bar { a -> a.length }
     bar { it.length }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression, typeParameter */

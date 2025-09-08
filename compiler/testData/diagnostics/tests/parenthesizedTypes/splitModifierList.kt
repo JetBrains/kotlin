@@ -15,3 +15,5 @@ typealias Test6 = (@A @B Int)
 typealias Test7 = (@A @B Int)?
 typealias Test8 = (@A() (<!MODIFIER_LIST_NOT_ALLOWED!>@B<!> Int)? )
 typealias Test9 = (@A() (<!MODIFIER_LIST_NOT_ALLOWED!>@B<!> Int)  )?
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionalType, nullableType, typeAliasDeclaration */

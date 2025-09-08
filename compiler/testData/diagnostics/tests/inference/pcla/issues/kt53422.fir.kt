@@ -4,7 +4,7 @@
 fun test() {
     foo(
         flow { emit(0) }
-    ) { <!ARGUMENT_TYPE_MISMATCH!>it<!>.collect <!TOO_MANY_ARGUMENTS!>{}<!> }
+    ) { <!ARGUMENT_TYPE_MISMATCH!>it<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>collect<!> {} }
 
     // 0. Initial
     // W <: Any / declared upper bound
@@ -55,3 +55,8 @@ class FlowCollectorImpl<C> : FlowCollector<C> {
 }
 
 fun Flow<*>.collect() {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, classReference, funInterface,
+funWithExtensionReceiver, functionDeclaration, functionalType, in, integerLiteral, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, out, override, propertyDeclaration, starProjection, typeConstraint, typeParameter,
+typeWithExtension */

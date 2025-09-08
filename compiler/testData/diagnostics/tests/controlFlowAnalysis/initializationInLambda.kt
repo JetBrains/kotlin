@@ -76,3 +76,7 @@ val z = if (true) {
     42
 }
 else 0
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, ifExpression, init,
+integerLiteral, lambdaLiteral, localFunction, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

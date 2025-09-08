@@ -14,19 +14,13 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 
 // ------------------------------ diagnostics ------------------------------
 
-sealed class KtDiagnostic : DiagnosticMarker {
-    abstract val element: AbstractKtSourceElement
+sealed class KtDiagnostic {
+    abstract val severity: Severity
     abstract val factory: AbstractKtDiagnosticFactory
-    abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
-    abstract override val severity: Severity
+    abstract val isValid: Boolean
+    abstract val firstRange: TextRange
 
-    final override val textRanges: List<TextRange>
-        get() = positioningStrategy.markDiagnostic(this)
-
-    val isValid: Boolean
-        get() = positioningStrategy.isValid(element)
-
-    override val factoryName: String
+    val factoryName: String
         get() = factory.name
 
     fun renderMessage(): String {
@@ -34,29 +28,57 @@ sealed class KtDiagnostic : DiagnosticMarker {
     }
 }
 
-sealed class KtSimpleDiagnostic : KtDiagnostic() {
+class KtDiagnosticWithoutSource(
+    val message: String,
+    override val severity: Severity,
+    override val factory: KtSourcelessDiagnosticFactory,
+) : KtDiagnostic() {
+    override val isValid: Boolean
+        get() = true
+
+    override val firstRange: TextRange
+        get() = TextRange.EMPTY_RANGE
+}
+
+sealed class KtDiagnosticWithSource : KtDiagnostic(), DiagnosticMarker {
+    abstract val element: AbstractKtSourceElement
+    abstract override val factory: KtDiagnosticFactoryN
+    abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
+    abstract override val severity: Severity
+
+    final override val textRanges: List<TextRange>
+        get() = positioningStrategy.markDiagnostic(this)
+
+    final override val isValid: Boolean
+        get() = positioningStrategy.isValid(element)
+
+    final override val firstRange: TextRange
+        get() = DiagnosticRangeUtils.firstRange(textRanges)
+}
+
+sealed class KtSimpleDiagnostic : KtDiagnosticWithSource() {
     abstract override val factory: KtDiagnosticFactory0
 }
 
-sealed class KtDiagnosticWithParameters1<A> : KtDiagnostic(), DiagnosticWithParameters1Marker<A> {
+sealed class KtDiagnosticWithParameters1<A> : KtDiagnosticWithSource(), DiagnosticWithParameters1Marker<A> {
     abstract override val a: A
     abstract override val factory: KtDiagnosticFactory1<A>
 }
 
-sealed class KtDiagnosticWithParameters2<A, B> : KtDiagnostic(), DiagnosticWithParameters2Marker<A, B> {
+sealed class KtDiagnosticWithParameters2<A, B> : KtDiagnosticWithSource(), DiagnosticWithParameters2Marker<A, B> {
     abstract override val a: A
     abstract override val b: B
     abstract override val factory: KtDiagnosticFactory2<A, B>
 }
 
-sealed class KtDiagnosticWithParameters3<A, B, C> : KtDiagnostic(), DiagnosticWithParameters3Marker<A, B, C> {
+sealed class KtDiagnosticWithParameters3<A, B, C> : KtDiagnosticWithSource(), DiagnosticWithParameters3Marker<A, B, C> {
     abstract override val a: A
     abstract override val b: B
     abstract override val c: C
     abstract override val factory: KtDiagnosticFactory3<A, B, C>
 }
 
-sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnostic(), DiagnosticWithParameters4Marker<A, B, C, D> {
+sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnosticWithSource(), DiagnosticWithParameters4Marker<A, B, C, D> {
     abstract override val a: A
     abstract override val b: B
     abstract override val c: C
@@ -67,7 +89,7 @@ sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnostic(), Diagnosti
 // ------------------------------ psi diagnostics ------------------------------
 
 interface KtPsiDiagnostic : DiagnosticMarker {
-    val factory: AbstractKtDiagnosticFactory
+    val factory: KtDiagnosticFactoryN
     val element: KtPsiSourceElement
     override val textRanges: List<TextRange>
     override val severity: Severity
@@ -210,7 +232,7 @@ data class KtLightDiagnosticWithParameters4<A, B, C, D>(
     override val positioningStrategy: AbstractSourceElementPositioningStrategy
 ) : KtDiagnosticWithParameters4<A, B, C, D>(), KtLightDiagnostic
 
-// ------------------------------ light tree diagnostics ------------------------------
+// ------------------------------ offset-based diagnostics ------------------------------
 
 interface KtOffsetsOnlyDiagnostic : DiagnosticMarker {
     val element: AbstractKtSourceElement

@@ -12,3 +12,5 @@ public class Sample {
 fun main() {
     Sample.foo(<!ARGUMENT_TYPE_MISMATCH("String; (Mutable)List<(Mutable)List<String!>!>!")!>"123"<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, stringLiteral */

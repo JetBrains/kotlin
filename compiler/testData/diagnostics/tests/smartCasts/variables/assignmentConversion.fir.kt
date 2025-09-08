@@ -34,3 +34,5 @@ fun test3() {
     foo(c)
 }
 
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

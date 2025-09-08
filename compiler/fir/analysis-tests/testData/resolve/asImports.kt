@@ -20,3 +20,5 @@ fun test_1() {
 fun test_2(b: B) {
     b.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

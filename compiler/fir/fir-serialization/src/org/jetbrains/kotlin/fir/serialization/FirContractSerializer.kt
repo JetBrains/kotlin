@@ -82,6 +82,20 @@ class FirContractSerializer {
                     }
                 }
 
+                is ConeConditionalReturnsDeclaration -> {
+                    builder.conditionKind = ProtoBuf.Effect.EffectConditionKind.RETURNS_CONDITION
+                    builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
+                    fillEffectProto(builder, effectDeclaration.returnsEffect, contractDescription)
+                }
+
+                is ConeHoldsInEffectDeclaration -> {
+                    builder.conditionKind = ProtoBuf.Effect.EffectConditionKind.HOLDSIN_CONDITION
+                    builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.argumentsCondition, contractDescription))
+                    builder.addEffectConstructorArgument(
+                        contractExpressionProto(effectDeclaration.valueParameterReference, contractDescription)
+                    )
+                }
+
                 else -> {
                     throw IllegalStateException("Unsupported effect type: ${effectDeclaration::class.simpleName}")
                 }

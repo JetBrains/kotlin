@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
@@ -10,7 +11,7 @@ fun box(): String {
 
     var cmeThrown = false
     try {
-        for ((index, x) in xs.withIndex()) {
+        for ([index, x] in xs.withIndex()) {
             s.append("$index:$x;")
             xs.clear()
         }

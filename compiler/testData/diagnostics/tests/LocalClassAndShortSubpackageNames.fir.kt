@@ -16,3 +16,5 @@ fun f() {
         fun g() : foo.bar.X? = null
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, nullableType */

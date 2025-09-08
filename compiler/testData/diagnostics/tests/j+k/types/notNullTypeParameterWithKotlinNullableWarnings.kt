@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
-// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated -PreciseSimplificationToFlexibleLowerConstraint
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 
@@ -42,3 +42,6 @@ fun <V : Any> SLRUMap<V>.getOrPutNN(value: V, l: List<V>) {
     takeEList(l)
     takeE(id(value))
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration,
+ifExpression, javaType, nullableType, smartcast, typeConstraint, typeParameter */

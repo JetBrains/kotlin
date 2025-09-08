@@ -9,3 +9,6 @@ class My {
     override fun equals(other: Any?) =
             other is My && isInstance.hashCode() == other.isInstance.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+isExpression, nullableType, operator, override, propertyDeclaration, smartcast, stringLiteral, thisExpression */

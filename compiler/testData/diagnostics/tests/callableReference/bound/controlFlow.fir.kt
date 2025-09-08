@@ -24,3 +24,6 @@ fun unreachableCodeInLoop(): Int {
     }
     return 2
 }
+
+/* GENERATED_FIR_TAGS: break, callableReference, classReference, functionDeclaration, ifExpression, integerLiteral,
+localProperty, propertyDeclaration, whileLoop */

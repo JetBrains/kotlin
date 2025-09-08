@@ -844,7 +844,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                     (this@R|kotlin/jvm/internal/TypeReference|, R|<local>/javaClass|).R|kotlin/jvm/internal/TypeReference.arrayClassName|
                 }
                 R|<local>/convertPrimitiveToWrapper| && R|<local>/javaClass|.R|java/lang/Class.isPrimitive| ->  {
-                    (this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier| as R|kotlin/reflect/KClass<*>|).R|kotlin/jvm/javaObjectType|<R|CapturedType(*)|>.R|java/lang/Class.name|
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.classifier|.R|kotlin/jvm/javaObjectType|<R|CapturedType(*)|>.R|java/lang/Class.name|
                 }
                 else ->  {
                     R|<local>/javaClass|.R|java/lang/Class.name|
@@ -856,7 +856,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
                     String()
                 }
                 else ->  {
-                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/collections/joinToString|<R|kotlin/reflect/KTypeProjection|>(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, kotlin/CharSequence>?] joinToString@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/reflect/KTypeProjection|): R|kotlin/CharSequence| <inline=NoInline>  {
+                    this@R|kotlin/jvm/internal/TypeReference|.R|kotlin/jvm/internal/TypeReference.arguments|.R|kotlin/collections/joinToString|<R|kotlin/reflect/KTypeProjection|>(String(, ), String(<), String(>), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<TypeVariable(T), kotlin/CharSequence>?] joinToString@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/reflect/KTypeProjection|): R|kotlin/CharSequence| <inline=NoInline>  {
                         ^ (this@R|kotlin/jvm/internal/TypeReference|, R|<local>/it|).R|kotlin/jvm/internal/TypeReference.asString|()
                     }
                     )

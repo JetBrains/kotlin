@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WhenGuards
 // DIAGNOSTICS: -DUPLICATE_LABEL_IN_WHEN, -USELESS_IS_CHECK
 
@@ -24,3 +24,7 @@ fun whenWithNamedSubject(y: BooleanHolder) {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, guardCondition,
+ifExpression, integerLiteral, intersectionType, isExpression, localProperty, nullableType, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, smartcast, typeParameter, whenExpression, whenWithSubject */

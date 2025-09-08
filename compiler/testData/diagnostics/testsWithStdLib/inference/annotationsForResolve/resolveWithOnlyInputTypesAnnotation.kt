@@ -23,3 +23,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> expect1(expected: T, block: () ->
 fun test() {
     expect1(2) { byteArrayOf(1, 2, 3).indexOf(3) }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

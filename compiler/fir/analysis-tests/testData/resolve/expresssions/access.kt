@@ -62,3 +62,6 @@ fun f() {
 
     abc()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localFunction, localProperty, operator, propertyDeclaration, stringLiteral, thisExpression */

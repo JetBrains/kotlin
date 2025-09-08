@@ -6,3 +6,5 @@ data object CreateBuilder : Builder<CreateBuilder> {
 }
 
 interface Builder<T> : Cloneable
+
+/* GENERATED_FIR_TAGS: data, functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration, typeParameter */

@@ -10,3 +10,5 @@ object Foo {
         baz({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> "" }) // should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, objectDeclaration, stringLiteral, vararg */

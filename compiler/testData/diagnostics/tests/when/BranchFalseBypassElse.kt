@@ -21,3 +21,6 @@ fun test(a: Any): String {
     // When is not exhaustive
     return <!DEBUG_INFO_SMARTCAST!>q<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, isExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

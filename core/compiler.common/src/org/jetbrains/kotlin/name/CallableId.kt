@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.name
 
+import org.jetbrains.kotlin.name.CallableId.Companion.PACKAGE_FQ_NAME_FOR_LOCAL
+
 /**
  * A callable ID identifies a Kotlin callable, such as a function or property. When [className] is `null`, the ID represents a top-level
  * callable.
@@ -131,3 +133,7 @@ class CallableId private constructor(
 fun CallableId.withClassId(classId: ClassId): CallableId {
     return CallableId(classId, callableName)
 }
+
+val CallableId?.packageName: FqName get() = this?.packageName ?: PACKAGE_FQ_NAME_FOR_LOCAL
+
+val CallableId?.isLocal: Boolean get() = this == null || this.isLocal

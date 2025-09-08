@@ -85,7 +85,6 @@ class KotlinConstraintSystemCompleter(
                 continue
 
             val isThereAnyReadyForFixationVariable = variableFixationFinder.findFirstVariableForFixation(
-                this,
                 getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
                 postponedArguments,
                 completionMode,
@@ -106,7 +105,6 @@ class KotlinConstraintSystemCompleter(
 
             // Stage 2: collect parameter types for postponed arguments
             val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentsInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                this,
                 postponedArgumentsWithRevisableType,
                 completionMode,
                 dependencyProvider,
@@ -120,7 +118,6 @@ class KotlinConstraintSystemCompleter(
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedArguments) {
                     val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
-                        this,
                         argument,
                         postponedArguments,
                         topLevelType,
@@ -275,7 +272,7 @@ class KotlinConstraintSystemCompleter(
         }
 
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
+            getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
         )
 
         // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
@@ -314,7 +311,6 @@ class KotlinConstraintSystemCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean {
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this,
             getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
             postponedArguments,
             completionMode,
@@ -338,7 +334,7 @@ class KotlinConstraintSystemCompleter(
     ) {
         while (true) {
             val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-                this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+                getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
                 postponedArguments, completionMode, topLevelType,
             ) ?: break
 
@@ -483,7 +479,9 @@ class KotlinConstraintSystemCompleter(
         topLevelAtoms: List<ResolvedAtom>,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
-        val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
+        val resultType = with(c) {
+            resultTypeResolver.findResultType(variableWithConstraints, direction)
+        }
         val variable = variableWithConstraints.typeVariable
         val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 

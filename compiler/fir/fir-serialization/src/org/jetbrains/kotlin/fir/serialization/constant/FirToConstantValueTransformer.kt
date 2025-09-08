@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.math.exp
 
 internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
     session: FirSession,
@@ -54,7 +56,7 @@ internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue
     return valueFromFir as? T
 }
 
-internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
+fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
 
@@ -213,7 +215,7 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
         val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return false
 
         return when {
-            symbol.fir is FirEnumEntry -> symbol.callableId.classId != null
+            symbol.fir is FirEnumEntry -> symbol.callableId?.classId != null
 
             symbol is FirPropertySymbol -> symbol.fir.isConst
 
@@ -223,9 +225,9 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
                 symbol.containingClassLookupTag()?.toRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
             }
 
-            symbol.callableId.packageName.asString() == "kotlin" -> {
+            symbol.callableId?.packageName?.asString() == "kotlin" -> {
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
-                when (symbol.callableId.callableName) {
+                when (symbol.name) {
                     !in constantIntrinsicCalls -> false
                     else -> dispatchReceiver?.accept(this, data) ?: false
                 }
@@ -250,5 +252,10 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: FirSession): Boolean {
         return namedArgumentExpression.expression.accept(this, data)
+    }
+
+    override fun visitExpression(expression: FirExpression, data: FirSession): Boolean {
+        // FirExpressionStub could replace constant initializers in fir2ir
+        return expression is FirExpressionStub
     }
 }

@@ -20,9 +20,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.internal.kapt.KaptProperties
-import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
@@ -39,13 +37,11 @@ import java.util.concurrent.Callable
 import javax.inject.Inject
 
 // apply plugin: 'kotlin-kapt'
-class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+class Kapt3GradleSubplugin @Inject internal constructor() :
     KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("kapt", KaptExtension::class.java)
-
-        registry.register(KaptModelBuilder())
     }
 
     companion object {
@@ -176,7 +172,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         val androidVariantData: DeprecatedAndroidBaseVariant? = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 
         val sourceSetName = if (androidVariantData != null) {
@@ -447,10 +443,8 @@ internal fun buildKaptSubpluginOptions(
         "${kaptExtension.strictMode}"
     )
     pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
-    pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${KaptProperties.isKaptKeepKdocCommentsInStubs(project).get()}")
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
-    pluginOptions += SubpluginOption("useK2", "${KaptProperties.isUseK2(project).get()}")
     pluginOptions += SubpluginOption("infoAsWarnings", "${KaptProperties.isInfoAsWarnings(project).get()}")
     pluginOptions += FilesSubpluginOption("stubs", kaptStubsDir)
 

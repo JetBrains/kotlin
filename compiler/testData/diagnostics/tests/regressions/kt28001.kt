@@ -32,3 +32,7 @@ private object Case2 {
 
     fun <T> listOf(vararg elements: T): List<T> = TODO()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, nullableType, objectDeclaration, out, outProjection,
+primaryConstructor, propertyDeclaration, typeParameter, vararg */

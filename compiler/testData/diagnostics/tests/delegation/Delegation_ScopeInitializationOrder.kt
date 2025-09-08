@@ -10,3 +10,5 @@ class C(b : B) : B by b {
 
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration,
+primaryConstructor */

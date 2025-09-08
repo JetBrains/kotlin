@@ -10,3 +10,6 @@ class Outer {
     @Special(<!NO_COMPANION_OBJECT!>Nested<!>)
     class Nested<@Special(<!NO_COMPANION_OBJECT!>Nested<!>) T> : @Special(<!NO_COMPANION_OBJECT!>Nested<!>) Interface
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, interfaceDeclaration, nestedClass, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

@@ -25,3 +25,7 @@ fun test(l: HS<Int>) {
     val r = convert(l, HS())
     r checkType { _<HS<Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter, typeWithExtension */

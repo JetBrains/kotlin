@@ -96,7 +96,10 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     @TestMetadata("native-configuration-cache")
     fun testCommonizer(gradleVersion: GradleVersion) {
-        project("native-configuration-cache", gradleVersion) {
+        project(
+            "native-configuration-cache",
+            gradleVersion,
+        ) {
             val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
             val cleanNativeDistributionCommonizationTask = ":lib:cleanNativeDistributionCommonization"
 
@@ -406,7 +409,6 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
             *taskNames,
             executedTaskNames = executedTaskNames,
             checkUpToDateOnRebuild = checkUpToDateOnRebuild,
-            suppressAgpWarnings = suppressAgpWarnings,
             buildOptions = buildOptions,
         )
     }

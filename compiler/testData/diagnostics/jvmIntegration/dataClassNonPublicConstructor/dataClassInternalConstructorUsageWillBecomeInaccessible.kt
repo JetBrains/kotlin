@@ -15,3 +15,6 @@ data class Foo private constructor(val x: Int) {
 fun main() {
     <!UNRESOLVED_REFERENCE!>Foo<!>.new().copy()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, functionDeclaration, integerLiteral, objectDeclaration,
+primaryConstructor, propertyDeclaration */

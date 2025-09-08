@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -32,10 +34,13 @@ private object KlibSourceFile : FirDeclarationDataKey()
 private object EvaluatedValue : FirDeclarationDataKey()
 private object CompilerPluginMetadata : FirDeclarationDataKey()
 private object OriginalReplSnippet : FirDeclarationDataKey()
+private object ScriptTopLevelDeclaration : FirDeclarationDataKey()
 private object ReplSnippetTopLevelDeclaration : FirDeclarationDataKey()
 private object HasBackingFieldKey : FirDeclarationDataKey()
 private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
 private object IsDelegatedProperty : FirDeclarationDataKey()
+private object LambdaArgumentHoldsInTruths : FirDeclarationDataKey()
+private object FileNameForPluginGeneratedCallable : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -45,6 +50,10 @@ var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataR
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 var FirDeclaration.compilerPluginMetadata: Map<String, ByteArray>? by FirDeclarationDataRegistry.data(CompilerPluginMetadata)
 var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclarationDataRegistry.data(OriginalReplSnippet)
+var FirAnonymousFunction.lambdaArgumentParent: FirQualifiedAccessExpression? by FirDeclarationDataRegistry.data(LambdaArgumentHoldsInTruths)
+var FirCallableDeclaration.fileNameForPluginGeneratedCallable: String? by FirDeclarationDataRegistry.data(FileNameForPluginGeneratedCallable)
+
+var FirDeclaration.isScriptTopLevelDeclaration: Boolean? by FirDeclarationDataRegistry.data(ScriptTopLevelDeclaration)
 
 /**
  * Denotes a declaration on the REPL snippet level - top-level and all nested ones, but not the ones declared inside bodies.
@@ -57,7 +66,8 @@ val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
 
 /**
  * This is an implementation detail attribute to provide proper [hasBackingField]
- * flag for deserialized properties.
+ * flag for properties in case it is impossible to compute it.
+ * This is the case for deserialized properties and properties after Fir2Ir with removed bodies.
  *
  * This attribute mustn't be used directly.
  *
@@ -134,10 +144,7 @@ fun FirProperty.getExplicitBackingField(): FirBackingField? {
 }
 
 val FirProperty.canNarrowDownGetterType: Boolean
-    get() {
-        val backingFieldHasDifferentType = backingField != null && backingField?.returnTypeRef?.coneType != returnTypeRef.coneType
-        return backingFieldHasDifferentType && getter is FirDefaultPropertyGetter
-    }
+    get() = backingField != null && getter is FirDefaultPropertyGetter
 
 val FirPropertySymbol.canNarrowDownGetterType: Boolean
     get() = fir.canNarrowDownGetterType

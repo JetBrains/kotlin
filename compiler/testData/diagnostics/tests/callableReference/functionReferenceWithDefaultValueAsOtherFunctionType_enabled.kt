@@ -18,3 +18,6 @@ fun test() {
     bar1(::foo)
     bar2(::foo)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, callableReference, functionDeclaration, functionalType, integerLiteral,
+stringLiteral */

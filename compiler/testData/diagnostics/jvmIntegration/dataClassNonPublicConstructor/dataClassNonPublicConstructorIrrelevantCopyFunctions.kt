@@ -17,3 +17,6 @@ fun test(irrelevantClass: IrrelevantClass) {
     copy()
     irrelevantClass.copy()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, data, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

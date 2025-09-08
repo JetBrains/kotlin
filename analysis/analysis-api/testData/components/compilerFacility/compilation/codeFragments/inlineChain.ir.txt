@@ -1,20 +1,4 @@
 MODULE_FRAGMENT
-  FILE fqName:<root> fileName:context.kt
-    FUN name:baz visibility:public modality:FINAL returnType:kotlin.Unit [inline]
-      BLOCK_BODY
-        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public final fun foo (): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null
-    FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
-      BLOCK_BODY
-        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-  FILE fqName:<root> fileName:dep.kt
-    FUN name:bar visibility:public modality:FINAL returnType:kotlin.Unit [inline]
-      BLOCK_BODY
-        CALL 'public final fun baz (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
-    FUN name:foo visibility:public modality:FINAL returnType:kotlin.String [inline]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String [inline] declared in <root>'
-          CONST String type=kotlin.String value="OK"
   FILE fqName:<root> fileName:fragment.kt
     CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
@@ -24,4 +8,4 @@ MODULE_FRAGMENT
       FUN name:run visibility:public modality:FINAL returnType:kotlin.String
         EXPRESSION_BODY
           BLOCK type=kotlin.String origin=null
-            CALL 'public final fun foo (): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null
+            CALL 'public final fun foo (): kotlin.String [inline] declared in <root>.DepKt' type=kotlin.String origin=null

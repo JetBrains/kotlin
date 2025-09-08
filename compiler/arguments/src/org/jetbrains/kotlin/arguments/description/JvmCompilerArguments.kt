@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
-import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
@@ -30,7 +30,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<directory|jar>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -40,7 +43,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -48,7 +54,11 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Include the Kotlin runtime in the resulting JAR.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -57,7 +67,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_3,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_3,
+        )
     }
 
     compilerArgument {
@@ -65,15 +78,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Don't automatically include the Java runtime in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
-
-        stubLifecycle()
     }
 
     compilerArgument {
@@ -81,7 +89,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -89,7 +100,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Don't automatically include the Kotlin reflection dependency in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_4,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_4,
+        )
     }
 
     compilerArgument {
@@ -98,7 +112,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Evaluate the given string as a Kotlin script.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_4_0,
+        )
     }
 
     compilerArgument {
@@ -107,7 +124,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringArrayType.defaultNull
         valueDescription = "<fully qualified class name[,]>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_1_0,
+        )
     }
 
     compilerArgument {
@@ -116,15 +136,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        additionalAnnotations(
-            GradleOption(
-                value = DefaultValue.STRING_NULL_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
-
-        stubLifecycle()
     }
 
     compilerArgument {
@@ -140,15 +155,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         )
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotations(
-            GradleOption(
-                value = DefaultValue.JVM_TARGET_VERSIONS,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_3,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_3,
         )
-
-        stubLifecycle()
     }
 
     compilerArgument {
@@ -156,15 +166,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Generate metadata for Java 1.8 reflection on method parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_1_0,
         )
-
-        stubLifecycle()
     }
 
     compilerArgument {
@@ -179,15 +184,10 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
 
-        additionalAnnotations(
-            GradleOption(
-                value = DefaultValue.JVM_DEFAULT_MODES,
-                gradleInputType = GradleInputTypes.INPUT,
-                gradleName = "jvmDefault",
-            )
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_2_0,
         )
-
-        stubLifecycle()
     }
 
     // Advanced options
@@ -197,7 +197,9 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Do not report errors on classes in dependencies that were compiled by an unstable version of the Kotlin compiler.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -209,7 +211,9 @@ to force diagnostics to be reported.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{stable|unstable}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -218,7 +222,9 @@ to force diagnostics to be reported.""".asReleaseDependent()
         description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -229,7 +235,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = IntType.defaultOne
         valueDescription = "<N>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
+        )
     }
 
     compilerArgument {
@@ -239,7 +247,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -249,7 +259,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<module[,]>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -257,7 +269,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Don't generate not-null assertions for arguments of platform types.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -265,7 +279,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Don't generate not-null assertions for extension receiver arguments of platform types.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_50,
+        )
     }
 
     compilerArgument {
@@ -273,7 +289,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Don't generate not-null assertions on parameters of methods accessible from Java.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -281,7 +299,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Disable optimizations.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -297,7 +317,9 @@ default: legacy""".asReleaseDependent()
         valueType = StringType(defaultValue = "legacy".asReleaseDependent())
         valueDescription = "{always-enable|always-disable|jvm|legacy}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_60,
+        )
     }
 
     compilerArgument {
@@ -307,7 +329,9 @@ default: legacy""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -316,7 +340,9 @@ default: legacy""".asReleaseDependent()
         description = "Compile multifile classes as a hierarchy of parts and a facade.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_2,
+        )
     }
 
     compilerArgument {
@@ -324,7 +350,9 @@ default: legacy""".asReleaseDependent()
         description = "Use a type table in metadata serialization.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_40,
+        )
     }
 
     compilerArgument {
@@ -333,7 +361,9 @@ default: legacy""".asReleaseDependent()
 This can be used in the event of problems with the new implementation.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_3,
+        )
     }
 
     compilerArgument {
@@ -341,7 +371,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         description = "Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -349,7 +381,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         description = """Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib').""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_40,
+        )
     }
 
     compilerArgument {
@@ -358,7 +392,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         valueType = StringArrayType.defaultNull
         valueDescription = "<key=value[,]>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_2,
+        )
     }
 
     // Javac options
@@ -368,7 +404,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         description = "Use javac for Java source and class file analysis.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -376,7 +414,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         description = "Reuse 'javac' analysis and compile Java source files.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_50,
+        )
     }
 
     compilerArgument {
@@ -385,7 +425,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         valueType = StringArrayType.defaultNull
         valueDescription = "<option[,]>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -394,7 +436,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_40,
+        )
     }
 
     compilerArgument {
@@ -402,7 +446,9 @@ This can be used in the event of problems with the new implementation.""".asRele
         description = "Package prefix for Java files.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_40,
+        )
     }
 
     compilerArgument {
@@ -419,7 +465,9 @@ Modes:
         valueType = StringArrayType.defaultNull
         valueDescription = "{ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_50,
+        )
     }
 
     compilerArgument {
@@ -432,7 +480,9 @@ Modes:
         valueType = StringArrayType.defaultNull
         valueDescription = "@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+        )
     }
 
     compilerArgument {
@@ -442,17 +492,28 @@ The default value is 'enable'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "enable|disable".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_20,
+        )
     }
 
     compilerArgument {
         name = "Xjspecify-annotations"
-        description = """Specify the behavior of 'jspecify' annotations.
-The default value is 'warn'.""".asReleaseDependent()
+        description = ReleaseDependent(
+            """
+                Specify the behavior of 'jspecify' annotations.
+                The default value is 'strict'.""".trimIndent(),
+            KotlinReleaseVersion.v1_4_30..KotlinReleaseVersion.v2_0_21 to
+                    """
+                       Specify the behavior of 'jspecify' annotations.
+                       The default value is 'warn'.""".trimIndent()
+        )
         valueType = StringType.defaultNull
         valueDescription = "ignore|strict|warn".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -464,7 +525,14 @@ The default value is 'warn'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{all|all-compatibility|disable}".asReleaseDependent()
 
-        stubLifecycle()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated. Use `-jvm-default` instead")
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_50,
+            deprecatedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
     compilerArgument {
@@ -473,7 +541,9 @@ The default value is 'warn'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<script filename extension>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -481,7 +551,9 @@ The default value is 'warn'.""".asReleaseDependent()
         description = "Disable standard Kotlin scripting support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_50,
+        )
     }
 
     compilerArgument {
@@ -490,7 +562,9 @@ The default value is 'warn'.""".asReleaseDependent()
         description = "Generate metadata with strict version semantics (see the KDoc entry on 'Metadata.extraInt').".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_0,
+        )
     }
 
     compilerArgument {
@@ -500,7 +574,9 @@ This mode can BREAK BINARY COMPATIBILITY and should only be used as a workaround
 problems with parentheses in identifiers on certain platforms.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_30,
+        )
     }
 
     compilerArgument {
@@ -509,7 +585,9 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_2_70,
+        )
     }
 
     compilerArgument {
@@ -517,7 +595,9 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         description = "Allow the set of source files to be empty.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_40,
+        )
     }
 
     compilerArgument {
@@ -525,7 +605,9 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         description = "Emit JVM type annotations in bytecode.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_70,
+        )
     }
 
     compilerArgument {
@@ -534,7 +616,9 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         valueType = BooleanType.defaultFalse
         additionalAnnotations(Enables(LanguageFeature.ImplicitJvmExposeBoxed))
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
     compilerArgument {
@@ -547,7 +631,9 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
         valueType = StringType.defaultNull
         valueDescription = "{indy-with-constants|indy|inline}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_20,
+        )
     }
 
     compilerArgument {
@@ -558,7 +644,9 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+        )
     }
 
     compilerArgument {
@@ -570,7 +658,9 @@ The default value is 'indy'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{class|indy}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+        )
     }
 
     compilerArgument {
@@ -583,15 +673,19 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         valueType = StringType.defaultNull
         valueDescription = "{class|indy}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+        )
     }
 
     compilerArgument {
         name = "Xindy-allow-annotated-lambdas"
         description = "Allow using 'invokedynamic' for lambda expressions with annotations".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultNull
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
     compilerArgument {
@@ -601,7 +695,9 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+        )
     }
 
     compilerArgument {
@@ -609,7 +705,9 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         description = "Don't reset jar entry timestamps to a fixed date.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -617,7 +715,9 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         description = "Use pre-1.4 exception types instead of 'java.lang.NPE' in null checks. See KT-22275 for more details.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_10,
+        )
     }
 
     compilerArgument {
@@ -625,7 +725,9 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         description = "Don't generate the '@kotlin.jvm.internal.SourceDebugExtension' annotation with an SMAP copy on classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -638,7 +740,9 @@ Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfile
         valueType = StringType.defaultNull
         valueDescription = "<profilerPath:command:outputDir>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_20,
+        )
     }
 
     compilerArgument {
@@ -647,7 +751,9 @@ Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfile
         description = "Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -657,7 +763,9 @@ Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfile
 This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -666,7 +774,9 @@ This works like '--enable-preview' in Java. All class files are marked as compil
 This option has no effect and will be deleted in a future version.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+        )
     }
 
     compilerArgument {
@@ -679,7 +789,9 @@ See KT-45671 for more details.""".asReleaseDependent()
 
         additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+        )
     }
 
     compilerArgument {
@@ -691,7 +803,9 @@ See KT-45671 for more details.""".asReleaseDependent()
         )
         valueDescription = "{none|inline|all}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -699,7 +813,9 @@ See KT-45671 for more details.""".asReleaseDependent()
         description = "Validate generated JVM bytecode before and after optimizations.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -709,7 +825,9 @@ See KT-45671 for more details.""".asReleaseDependent()
 
         additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -720,7 +838,14 @@ This option is deprecated and will be deleted in future versions.
 It has no effect when -language-version is 2.0 or higher.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_0_0,
+        )
     }
 
     compilerArgument {
@@ -731,7 +856,9 @@ Currently this includes spilling all variables in a suspending context regardles
 If API Level >= 2.2 -- no-op.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -740,7 +867,9 @@ If API Level >= 2.2 -- no-op.""".asReleaseDependent()
 inside suspend functions and lambdas to distinguish them from user code by debugger.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
     compilerArgument {
@@ -748,7 +877,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Don't generate Java 1.8+ targets for Kotlin annotation classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -758,7 +889,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
         additionalAnnotations(Enables(LanguageFeature.ValueClasses))
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -767,7 +900,10 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0
+        )
     }
 
     compilerArgument {
@@ -775,7 +911,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_0,
+        )
     }
 
     compilerArgument {
@@ -783,7 +921,10 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Enable the experimental support for K2 KAPT.".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
+        )
     }
 
     compilerArgument {
@@ -792,7 +933,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Enable behaviour needed to compile builtins as part of JVM stdlib".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
     }
 
     compilerArgument {
@@ -800,7 +943,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Output builtins metadata as .kotlin_builtins files".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
     }
 
     compilerArgument {
@@ -810,6 +955,24 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
         additionalAnnotations(Enables(LanguageFeature.AnnotationsInMetadata))
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xwhen-expressions"
+        compilerName = "whenExpressionsGeneration"
+        description = """Select the code generation scheme for type-checking 'when' expressions:
+-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
+                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+The default value is 'inline'.""".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "{indy|inline}".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20
+        )
     }
 }

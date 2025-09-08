@@ -28,3 +28,6 @@ fun foo(x: A<Int>) {
         x is C -> {} // Not
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, isExpression, nestedClass, nullableType, sealed,
+smartcast, starProjection, typeParameter, whenExpression */

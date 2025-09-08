@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 kotlin {
@@ -10,12 +11,12 @@ kotlin {
 
 dependencies {
     api(project(":analysis:analysis-api"))
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":native:objcexport-header-generator"))
 
     implementation(project(":core:compiler.common.native"))
     implementation(project(":kotlin-util-klib"))
-    implementation(project(":native:analysis-api-klib-reader"))
+    implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
     implementation(project(":native:analysis-api-based-export-common"))
 
     testImplementation(projectTests(":native:objcexport-header-generator"))
@@ -30,4 +31,6 @@ sourceSets {
 
 testsJar()
 
-objCExportHeaderGeneratorTest("test")
+projectTests {
+    objCExportHeaderGeneratorTestTask("test")
+}

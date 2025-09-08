@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 description = "Printer for SIR"
@@ -20,8 +21,8 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 sourceSets {
@@ -31,9 +32,10 @@ sourceSets {
 
 val testDataDir = projectDir.resolve("testData")
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    inputs.dir(testDataDir)
-    useJUnitPlatform { }
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        inputs.dir(testDataDir)
+    }
 }
 
 testsJar()

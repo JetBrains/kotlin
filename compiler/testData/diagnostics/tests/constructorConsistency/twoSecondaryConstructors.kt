@@ -11,3 +11,5 @@ class Eap {
         use(foo)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, secondaryConstructor */

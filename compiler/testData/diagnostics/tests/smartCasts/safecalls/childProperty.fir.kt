@@ -40,3 +40,6 @@ fun test5(a:A?){
     var k2: Int = a.e.d
     var k3: Int? = a.b
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

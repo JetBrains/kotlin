@@ -14,3 +14,4 @@ class B : A<Some>() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeParameter */

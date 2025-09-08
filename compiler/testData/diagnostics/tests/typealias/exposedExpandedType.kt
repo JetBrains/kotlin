@@ -45,3 +45,6 @@ internal typealias TestInternal2 = Internal
 private typealias TestInternal3 = Internal
 typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestInternal4<!> = L<Internal>
 typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestInternal5<!> = L<TestInternal1>
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -29,3 +29,6 @@ fun test_2(b: Any?) {
         null -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

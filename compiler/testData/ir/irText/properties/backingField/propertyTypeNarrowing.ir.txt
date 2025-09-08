@@ -45,8 +45,9 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>.A'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            ARG <this>: CALL 'public final fun <get-it> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+            ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              CALL 'public final fun <get-it> (): kotlin.Number declared in <root>.A' type=kotlin.Number origin=GET_PROPERTY
+                ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A.test' type=<root>.A origin=IMPLICIT_ARGUMENT
             ARG other: CONST Int type=kotlin.Int value=3
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY

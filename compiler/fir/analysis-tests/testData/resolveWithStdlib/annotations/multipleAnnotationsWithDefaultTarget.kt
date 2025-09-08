@@ -7,3 +7,5 @@ annotation class ParamPropertyField
 annotation class WithoutExplicitTarget
 
 class MultipleTargets (@[ParamPropertyField WithoutExplicitTarget] val value: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration */

@@ -1,0 +1,1 @@
+fun foo(vararg x<caret>x: String) {}

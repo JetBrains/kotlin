@@ -13,7 +13,7 @@ FILE: main.kt
     }
     public final fun <E3 : R|kotlin/Enum<E3>|> funB(): R|kotlin/Unit| {
         R|/funA<CS errors: /funA>#|<R|CapturedType(*)|>(R|/createInterfaceAKotlin|<R|CapturedType(*)|>(), R|/defaultB|<R|CapturedType(*)|>())
-        R|/funA<CS errors: /funA>#|<R|CapturedType(*)|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|ft<CapturedType(*), CapturedType(*)?>|>(), R|/defaultB|<R|CapturedType(*)|>())
+        R|/funA<CS errors: /funA>#|<R|CapturedType(*)|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|CapturedType(*)!|>(), R|/defaultB|<R|CapturedType(*)|>())
         R|/funA|<R|E3|>(R|/createInterfaceAKotlin|<R|E3|>(), R|/defaultB|<R|E3|>())
         R|/funA|<R|E3|>(Q|JavaHelper|.R|/JavaHelper.createInterfaceA*s|<R|E3!|>(), R|/defaultB|<R|E3|>())
     }

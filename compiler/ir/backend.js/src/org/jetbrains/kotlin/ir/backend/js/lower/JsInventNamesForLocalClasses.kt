@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.lower.InventNamesForLocalClasses
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 
 class JsInventNamesForLocalClasses(private val context: JsIrBackendContext) : InventNamesForLocalClasses() {
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.toString()
 
-    override fun sanitizeNameIfNeeded(name: String): String = sanitizeName(name, withHash = false)
+    override fun sanitizeNameIfNeeded(name: String): String = makeValidES5Identifier(name, withHash = false)
 
     override fun customizeNameInventorData(clazz: IrClass, data: NameBuilder): NameBuilder {
         if (!clazz.isAnonymousObject) return data

@@ -21,3 +21,6 @@ fun test() {
         it.<!MISSING_DEPENDENCY_SUPERCLASS!>hashCode<!>() // crashes backend
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+primaryConstructor, propertyDeclaration */

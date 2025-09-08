@@ -74,3 +74,7 @@ class FirRenderer : FirVisitorVoid() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+in, interfaceDeclaration, localProperty, nullableType, out, override, primaryConstructor, propertyDeclaration, smartcast,
+starProjection, thisExpression, typeConstraint, typeParameter */

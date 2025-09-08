@@ -5,3 +5,5 @@ fun f(): Int {
     <!UNUSED_LAMBDA_EXPRESSION!>{ var <!NAME_SHADOWING, UNUSED_VARIABLE!>i<!> = 18 }<!>
     return i
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

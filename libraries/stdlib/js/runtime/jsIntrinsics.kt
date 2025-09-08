@@ -7,6 +7,10 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.js.internal.boxedLong.BoxedLongApi
+import kotlin.js.internal.boxedLong.toStringImpl
+
 @RequiresOptIn(message = "Here be dragons! This is a compiler intrinsic, proceed with care!")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
@@ -157,6 +161,9 @@ internal fun float32Array(a: Any?): Any?
 internal fun float64Array(a: Any?): Any?
 
 @JsIntrinsic
+internal fun bigint64Array(a: Any?): Any?
+
+@JsIntrinsic
 internal fun int8ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
@@ -172,13 +179,7 @@ internal fun float32ArrayOf(a: Any?): Any?
 internal fun float64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
-internal fun <T> sharedBoxCreate(v: T?): dynamic
-
-@JsIntrinsic
-internal fun <T> sharedBoxRead(box: dynamic): T?
-
-@JsIntrinsic
-internal fun <T> sharedBoxWrite(box: dynamic, nv: T?)
+internal fun bigint64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 internal fun <T> DefaultType(): T
@@ -230,3 +231,30 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
+
+/**
+ * Depending on the target ES edition, calls transforms either
+ * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`
+ *
+ * TODO(KT-70480): Replace call sites with `arr.unsafeCast<BigInt64Array>().slice(fromIndex, toIndex)` when we drop the ES5 target
+ *
+ * TODO: after the next bootstrap drop the body of this function, @OptIn annotation and uncomment the @JsIntrinsic annotation;
+ * Since the current bootstrap compiler doesn't know how to handle this intrinsic the tests will fail without such tricks.
+ */
+// @JsIntrinsic
+@OptIn(BoxedLongApi::class)
+internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic, toIndex: dynamic): LongArray =
+    kotlin.js.internal.boxedLong.longCopyOfRange(arr, fromIndex, toIndex)
+
+/**
+ * Depending on the target ES edition, calls to this function are either replaced with a call
+ * to [kotlin.js.internal.boxedLong.toStringImpl], or to [kotlin.js.internal.longAsBigInt.toStringImpl].
+ *
+ * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt>().toString(radix)` when we drop the ES5 target
+ */
+@UsedFromCompilerGeneratedCode
+internal fun jsLongToString(value: Long, radix: Int): String {
+    // TODO(KT-57128): Make bodiless after 2.2.20 branching and mark with @JsIntrinsic
+    @OptIn(BoxedLongApi::class)
+    return value.toStringImpl(radix)
+}

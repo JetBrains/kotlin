@@ -8,6 +8,7 @@ package kotlin.random
 import kotlin.wasm.WasiError
 import kotlin.wasm.WasiErrorCode
 import kotlin.wasm.WasmImport
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
 /**
@@ -16,9 +17,11 @@ import kotlin.wasm.unsafe.withScopedMemoryAllocator
  * slowly, so when large mounts of random data are required, it's advisable to use this function to
  * seed a pseudo-random number generator, rather than to provide the random data directly.
  */
+@ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "random_get")
 internal external fun wasiRawRandomGet(address: Int, size: Int): Int
 
+@OptIn(ExperimentalWasmInterop::class)
 private fun wasiRandomGet(): Long {
     withScopedMemoryAllocator { allocator ->
         val memory = allocator.allocate(Long.SIZE_BYTES)

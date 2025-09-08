@@ -313,6 +313,7 @@ private fun ConeKotlinType.isValueType(session: FirSession) =
         Names.LOCAL_DATE_CLASS_ID,
         Names.LOCAL_DATE_TIME_CLASS_ID,
         Names.INSTANT_CLASS_ID,
+        Names.STDLIB_INSTANT_CLASS_ID,
         Names.DATE_TIME_PERIOD_CLASS_ID,
         Names.DATE_TIME_UNIT_CLASS_ID,
         Names.TIME_ZONE_CLASS_ID

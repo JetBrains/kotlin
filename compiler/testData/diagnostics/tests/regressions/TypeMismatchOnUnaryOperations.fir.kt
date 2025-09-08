@@ -16,3 +16,6 @@ fun main() {
     val l : String = <!INITIALIZER_TYPE_MISMATCH!>-1<!>;
     val m : String = <!INITIALIZER_TYPE_MISMATCH!>+1<!>;
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration */

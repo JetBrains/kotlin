@@ -42,3 +42,6 @@ fun testArray() {}
 
 @Ann1(<!TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)
 fun testVararg() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+multiplicativeExpression, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

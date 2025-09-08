@@ -37,3 +37,6 @@ actual typealias C6<H> = MutableList<H>
 
 typealias Tmp<K> = MutableList<K>
 <!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias C10<L> = Tmp<L><!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, inProjection, interfaceDeclaration, nullableType, outProjection,
+starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

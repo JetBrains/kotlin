@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-51009
+// LATEST_LV_DIFFERENCE
 
 fun test(b: Boolean, f: () -> String?): () -> String {
     val foo = try {
@@ -19,3 +19,6 @@ fun test2(b: Boolean, f: () -> String?) = run { // implicit return type
     }
     { "2" }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

@@ -12,3 +12,6 @@ class Outer {
         val c = codegen
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, inner, integerLiteral, objectDeclaration, propertyDeclaration,
+stringLiteral */

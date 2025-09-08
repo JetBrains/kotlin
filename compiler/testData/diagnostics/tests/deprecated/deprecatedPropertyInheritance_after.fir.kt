@@ -135,3 +135,6 @@ fun use(
     diff.<!DEPRECATION_ERROR!>p<!>
     diff.<!UNRESOLVED_REFERENCE!>p<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+override, propertyDeclaration, setter, stringLiteral */

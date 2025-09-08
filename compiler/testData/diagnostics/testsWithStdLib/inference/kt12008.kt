@@ -12,3 +12,6 @@ class Test(nullable: String?) {
         foo(nullableOptional)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, nullableType, primaryConstructor,
+propertyDeclaration */

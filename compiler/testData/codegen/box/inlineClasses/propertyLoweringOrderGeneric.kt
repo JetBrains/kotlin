@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
+// ^^^ Cannot split to two modules due to cyclic import
 // FILE: 1.kt
 
 OPTIONAL_JVM_INLINE_ANNOTATION

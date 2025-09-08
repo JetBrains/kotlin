@@ -80,3 +80,7 @@ public @interface Jnno {
     E[] ea() default {E.E2, E.E3};
     A[] aa() default {@A("2"), @A("3")};
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, collectionLiteral, enumDeclaration, enumEntry,
+expect, functionDeclaration, integerLiteral, javaType, primaryConstructor, propertyDeclaration, starProjection,
+stringLiteral, typeAliasDeclaration, unaryExpression */

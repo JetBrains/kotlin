@@ -24,3 +24,6 @@ actual class A {
     actual tailrec fun foo(p: Int): Int = foo(p)
     actual tailrec fun bar(p: Int): Int = bar(p)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, propertyDeclaration, stringLiteral,
+tailrec */

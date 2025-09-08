@@ -25,8 +25,6 @@ internal abstract class SymbolLightMemberBase<T : PsiMember>(
 
     override fun hasModifierProperty(name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    override fun toString(): String = "${this::class.java.simpleName}:$name"
-
     override fun getContainingClass(): SymbolLightClassBase = containingClass
 
     abstract override fun getNameIdentifier(): PsiIdentifier?

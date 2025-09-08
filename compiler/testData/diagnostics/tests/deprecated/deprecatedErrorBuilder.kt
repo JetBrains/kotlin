@@ -21,3 +21,6 @@ fun builderTest() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+stringLiteral, typeWithExtension */

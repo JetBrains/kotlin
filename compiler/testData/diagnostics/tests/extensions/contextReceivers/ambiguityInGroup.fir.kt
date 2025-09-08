@@ -27,3 +27,6 @@ fun test() {
     <!AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER, CANNOT_INFER_PARAMETER_TYPE!>supertypeExtensionGeneric<!>()
     <!AMBIGUOUS_CONTEXT_ARGUMENT!>supertypeContextual<!>()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, typeConstraint, typeParameter */

@@ -22,3 +22,5 @@ class C: MutableIterator<Int> {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, operator, override */

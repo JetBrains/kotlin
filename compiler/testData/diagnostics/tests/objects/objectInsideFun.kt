@@ -11,3 +11,6 @@ fun test(foo: Int, bar: Int) {
         override val foo: Int = foo + bar
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, functionDeclaration, getter, interfaceDeclaration,
+override, propertyDeclaration, stringLiteral */

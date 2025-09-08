@@ -18,11 +18,10 @@ import org.jetbrains.kotlin.psi.KtElement
 
 inline fun <T> analyzeWithObjCExport(
     useSiteKtElement: KtElement,
-    configuration: KtObjCExportConfiguration = KtObjCExportConfiguration(),
     action: ObjCExportContext.() -> T,
 ): T = analyze(useSiteKtElement) {
     val kaSession: KaSession = this
-    withKtObjCExportSession(configuration) {
+    withKtObjCExportSession(KtObjCExportConfiguration()) {
         val exportSession = this
         with(ObjCExportContext(kaSession, exportSession)) {
             action.invoke(this)

@@ -123,3 +123,6 @@ fun test(u: U, v: V, x: X) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+lambdaLiteral, operator, propertyDeclaration, propertyWithExtensionReceiver */

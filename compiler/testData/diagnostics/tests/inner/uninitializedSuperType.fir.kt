@@ -8,3 +8,5 @@ open class Outer {
 class Test : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER, SUPERTYPE_NOT_INITIALIZED!>Inner<!> {
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner */

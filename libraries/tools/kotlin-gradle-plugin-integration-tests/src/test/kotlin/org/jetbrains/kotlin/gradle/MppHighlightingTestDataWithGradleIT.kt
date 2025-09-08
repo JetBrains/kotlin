@@ -233,7 +233,7 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
                 .filter { it.isDirectory() && it.listDirectoryEntries().isNotEmpty() }
                 .map { testDataDir ->
                     testDataDir to testDataDir.useDirectoryEntries { entries ->
-                        entries.map { TestCaseSourceRoot.parse(it.name) }.toList()
+                        entries.sorted().map { TestCaseSourceRoot.parse(it.name) }.toList()
                     }
                 }
                 .filter { (testDataDir, sourceRoots) ->

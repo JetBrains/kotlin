@@ -1,4 +1,4 @@
-// MODULE_KIND: COMMON_JS
+// JS_MODULE_KIND: COMMON_JS
 
 @JsModule("lib")
 external fun f(x: Int): String

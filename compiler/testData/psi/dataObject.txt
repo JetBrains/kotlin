@@ -1,0 +1,14 @@
+KtFile: dataObject.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  OBJECT_DECLARATION
+    PsiComment(EOL_COMMENT)('// FILE: DataObject.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(data)('data')
+    PsiWhiteSpace(' ')
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('DataObject')

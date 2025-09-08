@@ -1,0 +1,34 @@
+Anno1.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @kotlin.annotation.Target public final annotation class Anno1 public constructor() : kotlin.Annotation {
+  }
+
+Anno2.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @kotlin.annotation.Target public final annotation class Anno2 public constructor() : kotlin.Annotation {
+  }
+
+FooKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public fun <@Anno1 @Anno2 T : I1> foo(): kotlin.Unit where T : I2 { /* compiled code */ }
+
+I1.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public interface I1 {
+  }
+
+I2.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public interface I2 {
+  }
+

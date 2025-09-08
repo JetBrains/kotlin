@@ -10,3 +10,6 @@ fun test1(l: List<Number>) {
 
     val s: String = l.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>firstTyped<!>()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

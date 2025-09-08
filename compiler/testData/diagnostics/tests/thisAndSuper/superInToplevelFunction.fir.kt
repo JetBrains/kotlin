@@ -4,3 +4,5 @@ fun foo() {
     <!SUPER_NOT_AVAILABLE!>super<!>.foo()
     <!SUPER_NOT_AVAILABLE!>super<Nothing><!>.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

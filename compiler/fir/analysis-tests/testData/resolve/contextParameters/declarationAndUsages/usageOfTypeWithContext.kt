@@ -24,3 +24,6 @@ fun funWithContextsType(x: context(A, Int) () -> Unit) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+typeWithContext, typeWithExtension */

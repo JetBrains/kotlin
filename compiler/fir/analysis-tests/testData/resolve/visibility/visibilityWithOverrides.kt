@@ -22,3 +22,5 @@ abstract class A {
 fun test(b: B): String {
     return b <!INVISIBLE_REFERENCE!>foo<!> "hello" // should be an error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, infix, override, stringLiteral, thisExpression */

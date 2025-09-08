@@ -13,3 +13,5 @@ fun plain() = deprecated()
 
 @Suppress(names = arrayOf("DEPRECATION"))
 fun brain() = deprecated()
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, stringLiteral */

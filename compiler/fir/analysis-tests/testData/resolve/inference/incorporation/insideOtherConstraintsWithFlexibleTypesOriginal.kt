@@ -28,7 +28,7 @@ fun <E : Any> funA(
 fun <E> funB() where E : Enum<E>, E : InterfaceC {
     <!TYPE_MISMATCH!>funA(
         JavaHelper.createInterfaceA(),
-        InterfaceB.default(),
+        InterfaceB.<!UPPER_BOUND_VIOLATED!>default<!>(),
     )<!>
 
     funA<E>(
@@ -38,7 +38,7 @@ fun <E> funB() where E : Enum<E>, E : InterfaceC {
 
     <!TYPE_MISMATCH!>funA(
         createInterfaceAKotlin(),
-        InterfaceB.default(),
+        InterfaceB.<!UPPER_BOUND_VIOLATED!>default<!>(),
     )<!>
 
     funA<E>(
@@ -46,3 +46,6 @@ fun <E> funB() where E : Enum<E>, E : InterfaceC {
         InterfaceB.default(),
     )
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, companionObject, flexibleType, functionDeclaration,
+interfaceDeclaration, javaFunction, nullableType, objectDeclaration, typeConstraint, typeParameter */

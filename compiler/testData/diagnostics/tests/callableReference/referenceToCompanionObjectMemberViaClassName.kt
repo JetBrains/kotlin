@@ -36,3 +36,6 @@ fun testB(b: B) {
     val call3 = call(B.Companion::foo)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>call3<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, functionalType,
+integerLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

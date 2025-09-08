@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -254,7 +257,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildJdk = jdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -302,36 +305,19 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             "AndroidIncrementalMultiModule",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion,
-            ),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdk.location
         ) {
-            buildGradle.appendText(
-                //language=groovy
-                """
-                |
-                |subprojects {
-                |    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile.class).configureEach {
-                |        compilerOptions {
-                |            freeCompilerArgs.addAll("-progressive")
-                |        }
-                |    }
-                |}
-                """.trimMargin()
-            )
-
-            subProject("libAndroid").buildGradle.appendText(
-                //language=groovy
-                """
-                |
-                |android {
-                |    kotlinOptions {
-                |        freeCompilerArgs += ["-opt-in=com.example.roo.requiresOpt.FunTests"]
-                |    }
-                |}
-                """.trimMargin()
-            )
+            subprojects("app", "libAndroid", "libAndroidClassesOnly", "libJvmClassesOnly").buildScriptInjection {
+                project.tasks.withType<KotlinCompile>().configureEach { task ->
+                    task.compilerOptions.freeCompilerArgs.add("-progressive")
+                }
+                if (project.name == "libAndroid") {
+                    project.kotlinAndroidExtensionOrNull?.compilerOptions?.freeCompilerArgs?.add(
+                        "-opt-in=com.example.roo.requiresOpt.FunTests"
+                    )
+                }
+            }
 
             build(":libAndroid:compileDebugKotlin") {
                 assertTasksExecuted(":libAndroid:compileDebugKotlin")
@@ -396,7 +382,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             "multiplatformAndroidSourceSetLayout2",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdk.location
         ) {
             buildGradleKts.appendText(
@@ -529,7 +515,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         project(
             projectName = "multiplatformAndroidSourceSetLayout2",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdk.location
         ) {
             buildGradleKts.appendText(

@@ -13,3 +13,5 @@ fun <T> foo(t: A<T>) = Wrong
 fun <T> foo(t: B<T>) = Right
 
 fun test(b: B<Int>): Right = foo(b)
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration, typeParameter, vararg */

@@ -13,3 +13,6 @@ fun foo(javaEnum: JavaEnum) = when (javaEnum) {
     FIRST -> 1
     SECOND -> 2
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, smartcast,
+whenExpression, whenWithSubject */

@@ -13,3 +13,6 @@ fun main() {
     val a = A()
     foo(a::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funInterface, functionDeclaration, interfaceDeclaration,
+localProperty, propertyDeclaration, samConversion */

@@ -31,14 +31,12 @@ private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
 class WasmStringSwitchOptimizerLowering(
     private val context: WasmBackendContext
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    private val symbols = context.wasmSymbols
-
     private val stringHashCode by lazy {
-        symbols.irBuiltIns.stringClass.getSimpleFunction("hashCode")!!
+        context.irBuiltIns.stringClass.getSimpleFunction("hashCode")!!
     }
 
-    private val intType: IrType = symbols.irBuiltIns.intType
-    private val booleanType: IrType = symbols.irBuiltIns.booleanType
+    private val intType: IrType = context.irBuiltIns.intType
+    private val booleanType: IrType = context.irBuiltIns.booleanType
 
     private fun IrBlockBuilder.createEqEqForIntVariable(tempIntVariable: IrVariable, value: Int) =
         irCall(context.irBuiltIns.eqeqSymbol, booleanType).also {
@@ -242,7 +240,7 @@ class WasmStringSwitchOptimizerLowering(
         val stringConstantToMatchedCase = mutableMapOf<String?, MatchedCase>()
         visitedWhen.branches.forEachIndexed { branchIndex, branch ->
             if (!isElseBranch(branch)) {
-                val conditions = IrWhenUtils.matchConditions(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
+                val conditions = IrWhenUtils.matchConditions<IrCall>(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
                 if (conditions.isEmpty()) return visitedWhen
 
                 isSimpleWhen = isSimpleWhen && conditions.size == 1
@@ -263,7 +261,7 @@ class WasmStringSwitchOptimizerLowering(
 
         val convertedBlock = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(resultType = visitedWhen.type) {
-                val tempIntVariable = addHashCodeVariable(firstEqCall!!)
+                val tempIntVariable = addHashCodeVariable(firstEqCall)
 
                 val buckets = stringConstantToMatchedCase.keys.groupBy { it.hashCode() }
 

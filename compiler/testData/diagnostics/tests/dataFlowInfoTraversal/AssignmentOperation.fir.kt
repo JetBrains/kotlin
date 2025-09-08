@@ -16,3 +16,7 @@ fun bar3(x: Number, y: Array<Int>) {
     y[0] += x as Int
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+typeParameter, typeWithExtension */

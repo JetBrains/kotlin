@@ -177,6 +177,7 @@ abstract class IrBuiltIns {
     abstract val intPlusSymbol: IrSimpleFunctionSymbol
     abstract val intTimesSymbol: IrSimpleFunctionSymbol
     abstract val intXorSymbol: IrSimpleFunctionSymbol
+    abstract val intAndSymbol: IrSimpleFunctionSymbol
 
     abstract val extensionToString: IrSimpleFunctionSymbol
     abstract val memberToString: IrSimpleFunctionSymbol
@@ -195,17 +196,6 @@ abstract class IrBuiltIns {
     abstract fun kSuspendFunctionN(arity: Int): IrClass
 
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
-
-    abstract fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getNonBuiltinFunctionsByReturnType(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
-    abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
     abstract val kotlinInternalPackageFragment: IrExternalPackageFragment
@@ -260,9 +250,6 @@ abstract class SymbolFinder {
 
     // TODO: replace this with lazy get
     abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
-
-    // TODO: replace this with get by CallableId
-    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
 
     fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol> {
         return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))

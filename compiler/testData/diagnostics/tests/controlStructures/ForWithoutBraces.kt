@@ -8,3 +8,6 @@ fun ff() {
     for (j in 1..10)
         i += j
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, forLoop, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, rangeExpression */

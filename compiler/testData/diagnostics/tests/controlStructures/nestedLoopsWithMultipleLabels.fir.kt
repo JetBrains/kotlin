@@ -9,3 +9,5 @@ fun test() {
         break@b
     }
 }
+
+/* GENERATED_FIR_TAGS: break, functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, whileLoop */

@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -23,7 +21,7 @@ class FirExpectActualMatcherProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-    private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+    private val enabled = LanguageFeature.MultiPlatformProjects.isEnabled()
 
     override val transformer: FirTransformer<Nothing?> = FirExpectActualMatcherTransformer(session, scopeSession)
 
@@ -43,7 +41,7 @@ class FirExpectActualMatcherProcessor(
  */
 open class FirExpectActualMatcherTransformer(
     final override val session: FirSession,
-    private val actualScopeSession: ScopeSession,
+    actualScopeSession: ScopeSession,
 ) : FirAbstractTreeTransformer<Nothing?>(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
 
     private val expectActualMatchingContext = session.expectActualMatchingContextFactory.create(
@@ -59,7 +57,7 @@ open class FirExpectActualMatcherTransformer(
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         transformMemberDeclaration(regularClass)
-        regularClass.transformChildren(this, data)
+        regularClass.transformDeclarations(this, data)
         return regularClass
     }
 
@@ -88,8 +86,16 @@ open class FirExpectActualMatcherTransformer(
     }
 
     // --------------------------- other ---------------------------
-    override fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?): FirAnonymousInitializer {
-        return anonymousInitializer
+
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+        file.transformDeclarations(this, data)
+        return file
+    }
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        // To prevent entering anonymous initializer's body, delegate field's body,
+        // and other unnecessary elements
+        return element
     }
 
     // ------------------------------------------------------

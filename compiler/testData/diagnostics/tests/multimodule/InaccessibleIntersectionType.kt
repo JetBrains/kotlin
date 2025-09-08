@@ -22,3 +22,6 @@ fun test() {
     val x = select(c, d)
     x
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+intersectionType, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, vararg */

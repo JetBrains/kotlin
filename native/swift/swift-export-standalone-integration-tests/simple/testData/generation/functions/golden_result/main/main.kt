@@ -1,10 +1,13 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(operators.Foo::class, "22ExportedKotlinPackages9operatorsO4mainE3FooC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(operators.Foo.EmptyIterator::class, "22ExportedKotlinPackages9operatorsO4mainE3FooC13EmptyIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(overload.Foo::class, "22ExportedKotlinPackages8overloadO4mainE3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import operators.invoke as operators_invoke
 
 @ExportedBridge("Foo_ext__TypesOfArguments__Swift_String__")
 public fun Foo_ext__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Unit {
@@ -209,6 +212,281 @@ public fun namespace2_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     val __arg1 = arg1
     val _result = namespace2.foo(__arg1)
     return _result
+}
+
+@ExportedBridge("namespace3_bar_get")
+public fun namespace3_bar_get(): Unit {
+    namespace3.bar
+}
+
+@ExportedBridge("namespace3_foo__TypesOfArguments__Swift_Void__")
+public fun namespace3_foo__TypesOfArguments__Swift_Void__(): Unit {
+    val __faux = Unit
+    namespace3.foo(__faux)
+}
+
+@ExportedBridge("namespace3_foo__TypesOfArguments__Swift_Int32_Swift_Void__")
+public fun namespace3_foo__TypesOfArguments__Swift_Int32_Swift_Void__(arg1: Int): Unit {
+    val __arg1 = arg1
+    val __faux = Unit
+    namespace3.foo(__arg1, __faux)
+}
+
+@ExportedBridge("operators_Foo_EmptyIterator_get")
+public fun operators_Foo_EmptyIterator_get(): kotlin.native.internal.NativePtr {
+    val _result = operators.Foo.EmptyIterator
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_EmptyIterator_hasNext")
+public fun operators_Foo_EmptyIterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo.EmptyIterator
+    val _result = __self.hasNext()
+    return _result
+}
+
+@ExportedBridge("operators_Foo_EmptyIterator_next")
+public fun operators_Foo_EmptyIterator_next(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo.EmptyIterator
+    val _result = __self.next()
+    return _result
+}
+
+@ExportedBridge("operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.compareTo(__other)
+    return _result
+}
+
+@ExportedBridge("operators_Foo_contains__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_contains__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.contains(__other)
+    return _result
+}
+
+@ExportedBridge("operators_Foo_copy__TypesOfArguments__Swift_Int32__")
+public fun operators_Foo_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, value: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __value = value
+    val _result = __self.copy(__value)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_dec")
+public fun operators_Foo_dec(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.dec()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.div(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    __self.divAssign(__other)
+}
+
+@ExportedBridge("operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
+}
+
+@ExportedBridge("operators_Foo_get__TypesOfArguments__Swift_Int32__")
+public fun operators_Foo_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __index = index
+    val _result = __self.`get`(__index)
+    return _result
+}
+
+@ExportedBridge("operators_Foo_hashCode")
+public fun operators_Foo_hashCode(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.hashCode()
+    return _result
+}
+
+@ExportedBridge("operators_Foo_inc")
+public fun operators_Foo_inc(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.inc()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_init_allocate")
+public fun operators_Foo_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<operators.Foo>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __value = value
+    kotlin.native.internal.initInstance(____kt, operators.Foo(__value))
+}
+
+@ExportedBridge("operators_Foo_invoke")
+public fun operators_Foo_invoke(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.invoke()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_iterator")
+public fun operators_Foo_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.iterator()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.minus(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_minusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_minusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    __self.minusAssign(__other)
+}
+
+@ExportedBridge("operators_Foo_not")
+public fun operators_Foo_not(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.not()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_plus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_plus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.plus(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_plusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_plusAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    __self.plusAssign(__other)
+}
+
+@ExportedBridge("operators_Foo_rangeTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_rangeTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.rangeTo(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.rangeUntil(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_rem__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_rem__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.rem(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_remAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_remAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    __self.remAssign(__other)
+}
+
+@ExportedBridge("operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__")
+public fun operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int, value: Int): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __index = index
+    val __value = value
+    __self.`set`(__index, __value)
+}
+
+@ExportedBridge("operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_times__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __self.times(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_timesAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
+public fun operators_Foo_timesAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    __self.timesAssign(__other)
+}
+
+@ExportedBridge("operators_Foo_toString")
+public fun operators_Foo_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.toString()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("operators_Foo_unaryMinus")
+public fun operators_Foo_unaryMinus(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.unaryMinus()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_unaryPlus")
+public fun operators_Foo_unaryPlus(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.unaryPlus()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_value_get")
+public fun operators_Foo_value_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.value
+    return _result
+}
+
+@ExportedBridge("operators_Foo_value_set__TypesOfArguments__Swift_Int32__")
+public fun operators_Foo_value_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val __newValue = newValue
+    __self.value = __newValue
+}
+
+@ExportedBridge("operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__")
+public fun operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(`receiver`: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __receiver.operators_invoke(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("overload_Foo_init_allocate")

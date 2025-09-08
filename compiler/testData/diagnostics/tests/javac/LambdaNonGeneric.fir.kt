@@ -30,3 +30,5 @@ fun test() {
     <!MISSING_DEPENDENCY_CLASS!>bar<!> <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.toString() }<!>
     <!MISSING_DEPENDENCY_CLASS!>bar<!> { <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>some<!> -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral */

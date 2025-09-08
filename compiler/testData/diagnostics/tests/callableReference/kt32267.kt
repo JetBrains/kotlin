@@ -38,3 +38,7 @@ interface SomeService {
     fun execute(command: Command1)
     fun execute(command: Command2)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, inline, interfaceDeclaration, lambdaLiteral, nestedClass, objectDeclaration,
+operator, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

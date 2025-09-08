@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
@@ -30,8 +31,9 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
         if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) return
         if (declaration.symbol.hasExplicitReturnType) {
             val notDeclaredAsNothing = !declaration.returnTypeRef.coneType.abbreviatedTypeOrSelf.isNothing
-            val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType(context.session).isNothing
+            val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType().isNothing
             if (notDeclaredAsNothing && expandedNothing) {
+                @Suppress("REDUNDANT_ELSE_IN_WHEN")
                 val factory = when (declaration) {
                     is FirSimpleFunction -> FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
                     is FirProperty -> FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
@@ -42,6 +44,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
             return
         }
         if (declaration.returnTypeRef.coneType.isNothing) {
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             val factory = when (declaration) {
                 is FirSimpleFunction -> FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
                 is FirProperty -> FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE

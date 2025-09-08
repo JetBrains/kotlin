@@ -11,3 +11,5 @@ class Foo<A> {
         x?.m<B>(null)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, safeCall, typeConstraint, typeParameter */

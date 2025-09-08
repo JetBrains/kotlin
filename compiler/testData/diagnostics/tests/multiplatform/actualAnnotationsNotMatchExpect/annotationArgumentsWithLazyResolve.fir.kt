@@ -31,3 +31,6 @@ actual fun onFunction_negative() {}
 actual fun withEmptyArguments_negative() {}
 @Ann("incorrect")
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun withEmptyArguments_positive() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

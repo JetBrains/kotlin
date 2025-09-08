@@ -20,7 +20,6 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -64,7 +63,7 @@ internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
 abstract class MetadataDependencyTransformationTask
 @Inject constructor(
     kotlinSourceSet: KotlinSourceSet,
-    private val objectFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
     private val projectLayout: ProjectLayout
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
@@ -172,7 +171,6 @@ abstract class MetadataDependencyTransformationTask
                 val serializableKey = identifier.serializableUniqueKey
                 visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
             },
-            kotlinToolingDiagnosticsCollector = PreparedKotlinToolingDiagnosticsCollector.create(this)
         )
 
         if (outputsDir.isDirectory) {
@@ -185,18 +183,24 @@ abstract class MetadataDependencyTransformationTask
         KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(transformedLibrariesRecords)
     }
 
-    internal fun allTransformedLibraries(): Provider<List<File>> {
-        val ownRecords = transformedLibrariesIndexFile.map { it.records() }
-
-        return parentLibrariesIndexFiles.zip(ownRecords) { parent, own ->
-            val allRecords = own + parent.flatMap { it.records() }
-            allRecords.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
+    internal fun ownTransformedLibraries(): Provider<List<File>> {
+        return transformedLibrariesIndexFile.map { file ->
+            transformedLibraries(file.records())
         }
     }
+
+    internal fun allTransformedLibraries(): Provider<List<File>> =
+        parentLibrariesIndexFiles.zip(ownTransformedLibraries()) { parent, own ->
+            own + transformedLibraries(parent.flatMap { it.records() })
+        }
 
     companion object {
         @JvmStatic
         private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+
+        private fun transformedLibraries(records: List<TransformedMetadataLibraryRecord>): List<File> {
+            return records.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
+        }
     }
 }
 

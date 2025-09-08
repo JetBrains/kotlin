@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 abstract class A
 abstract class B : A()
 
@@ -68,3 +68,6 @@ fun test_5(a: A) {
         !is BI -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, smartcast, whenExpression, whenWithSubject */

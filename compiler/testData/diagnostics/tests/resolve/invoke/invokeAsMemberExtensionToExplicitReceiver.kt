@@ -12,3 +12,6 @@ fun test(a: A, foo: Foo) {
 fun test(a: Int, foo: Int.()->Unit) {
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration, operator,
+typeWithExtension */

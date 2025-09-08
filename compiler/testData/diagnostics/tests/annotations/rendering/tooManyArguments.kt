@@ -10,3 +10,6 @@ fun foo() {}
 val bar = foo(
     <!TOO_MANY_ARGUMENTS("public fun foo(): Unit defined in root package in file tooManyArguments.kt")!>15<!>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

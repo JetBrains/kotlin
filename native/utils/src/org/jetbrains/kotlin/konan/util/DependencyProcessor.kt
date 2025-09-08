@@ -93,7 +93,7 @@ class DependencyProcessor(
     private val airplaneMode: Boolean = false,
     maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
     attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
-    customProgressCallback: ProgressCallback? = null,
+    customProgressCallback: ProgressCallback,
     private val keepUnstable: Boolean = true,
     private val deleteArchives: Boolean = true,
     private val archiveType: ArchiveType = ArchiveType.systemDefault,
@@ -121,7 +121,7 @@ class DependencyProcessor(
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true,
                 archiveType: ArchiveType = ArchiveType.systemDefault,
-                customProgressCallback: ProgressCallback? = null) : this(
+                customProgressCallback: ProgressCallback) : this(
             dependenciesRoot,
             properties.properties,
             properties.dependencies,
@@ -136,7 +136,7 @@ class DependencyProcessor(
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true,
                 archiveType: ArchiveType = ArchiveType.systemDefault,
-                customProgressCallback: ProgressCallback? = null ) : this(
+                customProgressCallback: ProgressCallback) : this(
             dependenciesRoot,
             dependenciesUrl,
             dependencyToCandidates = properties.findCandidates(dependencies),

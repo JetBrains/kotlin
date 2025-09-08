@@ -20,3 +20,6 @@ class A() {
     }
     val k : Int
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration */

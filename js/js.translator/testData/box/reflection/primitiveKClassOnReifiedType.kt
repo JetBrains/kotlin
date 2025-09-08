@@ -9,6 +9,11 @@ import kotlin.reflect.KClass
 
 inline fun <reified T: Any> klass() = T::class
 
+fun compileLongAsBigInt(): Boolean {
+    val long = 1L
+    return js("typeof long === 'bigint'").unsafeCast<Boolean>()
+}
+
 fun box(): String {
     check(js("Object"), "Any", klass<Any>())
     check(js("String"), "String", klass<String>())
@@ -30,7 +35,13 @@ fun box(): String {
     check(js("Int8Array"), "ByteArray", klass<ByteArray>())
     check(js("Int16Array"), "ShortArray", klass<ShortArray>())
     check(js("Int32Array"), "IntArray", klass<IntArray>())
-    check(js("Array"), "LongArray", klass<LongArray>())
+
+    if (compileLongAsBigInt()) {
+        check(js("BigInt64Array"), "LongArray", klass<LongArray>())
+    } else {
+        check(js("Array"), "LongArray", klass<LongArray>())
+    }
+
     check(js("Float32Array"), "FloatArray", klass<FloatArray>())
     check(js("Float64Array"), "DoubleArray", klass<DoubleArray>())
 

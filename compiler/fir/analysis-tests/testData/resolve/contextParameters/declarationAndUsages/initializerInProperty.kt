@@ -14,3 +14,6 @@ var prop2: String = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>""<!>
     set(value) {
         <!UNRESOLVED_REFERENCE!>field<!> = value
     }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, propertyDeclaration,
+propertyDeclarationWithContext, setter, stringLiteral */

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(65,74): 'Cloneable'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

@@ -31,3 +31,6 @@ annotation class A
 
 interface B<T>
 interface C
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

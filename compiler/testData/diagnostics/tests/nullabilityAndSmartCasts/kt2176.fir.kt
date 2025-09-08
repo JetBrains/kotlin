@@ -30,3 +30,6 @@ fun f5(a: String) {
     a as Any?
     checkSubtype<String>(a)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, nullableType, smartcast, typeParameter, typeWithExtension */

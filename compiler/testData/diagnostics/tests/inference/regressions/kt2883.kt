@@ -31,3 +31,6 @@ fun testWithoutInference(col: MutableCollection<Int>) {
 
     val u: Unit = <!TYPE_MISMATCH!>col.add(2)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

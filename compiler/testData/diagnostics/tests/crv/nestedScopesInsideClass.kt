@@ -17,3 +17,6 @@ fun test() {
     A.foo()                 //unused
     A.Nested().bar()        //unused
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration */

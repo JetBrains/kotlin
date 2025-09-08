@@ -10,3 +10,5 @@ object Derived : Base() {
 fun test() {
     foo(42) // No value passed for parameter 'def'
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, objectDeclaration, override, stringLiteral */

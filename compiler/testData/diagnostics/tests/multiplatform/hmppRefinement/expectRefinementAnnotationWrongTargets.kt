@@ -18,3 +18,5 @@ expect class Foo {
 actual class Foo {
     actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

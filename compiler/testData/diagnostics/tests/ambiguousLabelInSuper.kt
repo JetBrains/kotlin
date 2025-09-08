@@ -12,3 +12,4 @@ class Dup : Sup {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration */

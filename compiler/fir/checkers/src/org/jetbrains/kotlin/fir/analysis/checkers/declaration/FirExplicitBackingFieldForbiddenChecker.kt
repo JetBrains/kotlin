@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,7 +18,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 
 object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -25,20 +30,29 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
             return
         }
 
-        if (declaration.propertySymbol.isAbstract) {
-            reporter.reportOn(declaration.source, getProperDiagnostic(context))
+        if (declaration.propertySymbol.modality != Modality.FINAL) {
+            reporter.reportOn(declaration.source, getProperDiagnostic(declaration))
         }
 
         if (declaration.propertySymbol.isExtension) {
             reporter.reportOn(declaration.source, FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION)
         }
+
+        if (declaration.propertySymbol.isExpect) {
+            reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPECT_PROPERTY_WITH_EXPLICIT_BACKING_FIELD)
+        }
+
+        if (Visibilities.isPrivate(declaration.propertySymbol.visibility)) {
+            reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPLICIT_FIELD_VISIBILITY_MUST_BE_LESS_PERMISSIVE)
+        }
     }
 
-    private fun getProperDiagnostic(context: CheckerContext): KtDiagnosticFactory0 {
-        return if (context.findClosestClassOrObject()?.classKind == ClassKind.INTERFACE) {
-            FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
-        } else {
-            FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
+    context(context: CheckerContext)
+    private fun getProperDiagnostic(declaration: FirBackingField): KtDiagnosticFactory0 {
+        return when {
+            context.findClosestClassOrObject()?.classKind == ClassKind.INTERFACE -> FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
+            declaration.propertySymbol.isAbstract -> FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
+            else -> FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
         }
     }
 }

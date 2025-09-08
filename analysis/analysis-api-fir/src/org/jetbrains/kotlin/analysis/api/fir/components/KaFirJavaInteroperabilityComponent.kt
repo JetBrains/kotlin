@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -98,6 +99,10 @@ internal class KaFirJavaInteroperabilityComponent(
         }
     }
 
+    /**
+     * [useSitePosition] is used as pure psi, so there is no need to validate it.
+     * Also, it might represent some complex expressions like light classes or UAST
+     */
     override fun KaType.asPsiType(
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
@@ -116,6 +121,12 @@ internal class KaFirJavaInteroperabilityComponent(
         }
 
         if (!rootModuleSession.moduleData.platform.has<JvmPlatform>() && !allowNonJvmPlatforms) return null
+
+        if (mode == KaTypeMappingMode.FUNCTION_RETURN_TYPE && !isAnnotationMethod && coneType.isUnit) {
+            // Here we approximate the JVM backend logic from `MethodSignatureMapper#hasVoidReturnType`.
+            // But we do it only in the special type mapping mode `FUNCTION_RETURN_TYPE` because it is not applicable in other cases.
+            return PsiTypes.voidType()
+        }
 
         val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
@@ -186,8 +197,17 @@ internal class KaFirJavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE_AS_IS
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KaTypeMappingMode.RETURN_TYPE -> jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
-            KaTypeMappingMode.VALUE_PARAMETER -> jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+            KaTypeMappingMode.RETURN_TYPE, KaTypeMappingMode.FUNCTION_RETURN_TYPE ->
+                jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
+
+            KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
+                val mappingMode = jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+                if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {
+                    mappingMode.wrapInlineClassesMode()
+                } else {
+                    mappingMode
+                }
+            }
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
@@ -198,6 +218,10 @@ internal class KaFirJavaInteroperabilityComponent(
         }
     }
 
+    /**
+     * [useSitePosition] is used as pure psi, so there is no need to validate it.
+     * Also, it might represent some complex expressions like light classes or UAST
+     */
     override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withValidityAssertion {
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
         val javaType = JavaTypeImpl.create(this, javaElementSourceFactory.createTypeSource(this))
@@ -254,7 +278,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
         val firTypeRef = javaTypeRef.resolveIfJavaType(analysisSession.firSession, javaTypeParameterStack, source = null)
         val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.coneType ?: return null
-        return coneKotlinType.asKtType()
+        return coneKotlinType.asKaType()
     }
 
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
@@ -268,7 +292,7 @@ internal class KaFirJavaInteroperabilityComponent(
             }
 
             with(analysisSession) {
-                if (!canBeNull) {
+                if (!isNullable) {
                     if (isPrimitive) {
                         return true
                     }
@@ -289,7 +313,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
 
     override val PsiClass.namedClassSymbol: KaNamedClassSymbol?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             if (this is PsiTypeParameter) return null
             if (this is KtLightElement<*, *>) return null
             if (qualifiedName == null) return null
@@ -304,7 +328,7 @@ internal class KaFirJavaInteroperabilityComponent(
         this is ClsElementImpl && hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
 
     override val PsiMember.callableSymbol: KaCallableSymbol?
-        get() = withValidityAssertion {
+        get() = withPsiValidityAssertion {
             if (this !is PsiMethod && this !is PsiField) return null
             if (this is KtLightElement<*, *>) return null
 
@@ -439,8 +463,12 @@ private fun ConeKotlinType.simplifyType(
 
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
-        currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
-            ?: currentType
+        currentType = PublicTypeApproximator.approximateToDenotableSupertype(
+            currentType,
+            session,
+            needLocalTypeApproximation,
+            shouldApproximateLocalType = { _, _ -> true }
+        ) ?: currentType
 
     } while (oldType !== currentType)
     if (typeArguments.isNotEmpty()) {

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   TYPEALIAS[classId=/f, fqName=f, isTopLevel=true, name=f]

@@ -16,3 +16,6 @@ fun main() {
     box.compareAndSet(test, rest)
     println(box.get())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral, value */

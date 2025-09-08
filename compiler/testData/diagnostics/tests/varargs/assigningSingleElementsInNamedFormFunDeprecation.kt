@@ -58,3 +58,7 @@ fun testMany(a: Any) {
     <!NONE_APPLICABLE!>manyFoo<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>v<!> = a as Int)
     <!NONE_APPLICABLE!>manyFoo<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>s<!> = a as String)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, classDeclaration, functionDeclaration, integerLiteral,
+localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral,
+typeParameter, vararg */

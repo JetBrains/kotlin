@@ -21,3 +21,6 @@ open class X5 : C() {
     context(s: Int)
     fun some3(text: String): String = ""
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+nullableType, stringLiteral, typeParameter */

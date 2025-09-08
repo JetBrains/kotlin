@@ -72,26 +72,14 @@ abstract class AbstractValueUsageTransformer(
 
     protected open fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression = element
 
-    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-        TODO()
-    }
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
-        TODO()
-    }
-
-  //  override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-  //      TODO()
-  //  }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
         with(expression) {
-            val newArguments = arguments.zip(symbol.owner.parameters).map { (argument, parameter) ->
-                argument?.useAsValueArgument(expression, parameter)
+            for (index in 0 until minOf(arguments.size, symbol.owner.parameters.size)) {
+                arguments[index] = arguments[index]?.useAsValueArgument(expression, symbol.owner.parameters[index])
             }
-            arguments.assignFrom(newArguments)
         }
 
         return expression

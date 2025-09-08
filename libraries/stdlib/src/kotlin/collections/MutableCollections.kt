@@ -17,6 +17,7 @@ package kotlin.collections
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean =
     @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).remove(element)
 
@@ -28,6 +29,7 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean =
     @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).removeAll(elements)
 
@@ -39,6 +41,7 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean =
     @Suppress("UNCHECKED_CAST") (this as MutableCollection<T>).retainAll(elements)
 
@@ -109,6 +112,7 @@ public inline operator fun <T> MutableCollection<in T>.minusAssign(elements: Seq
 /**
  * Adds all elements of the given [elements] collection to this [MutableCollection].
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>): Boolean {
     when (elements) {
         is Collection -> return addAll(elements)
@@ -124,6 +128,7 @@ public fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>): Boolean {
 /**
  * Adds all elements of the given [elements] sequence to this [MutableCollection].
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>): Boolean {
     var result: Boolean = false
     for (item in elements) {
@@ -135,6 +140,7 @@ public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>): Boolean {
 /**
  * Adds all elements of the given [elements] array to this [MutableCollection].
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>): Boolean {
     return addAll(elements.asList())
 }
@@ -149,6 +155,7 @@ internal fun <T> Iterable<T>.convertToListIfNotCollection(): Collection<T> =
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] collection.
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean {
     return removeAll(elements.convertToListIfNotCollection())
 }
@@ -156,6 +163,7 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] sequence.
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean {
     val list = elements.toList()
     return list.isNotEmpty() && removeAll(list)
@@ -164,6 +172,7 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] array.
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>): Boolean {
     return elements.isNotEmpty() && removeAll(elements.asList())
 }
@@ -171,6 +180,7 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>): Boolea
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] collection.
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean {
     return retainAll(elements.convertToListIfNotCollection())
 }
@@ -178,6 +188,7 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] array.
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolean {
     if (elements.isNotEmpty())
         return retainAll(elements.asList())
@@ -188,6 +199,7 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolea
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
+@IgnorableReturnValue
 public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean {
     val list = elements.toList()
     if (list.isNotEmpty())
@@ -196,6 +208,7 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean
         return retainNothing()
 }
 
+@IgnorableReturnValue
 private fun MutableCollection<*>.retainNothing(): Boolean {
     val result = isNotEmpty()
     clear()
@@ -208,6 +221,7 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
  *
  * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
  */
+@IgnorableReturnValue
 public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
 
 /**
@@ -215,6 +229,7 @@ public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean 
  *
  * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
  */
+@IgnorableReturnValue
 public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
 private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
@@ -242,24 +257,28 @@ public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
  * Removes the first element from this mutable list and returns that removed element, or throws [NoSuchElementException] if this list is empty.
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public fun <T> MutableList<T>.removeFirst(): T = if (isEmpty()) throw NoSuchElementException("List is empty.") else removeAt(0)
 
 /**
  * Removes the first element from this mutable list and returns that removed element, or returns `null` if this list is empty.
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public fun <T> MutableList<T>.removeFirstOrNull(): T? = if (isEmpty()) null else removeAt(0)
 
 /**
  * Removes the last element from this mutable list and returns that removed element, or throws [NoSuchElementException] if this list is empty.
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public fun <T> MutableList<T>.removeLast(): T = if (isEmpty()) throw NoSuchElementException("List is empty.") else removeAt(lastIndex)
 
 /**
  * Removes the last element from this mutable list and returns that removed element, or returns `null` if this list is empty.
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else removeAt(lastIndex)
 
 /**
@@ -267,6 +286,7 @@ public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else 
  *
  * @return `true` if any element was removed from this collection, or `false` when no elements were removed and collection was not modified.
  */
+@IgnorableReturnValue
 public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
 
 /**
@@ -274,6 +294,7 @@ public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = fi
  *
  * @return `true` if any element was removed from this collection, or `false` when all elements were retained and collection was not modified.
  */
+@IgnorableReturnValue
 public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
 private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {

@@ -10,3 +10,6 @@ open class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, ifExpression, integerLiteral,
+propertyDeclaration, secondaryConstructor */

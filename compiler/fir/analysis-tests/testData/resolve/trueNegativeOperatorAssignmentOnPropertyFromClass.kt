@@ -18,3 +18,6 @@ fun main() {
     // But this should print 110
     // test.number += 100
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, getter,
+incrementDecrementExpression, integerLiteral, lambdaLiteral, primaryConstructor, propertyDeclaration, setter */

@@ -28,3 +28,6 @@ fun baz(x: String?) {
         yield(y)
     }.e.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, getter, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

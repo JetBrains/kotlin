@@ -71,3 +71,7 @@ fun testJava() {
     val jj: AtomicReference<Int>
     jj = j
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationUseSiteTargetFile, assignment, classDeclaration, classReference, expect,
+flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

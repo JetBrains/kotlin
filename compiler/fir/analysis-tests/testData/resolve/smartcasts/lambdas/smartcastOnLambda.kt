@@ -5,3 +5,5 @@ fun test(func: (() -> Unit)?) {
         func()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, nullableType, smartcast */

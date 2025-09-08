@@ -182,6 +182,14 @@ For more information, see our [Time measurement](https://kotlinlang.org/docs/tim
 
 Multiplatform `Uuid` class and utility functions for working with UUIDs.
 
+# Package kotlin.wasm
+
+Provides Wasm-platform interoperability support. 
+
+# Package kotlin.wasm.unsafe
+
+API for working with Wasm linear memory. 
+
 # Package kotlinx.cinterop
 
 Experimental API for working with unmanaged and foreign memory, as well as for interoperability with other languages,

@@ -164,7 +164,7 @@ internal fun KaSession.isObjCVoid(type: KaType): Boolean {
  * [ObjCExportMapper.bridgeReturnType]
  */
 private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): MethodBridge.ReturnValue {
-    val sessionReturnType = exportSession.exportSessionReturnType(symbol)
+    val sessionReturnType = exportSession.overrideReturnType(symbol)
 
     if (analysisSession.isArrayConstructor(symbol)) {
         return MethodBridge.ReturnValue.Instance.FactoryResult
@@ -195,7 +195,7 @@ private fun ObjCExportContext.bridgeReturnType(symbol: KaCallableSymbol): Method
     val successReturnValueBridge = MethodBridge.ReturnValue.Mapped(returnTypeBridge)
 
     return if (symbol.hasThrowsAnnotation) {
-        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(analysisSession) { sessionReturnType.canBeNull }
+        val canReturnZero = !returnTypeBridge.isReferenceOrPointer() || with(analysisSession) { sessionReturnType.isNullable }
         MethodBridge.ReturnValue.WithError.ZeroForError(
             successReturnValueBridge,
             successMayBeZero = canReturnZero

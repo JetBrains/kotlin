@@ -24,3 +24,6 @@ fun foo(x: MyEnum?): Int {
     }
     return y
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

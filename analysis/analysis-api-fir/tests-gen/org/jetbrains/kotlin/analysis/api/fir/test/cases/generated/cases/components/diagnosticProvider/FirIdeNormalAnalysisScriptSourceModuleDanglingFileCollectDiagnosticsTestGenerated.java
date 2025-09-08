@@ -71,6 +71,26 @@ public class FirIdeNormalAnalysisScriptSourceModuleDanglingFileCollectDiagnostic
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MustUseReturnValue {
+    @Test
+    public void testAllFilesPresentInMustUseReturnValue() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Redeclaration {
+    @Test
+    public void testAllFilesPresentInRedeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")
   public class Suppression {
@@ -89,6 +109,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleDanglingFileCollectDiagnostic
     @TestMetadata("scriptUninitializedTopLevelProperty2.kts")
     public void testScriptUninitializedTopLevelProperty2() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/scriptUninitializedTopLevelProperty2.kts");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Wasm {
+    @Test
+    public void testAllFilesPresentInWasm() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
   }
 

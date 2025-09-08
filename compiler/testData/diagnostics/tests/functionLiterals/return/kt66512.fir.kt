@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-66512
 
 typealias MyUnit = Unit
@@ -10,7 +9,7 @@ typealias MyUnit = Unit
 // ================= Lambdas assigned to a variable =================
 
 val expectedMyUnitExplicitReturnString: () -> MyUnit = l@ {
-    return@l <!RETURN_TYPE_MISMATCH!>""<!>
+    return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
 }
 
 // ============== Lambdas passed as function argument ===============
@@ -20,3 +19,6 @@ fun test() {
         return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration, stringLiteral,
+typeAliasDeclaration */

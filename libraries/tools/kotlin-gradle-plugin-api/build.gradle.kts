@@ -1,4 +1,5 @@
 import gradle.GradlePluginVariant
+import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     id("gradle-plugin-dependency-configuration")
@@ -8,13 +9,15 @@ plugins {
 }
 
 pluginApiReference {
-    enableForGradlePluginVariants(GradlePluginVariant.values().toSet())
+    enableForAllGradlePluginVariants()
     enableKotlinlangDocumentation()
 
     failOnWarning = true
+    moduleName("The Kotlin Gradle plugins API")
 
     additionalDokkaConfiguration {
         reportUndocumented.set(true)
+        includes.from("api-reference-description.md")
     }
 }
 
@@ -41,3 +44,8 @@ tasks {
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_88,
+)

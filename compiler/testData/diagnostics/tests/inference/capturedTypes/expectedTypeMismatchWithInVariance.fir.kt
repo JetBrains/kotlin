@@ -8,3 +8,6 @@ fun test(a1: Array<in Int>, a2: Array<Int>) {
     val c: Int = <!INITIALIZER_TYPE_MISMATCH!>foo(a1, a2)<!>
 
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, functionDeclaration, inProjection, localProperty, nullableType,
+outProjection, propertyDeclaration, typeParameter */

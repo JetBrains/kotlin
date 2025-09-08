@@ -1,7 +1,6 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-70507
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 
 object O {
     operator fun inc() = this
@@ -18,3 +17,5 @@ fun main() {
     (O)[0]++
 }
 
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, localProperty, objectDeclaration,
+operator, propertyDeclaration, thisExpression */

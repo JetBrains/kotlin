@@ -141,3 +141,6 @@ class C : O.B() {
     // DEPRECATED: Classifiers from supertypes of our own companion
     val r = <!DEPRECATED_ACCESS_BY_SHORT_NAME!>FromDelta<!>::foo
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, override, propertyDeclaration */

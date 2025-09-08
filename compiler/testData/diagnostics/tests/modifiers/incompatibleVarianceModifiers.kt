@@ -22,3 +22,6 @@ class A {
 fun test4(a: A) {
     a.bar<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>out<!> <!REPEATED_MODIFIER!>out<!> Int>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, interfaceDeclaration, localClass,
+localProperty, nullableType, out, outProjection, propertyDeclaration, typeParameter */

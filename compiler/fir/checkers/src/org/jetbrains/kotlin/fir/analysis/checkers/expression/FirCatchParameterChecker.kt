@@ -8,20 +8,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.defaultValueForParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
-import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isNothing
-import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.types.*
 
 object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -45,14 +37,14 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                 }
 
                 if (isReified) {
-                    reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE)
+                    catchParameter.requireFeatureSupport(LanguageFeature.AllowReifiedTypeInCatchClause)
                 } else {
                     reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE)
                 }
             }
 
             val session = context.session
-            if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(context, coneType)) {
+            if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(coneType)) {
                 reporter.reportOn(
                     source,
                     FirErrors.THROWABLE_TYPE_MISMATCH,
@@ -66,7 +58,8 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
         }
     }
 
-    private fun isProhibitedNothing(context: CheckerContext, coneType: ConeKotlinType): Boolean {
-        return context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNothingAsCatchParameter) && coneType.isNothing
+    context(context: CheckerContext)
+    private fun isProhibitedNothing(coneType: ConeKotlinType): Boolean {
+        return LanguageFeature.ProhibitNothingAsCatchParameter.isEnabled() && coneType.isNothing
     }
 }

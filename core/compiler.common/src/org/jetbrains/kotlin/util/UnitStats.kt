@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.util
 
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.round
 
 /**
  * Represents aggregated info about performance and other measurements in a simple format that compatible with
@@ -28,6 +29,9 @@ data class UnitStats(
     In the last case, it should have a suffix like `(Child)`.
      */
     val name: String?,
+    val outputKind: String?,
+    // Use plain millis to get rid of using a custom JSON serializer for `java.util.Date`
+    val timeStampMs: Long = System.currentTimeMillis(),
     val platform: PlatformType = PlatformType.JVM,
     val compilerType: CompilerType = CompilerType.K2,
     val hasErrors: Boolean = false,
@@ -40,8 +44,13 @@ data class UnitStats(
     val initStats: Time?,
     val analysisStats: Time?,
     val translationToIrStats: Time?,
+    val irPreLoweringStats: Time?,
+    val irSerializationStats: Time?,
+    val klibWritingStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
+
+    val dynamicStats: List<DynamicStats>? = null,
 
     // Null in case of java files not used
     val findJavaClassStats: SideStats? = null,
@@ -54,7 +63,25 @@ data class UnitStats(
 
     @property:DeprecatedMeasurementForBackCompatibility
     val extendedStats: List<String>? = null,
-)
+) : Comparable<UnitStats> {
+    fun getTotalTime(): Time {
+        return Time.ZERO +
+                initStats +
+                analysisStats +
+                translationToIrStats +
+                irPreLoweringStats +
+                irSerializationStats +
+                klibWritingStats +
+                irLoweringStats +
+                backendStats +
+                findJavaClassStats?.time +
+                findKotlinClassStats?.time
+    }
+
+    override fun compareTo(other: UnitStats): Int {
+        return timeStampMs.compareTo(other.timeStampMs)
+    }
+}
 
 enum class CompilerType {
     K1,
@@ -64,7 +91,8 @@ enum class CompilerType {
     val isK2: Boolean
         get() = this == K2 || this == K1andK2
 
-    operator fun plus(other: CompilerType): CompilerType {
+    operator fun plus(other: CompilerType?): CompilerType {
+        if (other == null) return this
         return when (this) {
             K1 -> if (other.isK2) K1andK2 else K1
             K2 -> if (other == K1 || other == K1andK2) K1andK2 else K2
@@ -77,6 +105,9 @@ enum class PhaseType {
     Initialization,
     Analysis,
     TranslationToIr,
+    IrPreLowering,
+    IrSerialization,
+    KlibWriting,
     IrLowering,
     Backend,
 }
@@ -99,14 +130,42 @@ data class Time(val nanos: Long, val userNanos: Long, val cpuNanos: Long) {
     val millis: Long
         get() = TimeUnit.NANOSECONDS.toMillis(nanos)
 
-    operator fun plus(other: Time): Time {
+    operator fun plus(other: Time?): Time {
+        if (other == null) return this
         return Time(nanos + other.nanos, userNanos + other.userNanos, cpuNanos + other.cpuNanos)
     }
 
-    operator fun minus(other: Time): Time {
+    operator fun minus(other: Time?): Time {
+        if (other == null) return this
         return Time(nanos - other.nanos, userNanos - other.userNanos, cpuNanos - other.cpuNanos)
     }
+
+    operator fun unaryMinus(): Time {
+        return Time(-nanos, -userNanos, -cpuNanos)
+    }
+
+    operator fun div(other: Time): TimeRatio {
+        return TimeRatio(nanos.toDouble() / other.nanos, userNanos.toDouble() / other.userNanos, cpuNanos.toDouble() / other.cpuNanos)
+    }
+
+    operator fun div(divider: Int): Time {
+        return Time(nanos / divider, userNanos / divider, cpuNanos / divider)
+    }
+
+    operator fun times(multiplier: Double): Time {
+        return Time(
+            round(nanos * multiplier).toLong(),
+            round(userNanos * multiplier).toLong(),
+            round(cpuNanos * multiplier).toLong(),
+        )
+    }
 }
+
+data class TimeRatio(
+    val nanos: Double,
+    val userNanos: Double,
+    val cpuNanos: Double,
+)
 
 enum class PhaseSideType {
     FindJavaClass,
@@ -121,17 +180,31 @@ data class SideStats(
         val EMPTY = SideStats(0, Time.ZERO)
     }
 
-    operator fun plus(other: SideStats): SideStats {
+    operator fun plus(other: SideStats?): SideStats {
+        if (other == null) return this
         return SideStats(count + other.count, time + other.time)
+    }
+
+    operator fun div(divider: Int): SideStats {
+        return SideStats(count / divider, time / divider)
     }
 }
 
-data class GarbageCollectionStats(val kind: String, val millis: Long, val count: Long)
+data class GarbageCollectionStats(val kind: String, val millis: Long, val count: Long) {
+    companion object {
+        val EMPTY = GarbageCollectionStats("", 0, 0)
+    }
+}
+
+data class DynamicStats(val parentPhaseType: PhaseType, val name: String, val time: Time)
 
 fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.Initialization, initStats)
     action(PhaseType.Analysis, analysisStats)
     action(PhaseType.TranslationToIr, translationToIrStats)
+    action(PhaseType.IrPreLowering, irPreLoweringStats)
+    action(PhaseType.IrSerialization, irSerializationStats)
+    action(PhaseType.KlibWriting, klibWritingStats)
     action(PhaseType.IrLowering, irLoweringStats)
     action(PhaseType.Backend, backendStats)
 }
@@ -141,52 +214,85 @@ fun UnitStats.forEachPhaseSideMeasurement(action: (PhaseSideType, SideStats?) ->
     action(PhaseSideType.BinaryClassFromKotlinFile, findKotlinClassStats)
 }
 
-fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
-    forEachPhaseMeasurement { phaseType, time ->
-        if (time == null) return@forEachPhaseMeasurement
+val phaseTypeName = mapOf(
+    PhaseType.Initialization to "INIT",
+    PhaseType.Analysis to "ANALYZE",
+    PhaseType.TranslationToIr to "TRANSLATION to IR",
+    PhaseType.IrPreLowering to "IR PRE-LOWERING",
+    PhaseType.IrSerialization to "IR SERIALIZATION",
+    PhaseType.KlibWriting to "KLIB WRITING",
+    PhaseType.IrLowering to "IR LOWERING",
+    PhaseType.Backend to "BACKEND",
+)
 
-        val name = when (phaseType) {
-            PhaseType.Initialization -> "INIT"
-            PhaseType.Analysis -> "ANALYZE"
-            PhaseType.TranslationToIr -> "TRANSLATION to IR"
-            PhaseType.IrLowering -> "IR LOWERING"
-            PhaseType.Backend -> "BACKEND"
-        }
+val phaseSideTypeName = mapOf(
+    PhaseSideType.FindJavaClass to "Find Java class",
+    PhaseSideType.BinaryClassFromKotlinFile to "Binary class from Kotlin file"
+)
 
-        action(
-            "%20s%8s ms".format(name, time.millis) +
-                    if (phaseType != PhaseType.Initialization && linesCount != 0) {
-                        "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
-                    } else {
-                        ""
+fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
+    with(unitStats) {
+        forEachPhaseMeasurement { phaseType, time ->
+            if (time == null) return@forEachPhaseMeasurement
+
+            action(
+                "%20s%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
+                        if (phaseType != PhaseType.Initialization && linesCount != 0) {
+                            "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
+                        } else {
+                            ""
+                        }
+            )
+
+            dynamicStats?.filter { it.parentPhaseType == phaseType }?.let { filteredDynamicStats ->
+                if (detailedPerf) {
+                    filteredDynamicStats.forEach { (_, dynamicName, dynamicTime) ->
+                        action(
+                            "%20s%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
+                                    if (linesCount != 0) {
+                                        "%12.3f loc/s ($dynamicName)".format(Locale.ENGLISH, getLinesPerSecond(dynamicTime))
+                                    } else {
+                                        " ($dynamicName)"
+                                    }
+                        )
                     }
-        )
-    }
-
-    forEachPhaseSideMeasurement { phaseSideType, sideStats ->
-        if (sideStats == null) return@forEachPhaseSideMeasurement
-
-        val description = when (phaseSideType) {
-            PhaseSideType.BinaryClassFromKotlinFile -> "Binary class from Kotlin file"
-            PhaseSideType.FindJavaClass -> "Find Java class"
+                } else {
+                    if (filteredDynamicStats.isNotEmpty()) {
+                        var totTime = Time.ZERO
+                        filteredDynamicStats.forEach {
+                            totTime += it.time
+                        }
+                        action(
+                            "%20s%8s ms".format("DYNAMIC PHASES", totTime.millis) +
+                                    if (linesCount != 0) "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(totTime)) else ""
+                        )
+                    }
+                }
+            }
         }
 
-        action("$description performed ${sideStats.count} times, total time ${sideStats.time.millis} ms")
-    }
+        forEachPhaseSideMeasurement { phaseSideType, sideStats ->
+            if (sideStats == null) return@forEachPhaseSideMeasurement
 
-    gcStats.forEach {
-        action("GC time for ${it.kind} is ${it.millis} ms, ${it.count} collections")
-    }
+            val description = phaseSideTypeName.getValue(phaseSideType)
 
-    jitTimeMillis?.let {
-        action("JIT time is $it ms")
-    }
+            action("$description performed ${sideStats.count} times, total time ${sideStats.time.millis} ms")
+        }
 
-    @OptIn(DeprecatedMeasurementForBackCompatibility::class)
-    extendedStats?.forEach { action(it) }
+        gcStats.forEach {
+            action("GC time for ${it.kind} is ${it.millis} ms, ${it.count} collections")
+        }
+
+        jitTimeMillis?.let {
+            action("JIT time is $it ms")
+        }
+
+        @OptIn(DeprecatedMeasurementForBackCompatibility::class)
+        extendedStats?.forEach { action(it) }
+    }
 }
 
-private val nanosInSecond = TimeUnit.SECONDS.toNanos(1)
+val nanosInSecond = TimeUnit.SECONDS.toNanos(1)
 
 fun UnitStats.getLinesPerSecond(time: Time): Double {
     return linesCount.toDouble() / time.nanos * nanosInSecond // Assume `nanos` is never zero because it's unlikely possible to measure such a small time

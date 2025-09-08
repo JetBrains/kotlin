@@ -31,3 +31,6 @@ actual data class Foo actual constructor(actual val x: Int, actual val y: String
 actual data class Bar actual constructor(val z: Double)
 
 actual data class Baz actual constructor(actual val w: List<String>)
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, data, expect, functionDeclaration, nullableType, operator, override,
+primaryConstructor, propertyDeclaration */

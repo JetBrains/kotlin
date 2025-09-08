@@ -18,3 +18,5 @@ fun main() {
     W.E.<!UNRESOLVED_REFERENCE!>length<!> // resolved with error to the class W.E in FIR and old FE
     W.E.w // resolved to static field W.e.W in FE
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty */

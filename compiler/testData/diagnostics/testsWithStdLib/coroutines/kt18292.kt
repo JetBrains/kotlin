@@ -17,3 +17,6 @@ suspend fun fib(n: Long) =
             else -> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!><!DEBUG_INFO_MISSING_UNRESOLVED!>fib<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>n<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>-<!> 1)<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>await<!>() <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>fib<!>(n - 2).<!DEBUG_INFO_MISSING_UNRESOLVED!>await<!>()
         }
     }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, out, suspend, typeParameter, whenExpression */

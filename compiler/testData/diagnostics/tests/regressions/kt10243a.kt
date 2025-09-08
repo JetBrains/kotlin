@@ -11,3 +11,6 @@ fun foo(f: Boolean) {
         fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, localFunction, propertyDeclaration,
+tryExpression */

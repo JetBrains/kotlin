@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.build.JvmSourceRoot
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -17,13 +18,9 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.Time
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
@@ -145,6 +142,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.jsr305 = originalArguments.jsr305
             args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
             args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
+            @Suppress("DEPRECATION")
             args.jvmDefault = originalArguments.jvmDefault
             args.jdkRelease = originalArguments.jdkRelease
             args.progressiveMode = originalArguments.progressiveMode
@@ -288,7 +286,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         configureBaseArguments(args, moduleData, tmp)
         configureArguments(args, moduleData)
 
-        val manager = CompilerPerformanceManager()
+        val manager = CompilerPerformanceManager().apply { detailedPerf = args.detailedPerf }
         val services = Services.Builder().register(PerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
         val result = try {
@@ -340,6 +338,9 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 put("Init", initTime.millis)
                 put("Analysis", unitStats.analysisStats?.millis ?: 0)
                 unitStats.translationToIrStats?.millis?.let { put("Translation", it) }
+                unitStats.irPreLoweringStats?.millis?.let { put("Pre-lowering", it) }
+                unitStats.irSerializationStats?.millis?.let { put("Serialization", it) }
+                unitStats.klibWritingStats?.millis?.let { put("Klib writing", it) }
                 unitStats.irLoweringStats?.millis?.let { put("Lowering", it) }
                 unitStats.backendStats?.millis?.let { put("Generation", it) }
             }
@@ -361,19 +362,5 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 println(MessageRenderer.GRADLE_STYLE.render(severity, message, location))
             }
         }
-    }
-}
-
-fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
-    val file = File(path)
-    val paths = PathUtil.kotlinPathsForDistDirectoryForTests
-    return when {
-        file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
-            paths.jar(KotlinPaths.Jar.SerializationPlugin)
-        file.name.startsWith("kotlin-sam-with-receiver") -> paths.jar(KotlinPaths.Jar.SamWithReceiver)
-        file.name.startsWith("kotlin-allopen") -> paths.jar(KotlinPaths.Jar.AllOpenPlugin)
-        file.name.startsWith("kotlin-noarg") -> paths.jar(KotlinPaths.Jar.NoArgPlugin)
-        file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
-        else -> null
     }
 }

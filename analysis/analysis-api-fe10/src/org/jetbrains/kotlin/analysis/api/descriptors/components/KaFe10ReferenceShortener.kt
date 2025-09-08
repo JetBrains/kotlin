@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -29,7 +29,7 @@ internal class KaFe10ReferenceShortener(
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand = withValidityAssertion {
+    ): ShortenCommand = withPsiValidityAssertion(element) {
         collectPossibleReferenceShortenings(
             element.containingKtFile,
             element.textRange,
@@ -45,7 +45,7 @@ internal class KaFe10ReferenceShortener(
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand = withValidityAssertion {
+    ): ShortenCommand = withPsiValidityAssertion(file) {
         // Compiler implementation does nothing.
         // Descriptor-based shortening is implemented on the IDE plugin side.
         val ktFilePointer = SmartPointerManager.createPointer(file)

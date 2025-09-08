@@ -50,3 +50,7 @@ fun test() {
 
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, contractCallsEffect, contracts, doWhileLoop, functionDeclaration,
+functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeParameter, whileLoop */

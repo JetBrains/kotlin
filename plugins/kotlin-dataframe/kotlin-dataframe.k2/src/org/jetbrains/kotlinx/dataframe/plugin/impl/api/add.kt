@@ -32,7 +32,8 @@ class Into : AbstractInterpreter<Unit>() {
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret() {
-        dsl.columns += simpleColumnOf(name, receiver.type)
+        val valuesType = extractBaseColumnValuesType(receiver.type) ?: session.builtinTypes.nullableAnyType.coneType
+        dsl.columns += simpleColumnOf(name, valuesType)
     }
 }
 

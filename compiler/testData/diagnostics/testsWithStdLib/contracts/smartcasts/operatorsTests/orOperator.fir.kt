@@ -76,3 +76,6 @@ fun falsefalse(x: Any?) {
         x.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, disjunctionExpression, functionDeclaration, ifExpression,
+intersectionType, isExpression, lambdaLiteral, nullableType, smartcast */

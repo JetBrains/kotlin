@@ -17,3 +17,6 @@ class C {
 class C1<<!SYNTAX!>in<!>> {}
 
 class C2(val<!SYNTAX!><!>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, functionDeclaration, integerLiteral, nestedClass, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

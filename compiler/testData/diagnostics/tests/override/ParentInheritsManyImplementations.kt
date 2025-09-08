@@ -17,3 +17,5 @@ interface E {
 }
 
 class D : C() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration */

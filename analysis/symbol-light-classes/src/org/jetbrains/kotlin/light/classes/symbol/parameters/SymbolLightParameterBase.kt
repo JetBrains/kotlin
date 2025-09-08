@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,12 +11,14 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
+import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -54,10 +56,10 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
         }
     }
 
-    override fun toString(): String = "${this::class.simpleName}:$name"
+    override fun toString(): String = this::class.simpleName.orEmpty()
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
-        basicIsEquivalentTo(this, another as? PsiParameter)
+        basicIsEquivalentTo(this, another as? PsiParameter) || isOriginEquivalentTo(another)
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: method.navigationElement
 
@@ -77,12 +79,11 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
 
     abstract override fun isVarArgs(): Boolean
 
-    protected fun KaSession.getTypeMappingMode(type: KaType): KaTypeMappingMode {
-        return when {
-            type.isSuspendFunctionType -> KaTypeMappingMode.DEFAULT
-            // TODO: extract type mapping mode from annotation?
-            // TODO: methods with declaration site wildcards?
-            else -> KaTypeMappingMode.VALUE_PARAMETER
-        }
+    protected fun KaSession.getTypeMappingMode(type: KaType): KaTypeMappingMode = when {
+        type.isSuspendFunctionType -> KaTypeMappingMode.DEFAULT
+        method.isJvmExposedBoxed && typeForValueClass(type) -> KaTypeMappingMode.VALUE_PARAMETER_BOXED
+        // TODO: extract type mapping mode from annotation?
+        // TODO: methods with declaration site wildcards?
+        else -> KaTypeMappingMode.VALUE_PARAMETER
     }
 }

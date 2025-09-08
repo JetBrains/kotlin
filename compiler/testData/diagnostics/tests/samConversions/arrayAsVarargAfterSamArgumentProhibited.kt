@@ -52,3 +52,6 @@ fun main(x2: Runnable) {
     i2.foo2({}, x2, <!TYPE_MISMATCH!>x3<!>)
     i2.foo2(x2, {}, *arrayOf(""))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, localProperty,
+propertyDeclaration, samConversion, stringLiteral */

@@ -769,3 +769,8 @@ fun <T> build(instructions: Buildee<T>.() -> Unit): Buildee<T> {
 
 fun <T> accept(arg: T) {}
 fun <T> acceptCallable(arg: () -> T) {}
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, callableReference, checkNotNullCall,
+classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, getter, inner, lambdaLiteral,
+localClass, nestedClass, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, stringLiteral, thisExpression, typeParameter, typeWithExtension */

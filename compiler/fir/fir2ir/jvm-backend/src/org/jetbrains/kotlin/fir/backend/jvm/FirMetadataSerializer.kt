@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -87,8 +86,8 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     val approximator = TypeApproximatorForMetadataSerializer(session)
 
     val stringTable = object : JvmStringTable(null), FirElementAwareStringTable {
-        override fun getLocalClassIdReplacement(firClass: FirClass): ClassId =
-            ((firClass as? FirRegularClass)?.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: firClass)
+        override fun getLocalClassLikeDeclarationIdReplacement(declaration: FirClassLikeDeclaration): ClassId =
+            (declaration.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: declaration)
                 .symbol.classId
     }
 
@@ -247,7 +246,7 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
         hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
         valueParameters.addAll(function.valueParameters.map {
             buildValueParameterCopy(it) {
-                symbol = FirValueParameterSymbol(it.name)
+                symbol = FirValueParameterSymbol()
                 returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         })
@@ -273,7 +272,7 @@ private fun FirPropertyAccessor.copyToFreeAccessor(
         status = accessor.status
         accessor.valueParameters.mapTo(valueParameters) {
             buildValueParameterCopy(it) {
-                symbol = FirValueParameterSymbol(it.name)
+                symbol = FirValueParameterSymbol()
                 returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         }
@@ -288,7 +287,7 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         moduleData = property.moduleData
         origin = FirDeclarationOrigin.Source
 
-        val newPropertySymbol = FirPropertySymbol(property.symbol.callableId)
+        val newPropertySymbol = property.symbol.callableId?.let { FirRegularPropertySymbol(it) } ?: FirLocalPropertySymbol()
         symbol = newPropertySymbol
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverParameter = property.receiverParameter?.let { receiverParameter ->
@@ -301,13 +300,12 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         initializer = property.initializer
         delegate = property.delegate
         delegateFieldSymbol = property.delegateFieldSymbol?.let {
-            FirDelegateFieldSymbol(it.callableId)
+            FirDelegateFieldSymbol(newPropertySymbol)
         }
         source = this@copyToFreeProperty.source
         getter = property.getter?.copyToFreeAccessor(approximator, newPropertySymbol)
         setter = property.setter?.copyToFreeAccessor(approximator, newPropertySymbol)
         isVar = property.isVar
-        isLocal = property.isLocal
         status = property.status
         dispatchReceiverType = property.dispatchReceiverType
         attributes = property.attributes.copy()

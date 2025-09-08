@@ -48,3 +48,6 @@ annotation class Ann(val x: IntArray = [1, 2, 3]) { // OK
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, companionObject, functionDeclaration,
+getter, integerLiteral, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

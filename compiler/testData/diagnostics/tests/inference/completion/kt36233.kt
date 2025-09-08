@@ -12,3 +12,6 @@ fun main() {
     test<Int>(foo(null)) // type mismatch
     test<Number>(foo(1 as Int)) // type mismatch
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, integerLiteral, nullableType, out,
+typeParameter */

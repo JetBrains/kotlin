@@ -19,3 +19,6 @@ abstract class A {
 
     class C(override val a: String): Nested(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, nestedClass, nullableType,
+override, primaryConstructor, propertyDeclaration, smartcast */

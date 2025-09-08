@@ -23,3 +23,7 @@ fun foo(): Int? {
         return null
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+inline, integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+stringLiteral, thisExpression, tryExpression, typeConstraint, typeParameter */

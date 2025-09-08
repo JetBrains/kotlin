@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo.bar.baz.buzz]
+FILE[kind=Facade[packageFqName=foo.bar.baz.buzz, facadeFqName=foo.bar.baz.buzz.PackageNewLineRecoveryKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

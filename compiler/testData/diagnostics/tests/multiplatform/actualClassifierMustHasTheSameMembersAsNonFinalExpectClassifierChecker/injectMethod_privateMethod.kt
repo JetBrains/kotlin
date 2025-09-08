@@ -17,3 +17,5 @@ actual open class Foo {
 
     private fun injected() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

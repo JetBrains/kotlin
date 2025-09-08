@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=name]
+FILE[kind=File[packageFqName=name]]
   PACKAGE_DIRECTIVE
     MODIFIER_LIST[public]
       ANNOTATION

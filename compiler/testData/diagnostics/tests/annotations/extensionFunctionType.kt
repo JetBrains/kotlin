@@ -22,3 +22,6 @@ interface Some {
 
     fun f8(x: <!WRONG_EXTENSION_FUNCTION_TYPE!>@ExtensionFunctionType<!> Int)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, typeWithExtension */

@@ -25,3 +25,6 @@ internal fun test(a: A, b: B, c: C) {
         <!SMARTCAST_IMPOSSIBLE!>c.x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType,
+propertyDeclaration, smartcast */

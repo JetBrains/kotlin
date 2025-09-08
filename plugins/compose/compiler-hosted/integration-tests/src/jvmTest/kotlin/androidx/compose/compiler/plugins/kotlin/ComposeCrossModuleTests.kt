@@ -1414,6 +1414,7 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     // Regression test for b/397855145
     @Test
     fun testB397855145() {
+        assumeTrue(useFir)
         compile(
             mapOf(
                 "lib" to mapOf(
@@ -1452,6 +1453,40 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                                     GraphicAsset(asset = asset.res)
                                 }
                             )
+                        }
+                    """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testOpenProtected() {
+        assumeTrue(useFir)
+        compile(
+            mapOf(
+                "lib" to mapOf(
+                    "lib/lib.kt" to """
+                        package lib
+                        
+                        import androidx.compose.runtime.Composable
+    
+                        open class PortfolioListView {
+                            @Composable
+                            protected open fun List(footer: Int = 0) = Unit
+                        }
+                    """
+                ),
+                "Main" to mapOf(
+                    "main.kt" to """
+                        import lib.PortfolioListView
+                        import androidx.compose.runtime.Composable
+                        
+                        class SpecificPortfolioListView : PortfolioListView() {
+                            @Composable
+                            fun Content() {
+                                List()
+                            }
                         }
                     """
                 )

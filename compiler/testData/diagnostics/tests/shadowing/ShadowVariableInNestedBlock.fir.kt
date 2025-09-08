@@ -7,3 +7,5 @@ fun ff(): Int {
     }
     return i
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

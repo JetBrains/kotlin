@@ -20,3 +20,5 @@ enum class E2: I {
         override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>() // NOT reported
     };
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration, override, superExpression */

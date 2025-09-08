@@ -19,3 +19,6 @@ fun foo(statements: List<FirBase>, arguments: List<FirBase>, explicitReceiver: F
 
     return firstCalls
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, localProperty,
+propertyDeclaration, thisExpression */

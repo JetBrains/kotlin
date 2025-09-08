@@ -30,3 +30,5 @@ import a.D.*
 fun test2(b: <!UNRESOLVED_REFERENCE!>B<!>) {
     <!UNRESOLVED_REFERENCE!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass */

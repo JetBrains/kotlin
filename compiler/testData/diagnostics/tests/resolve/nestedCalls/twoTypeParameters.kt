@@ -16,3 +16,6 @@ public class ResolutionTaskHolder<F, G : F> {
         tasks.add(ResolutionTask(candidate))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

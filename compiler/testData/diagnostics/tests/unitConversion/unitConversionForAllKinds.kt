@@ -15,3 +15,6 @@ fun test(g: () -> String, h: (Float) -> String) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>fooGeneric(h)<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

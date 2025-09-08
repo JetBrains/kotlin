@@ -8,3 +8,6 @@ fun test(foo: Int) {
     test(4.foo)
     test(foo)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, propertyDeclaration, propertyWithExtensionReceiver,
+thisExpression */

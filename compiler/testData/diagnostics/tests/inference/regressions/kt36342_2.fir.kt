@@ -11,3 +11,5 @@ fun test(b: Boolean) {
         )
     })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, typeParameter */

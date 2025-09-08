@@ -14,3 +14,6 @@ fun test() {
     val a = select(::foo, ::bar)
     a
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, typeParameter */

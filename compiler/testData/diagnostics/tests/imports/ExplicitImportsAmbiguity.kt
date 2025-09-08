@@ -16,3 +16,5 @@ import a.<!CONFLICTING_IMPORT!>X<!>
 import b.<!CONFLICTING_IMPORT!>X<!>
 
 class Y : <!UNRESOLVED_REFERENCE!>X<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

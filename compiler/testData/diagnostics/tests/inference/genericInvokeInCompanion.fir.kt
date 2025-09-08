@@ -38,3 +38,6 @@ fun main() {
     C<Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int, Int>("")
     C<Int, Int, Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int>("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration, operator,
+stringLiteral, typeParameter */

@@ -88,3 +88,7 @@ class Model {
 }
 
 fun simple(b: com.<!UNRESOLVED_REFERENCE!>result<!>.B<*>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+inner, integerLiteral, isExpression, javaFunction, lambdaLiteral, nestedClass, nullableType, out, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, thisExpression, typeParameter, whenExpression, whenWithSubject */

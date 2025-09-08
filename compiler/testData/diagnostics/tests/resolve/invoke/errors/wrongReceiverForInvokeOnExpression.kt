@@ -16,3 +16,6 @@ fun test3() {
 
     1.<!FUNCTION_EXPECTED!>(foo())<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localFunction, typeWithExtension */

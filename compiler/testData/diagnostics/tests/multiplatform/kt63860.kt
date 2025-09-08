@@ -25,3 +25,6 @@ actual interface SdkBufferedSink {
 
 actual class BufferedSinkAdapter actual constructor() : AbstractBufferedSinkAdapter(), SdkBufferedSink {
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor, stringLiteral */

@@ -70,8 +70,16 @@ internal actual fun uuidParseHexDash(hexDashString: String): Uuid =
     uuidParseHexDashCommonImpl(hexDashString)
 
 @ExperimentalUuidApi
+internal actual fun uuidParseHexDashOrNull(hexDashString: String): Uuid? =
+    uuidParseHexDashOrNullCommonImpl(hexDashString)
+
+@ExperimentalUuidApi
 internal actual fun uuidParseHex(hexString: String): Uuid =
     uuidParseHexCommonImpl(hexString)
+
+@ExperimentalUuidApi
+internal actual fun uuidParseHexOrNull(hexString: String): Uuid? =
+    uuidParseHexOrNullCommonImpl(hexString)
 
 /**
  * Converts this [java.util.UUID] value to the corresponding [kotlin.uuid.Uuid] value.

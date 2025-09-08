@@ -23,3 +23,7 @@ class WebClient {
 
 class OutDto
 class InDto
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, javaFunction, lambdaLiteral, nestedClass, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

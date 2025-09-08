@@ -7,3 +7,5 @@ typealias MyTypeAlias = AnnotationTarget
 
 @Target(MyTypeAlias.ANNOTATION_CLASS)
 annotation class MyAnnotation
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, typeAliasDeclaration */

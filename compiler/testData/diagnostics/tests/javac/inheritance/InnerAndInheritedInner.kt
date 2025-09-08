@@ -26,3 +26,5 @@ package test
 import a.y
 
 fun test() = y().getZ()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

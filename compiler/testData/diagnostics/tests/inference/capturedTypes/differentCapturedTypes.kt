@@ -17,3 +17,6 @@ fun foo(w: Out<*>) {
     // Anyway, this code should be definitely green and this test ensures it.
     select(w, myE() ?: w)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, elvisExpression, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, out, outProjection, starProjection, typeParameter, vararg */

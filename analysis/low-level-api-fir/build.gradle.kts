@@ -3,12 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val scriptingTestDefinition by configurations.creating
 
 dependencies {
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.common"))
@@ -25,7 +27,8 @@ dependencies {
     api(project(":compiler:cli-common"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
-    testImplementation(project(":analysis:analysis-api-fir"))
+    testFixturesApi(project(":analysis:analysis-api-fir"))
+
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":analysis:analysis-api-platform-interface"))
@@ -42,35 +45,35 @@ dependencies {
 
     api(intellijCore())
 
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
-    testImplementation(libs.opentest4j)
-    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testCompileOnly(toolsJarApi())
+    testFixturesApi(libs.opentest4j)
+    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
-    testImplementation(kotlinTest("junit"))
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
+    testFixturesApi(kotlinTest("junit"))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(project(":analysis:symbol-light-classes"))
-    testImplementation(projectTests(":plugins:scripting:scripting-tests"))
-    testImplementation(project(":kotlin-scripting-common"))
+    testFixturesApi(project(":analysis:symbol-light-classes"))
+    testFixturesApi(testFixtures(project(":plugins:scripting:scripting-tests")))
+    testFixturesApi(project(":kotlin-scripting-common"))
+    testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
-    testApi(project(":plugins:plugin-sandbox"))
-    testApi(projectTests(":plugins:plugin-sandbox"))
+    testFixturesApi(project(":plugins:plugin-sandbox"))
+    testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
-    scriptingTestDefinition(projectTests(":plugins:scripting:test-script-definition"))
+    scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
 }
 
 sourceSets {
@@ -79,6 +82,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 kotlin {
@@ -90,22 +94,25 @@ kotlin {
     }
 }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
-        JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
-        JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
-    )
-) {
-    dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
+            JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
+            JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
+        )
+    ) {
+        dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
+        workingDir = rootDir
 
-    val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
-    doFirst {
-        systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+        val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
+        doFirst {
+            systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+        }
     }
+
+    withJvmStdlibAndReflect()
 }
 
 allprojects {
@@ -117,6 +124,7 @@ allprojects {
                 "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
                 "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
                 "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
             )
         )
     }

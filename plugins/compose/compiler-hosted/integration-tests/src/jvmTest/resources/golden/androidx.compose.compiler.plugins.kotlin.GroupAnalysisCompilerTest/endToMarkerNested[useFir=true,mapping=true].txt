@@ -1,0 +1,29 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(text: String) {
+    Wrapper {
+        if (text.isEmpty()) return@Test
+        Text(text)
+
+        SecondWrapper {
+            if (text.isEmpty()) return@Wrapper
+            Text(text)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
+  1:1:void TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):11:11 -> m$<key>
+  1:1:void TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+  1:1:void ExtraKt.Wrapper(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+  1:1:void ExtraKt.SecondWrapper(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>

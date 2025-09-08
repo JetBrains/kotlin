@@ -5,3 +5,5 @@ val test: Int = listOf<Any>().map {
         else -> throw AssertionError()
     }
 }.sum()
+
+/* GENERATED_FIR_TAGS: isExpression, lambdaLiteral, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

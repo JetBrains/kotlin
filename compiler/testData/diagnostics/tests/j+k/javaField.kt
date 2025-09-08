@@ -10,3 +10,5 @@ public class MyClass {
 fun main(j: MyClass) {
     j.myField
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

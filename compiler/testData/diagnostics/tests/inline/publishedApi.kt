@@ -176,3 +176,6 @@ var publicVarTopLevel = 1
 internal var internalVarTopLevel = 1
 
 private var privateVarTopLevel = 1
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, inline, integerLiteral, localProperty,
+propertyDeclaration, setter */

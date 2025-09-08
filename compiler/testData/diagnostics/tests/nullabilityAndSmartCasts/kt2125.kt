@@ -12,3 +12,6 @@ fun main() {
     val bar = 2
     s.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

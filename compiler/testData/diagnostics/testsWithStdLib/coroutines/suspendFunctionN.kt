@@ -8,3 +8,5 @@ fun test() {
     suspend {} is <!UNRESOLVED_REFERENCE!>SuspendFunction0<!><*>
     suspend {} is kotlin.coroutines.SuspendFunction0<*>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, isExpression, lambdaLiteral, starProjection */

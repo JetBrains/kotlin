@@ -2,14 +2,15 @@ import org.jetbrains.kotlin.kotlinNativeDist
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 dependencies {
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":analysis:analysis-api-standalone"))
-    testImplementation(projectTests(":analysis:analysis-api-standalone"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
+    testImplementation(testFixtures(project(":native:native.tests")))
     testImplementation(project(":native:kotlin-native-utils"))
 
     testImplementation(platform(libs.junit.bom))
@@ -25,14 +26,10 @@ sourceSets {
 }
 
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-}
-
-val test by nativeTest("test", null) {
-    systemProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+projectTests {
+    nativeTestTask("test", tag = null) {
+        systemProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+    }
 }
 
 testsJar()

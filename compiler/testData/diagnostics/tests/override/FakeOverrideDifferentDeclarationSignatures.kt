@@ -11,3 +11,6 @@ open class B {
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : B(), A
 
 val obj: A = <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>object<!> : B(), A {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+propertyDeclaration, stringLiteral */

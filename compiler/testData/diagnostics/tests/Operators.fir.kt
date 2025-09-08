@@ -140,3 +140,8 @@ fun test3(i: Int, d: Double, b: Boolean) {
     for (element in <!OPERATOR_MODIFIER_REQUIRED!>d<!>) {}
     for (element in <!OPERATOR_MODIFIER_REQUIRED!>b<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, comparisonExpression,
+equalityExpression, forLoop, funWithExtensionReceiver, functionDeclaration, incrementDecrementExpression, integerLiteral,
+interfaceDeclaration, localProperty, operator, override, propertyDeclaration, rangeExpression, stringLiteral,
+thisExpression */

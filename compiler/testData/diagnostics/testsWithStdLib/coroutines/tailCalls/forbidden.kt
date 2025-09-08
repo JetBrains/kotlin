@@ -19,3 +19,5 @@ suspend fun unitSuspend() {
 suspend fun baz(): Int = run {
     suspendCoroutineUninterceptedOrReturn { x: Continuation<Int> -> }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, suspend */

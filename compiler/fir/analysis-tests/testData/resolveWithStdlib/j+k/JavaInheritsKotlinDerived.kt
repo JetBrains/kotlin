@@ -21,3 +21,6 @@ fun test() {
     val jc = JavaClass()
     val result = jc.some
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, javaFunction, javaType, localProperty, override,
+propertyDeclaration, stringLiteral */

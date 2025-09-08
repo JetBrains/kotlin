@@ -92,7 +92,7 @@ FILE: constantValues.kt
                 ($subj$ is R|KClassValue.Value.NormalClass|) ->  {
                     lval <destruct>: R|ClassLiteralValue| = this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.NormalClass.value|
                     lval classId: R|ClassId| = R|<local>/<destruct>|.R|/ClassLiteralValue.component1|()
-                    lval arrayDimensions: R|kotlin/Int| = R|<local>/<destruct>|.R|/ClassLiteralValue.component2|()
+                    lval arrayNestedness: R|kotlin/Int| = R|<local>/<destruct>|.R|/ClassLiteralValue.component2|()
                 }
             }
 

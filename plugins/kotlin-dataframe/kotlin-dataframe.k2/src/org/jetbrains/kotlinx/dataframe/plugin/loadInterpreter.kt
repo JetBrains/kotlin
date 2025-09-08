@@ -85,7 +85,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AsGroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AsGroupByDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByCharDelimiters
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByIterable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByName
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByRegex
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByStringDelimiters
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups2
@@ -113,6 +117,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNa0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DropNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ExcludeJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FillNulls0
@@ -128,6 +133,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FullJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FullJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Gather0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherChangeType
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherExplodeLists
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherKeysInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherMap
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherValuesInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
@@ -159,11 +172,15 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStdOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySumOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Implode
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ImplodeDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InnerJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.JoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MatchRegex
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MatchStringRegex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Max0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Max1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Mean0
@@ -223,6 +240,21 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Split0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameIntoColumns
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitInplace
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIntoRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIterableInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIterableInward
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitPairInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitPairInward
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInplace
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInto0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformIntoRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInward0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
@@ -237,6 +269,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateAt
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls0
@@ -247,15 +281,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 internal fun FirFunctionCall.loadInterpreter(session: FirSession, isTest: Boolean): Interpreter<*>? {
     val interpreter = Stdlib.interpreter(this)
     if (interpreter != null) return interpreter
-    val symbol =
-        (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
-    val argName = Name.identifier("interpreter")
-    return symbol.resolvedAnnotationsWithClassIds
-        .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
-        ?.let { annotation ->
-            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
-            name.load<Interpreter<*>>(isTest)
-        }
+    return interpreterName(session)?.load<Interpreter<*>>(isTest)
 }
 
 private object Stdlib {
@@ -289,7 +315,7 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
     val symbol =
         (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
     val argName = Name.identifier("interpreter")
-    return symbol.resolvedAnnotationsWithClassIds
+    return symbol.resolvedAnnotationsWithArguments
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
             val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
@@ -317,7 +343,7 @@ internal inline fun <reified T> ClassId.load(): T {
     return constructor.newInstance() as T
 }
 
-internal inline fun <reified T> String.load(isTest: Boolean): T? {
+internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T? {
     return when (this) {
         "Add" -> Add()
         "From" -> From()
@@ -335,6 +361,8 @@ internal inline fun <reified T> String.load(isTest: Boolean): T? {
         "ConvertAsColumn" -> ConvertAsColumn()
         "PerRowCol" -> PerRowCol()
         "Explode0" -> Explode0()
+        "Implode" -> Implode()
+        "ImplodeDefault" -> ImplodeDefault()
         "Insert0" -> Insert0()
         "Insert1" -> Insert1()
         "Under0" -> Under0()
@@ -369,6 +397,7 @@ internal inline fun <reified T> String.load(isTest: Boolean): T? {
         "Into0" -> Into0()
         "Ungroup0" -> Ungroup0()
         "DropNulls0" -> DropNulls0()
+        "DropNulls1" -> DropNulls1()
         "DropNa0" -> DropNa0()
         "Properties0" -> Properties0()
         "Preserve0" -> Preserve0()
@@ -449,6 +478,27 @@ internal inline fun <reified T> String.load(isTest: Boolean): T? {
         "ValueCols1" -> ValueCols1()
         "ValueCols2" -> ValueCols2()
         "ColumnRange" -> ColumnRange()
+        "Split0" -> Split0()
+        "ByIterable" -> ByIterable()
+        "ByCharDelimiters" -> ByCharDelimiters()
+        "ByStringDelimiters" -> ByStringDelimiters()
+        "ByRegex" -> ByRegex()
+        "MatchRegex" -> MatchRegex()
+        "MatchStringRegex" -> MatchStringRegex()
+        "SplitWithTransformInto0" -> SplitWithTransformInto0()
+        "SplitWithTransformInward0" -> SplitWithTransformInward0()
+        "SplitInplace" -> SplitInplace()
+        "SplitWithTransformInplace" -> SplitWithTransformInplace()
+        "SplitDefault" -> SplitDefault()
+        "SplitIntoRows" -> SplitIntoRows()
+        "SplitAnyFrameRows" -> SplitAnyFrameRows()
+        "SplitPair" -> SplitPairInto()
+        "SplitPairInward" -> SplitPairInward()
+        "SplitAnyFrameIntoColumns" -> SplitAnyFrameIntoColumns()
+        "SplitIterableInto" -> SplitIterableInto()
+        "SplitIterableInward" -> SplitIterableInward()
+        "SplitWithTransformDefault" -> SplitWithTransformDefault()
+        "SplitWithTransformIntoRows" -> SplitWithTransformIntoRows()
         "Named0" -> Named0()
         "toDataFrameDsl" -> ToDataFrameDsl()
         "toDataFrame" -> ToDataFrame()
@@ -470,6 +520,8 @@ internal inline fun <reified T> String.load(isTest: Boolean): T? {
         "Move0" -> Move0()
         "ToTop" -> ToTop()
         "Update0" -> Update0()
+        "UpdateWhere" -> UpdateWhere()
+        "UpdateAt" -> UpdateAt()
         "Aggregate" -> Aggregate()
         "AggregateRow" -> AggregateRow()
         "DataFrameOf3" -> DataFrameOf3()
@@ -531,6 +583,14 @@ internal inline fun <reified T> String.load(isTest: Boolean): T? {
         "GroupByStdOf" -> GroupByStdOf()
         "DataFrameXs" -> DataFrameXs()
         "GroupByXs" -> GroupByXs()
+        "Gather0" -> Gather0()
+        "GatherInto" -> GatherInto()
+        "GatherWhere" -> GatherWhere()
+        "GatherChangeType" -> GatherChangeType()
+        "GatherMap" -> GatherMap()
+        "GatherExplodeLists" -> GatherExplodeLists()
+        "GatherValuesInto" -> GatherValuesInto()
+        "GatherKeysInto" -> GatherKeysInto()
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
         else -> if (isTest) error(this) else null

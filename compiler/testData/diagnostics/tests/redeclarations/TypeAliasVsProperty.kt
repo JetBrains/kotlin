@@ -16,3 +16,5 @@ typealias <!REDECLARATION!>Test2<!> = String
 
 // FILE: file2.kt
 val <!REDECLARATION!>Test2<!> = 42
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration, typeAliasDeclaration */

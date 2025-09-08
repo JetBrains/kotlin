@@ -12,3 +12,6 @@ fun test(a: A<out CharSequence>) {
     a[1] = <!MEMBER_PROJECTED_OUT!>""<!>
     a[<!MEMBER_PROJECTED_OUT!>""<!>]
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, capturedType, classDeclaration, functionDeclaration,
+integerLiteral, nullableType, operator, outProjection, stringLiteral, thisExpression, typeParameter */

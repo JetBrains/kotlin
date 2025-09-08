@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Context: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Context: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.Context.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Context ") }
         let __kt = __root___Context_init_allocate()
@@ -16,7 +16,7 @@ public final class Context: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotl
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: KotlinRuntime.KotlinBase {
     public static var shared: main.Foo {
         get {
             return main.Foo.__createClassWrapper(externalRCRef: __root___Foo_get())

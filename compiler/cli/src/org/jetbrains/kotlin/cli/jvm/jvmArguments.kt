@@ -108,6 +108,25 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    val whenExpressionsGeneration = arguments.whenExpressionsGeneration
+    if (whenExpressionsGeneration != null) {
+        val whenGenerationScheme = JvmWhenGenerationScheme.fromString(whenExpressionsGeneration)
+        if (whenGenerationScheme != null) {
+            put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, whenGenerationScheme)
+            if (jvmTarget.majorVersion < JvmTarget.JVM_21.majorVersion && whenGenerationScheme != JvmWhenGenerationScheme.INLINE) {
+                messageCollector.report(
+                    WARNING,
+                    "`-Xwhen-expressions=$whenExpressionsGeneration` does nothing with JVM target `${jvmTarget.description}`."
+                )
+            }
+        } else {
+            messageCollector.report(
+                ERROR, "Unknown `-Xwhen-expressions` mode: $whenExpressionsGeneration\n" +
+                        "Supported modes: ${JvmWhenGenerationScheme.entries.joinToString { it.description }}"
+            )
+        }
+    }
+
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
@@ -284,12 +303,12 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
 
+    @Suppress("DEPRECATION")
     put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
 
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
     put(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING, arguments.enhancedCoroutinesDebugging)
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
-    put(JVMConfigurationKeys.ENABLE_IR_INLINER, arguments.enableIrInliner)
     put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, arguments.useInlineScopesNumbers)
 
     val assertionsMode =

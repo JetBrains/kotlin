@@ -43,10 +43,6 @@ abstract class DeclaredUpperBoundConstraintPosition<T>(val typeParameter: T) : C
     override fun toString(): String = "DeclaredUpperBound $typeParameter"
 }
 
-abstract class ArgumentConstraintPosition<out T>(val argument: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
-    override fun toString(): String = "Argument $argument"
-}
-
 abstract class CallableReferenceConstraintPosition<out T>(val call: T) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "Callable reference $call"
 }
@@ -75,11 +71,21 @@ abstract class KnownTypeParameterConstraintPosition<T : KotlinTypeMarker>(val ty
     override fun toString(): String = "TypeArgument $typeArgument"
 }
 
-abstract class LambdaArgumentConstraintPosition<T>(val lambda: T) : ConstraintPosition() {
+sealed class ArgumentConstraintPosition<out T>(val argument: T) : ConstraintPosition()
+
+abstract class RegularArgumentConstraintPosition<out T>(argument: T) : ArgumentConstraintPosition<T>(argument),
+    OnlyInputTypeConstraintPosition {
+    override fun toString(): String = "Argument $argument"
+}
+
+abstract class LambdaArgumentConstraintPosition<out T>(lambda: T) : ArgumentConstraintPosition<T>(lambda) {
     override fun toString(): String {
-        return "LambdaArgument $lambda"
+        return "LambdaArgument $argument"
     }
 }
+
+val <T> LambdaArgumentConstraintPosition<T>.lambda: T
+    get() = argument
 
 open class DelegatedPropertyConstraintPosition<T>(val topLevelCall: T) : ConstraintPosition() {
     override fun toString(): String = "Constraint from call $topLevelCall for delegated property"
@@ -129,34 +135,6 @@ class NewConstraintWarning(
     override val upperType: KotlinTypeMarker,
     override val position: IncorporationConstraintPosition,
 ) : ConstraintSystemError(RESOLVED), NewConstraintMismatch
-
-/**
- * This class is intended to store separately constraints using @NoInfer annotation in K2,
- * that are normally not added into the constraint list.
- * However, we store them, with an intention to recheck during completion if they are matched,
- * and report an error otherwise.
- */
-@K2Only
-class NoInferConstraint(
-    val lowerType: KotlinTypeMarker,
-    val upperType: KotlinTypeMarker,
-)
-
-/**
- * Each added [NoInferConstraint] provokes creation of this pseudo-diagnostic with [RESOLVED] status.
- */
-@K2Only
-class ConeNoInferSubtyping(
-    val constraint: NoInferConstraint,
-    override val position: IncorporationConstraintPosition,
-) : ConstraintSystemError(RESOLVED), NewConstraintMismatch {
-    override val lowerType: KotlinTypeMarker
-        get() = constraint.lowerType
-
-    override val upperType: KotlinTypeMarker
-        get() = constraint.upperType
-}
-
 
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,

@@ -12,3 +12,6 @@ fun test() {
 }
 
 <!NOTHING_TO_INLINE!>inline<!> fun <T> lambda(p: T) { }
+
+/* GENERATED_FIR_TAGS: break, continue, equalityExpression, forLoop, functionDeclaration, ifExpression, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression, typeParameter */

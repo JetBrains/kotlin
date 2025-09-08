@@ -5,3 +5,5 @@
 suspend fun test() {
     suspend {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, suspend */

@@ -102,7 +102,7 @@ open class FragmentDeclarationGenerator(
         val functionDescriptor = irFunction.descriptor
         functionDescriptor.valueParameters.forEachIndexed { index, valueParameterDescriptor ->
             val parameterInfo = fragmentInfo.parameters[index]
-            irFunction.valueParameters += declareParameter(valueParameterDescriptor, parameterInfo).apply {
+            irFunction.parameters += declareParameter(valueParameterDescriptor, parameterInfo).apply {
                 context.fragmentContext!!.capturedDescriptorToFragmentParameterMap[parameterInfo.descriptor] = this.symbol
             }
         }

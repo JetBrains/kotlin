@@ -21,3 +21,6 @@ fun main() {
 
     JavaClass.foo3({ (it + 4).toString() }, 5)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+lambdaLiteral, localProperty, propertyDeclaration */

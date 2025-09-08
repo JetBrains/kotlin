@@ -24,3 +24,6 @@ abstract class My<T : Some> {
 }
 
 abstract class Your<T : Some> : <!SUPERTYPE_NOT_A_CLASS_OR_INTERFACE!>T<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+nestedClass, propertyDeclaration, typeConstraint, typeParameter */

@@ -21,3 +21,6 @@ fun testOperator(i: OperatorHolder) {
     i + <!UNRESOLVED_REFERENCE!>InheritorObject<!>
     i - InheritorObject
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, enumDeclaration, enumEntry, functionDeclaration,
+nestedClass, objectDeclaration, operator, primaryConstructor */

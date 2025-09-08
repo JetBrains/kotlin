@@ -25,7 +25,6 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     shouldDisableKonanDaemon: Provider<Boolean>,
     useXcodeMessageStyle: Provider<Boolean>,
-    isUseEmbeddableCompilerJar: Provider<Boolean>,
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
@@ -37,7 +36,6 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
     kotlinToolSpec(
         shouldDisableKonanDaemon,
         useXcodeMessageStyle,
-        isUseEmbeddableCompilerJar,
         actualNativeHomeDirectory,
         jvmArgs,
         konanPropertiesBuildService,
@@ -49,7 +47,6 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
 private fun ObjectFactory.kotlinToolSpec(
     shouldDisableKonanDaemon: Provider<Boolean>,
     useXcodeMessageStyle: Provider<Boolean>,
-    isUseEmbeddableCompilerJar: Provider<Boolean>,
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
@@ -59,7 +56,7 @@ private fun ObjectFactory.kotlinToolSpec(
     optionalToolName = property("konanc"),
     mainClass = nativeMainClass,
     daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
-    classpath = nativeCompilerClasspath(actualNativeHomeDirectory, isUseEmbeddableCompilerJar),
+    classpath = nativeCompilerClasspath(actualNativeHomeDirectory),
     jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = shouldDisableKonanDaemon,
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),

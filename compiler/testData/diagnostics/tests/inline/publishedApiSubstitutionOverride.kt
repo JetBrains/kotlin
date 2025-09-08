@@ -14,3 +14,6 @@ internal class VirtueNavControllerImpl<R>(
         history.isIgnoringPlatformChanges = true
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, inline, interfaceDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

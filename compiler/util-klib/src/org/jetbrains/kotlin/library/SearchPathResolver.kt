@@ -53,27 +53,8 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
 
         companion object {
             fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? =
-                when {
-                    absoluteLibraryPath.isFile -> {
-                        // It's a really existing file.
-                        when (absoluteLibraryPath.extension) {
-                            KLIB_FILE_EXTENSION -> absoluteLibraryPath
-                            "jar" -> {
-                                // A special workaround for old JS stdlib, that was packed in a JAR file.
-                                absoluteLibraryPath
-                            }
-                            else -> {
-                                // A file with an unexpected extension.
-                                null
-                            }
-                        }
-                    }
-                    absoluteLibraryPath.isDirectory -> {
-                        // It's a really existing directory.
-                        absoluteLibraryPath
-                    }
-                    else -> null
-                }
+                if (!absoluteLibraryPath.isFile && !absoluteLibraryPath.isDirectory) null
+                else absoluteLibraryPath
         }
     }
 
@@ -133,12 +114,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override val searchRoots: List<SearchRoot> by lazy {
         val searchRoots = mutableListOf<SearchRoot?>()
 
-        // Current working dir:
-        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
-
         // Current Kotlin/Native distribution:
         searchRoots += distHead?.let { SearchRoot(searchRootPath = it) }
         searchRoots += distPlatformHead?.let { SearchRoot(searchRootPath = it) }
+
+        // Current working dir:
+        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
 
         searchRoots.filterNotNull()
     }

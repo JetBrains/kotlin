@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
@@ -430,6 +431,11 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
             override val context: TypeSystemInferenceExtensionContext
                 get() = SimpleClassicTypeSystemContext
             var counter = 0
+
+            // This object is in 1:1 correspondence with this `SimpleConstraintSystem`, not just the `context`.
+            // But realistically, it only exists to satisfy the compiler.
+            override val constraintSystemMarker: ConstraintSystemMarker
+                get() = object : ConstraintSystemMarker, TypeSystemInferenceExtensionContext by context {}
 
             override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>): TypeSubstitutor {
                 @Suppress("UNCHECKED_CAST")

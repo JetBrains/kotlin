@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -12,8 +15,8 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -34,7 +38,7 @@ fun createTopLevelClassStub(
     classProto: ProtoBuf.Class,
     source: SourceElement?,
     context: ClsStubBuilderContext,
-    isScript: Boolean
+    isScript: Boolean,
 ): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.packageFqName, isScript)
     createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
@@ -44,10 +48,10 @@ fun createTopLevelClassStub(
 fun createPackageFacadeStub(
     packageProto: ProtoBuf.Package,
     packageFqName: FqName,
-    c: ClsStubBuilderContext
+    c: ClsStubBuilderContext,
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(packageFqName, isScript = false)
-    setupFileStub(fileStub, packageFqName)
+    val fileStub = KotlinFileStubImpl.forFile(packageFqName)
+    setupFileStub(fileStub)
     createPackageDeclarationsStubs(
         fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null), packageProto
     )
@@ -55,14 +59,18 @@ fun createPackageFacadeStub(
 }
 
 fun createFileFacadeStub(
+    packageFqName: FqName,
     packageProto: ProtoBuf.Package,
     facadeFqName: FqName,
     jvmFqName: FqName,
-    c: ClsStubBuilderContext
+    c: ClsStubBuilderContext,
 ): KotlinFileStubImpl {
-    val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName)
-    setupFileStub(fileStub, packageFqName)
+    val fileStub = KotlinFileStubImpl.forFacade(
+        packageFqName = packageFqName,
+        facadeFqName = jvmFqName,
+    )
+
+    setupFileStub(fileStub)
     val container = ProtoContainer.Package(
         packageFqName, c.nameResolver, c.typeTable,
         JvmPackagePartSource(
@@ -73,20 +81,25 @@ fun createFileFacadeStub(
             c.nameResolver
         )
     )
+
     createPackageDeclarationsStubs(fileStub, c, container, packageProto)
     return fileStub
 }
 
 fun createMultifileClassStub(
-    header: KotlinClassHeader,
+    packageFqName: FqName,
     partFiles: List<KotlinJvmBinaryClass>,
-    facadeFqName: FqName,
-    components: ClsStubBuilderComponents
+    jvmFqName: FqName,
+    components: ClsStubBuilderComponents,
 ): KotlinFileStubImpl {
-    val packageFqName = header.packageName?.let { FqName(it) } ?: facadeFqName.parent()
-    val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
-    val fileStub = KotlinFileStubImpl.forMultifileClassStub(packageFqName, facadeFqName, partNames)
-    setupFileStub(fileStub, packageFqName)
+    val partNames = partFiles.map { it.classId.shortClassName.asString() }
+    val fileStub = KotlinFileStubImpl.forMultifileClass(
+        packageFqName = packageFqName,
+        facadeFqName = jvmFqName,
+        partNames = partNames,
+    )
+
+    setupFileStub(fileStub)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
@@ -100,17 +113,26 @@ fun createMultifileClassStub(
     return fileStub
 }
 
-fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT, isScript = false)
-
-fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(packageFqName, isScript)
-    setupFileStub(fileStub, packageFqName)
+fun createIncompatibleAbiVersionFileStub(errorMessage: String): KotlinFileStubImpl {
+    val fileStub = KotlinFileStubImpl.forInvalid(errorMessage)
+    setupFileStub(fileStub)
     return fileStub
 }
 
-private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
+fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
+    val fileStub = if (isScript) {
+        KotlinFileStubImpl.forScript(packageFqName)
+    } else {
+        KotlinFileStubImpl.forFile(packageFqName)
+    }
+
+    setupFileStub(fileStub)
+    return fileStub
+}
+
+private fun setupFileStub(fileStub: KotlinFileStubImpl) {
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtStubElementTypes.PACKAGE_DIRECTIVE)
-    createStubForPackageName(packageDirectiveStub, packageFqName)
+    createStubForPackageName(packageDirectiveStub, fileStub.getPackageFqName())
     KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtStubElementTypes.IMPORT_LIST)
 }
 
@@ -122,14 +144,23 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
         when (iterator.previousIndex()) {
             -1 -> return
             0 -> {
-                KotlinNameReferenceExpressionStubImpl(current, iterator.previous().ref())
+                KotlinNameReferenceExpressionStubImpl(
+                    /* parent = */ current,
+                    /* referencedName = */ iterator.previous().ref(),
+                    /* myClassRef = */ false,
+                )
+
                 return
             }
             else -> {
                 val lastSegment = iterator.previous()
                 val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
-                KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref())
+                KotlinNameReferenceExpressionStubImpl(
+                    /* parent = */ receiver,
+                    /* referencedName = */ lastSegment.ref(),
+                    /* myClassRef = */ false,
+                )
             }
         }
     }
@@ -150,27 +181,42 @@ fun createStubForTypeName(
     parent: StubElement<out PsiElement>,
     abbreviatedType: KotlinClassTypeBean? = null,
     upperBoundFun: ((Int) -> KotlinTypeBean?)? = null,
-    bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
+    bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> },
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
 
-    val fqName = if (substituteWithAny) StandardNames.FqNames.any
-    else typeClassId.asSingleFqName().toUnsafe()
+    val fqName = if (substituteWithAny) {
+        StandardNames.FqNames.any
+    } else {
+        typeClassId.asSingleFqName().toUnsafe()
+    }
 
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
     val classesNestedLevel = segments.size - if (substituteWithAny) 1 else typeClassId.packageFqName.pathSegments().size
 
-    fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
+    fun recCreateStubForType(current: StubElement<*>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
-        val userTypeStub = KotlinUserTypeStubImpl(current, upperBoundFun?.invoke(level), abbreviatedType.takeIf { level == 0 })
+        val userTypeStub = KotlinUserTypeStubImpl(
+            parent = current,
+            upperBound = upperBoundFun?.invoke(level),
+            abbreviatedType = abbreviatedType.takeIf { level == 0 },
+        )
+
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }
-        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < classesNestedLevel)
+
+        KotlinNameReferenceExpressionStubImpl(
+            /* parent = */ userTypeStub,
+            /* referencedName = */ lastSegment.ref(),
+            /* myClassRef = */ level < classesNestedLevel,
+        )
+
         if (!substituteWithAny) {
             bindTypeArguments(userTypeStub, level)
         }
+
         return userTypeStub
     }
 
@@ -180,34 +226,49 @@ fun createStubForTypeName(
 fun createModifierListStubForDeclaration(
     parent: StubElement<out PsiElement>,
     flags: Int,
-    flagsToTranslate: List<FlagsToModifiers> = listOf(),
-    additionalModifiers: List<KtModifierKeywordToken> = listOf()
+    flagsToTranslate: List<FlagsToModifiers>,
+    additionalModifiers: List<KtModifierKeywordToken>,
+    returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>?,
 ): KotlinModifierListStubImpl {
     assert(flagsToTranslate.isNotEmpty())
 
     val modifiers = flagsToTranslate.mapNotNull { it.getModifiers(flags) } + additionalModifiers
-    return createModifierListStub(parent, modifiers)!!
+    return createModifierListStub(
+        parent,
+        modifiers,
+        returnValueStatus?.get(flags) ?: ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+    )!!
 }
 
 fun createModifierListStub(
     parent: StubElement<out PsiElement>,
-    modifiers: Collection<KtModifierKeywordToken>
+    modifiers: Collection<KtModifierKeywordToken>,
+    returnValueStatus: ProtoBuf.ReturnValueStatus,
 ): KotlinModifierListStubImpl? {
     if (modifiers.isEmpty()) {
         return null
     }
+
+    val regularMask = ModifierMaskUtils.computeMask { it in modifiers }
+
+    @OptIn(KtImplementationDetail::class)
+    val specialMask = ModifierMaskUtils.computeMaskForSpecialFlags { flag ->
+        when (flag) {
+            KotlinModifierListStub.SpecialFlag.MustUseReturnValue   -> returnValueStatus == ProtoBuf.ReturnValueStatus.MUST_USE
+            KotlinModifierListStub.SpecialFlag.IgnorableReturnValue -> returnValueStatus == ProtoBuf.ReturnValueStatus.EXPLICITLY_IGNORABLE
+        }
+    }
+
     return KotlinModifierListStubImpl(
         parent,
-        ModifierMaskUtils.computeMask { it in modifiers },
-        KtStubElementTypes.MODIFIER_LIST
+        regularMask or specialMask
     )
 }
 
 fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierListStubImpl {
     return KotlinModifierListStubImpl(
         parent,
-        ModifierMaskUtils.computeMask { false },
-        KtStubElementTypes.MODIFIER_LIST
+        ModifierMaskUtils.computeMask { false }
     )
 }
 
@@ -217,7 +278,7 @@ fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinS
 
 fun createTargetedAnnotationStubs(
     annotations: List<AnnotationWithTarget>,
-    parent: KotlinStubBaseImpl<*>
+    parent: KotlinStubBaseImpl<*>,
 ) {
     if (annotations.isEmpty()) return
 
@@ -225,9 +286,9 @@ fun createTargetedAnnotationStubs(
         val (annotationWithArgs, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
-            shortName = annotationWithArgs.classId.shortClassName.ref(),
+            shortNameRef = annotationWithArgs.classId.shortClassName.ref(),
             hasValueArguments = false,
-            annotationWithArgs.args
+            annotationWithArgs.args,
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -267,10 +328,8 @@ fun Name.ref() = StringRef.fromString(this.asString())!!
 
 fun FqName.ref() = StringRef.fromString(this.asString())!!
 
-fun computeParameterName(name: Name): Name {
-    return when {
-        name == SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
-        SpecialNames.isAnonymousParameterName(name) -> Name.identifier("_")
-        else -> name
-    }
+fun computeParameterName(name: Name): Name = when {
+    name == SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+    name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR || SpecialNames.isAnonymousParameterName(name) -> Name.identifier("_")
+    else -> name
 }

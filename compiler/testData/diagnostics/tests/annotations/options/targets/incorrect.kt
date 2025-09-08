@@ -21,3 +21,7 @@
 }
 
 <!WRONG_ANNOTATION_TARGET!>@incorrect<!> val z = <!WRONG_ANNOTATION_TARGET!>@incorrect<!> 0
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, localFunction, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

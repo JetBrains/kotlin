@@ -6,3 +6,5 @@ class WithC() {
   val a = 1
   val b = a
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

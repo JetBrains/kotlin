@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object JSConfigurationKeys {
@@ -109,6 +108,9 @@ object JSConfigurationKeys {
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
 
     @JvmField
+    val COMPILE_LONG_AS_BIGINT = CompilerConfigurationKey.create<Boolean>("compile Long as BigInt")
+
+    @JvmField
     val GENERATE_REGION_COMMENTS = CompilerConfigurationKey.create<Boolean>("generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA")
 
     @JvmField
@@ -131,9 +133,6 @@ object JSConfigurationKeys {
 
     @JvmField
     val GENERATE_STRICT_IMPLICIT_EXPORT = CompilerConfigurationKey.create<Boolean>("enable strict implicitly exported entities types inside d.ts files")
-
-    @JvmField
-    val ZIP_FILE_SYSTEM_ACCESSOR = CompilerConfigurationKey.create<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
 
     @JvmField
     val OPTIMIZE_GENERATED_JS = CompilerConfigurationKey.create<Boolean>("perform additional optimizations on the generated JS code")
@@ -303,6 +302,10 @@ var CompilerConfiguration.compileLambdasAsEs6ArrowFunctions: Boolean
     get() = getBoolean(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS)
     set(value) { put(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS, value) }
 
+var CompilerConfiguration.compileLongAsBigint: Boolean
+    get() = getBoolean(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT)
+    set(value) { put(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT, value) }
+
 var CompilerConfiguration.generateRegionComments: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
     set(value) { put(JSConfigurationKeys.GENERATE_REGION_COMMENTS, value) }
@@ -334,10 +337,6 @@ var CompilerConfiguration.generateInlineAnonymousFunctions: Boolean
 var CompilerConfiguration.generateStrictImplicitExport: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
     set(value) { put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, value) }
-
-var CompilerConfiguration.zipFileSystemAccessor: ZipFileSystemAccessor?
-    get() = get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
-    set(value) { put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.optimizeGeneratedJs: Boolean
     get() = getBoolean(JSConfigurationKeys.OPTIMIZE_GENERATED_JS)

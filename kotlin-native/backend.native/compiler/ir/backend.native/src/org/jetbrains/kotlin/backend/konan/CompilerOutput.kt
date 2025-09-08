@@ -11,11 +11,17 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.linkRuntimeModules
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
 import org.jetbrains.kotlin.konan.target.supportsLibBacktrace
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
@@ -93,6 +99,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val runtimeModulesConfig = generationState.runtimeModulesConfig
 
     val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
+            .filterNot { it.isCInteropLibrary() && config.cCallMode == CCallMode.Direct }
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()
             .map { libraries ->
@@ -124,6 +131,13 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         add(RuntimeModule.ALLOC_COMMON)
         add(RuntimeModule.GC_COMMON)
         add(RuntimeModule.GC_SCHEDULER_COMMON)
+
+        if (config.target.family == Family.OSX && config.minidumpLocation != null) {
+            add(RuntimeModule.BREAKPAD)
+            add(RuntimeModule.CRASH_HANDLER_IMPL)
+        } else {
+            add(RuntimeModule.CRASH_HANDLER_NOOP)
+        }
         when (config.gcSchedulerType) {
             GCSchedulerType.MANUAL -> {
                 add(RuntimeModule.GC_SCHEDULER_MANUAL)

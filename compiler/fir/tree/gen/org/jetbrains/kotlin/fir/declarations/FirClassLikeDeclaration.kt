@@ -32,6 +32,7 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement, Fir
     abstract override val symbol: FirClassLikeSymbol<FirClassLikeDeclaration>
     abstract val deprecationsProvider: DeprecationsProvider
     abstract val scopeProvider: FirScopeProvider
+    abstract val isLocal: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClassLikeDeclaration(this, data)

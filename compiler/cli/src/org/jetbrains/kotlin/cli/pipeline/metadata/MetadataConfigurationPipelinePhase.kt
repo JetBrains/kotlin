@@ -71,8 +71,8 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         configuration.putIfNotNull(K2MetadataConfigurationKeys.REFINES_PATHS, arguments.refinesPaths?.toList())
 
         configuration.perfManager!!.apply {
-            val mode = if (arguments.metadataKlib) "KLib" else "metadata"
-            targetDescription = "$mode mode for $moduleName module"
+            outputKind = if (arguments.metadataKlib) "KLib" else "metadata"
+            targetDescription = moduleName
         }
 
         val destination = arguments.destination

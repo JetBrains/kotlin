@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>,
-    val strategy: CallInlinerStrategy,
 ) {
     @Suppress("UNCHECKED_CAST")
     private val parametersToSubstitute: Map<IrTypeParameterSymbol, IrType> =
@@ -140,7 +139,7 @@ internal class InlineFunctionBodyPreprocessor(
                 // DeepCopyIrTreeWithSymbols, but that's too invasive.
                 // So we postpone the postprocessor call for a separate run. This shouldn't be a significant performance hit,
                 // as typeOf calls are rare.
-                if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                if (PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
                     // We need to call super.remap here because we need to remap local classes.
                     typeOfNodes[it] = super.remapTypeImpl(reifiedTypeParameterSubstitutor.substitute(expression.typeArguments[0]!!))
                 }
@@ -170,7 +169,9 @@ internal class InlineFunctionBodyPreprocessor(
             return copier.typeOfNodes[expression]?.let { oldType ->
                 // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
                 // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
-                strategy.postProcessTypeOf(expression, nonReifiedTypeParameterUnsubsitutor.substitute(oldType))
+                expression.apply {
+                    typeArguments[0] = nonReifiedTypeParameterUnsubsitutor.substitute(oldType)
+                }
             } ?: expression
         }
     }

@@ -14,3 +14,6 @@ fun test(myA: A) {
         <!DEBUG_INFO_SMARTCAST!>myA<!>.value = 5
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression,
+override, propertyDeclaration, smartcast */

@@ -9,3 +9,6 @@ open class Base<T> {
 }
 
 class Derived: Base<String>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, starProjection, typeConstraint,
+typeParameter */

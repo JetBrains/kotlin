@@ -35,3 +35,5 @@ actual class DerivedExplicit : Base() {
 actual class DerivedExplicitCheck : Base() {
     override fun <!ACTUAL_MISSING!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

@@ -213,7 +213,7 @@ internal fun ObjCExportContext.translateTypeArgumentsToObjC(type: KaType): List<
         when (typeArgument) {
             is KaStarTypeProjection -> ObjCIdType
             is KaTypeArgumentWithVariance -> {
-                val isNullable = with(analysisSession) { typeArgument.type.canBeNull }
+                val isNullable = with(analysisSession) { typeArgument.type.isNullable }
                 /*
                 Kotlin `null` keys and values are represented as `NSNull` singleton in collections
                 */

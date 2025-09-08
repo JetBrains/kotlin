@@ -22,3 +22,7 @@ fun Int.g(v: View) {
 fun h() {
     123.<!NO_CONTEXT_RECEIVER!>dp<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+lambdaLiteral, multiplicativeExpression, propertyDeclaration, propertyDeclarationWithContext,
+propertyWithExtensionReceiver, thisExpression */

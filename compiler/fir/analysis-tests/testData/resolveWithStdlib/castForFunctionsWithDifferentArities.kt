@@ -8,3 +8,5 @@ fun test(b: Boolean, block1: Any.() -> Unit, block2: (Any.(Any?) -> Unit)?) {
         requireNotNull(block2)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, nullableType, typeWithExtension */

@@ -25,3 +25,6 @@ fun test() {
 
     <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>multiple<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, interfaceDeclaration, intersectionType,
+localProperty, nullableType, propertyDeclaration, typeParameter */

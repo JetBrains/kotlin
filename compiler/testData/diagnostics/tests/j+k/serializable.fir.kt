@@ -59,3 +59,6 @@ public class A {
     public static void use(java.io.Serializable s) { }
     public static void useList(java.util.List<? extends java.io.Serializable> s) { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, javaFunction,
+starProjection, stringLiteral */

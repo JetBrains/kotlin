@@ -3,3 +3,6 @@
 object C {
     fun foo(): String?? = ""!! <!USELESS_CAST!>as String??<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, functionDeclaration, nullableType, objectDeclaration,
+stringLiteral */

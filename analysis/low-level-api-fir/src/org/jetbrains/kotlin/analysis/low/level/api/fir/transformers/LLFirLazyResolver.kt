@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirPartialBodyResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
@@ -32,7 +33,10 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
         )
 
         resolver.resolveDesignation()
-        target.forEachTarget(::checkIsResolved)
+
+        if (target !is LLFirPartialBodyResolveTarget) {
+            target.forEachTarget(::checkIsResolved)
+        }
 
         checkCanceled()
     }

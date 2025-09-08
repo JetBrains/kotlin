@@ -8,3 +8,6 @@ fun test() {
     val x: Int = select()
     val t = <!CANNOT_INFER_PARAMETER_TYPE!>select<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeParameter */

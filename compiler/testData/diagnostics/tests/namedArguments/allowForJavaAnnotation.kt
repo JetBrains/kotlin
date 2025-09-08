@@ -12,3 +12,5 @@ public @interface A {
 
 @A(x = 1, y = "2")
 fun test() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType, stringLiteral */

@@ -31,3 +31,6 @@ val test6 = Outer.Nested
 val test7 = Outer.Inner
 
 val test8 = Outer.Obj
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, inner, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, typeParameter */

@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static org.jetbrains.kotlin.maven.Util.getMavenPluginVersion;
+
 public class AnnotationProcessingManager {
     private final ArtifactHandlerManager artifactHandlerManager;
     private final MavenSession session;
@@ -189,26 +191,6 @@ public class AnnotationProcessingManager {
             }
         }
         return version;
-    }
-
-    @NotNull
-    private static String getMavenPluginVersion() throws MojoExecutionException {
-        ClassLoader classLoader = AnnotationProcessingManager.class.getClassLoader();
-        InputStream pomPropertiesIs = classLoader.getResourceAsStream(
-                "META-INF/maven/org.jetbrains.kotlin/kotlin-maven-plugin/pom.properties");
-        if (pomPropertiesIs == null) {
-            throw new MojoExecutionException("Can't resolve the version of kotlin-maven-plugin");
-        }
-
-        Properties properties = new Properties();
-        try {
-            properties.load(pomPropertiesIs);
-        }
-        catch (IOException e) {
-            throw new MojoExecutionException("Error while reading kotlin-maven-plugin/pom.properties", e);
-        }
-
-        return properties.getProperty("version");
     }
 
     class ResolvedArtifacts {

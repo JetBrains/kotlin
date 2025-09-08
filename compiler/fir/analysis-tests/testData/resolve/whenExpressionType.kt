@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 /*
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-37091
@@ -110,3 +111,5 @@ fun case9() {
     val x1 = C(l1)
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+localProperty, primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

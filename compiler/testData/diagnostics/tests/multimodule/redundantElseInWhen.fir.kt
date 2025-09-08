@@ -44,3 +44,6 @@ fun baz(b: Boolean) = when (b) {
     // Still warning
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, isExpression, nullableType, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

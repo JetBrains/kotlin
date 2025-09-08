@@ -11,3 +11,5 @@ actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class A<!>
 
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class B<!>
 actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class B<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

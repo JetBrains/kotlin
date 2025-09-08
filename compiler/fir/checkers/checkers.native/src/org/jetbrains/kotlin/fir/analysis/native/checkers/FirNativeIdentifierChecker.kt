@@ -27,18 +27,22 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
     override fun check(declaration: FirDeclaration) {
         val source = declaration.source
         when (declaration) {
-            is FirRegularClass -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirSimpleFunction -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeParameter -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirProperty -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeAlias -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirValueParameter -> checkNameAndReport(declaration.name, source, context, reporter)
-            is FirEnumEntry -> checkNameAndReport(declaration.name, source, context, reporter)
+            is FirRegularClass -> checkNameAndReport(declaration.name, source)
+            is FirSimpleFunction -> checkNameAndReport(declaration.name, source)
+            is FirTypeParameter -> checkNameAndReport(declaration.name, source)
+            is FirProperty -> checkNameAndReport(declaration.name, source)
+            is FirTypeAlias -> checkNameAndReport(declaration.name, source)
+            is FirValueParameter -> checkNameAndReport(declaration.name, source)
+            is FirEnumEntry -> checkNameAndReport(declaration.name, source)
             else -> return
         }
     }
 
-    internal fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    internal fun checkNameAndReport(
+        name: Name,
+        source: KtSourceElement?,
+    ) {
         if (source != null && source.kind !is KtFakeSourceElementKind && !name.isSpecial) {
             val text = name.asString()
             val message = when {
@@ -49,7 +53,7 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
             }
 
             if (message != null) {
-                reporter.reportOn(source, FirNativeErrors.INVALID_CHARACTERS_NATIVE, message, context)
+                reporter.reportOn(source, FirNativeErrors.INVALID_CHARACTERS_NATIVE, message)
             }
         }
     }

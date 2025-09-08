@@ -98,3 +98,7 @@ fun testSmartcast(foo: Any, bar: Any) {
         bar.e()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, data, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, isExpression, localProperty, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral, thisExpression */

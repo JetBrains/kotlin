@@ -27,3 +27,6 @@ class Controller {
 
     suspend fun String.memberExtension() = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inline, integerLiteral,
+stringLiteral, suspend, vararg */

@@ -12,3 +12,5 @@ interface D2<<!FINITE_BOUNDS_VIOLATION!>T<!>, U> where T : U?, U: D2<*, *>
 interface D3<<!FINITE_BOUNDS_VIOLATION!>T<!>, U, V> where T : U, U : V, V: D3<*, *, V>
 
 interface A<T, U> where T : A<U, T>, U: A<T, A<in U, T>>
+
+/* GENERATED_FIR_TAGS: inProjection, interfaceDeclaration, nullableType, starProjection, typeConstraint, typeParameter */

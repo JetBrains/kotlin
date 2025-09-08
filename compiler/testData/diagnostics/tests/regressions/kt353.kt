@@ -31,3 +31,6 @@ fun foo(a: A) {
 
     a.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>gen<!>() // Shouldn't work: no info for inference
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

@@ -8,3 +8,6 @@ class Out<out T>(val x: T) {
 fun test(out: Out<String>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>extract(out)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, out, primaryConstructor, propertyDeclaration,
+typeParameter */

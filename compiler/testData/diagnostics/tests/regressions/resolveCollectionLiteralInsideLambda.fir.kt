@@ -6,3 +6,5 @@ fun bar(l: () -> String) {}
 
 val a = foo { <!UNSUPPORTED!>[]<!> }
 val b = bar { <!RETURN_TYPE_MISMATCH, UNSUPPORTED!>[]<!> }
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration */

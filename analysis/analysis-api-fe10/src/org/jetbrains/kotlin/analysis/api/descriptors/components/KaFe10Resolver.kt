@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.utils.checkWithAttachment
 internal class KaFe10Resolver(
     override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseResolver<KaFe10Session>(), KaFe10SessionComponent {
-    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
+    override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
         if (this !is KtSimpleNameReference) {
             return false
         }
@@ -77,7 +77,7 @@ internal class KaFe10Resolver(
         return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
-    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
+    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
     }
 

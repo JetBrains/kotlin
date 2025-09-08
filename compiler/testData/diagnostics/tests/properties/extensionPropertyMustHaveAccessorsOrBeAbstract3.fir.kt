@@ -11,3 +11,6 @@ var i: Int = TODO()
 
 <!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var A.i: Int<!>
     get() = 0
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, propertyDeclaration, propertyWithExtensionReceiver,
+thisExpression */

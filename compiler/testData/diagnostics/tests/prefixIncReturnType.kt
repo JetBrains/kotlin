@@ -14,3 +14,6 @@ var topLevel: I
 fun main() {
     val x: ST = ++topLevel
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, incrementDecrementExpression,
+localProperty, operator, propertyDeclaration, setter */

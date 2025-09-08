@@ -36,3 +36,6 @@ fun B.test() {
         "".getParent()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nullableType, override, smartcast, stringLiteral, thisExpression */

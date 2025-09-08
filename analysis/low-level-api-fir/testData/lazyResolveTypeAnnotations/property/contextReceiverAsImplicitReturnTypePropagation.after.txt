@@ -1,14 +1,14 @@
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirPropertySymbol /bar
-  anchor -> [FirValueParameterSymbol <local>/List from FirPropertySymbol /foo]
+  context -> FirRegularPropertySymbol /bar
+  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /bar
-  anchor -> [FirValueParameterSymbol <local>/List from FirPropertySymbol /foo]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /bar
+  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
 
 @R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /bar
-  anchor -> [FirValueParameterSymbol <local>/List from FirPropertySymbol /foo]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /bar
+  anchor -> [FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol /foo]] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /foo]] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>| {
             ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
         }

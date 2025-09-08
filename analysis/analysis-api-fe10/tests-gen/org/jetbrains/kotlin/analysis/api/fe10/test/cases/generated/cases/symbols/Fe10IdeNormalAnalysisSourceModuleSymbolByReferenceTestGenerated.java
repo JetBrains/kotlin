@@ -431,6 +431,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("libraryNestedTypeAlias.kt")
+  public void testLibraryNestedTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryNestedTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("libraryProperty.kt")
   public void testLibraryProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryProperty.kt");
@@ -608,6 +614,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   @TestMetadata("syntheticProperty.kt")
   public void testSyntheticProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("syntheticPropertyNoJavaOrigin.kt")
+  public void testSyntheticPropertyNoJavaOrigin() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticPropertyNoJavaOrigin.kt");
   }
 
   @Test

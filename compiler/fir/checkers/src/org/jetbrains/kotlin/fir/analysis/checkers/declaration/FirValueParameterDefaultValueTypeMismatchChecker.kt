@@ -20,6 +20,6 @@ object FirValueParameterDefaultValueTypeMismatchChecker : FirValueParameterCheck
         val source = requireNotNull(declaration.source)
         val parameterType = declaration.returnTypeRef.coneType
 
-        checkTypeMismatch(parameterType, null, defaultValue, context, source, reporter, true)
+        checkTypeMismatch(parameterType, null, defaultValue, source, true)
     }
 }

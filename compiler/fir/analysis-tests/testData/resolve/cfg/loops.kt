@@ -67,3 +67,6 @@ fun testDoWhileFalse() {
     } while (false)
     1
 }
+
+/* GENERATED_FIR_TAGS: break, doWhileLoop, forLoop, functionDeclaration, ifExpression, integerLiteral, isExpression,
+localProperty, nullableType, propertyDeclaration, rangeExpression, whileLoop */

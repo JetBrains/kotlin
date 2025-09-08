@@ -66,3 +66,6 @@ class InitOpenAndInterfaceViaImplicit : OpenBase(), InterfaceBase {
         <!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, interfaceDeclaration, nullableType, propertyDeclaration,
+stringLiteral, superExpression, thisExpression, typeParameter */

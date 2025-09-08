@@ -15,3 +15,6 @@ fun myFun() {
 
     myParent.child.notNull   // <- No smart cast in plugin
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral */

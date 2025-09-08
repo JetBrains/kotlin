@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FIR_DUMP
@@ -11,7 +12,7 @@ fun main() {
     val copy = data.copy(value)
     val prop: Alias = data.prop
     val component1: Alias = data.component1()
-    val (destructuring: Alias) = (data)
+    val [destructuring: Alias] = (data)
 }
 
 class MyClass
@@ -19,3 +20,6 @@ class MyClass
 data class MyDataClass(val prop: MyClass) {
     class MyClass
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, localProperty, nestedClass,
+primaryConstructor, propertyDeclaration */

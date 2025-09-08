@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public class Base {
+    // source: 'hiddenWithJavaDeprecation.kt'
+    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="", level=HIDDEN) @java.lang.Deprecated method f(): void
+}

@@ -24,3 +24,7 @@ class C(p: Any, val v: Any) {
 
     <!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>lateinit var test6<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, lambdaLiteral, lateinit, nullableType,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver,
+setter, stringLiteral, typeParameter */

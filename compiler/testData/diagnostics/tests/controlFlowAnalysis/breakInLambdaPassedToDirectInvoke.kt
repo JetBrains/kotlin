@@ -9,3 +9,5 @@ fun test() {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: break, functionDeclaration, functionalType, lambdaLiteral, whileLoop */

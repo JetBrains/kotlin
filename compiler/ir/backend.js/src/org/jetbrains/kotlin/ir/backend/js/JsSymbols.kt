@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
+import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.TEXT_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
@@ -14,20 +16,18 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds.BASE_JS_PACKAGE
 
+// TODO KT-77388 rename to `BackendWebSymbolsImpl`
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
-) : Symbols(irBuiltIns) {
+) : PreSerializationWebSymbols, KlibSymbols(irBuiltIns) {
     @OptIn(InternalSymbolFinderAPI::class)
     val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.symbolFinder)
 }
@@ -37,7 +37,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val intrinsics: JsIntrinsics,
-) : JsCommonSymbols(irBuiltIns) {
+) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
     override val throwNullPointerException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
@@ -48,17 +48,8 @@ class JsSymbols(
     override val throwTypeCastException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_CCE")
 
-    override val throwUninitializedPropertyAccessException =
-        symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
-
-    override val throwUnsupportedOperationException =
-        symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUnsupportedOperationException")
-
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
-
-    override val defaultConstructorMarker =
-        symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
     override val throwISE: IrSimpleFunctionSymbol =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_ISE")
@@ -85,15 +76,11 @@ class JsSymbols(
 
     override val continuationClass = coroutineSymbols.continuationClass
 
-    override val coroutineContextGetter = coroutineSymbols.coroutineContextGetter
-
-    override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
-
-    override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, GET_COROUTINE_CONTEXT_NAME)
-
     override val returnIfSuspended = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, "returnIfSuspended")
 
     override val functionAdapter = symbolFinder.topLevelClass(BASE_JS_PACKAGE, "FunctionAdapter")
+
+    override val defaultConstructorMarker = symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
     override fun functionN(n: Int): IrClassSymbol {
         return stageController.withInitialIr { super.functionN(n) }
@@ -118,39 +105,10 @@ class JsSymbols(
             }
         }
 
-    private val getProgressionLastElementSymbols =
-        symbolFinder.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
-
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
-    }
-
-    private val toUIntSymbols = symbolFinder.findFunctions(Name.identifier("toUInt"), "kotlin")
-
-    override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        toUIntSymbols.associateBy {
-            it.owner.parameters[0].type.classifierOrFail
-        }
-    }
-
-    private val toULongSymbols = symbolFinder.findFunctions(Name.identifier("toULong"), "kotlin")
-
-    override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        toULongSymbols.associateBy {
-            it.owner.parameters[0].type.classifierOrFail
-        }
-    }
-
     override fun isSideEffectFree(call: IrCall): Boolean =
         call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
                 call.symbol == intrinsics.arrayLiteral ||
                 call.symbol == intrinsics.arrayConcat ||
                 call.symbol == intrinsics.jsBoxIntrinsic ||
                 call.symbol == intrinsics.jsUnboxIntrinsic
-
-    companion object {
-        // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
-        private const val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
-        private const val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
-    }
 }

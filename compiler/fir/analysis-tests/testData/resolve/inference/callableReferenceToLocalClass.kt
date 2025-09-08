@@ -6,3 +6,7 @@ fun test_1() {
     val datas: List<Data> = null!!
     val xs = datas.myMap(Data::x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+typeParameter */

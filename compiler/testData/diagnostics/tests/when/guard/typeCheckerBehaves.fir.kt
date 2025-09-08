@@ -32,7 +32,7 @@ fun capturedTypesBoundedByBoolean(x: Any, outProjectedBox: InvariantBox<out Bool
 fun <T:<!FINAL_UPPER_BOUND!>Boolean<!>> typeVariablesBoundedByBoolean(x: T) {
     <!NO_ELSE_IN_WHEN!>when<!> (x) {
         is Boolean if x -> 250
-        is String if x -> 270
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> if x -> 270
         is BooleanAlias if x -> 20
     }
 }
@@ -52,3 +52,8 @@ fun typeCheckerBehavior(x: Any, y: Any) {
         is Boolean if <!CONDITION_TYPE_MISMATCH!><!INAPPLICABLE_CANDIDATE!>OuterBoundedBooleanHolder<!><<!UPPER_BOUND_VIOLATED!>CharSequence<!>>(true).getValue()<!> -> 600
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, capturedType, classDeclaration, equalityExpression, functionDeclaration,
+guardCondition, in, inProjection, integerLiteral, intersectionType, isExpression, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, typeAliasDeclaration, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

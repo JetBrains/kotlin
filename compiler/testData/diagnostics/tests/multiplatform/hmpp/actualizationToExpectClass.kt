@@ -21,3 +21,6 @@ actual var commonProp: Common = null!!
 
 actual fun intermediateFun(a: Common, b: Intermediate) {}
 actual var intermediateProp: Intermediate = null!!
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, functionDeclaration, propertyDeclaration,
+typeAliasDeclaration */

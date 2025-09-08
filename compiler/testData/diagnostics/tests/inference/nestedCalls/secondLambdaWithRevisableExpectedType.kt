@@ -26,3 +26,7 @@ fun <F : Element> foo(
 
 open class Element
 class SomeElement : Element()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, out, primaryConstructor, propertyDeclaration, safeCall, thisExpression, typeConstraint, typeParameter,
+typeWithExtension */

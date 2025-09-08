@@ -20,3 +20,7 @@ fun test() {
     Foo.valueOf("") checkType { _<Foo>() }
     Foo.Companion.valueOf("") checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, nullableType, objectDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

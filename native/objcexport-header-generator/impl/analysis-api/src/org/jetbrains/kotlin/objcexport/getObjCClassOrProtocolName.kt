@@ -43,25 +43,13 @@ fun ObjCExportContext.getObjCClassOrProtocolName(
     )
 }
 
-fun ObjCExportContext.getObjCClassOrProtocolNameOld(
-    classSymbol: KaClassLikeSymbol,
-    bareName: Boolean = false,
-): ObjCExportClassOrProtocolName {//KtObjCExportSession
-    val resolvedObjCNameAnnotation = classSymbol.resolveObjCNameAnnotation()
-
-    return ObjCExportClassOrProtocolName(
-        objCName = getObjCName(classSymbol, resolvedObjCNameAnnotation, bareName),
-        swiftName = getSwiftName(classSymbol, resolvedObjCNameAnnotation, bareName)
-    )
-}
-
 private fun ObjCExportContext.getObjCName(
     symbol: KaClassLikeSymbol,
-    resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = symbol.resolveObjCNameAnnotation(),
+    resolvedObjCNameAnnotation: ObjCExportObjCNameAnnotation? = symbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
     val objCName =
-        (resolvedObjCNameAnnotation?.objCName ?: exportSession.exportSessionSymbolNameOrAnonymous(symbol)).toValidObjCSwiftIdentifier()
+        exportSession.overrideObjCNameOrSymbolName(symbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
@@ -81,16 +69,18 @@ private fun ObjCExportContext.getObjCName(
     }
 }
 
+/**
+ * See K1 implementation at [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getClassOrProtocolSwiftName]
+ */
 private fun ObjCExportContext.getSwiftName(
     classSymbol: KaClassLikeSymbol,
-    resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
+    objCNameAnnotation: ObjCExportObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
 
-
-    val swiftName = (resolvedObjCNameAnnotation?.swiftName
-        ?: exportSession.exportSessionSymbolNameOrAnonymous(classSymbol)).toValidObjCSwiftIdentifier()
-    if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
+    val swiftName = objCNameAnnotation?.swiftName
+        ?: exportSession.overrideObjCNameOrSymbolName(classSymbol, objCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
+    if (bareName || objCNameAnnotation != null && objCNameAnnotation.isExact) {
         return swiftName
     }
 

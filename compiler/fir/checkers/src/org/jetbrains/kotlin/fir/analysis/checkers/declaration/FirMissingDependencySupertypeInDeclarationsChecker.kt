@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.types.typeContext
 
 /**
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
@@ -27,7 +28,7 @@ object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationC
 
         if (declaration is FirTypeParameterRefsOwner) {
             for (typeParameter in declaration.typeParameters) {
-                for (upperBound in typeParameter.toConeType().collectUpperBounds()) {
+                for (upperBound in typeParameter.toConeType().collectUpperBounds(context.session.typeContext)) {
                     checkMissingDependencySuperTypes(upperBound, typeParameter.source)
                 }
             }

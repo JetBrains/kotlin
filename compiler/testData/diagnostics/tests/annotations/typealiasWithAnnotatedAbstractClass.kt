@@ -13,3 +13,6 @@ typealias TestAnnGen3 = AnnGenList<@Ann1 String> // KT-62602: should REPEATED_AN
 
 fun useAnnGen1(x: TestAnnGen1) = x
 fun useAnnGen2(x: TestAnnGen2) = x
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, nullableType, typeAliasDeclaration,
+typeParameter */

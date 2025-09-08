@@ -35,3 +35,6 @@ fun main() {
     baz.execute(Unit)
     baz.execute()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, in, interfaceDeclaration,
+localProperty, nullableType, out, override, propertyDeclaration, stringLiteral, typeParameter */

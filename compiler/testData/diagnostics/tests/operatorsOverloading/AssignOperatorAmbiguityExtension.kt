@@ -21,3 +21,6 @@ class C {
         return map[""]
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+nullableType, operator, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

@@ -11,3 +11,6 @@ fun <V> outToOut(x: Inv<out V>): Inv<out V> = TODO()
 fun test(invOutAny: Inv<out Any>, invAny: Inv<Any>) {
     val a: Inv<out Any> = select(invAny, outToOut(invOutAny))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, outProjection,
+propertyDeclaration, typeParameter */

@@ -208,8 +208,6 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
     }
 
     @DisplayName("Multiplatform project with Java plugin applied could be resolved in all configurations")
-    // we muted this test for Gradle version higher than 8.7 because of KT-69814
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_7)
     @GradleTest
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions

@@ -11,3 +11,6 @@ fun box(): String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

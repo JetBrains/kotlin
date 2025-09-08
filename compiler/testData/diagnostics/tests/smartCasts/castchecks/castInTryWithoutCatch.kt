@@ -18,3 +18,5 @@ fun castInTryAndFinally(s: Any) {
     }
     <!DEBUG_INFO_SMARTCAST!>s<!>.length // Should be smartcast
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, smartcast, tryExpression */

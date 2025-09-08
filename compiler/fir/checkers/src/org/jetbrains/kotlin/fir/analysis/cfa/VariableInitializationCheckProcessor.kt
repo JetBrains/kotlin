@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -29,35 +30,34 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.RenderingInternals
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class VariableInitializationCheckProcessor {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     fun check(
         data: VariableInitializationInfoData,
         isForInitialization: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val filtered = filterProperties(data, isForInitialization)
         if (filtered.isEmpty()) return
 
         data.runCheck(
-            data.graph, filtered, context, reporter, scope = null,
+            data.graph, filtered, scope = null,
             isForInitialization,
             doNotReportUninitializedVariable = false,
             doNotReportConstantUninitialized = true,
-            scopes = mutableMapOf(),
+            scopes = hashMapOf(),
         )
     }
 
-    // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+// TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
     private fun VariableInitializationInfoData.runCheck(
         graph: ControlFlowGraph,
         properties: Set<FirVariableSymbol<*>>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         scope: FirDeclaration?,
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
@@ -66,17 +66,16 @@ abstract class VariableInitializationCheckProcessor {
     ) {
         for (node in graph.nodes) {
             if (node.isUnion) {
-                processUnionNode(node, properties, context, reporter)
+                processUnionNode(node, properties)
             }
 
             when (node) {
                 is VariableDeclarationNode -> processVariableDeclaration(node, scope, properties, scopes)
-                is VariableAssignmentNode -> processVariableAssignment(node, properties, reporter, context, scope, scopes)
+                is VariableAssignmentNode -> processVariableAssignment(node, properties, scope, scopes)
                 is QualifiedAccessNode -> processQualifiedAccess(
                     node, node.fir, properties,
                     doNotReportUninitializedVariable,
-                    doNotReportConstantUninitialized,
-                    reporter, context
+                    doNotReportConstantUninitialized
                 )
                 is FunctionCallEnterNode -> {
                     val call = node.fir
@@ -88,15 +87,14 @@ abstract class VariableInitializationCheckProcessor {
                             processQualifiedAccess(
                                 receiverExitNode, receiver, properties,
                                 doNotReportUninitializedVariable,
-                                doNotReportConstantUninitialized,
-                                reporter, context
+                                doNotReportConstantUninitialized
                             )
                         }
                     }
                 }
                 is CFGNodeWithSubgraphs<*> -> {
                     processSubGraphs(
-                        graph, node, properties, context, reporter,
+                        graph, node, properties,
                         scope, isForInitialization,
                         doNotReportUninitializedVariable,
                         doNotReportConstantUninitialized,
@@ -108,11 +106,10 @@ abstract class VariableInitializationCheckProcessor {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun VariableInitializationInfoData.processUnionNode(
         node: CFGNode<*>,
         properties: Set<FirVariableSymbol<*>>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         fun CFGNode<*>.reportErrorsOnInitializationsInInputs(
             symbol: FirVariableSymbol<*>,
@@ -120,13 +117,13 @@ abstract class VariableInitializationCheckProcessor {
             visited: PersistentSet<CFGNode<*>>,
         ) {
             val newVisited = visited.add(this)
-            require(newVisited !== visited) { buildRecursionErrorMessage(this, symbol, context) }
+            require(newVisited !== visited) { buildRecursionErrorMessage(this, symbol) }
 
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
-                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
+                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.range?.location) {
                     is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
-                    is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol, reporter, context)
+                    is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
                         assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path, newVisited)
                 }
@@ -137,11 +134,11 @@ abstract class VariableInitializationCheckProcessor {
             if (path == CapturedByValue) continue // CaptureByValue path does not contain enough information for captured initialization checks.
 
             for ((symbol, range) in data) {
-                if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
+                if (!symbol.isVal || !range.range.canBeRevisited() || symbol !in properties) continue
                 // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
                 // At each assignment it was only considered in isolation, but now that we're merging their control flows,
                 // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
-                if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
+                if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.range?.canBeRevisited() != true }) {
                     node.reportErrorsOnInitializationsInInputs(symbol, path, visited = persistentSetOf())
                 }
             }
@@ -162,11 +159,10 @@ abstract class VariableInitializationCheckProcessor {
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun VariableInitializationInfoData.processVariableAssignment(
         node: VariableAssignmentNode,
         properties: Set<FirVariableSymbol<*>>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
         scope: FirDeclaration?,
         scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
     ) {
@@ -174,37 +170,45 @@ abstract class VariableInitializationCheckProcessor {
         if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver(this) != true || symbol !in properties) return
 
         val info = getValue(node)
+        val isRevisited = info.values.any { it[symbol]?.range?.canBeRevisited() == true }
+
+        // If the variable has an initializer, this is definitely a reassignment if revisited.
+        // Otherwise, prefer reporting captured or non-inline initialization before falling back
+        // to reporting reassignment.
         when {
-            info.values.any { it[symbol]?.canBeRevisited() == true } -> {
-                reportValReassignment(node, symbol, reporter, context)
+            isRevisited && symbol.resolvedInitializer != null -> {
+                reportValReassignment(node, symbol)
             }
             scope != scopes[symbol] -> {
-                reportCapturedInitialization(node, symbol, reporter, context)
+                reportCapturedInitialization(node, symbol)
             }
             !symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session)) -> {
                 // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
                 // backend generates either separate function or separate class for the lambda.
                 // If we try to initialize non-static final field there, we will get exception at
                 // runtime, since we can initialize such fields only inside constructors.
-                reportNonInlineMemberValInitialization(node, symbol, reporter, context)
+                reportNonInlineMemberValInitialization(node, symbol)
+            }
+            isRevisited -> {
+                reportValReassignment(node, symbol)
             }
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun VariableInitializationInfoData.processQualifiedAccess(
         node: CFGNode<*>,
         expression: FirQualifiedAccessExpression,
         properties: Set<FirVariableSymbol<*>>,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         if (doNotReportUninitializedVariable) return
         if (expression is FirWhenSubjectExpression) return
         if (expression.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) return
         val symbol = expression.calleeReference.toResolvedVariableSymbol() ?: return
         if (doNotReportConstantUninitialized && symbol.isConst) return
+        if (symbol.source?.kind != KtRealSourceElementKind) return
         if (
             !symbol.isLateInit &&
             !symbol.isExternal &&
@@ -212,22 +216,21 @@ abstract class VariableInitializationCheckProcessor {
             symbol in properties &&
             !symbol.isInitializedAt(node, data = this)
         ) {
-            reportUninitializedVariable(reporter, expression, symbol, context)
+            reportUninitializedVariable(expression, symbol)
         }
     }
 
     private fun FirVariableSymbol<*>.isInitializedAt(node: CFGNode<*>, data: VariableInitializationInfoData): Boolean {
         return data.getValue(node).all { (key, value) ->
-            (key == CapturedByValue && !isCapturedByValue) || value[this]?.isDefinitelyVisited() == true
+            (key == CapturedByValue && !isCapturedByValue) || value[this]?.range?.isDefinitelyVisited() == true
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun VariableInitializationInfoData.processSubGraphs(
         graph: ControlFlowGraph,
         node: CFGNodeWithSubgraphs<*>,
         properties: Set<FirVariableSymbol<*>>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         scope: FirDeclaration?,
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
@@ -253,7 +256,7 @@ abstract class VariableInitializationCheckProcessor {
 
             val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
             runCheck(
-                subGraph, properties, context, reporter, newScope,
+                subGraph, properties, newScope,
                 isForInitialization,
                 doNotReportUninitializedVariable = doNotReportUninitializedVariable || doNotReportForSubGraph,
                 doNotReportConstantUninitialized = doNotReportConstantUninitialized && !isSubGraphConstProperty,
@@ -264,32 +267,28 @@ abstract class VariableInitializationCheckProcessor {
 
     // ------------------------------------ reporting ------------------------------------
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     )
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun reportUninitializedVariable(
-        reporter: DiagnosticReporter,
         expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
-        context: CheckerContext,
     )
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     )
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun reportValReassignment(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     )
 
     // ------------------------------------ utilities ------------------------------------
@@ -344,10 +343,10 @@ private val FirVariableSymbol<*>.isLocal: Boolean
 val FirVariableSymbol<*>.isCapturedByValue: Boolean
     get() = isVal && isLocal
 
+context(context: CheckerContext)
 fun buildRecursionErrorMessage(
     problemNode: CFGNode<*>,
     symbol: FirVariableSymbol<*>,
-    context: CheckerContext,
 ): String {
     return buildString {
         appendLine("Node has already been visited and could result in infinite recursion.")
@@ -369,7 +368,7 @@ private fun CFGNode<*>.firstGraphDeclaration(): FirDeclaration? {
     return owner.enterNode.previousNodes.firstNotNullOfOrNull { it.firstGraphDeclaration() }
 }
 
-@OptIn(SymbolInternals::class)
+@OptIn(SymbolInternals::class, RenderingInternals::class)
 private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
     return when (val fir = this.fir) {
         is FirFile -> fir.packageFqName.child(Name.identifier(fir.name))
@@ -378,7 +377,7 @@ private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
         is FirClassLikeDeclaration -> fir.symbol.classId.asSingleFqName()
         is FirTypeParameter -> fir.containingDeclarationSymbol.getDebugFqName().child(fir.name)
         is FirAnonymousInitializer -> fir.containingDeclarationSymbol.getDebugFqName().child(Name.special("<init>"))
-        is FirCallableDeclaration -> fir.symbol.callableId.asFqNameForDebugInfo()
+        is FirCallableDeclaration -> fir.symbol.callableIdForRendering.asFqNameForDebugInfo()
         is FirCodeFragment -> FqName.topLevel(Name.special("<fragment>"))
         is FirDanglingModifierList -> FqName.topLevel(Name.special("<dangling>"))
         is FirReceiverParameter -> FqName.topLevel(Name.special("<extension-receiver-parameter>"))

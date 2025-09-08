@@ -115,13 +115,21 @@ public final class IrLocalDelegatedPropertyReference extends
   public static final int DELEGATE_FIELD_NUMBER = 1;
   private long delegate_;
   /**
-   * <code>required int64 delegate = 1;</code>
+   * <code>optional int64 delegate = 1;</code>
+   *
+   * <pre>
+   * Was required before 2.3.0.
+   * </pre>
    */
   public boolean hasDelegate() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int64 delegate = 1;</code>
+   * <code>optional int64 delegate = 1;</code>
+   *
+   * <pre>
+   * Was required before 2.3.0.
+   * </pre>
    */
   public long getDelegate() {
     return delegate_;
@@ -200,10 +208,6 @@ public final class IrLocalDelegatedPropertyReference extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasDelegate()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!hasSymbol()) {
       memoizedIsInitialized = 0;
       return false;
@@ -433,10 +437,6 @@ public final class IrLocalDelegatedPropertyReference extends
     }
 
     public final boolean isInitialized() {
-      if (!hasDelegate()) {
-        
-        return false;
-      }
       if (!hasSymbol()) {
         
         return false;
@@ -465,19 +465,31 @@ public final class IrLocalDelegatedPropertyReference extends
 
     private long delegate_ ;
     /**
-     * <code>required int64 delegate = 1;</code>
+     * <code>optional int64 delegate = 1;</code>
+     *
+     * <pre>
+     * Was required before 2.3.0.
+     * </pre>
      */
     public boolean hasDelegate() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int64 delegate = 1;</code>
+     * <code>optional int64 delegate = 1;</code>
+     *
+     * <pre>
+     * Was required before 2.3.0.
+     * </pre>
      */
     public long getDelegate() {
       return delegate_;
     }
     /**
-     * <code>required int64 delegate = 1;</code>
+     * <code>optional int64 delegate = 1;</code>
+     *
+     * <pre>
+     * Was required before 2.3.0.
+     * </pre>
      */
     public Builder setDelegate(long value) {
       bitField0_ |= 0x00000001;
@@ -486,7 +498,11 @@ public final class IrLocalDelegatedPropertyReference extends
       return this;
     }
     /**
-     * <code>required int64 delegate = 1;</code>
+     * <code>optional int64 delegate = 1;</code>
+     *
+     * <pre>
+     * Was required before 2.3.0.
+     * </pre>
      */
     public Builder clearDelegate() {
       bitField0_ = (bitField0_ & ~0x00000001);

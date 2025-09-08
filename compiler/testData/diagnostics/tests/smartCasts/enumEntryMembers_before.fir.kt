@@ -18,3 +18,6 @@ fun printMessages() {
     Message.NOTHING.text!!
     Message.NOTHING.text.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, enumDeclaration, enumEntry, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, smartcast */

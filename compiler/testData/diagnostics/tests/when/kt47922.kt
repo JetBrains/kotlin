@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-47922
 
 package whencase.castissue
@@ -21,3 +20,6 @@ val sealedTest: SealedBase.() -> ToState? = {
 val nonSealedTest: NonSealedBase.() -> ToState? = {
     <!TYPE_MISMATCH!>when(this) {}<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, sealed, typeWithExtension, whenExpression, whenWithSubject */

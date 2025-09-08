@@ -24,3 +24,6 @@ fun C.testExtFun2(): C.P2 {
     val y = C.P2(1, 1)
     return x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeParameter */

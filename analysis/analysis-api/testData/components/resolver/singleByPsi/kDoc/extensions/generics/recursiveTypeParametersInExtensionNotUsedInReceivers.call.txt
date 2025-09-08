@@ -1,0 +1,7 @@
+<caret_1>:
+  KDocName(150,159): 'Child.foo'
+    null
+
+<caret_2>:
+  KDocName(165,173): 'Base.foo'
+    null

@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.fir.references
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -25,6 +26,7 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val resolvedSymbol: FirBasedSymbol<*>
+    abstract override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract val inferredTypeArguments: List<ConeKotlinType>
     abstract val mappedArguments: CallableReferenceMappedArguments<FirExpression>
 
@@ -34,4 +36,6 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedCallableReference(this, data) as E
+
+    abstract override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 }

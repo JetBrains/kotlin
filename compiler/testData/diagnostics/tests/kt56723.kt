@@ -90,3 +90,7 @@ fun bap(holder: DelegatedHolder?) {
     }
     foo(lambda)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, objectDeclaration, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, safeCall, setter, starProjection, stringLiteral */

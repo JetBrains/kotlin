@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -60,7 +60,7 @@ private val IrDeclaration.isStdlibDeclaration: Boolean
     get() = getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
 
 private val IrDeclaration.isArtificialDeclarationOfLambdaImpl: Boolean
-    get() = parentClassOrNull?.origin == CallableReferenceLowering.LAMBDA_IMPL &&
+    get() = parentClassOrNull?.origin == WebCallableReferenceLowering.LAMBDA_IMPL &&
             origin != IrDeclarationOrigin.DEFINED &&
             origin != AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
 
@@ -72,7 +72,7 @@ private val IrSymbol?.shouldIgnore: Boolean
 
 fun IrElement.getSourceLocation(
     declaration: IrSymbol?,
-    file: IrFile?,
+    fileEntry: IrFileEntry?,
     type: LocationType = LocationType.START
 ): SourceLocation {
     if (declaration.shouldIgnore) {
@@ -81,8 +81,6 @@ fun IrElement.getSourceLocation(
         else SourceLocation.IgnoredLocation
     }
 
-    val fileEntry = file?.fileEntry
-
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
     if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
@@ -90,8 +88,6 @@ fun IrElement.getSourceLocation(
     val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
     return SourceLocation.DefinedLocation(
-        // TODO Drop "file" usages after KT-58406 fix and replace IrFile with IrFileEntry
-        file.module.name.asString(),
         path,
         line,
         column

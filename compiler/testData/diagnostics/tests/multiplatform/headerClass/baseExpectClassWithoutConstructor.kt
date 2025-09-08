@@ -12,3 +12,5 @@ open class C : <!SUPERTYPE_NOT_INITIALIZED, SUPERTYPE_NOT_INITIALIZED{JVM}!>A<!>
 
 actual open class A
 actual class B : A()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

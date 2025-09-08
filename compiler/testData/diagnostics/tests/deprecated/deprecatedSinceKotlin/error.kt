@@ -39,3 +39,5 @@ fun usage() {
     funNext()
     valNext
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, stringLiteral */

@@ -28,3 +28,6 @@ fun test2(some: Some<String>) {
     val a = some.<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>g<!>
     register(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>a<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, starProjection, typeParameter */

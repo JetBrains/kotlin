@@ -1,9 +1,3 @@
-// KT-72862: Undefined symbols for architecture arm64: "_kfun:#$doInitializeAndReadOK.<no name provided>.ok_field(#doInitializeAndReadOK.<no name provided>){}kotlin.String?"
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
-// KT-72862: No function found for symbol
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
-
 // IGNORE_BACKEND: JVM_IR
 
 // WITH_STDLIB

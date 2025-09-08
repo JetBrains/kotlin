@@ -23,3 +23,6 @@ fun foo(markerManager: MarkerManager) {
     val test: MarkerManager.Collection = markerManager.getCollection("FOO")!!
     test.setOnMarkerClickListener()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration, stringLiteral */

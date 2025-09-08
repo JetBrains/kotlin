@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
-import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -40,21 +39,23 @@ import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
 
-// This symbol provider loads JVM classes, reading extra info from Kotlin `@Metadata` annotations
-// if present. Use it for library and incremental compilation sessions. For source sessions use
-// `JavaSymbolProvider`, as Kotlin classes should be parsed first.
+/**
+ * This symbol provider loads JVM classes, reading extra info from Kotlin [`@Metadata`][Metadata] annotations if present. Use it for library
+ * and incremental compilation sessions. For source sessions use [JavaSymbolProvider][org.jetbrains.kotlin.fir.java.JavaSymbolProvider], as
+ * Kotlin classes should be parsed first.
+ */
 @ThreadSafeMutableState
-class JvmClassFileBasedSymbolProvider(
+open class JvmClassFileBasedSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
-    override val javaFacade: FirJavaFacade,
+    private val javaFacade: FirJavaFacade,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
-), FirJavaAwareSymbolProvider {
+) {
     private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toJvmMetadataVersion()
 
     private val reportErrorsOnPreReleaseDependencies = with(session.languageVersionSettings) {
@@ -92,7 +93,7 @@ class JvmClassFileBasedSymbolProvider(
             kotlinClassFinder.findKotlinClass(ClassId.topLevel(it), ownMetadataVersion)
         }
 
-        val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibrary.toPath()) ?: return null
+        val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()) ?: return null
 
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
@@ -193,7 +194,7 @@ class JvmClassFileBasedSymbolProvider(
             nameResolver,
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
-            moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
+            moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()),
             KotlinJvmBinarySourceElement(
                 kotlinClass,
                 kotlinClass.incompatibility,

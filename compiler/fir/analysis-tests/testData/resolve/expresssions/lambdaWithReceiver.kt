@@ -40,3 +40,6 @@ fun test_4() {
         it.length
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

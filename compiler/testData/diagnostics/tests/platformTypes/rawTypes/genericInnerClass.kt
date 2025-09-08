@@ -35,3 +35,5 @@ fun main() {
     rawInner.bar().foo("")
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration, stringLiteral */

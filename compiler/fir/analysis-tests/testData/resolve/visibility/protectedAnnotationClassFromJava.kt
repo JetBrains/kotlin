@@ -25,3 +25,5 @@ class KotlinChildOfJavaSuper : JavaSuper() {
     @Foo("should work")
     fun usesFoo() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, stringLiteral */

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.typeParametersList
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -20,28 +21,26 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
     override fun isApplicable(element: FirProperty, source: KtSourceElement): Boolean =
         source.kind !is KtFakeSourceElementKind && element.isLocal
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirProperty,
         source: KtPsiSourceElement,
         psi: KtExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (psi is KtProperty && psi.typeParameterList != null) {
-            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, context)
+            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirProperty,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val node = source.lighterASTNode
         if (node.tokenType != KtNodeTypes.PROPERTY) return
         source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
-            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, context)
+            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS)
         }
     }
 }

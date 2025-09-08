@@ -31,3 +31,7 @@ fun testUnresolved() {
 }
 
 fun foo1(i: Int) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, forLoop, functionDeclaration, ifExpression,
+integerLiteral, isExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, whenExpression, whenWithSubject */

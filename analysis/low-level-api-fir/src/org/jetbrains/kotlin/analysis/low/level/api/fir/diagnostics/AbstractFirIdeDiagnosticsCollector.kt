@@ -163,10 +163,6 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
         if (filter.runExtraCheckers) {
             add(ExtraDeclarationCheckers)
         }
-
-        if (filter.runExperimentalCheckers) {
-            add(ExperimentalDeclarationCheckers)
-        }
     }
 
     private fun createExpressionCheckers(
@@ -214,10 +210,6 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
                 else -> {}
             }
             addAll(extensionCheckers.map { it.typeCheckers })
-        }
-
-        if (filter.runExtraCheckers) {
-            add(ExtraTypeCheckers)
         }
 
         if (filter.runExperimentalCheckers) {

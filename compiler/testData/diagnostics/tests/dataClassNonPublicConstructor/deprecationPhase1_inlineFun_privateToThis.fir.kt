@@ -8,3 +8,6 @@ data class Data<out T> <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>pri
         <!NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE_WARNING!>copy<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, inline, nullableType, out, primaryConstructor,
+propertyDeclaration, typeParameter */

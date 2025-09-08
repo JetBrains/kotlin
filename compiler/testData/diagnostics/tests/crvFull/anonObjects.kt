@@ -33,3 +33,6 @@ fun outer1() {
     fun f6(): String = ""
     f6()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localFunction, localProperty,
+propertyDeclaration, stringLiteral */

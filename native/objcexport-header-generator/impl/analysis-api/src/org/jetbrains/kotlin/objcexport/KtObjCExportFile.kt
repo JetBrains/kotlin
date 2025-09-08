@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.objcexport
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.klib.reader.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.native.analysis.api.*
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllVisibleInObjClassifiers
 import org.jetbrains.kotlin.psi.KtFile
 

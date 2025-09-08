@@ -1662,6 +1662,18 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         )
     }
 
+    @Test
+    fun testTransformNonPublicClasses() {
+        assertTransform(
+            """
+                private class PrivateFoo(val value: Int)
+                internal class InternalFoo(val value: Int)
+                @PublishedApi
+                internal class PublishedFoo(val value: Int)
+            """
+        )
+    }
+
     private fun assertStability(
         @Language("kotlin")
         classDefSrc: String,

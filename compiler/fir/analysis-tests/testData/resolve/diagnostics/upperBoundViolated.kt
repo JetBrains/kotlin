@@ -71,4 +71,7 @@ abstract class Base<T : Base<T>> {}
 class DerivedOut<out O : Base<out O>> {}
 class DerivedIn<in I : Base<in I>> {}
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, in, inProjection, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, out, outProjection, primaryConstructor, propertyDeclaration,
+starProjection, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

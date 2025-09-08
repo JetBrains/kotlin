@@ -14,3 +14,5 @@ annotation class MyAnnotation
 
 @MyAnnotation
 val property = 0
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, integerLiteral, propertyDeclaration, typeAliasDeclaration */

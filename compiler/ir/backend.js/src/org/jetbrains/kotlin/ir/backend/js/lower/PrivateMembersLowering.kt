@@ -140,43 +140,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                 } ?: expression
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                super.visitFunctionReference(expression)
-
-                return expression.symbol.owner.correspondingStatic?.let {
-                    transformPrivateToStaticReference(expression) {
-                        IrFunctionReferenceImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            it.symbol, expression.typeArguments.size,
-                            expression.reflectionTarget, expression.origin
-                        )
-                    }
-                } ?: expression
-            }
-
-            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-                super.visitPropertyReference(expression)
-
-                val staticGetter = expression.getter?.owner?.correspondingStatic
-                val staticSetter = expression.setter?.owner?.correspondingStatic
-
-                return if (staticGetter != null || staticSetter != null) {
-                    transformPrivateToStaticReference(expression) {
-                        IrPropertyReferenceImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            expression.symbol, // TODO remap property symbol based on remapped getter/setter?
-                            expression.typeArguments.size,
-                            expression.field,
-                            staticGetter?.symbol ?: expression.getter,
-                            staticSetter?.symbol ?: expression.setter,
-                            expression.origin
-                        )
-                    }
-                } else expression
-            }
-
             private fun transformPrivateToStaticCall(expression: IrCall, staticTarget: IrSimpleFunction): IrCall {
                 val newExpression = IrCallImpl(
                     expression.startOffset, expression.endOffset,
@@ -186,19 +149,6 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol
                 )
-
-                newExpression.arguments.assignFrom(expression.arguments)
-                newExpression.copyTypeArgumentsFrom(expression)
-
-                return newExpression
-            }
-
-            private fun transformPrivateToStaticReference(
-                expression: IrCallableReference<*>,
-                builder: () -> IrCallableReference<*>
-            ): IrCallableReference<*> {
-
-                val newExpression = builder()
 
                 newExpression.arguments.assignFrom(expression.arguments)
                 newExpression.copyTypeArgumentsFrom(expression)

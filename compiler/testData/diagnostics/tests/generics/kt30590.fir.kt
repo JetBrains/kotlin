@@ -7,3 +7,5 @@ fun <T: A, R: T> emptyStrangeMap(): Map<T, R> = TODO()
 fun test7() : Map<A, A> = emptyStrangeMap()
 
 fun test() = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>emptyStrangeMap<!>()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, typeConstraint, typeParameter */

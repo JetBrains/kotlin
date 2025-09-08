@@ -24,3 +24,6 @@ fun D.test(): Int {
     // Although D is final and the getter is not overridden, C is in another module.
     return <!SMARTCAST_IMPOSSIBLE!>x<!>.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
+propertyDeclaration, smartcast */

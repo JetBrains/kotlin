@@ -14,3 +14,5 @@ class B {
     <!MUST_BE_INITIALIZED!>val x: Int<!>
         get() = field.<!UNRESOLVED_REFERENCE!>length<!> // should be an error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, propertyDeclaration, stringLiteral */

@@ -26,3 +26,6 @@ class Example {
     <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun e9(s: String, a: Int) {}
     <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun e10() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, typeParameter */

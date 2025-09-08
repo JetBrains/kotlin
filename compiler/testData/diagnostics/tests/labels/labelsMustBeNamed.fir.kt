@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 fun foo(a: Any?): Int {
     <!SYNTAX!>@<!>{ ->
@@ -17,7 +16,7 @@ fun foo(a: Any?): Int {
 
     var b = 1
 
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(<!SYNTAX!>@<!> b)<!> = 2
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(<!SYNTAX!>@<!> b)<!> = 2
 
     return<!SYNTAX!>@<!> 1
 }
@@ -37,3 +36,7 @@ fun bar(f: () -> Unit) = f
 fun test() {
     bar <!SYNTAX!>@<!>{}
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, classDeclaration, continue, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+superExpression, thisExpression, whileLoop */

@@ -316,6 +316,7 @@ public actual inline fun String.toCharArray(): CharArray = (this as java.lang.St
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,
@@ -388,7 +389,15 @@ public inline fun String.Companion.format(locale: Locale?, format: String, varar
  *   - the function returns the result as a `List<String>` rather than an `Array<String>`;
  *   - when the [limit] is not specified or specified as 0,
  *   this function doesn't drop trailing empty strings from the result.
-
+ *
+ * The last element of the resulting list corresponds to a subsequence starting right after the last
+ * [regex] match (or at the beginning of this char sequence if there were no matches)
+ * and ending at the end of this char sequence. That implies that if this char sequences does not
+ * contain subsequences matching [regex], the resulting list will contain a single element
+ * corresponding to the whole char sequence.
+ * It also implies that for char sequences ending with a [regex] match,
+ * the resulting list will end with an empty string.
+ *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  * @sample samples.text.StringsJvmSpecific.splitWithPattern
@@ -569,7 +578,7 @@ public inline fun String(stringBuilder: java.lang.StringBuilder): String =
  * for more details on function's behavior.
  *
  * @param index the index of [Char] whose codepoint value is needed.
- * @throws IndexOutOfBoundsException if the [index] is negative or greater or equal to [length] of this string.
+ * @throws IndexOutOfBoundsException if the [index] is negative or greater or equal to [length][String.length] of this string.
  *
  * @sample samples.text.StringsJvmSpecific.codePointAt
  */
@@ -584,7 +593,7 @@ public inline fun String.codePointAt(index: Int): Int = (this as java.lang.Strin
  * for more details on function's behavior.
  *
  * @param index the index of a [Char] which follows a codepoint value that will be returned.
- * @throws IndexOutOfBoundsException if the [index] is less than 1, or exceeds the [length] of this string.
+ * @throws IndexOutOfBoundsException if the [index] is less than 1, or exceeds the [length][String.length] of this string.
  *
  * @sample samples.text.StringsJvmSpecific.codePointBefore
  */
@@ -601,7 +610,7 @@ public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.S
  * @param beginIndex the index of a [Char] corresponding to a beginning of the text range (inclusive).
  * @param endIndex the index of a [Char] corresponding to an end of the text range (exclusive).
  *
- * @throws IndexOutOfBoundsException when either of the indices is negative, exceeds [length] of this string, or
+ * @throws IndexOutOfBoundsException when either of the indices is negative, exceeds [length][String.length] of this string, or
  *     when [beginIndex] is greater than [endIndex].
  *
  * @sample samples.text.StringsJvmSpecific.codePointCount

@@ -29,9 +29,9 @@ class FirPackageMemberScope(
     private val symbolProvider: FirSymbolProvider = session.symbolProvider,
     private val excludedNames: Set<Name> = emptySet(),
 ) : FirScope() {
-    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
-    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
-    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()
+    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = hashMapOf()
+    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = hashMapOf()
+    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = hashMapOf()
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,

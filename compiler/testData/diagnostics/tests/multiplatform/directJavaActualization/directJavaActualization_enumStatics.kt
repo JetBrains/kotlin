@@ -35,3 +35,5 @@ expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>ExcessiveAnnotation<!> {
     ENTRY;
     @kotlin.annotations.jvm.KotlinActual public void values(){} // Not to be confused with static values
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, expect, functionDeclaration */

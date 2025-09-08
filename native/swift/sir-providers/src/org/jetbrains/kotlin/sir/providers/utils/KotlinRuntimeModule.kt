@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.utils
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule.kotlinBaseConstructionOptions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 /**
@@ -30,28 +31,9 @@ public object KotlinRuntimeModule : SirModule() {
     public val kotlinBaseConstructionOptions: SirStruct = buildStruct { // Faux struct representing NS_ENUM(NSUInteger)
         origin = KotlinRuntimeElement()
         name = "KotlinBaseConstructionOptions"
-    }.also { struct ->
-        struct.parent = KotlinRuntimeModule
-        struct.declarations.forEach { it.parent = struct }
-    }
+    }.initializeParentForSelfAndChildren(KotlinRuntimeModule)
 
-    public val kotlinBaseDesignatedInit: SirInit = buildInit {
-        origin = KotlinRuntimeElement()
-        isFailable = false
-        isOverride = false
-        parameters.addAll(
-            listOf(
-                SirParameter(
-                    argumentName = "__externalRCRefUnsafe",
-                    type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
-                ),
-                SirParameter(
-                    argumentName = "options",
-                    type = SirNominalType(kotlinBaseConstructionOptions)
-                ),
-            )
-        )
-    }
+    public val kotlinBaseDesignatedInit: SirInit = buildKotlinBaseDesignatedInit()
 
     public val kotlinBase: SirClass by lazy {
         buildClass {
@@ -68,10 +50,7 @@ public object KotlinRuntimeModule : SirModule() {
                     origin = KotlinRuntimeElement()
                 }
             }.also { it.getter.parent = it }
-        }.also { klass ->
-            klass.parent = KotlinRuntimeModule
-            klass.declarations.forEach { it.parent = klass }
-        }
+        }.initializeParentForSelfAndChildren(KotlinRuntimeModule)
     }
 }
 
@@ -82,7 +61,7 @@ public object KotlinRuntimeSupportModule : SirModule() {
     override val declarations: MutableList<SirDeclaration> by lazy {
         mutableListOf(
             kotlinError,
-            kotlinBridged,
+            kotlinBridgeable
         )
     }
 
@@ -92,24 +71,54 @@ public object KotlinRuntimeSupportModule : SirModule() {
         visibility = SirVisibility.PUBLIC
     }
 
-    public val kotlinBridged: SirProtocol = buildProtocol {
-        origin = KotlinRuntimeElement()
-        name = "_KotlinBridged"
-        visibility = SirVisibility.PUBLIC
-        superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
-    }.also { proto ->
-        proto.parent = KotlinRuntimeSupportModule
-        proto.declarations.forEach { it.parent = proto }
+    public val kotlinBridgeableInit: SirInit = buildKotlinBaseDesignatedInit()
+
+    public val kotlinBridgeable: SirProtocol by lazy {
+        buildProtocol {
+            name = "_KotlinBridgeable"
+            origin = KotlinRuntimeElement()
+
+            declarations += kotlinBridgeableInit
+
+            declarations += buildFunction {
+                origin = KotlinRuntimeElement()
+                name = "__externalRCRef"
+                returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
+            }
+        }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
     }
+
+    public val kotlinBridgeableType: SirExistentialType = SirExistentialType(kotlinBridgeable)
 
     public val kotlinExistential: SirClass = buildClass {
         origin = KotlinRuntimeElement()
         name = "_KotlinExistential"
         visibility = SirVisibility.PUBLIC
         superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
-        protocols.add(kotlinBridged)
-    }.also { declaration ->
-        declaration.parent = KotlinRuntimeSupportModule
-        declaration.declarations.forEach { it.parent = declaration }
-    }
+        protocols.add(kotlinBridgeable)
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+}
+
+private fun <T> T.initializeParentForSelfAndChildren(parentModule: SirModule): T where T : SirDeclaration, T : SirDeclarationContainer {
+    parent = parentModule
+    declarations.forEach { it.parent = this }
+    return this
+}
+
+private fun buildKotlinBaseDesignatedInit(): SirInit = buildInit {
+    origin = KotlinRuntimeElement()
+    isFailable = false
+    isOverride = false
+    parameters.addAll(
+        listOf(
+            SirParameter(
+                argumentName = "__externalRCRefUnsafe",
+                type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
+            ),
+            SirParameter(
+                argumentName = "options",
+                type = SirNominalType(kotlinBaseConstructionOptions)
+            ),
+        )
+    )
 }

@@ -48,3 +48,5 @@ fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<
     jad.removeLast()
     jad.reversed()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, stringLiteral */

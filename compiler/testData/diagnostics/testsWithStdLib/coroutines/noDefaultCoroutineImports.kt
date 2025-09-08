@@ -7,3 +7,5 @@ fun test(c: <!UNRESOLVED_REFERENCE!>Continuation<!><Unit>) {}
 import kotlin.coroutines.*
 
 fun test2(c: Continuation<Unit>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

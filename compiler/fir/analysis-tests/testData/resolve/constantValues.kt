@@ -20,8 +20,12 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
         when (value) {
             is Value.LocalClass -> return value.type
             is Value.NormalClass -> {
-                val (classId, arrayDimensions) = value.value
+                val (classId, arrayNestedness) = value.value
             }
         }
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, isExpression,
+localProperty, nestedClass, nullableType, out, primaryConstructor, propertyDeclaration, sealed, smartcast, typeParameter,
+whenExpression, whenWithSubject */

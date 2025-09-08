@@ -21,3 +21,6 @@ class Normal {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, ifExpression, init, localProperty, nullableType,
+propertyDeclaration, secondaryConstructor, smartcast, stringLiteral */

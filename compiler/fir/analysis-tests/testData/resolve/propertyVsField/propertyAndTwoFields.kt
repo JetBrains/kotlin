@@ -22,3 +22,6 @@ public class JavaDerived extends Test {
 fun test(d: JavaDerived) {
     d.abcd // JavaDerived
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, propertyDeclaration,
+stringLiteral */

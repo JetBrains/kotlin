@@ -1,0 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KTIJ-30120
+
+// FILE: A1.kt
+private class <!CLASSIFIER_REDECLARATION!>A<!>
+
+// FILE: A2.kt
+private class <!CLASSIFIER_REDECLARATION!>A<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

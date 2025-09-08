@@ -17,3 +17,5 @@ expect class Foo
 // MODULE: main()()(intermediate2)
 actual typealias Foo = Bar
 class Bar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, typeAliasDeclaration */

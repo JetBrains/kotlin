@@ -16,3 +16,6 @@ public interface A {
 public interface B extends A {
     void setSomething(int value);
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+javaFunction, javaType, typeConstraint, typeParameter */

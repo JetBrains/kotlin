@@ -27,8 +27,8 @@ public class WasmConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> WASM_USE_NEW_EXCEPTION_PROPOSAL =
             CompilerConfigurationKey.create("use wasm new exception proposal");
 
-    public static final CompilerConfigurationKey<Boolean> WASM_USE_JS_TAG =
-            CompilerConfigurationKey.create("use WebAssembly.JSTag to catch JS thrown values");
+    public static final CompilerConfigurationKey<Boolean> WASM_NO_JS_TAG =
+            CompilerConfigurationKey.create("Don't use WebAssembly.JSTag for throwing and catching exceptions");
 
     public static final CompilerConfigurationKey<Boolean> WASM_DEBUG =
             CompilerConfigurationKey.create("Generate debug information");
@@ -41,8 +41,4 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_FORCE_DEBUG_FRIENDLY_COMPILATION =
             CompilerConfigurationKey.create("avoid optimizations that can break debugging.");
-
-    public static final CompilerConfigurationKey<Boolean> WASM_OPTIMISE_LAMBDA_CALLS =
-            CompilerConfigurationKey.create("optimise lambda function calls");
-
 }

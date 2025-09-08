@@ -38,3 +38,6 @@ fun sideEffectBeforeAssignmentInTryButNotFinally(s: Any) {
     }
     a.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

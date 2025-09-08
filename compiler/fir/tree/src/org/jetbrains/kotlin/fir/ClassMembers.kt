@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 
 fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
     fir.dispatchReceiverClassTypeOrNull()
@@ -32,7 +33,7 @@ fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? =
 fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? =
     containingClassForStaticMemberAttr ?: dispatchReceiverClassLookupTagOrNull()
 
-fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
+fun FirClassLikeDeclaration.containingClassForLocal(): ConeClassLikeLookupTag? =
     if (isLocal) containingClassForLocalAttr else null
 
 fun FirDanglingModifierSymbol.containingClassLookupTag(): ConeClassLikeLookupTag? = fir.containingClass()
@@ -41,8 +42,8 @@ fun FirDanglingModifierList.containingClass(): ConeClassLikeLookupTag? =
     containingClassAttr
 
 fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag? {
-    return if (classId.isLocal) {
-        (fir as? FirRegularClass)?.containingClassForLocal()
+    return if (isLocal) {
+        fir.containingClassForLocal()
     } else {
         val ownerId = classId.outerClassId
         ownerId?.toLookupTag()
@@ -51,10 +52,8 @@ fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag?
 
 private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration.containingClassForStaticMemberAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
-var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
+var FirClassLikeDeclaration.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirDanglingModifierList.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
-val FirRegularClassSymbol.containingClassForLocalAttr: ConeClassLikeLookupTag?
-    get() = fir.containingClassForLocalAttr
 
 private object ContainingScriptKey : FirDeclarationDataKey()
 var FirClassLikeDeclaration.containingScriptSymbolAttr: FirScriptSymbol? by FirDeclarationDataRegistry.data(ContainingScriptKey)
@@ -196,6 +195,10 @@ private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()
  * }
  * ```
  * The original function type `@Foo T.() -> Unit` can be accessed with this property on the FirAnonymousFunction at caret.
+ *
+ * The function type can contain unsubstituted type variable types. Therefore, it must be used carefully.
+ *
+ * Currently, it's only used for retrieving type annotations for DSL scope violation checks.
  */
 var <D : FirAnonymousFunction>
         D.matchingParameterFunctionType: ConeKotlinType? by FirDeclarationDataRegistry.data(MatchingParameterFunctionTypeKey)
@@ -219,6 +222,15 @@ var FirRegularClass.isJavaRecord: Boolean? by FirDeclarationDataRegistry.data(Is
 private object IsJavaRecordComponentKey : FirDeclarationDataKey()
 var FirFunction.isJavaRecordComponent: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordComponentKey)
 
+private object IsJavaNonAbstractSealed : FirDeclarationDataKey()
+
+/**
+ * Unlike Kotlin, Java sealed classes aren't automatically abstract.
+ *
+ * @return `true` if [this] is a non-abstract sealed Java class.
+ */
+var FirRegularClass.isJavaNonAbstractSealed: Boolean? by FirDeclarationDataRegistry.data(IsJavaNonAbstractSealed)
+
 private object IsCatchParameterProperty : FirDeclarationDataKey()
 
 var FirProperty.isCatchParameter: Boolean? by FirDeclarationDataRegistry.data(IsCatchParameterProperty)
@@ -232,11 +244,11 @@ private object DelegatedWrapperDataKey : FirDeclarationDataKey()
 class DelegatedWrapperData<D : FirCallableDeclaration>(
     val wrapped: D,
     val containingClass: ConeClassLikeLookupTag,
-    val delegateField: FirField,
+    val delegateFieldSymbol: FirFieldSymbol,
 ) {
     override fun toString(): String = "[${::wrapped.name}=${wrapped.symbol}, " +
             "${::containingClass.name}=$containingClass, " +
-            "${::delegateField.name}=${delegateField.symbol}"
+            "${::delegateFieldSymbol.name}=$delegateFieldSymbol"
 }
 
 var <D : FirCallableDeclaration>
@@ -244,3 +256,15 @@ var <D : FirCallableDeclaration>
 
 val <D : FirCallableDeclaration> FirCallableSymbol<D>.delegatedWrapperData: DelegatedWrapperData<D>?
     get() = fir.delegatedWrapperData
+
+private object UnnamedContextParameterNameKey : FirDeclarationDataKey()
+
+var FirValueParameter.generatedContextParameterName: Name? by FirDeclarationDataRegistry.data(UnnamedContextParameterNameKey)
+
+val FirValueParameterSymbol.generatedContextParameterName: Name? get() = fir.generatedContextParameterName
+
+class FirDeclarationNameInvalidCharsProvider(val invalidChars: Set<Char>) : FirSessionComponent
+
+private val FirSession.declarationNameInvalidCharsProvider: FirDeclarationNameInvalidCharsProvider? by FirSession.nullableSessionComponentAccessor()
+
+val FirSession.declarationNameInvalidChars: Set<Char> get() = declarationNameInvalidCharsProvider?.invalidChars ?: emptySet()

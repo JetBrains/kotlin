@@ -27,7 +27,7 @@ package demoPackage.b
 fun moduleBFunction() = "B"
 
 // MODULE: main(ModuleA2, ModuleB)
-// MODULE_KIND: COMMON_JS
+// JS_MODULE_KIND: COMMON_JS
 // FILE: main.kt
 
 package mainPackage

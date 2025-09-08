@@ -21,3 +21,6 @@ object O: SuspendFunction0<Unit> {
     override suspend fun invoke() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, interfaceDeclaration, objectDeclaration,
+operator, override, suspend */

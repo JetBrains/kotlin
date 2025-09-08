@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
@@ -43,11 +42,9 @@ annotation class Fir2IrBuiltInsInternals
 
 @OptIn(Fir2IrBuiltInsInternals::class)
 class Fir2IrBuiltinSymbolsContainer(
-    private val c: Fir2IrComponents,
+    c: Fir2IrComponents,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
-) {
-    private val session: FirSession = c.session
-
+) : Fir2IrComponents by c {
     private val symbolProvider: FirSymbolProvider = session.symbolProvider
 
     val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
@@ -59,14 +56,14 @@ class Fir2IrBuiltinSymbolsContainer(
     @Fir2IrBuiltInsInternals
     internal fun findFirMemberFunctions(classId: ClassId, name: Name): List<FirNamedFunctionSymbol> {
         val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
-        val scope = klass.unsubstitutedScope(c)
+        val scope = klass.unsubstitutedScope()
         return scope.getFunctions(name)
     }
 
     @Fir2IrBuiltInsInternals
     internal fun findFirMemberProperties(classId: ClassId, name: Name): List<FirPropertySymbol> {
         val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
-        val scope = klass.unsubstitutedScope(c)
+        val scope = klass.unsubstitutedScope()
         return scope.getProperties(name).filterIsInstance<FirPropertySymbol>()
     }
 
@@ -140,9 +137,9 @@ class Fir2IrBuiltinSymbolsContainer(
         val firSymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
                 ?: return null
-        val irSymbol = firSymbol.toIrSymbol(c, ConversionTypeOrigin.DEFAULT) as? IrClassSymbol ?: return null
-        val firConstructorSymbol = firSymbol.unsubstitutedScope(c).getDeclaredConstructors().singleOrNull() ?: return null
-        val constructorSymbol = c.declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
+        val irSymbol = firSymbol.toIrSymbol(ConversionTypeOrigin.DEFAULT) as? IrClassSymbol ?: return null
+        val firConstructorSymbol = firSymbol.unsubstitutedScope().getDeclaredConstructors().singleOrNull() ?: return null
+        val constructorSymbol = declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
 
         return IrConstructorCallImplWithShape(
             startOffset = UNDEFINED_OFFSET,
@@ -293,9 +290,7 @@ class Fir2IrBuiltinSymbolsContainer(
         return getFunctionsByKey(
             name,
             *packageNameSegments,
-            mapKey = { symbol ->
-                with(c) { symbol.resolvedReceiverTypeRef?.toIrType()?.classifierOrNull }
-            },
+            mapKey = { symbol -> symbol.resolvedReceiverTypeRef?.toIrType()?.classifierOrNull },
             mapValue = { firSymbol, irSymbol -> firSymbol to irSymbol }
         )
     }
@@ -310,7 +305,7 @@ class Fir2IrBuiltinSymbolsContainer(
     @Fir2IrBuiltInsInternals
     internal fun loadClassSafe(classId: ClassId): IrClassSymbol? {
         val firClassSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
-        return c.classifierStorage.getIrClassSymbol(firClassSymbol)
+        return classifierStorage.getIrClassSymbol(firClassSymbol)
     }
 
     @Fir2IrBuiltInsInternals
@@ -355,7 +350,7 @@ class Fir2IrBuiltinSymbolsContainer(
     @Fir2IrBuiltInsInternals
     internal fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
         functionSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        return c.declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
+        return declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
     }
 
     @Fir2IrBuiltInsInternals
@@ -366,6 +361,6 @@ class Fir2IrBuiltinSymbolsContainer(
     @Fir2IrBuiltInsInternals
     internal fun findProperty(propertySymbol: FirPropertySymbol): IrPropertySymbol {
         propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        return c.declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
+        return declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
     }
 }

@@ -20,3 +20,6 @@ fun test2(): (Any?) -> Unit =
     id(run {
         ::foo // UNRESOLVED_REFERENCE
     })
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeParameter */

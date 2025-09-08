@@ -73,3 +73,7 @@ fun <T : MySealed> foo(a: T) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, isExpression, localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, sealed,
+smartcast, typeConstraint, typeParameter, whenExpression, whenWithSubject */

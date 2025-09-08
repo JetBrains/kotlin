@@ -35,3 +35,5 @@ fun test_6(a: Any?) {
     a.length
     (a <!USELESS_CAST!>as? String<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, nullableType, smartcast */

@@ -49,7 +49,7 @@ private class AssembleFramework(
 )
 
 private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, environment: XcodeEnvironment): AssembleFramework? {
-    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation()) return null
+    if (!framework.konanTarget.family.isAppleFamily || !framework.konanTarget.enabledOnCurrentHostForBinariesCompilation) return null
 
     val envTargets = environment.targets
     val needFatFramework = envTargets.size > 1
@@ -201,10 +201,6 @@ internal fun Project.registerEmbedSwiftExportTask(
 
     if (envBuildType == null) {
         error("Missing required environment variable: CONFIGURATION. Please verify that the CONFIGURATION variable is correctly set in your Xcode's environment settings")
-    }
-
-    if (!kotlinPropertiesProvider.swiftExportIgnoreExperimental) {
-        warnAboutExperimentalSwiftExportFeature()
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
@@ -364,16 +360,6 @@ private fun Project.registerEmbedTask(
     }
 
     return embedAndSignTask
-}
-
-private fun Project.warnAboutExperimentalSwiftExportFeature() {
-    reportDiagnosticOncePerBuild(
-        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
-            "Swift Export",
-            "https://kotl.in/1cr522",
-            "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN}=true' to your gradle.properties"
-        )
-    )
 }
 
 private fun Project.checkSandboxAndWriteProtectionTask(

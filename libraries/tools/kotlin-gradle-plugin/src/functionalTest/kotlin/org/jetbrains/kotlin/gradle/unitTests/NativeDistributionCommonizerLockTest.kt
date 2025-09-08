@@ -101,7 +101,7 @@ class NativeDistributionCommonizerLockTest {
         fun withLock(action: () -> Unit) {
             val actionProxy = Proxy.newProxyInstance(
                 classLoader,
-                arrayOf(classLoader.loadClass(kotlin.jvm.functions.Function1::class.java.name)),
+                arrayOf(classLoader.loadClass(Function1::class.java.name)),
                 InvocationHandler { _, _, _ -> action() })
             val withLockMethod = instance::class.declaredFunctions.first { it.name == "withLock" }
             withLockMethod.call(instance, actionProxy)

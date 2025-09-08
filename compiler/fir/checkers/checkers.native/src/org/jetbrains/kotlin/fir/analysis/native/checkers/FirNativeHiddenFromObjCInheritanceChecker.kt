@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
@@ -45,7 +45,7 @@ object FirNativeHiddenFromObjCInheritanceChecker : FirRegularClassChecker(MppChe
 
         val superTypes = declaration.superConeTypes
             .filterNot { it.isAny || it.isNullableAny }
-            .mapNotNull { it.toSymbol(session) }
+            .mapNotNull { it.toSymbol() }
 
         superTypes.firstOrNull { st -> checkIsHiddenFromObjC(st, session) }?.let {
             reporter.reportOn(declaration.source, FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC)

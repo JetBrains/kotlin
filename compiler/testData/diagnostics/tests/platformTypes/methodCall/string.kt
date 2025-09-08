@@ -16,3 +16,5 @@ fun test() {
     J().str(J())
     J().str(null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, nullableType */

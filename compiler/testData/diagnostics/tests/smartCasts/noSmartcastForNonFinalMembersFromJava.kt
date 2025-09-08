@@ -20,3 +20,6 @@ class Derived : Base() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaProperty, javaType, nullableType, smartcast */

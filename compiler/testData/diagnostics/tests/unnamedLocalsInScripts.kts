@@ -9,3 +9,6 @@ val <!UNDERSCORE_IS_RESERVED!>_<!> = foo()
 object Test {
     val <!UNDERSCORE_IS_RESERVED!>_<!> = foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, objectDeclaration, propertyDeclaration,
+unnamedLocalVariable */

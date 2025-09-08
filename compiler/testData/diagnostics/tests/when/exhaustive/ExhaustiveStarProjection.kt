@@ -109,3 +109,7 @@ fun ExpressionBElse() {
         else -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, interfaceDeclaration, isExpression, localProperty,
+primaryConstructor, propertyDeclaration, sealed, smartcast, starProjection, stringLiteral, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

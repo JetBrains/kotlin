@@ -21,3 +21,7 @@ private object Scope {
         val p: Int by Scope.Delegate(i)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, inProjection, localProperty, nestedClass,
+nullableType, objectDeclaration, operator, outProjection, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, typeParameter */

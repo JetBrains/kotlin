@@ -19,3 +19,5 @@ abstract class Node<out N: Node<N>> {
 }
 
 typealias ReadOnlyNode = <!RECURSIVE_TYPEALIAS_EXPANSION!>Node<ReadOnlyNode><!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, out, propertyDeclaration, typeAliasDeclaration, typeConstraint, typeParameter */

@@ -10,3 +10,5 @@ val entries = "local str"
 fun test() {
     val s: String = entries
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, functionDeclaration, localProperty, propertyDeclaration, stringLiteral */

@@ -5,3 +5,6 @@
 const val x = 42
 
 annotation class Some(val value: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, const, integerLiteral, primaryConstructor,
+propertyDeclaration */

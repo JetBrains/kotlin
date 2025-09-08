@@ -18,3 +18,6 @@ fun <T> delegate(value: T): DelegateProvider<T> = DelegateProvider(value)
 class A {
     val x by delegate(1)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

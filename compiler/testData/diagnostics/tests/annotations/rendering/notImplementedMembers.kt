@@ -47,3 +47,6 @@ interface GI : G {
 
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED("Class 'AG1'; public open fun a(arg: Int): Unit defined in AG1")!>class AG1<!>(val a: A, val g: G) : A by a, G by g
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED("Class 'AG2'; public open fun a(arg: Int): Unit defined in AI")!>class AG2<!>() : AI, GI
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

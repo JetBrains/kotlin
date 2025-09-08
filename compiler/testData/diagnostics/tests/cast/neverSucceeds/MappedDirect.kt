@@ -33,3 +33,5 @@ fun test(
   jcs <!CAST_NEVER_SUCCEEDS!>as<!> Int
   s <!CAST_NEVER_SUCCEEDS!>as<!> java.lang.Integer
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, intersectionType, smartcast */

@@ -15,3 +15,5 @@ fun foo(x: List<String>) {
         add("")
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, stringLiteral, typeParameter */

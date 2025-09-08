@@ -36,3 +36,6 @@ fun test_3(b: Boolean) {
         { <!CANNOT_INFER_PARAMETER_TYPE, EXPECTED_PARAMETERS_NUMBER_MISMATCH!>x<!> -> "x" }
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, typeWithExtension */

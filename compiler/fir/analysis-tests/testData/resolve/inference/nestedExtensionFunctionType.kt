@@ -18,3 +18,6 @@ fun test_2(a: A, vararg zs: A.() -> Unit) {
         a.z()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, forLoop, functionDeclaration, functionalType, interfaceDeclaration, localProperty,
+outProjection, propertyDeclaration, typeWithExtension, vararg */

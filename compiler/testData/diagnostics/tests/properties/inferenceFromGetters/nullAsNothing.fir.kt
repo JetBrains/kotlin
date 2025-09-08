@@ -7,3 +7,6 @@ fun foo() {
     x checkType { _<Nothing?>() }
     y checkType { _<Nothing>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, lambdaLiteral, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

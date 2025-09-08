@@ -19,3 +19,4 @@ fun testIsNotNullOrBlank(x: String?) {
     x<!UNSAFE_CALL!>.<!>length
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, smartcast */

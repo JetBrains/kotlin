@@ -18,3 +18,6 @@ fun process() {
     validate()
     a.length
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+functionDeclarationWithContext, lambdaLiteral, nullableType, smartcast */

@@ -10,3 +10,6 @@ fun foo(x: B) {
     // Checks that when checking subtypes we search closes corresponding constructor (e.g. with BFS)
     val y: X<Int> = x
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, localProperty, nullableType, propertyDeclaration,
+typeParameter */

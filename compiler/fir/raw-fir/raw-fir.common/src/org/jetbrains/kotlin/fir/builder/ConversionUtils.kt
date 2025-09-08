@@ -80,7 +80,7 @@ fun escapedStringToCharacter(text: String): CharacterWithDiagnostic {
     when (escape.length) {
         0 -> {
             // bare slash
-            return CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
+            return illegalEscapeDiagnostic
         }
         1 -> {
             // one-char escape
@@ -97,21 +97,23 @@ fun escapedStringToCharacter(text: String): CharacterWithDiagnostic {
             }
         }
     }
-    return CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
+    return illegalEscapeDiagnostic
 }
 
-internal fun translateEscape(c: Char): CharacterWithDiagnostic =
-    when (c) {
-        't' -> CharacterWithDiagnostic('\t')
-        'b' -> CharacterWithDiagnostic('\b')
-        'n' -> CharacterWithDiagnostic('\n')
-        'r' -> CharacterWithDiagnostic('\r')
-        '\'' -> CharacterWithDiagnostic('\'')
-        '\"' -> CharacterWithDiagnostic('\"')
-        '\\' -> CharacterWithDiagnostic('\\')
-        '$' -> CharacterWithDiagnostic('$')
-        else -> CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
-    }
+internal fun translateEscape(c: Char): CharacterWithDiagnostic = escapeCharToChartedWithDiagnosticMap[c] ?: illegalEscapeDiagnostic
+
+private val escapeCharToChartedWithDiagnosticMap = hashMapOf(
+    't' to CharacterWithDiagnostic('\t'),
+    'b' to CharacterWithDiagnostic('\b'),
+    'n' to CharacterWithDiagnostic('\n'),
+    'r' to CharacterWithDiagnostic('\r'),
+    '\'' to CharacterWithDiagnostic('\''),
+    '\"' to CharacterWithDiagnostic('\"'),
+    '\\' to CharacterWithDiagnostic('\\'),
+    '$' to CharacterWithDiagnostic('$'),
+)
+
+private val illegalEscapeDiagnostic = CharacterWithDiagnostic(DiagnosticKind.IllegalEscape)
 
 class CharacterWithDiagnostic {
     private val diagnostic: DiagnosticKind?
@@ -143,29 +145,31 @@ fun IElementType.toUnaryName(): Name? {
 fun IElementType.toFirOperation(): FirOperation =
     toFirOperationOrNull() ?: error("Cannot convert element type to FIR operation: $this")
 
-fun IElementType.toFirOperationOrNull(): FirOperation? =
-    when (this) {
-        KtTokens.LT -> FirOperation.LT
-        KtTokens.GT -> FirOperation.GT
-        KtTokens.LTEQ -> FirOperation.LT_EQ
-        KtTokens.GTEQ -> FirOperation.GT_EQ
-        KtTokens.EQEQ -> FirOperation.EQ
-        KtTokens.EXCLEQ -> FirOperation.NOT_EQ
-        KtTokens.EQEQEQ -> FirOperation.IDENTITY
-        KtTokens.EXCLEQEQEQ -> FirOperation.NOT_IDENTITY
+fun IElementType.toFirOperationOrNull(): FirOperation? = ktTokenToFirOperationMap[this]
 
-        KtTokens.EQ -> FirOperation.ASSIGN
-        KtTokens.PLUSEQ -> FirOperation.PLUS_ASSIGN
-        KtTokens.MINUSEQ -> FirOperation.MINUS_ASSIGN
-        KtTokens.MULTEQ -> FirOperation.TIMES_ASSIGN
-        KtTokens.DIVEQ -> FirOperation.DIV_ASSIGN
-        KtTokens.PERCEQ -> FirOperation.REM_ASSIGN
+private val ktTokenToFirOperationMap = hashMapOf(
+    KtTokens.LT to FirOperation.LT,
+    KtTokens.GT to FirOperation.GT,
+    KtTokens.LTEQ to FirOperation.LT_EQ,
+    KtTokens.GTEQ to FirOperation.GT_EQ,
+    KtTokens.EQEQ to FirOperation.EQ,
+    KtTokens.EXCLEQ to FirOperation.NOT_EQ,
+    KtTokens.EQEQEQ to FirOperation.IDENTITY,
+    KtTokens.EXCLEQEQEQ to FirOperation.NOT_IDENTITY,
 
-        KtTokens.AS_KEYWORD -> FirOperation.AS
-        KtTokens.AS_SAFE -> FirOperation.SAFE_AS
+    KtTokens.EQ to FirOperation.ASSIGN,
+    KtTokens.PLUSEQ to FirOperation.PLUS_ASSIGN,
+    KtTokens.MINUSEQ to FirOperation.MINUS_ASSIGN,
+    KtTokens.MULTEQ to FirOperation.TIMES_ASSIGN,
+    KtTokens.DIVEQ to FirOperation.DIV_ASSIGN,
+    KtTokens.PERCEQ to FirOperation.REM_ASSIGN,
 
-        else -> null
-    }
+    KtTokens.IS_KEYWORD to FirOperation.IS,
+    KtTokens.NOT_IS to FirOperation.NOT_IS,
+
+    KtTokens.AS_KEYWORD to FirOperation.AS,
+    KtTokens.AS_SAFE to FirOperation.SAFE_AS,
+)
 
 fun FirExpression.generateNotNullOrOther(
     other: FirExpression, baseSource: KtSourceElement?,
@@ -317,7 +321,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     explicitDeclarationSource: KtSourceElement? = null
 ) {
     if (delegateBuilder == null) return
-    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
+    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol).also {
         this.delegateFieldSymbol = it
     }
 
@@ -430,9 +434,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         val getterStatus = getter?.status
-        val getterElement = getter?.source?.takeIf {
-            it.kind == KtRealSourceElementKind
-        }?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: declarationFakeSource
+        val getterElement = getter?.source?.takeIf { it.kind == KtRealSourceElementKind } ?: declarationFakeSource
         getter = buildPropertyAccessor {
             this.source = getterElement
             this.moduleData = moduleData
@@ -474,7 +476,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         val parameterAnnotations = setter?.valueParameters?.firstOrNull()?.annotations
         val setterStatus = setter?.status
-        val setterElement = setter?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: declarationFakeSource
+        val setterElement = setter?.source?.takeIf { it.kind is KtRealSourceElementKind } ?: declarationFakeSource
         setter = buildPropertyAccessor {
             this.source = setterElement
             this.moduleData = moduleData
@@ -492,7 +494,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 name = SpecialNames.IMPLICIT_SET_PARAMETER
-                symbol = FirValueParameterSymbol(this@generateAccessorsByDelegate.name)
+                symbol = FirValueParameterSymbol()
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false

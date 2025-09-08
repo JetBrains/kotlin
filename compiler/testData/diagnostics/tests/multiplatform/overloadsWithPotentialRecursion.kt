@@ -19,3 +19,5 @@ actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
     actual fun f(x: Int): Foo? = null
     actual fun f(x: Double, y: Int): Foo? = null
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType */

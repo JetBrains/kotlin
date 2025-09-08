@@ -15,3 +15,6 @@ data class Foo private constructor(val x: Int) {
 fun main() {
     Foo.new().<!DATA_CLASS_INVISIBLE_COPY_USAGE_ERROR!>copy<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, functionDeclaration, integerLiteral, objectDeclaration,
+primaryConstructor, propertyDeclaration */

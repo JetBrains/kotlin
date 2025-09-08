@@ -121,6 +121,10 @@ class ResourcesIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(
+        // Gradle 9.0 does not allow creating configuration with the same name which is triggered by 'sourceSets.create("x")'
+        maxVersion = TestVersions.Gradle.G_8_14,
+    )
     @DisplayName("KT-62490: should keep previously configured Kotlin resources")
     @JvmGradlePluginTests
     fun keepConfiguredKotlinResources(gradleVersion: GradleVersion) {

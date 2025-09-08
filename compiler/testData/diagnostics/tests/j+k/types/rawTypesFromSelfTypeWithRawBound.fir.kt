@@ -44,3 +44,6 @@ fun `acquire raw type via type parameter's upper bound of another class`(instanc
     val listOfNullableAny: List<Any?> = raw.getListOfStrings()
     val listOfAny: List<Any> = raw.getListOfStrings() // K1 & K2: ok
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, localProperty, nullableType,
+propertyDeclaration, starProjection */

@@ -42,3 +42,6 @@ fun test(c: Collection<String>, l: List<String>, s: Set<String>) {
 }
 
 fun consumeInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: asExpression, enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeConstraint, typeParameter, vararg */

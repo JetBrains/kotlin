@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -891,7 +892,6 @@ class ObjCExportNamerImpl(
                             DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(res.conflictingElement)
                         is AssignResult.Conflict -> "${res.conflictingElement}"
                         AssignResult.Reserved -> "a keyword or a reserved name"
-                        else -> "another entity"
                     }
                     when (configuration.nameCollisionMode) {
                         ObjCExportNameCollisionMode.ERROR -> {

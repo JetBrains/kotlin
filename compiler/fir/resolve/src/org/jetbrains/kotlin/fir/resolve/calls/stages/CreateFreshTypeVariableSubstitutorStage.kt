@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo) {
+    override suspend fun check(candidate: Candidate) {
         val declaration = candidate.symbol.fir
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
@@ -67,7 +68,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     getTypePreservingFlexibilityWrtTypeVariable(
                         typeArgument.typeRef.coneType,
                         typeParameter,
-                    ).fullyExpandedType(context.session),
+                    ).fullyExpandedType(),
                     ConeExplicitTypeParameterConstraintPosition(typeArgument)
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
@@ -132,8 +133,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      * }
      * ```
      *
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      *
      * @return type which is chosen for EQUALS constraint
      */
@@ -161,7 +161,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     isTrivial = false,
                 )
             }.run {
-                if (session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
+                if (LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible.isEnabled()) {
                     return@run this
                 }
                 if (!type.isMarkedNullable) {
@@ -183,9 +183,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(context: ResolutionContext)
     private fun FirTypeParameterRef.shouldBeFlexible(): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) ||
-            languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)
-        ) {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
             return false
         }
         return symbol.resolvedBounds.any {
@@ -260,7 +258,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             val typeParameterConeType = toConeType()
             val expandedConeType = containingDeclaration.expandedTypeRef.coneType
             val typeArgumentIndex = expandedConeType.typeArguments.indexOfFirst { it.type == typeParameterConeType }
-            val expandedTypeFir = expandedConeType.toSymbol(context.session)?.fir
+            val expandedTypeFir = expandedConeType.toSymbol()?.fir
             if (expandedTypeFir is FirTypeParameterRefsOwner) {
                 val typeParameterFir = expandedTypeFir.typeParameters.elementAtOrNull(typeArgumentIndex)?.symbol?.fir ?: return this
                 if (expandedTypeFir is FirTypeAlias) {

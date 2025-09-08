@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ISSUE: KT-46465
 // WITH_STDLIB
 
@@ -17,6 +16,6 @@ class MyNumber(val value: Int) : Number(), Some {
 }
 
 fun box(): String {
-    val x = MyNumber('*'.code).toChar()
+    val x = MyNumber('*'.code).toInt().toChar()
     return if (x == '*') "OK" else "Fail: $x"
 }

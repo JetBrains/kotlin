@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
@@ -31,7 +32,7 @@ class FirTypeCandidateCollector(
     var applicability: CandidateApplicability? = null
         private set
 
-    fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor? = null) {
+    fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor? = null, resolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
         var symbolApplicability = CandidateApplicability.RESOLVED
         var diagnostic: ConeVisibilityError? = null
 
@@ -57,7 +58,7 @@ class FirTypeCandidateCollector(
             candidates.clear()
         }
         if (symbolApplicability == applicability) {
-            candidates.add(TypeCandidate(symbol, substitutor, diagnostic, symbolApplicability))
+            candidates.add(TypeCandidate(symbol, substitutor, diagnostic, symbolApplicability, resolvedSymbolOrigin))
         }
     }
 
@@ -132,6 +133,7 @@ class FirTypeCandidateCollector(
         // Currently, it's only ConeVisibilityError
         val diagnostic: ConeDiagnostic?,
         override val applicability: CandidateApplicability,
+        val resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     ) : AbstractCandidate() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
 import org.jetbrains.kotlin.compilerRunner.getKonanParallelThreads
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -110,7 +111,7 @@ constructor(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION_ERROR")
-            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) compilation.compileDependencyFiles.exclude(excludeDependencies)
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation) compilation.compileDependencyFiles.exclude(excludeDependencies)
             else objectFactory.fileCollection()
         }
     )
@@ -139,10 +140,6 @@ constructor(
     @get:Input
     internal val konanCacheKind: Provider<NativeCacheKind> = project.getKonanCacheKind(konanTarget)
 
-    @Suppress("unused")
-    @get:Input
-    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.shouldUseEmbeddableCompilerJar
-
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
         "Use toolOptions.freeCompilerArgs",
@@ -155,9 +152,9 @@ constructor(
     @Deprecated(KOTLIN_OPTIONS_AS_TOOLS_DEPRECATION_MESSAGE)
     @get:Internal
     val kotlinOptions: KotlinCommonToolOptions = object : KotlinCommonToolOptions {
-        @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
+        @OptIn(InternalKotlinGradlePluginApi::class)
         @Deprecated(
-            message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+            message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
             level = DeprecationLevel.ERROR,
         )
         override val options: KotlinCommonCompilerToolOptions
@@ -209,6 +206,12 @@ constructor(
 
     @get:Input
     val isStaticFramework: Boolean by lazyConvention { binary.let { it is Framework && it.isStatic } }
+
+    @get:Input
+    val exportKdoc: Provider<Boolean> = when (binary) {
+        is Framework -> binary.exportKdoc
+        else -> objectFactory.property(false)
+    }
 
     @Suppress("DEPRECATION_ERROR")
     @get:Input
@@ -282,8 +285,10 @@ constructor(
             args.target = konanTarget.name
             args.produce = outputKind.name.toLowerCaseAsciiOnly()
             args.multiPlatform = true
+            @Suppress("DEPRECATION")
             args.noendorsedlibs = true
             args.nostdlib = true
+            args.exportKDoc = exportKdoc.get()
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
             args.generateTestRunner = processTests
             args.mainPackage = entryPoint
@@ -425,7 +430,6 @@ constructor(
             classLoadersCachingService,
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
-            useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService,

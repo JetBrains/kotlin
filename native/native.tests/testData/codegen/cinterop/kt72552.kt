@@ -1,4 +1,5 @@
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 @file:OptIn(ExperimentalForeignApi::class)
 
 import kotlinx.cinterop.ExperimentalForeignApi

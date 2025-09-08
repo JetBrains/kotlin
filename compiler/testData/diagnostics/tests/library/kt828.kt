@@ -12,3 +12,6 @@ fun test() {
     res = (true && false)
     res = (true || false)
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, disjunctionExpression, functionDeclaration, localProperty,
+propertyDeclaration */

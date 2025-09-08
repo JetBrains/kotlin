@@ -1,0 +1,13 @@
+package apkg;
+
+import bpkg.*;
+
+public class AClass {
+    public static String getString(String suffix) {
+        return (new BClass()).X() + "Z" + suffix;
+    }
+
+    public static String getY() {
+        return "Y";
+    }
+}

@@ -114,6 +114,9 @@ abstract class JsVisitor {
     open fun visitDouble(x: JsDoubleLiteral): Unit =
             visitElement(x)
 
+    open fun visitBigInt(x: JsBigIntLiteral): Unit =
+            visitElement(x)
+
     open fun visitObjectLiteral(x: JsObjectLiteral): Unit =
             visitElement(x)
 

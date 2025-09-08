@@ -20,3 +20,5 @@ public class Area {
 private fun unregisterEverything(extensionPoint: ExtensionPointName<*>) {
     Area.getExtensionPoint(extensionPoint).foo().hashCode()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, starProjection */

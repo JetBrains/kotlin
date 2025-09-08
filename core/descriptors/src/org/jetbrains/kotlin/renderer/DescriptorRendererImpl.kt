@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
-import org.jetbrains.kotlin.types.error.*
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeConstructor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -209,39 +210,13 @@ internal class DescriptorRendererImpl(
             return "$lowerRendered!"
         }
 
-        val kotlinCollectionsPrefix = classifierNamePolicy.renderClassifier(builtIns.collection, this).substringBefore("Collection")
-        val mutablePrefix = "Mutable"
-        // java.util.List<Foo> -> (Mutable)List<Foo!>!
-        val simpleCollection = replacePrefixesInTypeRepresentations(
+        return renderFlexibleMutabilityOrArrayElementVarianceType(
             lowerRendered,
-            kotlinCollectionsPrefix + mutablePrefix,
             upperRendered,
-            kotlinCollectionsPrefix,
-            "$kotlinCollectionsPrefix($mutablePrefix)"
-        )
-        if (simpleCollection != null) return simpleCollection
-        // java.util.Map.Entry<Foo, Bar> -> (Mutable)Map.(Mutable)Entry<Foo!, Bar!>!
-        val mutableEntry = replacePrefixesInTypeRepresentations(
-            lowerRendered,
-            kotlinCollectionsPrefix + "MutableMap.MutableEntry",
-            upperRendered,
-            kotlinCollectionsPrefix + "Map.Entry",
-            "$kotlinCollectionsPrefix(Mutable)Map.(Mutable)Entry"
-        )
-        if (mutableEntry != null) return mutableEntry
-
-        val kotlinPrefix = classifierNamePolicy.renderClassifier(builtIns.array, this).substringBefore("Array")
-        // Foo[] -> Array<(out) Foo!>!
-        val array = replacePrefixesInTypeRepresentations(
-            lowerRendered,
-            kotlinPrefix + escape("Array<"),
-            upperRendered,
-            kotlinPrefix + escape("Array<out "),
-            kotlinPrefix + escape("Array<(out) ")
-        )
-        if (array != null) return array
-
-        return "($lowerRendered..$upperRendered)"
+            { classifierNamePolicy.renderClassifier(builtIns.collection, this).substringBefore("Collection") },
+            { classifierNamePolicy.renderClassifier(builtIns.array, this).substringBefore("Array") },
+            ::escape,
+        ) ?: "($lowerRendered..$upperRendered)"
     }
 
     override fun renderTypeArguments(typeArguments: List<TypeProjection>): String =
@@ -761,9 +736,9 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun KotlinType.renderForReceiver(): String {
+    private fun KotlinType.renderForReceiver(wrapAnnotated: Boolean = false): String {
         var result = renderType(this)
-        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType) {
+        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType || wrapAnnotated && !this.annotations.isEmpty()) {
             result = "($result)"
         }
         return result
@@ -776,8 +751,8 @@ internal class DescriptorRendererImpl(
             return
         }
         for ((i, contextReceiver) in contextReceivers.withIndex()) {
-            builder.renderAnnotations(contextReceiver, AnnotationUseSiteTarget.RECEIVER)
-            val typeString = contextReceiver.type.renderForReceiver()
+            // Context receivers have to wrap type annotation to be parsed correctly
+            val typeString = contextReceiver.type.renderForReceiver(wrapAnnotated = true)
             builder.append(typeString)
             if (i == contextReceivers.lastIndex) {
                 builder.append(") ")

@@ -27,3 +27,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+propertyDeclaration, typeAliasDeclaration, typeWithExtension */

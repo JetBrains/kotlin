@@ -1,0 +1,106 @@
+//
+// Source
+// ------------------------------------------
+
+private fun contentOf(
+    loading: @Composable ((State.Loading) -> Unit)?,
+    success: @Composable ((State.Success) -> Unit)?,
+    error: @Composable ((State.Error) -> Unit)?,
+): @Composable () -> Unit {
+    return if (loading != null || success != null || error != null) {
+        {
+            var draw = true
+            when (val state = getState()) {
+                is State.Loading -> if (loading != null) loading(state).also { draw = false }
+                is State.Success -> if (success != null) success(state).also { draw = false }
+                is State.Error -> if (error != null) error(state).also { draw = false }
+                is State.Empty -> {} // Skipped if rendering on the main thread.
+            }
+            if (draw) SubcomposeAsyncImageContent()
+        }
+    } else {
+        { SubcomposeAsyncImageContent() }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposableSingletons$TestKt$lambda$-1311044554$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 21 }
+}
+
+TestKt$contentOf$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 18 }
+        ReplaceGroup { key: <key>, line: 18 }
+        Root { key: <key>, line: 11 }
+}
+
+========= FunctionMeta: false, OptimizeGroups: true =========
+ComposableSingletons$TestKt$lambda$-1311044554$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 21 }
+}
+
+TestKt$contentOf$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 18 }
+        ReplaceGroup { key: <key>, line: 18 }
+        Root { key: <key>, line: 11 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+ComposableSingletons$TestKt$lambda$-1311044554$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 21 }
+}
+
+TestKt$contentOf$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 16 }
+        ReplaceGroup { key: <key>, line: 17 }
+        Root { key: <key>, line: 11 }
+}
+
+========= FunctionMeta: false, OptimizeGroups: false =========
+ComposableSingletons$TestKt$lambda$-1311044554$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 21 }
+}
+
+TestKt$contentOf$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 16 }
+        ReplaceGroup { key: <key>, line: 17 }
+        Root { key: <key>, line: 11 }
+}

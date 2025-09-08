@@ -8,3 +8,5 @@ fun foo(x: String): String {
         throw NullPointerException()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, tryExpression */

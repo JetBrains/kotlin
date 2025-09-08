@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -30,70 +27,38 @@ fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound 
  */
 fun IrFunctionSymbol.isConsideredAsPrivateAndNotLocalForInlining(): Boolean = this.isBound && owner.isEffectivelyPrivate() && !owner.isLocal
 
-interface CallInlinerStrategy {
-    /**
-     * TypeOf function requires some custom backend-specific processing. This is a customization point for that.
-     *
-     * @param expression is a copy of original IrCall with types substituted by normal rules
-     * @param nonSubstitutedTypeArgument is typeArgument of call with only reified type parameters substituted
-     *
-     * @return new node to insert instead of typeOf call.
-     */
-    fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression
-    fun at(container: IrDeclaration, expression: IrExpression) {}
-
-    object DEFAULT : CallInlinerStrategy {
-        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
-            return expression.apply {
-                typeArguments[0] = nonSubstitutedTypeArgument
-            }
-        }
-    }
-}
-
 enum class InlineMode {
     PRIVATE_INLINE_FUNCTIONS,
+    INTRA_MODULE_INLINE_FUNCTIONS,
     ALL_INLINE_FUNCTIONS,
 }
 
-abstract class InlineFunctionResolver(
-    val callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
-) {
-    protected open fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression) = false
+abstract class InlineFunctionResolver() {
+    protected open fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>) = false
 
     protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
 
-    fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression): IrFunction? {
+    fun getFunctionDeclarationToInline(expression: IrMemberAccessExpression<IrFunctionSymbol>): IrFunction? {
         if (shouldSkipBecauseOfCallSite(expression)) return null
         return getFunctionDeclaration(expression.symbol)
-    }
-
-    fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
-        return getFunctionDeclarationToInline(expression) != null
-    }
-
-    fun needsInlining(function: IrFunction): Boolean {
-        return getFunctionDeclaration(function.symbol) != null
     }
 }
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
-    private val inlineMode: InlineMode,
-    callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
-) : InlineFunctionResolver(callInlinerStrategy) {
+    protected val inlineMode: InlineMode,
+) : InlineFunctionResolver() {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
         if (!realOwner.isInline) return null
-        // TODO: drop special cases KT-77111
+        if (realOwner.isExternal && !context.allowInliningOfExternalFunctions) return null
         val result = when {
             realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() -> context.symbols.suspendCoroutineUninterceptedOrReturn.owner
             realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
             else -> realOwner
         }
         if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null
-        if (!context.allowExternalInlining && result.isExternal) return null
         return result
     }
 }
@@ -114,7 +79,11 @@ internal class PreSerializationPrivateInlineFunctionResolver(
 internal class PreSerializationNonPrivateInlineFunctionResolver(
     context: LoweringContext,
     irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
+    inlineCrossModuleFunctions: Boolean,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(
+    context,
+    if (inlineCrossModuleFunctions) InlineMode.ALL_INLINE_FUNCTIONS else InlineMode.INTRA_MODULE_INLINE_FUNCTIONS
+) {
 
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
@@ -123,9 +92,10 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
-        if (declarationMaybeFromOtherModule.body != null) {
+        if (declarationMaybeFromOtherModule.body != null || declarationMaybeFromOtherModule !is IrSimpleFunction) {
             return declarationMaybeFromOtherModule
         }
+        if (inlineMode != InlineMode.ALL_INLINE_FUNCTIONS) return null
         return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
     }
 }

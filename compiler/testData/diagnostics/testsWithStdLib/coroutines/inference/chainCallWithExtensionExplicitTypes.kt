@@ -23,3 +23,7 @@ fun test(ls: List<Int>) =
 
 private fun <E> Iterable<E>.asReceiveChannel(): ReceiveChannel<E> = TODO()
 public suspend fun <E, C> ReceiveChannel<E>.toChannel(destination: C): C = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

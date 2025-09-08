@@ -9,3 +9,7 @@ class XThreadsFramesView {
         return this
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, thisExpression, typeConstraint,
+typeParameter */

@@ -63,3 +63,6 @@ fun test(){
 
     Test3(Base1Impl()).foo("")
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral */

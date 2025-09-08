@@ -5,6 +5,9 @@ fun <T> produce(arg: () -> T): T = arg()
 
 fun main() {
     <!CANNOT_INFER_PARAMETER_TYPE!>produce<!> {
-        <!ARGUMENT_TYPE_MISMATCH!><!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun() {}<!> // CCE
+        <!RETURN_TYPE_MISMATCH!><!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun() {}<!> // CCE
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeParameter */

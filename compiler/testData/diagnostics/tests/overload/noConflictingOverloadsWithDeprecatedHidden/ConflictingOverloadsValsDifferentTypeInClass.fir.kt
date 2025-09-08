@@ -4,3 +4,5 @@ class Aaa() {
     @Deprecated("a", level = DeprecationLevel.HIDDEN)
     val a = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

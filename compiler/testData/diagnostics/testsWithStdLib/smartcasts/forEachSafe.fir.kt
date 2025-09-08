@@ -11,3 +11,6 @@ fun indexOfMax(a: IntArray): Int? {
     }
     return maxI
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

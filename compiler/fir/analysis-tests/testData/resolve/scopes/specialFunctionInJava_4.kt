@@ -27,3 +27,5 @@ public abstract class Some extends Number implements MyNumber {
 fun test(some: Some) {
     some.toByte()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

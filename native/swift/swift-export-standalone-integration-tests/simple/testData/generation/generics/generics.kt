@@ -1,3 +1,7 @@
+// KIND: STANDALONE
+// MODULE: main
+// FILE: main.kt
+
 fun <T> foo(param1: T, param2: T?) {}
 
 // A producer interface (covariant)
@@ -11,7 +15,7 @@ interface Consumer<in T> {
 }
 
 // An example producer class
-class StringProducer : Producer<String> {
+open class StringProducer : Producer<String> {
     override fun produce(): String = "Hello"
 }
 
@@ -39,3 +43,29 @@ class IdentityProcessor<T> : Processor<T, T> {
 fun <T> List<T>.customFilter(predicate: (T) -> Boolean): List<T> {
     return this.filter(predicate)
 }
+
+interface ConsumerProducer<T> : Consumer<T>, Producer<T>
+
+class CPImpl: StringProducer(), ConsumerProducer<String> {
+    override fun consume(item: String) {
+        println("Consumed: $item")
+    }
+}
+
+interface A <T> {
+    val foo: T
+}
+
+interface B <T> {
+    val foo: T
+}
+
+class Demo: A<Int>, B<Int?> {
+    override val foo = 5
+}
+
+abstract class Box<T>(val t: T)
+class DefaultBox<T>(t: T): Box<T>(t)
+class TripleBox: Box<Box<Box<Int>>>(DefaultBox(DefaultBox(5)))
+
+class GenericWithComparableUpperBound<T: Comparable<T>>(val t: T)

@@ -7,3 +7,6 @@ fun test(some: Some) {
     val same = some.copy()
     val different = some.copy(456, "456")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, stringLiteral */

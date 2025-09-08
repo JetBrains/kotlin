@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -291,7 +291,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     origin = JsPlainObjectsPluginKey.origin
                     returnTypeRef = replacedJsPlainObjectType
                     name = sourceVariableName
-                    symbol = FirValueParameterSymbol(sourceVariableName)
+                    symbol = FirValueParameterSymbol()
                     isCrossinline = false
                     isNoinline = true
                     isVararg = false
@@ -309,7 +309,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                         typeRef.withReplacedConeType(subst.substituteOrNull(typeRef.coneType))
                     } ?: typeRef
                     name = it.name
-                    symbol = FirValueParameterSymbol(it.name)
+                    symbol = FirValueParameterSymbol()
                     isCrossinline = false
                     isNoinline = true
                     isVararg = false

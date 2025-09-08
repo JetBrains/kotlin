@@ -79,3 +79,8 @@ fun test() {
     // It seems it's okay to resolve to outer X because we assign `X` to delegate field where it's not used as receiver
     val delegated by X
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, companionObject, comparisonExpression, forLoop,
+functionDeclaration, infix, integerLiteral, lambdaLiteral, localClass, localProperty, nullableType, objectDeclaration,
+operator, primaryConstructor, propertyDeclaration, propertyDelegate, rangeExpression, starProjection, stringLiteral,
+thisExpression, unaryExpression */

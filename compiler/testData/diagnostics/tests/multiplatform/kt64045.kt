@@ -18,3 +18,5 @@ public interface I {
 
 // FILE: jvm.kt
 actual interface Foo : I
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, interfaceDeclaration, javaType */

@@ -15,3 +15,6 @@ fun foo(c: Collection<TextWithOffset>) {
     val a3 = c.map(Pair<String, Int>::first)
     a3[0].length
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -251,6 +251,10 @@ open class FirKaptAnalysisHandlerExtension(
                 if (classFilePathWithoutExtension == "error/NonExistentClass") return
                 val sourceFiles = (outputFiles?.get(classFilePathWithoutExtension)
                     ?: error("The `outputFiles` map is not properly initialized (key = $classFilePathWithoutExtension)")).sourceFiles
+                kaptContext.generationState.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
+                    sourceFiles,
+                    generatedFile
+                )
                 messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
             }
 
@@ -271,12 +275,21 @@ open class FirKaptAnalysisHandlerExtension(
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
-        kaptContext.generationState.factory.writeAll(
-            incrementalDataOutputDir,
-            if (!reportOutputFiles) null else fun(sources: List<File>, output: File) {
-                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+        kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
+            kaptContext.generationState.configuration.fileMappingTracker?.let {
+                when (outputInfo.generatedForCompilerPlugin) {
+                    false -> it.recordSourceFilesToOutputFileMapping(
+                        outputInfo.sourceFiles,
+                        output
+                    )
+
+                    true -> it.recordOutputFileGeneratedForPlugin(output)
+                }
             }
-        )
+            if (reportOutputFiles) {
+                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
+            }
+        }
     }
 
     protected open fun loadProcessors(): LoadedProcessors {

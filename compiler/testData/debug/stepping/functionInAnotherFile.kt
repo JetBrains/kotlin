@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
 // FILE: foo.kt
 import bar
 fun foo(x: Int): Int {

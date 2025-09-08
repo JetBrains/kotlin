@@ -32,3 +32,5 @@ fun useSiteTestInterfaces(
     d: <!OPT_IN_USAGE_ERROR!>InterfaceOptInApiInheritorD<!>, // usage opt-in is required
     e: InterfaceOptInApiInheritorE  // usage opt-in isn't required
 ) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration, interfaceDeclaration */

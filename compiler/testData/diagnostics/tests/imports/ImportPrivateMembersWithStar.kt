@@ -31,3 +31,6 @@ fun testAccess() {
     <!INVISIBLE_MEMBER!>A1<!>()
     <!INVISIBLE_MEMBER!>A2<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration */

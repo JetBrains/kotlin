@@ -1127,7 +1127,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             +")."
         }
         symbolRef(symbol) {
-            +symbol.callableId.toString()
+            +symbol.callableIdAsString()
         }
         +"("
         generateList(fir.valueParameters) {

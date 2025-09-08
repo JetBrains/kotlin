@@ -10,3 +10,4 @@ fun overloadedFun(b: Any = "", c: Any = "", e: String = "", x: String = "", y: S
 
 val test: Right = overloadedFun(b = "")
 
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, propertyDeclaration, stringLiteral */

@@ -42,3 +42,5 @@ fun test(map: SomeMap<Int, String>) {
     map.remove(1) // ok
     map.remove(<!ARGUMENT_TYPE_MISMATCH!>""<!>) // error
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType, nullableType, stringLiteral */

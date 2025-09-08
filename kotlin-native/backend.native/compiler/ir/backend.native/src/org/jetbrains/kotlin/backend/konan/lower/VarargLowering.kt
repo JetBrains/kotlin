@@ -167,9 +167,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     private val symbols = context.symbols
-    private val intPlusInt = symbols.getBinaryOperator(
-            OperatorNameConventions.PLUS, context.irBuiltIns.intType, context.irBuiltIns.intType
-    ).owner
+    private val intPlusInt = context.irBuiltIns.intPlusSymbol
 
     private fun arrayType(type: IrType): ArrayHandle {
         val arrayClass = type.classifierOrFail
@@ -256,7 +254,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     inner class PrimitiveArrayHandle(primitiveType: PrimitiveType)
-        : ArrayHandle(symbols.irBuiltIns.primitiveTypesToPrimitiveArrays[primitiveType]!!) {
+        : ArrayHandle(context.irBuiltIns.primitiveTypesToPrimitiveArrays[primitiveType]!!) {
 
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             return builder.irCall(singleParameterConstructor).apply {

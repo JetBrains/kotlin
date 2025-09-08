@@ -120,6 +120,11 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitBigInt(@NotNull JsBigIntLiteral x) {
+        answer = 17; // primary
+    }
+
+    @Override
     public void visitObjectLiteral(@NotNull JsObjectLiteral x) {
         answer = 17; // primary
     }

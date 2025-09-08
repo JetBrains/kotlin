@@ -24,3 +24,5 @@ fun main(j: J<String>) {
     val r = Ref.create<Array<String>>()
     j.foo(r)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -76,10 +77,15 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                 ?.also { new -> variables[param] = new } ?: param
         }
 
+        val valueRemapper = VariableRemapper(variables)
+        for (parameter in parameters) {
+            parameter.defaultValue?.transformChildrenVoid(valueRemapper)
+        }
+
         val blockBody = body as? IrBlockBody
 
         if (blockBody != null && variables.isNotEmpty()) {
-            blockBody.transformChildren(VariableRemapper(variables), null)
+            blockBody.transformChildrenVoid(valueRemapper)
             blockBody.statements.addAll(0, parameters.mapNotNull {
                 irBuilder.createResolutionStatement(it, it.defaultValue?.expression)
             })
@@ -127,7 +133,10 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val (exportAnnotations, irrelevantAnnotations) = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn) || (it.isAnnotation(JsAnnotations.jsNameFqn))
+                it.isAnnotation(JsAnnotations.jsExportFqn) ||
+                        (it.isAnnotation(JsAnnotations.jsNameFqn)) ||
+                        (it.isAnnotation(JsAnnotations.jsExportIgnoreFqn))
+
             }
 
         originalFun.annotations = irrelevantAnnotations

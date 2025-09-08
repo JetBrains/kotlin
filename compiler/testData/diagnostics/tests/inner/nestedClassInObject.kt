@@ -16,3 +16,6 @@ object Object {
     object OuterObject
     class OuterClass
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nestedClass, objectDeclaration,
+propertyDeclaration */

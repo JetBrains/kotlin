@@ -79,3 +79,6 @@ fun falsefalse(x: Any?) {
         x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, functionDeclaration, ifExpression,
+intersectionType, isExpression, lambdaLiteral, nullableType, smartcast */

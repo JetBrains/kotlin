@@ -17,3 +17,6 @@ class My {
         // Error
         get() = <!UNRESOLVED_REFERENCE!>field<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, localProperty, propertyDeclaration,
+propertyWithExtensionReceiver */

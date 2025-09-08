@@ -25,3 +25,6 @@ fun f() {
             <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, init, localClass, localFunction, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

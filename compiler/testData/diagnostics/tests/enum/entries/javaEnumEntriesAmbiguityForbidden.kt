@@ -35,3 +35,6 @@ fun test(): String {
 
     return "$first$second$third"
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration */

@@ -1,0 +1,29 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun targetEnterExit(param: String): String =
+    key(param) {
+        if (param.isEmpty()) {
+            "Empty"
+        } else {
+            val state = remember { mutableStateOf("") }
+            state.value
+        }
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):9:9 -> m$<key>
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+========= FunctionMeta: true, OptimizeGroups: false =========
+ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):8:8 -> m$<key>
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>

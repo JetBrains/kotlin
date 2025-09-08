@@ -14,3 +14,6 @@ object Main {
         KOTLIN_HOME = File(home)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, ifExpression, init, integerLiteral, javaFunction,
+localProperty, objectDeclaration, propertyDeclaration, smartcast, stringLiteral */

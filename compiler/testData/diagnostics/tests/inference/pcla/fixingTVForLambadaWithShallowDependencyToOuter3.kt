@@ -31,3 +31,6 @@ fun main() {
         foo(<!TYPE_MISMATCH, TYPE_MISMATCH!>get()<!>) { it.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>toString<!>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, stringLiteral,
+suspend, typeParameter, typeWithExtension */

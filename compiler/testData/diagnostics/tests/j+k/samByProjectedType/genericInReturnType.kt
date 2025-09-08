@@ -51,3 +51,7 @@ fun main() {
     A.baz(<!TYPE_MISMATCH!>block<!>)
     A.baz(block2)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+samConversion, starProjection, typeParameter, typeWithExtension */

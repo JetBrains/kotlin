@@ -22,7 +22,7 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
         override fun check(declaration: FirCallableDeclaration) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
             if (containingClass.isExpect) return
-            check(declaration, containingClass, context, reporter)
+            check(declaration, containingClass)
         }
     }
 
@@ -31,18 +31,17 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
         override fun check(declaration: FirCallableDeclaration) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*> ?: return
             if (!containingClass.isExpect) return
-            check(declaration, containingClass, context, reporter)
+            check(declaration, containingClass)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     protected fun check(
         declaration: FirCallableDeclaration,
         containingClass: FirClassSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
-        val firTypeScope = containingClass.unsubstitutedScope(context)
-        FirNativeObjCNameUtilities.checkCallableMember(firTypeScope, declaration.symbol, declaration, context, reporter)
+        val firTypeScope = containingClass.unsubstitutedScope()
+        FirNativeObjCNameUtilities.checkCallableMember(firTypeScope, declaration.symbol, declaration)
     }
 }

@@ -439,3 +439,6 @@ fun main() {
     a0 += ""
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, localFunction,
+localProperty, propertyDeclaration, stringLiteral, whenExpression */

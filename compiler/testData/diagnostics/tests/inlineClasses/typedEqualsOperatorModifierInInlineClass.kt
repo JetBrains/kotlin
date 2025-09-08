@@ -22,3 +22,6 @@ value class IC2(val x: Int) {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun equals(other: IC2) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, value */

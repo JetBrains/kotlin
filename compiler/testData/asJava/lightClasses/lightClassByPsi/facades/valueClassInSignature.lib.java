@@ -64,7 +64,13 @@ public abstract interface SomeInterface /* SomeInterface*/ {
 
   public abstract void setMemberPropInExtension-54afNMI(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  setMemberPropInExtension-54afNMI(java.lang.String, int)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* SomeInterface.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static int getMemberPropInExtension-5lyY9Q4(@org.jetbrains.annotations.NotNull() SomeInterface, @org.jetbrains.annotations.NotNull() java.lang.String);//  getMemberPropInExtension-5lyY9Q4(SomeInterface, java.lang.String)
+
+    @java.lang.Deprecated()
+    public static void setMemberPropInExtension-54afNMI(@org.jetbrains.annotations.NotNull() SomeInterface, @org.jetbrains.annotations.NotNull() java.lang.String, int);//  setMemberPropInExtension-54afNMI(SomeInterface, java.lang.String, int)
+  }
 }
 
 public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {

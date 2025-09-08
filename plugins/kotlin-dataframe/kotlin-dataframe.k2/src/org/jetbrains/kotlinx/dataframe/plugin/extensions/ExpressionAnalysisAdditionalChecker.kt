@@ -23,12 +23,17 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -37,6 +42,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_TARGET_WARNING
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
@@ -56,7 +62,9 @@ class ExpressionAnalysisAdditionalChecker(
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
-            Checker(isTest), FunctionCallSchemaReporter.takeIf { dumpSchemas }
+            Checker(isTest),
+            FunctionCallSchemaReporter.takeIf { dumpSchemas },
+            InlineDataFrameLocalClassesChecker,
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOfNotNull(
             PropertyAccessSchemaReporter.takeIf { dumpSchemas }
@@ -73,6 +81,7 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
@@ -82,6 +91,7 @@ object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
         map.put(ERROR, "{0}", TO_STRING)
         map.put(CAST_ERROR, "{0}", TO_STRING)
         map.put(CAST_TARGET_WARNING, "{0}", TO_STRING)
+        map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE, "{0}", TO_STRING)
     }
 }
 
@@ -177,6 +187,24 @@ private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppChe
     }
 }
 
+private data object InlineDataFrameLocalClassesChecker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
+        expression.toResolvedCallableReference()?.toResolvedNamedFunctionSymbol()?.let { symbol ->
+            if (
+                FunctionCallTransformer.shouldRefine(expression.annotations, symbol, context.session) &&
+                context.containingDeclarations.any { it is FirNamedFunctionSymbol && it.isInline }
+            ) {
+                reporter.reportOn(
+                    expression.source,
+                    DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
+                    "DataFrame compiler plugin is not yet supported in inline functions"
+                )
+            }
+        }
+    }
+}
+
 private data object FunctionCallSchemaReporter : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
@@ -250,7 +278,7 @@ private fun SessionContext.reportSchema(
     }
 }
 
-private object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
+object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
     val PROPERTY_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
     val FUNCTION_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val FUNCTION_CALL_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
@@ -266,15 +294,16 @@ private object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
             it.put(PROPERTY_ACCESS_SCHEMA, "{0}", TO_STRING)
         }
     }
+}
 
-    private fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
-        return DiagnosticFactory1DelegateProvider(
-            Severity.INFO,
-            positioningStrategy,
-            KtElement::class,
-            container = this,
-        )
-    }
+context(container: KtDiagnosticsContainer)
+internal fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
+    return DiagnosticFactory1DelegateProvider(
+        Severity.INFO,
+        positioningStrategy,
+        KtElement::class,
+        container = container,
+    )
 }
 
 fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {

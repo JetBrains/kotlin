@@ -30,3 +30,6 @@ class C {
 
 @JvmName("extensionFun")
 fun Foo.extensionFun() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

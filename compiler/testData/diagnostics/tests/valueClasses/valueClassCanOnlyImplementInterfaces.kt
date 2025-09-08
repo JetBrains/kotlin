@@ -22,3 +22,6 @@ value class TestExtendsOpenClass(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASS
 
 @JvmInline
 value class TestImplementsInterface(val x: Int) : BaseInterface
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, value */

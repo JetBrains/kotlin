@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 fun <T> materialize(): T = TODO()
 
@@ -25,3 +24,6 @@ val c: () -> Unit = {
     // (compare that with the previous case, where we didn't used expected type Unit for "hello")
     materialize()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

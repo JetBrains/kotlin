@@ -128,7 +128,7 @@ class KotlinMocha internal constructor(
             add(mocha)
             add(file)
             addAll(cliArgs.toList())
-            addAll(cliArg("--reporter", "kotlin-web-helpers/dist/mocha-kotlin-reporter.js"))
+            addAll(cliArg("--reporter", modules.require("kotlin-web-helpers/dist/mocha-kotlin-reporter.js")))
             addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
             if (debug) {
                 add(NO_TIMEOUT_ARG)
@@ -164,7 +164,11 @@ class KotlinMocha internal constructor(
         return value?.let { listOf(cli, it) } ?: emptyList()
     }
 
-    @Deprecated(message = CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG)
+    @Deprecated(
+        CREATE_TEST_EXEC_SPEC_DEPRECATION_MSG,
+        ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs, debug)"),
+        DeprecationLevel.ERROR
+    )
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,

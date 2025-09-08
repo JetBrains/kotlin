@@ -39,3 +39,6 @@ fun test4(x: Any?): Any? {
         null
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+ifExpression, lambdaLiteral, nullableType, smartcast */

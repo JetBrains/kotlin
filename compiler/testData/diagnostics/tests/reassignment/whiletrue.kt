@@ -11,3 +11,6 @@ fun foo(): Int {
     } 
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, comparisonExpression, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration, whileLoop */

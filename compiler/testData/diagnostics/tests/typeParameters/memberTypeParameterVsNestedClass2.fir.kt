@@ -27,3 +27,6 @@ class Owner<T> {
         val y: T? = <!INITIALIZER_TYPE_MISMATCH!>T()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, inline, localProperty, nestedClass,
+nullableType, propertyDeclaration, reified, typeParameter */

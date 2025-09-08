@@ -4,18 +4,7 @@
 @file:MustUseReturnValue
 
 fun stringF(): String = ""
-fun nsf(): String? = "null"
 fun unitF(): Unit = Unit
-
-fun coll(m: MutableList<String>) {
-    m.add("")
-    m.isEmpty()
-}
-
-fun nullable(m: MutableList<String>?) {
-    m?.add("x")
-    m?.isEmpty()
-}
 
 fun exlusionPropagation(cond: Boolean, m: MutableList<String>) {
     if (cond) m.add("x") else throw IllegalStateException()
@@ -35,3 +24,6 @@ fun unused(cond: Boolean) {
 fun underscore() {
     val <!UNDERSCORE_IS_RESERVED!>_<!> = stringF()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, safeCall, stringLiteral, unnamedLocalVariable */

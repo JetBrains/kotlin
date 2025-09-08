@@ -22,3 +22,6 @@ fun test_1(any: Any, a: A, nullableA: A?) {
     x = nullableA ?: return // inferred to Any, but has A type
     x.foo() // smartcast
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, functionDeclaration, interfaceDeclaration, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter */

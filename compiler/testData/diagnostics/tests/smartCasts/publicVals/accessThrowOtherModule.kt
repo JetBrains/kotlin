@@ -13,3 +13,6 @@ fun test(pair: Pair<String?, Data>) {
         <!SMARTCAST_IMPOSSIBLE!>pair.first<!>.length // should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast */

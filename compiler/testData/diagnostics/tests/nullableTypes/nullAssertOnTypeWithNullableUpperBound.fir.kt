@@ -13,3 +13,5 @@ fun <T> T.testThis(): String {
     return this!!.toString()
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, intersectionType, nullableType, smartcast, thisExpression, typeParameter */

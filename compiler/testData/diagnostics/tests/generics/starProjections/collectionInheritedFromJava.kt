@@ -14,3 +14,5 @@ public class Base<T> {
 package p
 
 class Derived: p.Base<String>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

@@ -5,6 +5,8 @@ description = "ABI generation for Kotlin/JVM"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 sourceSets {
@@ -13,6 +15,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 val embedded by configurations
@@ -44,9 +47,9 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
+    testFixturesApi(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 }
 
 optInToExperimentalCompilerApi()
@@ -63,9 +66,15 @@ sourcesJar()
 
 javadocJar()
 
-projectTest(parallel = true) {
-    workingDir = rootDir
-    dependsOn(":dist")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+        dependsOn(":dist")
+    }
+
+    testGenerator("org.jetbrains.kotlin.jvm.abi.TestGeneratorKt")
+
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

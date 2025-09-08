@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
     private val WARNING_STARTING_FROM_2_2: String = """
@@ -36,12 +37,13 @@ object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSe
         }
     }
 
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+    context(context: CheckerContext)
+    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
+        if (!LanguageFeature.ContextReceivers.isEnabled()) {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+        if (LanguageFeature.ContextParameters.isEnabled()) {
             reporter.reportError(
                 "Experimental language features for context receivers and context parameters cannot be enabled at the same time. " +
                         "Remove the '-Xcontext-receivers' compiler argument."

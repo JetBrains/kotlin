@@ -7,3 +7,5 @@ class My {
         this.x = x
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, propertyDeclaration, secondaryConstructor, thisExpression */

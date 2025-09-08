@@ -14,3 +14,5 @@ expect open class IOException(message: String, cause: Throwable?) {
 }
 
 expect class EOFException(message: String) : IOException
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, nullableType, primaryConstructor, secondaryConstructor */

@@ -11,3 +11,7 @@ fun <A, T: Comparable<T>> arrayData(vararg values: T, toArray: Array<out T>.() -
 fun main() {
     with (arrayData("ac", "aD", "aba") { toList().toTypedArray() }) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inProjection, lambdaLiteral, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter, typeWithExtension,
+vararg */

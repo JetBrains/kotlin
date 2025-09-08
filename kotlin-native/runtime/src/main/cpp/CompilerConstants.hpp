@@ -98,6 +98,7 @@ bool globalDataLazyInit() noexcept;
 bool swiftExport() noexcept;
 bool latin1Strings() noexcept;
 uint8_t mmapTag() noexcept;
+const char* minidumpLocation() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

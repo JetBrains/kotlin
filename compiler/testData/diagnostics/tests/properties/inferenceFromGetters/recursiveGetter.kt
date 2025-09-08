@@ -18,3 +18,6 @@ class A {
 
 fun <E> id(x: E) = x
 fun <E> l(x: E): List<E> = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

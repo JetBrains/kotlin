@@ -20,3 +20,5 @@ class Derived : Base() {
         this.dependsOn += s
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, thisExpression */

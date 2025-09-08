@@ -26,3 +26,6 @@ fun <T1> Iterable<T1>.flatMap1(transform: (T1) -> String): String = TODO()
 fun <T2> Iterable<T2>.flatMap1(transform: (T2) -> Int): Int = TODO()
 
 fun <T3, R3> T3.map2(transform: (T3) -> R3): R3 = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, stringLiteral, suspend, typeParameter, typeWithExtension */

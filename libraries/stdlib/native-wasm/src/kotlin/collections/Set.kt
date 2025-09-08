@@ -78,14 +78,19 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Sets.add
      */
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
 
+    @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
 }

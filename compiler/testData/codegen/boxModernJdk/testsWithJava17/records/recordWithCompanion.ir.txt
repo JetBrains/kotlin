@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/Generated_Box_Main.kt
-  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit [suspend]
+  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:res type:kotlin.String [val]
         CALL 'public final fun box (): kotlin.String declared in <root>' type=kotlin.String origin=null
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Tag [val]
-          TYPE_OP type=<root>.Tag origin=CAST typeOperand=<root>.Tag
+          TYPE_OP type=<root>.Tag origin=IMPLICIT_CAST typeOperand=<root>.Tag
             GET_VAR 'other: kotlin.Any? declared in <root>.Tag.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

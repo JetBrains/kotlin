@@ -27,3 +27,6 @@ fun testFromJava() {
     val list = myListOf(*values)
     takeStrings(list)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration, typeParameter, vararg */

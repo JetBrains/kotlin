@@ -23,3 +23,6 @@ fun testReceivedLambda() {
     receiveLambda<MyEnum> { EnumValue3 }
     receiveLambda<MyEnum> { <!ARGUMENT_TYPE_MISMATCH!>prop<!> }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

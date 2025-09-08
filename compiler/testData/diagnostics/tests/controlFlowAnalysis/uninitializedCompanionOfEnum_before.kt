@@ -63,3 +63,6 @@ fun EnumWithLambda.Companion.extensionFun(): String = companionFun()
 val EnumWithLambda.Companion.extensionProp: String
     get() = companionProp
 
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, objectDeclaration, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral */

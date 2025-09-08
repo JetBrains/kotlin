@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.continuationClassVarsCountByType
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -92,7 +93,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
     protected fun IrSimpleFunction.generateErrorForInlineBody() {
         val message = "This is a stub representing a copy of a suspend method without the state machine " +
                 "(used by the inliner). Since the difference is at the bytecode level, the body is " +
-                "still on the original function. Use suspendForInlineToOriginal() to retrieve it."
+                "still on the original function. Use originalOfSuspendForInline to retrieve it."
         body = context.irFactory.createExpressionBody(
             startOffset,
             endOffset,
@@ -291,6 +292,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             copyAttributes(invokeSuspend)
             generateErrorForInlineBody()
             parameters += invokeSuspend.nonDispatchParameters.map { it.copyTo(this) }
+            originalOfSuspendForInline = invokeSuspend
         }
     }
 

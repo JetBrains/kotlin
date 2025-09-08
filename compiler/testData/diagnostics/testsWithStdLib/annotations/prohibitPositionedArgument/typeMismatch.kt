@@ -12,3 +12,5 @@ public @interface A {
 <!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>false<!>) fun foo1() {}
 
 @A(<!CONSTANT_EXPECTED_TYPE_MISMATCH, POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>2.0<!>, x = true, b = 2.0) fun foo2() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType */

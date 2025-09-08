@@ -18,3 +18,6 @@ fun C.test() {
         val foo = foo {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, interfaceDeclaration, lambdaLiteral, propertyDeclaration */

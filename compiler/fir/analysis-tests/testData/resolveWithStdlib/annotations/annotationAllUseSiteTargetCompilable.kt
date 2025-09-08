@@ -132,3 +132,6 @@ class My(
         get() = 6
         set(param) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetAll, classDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, setter, stringLiteral */

@@ -247,10 +247,10 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
         subclass.addFakeOverrides(
             context.typeSystem,
-            // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
+            // Built function overrides the originalSuperMethod, while, if the parent class is already lowered, it would
             // transformedSuperMethod in its declaration list. We need not fake override in that case.
-            // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
-            ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
+            // Later lowerings will fix it and replace the function with one overriding transformedSuperMethod.
+            mapOf(superClass to (superClass.declarationsAtFunctionReferenceLowering ?: superClass.declarations.filter { it !== transformedSuperMethod }))
         )
 
         postprocessCreatedObjectProxy(subclass)

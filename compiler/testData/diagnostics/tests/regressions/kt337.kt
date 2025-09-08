@@ -14,3 +14,5 @@ fun test() {
       .foo() // Should be a valid expression
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, primaryConstructor, propertyDeclaration */

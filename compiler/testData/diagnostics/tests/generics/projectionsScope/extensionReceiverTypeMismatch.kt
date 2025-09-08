@@ -17,3 +17,6 @@ fun test(x: A<out CharSequence>, y: Out<CharSequence>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, lambdaLiteral, nullableType, out,
+outProjection, stringLiteral, typeParameter */

@@ -19,3 +19,6 @@ fun bar(body: Ctx.() -> Unit) {
     foo()
     body()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, typeWithExtension */

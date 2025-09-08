@@ -10,13 +10,13 @@ dependencies {
         // kotlin-gradle-plugin-api
         api(project(":kotlin-gradle-plugin-api"))
         api(project(":kotlin-gradle-plugin-annotations"))
-        api(project(":kotlin-gradle-plugin-model"))
         api(project(":native:kotlin-native-utils"))
         api(project(":kotlin-tooling-core"))
         api(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
 
         // plugins
         api(project(":kotlin-gradle-plugin"))
+        api(project(":gradle:kotlin-gradle-ecosystem-plugin"))
         api(project(":atomicfu"))
         api(project(":compose-compiler-gradle-plugin"))
         api(project(":kotlin-allopen"))

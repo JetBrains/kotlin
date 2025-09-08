@@ -33,6 +33,7 @@ abstract class IrExtraActualDeclarationExtractor {
 abstract class IrActualizerMapContributor {
     abstract fun collectClassesMap(): ActualClassInfo
     abstract fun collectTopLevelCallablesMap(): Map<IrSymbol, IrSymbol>
+    abstract fun actualizeClass(classId: ClassId): IrClassSymbol?
 
     class ActualClassInfo(
         val classMapping: Map<IrClassSymbol, IrClassSymbol>,

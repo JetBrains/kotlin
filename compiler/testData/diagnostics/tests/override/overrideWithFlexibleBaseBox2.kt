@@ -21,3 +21,6 @@ public interface Foo<T> extends KotlinBase<T> {}
 
     <!NOTHING_TO_OVERRIDE!>override<!> fun test2(a: KotlinBox<in E1 & Any>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, inProjection, interfaceDeclaration, javaType,
+nullableType, outProjection, override, typeParameter */

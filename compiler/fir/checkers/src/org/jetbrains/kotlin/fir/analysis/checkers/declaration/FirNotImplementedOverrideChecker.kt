@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
+import org.jetbrains.kotlin.fir.isVisibleInClass
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
@@ -61,7 +63,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 classKind == ClassKind.INTERFACE && modality == Modality.OPEN
         val classSymbol = declaration.symbol
 
-        val classScope = declaration.unsubstitutedScope(context)
+        val classScope = declaration.unsubstitutedScope()
 
         val notImplementedSymbols = mutableListOf<FirCallableSymbol<*>>()
         val notImplementedIntersectionSymbols = mutableListOf<FirCallableSymbol<*>>()
@@ -75,8 +77,8 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
 
         fun DelegatedWrapperData<FirCallableDeclaration>.isIncorrectlyDelegated(): Boolean {
             if (classKind != ClassKind.OBJECT) return false
-            val delegateFieldType = delegateField.initializer?.resolvedType?.fullyExpandedType(session)
-            return (delegateFieldType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) == classSymbol
+            val delegateFieldType = delegateFieldSymbol.resolvedInitializer?.resolvedType?.fullyExpandedType()
+            return (delegateFieldType as? ConeClassLikeType)?.lookupTag?.toSymbol() == classSymbol
         }
 
         @OptIn(ScopeFunctionRequiresPrewarm::class) // The symbol is coming from a call to process*ByName
@@ -221,13 +223,13 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                         it.modality == Modality.ABSTRACT
                     }
                 if (implIntersections.any {
-                        it.containingClassLookupTag()?.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS
+                        it.containingClassLookupTag()?.toRegularClassSymbol()?.classKind == ClassKind.CLASS
                     }
                 ) {
                     reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol)
                 } else {
                     if (canHaveAbstractDeclarations && abstractIntersections.any {
-                            it.containingClassLookupTag()?.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS
+                            it.containingClassLookupTag()?.toRegularClassSymbol()?.classKind == ClassKind.CLASS
                         }
                     ) {
                         return

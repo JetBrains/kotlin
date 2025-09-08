@@ -23,3 +23,6 @@ fun <K, V> test(w: B<K, A<V>>, b: Boolean) {
 }
 
 fun <T> select(vararg x: T): T = x[0]
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, outProjection, propertyDeclaration, typeParameter, vararg, whenExpression */

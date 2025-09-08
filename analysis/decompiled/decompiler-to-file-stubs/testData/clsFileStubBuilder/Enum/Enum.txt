@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=a.b.c.test.enum]
+FILE[kind=File[packageFqName=a.b.c.test.enum]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION
@@ -11,8 +11,8 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
       REFERENCE_EXPRESSION[referencedName=enum]
   IMPORT_LIST
   CLASS[classId=a/b/c/test/enum/Enum, fqName=a.b.c.test.enum.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Enum]]
-    MODIFIER_LIST[enum public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Enum]
+    MODIFIER_LIST[public final enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Enum]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST
@@ -44,7 +44,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.F, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=F, superNames=[]]
-      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
@@ -69,8 +69,8 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-        MODIFIER_LIST[open public]
+      FUN[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        MODIFIER_LIST[public open]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

@@ -8,3 +8,6 @@ val oo = object {
 
     fun f1() = Nested(<!TOO_MANY_ARGUMENTS!>11<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
+nestedClass, propertyDeclaration */

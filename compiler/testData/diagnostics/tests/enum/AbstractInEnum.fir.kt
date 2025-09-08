@@ -46,3 +46,6 @@ enum class MyEnum() {
 
     var n: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> get <!WRONG_MODIFIER_TARGET!>abstract<!> set(v: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, functionDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, setter */

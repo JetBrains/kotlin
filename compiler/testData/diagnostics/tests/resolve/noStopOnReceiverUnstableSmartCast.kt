@@ -27,3 +27,6 @@ class Something {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, ifExpression,
+interfaceDeclaration, isExpression, nullableType, override, propertyDeclaration, smartcast, whenExpression */

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType +DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +AllowDnnTypeOverridingFlexibleType +DontMakeExplicitJavaTypeArgumentsFlexible
 // FILE: Super.java
 public interface Super {
     <A> A foo(Class<A> klass);
@@ -57,3 +57,5 @@ open class NotNullGeneric<B : Any> : SuperGeneric<B> {
 
 class NotNullSubGeneric<B : Any> : OtherSuperGeneric<B>, NotNullGeneric<B>()
 
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, javaType, nullableType, override, typeConstraint,
+typeParameter */

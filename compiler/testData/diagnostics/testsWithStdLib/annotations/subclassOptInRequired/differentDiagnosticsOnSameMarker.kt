@@ -10,3 +10,5 @@ annotation class Marker
 interface MessApi
 
 open class MessImpl: <!OPT_IN_TO_INHERITANCE_ERROR, OPT_IN_USAGE_ERROR!>MessApi<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, interfaceDeclaration */

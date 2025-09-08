@@ -25,3 +25,6 @@ abstract class KtCodeFragment : JavaCodeFragment {
         thisType = psiType
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaType, nullableType, override,
+propertyDeclaration */

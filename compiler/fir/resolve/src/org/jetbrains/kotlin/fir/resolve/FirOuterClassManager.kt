@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -18,9 +19,8 @@ class FirOuterClassManager(
 ) {
     fun outerClass(classSymbol: FirClassLikeSymbol<*>): FirClassLikeSymbol<*>? {
         if (classSymbol !is FirClassSymbol<*>) return null
-        val classId = classSymbol.classId
-        if (classId.isLocal) return outerLocalClassForNested[classSymbol]
-        val outerClassId = classId.outerClassId ?: return null
+        if (classSymbol.isLocal) return outerLocalClassForNested[classSymbol]
+        val outerClassId = classSymbol.classId.outerClassId ?: return null
         return session.symbolProvider.getClassLikeSymbolByClassId(outerClassId)
     }
 

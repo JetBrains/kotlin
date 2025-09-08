@@ -16,3 +16,6 @@ fun box(): String {
     val d = Derived()
     return d::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>.get()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaCallableReference, javaType,
+localProperty, propertyDeclaration, stringLiteral */

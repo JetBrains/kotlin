@@ -1,8 +1,9 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 fun test(uis: UIntArray): String {
     var s = ""
-    for ((i, ui) in uis.withIndex()) {
+    for ([i, ui] in uis.withIndex()) {
         s += "$i:$ui;"
     }
     return s

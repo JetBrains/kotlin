@@ -21,3 +21,6 @@ fun test(a: My): String {
     // When is exhaustive
     return <!DEBUG_INFO_SMARTCAST!>q<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

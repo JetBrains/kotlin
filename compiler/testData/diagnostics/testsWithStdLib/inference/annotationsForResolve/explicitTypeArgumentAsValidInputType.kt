@@ -12,3 +12,5 @@ fun test() {
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>select<!>(ChildA, ChildB) // should be error
     select<Any>(ChildA, ChildB) // should be ok
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration, typeParameter */

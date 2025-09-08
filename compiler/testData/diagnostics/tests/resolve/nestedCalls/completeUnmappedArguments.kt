@@ -14,3 +14,6 @@ fun test() {
     bar(<!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>zz<!> = foo(
       <!NAMED_PARAMETER_NOT_FOUND!>xx<!> = zzz(12) { i: Int -> i + i }))<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localFunction, stringLiteral */

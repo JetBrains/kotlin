@@ -24,3 +24,7 @@ fun bar(): Int {
         }
     }.baz()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, javaFunction,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

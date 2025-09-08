@@ -12,3 +12,5 @@ expect annotation class Foo(val foo: Int = 42)
 @kotlin.annotations.jvm.KotlinActual public @interface Foo {
     @kotlin.annotations.jvm.KotlinActual int foo() default 42;
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, expect, integerLiteral, primaryConstructor, propertyDeclaration */

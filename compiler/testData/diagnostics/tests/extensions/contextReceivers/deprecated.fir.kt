@@ -77,3 +77,8 @@ enum class E
 
 <!CONTEXT_CLASS_OR_CONSTRUCTOR, CONTEXT_RECEIVERS_DEPRECATED!>context<!>(A)
 object O
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, getter, integerLiteral, interfaceDeclaration, lambdaLiteral,
+localProperty, objectDeclaration, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver,
+secondaryConstructor, setter, suspend, typeAliasDeclaration, typeWithContext, typeWithExtension */

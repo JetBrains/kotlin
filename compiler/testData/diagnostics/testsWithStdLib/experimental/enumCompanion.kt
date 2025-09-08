@@ -29,3 +29,6 @@ val FooEntries = Foo.entries
 val BazEntries = <!OPT_IN_USAGE_ERROR!>Baz<!>.<!OPT_IN_USAGE_ERROR!>entries<!>
 
 val FooDeprecated = Foo.<!OPT_IN_USAGE_ERROR!>Deprecated<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, companionObject, enumDeclaration, enumEntry, objectDeclaration,
+propertyDeclaration */

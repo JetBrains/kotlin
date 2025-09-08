@@ -14,3 +14,5 @@ fun test(a: A) {
 }
 
 fun takeA(a: A) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration */

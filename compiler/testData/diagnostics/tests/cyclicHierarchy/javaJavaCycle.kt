@@ -28,3 +28,4 @@ fun foo() {
     object : B.B3 { override fun getFoo() = 1 }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, javaType, override */

@@ -13,3 +13,4 @@ public class Derived extends Base {}
 // FILE: use.kt
 fun foo(): Derived = <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>()
 
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

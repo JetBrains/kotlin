@@ -57,35 +57,11 @@ var Project.javaHome: String?
         extra["javaHome"] = v
     }
 
-fun Project.generator(
-    fqName: String,
-    sourceSet: SourceSet? = null,
-    configure: JavaExec.() -> Unit = {}
-) = PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> { _, property ->
-    smartJavaExec(
-        name = property.name,
-        classpath = (sourceSet ?: testSourceSet).runtimeClasspath,
-        mainClass = fqName
-    ) {
-        group = "Generate"
-        workingDir = rootDir
-        systemProperty("line.separator", "\n")
-        systemProperty("idea.ignore.disabled.plugins", "true")
-        configure()
-    }
-}
-
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
     val v = it.toString()
     if (v.isBlank()) true
     else v.toBoolean()
 }
-
-inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
-
-fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
-
-fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByType()
 
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
 
@@ -108,7 +84,3 @@ fun getMvnwCmd(): List<String> = when {
     OperatingSystem.current().isWindows -> listOf("cmd", "/c", "mvnw.cmd")
     else -> listOf("./mvnw")
 }
-
-fun String.capitalize(): String = capitalize(Locale.ROOT)
-
-fun String.capitalize(locale: Locale): String = replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }

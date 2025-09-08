@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -20,8 +21,10 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -69,12 +72,7 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
                             reflectionTargetLinkageError = expression.reflectionTargetLinkageError
                         }
                     }
-                    +createKProperty(
-                        expression, typeArguments,
-                        if (expression.reflectionTargetLinkageError == null) originalPropertySymbol.owner.name.asString() else null,
-                        getterReference,
-                        setterReference,
-                    )
+                    +createKProperty(expression, typeArguments, getterReference, setterReference)
                 }
                 if (expression.boundValues.isEmpty()) {
                     return block.statements.single() as IrExpression
@@ -100,19 +98,41 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
                 invokeFunction = function,
                 superType = superType,
                 reflectionTargetSymbol = reflectionTarget,
-                overriddenFunctionSymbol = UpgradeCallableReferences.selectSAMOverriddenFunction(superType),
+                overriddenFunctionSymbol = superType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 captures = captures,
                 origin = origin,
             )
         })
     }
 
+    protected fun IrBuilderWithScope.propertyReferenceNameExpression(reference: IrRichPropertyReference): IrExpression {
+        val originalPropertySymbol = reference.reflectionTargetSymbol
+        require(originalPropertySymbol is IrPropertySymbol)
+        return if (reference.reflectionTargetLinkageError == null) {
+            irString(originalPropertySymbol.owner.name.asString())
+        } else {
+            irNull()
+        }
+    }
+
+    protected fun IrBuilderWithScope.propertyReferenceLinkageErrorExpression(
+        reference: IrRichPropertyReference,
+        defaultValue: () -> IrExpression = ::irNull,
+    ): IrExpression =
+        reference.reflectionTargetLinkageError?.let {
+            this@AbstractPropertyReferenceLowering.context.partialLinkageSupport.prepareLinkageError(
+                doNotLog = true,
+                it,
+                reference,
+                PartialLinkageSources.File.determineFileFor(reference.getterFunction),
+            )
+        }?.let(::irString) ?: defaultValue()
+
     abstract fun functionReferenceClass(arity: Int): IrClassSymbol
 
     abstract fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
         typeArguments: List<IrType>,
-        name: String?,
         getterReference: IrRichFunctionReference,
         setterReference: IrRichFunctionReference?,
     ): IrExpression

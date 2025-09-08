@@ -14,3 +14,6 @@ fun enumStarTest(a: Enum<*>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>()<!>
     <!UNREACHABLE_CODE!>a.bar()<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, localProperty, propertyDeclaration,
+starProjection, typeConstraint, typeParameter, vararg */

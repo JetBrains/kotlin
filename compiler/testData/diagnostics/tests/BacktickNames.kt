@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 //  !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
@@ -71,7 +72,7 @@ class A() {
 }
 
 fun <!INVALID_CHARACTERS!>`foo:bar`<!>(<!INVALID_CHARACTERS!>`\arg`<!>: Int): Int {
-    val (<!INVALID_CHARACTERS!>`a:b`<!>, c) = Data(10, 20)
+    val [<!INVALID_CHARACTERS!>`a:b`<!>, c] = Data(10, 20)
     val <!INVALID_CHARACTERS!>`a\b`<!> = 10
 
     fun localFun() {}
@@ -94,3 +95,7 @@ fun <!INVALID_CHARACTERS!>`foo:bar`<!>(<!INVALID_CHARACTERS!>`\arg`<!>: Int): In
 
     return `\arg`
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration,
+functionalType, init, integerLiteral, lambdaLiteral, localFunction, localProperty, primaryConstructor,
+propertyDeclaration, rangeExpression, tryExpression */

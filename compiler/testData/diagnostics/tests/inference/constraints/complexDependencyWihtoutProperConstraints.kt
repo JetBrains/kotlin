@@ -67,3 +67,7 @@ fun test(bool: Boolean) {
     } else null
     <!DEBUG_INFO_EXPRESSION_TYPE("Pair<kotlin.Int, () -> () -> kotlin.String>?")!>test13<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeParameter, vararg */

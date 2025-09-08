@@ -24,3 +24,5 @@ fun use() {
     <!INVISIBLE_REFERENCE!>a<!>()
     outer.<!INVISIBLE_REFERENCE!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

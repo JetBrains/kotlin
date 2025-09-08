@@ -34,7 +34,7 @@ abstract class FirExportCheckerVisitor : FirVisitor<Boolean, SpecialDeclarationT
     }
 
     private fun <D> D.isExported(): Boolean where D : FirCallableDeclaration {
-        val classId = symbol.callableId.classId ?: return globalMemberIsExported()
+        val classId = symbol.callableId?.classId ?: return globalMemberIsExported()
         return visibility !== Visibilities.Local &&
                 classId.toSymbol(moduleData.session)!!.fir.accept(this@FirExportCheckerVisitor, SpecialDeclarationType.REGULAR)
     }

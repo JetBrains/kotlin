@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -22,6 +23,7 @@ internal class FirResolvedErrorReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     override val diagnostic: ConeDiagnostic,
 ) : FirResolvedErrorReference() {
 
@@ -29,5 +31,9 @@ internal class FirResolvedErrorReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedErrorReferenceImpl {
         return this
+    }
+
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        resolvedSymbolOrigin = newResolvedSymbolOrigin
     }
 }

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.irError
-import org.jetbrains.kotlin.ir.util.originalFunction
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 
 val emptyScope: JsScope = object : JsScope("nil") {
     override fun doCreateName(ident: String): JsName {
@@ -55,9 +55,9 @@ class JsGenerationContext(
         )
     }
 
-    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null, fileEntry: IrFileEntry = currentFileEntry): JsGenerationContext {
         return JsGenerationContext(
-            currentFileEntry = currentFileEntry,
+            currentFileEntry = fileEntry,
             currentFunction = func,
             currentInlineFunction = currentInlineFunction,
             staticContext = staticContext,
@@ -70,7 +70,7 @@ class JsGenerationContext(
     fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
         return nameCache.getOrPut(declaration) {
             if (useBareParameterNames) {
-                JsName(sanitizeName(declaration.name.asString()), true)
+                JsName(makeValidES5Identifier(declaration.name.asString()), true)
             } else {
                 val name = localNames!!.variableNames.names[declaration]
                     ?: irError("Variable name is not found") {
@@ -98,8 +98,7 @@ class JsGenerationContext(
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
 
     fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean {
-        val originalSymbol = symbol.owner.originalFunction.symbol
-        return staticContext.backendContext.getJsCodeForFunction(originalSymbol) != null
+        return staticContext.backendContext.getJsCodeForFunction(symbol) != null
     }
 
     fun getStartLocationForIrElement(irElement: IrElement, originalName: String? = null) =

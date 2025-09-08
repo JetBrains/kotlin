@@ -11,3 +11,6 @@ fun MySealed.getOrElse() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
     is <!UNRESOLVED_REFERENCE!>Left<!> -> <!UNRESOLVED_REFERENCE!>x<!>
     is <!UNRESOLVED_REFERENCE!>Right<!> -> <!UNRESOLVED_REFERENCE!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, whenExpression, whenWithSubject */

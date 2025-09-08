@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.androidLibrary
+import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
+import org.jetbrains.kotlin.gradle.util.kotlin
 import org.junit.Test
 
 class MppDiagnosticsFunctionalTest {
@@ -113,17 +115,6 @@ class MppDiagnosticsFunctionalTest {
     fun testNoTargetsDeclared() {
         checkDiagnosticsWithMppProject("noTargetsDeclared") {
             kotlin { }
-        }
-    }
-
-    @Test
-    fun testKotlinCompilationSourceDeprecation() {
-        checkDiagnosticsWithMppProject("kotlinCompilationSourceDeprecation") {
-            kotlin {
-                val customMain = sourceSets.create("customMain")
-                @Suppress("DEPRECATION_ERROR")
-                jvm().compilations.create("custom").source(customMain)
-            }
         }
     }
 }

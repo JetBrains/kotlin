@@ -49,6 +49,8 @@ class ComposeIrGenerationExtension(
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
+    private val indyJvmLambdasEnabled: Boolean = true,
+    private val targetRuntimeVersion: ComposeRuntimeVersion? = null,
     private val messageCollector: MessageCollector,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
@@ -187,6 +189,8 @@ class ComposeIrGenerationExtension(
             stabilityInferencer,
             sourceInformationEnabled,
             traceMarkersEnabled,
+            indyEnabled = indyJvmLambdasEnabled && pluginContext.platform.isJvm(),
+            targetRuntimeVersion,
             featureFlags,
         ).lower(moduleFragment)
 

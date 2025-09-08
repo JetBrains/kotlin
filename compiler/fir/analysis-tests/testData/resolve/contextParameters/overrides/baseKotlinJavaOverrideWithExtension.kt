@@ -38,3 +38,6 @@ fun usage(a: JavaWithOverride, b: JavaWithFakeOverride) {
         1.<!NO_CONTEXT_ARGUMENT!>foo<!>(true)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, integerLiteral,
+interfaceDeclaration, javaFunction, javaType, lambdaLiteral, stringLiteral */

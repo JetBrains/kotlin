@@ -31,9 +31,14 @@ object Names {
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
             Name.identifier("DataColumn")
         )
+    val VALUE_COLUMN_CLASS_ID: ClassId
+        get() = ClassId(
+            FqName("org.jetbrains.kotlinx.dataframe.columns"),
+            Name.identifier("ValueColumn")
+        )
     val BASE_COLUMN_CLASS_ID: ClassId
         get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "columns")),
+            FqName("org.jetbrains.kotlinx.dataframe.columns"),
             Name.identifier("BaseColumn")
         )
     val COLUMNS_CONTAINER_CLASS_ID: ClassId
@@ -47,6 +52,10 @@ object Names {
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
             Name.identifier("ColumnsScope")
         )
+
+
+
+
     val DATA_ROW_CLASS_ID: ClassId
         get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
     val DF_ANNOTATIONS_PACKAGE: Name
@@ -67,6 +76,7 @@ object Names {
     val LOCAL_DATE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDate"))
     val LOCAL_DATE_TIME_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("LocalDateTime"))
     val INSTANT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("Instant"))
+    val STDLIB_INSTANT_CLASS_ID = ClassId(FqName("kotlin.time"), Name.identifier("Instant"))
     val DATE_TIME_PERIOD_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimePeriod"))
     val DATE_TIME_UNIT_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("DateTimeUnit"))
     val TIME_ZONE_CLASS_ID = ClassId(FqName("kotlinx.datetime"), Name.identifier("TimeZone"))
@@ -79,6 +89,12 @@ object Names {
     val TO = CallableId(FqName("kotlin"), Name.identifier("to"))
     val TRIM_MARGIN = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimMargin"))
     val TRIM_INDENT = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimIndent"))
+
+    val DATAFRAME_PROVIDER = ClassId(FqName("org.jetbrains.kotlinx.dataframe.io"), Name.identifier("DataFrameProvider"))
+    val DATA_SCHEMA_SOURCE_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchemaSource"))
+    val READ = Name.identifier("read")
+    val DEFAULT = Name.identifier("default")
+    val SCHEMA_KTYPE = Name.identifier("schemaKType")
 }
 
 private fun KClass<*>.classId(): ClassId {

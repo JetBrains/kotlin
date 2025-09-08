@@ -12,3 +12,5 @@ fun test() {
 }
 
 fun bar(s: String) = s
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, integerLiteral */

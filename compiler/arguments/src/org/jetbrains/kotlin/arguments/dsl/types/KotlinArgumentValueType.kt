@@ -61,8 +61,8 @@ class KotlinVersionType(
         KotlinReleaseVersion.v1_7_0..KotlinReleaseVersion.v1_7_21 to KotlinVersion.v1_7,
         KotlinReleaseVersion.v1_8_0..KotlinReleaseVersion.v1_8_22 to KotlinVersion.v1_8,
         KotlinReleaseVersion.v1_9_0..KotlinReleaseVersion.v1_9_25 to KotlinVersion.v1_9,
-        KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_0_20 to KotlinVersion.v2_0,
-        KotlinReleaseVersion.v2_1_0..KotlinReleaseVersion.v2_1_20 to KotlinVersion.v2_1,
+        KotlinReleaseVersion.v2_0_0..KotlinReleaseVersion.v2_0_21 to KotlinVersion.v2_0,
+        KotlinReleaseVersion.v2_1_0..KotlinReleaseVersion.v2_1_21 to KotlinVersion.v2_1,
     )
 ) : KotlinArgumentValueType<KotlinVersion> {
     override fun stringRepresentation(value: KotlinVersion?): String? {
@@ -150,6 +150,19 @@ class ReturnValueCheckerModeType(
     override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(ReturnValueCheckerMode.disabled),
 ) : KotlinArgumentValueType<ReturnValueCheckerMode> {
     override fun stringRepresentation(value: ReturnValueCheckerMode?): String {
+        return value?.modeState.valueOrNullStringLiteral
+    }
+}
+
+/**
+ * A value which accepts [KlibIrInlinerMode] type.
+ */
+@Serializable
+class KlibIrInlinerModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<KlibIrInlinerMode?> = ReleaseDependent(KlibIrInlinerMode.default),
+) : KotlinArgumentValueType<KlibIrInlinerMode> {
+    override fun stringRepresentation(value: KlibIrInlinerMode?): String {
         return value?.modeState.valueOrNullStringLiteral
     }
 }

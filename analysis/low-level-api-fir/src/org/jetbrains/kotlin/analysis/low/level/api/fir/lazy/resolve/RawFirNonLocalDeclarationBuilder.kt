@@ -140,12 +140,14 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 withPsiEntry("element", element)
             }
 
+            val hasSquareBrackets = (element.parent as KtDestructuringDeclaration).hasSquareBrackets()
+            val isNameBased = !hasSquareBrackets && (element.ownValOrVarKeyword != null || nameBasedDestructuringShortForm)
+
             return buildDestructuringVariable(
                 moduleData = baseModuleData,
-                this,
                 container = container,
                 element,
-                isVar = element.isVar,
+                isNameBased = isNameBased,
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },

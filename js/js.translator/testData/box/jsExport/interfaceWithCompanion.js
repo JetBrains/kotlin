@@ -4,7 +4,7 @@ module.exports = function() {
     var { A } = require("main").api
 
     return {
-        "res": A.ok()
+        "res": A.Companion.ok()
     };
 };
 

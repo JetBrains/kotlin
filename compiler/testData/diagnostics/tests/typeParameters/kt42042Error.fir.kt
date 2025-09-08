@@ -11,3 +11,6 @@ fun <A, B> unsafeCast(value: A): B {
     val proof: Subtype<A, B> = Subtype.<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>Trivial<!>()
     return proof.cast(value)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, nullableType, override,
+propertyDeclaration, sealed, typeConstraint, typeParameter */

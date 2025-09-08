@@ -38,3 +38,6 @@ class ScopeOwner {
 
 fun ScopeOwner.<!EXTENSION_SHADOWED_BY_MEMBER!>nullaryFunction<!>(): ExtensionFunctionResult = ExtensionFunctionResult
 fun ScopeOwner.unaryFunction(arg: GeneralCallArgument): ExtensionFunctionResult = ExtensionFunctionResult
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

@@ -8,3 +8,5 @@
 annotation class E1
 
 class My(@E1 val x: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration */

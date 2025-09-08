@@ -35,3 +35,6 @@ enum class MyEnum {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, integerLiteral, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

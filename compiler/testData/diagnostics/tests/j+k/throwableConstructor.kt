@@ -17,3 +17,5 @@ fun foo() {
     Throwable()
     Throwable("", Exception())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, secondaryConstructor, stringLiteral */

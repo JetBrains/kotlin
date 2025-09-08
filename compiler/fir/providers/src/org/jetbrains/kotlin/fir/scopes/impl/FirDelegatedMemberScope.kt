@@ -110,7 +110,9 @@ class FirDelegatedMemberScope(
                     newSource = containingClass.source?.fakeElement(KtFakeSourceElementKind.MembersImplementedByDelegation),
                     markAsOverride = true
                 ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
+                    delegatedWrapperData = DelegatedWrapperData(
+                        functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField.symbol
+                    )
                 }.symbol
 
             result += delegatedSymbol
@@ -179,7 +181,7 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirProperty(
-                    FirPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
+                    FirRegularPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,
                     session,
@@ -187,7 +189,9 @@ class FirDelegatedMemberScope(
                     newModality = Modality.OPEN,
                     newDispatchReceiverType = dispatchReceiverType,
                 ).apply {
-                    delegatedWrapperData = DelegatedWrapperData(propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
+                    delegatedWrapperData = DelegatedWrapperData(
+                        propertySymbol.fir, containingClass.symbol.toLookupTag(), delegateField.symbol
+                    )
                 }.symbol
             result += delegatedSymbol
         }

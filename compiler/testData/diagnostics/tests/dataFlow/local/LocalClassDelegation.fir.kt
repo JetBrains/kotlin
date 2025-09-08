@@ -10,3 +10,5 @@ fun test(d: Any?) {
   }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, inheritanceDelegation, interfaceDeclaration,
+isExpression, localClass, nullableType, smartcast */

@@ -1,41 +1,35 @@
 test1: ---
 assert(a!!)
-       ||
-       |false
+       |
        false
 ---
 test2: ---
 assert(a!!.length == 5)
-       ||  |      |
-       ||  |      false
-       ||  4
-       |test
+       |   |      |
+       |   |      false
+       |   4
        test
 ---
 test3: ---
 assert(a.value!!.length == 5)
-       | |    |  |      |
-       | |    |  |      false
-       | |    |  4
-       | |    Test
+       | |       |      |
+       | |       |      false
+       | |       4
        | Test
        Holder
 ---
 test4: ---
 assert(a["a"]!! == 43)
-       ||    |  |
-       ||    |  false
-       ||    42
+       ||       |
+       ||       false
        |42
        {a=42}
 ---
 test5: ---
 assert(a!!.next!!.next != null)
-       ||  |   |  |    |
-       ||  |   |  |    false
-       ||  |   |  null
-       ||  |   Node
-       ||  Node
-       |Node
+       |   |      |    |
+       |   |      |    false
+       |   |      null
+       |   Node
        Node
 ---

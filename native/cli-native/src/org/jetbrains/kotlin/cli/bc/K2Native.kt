@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.*
@@ -22,6 +21,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.ir.validation.checkers.IrValidationError
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -29,10 +30,8 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
-import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.io.File
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -52,7 +51,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         val pluginLoadResult = PluginCliParser.loadPluginsSafe(
-            arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration, rootDisposable,
+            arguments.pluginClasspaths,
+            arguments.pluginOptions,
+            arguments.pluginConfigurations,
+            arguments.pluginOrderConstraints,
+            configuration,
+            rootDisposable,
         )
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
@@ -102,8 +106,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration.phaseConfig = createPhaseConfig(arguments)
 
         // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
-        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true)
-        arguments.dumpSyntheticAccessorsTo?.let { configuration.put(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR, it) }
+        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true, rootDisposable)
 
         return environment
     }
@@ -112,27 +115,24 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         configuration: CompilerConfiguration,
         environment: KotlinCoreEnvironment,
         rootDisposable: Disposable,
-        spawning: Boolean = false,
     ) {
-        val mainPerfManager = configuration.perfManager
-        val childPerfManager = if (spawning) {
-            if (mainPerfManager?.isPhaseMeasuring == true) {
-                mainPerfManager.notifyPhaseFinished(PhaseType.Initialization)
-            }
-            PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)
-        } else {
-            null
-        }
+        val perfManager = configuration.perfManager
 
         val konanDriver =
-            KonanDriver(environment.project, environment, configuration, childPerfManager, object : CompilationSpawner {
+            KonanDriver(environment.project, environment, configuration, perfManager, object : CompilationSpawner {
                 override fun spawn(configuration: CompilerConfiguration) {
                     val spawnedArguments = K2NativeCompilerArguments()
                     parseCommandLineArguments(emptyList(), spawnedArguments)
+                    val spawnedPerfManager = PerformanceManagerImpl.createAndEnableChildIfNeeded(perfManager)
+                    configuration.perfManager = spawnedPerfManager
                     val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
                         rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
                     )
-                    runKonanDriver(configuration, spawnedEnvironment, rootDisposable, spawning = true)
+                    try {
+                        runKonanDriver(configuration, spawnedEnvironment, rootDisposable)
+                    } finally {
+                        perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
+                    }
                 }
 
                 override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
@@ -140,8 +140,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     parseCommandLineArguments(arguments, spawnedArguments)
                     val spawnedConfiguration = CompilerConfiguration()
 
+                    val spawnedPerfManager = PerformanceManagerImpl.createAndEnableChildIfNeeded(perfManager)
                     spawnedConfiguration.messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                    configuration.perfManager?.let { spawnedConfiguration.perfManager = it }
+                    spawnedConfiguration.perfManager = spawnedPerfManager
                     spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                     spawnedConfiguration.setupFromArguments(spawnedArguments)
                     spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
@@ -165,15 +166,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     // TODO KT-72014: Remove the second invocation of `setupConfiguration()`
                     spawnedConfiguration.setupConfiguration()
 
-                    runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable, spawning = true)
+                    try {
+                        runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
+                    } finally {
+                        perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
+                    }
                 }
             })
 
-        try {
-            konanDriver.run()
-        } finally {
-            mainPerfManager?.addOtherUnitStats(childPerfManager?.unitStats)
-        }
+        konanDriver.run()
     }
 
     private val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
@@ -231,7 +232,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 }
 
-typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.backend.konan.BinaryOptionWithValue<T>
+typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue<T>
 
 @Suppress("unused")
 fun parseBinaryOptions(

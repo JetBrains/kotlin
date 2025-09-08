@@ -3,11 +3,16 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl
 import org.jetbrains.kotlinx.dataframe.AnyCol
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.asColumn
 import org.jetbrains.kotlinx.dataframe.api.asDataColumn
 import org.jetbrains.kotlinx.dataframe.api.cast
+import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.dataFrameOf
+import org.jetbrains.kotlinx.dataframe.api.with
 import org.jetbrains.kotlinx.dataframe.columns.ColumnGroup
 import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.Marker
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
 
 fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
@@ -19,10 +24,20 @@ fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchem
 
 interface ConeTypesAdapter
 
+fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (Marker) -> Marker): PluginDataFrameSchema {
+    return asDataFrame().convert { columns }.with { converter(it as Marker) }.toPluginDataFrameSchema()
+}
+
+fun PluginDataFrameSchema.convertAsColumn(columns: ColumnsResolver, converter: (SimpleCol) -> SimpleCol): PluginDataFrameSchema {
+    return asDataFrame().convert { columns }.asColumn { converter(it.asSimpleColumn()).asDataColumn() }.toPluginDataFrameSchema()
+}
+
 private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
     val columns = map {
         it.asDataColumn()
     }
+    // avoiding UnequalColumnSize exception in dataFrameOf for an empty column group
+    if (columns.isEmpty()) return DataFrame.empty(nrow = 1).cast()
     return dataFrameOf(columns).cast()
 }
 

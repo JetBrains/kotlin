@@ -112,3 +112,7 @@ fun <T> generic(container: Container<out T>, wrapper: Wrapper<out T>, arg: T) {
     container.simple = <!TYPE_MISMATCH_WARNING!>arg<!>
     container.setSimple(<!TYPE_MISMATCH!>arg<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, ifExpression, inProjection,
+integerLiteral, isExpression, javaProperty, javaType, nullableType, objectDeclaration, outProjection,
+propertyDeclaration, smartcast, starProjection, stringLiteral, typeParameter */

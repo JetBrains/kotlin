@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/SignatureClash.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataClass'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.DataClass [val]
-          TYPE_OP type=<root>.DataClass origin=CAST typeOperand=<root>.DataClass
+          TYPE_OP type=<root>.DataClass origin=IMPLICIT_CAST typeOperand=<root>.DataClass
             GET_VAR 'other: kotlin.Any? declared in <root>.DataClass.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

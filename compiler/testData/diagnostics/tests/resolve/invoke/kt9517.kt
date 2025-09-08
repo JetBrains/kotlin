@@ -14,3 +14,6 @@ fun test(a: A) {
         val foo: Int = <!DEBUG_INFO_SMARTCAST!>a<!>.foo() // B::foo + invoke()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, getter, ifExpression,
+isExpression, localProperty, override, propertyDeclaration, smartcast */

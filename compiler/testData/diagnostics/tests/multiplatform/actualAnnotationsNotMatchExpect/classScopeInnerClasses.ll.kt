@@ -24,3 +24,5 @@ actual class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass */

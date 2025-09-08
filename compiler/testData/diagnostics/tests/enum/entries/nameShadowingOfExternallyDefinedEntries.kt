@@ -39,3 +39,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, functionDeclaration, integerLiteral, nestedClass,
+propertyDeclaration, stringLiteral, thisExpression */

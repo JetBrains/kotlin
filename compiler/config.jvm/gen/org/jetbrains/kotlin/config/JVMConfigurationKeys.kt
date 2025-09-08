@@ -147,9 +147,6 @@ object JVMConfigurationKeys {
     val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
     @JvmField
-    val ENABLE_IR_INLINER = CompilerConfigurationKey.create<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
-
-    @JvmField
     val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("Use inline scopes numbers for inline marker variables")
 
     @JvmField
@@ -157,6 +154,9 @@ object JVMConfigurationKeys {
 
     @JvmField
     val EXPRESSION_TO_EVALUATE = CompilerConfigurationKey.create<String>("Expression to evaluate in script mode")
+
+    @JvmField
+    val WHEN_GENERATION_SCHEME = CompilerConfigurationKey.create<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions")
 
 }
 
@@ -332,10 +332,6 @@ var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
     set(value) { put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, value) }
 
-var CompilerConfiguration.enableIrInliner: Boolean
-    get() = getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
-    set(value) { put(JVMConfigurationKeys.ENABLE_IR_INLINER, value) }
-
 var CompilerConfiguration.useInlineScopesNumbers: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
     set(value) { put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, value) }
@@ -347,4 +343,8 @@ var CompilerConfiguration.skipBodies: Boolean
 var CompilerConfiguration.expressionToEvaluate: String?
     get() = get(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE)
     set(value) { putIfNotNull(JVMConfigurationKeys.EXPRESSION_TO_EVALUATE, value) }
+
+var CompilerConfiguration.whenGenerationScheme: JvmWhenGenerationScheme?
+    get() = get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
+    set(value) { put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, requireNotNull(value) { "nullable values are not allowed" }) }
 

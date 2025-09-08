@@ -29,6 +29,5 @@ abstract class IrSymbolBase<out D : Any>(
         get() = _descriptor!!
 }
 
-
-
-
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, getter, interfaceDeclaration, nullableType, out, override,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

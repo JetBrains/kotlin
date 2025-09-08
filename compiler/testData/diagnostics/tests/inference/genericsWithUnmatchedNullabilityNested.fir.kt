@@ -11,3 +11,6 @@ fun main() {
         <!TYPE_INTERSECTION_AS_REIFIED_WARNING!>foo<!>("")
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, interfaceDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, reified, stringLiteral, typeConstraint, typeParameter */

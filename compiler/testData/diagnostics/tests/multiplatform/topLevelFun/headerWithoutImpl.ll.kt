@@ -5,3 +5,5 @@
 expect fun foo()
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration */

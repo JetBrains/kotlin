@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithInlineSnapshotting
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -27,7 +24,7 @@ class AnonymousInheritorTest : BaseCompilationTest() {
     fun testAnonymousObjectBaseTypeChangeWithOverloads(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
-            val app = moduleWithInlineSnapshotting(
+            val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",
                 dependencies = listOf(lib),
             )

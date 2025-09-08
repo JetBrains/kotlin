@@ -18,3 +18,6 @@ abstract class D(<!WRONG_MODIFIER_TARGET!>sealed<!> var x: Int) {
 }
 
 abstract class E : D(42)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, primaryConstructor,
+propertyDeclaration */

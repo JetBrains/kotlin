@@ -38,3 +38,7 @@ val test2 = generate {
 val test3 = generate {
     ({ yield("foo") })::class
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, callableReference, classDeclaration, classReference,
+functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

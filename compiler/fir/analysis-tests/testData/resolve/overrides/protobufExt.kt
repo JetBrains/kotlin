@@ -13,3 +13,6 @@ fun foo(m: MyMessage, e: MyExt) {
     m.ext(e)
     m.extF(e)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nullableType, typeConstraint, typeParameter */

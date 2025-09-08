@@ -10,3 +10,6 @@ fun main() {
     val command = parse("")
     if (command == null) 1 // error on this line, but must be OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

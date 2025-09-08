@@ -43,6 +43,5 @@ sourceSets {
     }
 }
 
-allprojects {
-    optInToExperimentalCompilerApi()
-}
+optInToExperimentalCompilerApi()
+optInToK1Deprecation()

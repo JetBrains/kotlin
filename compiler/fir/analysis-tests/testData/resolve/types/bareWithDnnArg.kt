@@ -16,3 +16,6 @@ class D<T> {
 
     fun bar(x: KotlinCancellablePromise<T & Any>) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, interfaceDeclaration, javaType,
+nullableType, typeParameter */

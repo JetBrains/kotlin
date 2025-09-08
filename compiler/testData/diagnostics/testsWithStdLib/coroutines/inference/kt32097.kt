@@ -24,3 +24,6 @@ interface FlowCollector<in T> {
 }
 
 suspend fun ProducerScope<*>.awaitClose(block: () -> Unit = {}) {}
+
+/* GENERATED_FIR_TAGS: classReference, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, nullableType, out, starProjection, suspend, typeParameter, typeWithExtension */

@@ -20,3 +20,6 @@ actual class Foo(i: I) : I by i
 fun test(foo: Foo) {
     foo.foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, primaryConstructor */

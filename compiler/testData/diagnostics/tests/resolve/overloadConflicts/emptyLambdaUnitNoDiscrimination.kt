@@ -11,3 +11,5 @@ fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>e<!> {}
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>c<!> {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

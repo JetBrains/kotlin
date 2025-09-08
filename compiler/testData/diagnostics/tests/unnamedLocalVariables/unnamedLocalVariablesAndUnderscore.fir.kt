@@ -42,3 +42,7 @@ fun testLocalContext() {
 
     val _: String = ""
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+integerLiteral, lambdaLiteral, localFunction, localProperty, propertyDeclaration, stringLiteral, tryExpression,
+unnamedLocalVariable */

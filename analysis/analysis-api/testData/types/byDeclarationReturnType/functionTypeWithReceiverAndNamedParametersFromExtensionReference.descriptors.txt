@@ -9,13 +9,11 @@ KaFunctionType:
   hasReceiver: false
   isReflectType: true
   isSuspend: false
-  nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Foo
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Foo
@@ -24,6 +22,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(Foo)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -31,7 +32,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -40,6 +40,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -47,7 +50,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -56,6 +58,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: null, type: /Foo]
@@ -71,7 +76,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: Foo
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Foo
@@ -80,6 +84,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(Foo)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -87,7 +94,6 @@ KaFunctionType:
               psi: null
           ]
           classId: kotlin/Int
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -96,6 +102,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: [
@@ -103,7 +112,6 @@ KaFunctionType:
               psi: null
           ]
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -112,11 +120,13 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/Unit
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Unit
@@ -125,6 +135,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Unit)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -132,7 +145,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: kotlin/Unit
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Unit
@@ -141,13 +153,15 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Unit)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/reflect/KFunction3)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: Foo
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Foo
@@ -156,6 +170,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(Foo)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -163,7 +180,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -172,6 +188,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: [
@@ -179,7 +198,6 @@ KaFunctionType:
           psi: null
       ]
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -188,11 +206,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/Unit
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Unit
@@ -201,7 +221,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Unit)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 kotlin.reflect.KFunction3<Foo, kotlin.Int, kotlin.String, kotlin.Unit>

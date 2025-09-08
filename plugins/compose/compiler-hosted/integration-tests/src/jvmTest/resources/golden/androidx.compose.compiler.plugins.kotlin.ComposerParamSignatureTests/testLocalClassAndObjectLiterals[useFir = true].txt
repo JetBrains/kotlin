@@ -25,7 +25,7 @@ public final class TestKt {
   public final static Foo(ILandroidx/compose/runtime/Composer;I)V
   private final static Wat%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   private final static Foo%goo(Landroidx/compose/runtime/Composer;I)V
-  private final static Foo%lambda%1(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Foo%lambda%0(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   public final static INNERCLASS TestKt%Foo%Bar null Bar
 }
 public final class TestKt%Foo%Bar {

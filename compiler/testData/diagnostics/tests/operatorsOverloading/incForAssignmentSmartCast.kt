@@ -12,3 +12,6 @@ fun foo(): Int {
 
     return <!DEBUG_INFO_SMARTCAST!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, incrementDecrementExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

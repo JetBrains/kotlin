@@ -72,13 +72,15 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
                 namer = objcExportNamer,
                 problemCollector = ObjCExportProblemCollector.SILENT,
                 objcGenerics = true,
+                objcExportBlockExplicitParameterNames = true,
                 shouldExportKDoc = false,
                 additionalImports = emptyList()
             ),
             mapper = objcExportMapper,
             namer = objcExportNamer,
             problemCollector = ObjCExportProblemCollector.SILENT,
-            objcGenerics = true
+            objcGenerics = true,
+            objcExportBlockExplicitParameterNames = true,
         )
 
         val listClassDescriptor = module.findClassAcrossModuleDependencies(ClassId.fromString("kotlin/collections/List"))!!

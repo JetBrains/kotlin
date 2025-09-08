@@ -12,3 +12,5 @@ class B : A() {
         super.x(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, override, propertyDeclaration, superExpression */

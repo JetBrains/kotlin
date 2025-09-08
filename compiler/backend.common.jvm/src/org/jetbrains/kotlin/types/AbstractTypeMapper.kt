@@ -221,8 +221,22 @@ object AbstractTypeMapper {
         type: KotlinTypeMarker
     ): Boolean = context.typeContext.isPrimitiveBacked(type)
 
-    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(type: KotlinTypeMarker): Boolean =
-        !type.isNullableType() &&
-                (type is SimpleTypeMarker && type.isPrimitiveType() ||
-                        type.typeConstructor().getValueClassProperties()?.singleOrNull()?.let { isPrimitiveBacked(it.second) } == true)
+    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(
+        type: KotlinTypeMarker,
+        visited: HashSet<TypeConstructorMarker> = hashSetOf()
+    ): Boolean {
+        if (type.isNullableType()) {
+            return false
+        }
+
+        if (type is SimpleTypeMarker && type.isPrimitiveType()) {
+            return true
+        }
+
+        val typeConstructor = type.typeConstructor()
+
+        return visited.add(typeConstructor) &&
+                typeConstructor.getValueClassProperties()?.singleOrNull()
+                    ?.let { isPrimitiveBacked(it.second, visited) } == true
+    }
 }

@@ -10,3 +10,6 @@ class A {
 
     val String.field: B get() = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, propertyDeclaration,
+propertyWithExtensionReceiver */

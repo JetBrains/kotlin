@@ -43,3 +43,6 @@ fun useInAnotherAnnotation() {}
 actual class C {
     actual annotation class Nested
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
+nullableType, primaryConstructor, propertyDeclaration */

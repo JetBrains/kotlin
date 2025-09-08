@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import com.intellij.openapi.Disposable
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
@@ -19,17 +18,15 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 import java.io.IOException
 import kotlin.math.min
@@ -59,16 +56,6 @@ val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
         this.irPerFile -> TsCompilationStrategy.EACH_FILE
         else -> TsCompilationStrategy.MERGED
     }
-
-internal class DisposableZipFileSystemAccessor private constructor(
-    private val zipAccessor: ZipFileSystemCacheableAccessor,
-) : Disposable, ZipFileSystemAccessor by zipAccessor {
-    constructor(cacheLimit: Int) : this(ZipFileSystemCacheableAccessor(cacheLimit))
-
-    override fun dispose() {
-        zipAccessor.reset()
-    }
-}
 
 internal val sourceMapContentEmbeddingMap: Map<String, SourceMapSourceEmbedding> = mapOf(
     K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS to SourceMapSourceEmbedding.ALWAYS,
@@ -160,15 +147,6 @@ internal fun reportCompiledSourcesList(messageCollector: MessageCollector, sourc
     messageCollector.report(LOGGING, "Compiling source files: " + join(fileNames, ", "), null)
 }
 
-internal fun runStandardLibrarySpecialCompatibilityChecks(
-    libraries: List<KotlinLibrary>,
-    isWasm: Boolean,
-    messageCollector: MessageCollector,
-) {
-    val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
-    checker.check(libraries, messageCollector)
-}
-
 internal fun reportCollectedDiagnostics(
     compilerConfiguration: CompilerConfiguration,
     diagnosticsReporter: BaseDiagnosticsCollector,
@@ -177,3 +155,6 @@ internal fun reportCollectedDiagnostics(
     val renderName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
 }
+
+internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
+    get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS

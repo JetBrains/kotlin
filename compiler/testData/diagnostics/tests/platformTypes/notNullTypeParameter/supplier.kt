@@ -24,3 +24,6 @@ fun test2() {
 fun test3() {
     42.apply(JavaClass::consume)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, javaCallableReference, javaFunction,
+lambdaLiteral, samConversion */

@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class DummyClass001
@@ -6,5 +7,8 @@ fun DummyClass001.component1() = "1"
 fun DummyClass001.component2() = "2"
 
 fun testDummyClass001() {
-    val (<!OPERATOR_MODIFIER_REQUIRED!>a<!>, <!OPERATOR_MODIFIER_REQUIRED!>b<!>) = DummyClass001()
+    val [<!OPERATOR_MODIFIER_REQUIRED!>a<!>, <!OPERATOR_MODIFIER_REQUIRED!>b<!>] = DummyClass001()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+localProperty, propertyDeclaration, stringLiteral */

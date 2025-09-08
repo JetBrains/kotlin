@@ -16,3 +16,5 @@ open class B : A() {
 open class C : B() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, override, propertyDeclaration */

@@ -22,7 +22,7 @@ import kotlin.ranges.reversed
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun UIntArray.elementAt(index: Int): UInt {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -34,7 +34,7 @@ public actual inline fun UIntArray.elementAt(index: Int): UInt {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun ULongArray.elementAt(index: Int): ULong {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -46,7 +46,7 @@ public actual inline fun ULongArray.elementAt(index: Int): ULong {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun UByteArray.elementAt(index: Int): UByte {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -58,7 +58,7 @@ public actual inline fun UByteArray.elementAt(index: Int): UByte {
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public actual inline fun UShortArray.elementAt(index: Int): UShort {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**

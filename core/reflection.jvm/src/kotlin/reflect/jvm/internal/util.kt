@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -43,8 +44,6 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.isInlineClassType
-import org.jetbrains.kotlin.resolve.needsMfvcFlattening
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import java.lang.reflect.Field
@@ -77,8 +76,16 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
     }
 }
 
+private val SUSPEND_FUNCTION_PREFIX =
+    FunctionTypeKind.SuspendFunction.packageFqName.asString() + "." + FunctionTypeKind.SuspendFunction.classNamePrefix
+
 internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int = 0): Class<*>? {
-    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinClassId.asSingleFqName().toUnsafe()) ?: kotlinClassId
+    val kotlinFqName = kotlinClassId.asSingleFqName().toUnsafe()
+    kotlinFqName.asString().substringAfter(SUSPEND_FUNCTION_PREFIX).toIntOrNull()?.let { suspendFunctionArity ->
+        return loadClass(FunctionTypeKind.Function.numberedClassId(suspendFunctionArity + 1), arrayDimensions)
+    }
+
+    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinFqName) ?: kotlinClassId
     // Pseudo-classes like `kotlin/String.Companion` can be accessible from different class loaders. To ensure that we always use the
     // same class, we always load it from the stdlib's class loader.
     val correctClassLoader =
@@ -271,9 +278,10 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 }
 
 internal val KType.isInlineClassType: Boolean
-    get() = (this as? KTypeImpl)?.type?.isInlineClassType() == true
+    get() = (classifier as? KClassImpl<*>)?.isInline == true
+
 internal val KType.needsMultiFieldValueClassFlattening: Boolean
-    get() = (this as? KTypeImpl)?.type?.needsMfvcFlattening() == true
+    get() = (classifier as? KClassImpl<*>)?.run { isValue && !isInline } == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {

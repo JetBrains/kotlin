@@ -30,3 +30,6 @@ val test13 = TC<Number, Collection<Number>>()
 val test14 = TC<Number, Collection<Int>>()
 val test15 = TC<Number, List<Int>>()
 val test16 = TC<Number, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>List<Any><!>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

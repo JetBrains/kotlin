@@ -61,3 +61,7 @@ fun test(a: String?) {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, elvisExpression, functionDeclaration, functionalType,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+stringLiteral, typeConstraint, typeParameter, typeWithExtension */

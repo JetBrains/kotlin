@@ -11,3 +11,6 @@ class A(impl: Interface) : <!UNRESOLVED_REFERENCE!>Nested<!>(), <!UNRESOLVED_REF
 
     interface Interface
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, inner, interfaceDeclaration, nestedClass, nullableType,
+primaryConstructor, typeParameter */

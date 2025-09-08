@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/dataObject.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataObject'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.DataObject [val]
-          TYPE_OP type=<root>.DataObject origin=CAST typeOperand=<root>.DataObject
+          TYPE_OP type=<root>.DataObject origin=IMPLICIT_CAST typeOperand=<root>.DataObject
             GET_VAR 'other: kotlin.Any? declared in <root>.DataObject.equals' type=kotlin.Any? origin=null
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataObject'
           CONST Boolean type=kotlin.Boolean value=true

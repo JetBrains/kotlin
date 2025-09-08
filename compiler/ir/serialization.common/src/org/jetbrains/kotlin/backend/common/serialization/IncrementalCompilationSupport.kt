@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-class ICData(val icData: List<SerializedIrFile>, val containsErrorCode: Boolean)
+class ICData(val icData: List<SerializedIrFile>)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override val hasIr get() = true
@@ -48,7 +49,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     }
 
     private val indexedDeclarations = arrayOfNulls<DeclarationIdTableReader>(icData.size)
-    private val indexedInlineDeclarations = arrayOfNulls<DeclarationIdTableReader>(icData.size)
     private val indexedTypes = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedSignatures = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedStrings = arrayOfNulls<IrArrayReader>(icData.size)
@@ -59,11 +59,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
         indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
             DeclarationIdTableReader(icData[fileIndex].declarations)
-        }
-
-    override fun irInlineDeclaration(index: Int, fileIndex: Int): ByteArray =
-        indexedInlineDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
-            DeclarationIdTableReader(icData[fileIndex].inlineDeclarations)
         }
 
     override fun type(index: Int, fileIndex: Int): ByteArray =
@@ -111,6 +106,17 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 
     override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
+
+    // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
+    override val hasIrOfInlineableFuns: Boolean get() = false
+    override fun irFileOfInlineableFuns(): ByteArray = shouldNotBeCalled()
+    override fun irDeclarationOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun typeOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun signatureOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun stringOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun bodyOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun debugInfoOfInlineableFuns(index: Int): ByteArray? = shouldNotBeCalled()
+    override fun fileEntryOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
 }
 
 class CurrentModuleWithICDeserializer(

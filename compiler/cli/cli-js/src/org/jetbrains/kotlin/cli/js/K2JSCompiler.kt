@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -41,14 +41,13 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
-
 
 class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     override val platform: TargetPlatform
@@ -118,15 +117,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != OK) return pluginLoadResult
 
-        CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments)
-        val libraries = configuration.libraries
-        val friendLibraries = configuration.friendLibraries
+        CommonWebConfigurationUpdater.initializeCommonConfiguration(compilerImpl.configuration, arguments, rootDisposable)
 
         val targetEnvironment = compilerImpl.tryInitializeCompiler(rootDisposable) ?: return COMPILATION_ERROR
-
-        val zipAccessor = DisposableZipFileSystemAccessor(64)
-        Disposer.register(rootDisposable, zipAccessor)
-        targetEnvironment.configuration.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
 
         val sourcesFiles = targetEnvironment.getSourceFiles()
 
@@ -136,21 +129,23 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             reportCompiledSourcesList(messageCollector, sourcesFiles)
         }
 
-        // Produce KLIBs and get module (run analysis if main module is sources)
+        // Produce KLIBs and get module (run analysis if main module is sources).
+        // Make it lazy to avoid loading KLIBs twice in the case of IC, because the IC engine itself will load KLIBs.
+        val klibs: LoadedKlibs by lazy { loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker) }
+
         var sourceModule: ModulesStructure? = null
         val includes = configuration.includes
         if (includes == null) {
             val outputKlibPath =
                 if (arguments.irProduceKlibFile) outputDir.resolve("$outputName.klib").normalize().absolutePath
                 else outputDirPath
-            sourceModule = produceSourceModule(targetEnvironment, libraries, friendLibraries, arguments, outputKlibPath)
+            sourceModule = produceSourceModule(targetEnvironment, klibs, arguments, outputKlibPath)
 
             if (configuration.get(CommonConfigurationKeys.USE_FIR) != true && !sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
                 return OK
         }
 
         if (!arguments.irProduceJs) {
-            performanceManager?.notifyPhaseFinished(PhaseType.TranslationToIr)
             return OK
         }
 
@@ -208,19 +203,16 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             if (sourcesFiles.isNotEmpty()) {
                 messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
             }
-            val includesPath = File(includes).canonicalPath
-            val mainLibPath = libraries.find { File(it).canonicalPath == includesPath }
-                ?: error("No library with name $includes ($includesPath) found")
+
+            val mainLibPath = klibs.included?.libraryFile?.path
+                ?: error("No library with name $includes found")
             val kLib = MainModule.Klib(mainLibPath)
             ModulesStructure(
                 project = targetEnvironment.project,
                 mainModule = kLib,
                 compilerConfiguration = targetEnvironment.configuration,
-                libraryPaths = libraries,
-                friendDependenciesPaths = friendLibraries
-            ).also {
-                runStandardLibrarySpecialCompatibilityChecks(it.allDependencies, isWasm = arguments.wasm, messageCollector)
-            }
+                klibs = klibs
+            )
         } else {
             sourceModule!!
         }
@@ -230,8 +222,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     private fun produceSourceModule(
         environmentForJS: KotlinCoreEnvironment,
-        libraries: List<String>,
-        friendLibraries: List<String>,
+        klibs: LoadedKlibs,
         arguments: K2JSCompilerArguments,
         outputKlibPath: String,
     ): ModulesStructure {
@@ -241,16 +232,18 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         lateinit var sourceModule: ModulesStructure
         performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) {
             do {
+                @Suppress("DEPRECATION")
                 val analyzerFacade = when (arguments.wasm) {
                     true -> TopDownAnalyzerFacadeForWasm.facadeFor(environmentForJS.configuration.get(WasmConfigurationKeys.WASM_TARGET))
                     else -> TopDownAnalyzerFacadeForJSIR
                 }
+
+                @Suppress("DEPRECATION")
                 sourceModule = prepareAnalyzedSourceModule(
                     environmentForJS.project,
                     environmentForJS.getSourceFiles(),
                     environmentForJS.configuration,
-                    libraries,
-                    friendLibraries,
+                    klibs,
                     AnalyzerWithCompilerReport(environmentForJS.configuration),
                     analyzerFacade = analyzerFacade
                 )
@@ -270,7 +263,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 files = moduleSourceFiles,
                 configuration = environmentForJS.configuration,
                 analysisResult = sourceModule.jsFrontEndResult.jsAnalysisResult,
-                sortedDependencies = sourceModule.allDependencies,
+                klibs = sourceModule.klibs,
                 icData = icData,
                 irFactory = IrFactoryImpl,
             ) {
@@ -289,7 +282,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 irBuiltIns = irPluginContext.irBuiltIns,
                 diagnosticReporter = diagnosticsReporter,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
-                wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName)
+                wasmTarget = if (!arguments.wasm) null else arguments.wasmTarget?.let(WasmTarget::fromName),
+                performanceManager = performanceManager,
             )
 
             reportCollectedDiagnostics(environmentForJS.configuration, diagnosticsReporter, messageCollector)
@@ -345,6 +339,6 @@ fun loadPluginsForTests(configuration: CompilerConfiguration, parentDisposable: 
         PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
     pluginClasspath = jars.map { it.canonicalPath } + pluginClasspath
 
-    return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), configuration, parentDisposable)
+    return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), listOf(), configuration, parentDisposable)
 }
 

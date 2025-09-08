@@ -29,3 +29,7 @@ class Child : Base<String>() {
     context(child: RChild)
     override val <RChild> String.baz: Int? get() = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+getter, integerLiteral, nullableType, override, propertyDeclaration, propertyDeclarationWithContext,
+propertyWithExtensionReceiver, typeParameter */

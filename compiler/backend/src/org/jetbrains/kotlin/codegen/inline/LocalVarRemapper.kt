@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.LocalVarRemapper.RemapStatus.*
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -94,7 +95,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
         }
     }
 
-    fun visitVarInsn(opcode: Int, `var`: Int, mv: InstructionAdapter) {
+    fun visitVarInsn(opcode: Int, `var`: Int, mv: InstructionAdapter, typeMapper: KotlinTypeMapperBase) {
         val remapInfo = remap(`var`)
         val value = remapInfo.value
         if (value is StackValue.Local) {
@@ -113,7 +114,7 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             }
         } else {
             assert(remapInfo.parameterInfo != null) { "Non local value should have parameter info" }
-            value!!.put(remapInfo.parameterInfo!!.type, null, mv)
+            value!!.put(remapInfo.parameterInfo!!.type, null, mv, typeMapper)
         }
     }
 

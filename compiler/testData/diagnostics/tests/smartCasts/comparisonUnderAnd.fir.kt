@@ -37,3 +37,6 @@ fun foo(x : String?, y : String?) {
         y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

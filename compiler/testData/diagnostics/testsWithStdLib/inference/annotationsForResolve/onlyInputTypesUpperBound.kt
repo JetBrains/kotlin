@@ -10,3 +10,6 @@ fun <T> foo(i: Inv<in T>, o: Out<T>) {
 }
 
 fun <@kotlin.internal.OnlyInputTypes K> bar(r: Inv<out K>, o: Out<K>): K = TODO()
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, inProjection, nullableType,
+out, outProjection, stringLiteral, typeParameter */

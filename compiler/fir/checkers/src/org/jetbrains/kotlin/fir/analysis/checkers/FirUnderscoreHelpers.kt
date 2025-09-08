@@ -15,10 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.*
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkUnderscoreDiagnostics(
     source: KtSourceElement?,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     isExpression: Boolean
 ) {
     val sourceKind = source?.kind ?: return
@@ -29,8 +28,7 @@ internal fun checkUnderscoreDiagnostics(
                 reporter.reportOn(
                     source,
                     if (isExpression) FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS else FirErrors.UNDERSCORE_IS_RESERVED,
-                    context,
-                    SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
+                    SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
                 )
             }
         }
@@ -40,21 +38,20 @@ internal fun checkUnderscoreDiagnostics(
 val CharSequence.isUnderscore: Boolean
     get() = all { it == '_' }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkTypeRefForUnderscore(
     typeRef: FirTypeRef?,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
 ) {
     if (typeRef is FirErrorTypeRef) return
 
     typeRef?.forEachQualifierPart { qualifierPart ->
-        checkUnderscoreDiagnostics(qualifierPart.source, context, reporter, isExpression = true)
+        checkUnderscoreDiagnostics(qualifierPart.source, isExpression = true)
 
         for (typeArgument in qualifierPart.typeArgumentList.typeArguments) {
             if (typeArgument is FirTypeProjectionWithVariance) {
-                checkTypeRefForUnderscore(typeArgument.typeRef, context, reporter)
+                checkTypeRefForUnderscore(typeArgument.typeRef)
             } else {
-                checkUnderscoreDiagnostics(typeArgument.source, context, reporter, isExpression = true)
+                checkUnderscoreDiagnostics(typeArgument.source, isExpression = true)
             }
         }
     }

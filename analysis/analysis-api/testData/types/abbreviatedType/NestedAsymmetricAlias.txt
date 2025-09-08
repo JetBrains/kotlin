@@ -3,7 +3,6 @@ KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: expansion/AsymmetricAlias2
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: AsymmetricAlias2
@@ -14,7 +13,6 @@ KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/IntAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: IntAlias
@@ -23,9 +21,11 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/IntAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -34,12 +34,14 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           KaUsualClassType:
             abbreviation: KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/AsymmetricAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: AsymmetricAlias
@@ -50,7 +52,6 @@ KaUsualClassType:
                         abbreviation: null
                         annotations: []
                         classId: expansion/BooleanAlias
-                        nullability: NON_NULLABLE
                         qualifiers: [
                           KaResolvedClassTypeQualifier:
                             name: BooleanAlias
@@ -59,9 +60,11 @@ KaUsualClassType:
                         ]
                         symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                         typeArguments: []
+                        isMarkedNullable: false
+                        isNullable: false
+                        hasFlexibleNullability: false
                       annotations: []
                       classId: kotlin/Boolean
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: Boolean
@@ -70,12 +73,14 @@ KaUsualClassType:
                       ]
                       symbol: KaNamedClassSymbol(kotlin/Boolean)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     KaUsualClassType:
                       abbreviation: KaUsualClassType:
                         abbreviation: null
                         annotations: []
                         classId: expansion/IntAlias
-                        nullability: NON_NULLABLE
                         qualifiers: [
                           KaResolvedClassTypeQualifier:
                             name: IntAlias
@@ -84,9 +89,11 @@ KaUsualClassType:
                         ]
                         symbol: KaTypeAliasSymbol(expansion/IntAlias)
                         typeArguments: []
+                        isMarkedNullable: false
+                        isNullable: false
+                        hasFlexibleNullability: false
                       annotations: []
                       classId: kotlin/Int
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: Int
@@ -95,6 +102,9 @@ KaUsualClassType:
                       ]
                       symbol: KaNamedClassSymbol(kotlin/Int)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                   ]
               ]
               symbol: KaTypeAliasSymbol(expansion/AsymmetricAlias)
@@ -104,7 +114,6 @@ KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/BooleanAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: BooleanAlias
@@ -113,9 +122,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/Boolean
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: Boolean
@@ -124,12 +135,14 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/Boolean)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 KaUsualClassType:
                   abbreviation: KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/IntAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: IntAlias
@@ -138,9 +151,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/IntAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/Int
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: Int
@@ -149,10 +164,15 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/Int)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/String
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: String
@@ -161,6 +181,9 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
     ]
     symbol: KaTypeAliasSymbol(expansion/AsymmetricAlias2)
@@ -170,7 +193,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: expansion/IntAlias
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: IntAlias
@@ -179,9 +201,11 @@ KaUsualClassType:
           ]
           symbol: KaTypeAliasSymbol(expansion/IntAlias)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         annotations: []
         classId: kotlin/Int
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: Int
@@ -190,12 +214,14 @@ KaUsualClassType:
         ]
         symbol: KaNamedClassSymbol(kotlin/Int)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       KaUsualClassType:
         abbreviation: KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: expansion/AsymmetricAlias
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: AsymmetricAlias
@@ -206,7 +232,6 @@ KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/BooleanAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: BooleanAlias
@@ -215,9 +240,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/Boolean
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: Boolean
@@ -226,12 +253,14 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/Boolean)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 KaUsualClassType:
                   abbreviation: KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/IntAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: IntAlias
@@ -240,9 +269,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/IntAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/Int
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: Int
@@ -251,6 +282,9 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/Int)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
           ]
           symbol: KaTypeAliasSymbol(expansion/AsymmetricAlias)
@@ -260,7 +294,6 @@ KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: expansion/BooleanAlias
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: BooleanAlias
@@ -269,9 +302,11 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/Boolean
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: Boolean
@@ -280,12 +315,14 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/Boolean)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             KaUsualClassType:
               abbreviation: KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: expansion/IntAlias
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: IntAlias
@@ -294,9 +331,11 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/IntAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/Int
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: Int
@@ -305,10 +344,15 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/Int)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         annotations: []
         classId: kotlin/String
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: String
@@ -317,10 +361,15 @@ KaUsualClassType:
         ]
         symbol: KaNamedClassSymbol(kotlin/String)
         typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
     ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   annotations: []
   classId: kotlin/collections/List
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -331,7 +380,6 @@ KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: expansion/AsymmetricAlias
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: AsymmetricAlias
@@ -342,7 +390,6 @@ KaUsualClassType:
                       abbreviation: null
                       annotations: []
                       classId: expansion/BooleanAlias
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: BooleanAlias
@@ -351,9 +398,11 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     annotations: []
                     classId: kotlin/Boolean
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: Boolean
@@ -362,12 +411,14 @@ KaUsualClassType:
                     ]
                     symbol: KaNamedClassSymbol(kotlin/Boolean)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   KaUsualClassType:
                     abbreviation: KaUsualClassType:
                       abbreviation: null
                       annotations: []
                       classId: expansion/IntAlias
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: IntAlias
@@ -376,9 +427,11 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(expansion/IntAlias)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     annotations: []
                     classId: kotlin/Int
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: Int
@@ -387,6 +440,9 @@ KaUsualClassType:
                     ]
                     symbol: KaNamedClassSymbol(kotlin/Int)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                 ]
             ]
             symbol: KaTypeAliasSymbol(expansion/AsymmetricAlias)
@@ -396,7 +452,6 @@ KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/BooleanAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: BooleanAlias
@@ -405,9 +460,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/Boolean
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Boolean
@@ -416,12 +473,14 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               KaUsualClassType:
                 abbreviation: KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/IntAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: IntAlias
@@ -430,9 +489,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/IntAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/Int
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Int
@@ -441,10 +502,15 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Int)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -453,6 +519,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -462,7 +531,6 @@ KaUsualClassType:
         abbreviation: null
         annotations: []
         classId: expansion/AsymmetricAlias
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: AsymmetricAlias
@@ -473,7 +541,6 @@ KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/BooleanAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: BooleanAlias
@@ -482,9 +549,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/Boolean
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Boolean
@@ -493,12 +562,14 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               KaUsualClassType:
                 abbreviation: KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/IntAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: IntAlias
@@ -507,9 +578,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/IntAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/Int
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Int
@@ -518,6 +591,9 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Int)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         symbol: KaTypeAliasSymbol(expansion/AsymmetricAlias)
@@ -527,7 +603,6 @@ KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/BooleanAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: BooleanAlias
@@ -536,9 +611,11 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/BooleanAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/Boolean
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Boolean
@@ -547,12 +624,14 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/Boolean)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           KaUsualClassType:
             abbreviation: KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/IntAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: IntAlias
@@ -561,9 +640,11 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/IntAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -572,10 +653,15 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -584,7 +670,13 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 expansion.AsymmetricAlias2<expansion.IntAlias, expansion.AsymmetricAlias<expansion.BooleanAlias, expansion.IntAlias>>

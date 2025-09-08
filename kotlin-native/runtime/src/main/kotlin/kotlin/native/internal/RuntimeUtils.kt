@@ -14,6 +14,7 @@ import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlinx.cinterop.*
 import kotlinx.cinterop.NativePtr
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
@@ -78,16 +79,6 @@ internal fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
-@PublishedApi
-internal fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
-    throw UninitializedPropertyAccessException("lateinit property $propertyName has not been initialized")
-}
-
-@PublishedApi
-internal fun ThrowUnsupportedOperationException(message: String): Nothing {
-    throw UnsupportedOperationException(message)
-}
-
 @ExportForCppRuntime
 internal fun ThrowIllegalArgumentException() : Nothing {
     throw IllegalArgumentException()
@@ -133,13 +124,6 @@ internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
         // and ExceptionInInitializerError if it's non-null
         throw FileFailedToInitializeException("There was an error during file or class initialization", reason)
     }
-}
-
-internal class IrLinkageError(message: String?) : Error(message)
-
-@PublishedApi
-internal fun ThrowIrLinkageError(message: String?): Nothing {
-    throw IrLinkageError(message)
 }
 
 @ExportForCppRuntime

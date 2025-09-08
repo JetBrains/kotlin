@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
@@ -101,6 +102,7 @@ class FirReplSnippetResolveExtensionImpl(
     private fun FirProperty.createCopyForState(snippet: FirReplSnippetSymbol): FirProperty {
         // Needed for delegated properties to be handled correctly in Fir2Ir. See also [Fir2IrReplSnippetConfiguratorExtensionImpl]
         val makePublic = this.delegate != null
+        val oldSymbol = symbol
         return buildPropertyCopy(this) {
             origin = FirDeclarationOrigin.FromOtherReplSnippet
             status =
@@ -108,8 +110,13 @@ class FirReplSnippetResolveExtensionImpl(
                     visibility = if (makePublic) Visibilities.Public else Visibilities.Local,
                     isStatic = true
                 )
-            isLocal = !makePublic
-            symbol = FirPropertySymbol(this@createCopyForState.symbol.callableId)
+            symbol = when {
+                !makePublic -> FirLocalPropertySymbol()
+                oldSymbol is FirRegularPropertySymbol -> FirRegularPropertySymbol(oldSymbol.callableId)
+                // TODO: suspicious place, as we keep local visibility but create a regular (non-local) symbol
+                // Consider introducing special visibility in this case (KT-75301)
+                else -> FirRegularPropertySymbol(CallableId(oldSymbol.name))
+            }
         }.also {
             it.originalReplSnippetSymbol = snippet
             if (makePublic) {

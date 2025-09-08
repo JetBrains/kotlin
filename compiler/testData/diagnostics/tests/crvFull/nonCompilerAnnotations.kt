@@ -13,3 +13,5 @@ fun foo(): String = ""
 fun main() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, functionDeclaration, stringLiteral */

@@ -41,6 +41,8 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
         registerComponents(this, configuration)
     }
 
+    override val pluginId: String get() = PLUGIN_ID
+
     override val supportsK2: Boolean
         get() = true
 }

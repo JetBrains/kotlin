@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -82,7 +81,6 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
 ) {
     with(attributes) {
         attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK)
         attributes.attribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, frameworkDescription.buildType.name)
         attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.frameworkName)
         setAttributeProvider(project.providers, Framework.frameworkTargets) {
@@ -92,12 +90,13 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
 }
 
 private fun Project.addFrameworkArtifact(configuration: Configuration, artifactFile: Provider<File>) {
-    artifacts.add(configuration.name, artifactFile) { artifact ->
-        artifact.name = name
-        artifact.extension = "framework"
-        artifact.type = "binary"
-        artifact.classifier = "framework"
-    }
+    configuration.outgoing.registerArtifact(
+        artifactProvider = artifactFile,
+        name = name,
+        type = KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK,
+        extension = "framework",
+        classifier = "framework"
+    )
 }
 
 private fun Project.createFatFramework(groupDescription: FrameworkGroupDescription, frameworks: List<Framework>) {

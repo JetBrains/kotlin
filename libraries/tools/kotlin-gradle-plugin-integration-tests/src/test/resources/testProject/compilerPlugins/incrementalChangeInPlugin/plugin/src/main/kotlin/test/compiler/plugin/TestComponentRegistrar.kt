@@ -16,5 +16,6 @@ class TestComponentRegistrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(MyMethodGenerator())
     }
 
+    override val pluginId: String get() = "test.compiler.plugin"
     override val supportsK2: Boolean = true
 }

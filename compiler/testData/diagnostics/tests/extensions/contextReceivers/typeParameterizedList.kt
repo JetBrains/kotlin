@@ -18,3 +18,6 @@ fun main() {
         A<Int>().<!NO_CONTEXT_RECEIVER!>f<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, vararg */

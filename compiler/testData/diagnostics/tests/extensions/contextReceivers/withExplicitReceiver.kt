@@ -20,3 +20,6 @@ fun main() {
         b.f()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+lambdaLiteral, localProperty, propertyDeclaration */

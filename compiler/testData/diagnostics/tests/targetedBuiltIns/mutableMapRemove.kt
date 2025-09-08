@@ -29,3 +29,6 @@ fun foo(x: MutableMap<String, Int>, y: java.util.HashMap<String, Int>, z: java.u
     z.remove("", <!TYPE_MISMATCH!>""<!>)
     z.remove("", null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, nullableType, override,
+propertyDeclaration, stringLiteral, typeParameter */

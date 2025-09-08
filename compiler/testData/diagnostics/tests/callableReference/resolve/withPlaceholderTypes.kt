@@ -26,3 +26,6 @@ val x4 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>fn2<!>(::<!DEBUG_INFO_MISSING_UNRESOLV
 val x5 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>fn2<!>(::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>, ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)
 
 val x6 = fn3(1, ::qux)
+
+/* GENERATED_FIR_TAGS: additiveExpression, callableReference, functionDeclaration, functionalType, integerLiteral,
+propertyDeclaration, stringLiteral */

@@ -10,7 +10,7 @@
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
     gitCommitSha = "13720ddabaa054970350135df60688b157156534",
-    stableKotlinVersion = "2.1.20",
+    stableKotlinVersion = "2.2.0",
 )
 
 import java.io.File
@@ -24,12 +24,15 @@ val repoPatch = {
     )
 }
 
+val defaultIterations = 20
+
 runBenchmarks(
     repoPatch,
     suite {
         scenario {
             title = "Spring server clean build"
             useGradleArgs("--no-build-cache")
+            iterations = defaultIterations
 
             runTasks(":graphql-kotlin-spring-server:assemble")
             runCleanupTasks("clean")
@@ -39,6 +42,7 @@ runBenchmarks(
         scenario {
             title = "Incremental Spring server build with ABI change in FederatedSchemaGenerator"
             useGradleArgs("--no-build-cache")
+            iterations = defaultIterations
 
             runTasks(":graphql-kotlin-spring-server:assemble")
             applyAbiChangeTo("generator/graphql-kotlin-federation/src/main/kotlin/com/expediagroup/graphql/generator/federation/FederatedSchemaGenerator.kt")
@@ -47,6 +51,7 @@ runBenchmarks(
         scenario {
             title = "Incremental Spring client build with ABI change in GraphQLClient"
             useGradleArgs("--no-build-cache")
+            iterations = defaultIterations
 
             runTasks(":graphql-kotlin-spring-server:assemble")
             applyAbiChangeTo("clients/graphql-kotlin-client/src/main/kotlin/com/expediagroup/graphql/client/GraphQLClient.kt")
@@ -55,6 +60,7 @@ runBenchmarks(
         scenario {
             title = "Dry run configuration time"
             useGradleArgs("--no-build-cache", "-m")
+            iterations = defaultIterations
 
             runTasks("assemble")
         }
@@ -62,6 +68,7 @@ runBenchmarks(
         scenario {
             title = "No-op configuration time"
             useGradleArgs("--no-build-cache")
+            iterations = defaultIterations
 
             runTasks("help")
         }
@@ -69,6 +76,7 @@ runBenchmarks(
         scenario {
             title = "UP-TO-DATE configuration time"
             useGradleArgs("--no-build-cache")
+            iterations = defaultIterations
 
             runTasks("assemble")
         }

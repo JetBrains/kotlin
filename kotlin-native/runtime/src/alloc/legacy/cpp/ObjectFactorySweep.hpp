@@ -56,7 +56,6 @@ SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> Sweep(
             sweepHandle.addKeptObject(Traits::ObjectFactory::GetAllocatedHeapSize(objHeader));
             continue;
         }
-        sweepHandle.addSweptObject();
         if (HasFinalizers(objHeader)) {
             auto* extraObject = mm::ExtraObjectData::Get(objHeader);
             if (compiler::objcDisposeOnMain() && extraObject && extraObject->getFlag(mm::ExtraObjectData::FLAGS_RELEASE_ON_MAIN_QUEUE)) {
@@ -64,8 +63,11 @@ SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> Sweep(
             } else {
                 objectFactoryIter.MoveAndAdvance(finalizerQueue.regular, it);
             }
+            sweepHandle.addMarkedObject();
+            sweepHandle.addKeptObject(Traits::ObjectFactory::GetAllocatedHeapSize(objHeader));
         } else {
             objectFactoryIter.EraseAndAdvance(it);
+            sweepHandle.addSweptObject();
         }
     }
 

@@ -13,3 +13,6 @@ fun foo(x: Any) {
     val s = SmartSet<Any>()
     s.add(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType, operator,
+override, propertyDeclaration, typeParameter */

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -43,6 +44,13 @@ sealed class FirImplicitBuiltinTypeRef(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
         return this
+    }
+
+    override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
+        get() = null
+
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        throw AssertionError("Replacing resolvedSymbolOrigin in FirImplicitBuiltinTypeRef is not supported")
     }
 }
 

@@ -71,22 +71,25 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                 Usage: klib <command> <library path> [<option>]
 
                 where the commands are:
-                   info                      General information about the library
-                   dump-abi                  Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
-                                               declaration. Whenever an ABI-incompatible change happens to a declaration, this should
-                                               be visible in the corresponding line of the snapshot.
-                   dump-ir                   Dump the intermediate representation (IR) of all declarations in the library. The output of this
-                                               command is intended to be used for debugging purposes only.
-                   dump-ir-signatures        Dump IR signatures of all non-private declarations in the library and all non-private declarations
-                                               consumed by this library (as two separate lists). This command relies purely on the data in IR.
-                   dump-metadata-signatures  Dump IR signatures of all non-private declarations in the library. Note, that this command renders
-                                               the signatures based on the library metadata. This is different from "dump-ir-signatures",
-                                               which renders signatures based on the IR. On practice, in most cases there is no difference
-                                               between output of these two commands. However, if IR transforming compiler plugins
-                                               (such as Compose) were used during compilation of the library, there would be different
-                                               signatures for patched declarations.
-                   dump-metadata             Dump the metadata of all declarations in the library. The output of this command is intended
-                                               to be used for debugging purposes only.
+                   info                          General information about the library
+                   dump-abi                      Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
+                                                   declaration. Whenever an ABI-incompatible change happens to a declaration, this should
+                                                   be visible in the corresponding line of the snapshot.
+                   dump-ir                       Dump the intermediate representation (IR) of declarations in the library.
+                                                   The output of this command is intended to be used for debugging purposes only.
+                   dump-ir-signatures            Dump IR signatures of all non-private declarations in the library and all non-private
+                                                   declarations consumed by this library (as two separate lists). This command relies
+                                                   purely on the data in IR.
+                   dump-ir-inlinable-functions   Dump the intermediate representation (IR) of inlinable functions in the library.
+                                                   The output of this command is intended to be used for debugging purposes only.
+                   dump-metadata                 Dump the metadata of all declarations in the library.
+                                                   The output of this command intended to be used for debugging purposes only.
+                   dump-metadata-signatures      Dump IR signatures of all non-private declarations in the library. Note, that this command
+                                                   renders the signatures based on the library metadata. This is different from
+                                                   "dump-ir-signatures", which renders signatures based on the IR. On practice,
+                                                   in most cases there is no difference between output of these two commands. However,
+                                                   if IR transforming compiler plugins (such as Compose) were used during compilation
+                                                   of the library, there would be different signatures for patched declarations.
 
                 and the options are:
                    -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}

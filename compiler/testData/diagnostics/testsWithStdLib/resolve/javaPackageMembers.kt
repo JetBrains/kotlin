@@ -9,3 +9,5 @@ class SomeClass {
         throw java.lang.AssertionError("!!!")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, propertyDeclaration, stringLiteral */

@@ -1,5 +1,5 @@
 // MODULE: main
-// MODULE_KIND: COMMON_JS
+// JS_MODULE_KIND: COMMON_JS
 // FILE: lib.kt
 @file:JsModule("foo")
 package lib

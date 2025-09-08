@@ -12,3 +12,6 @@ public class JavaClass {
 fun main(j: JavaClass) {
     j.foo += "OK"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, javaProperty, javaType,
+localProperty, propertyDeclaration, stringLiteral */

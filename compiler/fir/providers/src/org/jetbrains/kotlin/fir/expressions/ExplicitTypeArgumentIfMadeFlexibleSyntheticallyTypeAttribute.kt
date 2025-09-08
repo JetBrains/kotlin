@@ -14,12 +14,11 @@ import kotlin.reflect.KClass
 /**
  * This attribute is expected to decode original non-flexible type arguments if they were lost
  * after [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
- * TODO: Get rid of this class once KT-59138 is fixed and the relevant feature for disabling it will be removed
- * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+ * TODO: Get rid of this class once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
  */
 data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
     val coneType: ConeKotlinType,
-    val relevantFeature: LanguageFeature,
+    val relevantFeature: LanguageFeature? = null,
 ) : ConeAttribute<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute>() {
     // Those methods should not matter too much because it's only assumed to be used for explicit type arguments
     // for which we don't expect to perform complex operations

@@ -1,0 +1,26 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(ints: IntArray, strings: Array<String>) {
+    println(ints)
+    println(strings)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test([I[Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 5 }
+}
+
+TestKt$Test$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}

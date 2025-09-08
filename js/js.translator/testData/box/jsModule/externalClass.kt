@@ -1,4 +1,4 @@
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 package foo
 
 @JsModule("lib")

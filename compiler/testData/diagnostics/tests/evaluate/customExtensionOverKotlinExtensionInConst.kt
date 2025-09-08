@@ -7,3 +7,5 @@ fun Int.floorDiv(other: Int): Int = 20
 
 const val a1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>(-5).mod(2)<!>
 const val b1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>5.floorDiv(3)<!>
+
+/* GENERATED_FIR_TAGS: const, funWithExtensionReceiver, functionDeclaration, integerLiteral, propertyDeclaration */

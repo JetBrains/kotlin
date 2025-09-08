@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
+import org.jetbrains.kotlin.fir.deserialization.toResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
@@ -210,7 +211,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         origin = GeneratedForMetadata.origin
                         returnTypeRef = parameter.type.toConeType().toFirResolvedTypeRef()
                         name = parameter.name
-                        symbol = FirValueParameterSymbol(name)
+                        symbol = FirValueParameterSymbol()
                         if (parameter.defaultValue != null) {
                             defaultValue = buildExpressionStub {
                                 coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType
@@ -369,9 +370,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 }
             }
             is IrGetEnumValue -> {
-                val enumClassType: ConeKotlinType = with(emptyTypeConverter) { this@toFirExpression.type.toConeType() }
                 val enumClassId = (this.symbol.owner.parent as IrClass).classId!!
-                val enumClassLookupTag = enumClassId.toLookupTag()
                 val enumVariantName = this.symbol.owner.name
                 val enumEntrySymbol = session.symbolProvider.getClassLikeSymbolByClassId(enumClassId)?.let { classSymbol ->
                     (classSymbol as? FirRegularClassSymbol)?.declarationSymbols
@@ -380,13 +379,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 } ?: error("Could not resolve FirEnumEntry for $enumClassId.$enumVariantName")
 
                 buildPropertyAccessExpression {
-                    val receiver = buildResolvedQualifier {
-                        coneTypeOrNull = enumClassType
-                        packageFqName = enumClassId.packageFqName
-                        relativeClassFqName = enumClassId.relativeClassName
-                        symbol = enumClassLookupTag.toSymbol(session)
-                    }
-                    coneTypeOrNull = enumClassType
+                    val receiver = enumClassId.toResolvedQualifier(session)
+                    coneTypeOrNull = receiver.resolvedType
                     calleeReference = buildResolvedNamedReference {
                         name = enumVariantName
                         resolvedSymbol = enumEntrySymbol

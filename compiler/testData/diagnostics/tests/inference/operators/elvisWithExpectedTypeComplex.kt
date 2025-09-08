@@ -18,3 +18,6 @@ fun main() {
         } ?: unitFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, elvisExpression, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

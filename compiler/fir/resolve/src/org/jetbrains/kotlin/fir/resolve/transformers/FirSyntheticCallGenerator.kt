@@ -409,7 +409,7 @@ class FirSyntheticCallGenerator(
                     diagnostic = ConeAmbiguityError(
                         it.name,
                         CandidateApplicability.INAPPLICABLE,
-                        it.candidates,
+                        it.candidatesWithErrors,
                     )
                     name = it.name
                 }
@@ -654,7 +654,7 @@ class FirSyntheticCallGenerator(
             isCrossinline = false
             isNoinline = false
             this.isVararg = isVararg
-            symbol = FirValueParameterSymbol(name)
+            symbol = FirValueParameterSymbol()
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
     }

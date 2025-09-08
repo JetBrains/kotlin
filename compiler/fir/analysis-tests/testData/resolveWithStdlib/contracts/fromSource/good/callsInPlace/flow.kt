@@ -44,3 +44,6 @@ fun foo(x: () -> Unit, y: () -> Unit, z: () -> Unit) {
         bar(z)
     } while (true)
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, doWhileLoop, forLoop, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, rangeExpression */

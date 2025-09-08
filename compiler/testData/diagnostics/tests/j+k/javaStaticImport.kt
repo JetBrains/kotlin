@@ -38,3 +38,5 @@ open public class ECallable  {
 
 /* KT-5848 */
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, javaFunction, objectDeclaration,
+propertyDeclaration, stringLiteral */

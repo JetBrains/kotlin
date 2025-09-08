@@ -31,3 +31,5 @@ fun test(k: K, r: Runnable) {
     k.foo3({}, {}, r)
     k.foo3({}, {}, {})
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, lambdaLiteral, samConversion */

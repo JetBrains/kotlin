@@ -13,3 +13,6 @@ fun calc(x: String?, y: String?): Int {
     // x is not null, at least in theory
     return <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, comparisonExpression, doWhileLoop, functionDeclaration, ifExpression,
+integerLiteral, nullableType, safeCall, smartcast */

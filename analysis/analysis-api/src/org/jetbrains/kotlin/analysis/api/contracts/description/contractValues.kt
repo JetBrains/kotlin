@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.contracts.description
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
  * See: [org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.KaContractReturnsSpecificValueEffectDeclaration.value]
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaContractConstantValue : KaLifetimeOwner {
     @KaExperimentalApi
     public enum class KaContractConstantType {
@@ -32,6 +34,7 @@ public interface KaContractConstantValue : KaLifetimeOwner {
  * Represents parameter that can be passed to `value` argument of [kotlin.contracts.ContractBuilder.callsInPlace].
  */
 @KaExperimentalApi
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaContractParameterValue : KaLifetimeOwner {
     /**
      * A symbol to which this parameter points.
@@ -44,6 +47,7 @@ public sealed interface KaContractParameterValue : KaLifetimeOwner {
  * Examples: all [KaParameterSymbol] hierarchy.
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaContractExplicitParameterValue : KaContractParameterValue {
     public override val symbol: KaParameterSymbol
 }
@@ -69,6 +73,7 @@ public interface KaContractExplicitParameterValue : KaContractParameterValue {
  * `this` is represented by this value.
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaContractOwnerParameterValue : KaContractParameterValue {
     public override val symbol: KaClassSymbol
 }

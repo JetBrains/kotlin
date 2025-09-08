@@ -98,3 +98,6 @@ class Derived : Base() {
         <!INLINE_FROM_HIGHER_PLATFORM!>inlinePropertyBase<!> = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, getter, inline, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration, setter */

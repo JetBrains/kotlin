@@ -31,3 +31,6 @@ suspend fun bar3() =
             true -> { foo() }
             else -> suspendCoroutineUninterceptedOrReturn { x: Continuation<Unit> -> }
         }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, suspend,
+whenExpression */

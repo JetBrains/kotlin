@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -26,9 +27,9 @@ object FirJavaUnnecessaryNotNullChecker: FirCheckNotNullCallChecker(MppCheckerKi
         val argument = expression.arguments.singleOrNull() ?: return
         val argumentType = EnhancedForWarningConeSubstitutor(context.session.typeContext)
             .substituteOrNull(argument.resolvedType)
-            ?.fullyExpandedType(context.session) ?: return
+            ?.fullyExpandedType() ?: return
 
-        if (!argumentType.canBeNull(context.session) && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+        if (!argumentType.canBeNull(context.session) && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, argumentType)
         }
     }

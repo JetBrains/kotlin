@@ -42,7 +42,35 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("build") {
                 assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+                val packageJson = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
                 assertFileExists(dts)
+                assertEquals("kotlin/kotlin2JsIrDtsGeneration.d.ts", packageJson.types)
+                assertFileContains(dts, "function bar(): string")
+            }
+        }
+    }
+
+    @DisplayName("TS type declarations are generated with the right extension for ES modules")
+    @GradleTest
+    fun generateDtsWithEsModules(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    useEsModules()
+                }
+            }
+            build("build") {
+                assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.mjs")
+                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.mts")
+                val packageJson = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertFileExists(dts)
+                assertEquals("kotlin/kotlin2JsIrDtsGeneration.d.mts", packageJson.types)
                 assertFileContains(dts, "function bar(): string")
             }
         }
@@ -95,7 +123,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                """.trimMargin()
             )
             build("nodeDevelopmentRun") {
-                assertOutputContains("/build/js/packages/kotlin-js-nodejs-project/kotlin/kotlin-js-nodejs-project.js;test;'Hello, World'")
+                assertOutputContains("kotlin-js-nodejs-project.js;test;'Hello, World'")
             }
         }
     }
@@ -1586,9 +1614,10 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                         |
                         |plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
                         |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
+                        |    val npmResolutionManager = project.rootProject.kotlinNpmResolutionManager
                         |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
                         |        doFirst {
-                        |            project.rootProject.kotlinNpmResolutionManager.get().state = 
+                        |            npmResolutionManager.get().state = 
                         |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
                         |        }
                         |    }

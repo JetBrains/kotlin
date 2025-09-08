@@ -62,3 +62,7 @@ fun processRows(m: MyEither<BlankValue, String>) {
         val extra39 by m.bindOrAccumulate()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, nullableType, objectDeclaration, operator, out,
+propertyDeclaration, propertyDelegate, starProjection, typeParameter, typeWithExtension */

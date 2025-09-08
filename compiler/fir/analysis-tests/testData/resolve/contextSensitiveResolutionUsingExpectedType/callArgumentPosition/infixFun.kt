@@ -19,3 +19,6 @@ fun testInfix() {
     val r2 = 1 infixEnumConsumer <!UNRESOLVED_REFERENCE!>InheritorObject<!>
     val r3 = 1 infixConsumer InheritorObject
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration,
+infix, integerLiteral, localProperty, nestedClass, objectDeclaration, propertyDeclaration */

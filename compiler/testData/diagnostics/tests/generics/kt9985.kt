@@ -45,3 +45,7 @@ fun bar() {
     foo(l?.bar()) checkType { _<String?>() }
     foo(l?.gav()) checkType { _<String?>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, smartcast, stringLiteral, typeParameter, typeWithExtension */

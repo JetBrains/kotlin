@@ -9,3 +9,5 @@ actual fun foo() {}
 
 // MODULE: main()()(intermediate)
 actual fun foo() {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

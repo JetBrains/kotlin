@@ -35,3 +35,7 @@ fun test() {
         yieldString("abc") checkType { _<Int>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, multiplicativeExpression, nullableType,
+stringLiteral, suspend, typeParameter, typeWithExtension */

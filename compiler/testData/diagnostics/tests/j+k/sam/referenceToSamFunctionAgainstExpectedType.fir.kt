@@ -23,3 +23,5 @@ fun test(inv: Inv<String>) {
 }
 
 fun take(f: ((String) -> String) -> Inv<String>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, javaType, localProperty, propertyDeclaration */

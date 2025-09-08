@@ -29,12 +29,12 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
         val type = typeRef.coneType.abbreviatedTypeOrSelf
-        val fullyExpandedType = type.fullyExpandedType(context.session)
+        val fullyExpandedType = type.fullyExpandedType()
 
         val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 
         for (argumentData in potentiallyProblematicArguments) {
-            val declaration = argumentData.constructor.toRegularClassSymbol(context.session) ?: continue
+            val declaration = argumentData.constructor.toRegularClassSymbol() ?: continue
             val proto = declaration.typeParameterSymbols[argumentData.index]
             val actual = argumentData.projection
             val protoVariance = proto.variance

@@ -1,8 +1,8 @@
+// TARGET_BACKEND: JVM
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 // WITH_STDLIB
 
 // FILE: 1.kt
-// TARGET_BACKEND: JVM
 
 package test
 

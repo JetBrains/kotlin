@@ -11,3 +11,6 @@ class X {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, nestedClass,
+propertyDeclaration */

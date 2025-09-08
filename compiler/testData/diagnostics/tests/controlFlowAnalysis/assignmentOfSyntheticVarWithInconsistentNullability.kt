@@ -95,3 +95,6 @@ fun test_4(d: KotlinOverrideBase, s: String) {
 fun test_5(d: KotlinOverride, s: String) {
     <!VAL_REASSIGNMENT!>d.foo<!> = s
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, javaProperty, javaType,
+propertyDeclaration, stringLiteral */

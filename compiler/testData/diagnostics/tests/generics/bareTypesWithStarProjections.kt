@@ -37,3 +37,7 @@ fun foo(coneSymbol: AbstractFirBasedSymbol<*>) {
     if (coneSymbol !is FirPropertySymbol) return
     coneSymbol.phasedFir() checkType { _<FirProperty>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, infix, interfaceDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, starProjection,
+typeConstraint, typeParameter, typeWithExtension */

@@ -13,3 +13,6 @@ fun <T> List<T>.plus(other : List<T>) : List<T> {
   val result = ArrayList(this)
   return result
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction, localProperty,
+nullableType, propertyDeclaration, thisExpression, typeConstraint, typeParameter */

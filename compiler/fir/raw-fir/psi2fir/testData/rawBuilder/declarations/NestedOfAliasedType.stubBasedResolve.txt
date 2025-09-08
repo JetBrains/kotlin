@@ -1,0 +1,28 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] NestedOfAliasedType.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|A.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias TA = R|A|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|{TA=} A| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|{TA=} A|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedInB : R|A.Nested| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NestedInB] constructor(): R|B.NestedInB| {
+                LAZY_super<R|A.Nested|>
+            }
+
+        }
+
+    }

@@ -203,6 +203,11 @@ fun box(): String {
     val mapsColNullable: DataColumn<Map<*, *>?> = mapsDfNullable.value
     mapsColNullable.print()
 
+    @OptIn(kotlin.time.ExperimentalTime::class)
+    val newInstantDf = listOf(kotlin.time.Instant.DISTANT_FUTURE).toDataFrame()
+    @OptIn(kotlin.time.ExperimentalTime::class)
+    val instantCol: DataColumn<kotlin.time.Instant> = newInstantDf.value
+
     return "OK"
 }
 

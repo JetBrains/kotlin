@@ -17,11 +17,17 @@ abstract class KtContractDescriptionVisitor<out R, in D, Type, Diagnostic> {
     open fun visitConditionalEffectDeclaration(conditionalEffect: KtConditionalEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitEffectDeclaration(conditionalEffect, data)
 
+    open fun visitConditionalReturnsDeclaration(conditionalEffect: KtConditionalReturnsDeclaration<Type, Diagnostic>, data: D): R =
+        visitEffectDeclaration(conditionalEffect, data)
+
     open fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitEffectDeclaration(returnsEffect, data)
 
     open fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitEffectDeclaration(callsEffect, data)
+
+    open fun visitHoldsInEffectDeclaration(holdsInEffect: KtHoldsInEffectDeclaration<Type, Diagnostic>, data: D): R =
+        visitEffectDeclaration(holdsInEffect, data)
 
     open fun visitErroneousCallsEffectDeclaration(callsEffect: KtErroneousCallsEffectDeclaration<Type, Diagnostic>, data: D): R =
         visitCallsEffectDeclaration(callsEffect, data)

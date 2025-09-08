@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: WASM
+
 inline operator fun Double.provideDelegate(thisRef: Any?, kProp: Any?) = this.toLong()
 
 inline operator fun Long.getValue(thisRef: Any?, kProp: Any?) = this.toInt()

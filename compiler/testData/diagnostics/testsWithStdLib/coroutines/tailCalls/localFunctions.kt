@@ -17,3 +17,5 @@ suspend fun foo() {
         return unit()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localFunction, suspend */

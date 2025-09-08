@@ -24,3 +24,6 @@ class Base {
         return x[y]
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty,
+nullableType, operator, primaryConstructor, propertyDeclaration, typeParameter */

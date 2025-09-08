@@ -14,3 +14,6 @@ fun test(с: C?, a: Any) {
 fun main(args: Array<String>) {
     test(null, 1)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, integerLiteral, isExpression,
+nullableType, propertyDeclaration, safeCall */

@@ -57,3 +57,7 @@ fun test() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>ret3<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, intersectionType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression, typeParameter,
+typeWithExtension */

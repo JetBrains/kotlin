@@ -20,3 +20,6 @@ actual val expectWithContext : String
 
 context(a: A)
 actual fun expectWithContext() {}
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

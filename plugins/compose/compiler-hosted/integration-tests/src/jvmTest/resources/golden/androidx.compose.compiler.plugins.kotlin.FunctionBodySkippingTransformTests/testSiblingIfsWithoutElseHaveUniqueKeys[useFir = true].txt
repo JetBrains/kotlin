@@ -24,7 +24,7 @@ fun Test(cond: Boolean) {
 @Composable
 fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)N(cond):Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(cond)) 0b0100 else 0b0010
@@ -48,7 +48,7 @@ fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
       B(%composer, 0)
       %composer.endReplaceGroup()
     } else {
-      %composer.startReplaceGroup(<!DUPLICATE KEY: 723292542!>)
+      %composer.startReplaceGroup(<>)
       %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {

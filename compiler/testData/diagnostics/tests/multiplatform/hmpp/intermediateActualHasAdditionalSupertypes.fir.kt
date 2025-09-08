@@ -27,3 +27,6 @@ fun cancelFutureOnCompletion(handlerBase: CompletionHandlerBase) {
     invokeOnCompletion(handlerBase)
     handlerBase.foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+primaryConstructor */

@@ -1,0 +1,14 @@
+interface Foo {
+  val default: kotlin.String
+
+  val defaultWithOpen: kotlin.String
+
+  val defaultWithOpenAndBody: kotlin.String
+    get()
+
+  fun fooDefault()
+
+  fun fooWithOpen()
+
+  fun fooWithOpenAndBody()
+}

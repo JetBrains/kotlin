@@ -2,7 +2,6 @@ package
 
 public fun bar(): kotlin.Unit
 public fun </*0*/ T : kotlin.Throwable> tryCatch(): kotlin.Unit
-public inline fun </*0*/ reified E : kotlin.Exception /* = java.lang.Exception */, /*1*/ R> tryCatch(/*0*/ lazy: () -> R, /*1*/ failure: (E) -> R): R
 
 public final class XException</*0*/ T> : kotlin.Throwable {
     public constructor XException</*0*/ T>(/*0*/ p: T)

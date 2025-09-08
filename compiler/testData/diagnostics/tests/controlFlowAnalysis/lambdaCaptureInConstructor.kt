@@ -37,3 +37,7 @@ fun test3() {
         if (true) { x = ""; 1 } else { x = ""; 1 }
     )
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, functionDeclaration, functionalType,
+ifExpression, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

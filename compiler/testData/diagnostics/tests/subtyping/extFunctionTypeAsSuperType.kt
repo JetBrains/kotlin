@@ -29,3 +29,6 @@ abstract class C0: C(), <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>Int.() -> Double
 abstract class C1<T>: C(), E<T>, <!SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE!>Int.(C) -> Double<!>
 
 abstract class D0 : <!UNSUPPORTED_FEATURE!>context(C)<!> () -> Int
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+operator, override, typeAliasDeclaration, typeParameter, typeWithContext, typeWithExtension */

@@ -11,3 +11,5 @@ actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class <!PACKAGE_OR_CLASSIFIER_RED
 // MODULE: main()()(common, intermediate)
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
 actual class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

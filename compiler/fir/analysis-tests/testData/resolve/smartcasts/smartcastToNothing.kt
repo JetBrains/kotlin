@@ -33,3 +33,7 @@ fun test_1(a: String?) {
         val b = a.length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, classDeclaration, forLoop, functionDeclaration, getter,
+ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, safeCall, smartcast, typeParameter */

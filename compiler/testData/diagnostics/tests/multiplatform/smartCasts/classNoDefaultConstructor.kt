@@ -26,3 +26,5 @@ actual class Bar {
 fun testPlatform() {
     Bar().foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral */

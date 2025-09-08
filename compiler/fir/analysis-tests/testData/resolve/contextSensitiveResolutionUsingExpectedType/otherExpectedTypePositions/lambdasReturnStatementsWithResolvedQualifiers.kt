@@ -53,6 +53,9 @@ fun main(b: Boolean) {
 
     myRun {
         if (b) return@myRun MySealed.X
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        <!ARGUMENT_TYPE_MISMATCH!>Y<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, sealed, typeParameter */

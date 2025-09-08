@@ -13,3 +13,5 @@ actual fun <!ACTUAL_WITHOUT_EXPECT, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!
 
 // FILE: jvm2.kt
 actual fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

@@ -14,3 +14,6 @@ enum class MyEnum {
 
 @AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>Test()<!>)
 class Test2
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, primaryConstructor,
+propertyDeclaration */

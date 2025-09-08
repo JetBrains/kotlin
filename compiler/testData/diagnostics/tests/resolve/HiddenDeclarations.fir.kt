@@ -86,3 +86,7 @@ class B : A(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
 class C : A {
     constructor() : super(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+incrementDecrementExpression, integerLiteral, interfaceDeclaration, override, propertyDeclaration,
+propertyWithExtensionReceiver, secondaryConstructor, stringLiteral, superExpression */

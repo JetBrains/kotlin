@@ -19,6 +19,7 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
+import org.jetbrains.kotlin.backend.common.implicitInvoke
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.powerassert.getExplicitReceiver
-import org.jetbrains.kotlin.powerassert.irString
-import org.jetbrains.kotlin.powerassert.isInnerOfComparisonOperator
-import org.jetbrains.kotlin.powerassert.isInnerOfNotEqualOperator
+import org.jetbrains.kotlin.powerassert.*
 
 fun IrBuilderWithScope.irDiagramString(
     sourceFile: SourceFile,
@@ -210,6 +208,13 @@ private fun memberAccessOffset(
     if (expression !is IrCall) return 0
     val owner = expression.symbol.owner
     if (owner.isInfix || owner.isOperator || owner.origin == IrBuiltIns.BUILTIN_OPERATOR) {
+        if (expression.implicitInvoke) {
+            val receiver = expression.getExplicitReceiver() ?: return 0
+            var offset = receiver.endOffset - sourceRangeInfo.startOffset
+            while (offset in source.indices && source[offset] == ')') offset++
+            return offset
+        }
+
         val lhs = expression.binaryOperatorLhs() ?: return 0
         return when (expression.origin) {
             IrStatementOrigin.GET_ARRAY_ELEMENT -> lhs.endOffset - sourceRangeInfo.startOffset

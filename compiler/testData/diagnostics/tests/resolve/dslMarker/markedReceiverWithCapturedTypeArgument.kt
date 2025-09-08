@@ -11,3 +11,6 @@ class Inv<T> {
 fun Inv<*>.foo() {
     bar()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+nullableType, starProjection, typeParameter */

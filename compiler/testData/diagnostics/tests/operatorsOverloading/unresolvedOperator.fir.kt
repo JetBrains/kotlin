@@ -17,3 +17,6 @@ fun test() {
     a <!UNRESOLVED_REFERENCE!>..<!> a
     a <!UNRESOLVED_REFERENCE!>..<<!> a
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, localProperty,
+multiplicativeExpression, propertyDeclaration, rangeExpression, stringLiteral, unaryExpression */

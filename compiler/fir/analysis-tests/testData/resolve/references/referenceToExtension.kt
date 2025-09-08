@@ -46,3 +46,7 @@ class NoGenericTest {
         val memberFunRef = B::memberFun
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+getter, localProperty, nestedClass, nullableType, outProjection, propertyDeclaration, propertyWithExtensionReceiver,
+starProjection, typeParameter */

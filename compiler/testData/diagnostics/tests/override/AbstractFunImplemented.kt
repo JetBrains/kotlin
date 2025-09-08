@@ -7,3 +7,5 @@ abstract class A {
 class B() : A() {
     override fun foo() = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, primaryConstructor */

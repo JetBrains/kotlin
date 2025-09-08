@@ -14,3 +14,6 @@ object B : A<String>() {
 }
 
 fun baz(x: (A<String>.Inner) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inner, lambdaLiteral, localProperty,
+objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

@@ -27,3 +27,5 @@ fun test() {
     entries.length
     somethingElse.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaProperty, propertyDeclaration */

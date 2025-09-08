@@ -3,7 +3,6 @@
 // DIAGNOSTICS: -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // WITH_STDLIB
 // FIR_DUMP
-// LATEST_LV_DIFFERENCE
 
 object Plus {
     operator fun plus(number: Int) = this.also { println("p -> plus") }
@@ -61,3 +60,7 @@ fun bad(c: C?) {
     c?.ppa <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> 10
     (c?.ppa) += 10
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, safeCall, stringLiteral,
+thisExpression */

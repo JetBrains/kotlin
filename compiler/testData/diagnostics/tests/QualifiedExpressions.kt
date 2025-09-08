@@ -12,3 +12,6 @@ fun test(s: IntRange?) {
 }
 
 fun String.startsWith(s: String): Boolean = true
+
+/* GENERATED_FIR_TAGS: elvisExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, intersectionType,
+localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral */

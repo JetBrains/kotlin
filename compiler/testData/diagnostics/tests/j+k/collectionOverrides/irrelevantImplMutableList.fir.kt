@@ -118,3 +118,6 @@ fun main() {
     x.remove("")
     x.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+localProperty, propertyDeclaration, stringLiteral */

@@ -9,3 +9,5 @@ fun foo() {
     doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)   //no repeat error
 }
 fun doSmth(i: Int) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

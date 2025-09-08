@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.functionsNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule.kotlinBase
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -37,15 +36,15 @@ class GenericsErasure : SirTranslationTest() {
         translate(code) {
             val foo = it.functionsNamed("foo").first()
             val tParam = foo.parameters.first()
-            val optionalKotlinBase = SirNominalType(kotlinBase).optional()
-            assertEquals(optionalKotlinBase, tParam.type)
+            val optionalAny = KotlinRuntimeSupportModule.kotlinBridgeableType.optional()
+            assertEquals(optionalAny, tParam.type)
 
             val id = it.functionsNamed("id").first()
             val aParam = id.parameters.first()
-            assertEquals(SirNominalType(kotlinBase), aParam.type)
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, aParam.type)
 
             val myClassMethod = it.classNamed("MyClass").declarations.functionsNamed("method").first()
-            assertEquals(optionalKotlinBase, myClassMethod.returnType)
+            assertEquals(optionalAny, myClassMethod.returnType)
         }
     }
 
@@ -65,8 +64,7 @@ class GenericsErasure : SirTranslationTest() {
         translate(code) {
             val foo = it.functionsNamed("foo").first()
             val tParam = foo.parameters.first()
-            val optionalKotlinBase = SirNominalType(kotlinBase)
-            assertEquals(optionalKotlinBase, tParam.type)
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, tParam.type)
 
             val bar = it.functionsNamed("bar").first()
             val myClass = it.classNamed("MyClass")

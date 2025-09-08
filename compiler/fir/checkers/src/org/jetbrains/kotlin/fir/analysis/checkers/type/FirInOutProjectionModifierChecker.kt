@@ -18,7 +18,7 @@ object FirInOutProjectionModifierChecker : FirResolvedTypeRefChecker(MppCheckerK
         val delegatedTypeRef = typeRef.delegatedTypeRef as? FirUserTypeRef ?: return
         for (part in delegatedTypeRef.qualifier) {
             for (typeArgument in part.typeArgumentList.typeArguments) {
-                checkModifiersCompatibility(typeArgument, context, reporter)
+                checkModifiersCompatibility(typeArgument)
             }
         }
     }

@@ -44,3 +44,7 @@ fun MyClass.foo() {
 
     JavaClass.expectJavaClass(INSTANCE)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, flexibleType, funWithExtensionReceiver, functionDeclaration,
+javaFunction, javaProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, sealed, stringLiteral,
+typeParameter */

@@ -32,3 +32,5 @@ fun test() {
     E.<!OVERLOAD_RESOLUTION_AMBIGUITY!>field<!>
     O.field
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty */

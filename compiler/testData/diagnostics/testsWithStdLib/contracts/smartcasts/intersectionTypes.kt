@@ -43,3 +43,6 @@ fun testDeMorgan2(x: Any?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, disjunctionExpression, functionDeclaration, ifExpression,
+intersectionType, isExpression, lambdaLiteral, nullableType, smartcast */

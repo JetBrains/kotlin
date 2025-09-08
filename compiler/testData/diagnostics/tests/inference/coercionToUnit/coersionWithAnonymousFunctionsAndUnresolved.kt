@@ -72,3 +72,6 @@ fun testParameter() {
     takeFnToParameter(fun() { return <!UNRESOLVED_REFERENCE!>unresolved<!>() })
     takeFnToParameter(fun() { if (true ) return <!UNRESOLVED_REFERENCE!>unresolved<!>() })
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, ifExpression, lambdaLiteral, nullableType,
+typeParameter */

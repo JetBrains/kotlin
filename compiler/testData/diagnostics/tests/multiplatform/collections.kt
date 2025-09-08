@@ -20,3 +20,5 @@ import kotlin.collections.mapOf
 fun jvm() {
     mapOf(1 to "1")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

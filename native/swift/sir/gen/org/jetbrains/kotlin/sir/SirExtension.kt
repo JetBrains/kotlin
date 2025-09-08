@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.extension]
  */
-abstract class SirExtension : SirMutableDeclarationContainer(), SirDeclaration, SirConstrainedDeclaration, SirProtocolConformingDeclaration {
+abstract class SirExtension : SirElementBase(), SirDeclaration, SirMutableDeclarationContainer, SirConstrainedDeclaration, SirProtocolConformingDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?

@@ -41,3 +41,7 @@ fun ok3(arg: Any?): String {
         return "nonNull"
     } ?: error("null")
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, elvisExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral,
+typeParameter */

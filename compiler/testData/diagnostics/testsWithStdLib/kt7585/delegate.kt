@@ -79,3 +79,8 @@ class My(val x: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, flexibleType, functionDeclaration,
+integerLiteral, intersectionType, javaFunction, javaType, lambdaLiteral, localProperty, objectDeclaration, out,
+primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeConstraint, typeParameter,
+whenExpression */

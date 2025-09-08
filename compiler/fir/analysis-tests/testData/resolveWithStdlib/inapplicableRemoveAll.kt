@@ -4,3 +4,5 @@ fun test(list: MutableList<String>) {
         it.isEmpty()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral */

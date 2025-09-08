@@ -13,3 +13,5 @@ class Foo {
         bar = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, lateinit, propertyDeclaration, secondaryConstructor, stringLiteral */

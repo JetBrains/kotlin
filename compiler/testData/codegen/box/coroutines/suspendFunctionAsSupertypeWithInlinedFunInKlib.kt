@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +SuspendFunctionAsSupertype
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 // ^^^ This test demonstrates how after IR Inliner on 1st phase, there is no discrepancy in the name of value parameter of `FAKE_OVERRIDE name:invoke`
 
 import kotlin.coroutines.*

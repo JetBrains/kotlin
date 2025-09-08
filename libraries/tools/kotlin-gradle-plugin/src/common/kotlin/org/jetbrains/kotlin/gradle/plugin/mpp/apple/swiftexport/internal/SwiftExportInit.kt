@@ -11,6 +11,9 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
@@ -24,11 +27,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private const val SWIFT_EXPORT_CLASSPATH = "swiftExportClasspath"
 private const val SWIFT_EXPORT_CLASSPATH_RESOLVABLE = "swiftExportClasspathResolvable"
 private const val SWIFT_EXPORT_EMBEDDABLE_MODULE = "swift-export-embeddable"
-internal const val SWIFT_EXPORT_MODULE_NAME_PATTERN = "^[A-Za-z0-9_]+$"
+internal const val SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN = "^[A-Za-z0-9_]+$"
+internal const val SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN = "[:\\-]+"
 
 internal fun Project.initSwiftExportClasspathConfigurations() {
     maybeCreateSwiftExportClasspathDependenciesConfiguration()
@@ -60,23 +65,45 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfigurationName(buildTyp
     lowerCamelCaseName(buildType.configuration, "exported", "swift", "export", "api", "configuration")
 )
 
-internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(buildType: NativeBuildType): Configuration =
+internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
+    buildType: NativeBuildType,
+    extendConfiguration: Configuration,
+): Configuration =
     project.configurations.maybeCreateResolvable(exportedSwiftExportApiConfigurationName(buildType)) {
         description = "Swift Export dependencies configuration for $name"
         isVisible = false
-        isTransitive = false
+        extendsFrom(extendConfiguration)
+        shouldResolveConsistentlyWith(extendConfiguration)
         usesPlatformOf(this@exportedSwiftExportApiConfiguration)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
+        if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+            KlibPackaging.setAttributeTo(project, attributes, false)
+        }
     }
 
-internal val String.normalizedSwiftExportModuleName get() = dashSeparatedToUpperCamelCase(this)
+/**
+ * Converts a string to a Swift-compatible module name in UpperCamelCase.
+ * This function handles various separators like dashes and colons.
+ * For example, ":shared:core-api" becomes "SharedCoreApi".
+ */
+internal val String.normalizedSwiftExportModuleName: String
+    get() {
+        // Regex to split by any sequence of one or more non-alphanumeric characters.
+        val delimiters = Regex(SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN)
+
+        return this.split(delimiters)
+            // Filter out empty parts that can result from leading/trailing delimiters
+            // (e.g., ":api" splits into "" and "api").
+            .filter { it.isNotEmpty() }
+            .joinToString("") { it.capitalizeAsciiOnly() }
+    }
 
 internal fun Project.validateSwiftExportModuleName(moduleName: String) =
     kotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(this, moduleName)
 
 internal fun KotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(project: Project, moduleName: String) {
-    if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_PATTERN))) {
+    if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
         report(project, KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
     }
 }

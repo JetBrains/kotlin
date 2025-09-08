@@ -75,8 +75,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToIndex
 
 class FirElementSerializer private constructor(
-    private val session: FirSession,
-    private val scopeSession: ScopeSession,
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
     private val currentDeclaration: FirDeclaration?,
     private val typeParameters: Interner<FirTypeParameter>,
     private val extension: FirSerializerExtension,
@@ -86,7 +86,7 @@ class FirElementSerializer private constructor(
     private val typeApproximator: AbstractTypeApproximator,
     private val languageVersionSettings: LanguageVersionSettings,
     private val produceHeaderKlib: Boolean,
-) {
+) : SessionAndScopeSessionHolder {
     private val contractSerializer = FirContractSerializer()
     private val providedDeclarationsService = session.providedDeclarationsForMetadataService
     private val stdLibCompilation = languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
@@ -637,7 +637,7 @@ class FirElementSerializer private constructor(
         }
 
         val hasConstant = property.isConst || (!property.isVar
-                && property.returnTypeRef.coneType.fullyExpandedType(session).canBeUsedForConstVal()
+                && property.returnTypeRef.coneType.fullyExpandedType().canBeUsedForConstVal()
                 && property.symbol.resolvedInitializer.hasConstantValue(session))
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
@@ -646,7 +646,7 @@ class FirElementSerializer private constructor(
             property.memberKind(),
             property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
             property.isExternal, property.delegateFieldSymbol != null, property.isExpect,
-            property.status.hasMustUseReturnValue
+            ProtoEnumFlags.returnValueStatus(property.status.returnValueStatus)
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -730,7 +730,7 @@ class FirElementSerializer private constructor(
             function.isSuspend,
             simpleFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
-            simpleFunction?.status?.hasMustUseReturnValue == true,
+            ProtoEnumFlags.returnValueStatus(simpleFunction?.status?.returnValueStatus),
         )
 
         if (flags != builder.flags) {
@@ -854,7 +854,7 @@ class FirElementSerializer private constructor(
             builder.setUnderlyingType(local.typeProto(underlyingType, abbreviationOnly = true))
         }
 
-        val expandedType = underlyingType.fullyExpandedType(session)
+        val expandedType = underlyingType.fullyExpandedType()
         if (useTypeTable()) {
             builder.expandedTypeId = local.typeId(expandedType)
         } else {
@@ -893,7 +893,7 @@ class FirElementSerializer private constructor(
             ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
             !constructor.isPrimary,
             shouldSetStableParameterNames(constructor),
-            constructor.status.hasMustUseReturnValue
+            ProtoEnumFlags.returnValueStatus(constructor.status.returnValueStatus)
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -1046,7 +1046,7 @@ class FirElementSerializer private constructor(
         // `type` we'll see here will be fully expanded with the declaration
         // site session, but [FirElementSerializer] will be run with a use site one,
         // so it must be expanded twice.
-        val useSiteSessionExpandedType = type.fullyExpandedType(session)
+        val useSiteSessionExpandedType = type.fullyExpandedType()
         val abbreviation = type.abbreviatedTypeOrSelf
         val mainType = if (!abbreviationOnly) useSiteSessionExpandedType else abbreviation
         val mainTypeProto = typeOrTypealiasProto(
@@ -1189,10 +1189,7 @@ class FirElementSerializer private constructor(
         for (attribute in sortedAttributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
-                attribute is ParameterNameTypeAttribute -> {
-                    typeAnnotations.addAll(listOf(attribute.annotation).nonSourceAnnotations(session))
-                    typeAnnotations.addAll(attribute.others.nonSourceAnnotations(session))
-                }
+                attribute is ParameterNameTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
                 attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey ->
                     typeAnnotations.addIfNotNull(createAnnotationForCompilerDefinedTypeAttribute(attribute))
                 else -> extensionAttributes += attribute
@@ -1211,7 +1208,7 @@ class FirElementSerializer private constructor(
 
     private fun createAnnotationForCompilerDefinedTypeAttribute(attribute: ConeAttribute<*>): FirAnnotation? {
         val lookupTag = CompilerConeAttributes.classIdByCompilerAttributeKey.getValue(attribute.key).toLookupTag()
-        val annotationClassSymbol = lookupTag.toRegularClassSymbol(session)
+        val annotationClassSymbol = lookupTag.toRegularClassSymbol()
         if (annotationClassSymbol?.getRetention(session) == AnnotationRetention.SOURCE) return null
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
@@ -1268,8 +1265,8 @@ class FirElementSerializer private constructor(
 
         if (!symbol.isInner) return
         val outerClassId = symbol.classId.outerClassId
-        if (outerClassId == null || outerClassId.isLocal) return
-        val outerSymbol = outerClassId.toLookupTag().toSymbol(session)
+        if (outerClassId == null || symbol.isLocal) return
+        val outerSymbol = outerClassId.toLookupTag().toSymbol()
         if (outerSymbol != null) {
             val outerBuilder = ProtoBuf.Type.newBuilder()
             fillFromPossiblyInnerType(outerBuilder, outerSymbol, typeArguments, argumentIndex)
@@ -1282,7 +1279,7 @@ class FirElementSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType, abbreviationOnly: Boolean = false) {
-        val classifierSymbol = type.lookupTag.toSymbol(session)
+        val classifierSymbol = type.lookupTag.toSymbol()
         if (classifierSymbol != null) {
             fillFromPossiblyInnerType(builder, classifierSymbol, type.typeArguments, 0, abbreviationOnly)
         } else {
@@ -1326,16 +1323,15 @@ class FirElementSerializer private constructor(
     }
 
     private fun isDefaultAccessor(accessor: FirPropertyAccessor, property: FirProperty): Boolean {
-        if (property.isLocalInFunction) return true
+        if (property.isLocal) return true
 
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val hasAnnotations = accessor.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(accessor) ||
-                accessor.valueParameters.any { setterParameter ->
-                    setterParameter.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(setterParameter)
-                }
+        val hasSetterParameterAnnotations = accessor.valueParameters.any { setterParameter ->
+            setterParameter.nonSourceAnnotations(session).isNotEmpty() || extension.hasAdditionalAnnotations(setterParameter)
+        }
         return accessor is FirDefaultPropertyAccessor &&
-                !hasAnnotations &&
+                !hasSetterParameterAnnotations &&
                 accessor.visibility == property.visibility &&
                 !accessor.isExternal &&
                 !accessor.isInline
@@ -1495,7 +1491,7 @@ class FirElementSerializer private constructor(
             produceHeaderKlib: Boolean = false,
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
-            val parent = if (parentClassId != null && !parentClassId.isLocal) {
+            val parent = if (parentClassId != null && !klass.isLocal) {
                 val parentClass = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)!!.fir as FirRegularClass
                 parentSerializer ?: create(
                     session, scopeSession, parentClass, extension, null, typeApproximator,

@@ -15,3 +15,6 @@ fun dump(dumpStrategy: String) {
 }
 
 fun returnAdapter(a: kotlin.reflect.KFunction0<String>) = a
+
+/* GENERATED_FIR_TAGS: callableReference, equalityExpression, functionDeclaration, ifExpression, localProperty,
+propertyDeclaration, stringLiteral */

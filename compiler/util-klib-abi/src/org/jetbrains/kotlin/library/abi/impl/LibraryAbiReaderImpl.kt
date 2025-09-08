@@ -257,7 +257,7 @@ private class LibraryDeserializer(
                     ProtoType.KindCase.DNN -> return extractIdSignature(type.dnn.underlyingTypeId)
                     ProtoType.KindCase.SIMPLE -> type.simple.classifier
                     ProtoType.KindCase.LEGACYSIMPLE -> type.legacySimple.classifier
-                    ProtoType.KindCase.DYNAMIC, ProtoType.KindCase.KIND_NOT_SET, null -> return null
+                    ProtoType.KindCase.DYNAMIC, ProtoType.KindCase.ERROR, ProtoType.KindCase.KIND_NOT_SET, null -> return null
                 }
                 return deserializeIdSignature(symbolId)
             }
@@ -662,6 +662,7 @@ private class LibraryDeserializer(
                     ProtoType.KindCase.SIMPLE -> deserializeSimpleType(proto.simple, typeParameterResolver)
                     ProtoType.KindCase.LEGACYSIMPLE -> deserializeSimpleType(proto.legacySimple, typeParameterResolver)
                     ProtoType.KindCase.DYNAMIC -> DynamicTypeImpl
+                    ProtoType.KindCase.ERROR -> ErrorTypeImpl
                     ProtoType.KindCase.KIND_NOT_SET, null -> error("Unexpected IR type: $kindCase")
                 }
             }

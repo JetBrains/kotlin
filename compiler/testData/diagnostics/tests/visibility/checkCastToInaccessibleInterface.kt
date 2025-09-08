@@ -105,3 +105,7 @@ fun main() {
     println(f3<test1.<!INVISIBLE_REFERENCE!>PrivateInFileInterface<!>>(Public1, Public2))
     println(f3<`_`>(`_`, `_`))
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, data, equalityExpression, functionDeclaration, ifExpression, inline,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration,
+reified, stringLiteral, typeParameter, vararg, whenExpression, whenWithSubject */

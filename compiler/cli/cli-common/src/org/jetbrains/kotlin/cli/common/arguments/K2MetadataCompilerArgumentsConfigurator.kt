@@ -26,6 +26,7 @@ class K2MetadataCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigura
     override fun configureExtraLanguageFeatures(
         arguments: CommonCompilerArguments,
         map: HashMap<LanguageFeature, LanguageFeature.State>,
+        collector: MessageCollector,
     ) {
         map[LanguageFeature.MultiPlatformProjects] = LanguageFeature.State.ENABLED
     }

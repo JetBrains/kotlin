@@ -241,20 +241,18 @@ internal fun IrCall.getBackingField(): IrField =
         propertySymbol.owner.backingField ?: error("Property expected to have backing field")
     } ?: error("Atomic property accessor ${this.render()} expected to have non-null correspondingPropertySymbol")
 
-@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referencePackageFunction(
     packageName: String,
     name: String,
     predicate: (IrFunctionSymbol) -> Boolean = { true }
 ): IrSimpleFunctionSymbol = try {
-        referenceFunctions(FqName("$packageName.$name")).single(predicate)
-    } catch (e: RuntimeException) {
-        error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
-    }
+    referenceFunctions(CallableId(FqName(packageName), Name.identifier(name))).single(predicate)
+} catch (e: RuntimeException) {
+    error("Exception while looking for the function `$name` in package `$packageName`: ${e.message}")
+}
 
-@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, functionName: String): IrSimpleFunctionSymbol {
-    val functionId = FqName("$KOTLIN.${classSymbol.owner.name}.$functionName")
+    val functionId = CallableId(FqName("$KOTLIN.${classSymbol.owner.name}"), Name.identifier(functionName))
     return try {
         referenceFunctions(functionId).single()
     } catch (e: RuntimeException) {
@@ -262,33 +260,33 @@ internal fun IrPluginContext.referenceFunction(classSymbol: IrClassSymbol, funct
     }
 }
 
-@OptIn(FirIncompatiblePluginAPI::class)
 private fun IrPluginContext.referenceArrayClass(irType: IrSimpleType): IrClassSymbol {
-    val jsArrayName = irType.getArrayClassFqName()
+    val jsArrayName = irType.getArrayClassClassId()
     return referenceClass(jsArrayName) ?: error("Array class $jsArrayName was not found in the context")
 }
 
-@OptIn(FirIncompatiblePluginAPI::class)
 internal fun IrPluginContext.getArrayConstructorSymbol(
     irType: IrSimpleType,
     predicate: (IrConstructorSymbol) -> Boolean = { true }
 ): IrConstructorSymbol {
-    val jsArrayName = irType.getArrayClassFqName()
+    val jsArrayName = irType.getArrayClassClassId()
     return try {
         referenceConstructors(jsArrayName).single(predicate)
-    } catch (e: RuntimeException) {
+    } catch (_: RuntimeException) {
         error("Array constructor $jsArrayName matching the predicate was not found in the context")
     }
 }
 
-private fun IrSimpleType.getArrayClassFqName(): FqName =
-    classifier.signature?.let { signature ->
+private fun IrSimpleType.getArrayClassClassId(): ClassId {
+    val fqName = classifier.signature?.let { signature ->
         signature.getDeclarationNameBySignature().let { name ->
             AFU_ARRAY_CLASSES[name]?.let { jsArrayName ->
                 FqName("$KOTLIN.$jsArrayName")
             }
         }
     } ?: error("Unexpected array type ${this.render()}")
+    return ClassId.topLevel(fqName)
+}
 
 internal fun IdSignature.getDeclarationNameBySignature(): String? {
     val commonSignature = if (this is IdSignature.AccessorSignature) accessorSignature else asPublic()

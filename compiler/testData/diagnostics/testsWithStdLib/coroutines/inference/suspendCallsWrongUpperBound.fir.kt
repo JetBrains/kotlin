@@ -11,3 +11,6 @@ fun <S : Number> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 val test = <!CANNOT_INFER_PARAMETER_TYPE!>generate<!> {
     yield(<!ARGUMENT_TYPE_MISMATCH!>"foo"<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration,
+stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

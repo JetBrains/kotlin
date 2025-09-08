@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 repositories {
@@ -15,14 +16,14 @@ repositories {
     }
 }
 
-// WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
 val litmusKt by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
         attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
     }
 }
@@ -60,7 +61,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(testFixtures(project(":native:native.tests")))
 }
 
 sourceSets {
@@ -71,10 +72,12 @@ sourceSets {
     }
 }
 
-nativeTest(
-    taskName = "test",
-    tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
-    requirePlatformLibs = true,
-    customTestDependencies = listOf(litmusKt),
-    allowParallelExecution = false,
-)
+projectTests {
+    nativeTestTask(
+        taskName = "test",
+        tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
+        requirePlatformLibs = true,
+        customTestDependencies = listOf(litmusKt),
+        allowParallelExecution = false,
+    )
+}

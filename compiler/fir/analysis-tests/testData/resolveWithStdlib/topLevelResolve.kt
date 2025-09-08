@@ -34,3 +34,6 @@ fun testWith() {
     val indices = with("") { indices }
     val indicesNoWith = "".indices
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+multiplicativeExpression, nullableType, propertyDeclaration, stringLiteral, typeParameter */

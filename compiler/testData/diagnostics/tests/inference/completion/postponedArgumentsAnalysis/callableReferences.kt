@@ -11,3 +11,7 @@ fun <T> Foo<T>.bar(x: String) = null as Foo<Int>
 fun main() {
     val x: P<String, Foo<Int>.() -> Foo<Int>> = P("", <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty1<Foo<kotlin.Int>, Foo<kotlin.Int>>")!>Foo<Int>::bar<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+getter, localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, thisExpression, typeParameter */

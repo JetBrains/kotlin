@@ -46,8 +46,62 @@ public class FirIdeNormalAnalysisSourceModuleBuildClassTypeTestGenerated extends
   }
 
   @Test
-  @TestMetadata("unresolved.kt")
-  public void testUnresolved() {
-    runTest("analysis/analysis-api/testData/components/typeCreator/classType/unresolved.kt");
+  @TestMetadata("boxedArray.kt")
+  public void testBoxedArray() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/boxedArray.kt");
+  }
+
+  @Test
+  @TestMetadata("flexibleTypeAsArrayTypeArgument.kt")
+  public void testFlexibleTypeAsArrayTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/flexibleTypeAsArrayTypeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("genericClassWithBound.kt")
+  public void testGenericClassWithBound() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/genericClassWithBound.kt");
+  }
+
+  @Test
+  @TestMetadata("genericInterface.kt")
+  public void testGenericInterface() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/genericInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("intType.kt")
+  public void testIntType() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/intType.kt");
+  }
+
+  @Test
+  @TestMetadata("lackOfTypeArgumentsBoxedArray.kt")
+  public void testLackOfTypeArgumentsBoxedArray() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/lackOfTypeArgumentsBoxedArray.kt");
+  }
+
+  @Test
+  @TestMetadata("localUserType.kt")
+  public void testLocalUserType() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/localUserType.kt");
+  }
+
+  @Test
+  @TestMetadata("moreTypeArgumentsThanNeeded.kt")
+  public void testMoreTypeArgumentsThanNeeded() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/moreTypeArgumentsThanNeeded.kt");
+  }
+
+  @Test
+  @TestMetadata("stringMakeNullable.kt")
+  public void testStringMakeNullable() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/stringMakeNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("userType.kt")
+  public void testUserType() {
+    runTest("analysis/analysis-api/testData/components/typeCreator/classType/userType.kt");
   }
 }

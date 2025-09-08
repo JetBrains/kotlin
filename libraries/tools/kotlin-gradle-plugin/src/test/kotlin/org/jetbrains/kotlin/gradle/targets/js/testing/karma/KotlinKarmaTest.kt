@@ -5,8 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.junit.Test
 import java.nio.file.Files.createTempDirectory
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class KotlinKarmaTest {
@@ -48,5 +55,72 @@ class KotlinKarmaTest {
             "/base/kotlin/main.wasm",
             based
         )
+    }
+
+    @Test
+    fun checkWasmDebugConfig() {
+        checkDebugConfig(KotlinPlatformType.wasm) { content, testDir ->
+            assertContains(
+                content, "\"webpackCopy\": [\n" +
+                        "    ${testDir.resolve("inputFile.wasm.map").normalize().absolutePathString().jsQuoted()}\n" +
+                        "  ]"
+            )
+        }
+
+    }
+
+    @Test
+    fun checkJsDebugConfig() {
+        checkDebugConfig(KotlinPlatformType.js)
+    }
+
+    private fun checkDebugConfig(
+        platformType: KotlinPlatformType,
+        additionalCheck: (String, Path) -> Unit = { _, _ -> }
+    ) {
+        val config = KarmaConfig(
+            port = 12345
+        )
+
+        val testDir = createTempDirectory("tmp")
+
+        val nodeModules = testDir.resolve("node_modules").toFile().apply {
+            mkdirs()
+            val kotlinWebHelpersDist = resolve("kotlin-web-helpers/dist")
+            kotlinWebHelpersDist.mkdirs()
+            kotlinWebHelpersDist.resolve("kotlin-test-karma-runner.js").createNewFile()
+
+            val static = kotlinWebHelpersDist.resolve("static")
+            static.mkdirs()
+            static.resolve("context.html").createNewFile()
+            static.resolve("debug.html").createNewFile()
+        }
+
+        val outputResult = testDir.resolve("karma.config.js")
+
+        writeConfig(
+            config,
+            testDir.resolve("inputFile").toFile(),
+            NpmProjectModules(nodeModules),
+            "testTask",
+            KotlinTestRunnerCliArgs(),
+            outputResult.toFile().printWriter(),
+            emptyList(),
+            emptyList(),
+            emptyMap(),
+            platformType,
+            testDir.toFile(),
+            debug = true,
+        ) {}
+
+        outputResult.toFile().readText().let {
+            assertContains(it, "\"singleRun\": false")
+            assertContains(it, "\"autoWatch\": true")
+            assertContains(it, "\"basePath\": ${testDir.absolutePathString().jsQuoted()}")
+            assertContains(it, "\"port\": 12345")
+            assertContains(it, "\"browsers\": []")
+
+            additionalCheck(it, testDir)
+        }
     }
 }

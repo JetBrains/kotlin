@@ -22,3 +22,6 @@ fun foo(dir: Direction): Int {
     }<!>
     // See KT-1882: no return is needed at the end
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral, smartcast,
+whenExpression, whenWithSubject */

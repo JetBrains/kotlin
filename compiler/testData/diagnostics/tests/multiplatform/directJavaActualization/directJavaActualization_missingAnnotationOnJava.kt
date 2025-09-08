@@ -20,3 +20,6 @@ public class Foo {
     public static class Nested {}
     public class Inner {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, inner, nestedClass, nullableType, operator,
+override, primaryConstructor */

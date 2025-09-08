@@ -12,3 +12,6 @@ class Bar {
 }
 
 typealias Baz<T> = (@UnsafeVariance T) -> Unit
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, nullableType, out, primaryConstructor,
+propertyDeclaration, starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

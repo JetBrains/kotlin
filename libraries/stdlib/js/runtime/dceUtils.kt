@@ -6,11 +6,14 @@
 package kotlin.js
 
 import JsError
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
+@UsedFromCompilerGeneratedCode
 internal fun unreachableDeclarationLog() {
     console.asDynamic().trace("Unreachable declaration")
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun unreachableDeclarationException() {
     throw JsError("Unreachable declaration")
 }

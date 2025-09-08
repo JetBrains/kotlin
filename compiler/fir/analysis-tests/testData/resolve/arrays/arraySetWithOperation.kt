@@ -35,3 +35,6 @@ fun test_3(a: A<D>) {
 fun test_4(b: B) {
     b<!NO_GET_METHOD!>[0]<!> += B() // unresolved
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, functionDeclaration,
+integerLiteral, localProperty, nullableType, operator, propertyDeclaration, thisExpression, typeParameter */

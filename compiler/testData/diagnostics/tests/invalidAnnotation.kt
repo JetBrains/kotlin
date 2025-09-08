@@ -13,3 +13,6 @@ class X<K, V> constructor() : Closeable {
     @Throws(IOException::class)
     override fun close() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, localFunction, nullableType, override,
+primaryConstructor, typeParameter */

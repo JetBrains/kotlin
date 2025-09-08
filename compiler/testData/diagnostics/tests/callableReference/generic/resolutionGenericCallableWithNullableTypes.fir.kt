@@ -21,3 +21,6 @@ fun test1() {
     val b2: String = <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
     val b3: Boolean = <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

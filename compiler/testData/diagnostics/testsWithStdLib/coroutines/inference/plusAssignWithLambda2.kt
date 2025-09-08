@@ -19,3 +19,6 @@ fun main() {
     newValue += id(fun(total): A { return A() })
     newValue += id(::foo)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+localProperty, nullableType, operator, propertyDeclaration, typeParameter */

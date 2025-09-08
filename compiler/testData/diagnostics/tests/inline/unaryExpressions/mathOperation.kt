@@ -36,3 +36,7 @@ inline fun <T, V> Function1<T, V>.inlineFunWithInvoke() {
     this--
     --this
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType,
+incrementDecrementExpression, inline, nullableType, operator, thisExpression, typeParameter, typeWithExtension,
+unaryExpression */

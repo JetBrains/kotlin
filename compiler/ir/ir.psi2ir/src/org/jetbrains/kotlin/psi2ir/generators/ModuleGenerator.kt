@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -97,6 +98,8 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val fakeFileEntry = object : IrFileEntry {
             override val name: String = "<error-class>"
             override val maxOffset: Int = UNDEFINED_OFFSET
+            override val lineStartOffsets: IntArray get() = TODO("Not yet implemented")
+            override val firstRelevantLineIndex: Int get() = TODO("Not yet implemented")
 
             override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo = TODO("Not yet implemented")
             override fun getLineNumber(offset: Int): Int = TODO("Not yet implemented")
@@ -107,6 +110,7 @@ open class ModuleGenerator(override val context: GeneratorContext) : Generator {
             fakeFileEntry,
             EmptyPackageFragmentDescriptor(context.moduleDescriptor, FqName(fakeFileEntry.name)),
         )
+        fakeFile.module = IrModuleFragmentImpl(ErrorModuleDescriptor)
         val gen = SyntheticDeclarationsGenerator(context)
         gen.visitClassDescriptor(ErrorUtils.errorClass, fakeFile)
         gen.visitConstructorDescriptor(

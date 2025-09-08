@@ -144,6 +144,8 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     abstract override fun hashCode(): Int
 
+    override fun toString(): String = this::class.simpleName.orEmpty()
+
     override fun getContext(): PsiElement? = parent
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)

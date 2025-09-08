@@ -30,3 +30,6 @@ fun main() {
     // Should be Error (has a parameter of type Base with marker)
     d.<!OPT_IN_USAGE_ERROR!>bar<!>(d)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, starProjection, typeParameter */

@@ -11,3 +11,5 @@ fun bar(p: @Composable ()->Unit) {}
 fun main() {
     bar(<!DEBUG_INFO_EXPRESSION_TYPE("@Composable () -> kotlin.Unit")!>if(true) { { foo() } } else { { } }<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral */

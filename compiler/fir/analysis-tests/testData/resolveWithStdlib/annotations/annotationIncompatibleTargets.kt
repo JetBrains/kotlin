@@ -16,3 +16,5 @@ annotation class C
 
 <!ANNOTATION_TARGETS_ONLY_IN_JAVA!>@java.lang.annotation.Target(java.lang.annotation.ElementType.PARAMETER)<!>
 annotation class D
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, javaProperty */

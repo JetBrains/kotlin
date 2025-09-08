@@ -14,3 +14,6 @@ fun bar(s: String?, r: String?): Int {
         else -> ""
     }).length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, nullableType, smartcast, stringLiteral,
+whenExpression */

@@ -16,4 +16,4 @@ public @interface A {
 
 @A(x = true, b = 3.0, a = 4) fun foo3() {}
 
-
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaType */

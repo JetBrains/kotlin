@@ -115,3 +115,7 @@ fun elvis(): String {
     val x = nsf() ?: "" // used
     return nsf() ?: stringF()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, annotationUseSiteTargetFile, comparisonExpression, disjunctionExpression,
+elvisExpression, equalityExpression, functionDeclaration, guardCondition, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, tryExpression, whenExpression, whenWithSubject */

@@ -18,3 +18,6 @@ fun topLevel() = run {
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>topLevel()<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, intersectionType, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

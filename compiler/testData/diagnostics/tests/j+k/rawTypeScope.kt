@@ -17,3 +17,5 @@ public class B<E> {
 fun main(x: Map<Any, Any>) {
     A.getB().foo(x)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

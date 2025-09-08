@@ -83,3 +83,6 @@ fun case_3(a: MutableList<MutableList<MutableList<MutableList<MutableList<Mutabl
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, outProjection, propertyDeclaration, smartcast */

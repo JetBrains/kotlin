@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>2.2.255-SNAPSHOT</version>
+        <version>2.3.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -48,7 +48,7 @@
             <extension>
                 <groupId>org.apache.maven.archetype</groupId>
                 <artifactId>archetype-packaging</artifactId>
-                <version>2.4</version>
+                <version>3.4.0</version>
             </extension>
         </extensions>
 
@@ -56,9 +56,25 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.4.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+  <profiles>
+    <profile>
+      <id>no-integration-test</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>skipTests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <archetype.test.skip>true</archetype.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>

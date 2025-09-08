@@ -26,3 +26,7 @@ fun test(a: IA, b: IB, c: IC) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, funWithExtensionReceiver, functionDeclaration, getter, ifExpression,
+interfaceDeclaration, isExpression, lambdaLiteral, objectDeclaration, operator, propertyDeclaration,
+propertyWithExtensionReceiver, smartcast, thisExpression */

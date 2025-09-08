@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 sourceSets {
@@ -18,12 +19,12 @@ dependencies {
     testImplementation(projectTests(":native:objcexport-header-generator"))
 }
 
-kotlin {
-    compilerOptions {
-        optIn.add("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
-    }
-}
+
+optInToK1Deprecation()
+optInTo("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
 
 testsJar()
 
-objCExportHeaderGeneratorTest("test")
+projectTests {
+    objCExportHeaderGeneratorTestTask("test")
+}

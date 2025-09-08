@@ -8,3 +8,5 @@ enum class Ambiguous {
 }
 
 val e = <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>Ambiguous.entries<!NO_GET_METHOD!>[0]<!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ordinal<!>
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, propertyDeclaration */

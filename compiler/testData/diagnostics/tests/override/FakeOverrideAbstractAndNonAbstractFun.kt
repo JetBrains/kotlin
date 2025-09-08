@@ -9,3 +9,5 @@ interface Ttt {
 }
 
 class Zzz() : Ccc(), Ttt
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, primaryConstructor */

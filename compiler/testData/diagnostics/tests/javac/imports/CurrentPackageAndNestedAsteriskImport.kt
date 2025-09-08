@@ -30,3 +30,5 @@ public class T {
 package b
 
 fun test() = T().getY()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

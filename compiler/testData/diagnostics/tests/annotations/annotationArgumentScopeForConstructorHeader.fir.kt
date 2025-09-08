@@ -18,3 +18,6 @@ class TopLevelClass @Anno(CONST)/*Error*/ constructor(@Anno(CONST) x: @Anno(CONS
 
     val CONST = "str"
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, integerLiteral, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral */

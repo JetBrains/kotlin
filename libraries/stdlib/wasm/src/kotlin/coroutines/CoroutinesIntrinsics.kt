@@ -20,9 +20,13 @@ import kotlin.wasm.internal.*
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of the suspended
  * coroutine using a reference to the suspending function.
  */
-@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+    completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnImpl(completion)
+
+@PublishedApi
+internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnImpl(
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
     this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
@@ -40,16 +44,20 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
  * This function is designed to be used from inside of [suspendCoroutineUninterceptedOrReturn] to resume the execution of the suspended
  * coroutine using a reference to the suspending function.
  */
-@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
 @kotlin.internal.InlineOnly
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+    receiver: R,
+    completion: Continuation<T>
+): Any? = startCoroutineUninterceptedOrReturnImpl(receiver, completion)
+
+@PublishedApi
+internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnImpl(
     receiver: R,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
     this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
 )
 
-@Suppress("UNCHECKED_CAST", "LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING")
 @kotlin.internal.InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
@@ -80,7 +88,6 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-@Suppress("UNCHECKED_CAST")
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> {
@@ -110,7 +117,6 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
-@Suppress("UNCHECKED_CAST")
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>

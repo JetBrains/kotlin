@@ -11,13 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
-import org.jetbrains.kotlin.gradle.testing.ComponentPath
-import org.jetbrains.kotlin.gradle.testing.PrettyPrint
-import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
-import org.jetbrains.kotlin.gradle.testing.compilationResolution
-import org.jetbrains.kotlin.gradle.testing.prettyPrinted
-import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -29,17 +23,13 @@ import kotlin.test.assertEquals
 @DisplayName("Smoke test uklib consumption")
 class UklibConsumptionIT : KGPBaseTest() {
 
-    // FIXME: This test should run with Android, but due to KT-76265 it currently OOMs
-    // FIXME: As a temporary workaround add a test featuring only Android + metadata compilation to check that Android in a metadata
-    // compilation is correctly consumed
-    // @GradleAndroidTest
-    @GradleTest
+    @GradleAndroidTest
     fun `uklib consumption smoke - in kotlin compilations of a symmetric consumer and producer projects - with all metadata compilations`(
         gradleVersion: GradleVersion,
-        // androidVersion: String,
+        androidVersion: String,
     ) {
         val symmetricTargets: KotlinMultiplatformExtension.() -> Unit = {
-            // androidTarget().publishLibraryVariants("debug", "release")
+            androidTarget().publishLibraryVariants("debug", "release")
             linuxArm64()
             iosArm64()
             iosX64()
@@ -51,13 +41,13 @@ class UklibConsumptionIT : KGPBaseTest() {
         }
         val publisher = publishUklib(
             gradleVersion,
-            // androidVersion = androidVersion
+            androidVersion = androidVersion
         ) {
-            // project.plugins.apply("com.android.library")
-            // with(project.extensions.getByType(LibraryExtension::class.java)) {
-            //    compileSdk = 23
-            //    namespace = "kotlin.producer"
-            // }
+            project.plugins.apply("com.android.library")
+            with(project.extensions.getByType(LibraryExtension::class.java)) {
+                compileSdk = 23
+                namespace = "kotlin.producer"
+            }
 
             jvmToolchain(8)
 
@@ -144,6 +134,9 @@ class UklibConsumptionIT : KGPBaseTest() {
                 "Producer_commonMain",
                 "Producer_androidMain",
             ),
+            "web" to listOf(
+                "Producer_webMain",
+            ),
         ).flatMap {
             listOf(
                 it.key + "Main" to it.value,
@@ -167,25 +160,22 @@ class UklibConsumptionIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion,
-            // Due to KT-76265, on 1GB heap this test sometimes OOMs on CI even without androidTarget
-            enableGradleDaemonMemoryLimitInMb = 1024 * 2,
             buildOptions = defaultBuildOptions.copy(
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                // androidVersion = androidVersion,
+                androidVersion = androidVersion,
             ),
         ) {
-            // addAgpToBuildScriptCompilationClasspath(androidVersion)
+            addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()
             addPublishedProjectToRepositories(publisher)
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.setUklibResolutionStrategy()
-                // project.plugins.apply("com.android.library")
-                // with(project.extensions.getByType(LibraryExtension::class.java)) {
-                //    compileSdk = 23
-                //    namespace = "kotlin.consumer"
-                // }
+                project.plugins.apply("com.android.library")
+                with(project.extensions.getByType(LibraryExtension::class.java)) {
+                    compileSdk = 23
+                    namespace = "kotlin.consumer"
+                }
 
                 project.applyMultiplatform {
                     symmetricTargets()
@@ -197,7 +187,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                         val arguments = producerTypes.joinToString(", ") { "${it}: ${it}" }
                         it.compileSource(
                             """
-                                fun consumeIn_${it.name}(${arguments}) {}
+                            fun consumeIn_${it.name}(${arguments}) {}
                             """.trimIndent()
                         )
                     }
@@ -231,13 +221,11 @@ class UklibConsumptionIT : KGPBaseTest() {
                         configuration = "uklibApiElements",
                     ),
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = mutableListOf(),
                         configuration = "commonFakeApiElements-published",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = mutableListOf(),
                         configuration = "nativeApiElements",
                     ),
                 ).prettyPrinted,

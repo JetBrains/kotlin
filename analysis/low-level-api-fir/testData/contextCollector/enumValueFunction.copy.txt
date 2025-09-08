@@ -27,7 +27,7 @@ Tower Data Context:
                 FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Foo>|
             Properties:
                 FirEnumEntrySymbol public final static enum entry VALUE: R|Foo|
-                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Foo>|
+                FirRegularPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Foo>|
                     public get(): R|kotlin/enums/EnumEntries<Foo>|
     Element 9
         Implicit receiver:

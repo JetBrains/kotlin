@@ -14,3 +14,6 @@ interface Some {
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration, setter */

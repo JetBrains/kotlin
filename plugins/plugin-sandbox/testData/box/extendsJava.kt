@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM_IR
 // FULL_JDK
 import java.io.File;
 

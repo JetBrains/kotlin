@@ -32,3 +32,6 @@ fun <T> T.test4(): T {
 fun <T> T.test5(): T {
     return foo5(this) <!USELESS_CAST!>as T<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+nullableType, thisExpression, typeParameter */

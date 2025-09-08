@@ -24,3 +24,6 @@ fun testElvis() {
     receive<MyClass>(NestedInheritor <!USELESS_ELVIS!>?: <!ARGUMENT_TYPE_MISMATCH!>stringProp<!><!>)
     receive<MyClass>(NestedInheritor <!USELESS_ELVIS!>?: <!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, elvisExpression, functionDeclaration, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

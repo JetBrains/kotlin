@@ -29,3 +29,6 @@ fun test5() {}
 
 @JavaAnn("value", path = ["path"])
 fun test6() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, javaType, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, vararg */

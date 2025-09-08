@@ -27,3 +27,6 @@ fun asCast() {
     J.staticNonFinalJava as String
     <!SMARTCAST_IMPOSSIBLE!>J.staticNonFinalJava<!>.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, ifExpression, isExpression, javaProperty,
+smartcast */

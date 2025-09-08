@@ -37,3 +37,6 @@ class A2 {
         x = arg
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, equalityExpression, ifExpression, integerLiteral,
+propertyDeclaration, secondaryConstructor */

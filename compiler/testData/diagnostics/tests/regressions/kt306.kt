@@ -23,3 +23,5 @@ class Foo {
 class Barr {
     fun bar() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, thisExpression */

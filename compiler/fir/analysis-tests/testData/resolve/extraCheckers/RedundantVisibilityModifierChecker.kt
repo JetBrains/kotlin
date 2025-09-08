@@ -55,7 +55,9 @@ enum class F <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> constructor(val x: Int)
 }
 
 sealed class G constructor(val y: Int) {
-    <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> constructor(): this(42)
+    private constructor(): this(42)
+
+    <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> constructor(x: Double): this(x.toInt())
 
     object H : G()
 }
@@ -93,3 +95,8 @@ private class Foo {
 private open class ProtectedInOpenPrivateClass {
     protected fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, getter, inline, inner, integerLiteral, interfaceDeclaration, localClass, localProperty,
+multiplicativeExpression, nestedClass, nullableType, objectDeclaration, override, primaryConstructor,
+propertyDeclaration, sealed, secondaryConstructor, setter, typeConstraint, typeParameter */

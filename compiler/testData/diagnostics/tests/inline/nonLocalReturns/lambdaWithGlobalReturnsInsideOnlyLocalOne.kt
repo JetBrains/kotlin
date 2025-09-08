@@ -9,3 +9,6 @@ inline fun testSameCaptured(lambdaWithResultCaptured: () -> Unit) : String {
 inline fun <R> doWork(crossinline job: ()-> R) : R {
     return job()
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

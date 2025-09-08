@@ -32,3 +32,6 @@ expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>Foo<!> {
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, getter, lateinit, nullableType, objectDeclaration,
+operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter, stringLiteral, typeParameter */

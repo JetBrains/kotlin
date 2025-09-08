@@ -44,3 +44,6 @@ fun foo4() {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, nullableType, typeParameter,
+typeWithExtension */

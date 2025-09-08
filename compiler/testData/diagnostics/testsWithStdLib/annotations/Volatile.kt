@@ -57,3 +57,7 @@ class JvmVolatile {
         get() = ""
         set(value) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetField, annotationUseSiteTargetFieldDelegate, classDeclaration, getter,
+integerLiteral, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, stringLiteral */

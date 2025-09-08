@@ -7,3 +7,5 @@ class My {
             return field
         }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, localProperty, propertyDeclaration */

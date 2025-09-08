@@ -4,3 +4,5 @@ fun f(p: Int): Int {
     val p = 2
     return p
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

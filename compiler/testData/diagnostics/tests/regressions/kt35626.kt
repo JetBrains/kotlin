@@ -22,3 +22,5 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> rules12(res: Result
     }
 }
 
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, functionalType, intersectionType,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter */

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -228,9 +227,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        if (expression.origin == InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE)
-            return super.visitFunctionReference(expression)
-
         val function = expression.symbol.owner
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionReference(expression)
@@ -283,13 +279,13 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }
     }
 
-    override fun addMarkerParameterToNonExposedConstructor(constructor: IrConstructor): IrConstructor {
-        constructor.addValueParameter {
+    override fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor {
+        addValueParameter {
             name = Name.identifier("\$boxingMarker")
             origin = JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
             type = context.symbols.boxingConstructorMarkerClass.defaultType.makeNullable()
         }
-        return constructor
+        return this
     }
 
     override fun createExposedConstructor(constructor: IrConstructor): IrConstructor =

@@ -36,7 +36,7 @@ object AtomicfuPropertyChecker: FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         if (!declaration.isKotlinxAtomicfu()) return
-        val containingClassSymbol = declaration.dispatchReceiverType?.toClassLikeSymbol(context.session)
+        val containingClassSymbol = declaration.dispatchReceiverType?.toClassLikeSymbol()
         if (declaration.visibility.isPublicAPI &&
             (containingClassSymbol == null || containingClassSymbol.isPublic())) {
             reporter.reportOn(

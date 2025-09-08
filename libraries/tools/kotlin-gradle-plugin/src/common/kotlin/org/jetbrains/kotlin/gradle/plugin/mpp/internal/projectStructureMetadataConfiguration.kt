@@ -66,14 +66,16 @@ internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(
 }
 
 private fun setupTransformActionFromJarToPsm(project: Project) {
-    project.dependencies.registerTransform(ProjectStructureMetadataTransformAction::class.java) { transform ->
+    project.dependencies.registerTransformForArtifactType(
+        ProjectStructureMetadataTransformAction::class.java,
+        fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+        toArtifactType = KotlinUsages.KOTLIN_PSM_METADATA
+    ) { transform ->
         transform.from.apply {
             attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
         }
         transform.to.apply {
             attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
-            attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
         }
     }
 }

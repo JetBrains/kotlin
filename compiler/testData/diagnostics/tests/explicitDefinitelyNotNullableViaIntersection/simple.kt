@@ -14,3 +14,5 @@ fun main() {
     foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>).length
     foo(null, "").length
 }
+
+/* GENERATED_FIR_TAGS: dnnType, elvisExpression, functionDeclaration, nullableType, stringLiteral, typeParameter */

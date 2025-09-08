@@ -11,3 +11,5 @@ fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>ret<!>("foo")
     <!CANNOT_INFER_PARAMETER_TYPE!>ret<!>(<!ARGUMENT_TYPE_MISMATCH!>42<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

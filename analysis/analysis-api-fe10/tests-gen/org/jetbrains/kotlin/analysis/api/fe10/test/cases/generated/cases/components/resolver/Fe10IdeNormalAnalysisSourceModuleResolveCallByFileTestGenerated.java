@@ -227,6 +227,24 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
   }
 
   @Test
+  @TestMetadata("parenthesisedAnnotationCallArguments.kt")
+  public void testParenthesisedAnnotationCallArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/parenthesisedAnnotationCallArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("parenthesisedCallArguments.kt")
+  public void testParenthesisedCallArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/parenthesisedCallArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("parenthesisedDelegatedConstructorCallArguments.kt")
+  public void testParenthesisedDelegatedConstructorCallArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/parenthesisedDelegatedConstructorCallArguments.kt");
+  }
+
+  @Test
   @TestMetadata("providedDelegate.kt")
   public void testProvidedDelegate() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/providedDelegate.kt");
@@ -345,12 +363,40 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallByFileTestGenerated ext
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAlias {
+    @Test
+    public void testAllFilesPresentInTypeAlias() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("TypeAliasedCompanionObjectAsQualifier.kt")
+    public void testTypeAliasedCompanionObjectAsQualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias/TypeAliasedCompanionObjectAsQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasedObjectAsQualifier.kt")
+    public void testTypeAliasedObjectAsQualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias/TypeAliasedObjectAsQualifier.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class WithErrors {
     @Test
     public void testAllFilesPresentInWithErrors() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("assignOperatorAmbiguity.kt")
+    public void testAssignOperatorAmbiguity() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/assignOperatorAmbiguity.kt");
     }
 
     @Nested

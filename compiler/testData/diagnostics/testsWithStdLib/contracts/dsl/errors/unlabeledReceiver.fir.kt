@@ -11,3 +11,6 @@ fun Any?.foo(): Boolean {
     }
     return this != null
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, lambdaLiteral, nullableType, thisExpression */

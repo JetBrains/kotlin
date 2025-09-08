@@ -14,3 +14,5 @@ public class Some {
 fun main() {
     val d = Some.Derived()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

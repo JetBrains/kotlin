@@ -9,3 +9,6 @@ class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, nestedClass,
+primaryConstructor, propertyDeclaration */

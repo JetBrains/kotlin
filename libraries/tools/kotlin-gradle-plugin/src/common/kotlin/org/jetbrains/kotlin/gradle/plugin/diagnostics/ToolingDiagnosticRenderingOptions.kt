@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -27,6 +28,7 @@ internal class ToolingDiagnosticRenderingOptions(
     val coloredOutput: Boolean,
     val ignoreWarningMode: Boolean,
     val warningMode: WarningMode,
+    val displayDiagnosticsInIdeBuildLog: Boolean,
 ) : Serializable {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
@@ -50,7 +52,8 @@ internal class ToolingDiagnosticRenderingOptions(
                     showSeverityEmoji = !project.isInIdeaEnvironment.get() && !HostManager.hostIsMingw,
                     coloredOutput = project.showColoredDiagnostics(),
                     ignoreWarningMode = internalDiagnosticsIgnoreWarningMode == true,
-                    warningMode = project.gradle.startParameter.warningMode
+                    warningMode = project.gradle.startParameter.warningMode,
+                    displayDiagnosticsInIdeBuildLog = project.kotlinPropertiesProvider.displayDiagnosticsInIdeBuildLog && project.isInIdeaEnvironment.get(),
                 )
             }
         }
@@ -133,6 +136,7 @@ internal fun ToolingDiagnostic.isSuppressed(options: ToolingDiagnosticRenderingO
 
         severity == WARNING -> id in options.suppressedWarningIds
 
+        severity == STRONG_WARNING -> id in options.suppressedErrorIds
         severity == ERROR -> id in options.suppressedErrorIds
 
         // NB: FATALs can not be suppressed

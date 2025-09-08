@@ -8,3 +8,6 @@ fun demo() {
     val foo = 3;
     bar <!NONE_APPLICABLE!>+<!> map { foo }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, lambdaLiteral, localFunction,
+localProperty, propertyDeclaration */

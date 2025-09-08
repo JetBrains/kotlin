@@ -16,29 +16,35 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KClassifier
+import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(
     val type: KotlinType,
-    computeJavaType: (() -> Type)? = null
-) : KTypeBase {
+    computeJavaType: (() -> Type)?,
+    private val isAbbreviation: Boolean,
+) : AbstractKType() {
+    constructor(type: KotlinType, computeJavaType: (() -> Type)? = null) : this(type, computeJavaType, isAbbreviation = false)
+
     private val computeJavaType =
         computeJavaType as? ReflectProperties.LazySoftVal<Type> ?: computeJavaType?.let(ReflectProperties::lazySoft)
 
@@ -48,14 +54,22 @@ internal class KTypeImpl(
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
     private fun convert(type: KotlinType): KClassifier? {
+        if (isAbbreviation) {
+            // Package scope in kotlin-reflect cannot load type aliases because it requires to know the file class where the typealias
+            // is declared. Descriptor deserialization creates a "not found" MockClassDescriptor in this case.
+            (type.constructor.declarationDescriptor as? NotFoundClasses.MockClassDescriptor)?.let { notFoundClass ->
+                return KTypeAliasImpl(notFoundClass.fqNameSafe)
+            }
+        }
         when (val descriptor = type.constructor.declarationDescriptor) {
             is ClassDescriptor -> {
                 val jClass = descriptor.toJavaClass() ?: return null
-                if (jClass.isArray) {
-                    // There may be no argument if it's a primitive array (such as IntArray)
+                if (KotlinBuiltIns.isArray(type)) {
                     val argument = type.arguments.singleOrNull()?.type ?: return KClassImpl(jClass)
+                    // Make the array element type nullable to make sure that `kotlin.Array<Int>` is mapped to `[Ljava/lang/Integer;`
+                    // instead of `[I`.
                     val elementClassifier =
-                        convert(argument)
+                        convert(argument.makeNullable())
                             ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
                     return KClassImpl(elementClassifier.jvmErasure.java.createArrayType())
                 }
@@ -67,7 +81,6 @@ internal class KTypeImpl(
                 return KClassImpl(jClass)
             }
             is TypeParameterDescriptor -> return KTypeParameterImpl(null, descriptor)
-            is TypeAliasDescriptor -> TODO("Type alias classifiers are not yet supported")
             else -> return null
         }
     }
@@ -117,12 +130,55 @@ internal class KTypeImpl(
     override val annotations: List<Annotation>
         get() = type.computeAnnotations()
 
-    internal fun makeNullableAsSpecified(nullable: Boolean): KTypeImpl {
+    override fun isSubtypeOf(other: AbstractKType): Boolean {
+        return type.isSubtypeOf((other as KTypeImpl).type)
+    }
+
+    override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType {
         // If the type is not marked nullable, it's either a non-null type or a platform type.
         if (!type.isFlexible() && isMarkedNullable == nullable) return this
 
         return KTypeImpl(TypeUtils.makeNullableAsSpecified(type, nullable), computeJavaType)
     }
+
+    override fun makeDefinitelyNotNullAsSpecified(isDefinitelyNotNull: Boolean): AbstractKType {
+        val result =
+            if (isDefinitelyNotNull)
+                DefinitelyNotNullType.makeDefinitelyNotNull(type.unwrap(), true) ?: type
+            else
+                (type as? DefinitelyNotNullType)?.original ?: type
+        return KTypeImpl(result, computeJavaType)
+    }
+
+    override val abbreviation: KType?
+        get() = type.getAbbreviation()?.let { KTypeImpl(it, computeJavaType, isAbbreviation = true) }
+
+    override val isDefinitelyNotNullType: Boolean
+        get() = type.isDefinitelyNotNullType
+
+    override val isNothingType: Boolean
+        get() = KotlinBuiltIns.isNothingOrNullableNothing(type)
+
+    override val isMutableCollectionType: Boolean
+        get() = (type.constructor.declarationDescriptor as? ClassDescriptor)?.let(JavaToKotlinClassMapper::isMutable) == true
+
+    override val isSuspendFunctionType: Boolean
+        get() = type.isSuspendFunctionType
+
+    override val isRawType: Boolean
+        get() = type is RawType
+
+    override fun lowerBoundIfFlexible(): AbstractKType? =
+        when (val unwrapped = type.unwrap()) {
+            is FlexibleType -> KTypeImpl(unwrapped.lowerBound)
+            else -> null
+        }
+
+    override fun upperBoundIfFlexible(): AbstractKType? =
+        when (val unwrapped = type.unwrap()) {
+            is FlexibleType -> KTypeImpl(unwrapped.upperBound)
+            else -> null
+        }
 
     override fun equals(other: Any?) =
         other is KTypeImpl && type == other.type && classifier == other.classifier && arguments == other.arguments
@@ -131,5 +187,5 @@ internal class KTypeImpl(
         (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
 
     override fun toString() =
-        ReflectionObjectRenderer.renderType(type)
+        ReflectionObjectRenderer.renderType(this)
 }

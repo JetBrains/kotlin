@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.gradle.AppExtension
 import org.gradle.api.Project
 import org.gradle.api.flow.*
 import org.gradle.api.initialization.Settings
@@ -23,6 +24,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
@@ -192,7 +194,7 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     if (buildScript.exists()) {
         if (buildScript.readText().contains(buildScriptInjectionsMarker)) return
         buildScript.modify {
-            it.insertBlockToBuildScriptAfterImports(
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports(
                 """
                 $buildScriptInjectionsMarker
                 buildscript {
@@ -215,7 +217,7 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
     if (buildScriptKts.exists()) {
         if (buildScriptKts.readText().contains(buildScriptInjectionsMarker)) return
         buildScriptKts.modify {
-            it.insertBlockToBuildScriptAfterImports("""
+            it.insertBlockToBuildScriptAfterPluginManagementAndImports("""
                 $buildScriptInjectionsMarker
                 buildscript {
                     println("⚠️ GradleBuildScriptInjections Enabled. Classes from kotlin-gradle-plugin-integration-tests injected to buildscript")               
@@ -233,7 +235,7 @@ private fun GradleProject.enableBuildScriptInjectionsIfNecessary(
         return
     }
 
-    error("build.gradle.kts nor build.gradle files not found in Test Project '$projectName'. Please check if it is a valid gradle project")
+    error("Neither $buildScriptKts nor $buildScript files found in the Test Project '$projectName'. Please check if it is a valid gradle project")
 }
 
 class InjectionLoader {
@@ -277,7 +279,8 @@ class GradleProjectBuildScriptInjectionContext(
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
     val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
-    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *>
+    val androidApp get() = project.extensions.getByName("android") as AppExtension
+    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val signing get() = project.extensions.getByName("signing") as SigningExtension
     val dependencies get() = project.dependencies
@@ -294,14 +297,12 @@ class GradleBuildScriptBuildscriptInjectionContext(
     val project: Project,
 )
 
-typealias BuildAction = TestProject.(buildArguments: Array<String>, buildOptions: BuildOptions) -> Unit
-
 class ReturnFromBuildScriptAfterExecution<T>(
     val returnContainingGradleProject: TestProject,
     val serializedReturnPath: File,
     val injectionLoadProperty: String,
     val defaultEvaluationTask: String = "tasks",
-    val defaultBuildAction: BuildAction = build,
+    val defaultBuildAction: BuildAction = BuildActions.build,
 ) {
     /**
      * Return values to the test by serializing the return after the execution. The benefit of serializing after execution is that we can
@@ -335,23 +336,6 @@ class ReturnFromBuildScriptAfterExecution<T>(
         ObjectInputStream(serializedReturnPath.inputStream()).use {
             @Suppress("UNCHECKED_CAST")
             return it.readObject() as T
-        }
-    }
-
-    companion object {
-        val build: BuildAction = { args, options ->
-            build(
-                buildArguments = args,
-                buildOptions = options,
-                forwardBuildOutput = false,
-            )
-        }
-        val buildAndFail: BuildAction = { args, options ->
-            buildAndFail(
-                buildArguments = args,
-                buildOptions = options,
-                forwardBuildOutput = false,
-            )
         }
     }
 }
@@ -446,7 +430,7 @@ internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): Re
                 this,
                 serializedReturnPath,
                 injectionIdentifier,
-                defaultBuildAction = ReturnFromBuildScriptAfterExecution.buildAndFail,
+                defaultBuildAction = BuildActions.buildAndFail,
             )
         }
     )
@@ -476,8 +460,8 @@ private fun <T> GradleProject.buildScriptReturnInjection(
         execute: String,
     ): String = """
     
-        if (project.hasProperty("${property}")) {
-            ${execute}
+        if (providers.gradleProperty("$property").getOrNull() != null) {
+            $execute
         }
         
     """.trimIndent()
@@ -557,6 +541,15 @@ fun TestProject.addAgpToBuildScriptCompilationClasspath(androidVersion: String) 
     }
 }
 
+fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
+    val kotlinVersion = buildOptions.kotlinVersion
+    settingsBuildScriptBuildscriptBlockInjection {
+        settings.buildscript.configurations.getByName("classpath").dependencies.add(
+            settings.buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-ecosystem-plugin:$kotlinVersion")
+        )
+    }
+}
+
 /**
  * This helper method works similar to "plugins {}" block in the build script; it resolves the POM pointer to the plugin jar and applies the plugin
  */
@@ -566,23 +559,35 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
     transferPluginRepositoriesIntoBuildScript()
     transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints()
     buildScriptBuildscriptBlockInjection {
-        spec.plugins.filter {
-            // filter out Gradle's embedded plugins
-            !it.id.startsWith("org.gradle")
-        }.forEach {
-            val pluginPointer = buildscript.dependencies.create(
-                group = it.id,
-                name = "${it.id}.gradle.plugin",
-                version = it.version,
-            )
-            buildscript.configurations.getByName("classpath").dependencies.add(pluginPointer)
-        }
+        spec.plugins
+            .filter {
+                // filter out Gradle's embedded plugins
+                !it.id.startsWith("org.gradle")
+            }
+            .supportGradleBuiltInPlugins()
+            .forEach {
+                val pluginPointer = buildscript.dependencies.create(
+                    group = it.id,
+                    name = "${it.id}.gradle.plugin",
+                    version = it.version,
+                )
+                buildscript.configurations.getByName("classpath").dependencies.add(pluginPointer)
+            }
     }
     buildScriptInjection {
-        spec.plugins.filter { it.shouldBeApplied }.forEach {
-            project.plugins.apply(it.id)
-        }
+        spec.plugins
+            .filter { it.shouldBeApplied }
+            .supportGradleBuiltInPlugins()
+            .forEach {
+                project.plugins.apply(it.id)
+            }
     }
+}
+
+private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins() = map { spec ->
+    if (spec.id == "kotlin-dsl") {
+        TestPluginDependencySpec("org.gradle.kotlin.kotlin-dsl")
+    } else spec
 }
 
 private class TestPluginDependencySpec(
@@ -650,6 +655,39 @@ fun GradleProject.buildScriptBuildscriptBlockInjection(
                 "invokeBuildScriptPluginsInjection",
                 "project",
                 Project::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        else -> error("Can't find the build script to append the injection")
+    }
+}
+
+fun GradleProject.settingsBuildScriptBuildscriptBlockInjection(
+    code: GradleSettingsBuildScriptInjectionContext.() -> Unit,
+) {
+    markAsUsingInjections()
+    enableBuildScriptInjectionsIfNecessary(
+        settingsGradle,
+        settingsGradleKts,
+    )
+    val buildscriptBlockInjection = serializeInjection<GradleSettingsBuildScriptInjectionContext, Settings>(
+        instantiateInjectionContext = { GradleSettingsBuildScriptInjectionContext(it) },
+        code = code,
+    )
+    when {
+        settingsGradle.exists() -> settingsGradle.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoadGroovy(
+                "invokeSettingsBuildScriptInjection",
+                "settings",
+                Settings::class.java.name,
+                buildscriptBlockInjection,
+            )
+        )
+        settingsGradleKts.exists() -> settingsGradleKts.prependToOrCreateBuildscriptBlock(
+            scriptIsolatedInjectionLoad(
+                "invokeSettingsBuildScriptInjection",
+                "settings",
+                Settings::class.java.name,
                 buildscriptBlockInjection,
             )
         )
@@ -740,7 +778,7 @@ internal fun String.prependToOrCreateBuildscriptBlock(code: String): String {
             append(content.substring(match.range.last + 1, content.length))
         }
     } else {
-        content.insertBlockToBuildScriptAfterImports(
+        content.insertBlockToBuildScriptAfterPluginManagementAndImports(
             buildString {
                 appendLine("buildscript {")
                 appendLine(code)

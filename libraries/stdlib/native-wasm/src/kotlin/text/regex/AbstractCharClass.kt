@@ -602,7 +602,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
             MN("Mn"),
             ME("Me"),
             MC("Mc"),
-            N("N"),
+            ISN("IsN"),
             ND("Nd"),
             NL("Nl"),
             NO("No"),
@@ -788,7 +788,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 CharClasses.MN -> CachedCategory(CharCategory.NON_SPACING_MARK.value, true)
                 CharClasses.ME -> CachedCategory(CharCategory.ENCLOSING_MARK.value, false)
                 CharClasses.MC -> CachedCategory(CharCategory.COMBINING_SPACING_MARK.value, true)
-                CharClasses.N -> CachedCategoryScope(0xE00, true)
+                CharClasses.ISN -> CachedCategoryScope(0xE00, true)
                 CharClasses.ND -> CachedCategory(CharCategory.DECIMAL_DIGIT_NUMBER.value, true)
                 CharClasses.NL -> CachedCategory(CharCategory.LETTER_NUMBER.value, true)
                 CharClasses.NO -> CachedCategory(CharCategory.OTHER_NUMBER.value, true)

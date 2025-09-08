@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -25,7 +27,10 @@ import java.io.File
  * [analysis block][org.jetbrains.kotlin.analysis.api.analyze].
  */
 @KaExperimentalApi
-public sealed class KaCompilationResult {
+public sealed class KaCompilationResult(
+    /** A list of exceptions that were thrown during compilation but workaround somehow */
+    public val mutedExceptions: List<Throwable>,
+) {
     /**
      * A successful compilation result.
      *
@@ -51,7 +56,8 @@ public sealed class KaCompilationResult {
         public val output: List<KaCompiledFile>,
         public val capturedValues: List<CodeFragmentCapturedValue>,
         public var canBeCached: Boolean,
-    ) : KaCompilationResult()
+        mutedExceptions: List<Throwable> = emptyList(),
+    ) : KaCompilationResult(mutedExceptions)
 
     /**
      * A failed compilation result.
@@ -59,10 +65,14 @@ public sealed class KaCompilationResult {
      * @property errors Non-recoverable errors which occurred either during code analysis or during code generation.
      */
     @KaExperimentalApi
-    public class Failure(public val errors: List<KaDiagnostic>) : KaCompilationResult()
+    public class Failure(
+        public val errors: List<KaDiagnostic>,
+        mutedExceptions: List<Throwable> = emptyList(),
+    ) : KaCompilationResult(mutedExceptions)
 }
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompiledFile {
     /**
      * The path of the compiled file relative to the root of the output directory.
@@ -124,6 +134,7 @@ public fun interface KaCompiledClassHandler {
 }
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerFacility : KaSessionComponent {
     @KaExperimentalApi
     public companion object {
@@ -182,3 +193,19 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  */
 @KaExperimentalApi
 public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
+
+/**
+ * @see KaCompilerFacility.compile
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+@Throws(KaCodeCompilationException::class)
+context(context: KaCompilerFacility)
+public fun compile(
+    file: KtFile,
+    configuration: CompilerConfiguration,
+    target: KaCompilerTarget,
+    allowedErrorFilter: (KaDiagnostic) -> Boolean
+): KaCompilationResult {
+    return with(context) { compile(file, configuration, target, allowedErrorFilter) }
+}

@@ -13,3 +13,5 @@ class Bar {
         val y = 2
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, integerLiteral, localProperty, propertyDeclaration */

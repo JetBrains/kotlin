@@ -30,7 +30,10 @@ class SwiftExportXCIT : KGPBaseTest() {
                 boot()
             }
 
-            project("empty", gradleVersion) {
+            project(
+                "empty",
+                gradleVersion
+            ) {
                 embedDirectoryFromTestData("simpleSwiftExport")
                 plugins {
                     kotlin("multiplatform")

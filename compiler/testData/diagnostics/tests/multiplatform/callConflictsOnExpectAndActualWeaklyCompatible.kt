@@ -29,3 +29,5 @@ actual fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = fal
 fun main() {
     "".foo("")
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, funWithExtensionReceiver, functionDeclaration, stringLiteral */

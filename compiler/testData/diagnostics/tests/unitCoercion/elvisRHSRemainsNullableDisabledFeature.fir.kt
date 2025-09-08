@@ -12,3 +12,5 @@ fun main() {
         myRun { null } <!USELESS_ELVIS!>?: baz()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

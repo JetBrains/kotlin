@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 inline val FirMemberDeclaration.modality: Modality? get() = status.modality
@@ -60,12 +59,6 @@ inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEn
 inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
 
-inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
-inline val FirClassLikeDeclaration.isLocalInFunction: Boolean get() = symbol.classId.isLocal && isReplSnippetDeclaration != true
-inline val FirClassLikeSymbol<*>.isLocalInFunction: Boolean get() = fir.isLocalInFunction
-
-inline val FirProperty.isLocalInFunction: Boolean get() = isLocal && isReplSnippetDeclaration != true
-
 inline val FirClass.isInterface: Boolean
     get() = classKind.isInterface
 
@@ -88,6 +81,3 @@ inline val FirFunction.hasBody: Boolean get() = body != null
 inline val FirPropertyAccessor.hasBody: Boolean get() = body != null
 
 inline val FirSimpleFunction.isLocal: Boolean get() = status.visibility == Visibilities.Local
-
-inline val FirSimpleFunction.isLocalInFunction: Boolean
-    get() = status.visibility == Visibilities.Local && isReplSnippetDeclaration != true

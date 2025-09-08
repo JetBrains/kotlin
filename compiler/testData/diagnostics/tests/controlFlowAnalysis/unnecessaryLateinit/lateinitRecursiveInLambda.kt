@@ -5,3 +5,5 @@ class Test {
         someRunnable = Runnable { someRunnable.run() }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, javaFunction, lambdaLiteral, lateinit, propertyDeclaration */

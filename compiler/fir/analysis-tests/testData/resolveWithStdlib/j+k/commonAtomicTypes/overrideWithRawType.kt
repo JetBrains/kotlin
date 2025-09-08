@@ -30,3 +30,6 @@ fun usage(a: JavaClass) {
     a.foo(java.util.concurrent.atomic.AtomicReference(""))
     a.foo(<!ARGUMENT_TYPE_MISMATCH!>AtomicReference(1)<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, flexibleType, functionDeclaration,
+integerLiteral, javaFunction, javaType, stringLiteral */

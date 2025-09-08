@@ -39,3 +39,6 @@ class Use {
         <!OPT_IN_USAGE!>runtime<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+functionDeclaration */

@@ -183,3 +183,6 @@ fun ifExpr3() {
         if (true) 5
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration,
+tryExpression, whenExpression */

@@ -1221,7 +1221,7 @@ class ControlFlowProcessor(
 
             val operationType = expression.operationReference.getReferencedNameElementType()
             val left = expression.left
-            if (operationType === AS_KEYWORD || operationType === `AS_SAFE`) {
+            if (operationType === AS_KEYWORD || operationType === AS_SAFE) {
                 generateInstructions(left)
                 if (getBoundOrUnreachableValue(left) != null) {
                     createNonSyntheticValue(expression, MagicKind.CAST, left)
@@ -1446,7 +1446,7 @@ class ControlFlowProcessor(
                 if (declaration is KtAnonymousInitializer) {
                     generateInstructions(declaration)
                     if (hasResultField && declaration == lastInitializer) {
-                        resultExpression?.recordUsedAsExpression(trace, true)
+                        resultExpression.recordUsedAsExpression(trace, true)
                     }
                 } else if (declaration is KtProperty || declaration is KtDestructuringDeclaration) {
                     generateInstructions(declaration)

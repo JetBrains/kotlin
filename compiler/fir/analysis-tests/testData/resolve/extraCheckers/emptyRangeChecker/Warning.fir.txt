@@ -18,6 +18,21 @@ FILE: Warning.kt
             }
         }
 
+        when () {
+            Char(b).R|kotlin/Char.rangeTo|(Char(a)).R|kotlin/ranges/CharRange.contains|(Char( )) ->  {
+            }
+        }
+
+        when () {
+            Float(0.02).R|kotlin/ranges/rangeTo|(Float(0.01)).R|SubstitutionOverride<kotlin/ranges/ClosedFloatingPointRange.contains: R|kotlin/Boolean|>|(Float(0.0)) ->  {
+            }
+        }
+
+        when () {
+            Double(0.02).R|kotlin/ranges/rangeTo|(Double(0.01)).R|SubstitutionOverride<kotlin/ranges/ClosedFloatingPointRange.contains: R|kotlin/Boolean|>|(Double(0.0)) ->  {
+            }
+        }
+
     }
     public final fun backward(): R|kotlin/Unit| {
          {
@@ -38,6 +53,11 @@ FILE: Warning.kt
             }
         }
 
+        when () {
+            Char(a).R|kotlin/ranges/downTo|(Char(b)).R|kotlin/collections/contains|<R|kotlin/Char|>(Char( )) ->  {
+            }
+        }
+
     }
     public final fun until(): R|kotlin/Unit| {
          {
@@ -55,6 +75,50 @@ FILE: Warning.kt
         lval v: R|kotlin/Int| = Int(1)
         when () {
             Int(-5).R|kotlin/ranges/until|(Int(-5)).R|kotlin/ranges/IntRange.contains|(R|<local>/v|) ->  {
+            }
+        }
+
+        when () {
+            Char(7).R|kotlin/ranges/until|(Char(7)).R|kotlin/ranges/CharRange.contains|(Char( )) ->  {
+            }
+        }
+
+    }
+    public final fun rangeUntil(): R|kotlin/Unit| {
+         {
+            lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeUntil|(Int(-1)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                 {
+                }
+
+            }
+
+        }
+
+         {
+            lval <iterator>: R|kotlin/collections/IntIterator| = Int(2).R|kotlin/Int.rangeUntil|(Int(2)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                 {
+                }
+
+            }
+
+        }
+
+        when () {
+            Char(7).R|kotlin/Char.rangeUntil|(Char(7)).R|kotlin/ranges/CharRange.contains|(Char( )) ->  {
+            }
+        }
+
+        when () {
+            Float(0.0).R|kotlin/ranges/rangeUntil|(Float(0.0)).R|SubstitutionOverride<kotlin/ranges/OpenEndRange.contains: R|kotlin/Boolean|>|(Float(0.0)) ->  {
+            }
+        }
+
+        when () {
+            Double(0.0).R|kotlin/ranges/rangeUntil|(Double(0.0)).R|SubstitutionOverride<kotlin/ranges/OpenEndRange.contains: R|kotlin/Boolean|>|(Double(0.0)) ->  {
             }
         }
 

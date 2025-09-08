@@ -2,7 +2,6 @@ KaUsualClassType:
   abbreviation: null
   annotations: []
   classId: B
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: B
@@ -12,7 +11,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/Int
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -21,6 +19,9 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(<local>/B)
@@ -29,7 +30,6 @@ KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/Int
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -38,7 +38,13 @@ KaUsualClassType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 B<kotlin.Int>

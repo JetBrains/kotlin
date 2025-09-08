@@ -22,3 +22,7 @@ class Outer<T> {
         x.checkType { _<Nested>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, localProperty, nestedClass, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

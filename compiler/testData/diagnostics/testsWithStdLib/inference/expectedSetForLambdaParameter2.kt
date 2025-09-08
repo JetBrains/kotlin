@@ -15,3 +15,6 @@ fun func(ids: Set<A>): List<B> = emptyList()
 
 class A
 class B
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

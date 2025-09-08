@@ -41,3 +41,5 @@ fun main2() {
 
     bar(MyEnum3.X)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localFunction, nullableType, typeParameter */

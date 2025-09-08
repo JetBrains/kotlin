@@ -8,3 +8,6 @@ val test2f: suspend Any.() -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun Any.() {}<
 // see "Fix anonymous function literals handling in type checker" for more details
 val test3f: suspend Any.(Int) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (k: Int) = k + 1<!>
 val test4f: SuspendFn = <!INITIALIZER_TYPE_MISMATCH!>fun Any.() {}<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, functionalType, integerLiteral, propertyDeclaration,
+suspend, typeAliasDeclaration, typeWithExtension */

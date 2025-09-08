@@ -45,8 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)")));
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()")));
-- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
-- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
+- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
+- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -115,8 +115,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (void)doInitParentJobParent:(id<Job> _Nullable)parent __attribute__((swift_name("doInitParentJob(parent:)")));
-- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
-- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
+- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
+- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -233,13 +233,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)cancelCause_:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
 - (void)completeResumeToken:(id)token __attribute__((swift_name("completeResume(token:)")));
 - (void)doInitCancellability __attribute__((swift_name("doInitCancellability()")));
-- (void)invokeOnCancellationHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCancellation(handler:)")));
+- (void)invokeOnCancellationHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCancellation(handler:)")));
 
 /**
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-- (void)resumeValue:(id _Nullable)value onCancellation:(void (^ _Nullable)(KotlinThrowable *))onCancellation __attribute__((swift_name("resume(value:onCancellation:)")));
+- (void)resumeValue:(id _Nullable)value onCancellation:(void (^ _Nullable)(KotlinThrowable *cause))onCancellation __attribute__((swift_name("resume(value:onCancellation:)")));
 
 /**
  * @note annotations
@@ -253,7 +253,7 @@ NS_ASSUME_NONNULL_BEGIN
 */
 - (void)resumeUndispatchedWithException:(CoroutineDispatcher *)receiver exception:(KotlinThrowable *)exception __attribute__((swift_name("resumeUndispatchedWithException(_:exception:)")));
 - (id _Nullable)tryResumeValue:(id _Nullable)value idempotent:(id _Nullable)idempotent __attribute__((swift_name("tryResume(value:idempotent:)")));
-- (id _Nullable)tryResumeValue:(id _Nullable)value idempotent:(id _Nullable)idempotent onCancellation:(void (^ _Nullable)(KotlinThrowable *))onCancellation __attribute__((swift_name("tryResume(value:idempotent:onCancellation:)")));
+- (id _Nullable)tryResumeValue:(id _Nullable)value idempotent:(id _Nullable)idempotent onCancellation:(void (^ _Nullable)(KotlinThrowable *cause))onCancellation __attribute__((swift_name("tryResume(value:idempotent:onCancellation:)")));
 - (id _Nullable)tryResumeWithExceptionException:(KotlinThrowable *)exception __attribute__((swift_name("tryResumeWithException(exception:)")));
 @property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
 @property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled")));
@@ -418,7 +418,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.ExperimentalStdlibApi
 */
 @interface KotlinAbstractCoroutineContextKey<B, E> : Base <KotlinCoroutineContextKey>
-- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(E _Nullable (^)(id<KotlinCoroutineContextElement>))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(E _Nullable (^)(id<KotlinCoroutineContextElement> element))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer));
 @end
 
 
@@ -431,7 +431,7 @@ __attribute__((swift_name("CoroutineDispatcher.Key")))
 @interface CoroutineDispatcherKey : KotlinAbstractCoroutineContextKey<id<KotlinContinuationInterceptor>, CoroutineDispatcher *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(id<KotlinCoroutineContextElement> _Nullable (^)(id<KotlinCoroutineContextElement>))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)initWithBaseKey:(id<KotlinCoroutineContextKey>)baseKey safeCast:(id<KotlinCoroutineContextElement> _Nullable (^)(id<KotlinCoroutineContextElement> element))safeCast __attribute__((swift_name("init(baseKey:safeCast:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)key __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) CoroutineDispatcherKey *shared __attribute__((swift_name("shared")));
 @end
@@ -569,8 +569,8 @@ __attribute__((objc_subclassing_restricted))
 - (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 - (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
-- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -638,7 +638,7 @@ __attribute__((objc_subclassing_restricted))
 @protocol SendChannel
 @required
 - (BOOL)closeCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("close(cause:)")));
-- (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnClose(handler:)")));
+- (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnClose(handler:)")));
 - (BOOL)offerElement:(id _Nullable)element __attribute__((swift_name("offer(element:)"))) __attribute__((unavailable("Deprecated in the favour of 'trySend' method")));
 
 /**
@@ -784,7 +784,7 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithValue:(E _Nullable)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("ConflatedBroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 - (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (BOOL)closeCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("close(cause:)")));
-- (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnClose(handler:)")));
+- (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable cause))handler __attribute__((swift_name("invokeOnClose(handler:)")));
 - (BOOL)offerElement:(E _Nullable)element __attribute__((swift_name("offer(element:)"))) __attribute__((unavailable("Deprecated in the favour of 'trySend' method")));
 - (id<ReceiveChannel>)openSubscription __attribute__((swift_name("openSubscription()")));
 
@@ -1033,7 +1033,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)addLastNode:(T)node __attribute__((swift_name("addLast(node:)")));
 - (BOOL)addLastIfNode:(T)node cond:(Boolean *(^)(T _Nullable))cond __attribute__((swift_name("addLastIf(node:cond:)")));
-- (T _Nullable)findPredicate:(Boolean *(^)(T))predicate __attribute__((swift_name("find(predicate:)")));
+- (T _Nullable)findPredicate:(Boolean *(^)(T value))predicate __attribute__((swift_name("find(predicate:)")));
 - (T _Nullable)peek __attribute__((swift_name("peek()")));
 - (BOOL)removeNode:(T)node __attribute__((swift_name("remove(node:)")));
 - (T _Nullable)removeFirstIfPredicate:(Boolean *(^)(T))predicate __attribute__((swift_name("removeFirstIf(predicate:)")));
@@ -1065,9 +1065,9 @@ __attribute__((objc_subclassing_restricted))
 @protocol SelectClause
 @required
 @property (readonly) id clauseObject __attribute__((swift_name("clauseObject")));
-@property (readonly) KotlinUnit *(^(^ _Nullable onCancellationConstructor)(id<SelectInstance>, id _Nullable, id _Nullable))(KotlinThrowable *) __attribute__((swift_name("onCancellationConstructor")));
-@property (readonly) id _Nullable (^processResFunc)(id, id _Nullable, id _Nullable) __attribute__((swift_name("processResFunc")));
-@property (readonly) void (^regFunc)(id, id<SelectInstance>, id _Nullable) __attribute__((swift_name("regFunc")));
+@property (readonly) KotlinUnit *(^(^ _Nullable onCancellationConstructor)(id<SelectInstance> select, id _Nullable param, id _Nullable internalResult))(KotlinThrowable *) __attribute__((swift_name("onCancellationConstructor")));
+@property (readonly) id _Nullable (^processResFunc)(id clauseObject, id _Nullable param, id _Nullable clauseResult) __attribute__((swift_name("processResFunc")));
+@property (readonly) void (^regFunc)(id clauseObject, id<SelectInstance> select, id _Nullable param) __attribute__((swift_name("regFunc")));
 @end
 
 @protocol SelectClause0 <SelectClause>
@@ -1284,7 +1284,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.ObsoleteCoroutinesApi
 */
-+ (id<BroadcastChannel>)broadcast:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity start:(CoroutineStart *)start onCompletion:(void (^ _Nullable)(KotlinThrowable * _Nullable))onCompletion block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("broadcast(_:context:capacity:start:onCompletion:block:)"))) __attribute__((deprecated("BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
++ (id<BroadcastChannel>)broadcast:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity start:(CoroutineStart *)start onCompletion:(void (^ _Nullable)(KotlinThrowable * _Nullable cause))onCompletion block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("broadcast(_:context:capacity:start:onCompletion:block:)"))) __attribute__((deprecated("BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1344,10 +1344,10 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface ChannelKt : Base
 + (id<Channel>)ChannelCapacity:(int32_t)capacity onBufferOverflow:(BufferOverflow *)onBufferOverflow onUndeliveredElement:(void (^ _Nullable)(id _Nullable))onUndeliveredElement __attribute__((swift_name("Channel(capacity:onBufferOverflow:onUndeliveredElement:)")));
-+ (id _Nullable)getOrElse:(id _Nullable)receiver onFailure:(id _Nullable (^)(KotlinThrowable * _Nullable))onFailure __attribute__((swift_name("getOrElse(_:onFailure:)")));
-+ (id _Nullable)onClosed:(id _Nullable)receiver action:(void (^)(KotlinThrowable * _Nullable))action __attribute__((swift_name("onClosed(_:action:)")));
-+ (id _Nullable)onFailure:(id _Nullable)receiver action:(void (^)(KotlinThrowable * _Nullable))action __attribute__((swift_name("onFailure(_:action:)")));
-+ (id _Nullable)onSuccess:(id _Nullable)receiver action:(void (^)(id _Nullable))action __attribute__((swift_name("onSuccess(_:action:)")));
++ (id _Nullable)getOrElse:(id _Nullable)receiver onFailure:(id _Nullable (^)(KotlinThrowable * _Nullable exception))onFailure __attribute__((swift_name("getOrElse(_:onFailure:)")));
++ (id _Nullable)onClosed:(id _Nullable)receiver action:(void (^)(KotlinThrowable * _Nullable exception))action __attribute__((swift_name("onClosed(_:action:)")));
++ (id _Nullable)onFailure:(id _Nullable)receiver action:(void (^)(KotlinThrowable * _Nullable exception))action __attribute__((swift_name("onFailure(_:action:)")));
++ (id _Nullable)onSuccess:(id _Nullable)receiver action:(void (^)(id _Nullable value))action __attribute__((swift_name("onSuccess(_:action:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1582,13 +1582,13 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface DispatchedContinuationKt : Base
-+ (void)resumeCancellableWith:(id<KotlinContinuation>)receiver result:(id _Nullable)result onCancellation:(void (^ _Nullable)(KotlinThrowable *))onCancellation __attribute__((swift_name("resumeCancellableWith(_:result:onCancellation:)")));
++ (void)resumeCancellableWith:(id<KotlinContinuation>)receiver result:(id _Nullable)result onCancellation:(void (^ _Nullable)(KotlinThrowable *cause))onCancellation __attribute__((swift_name("resumeCancellableWith(_:result:onCancellation:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface DistinctKt : Base
 + (id<Flow>)distinctUntilChanged:(id<Flow>)receiver __attribute__((swift_name("distinctUntilChanged(_:)")));
-+ (id<Flow>)distinctUntilChanged:(id<Flow>)receiver areEquivalent:(Boolean *(^)(id _Nullable, id _Nullable))areEquivalent __attribute__((swift_name("distinctUntilChanged(_:areEquivalent:)")));
++ (id<Flow>)distinctUntilChanged:(id<Flow>)receiver areEquivalent:(Boolean *(^)(id _Nullable old, id _Nullable new_))areEquivalent __attribute__((swift_name("distinctUntilChanged(_:areEquivalent:)")));
 + (id<Flow>)distinctUntilChangedBy:(id<Flow>)receiver keySelector:(id _Nullable (^)(id _Nullable))keySelector __attribute__((swift_name("distinctUntilChangedBy(_:keySelector:)")));
 @end
 
@@ -1840,7 +1840,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
 + (id<ReceiveChannel>)produce:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("produce(_:context:capacity:block:)")));
-+ (id<ReceiveChannel>)produce:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity start:(CoroutineStart *)start onCompletion:(void (^ _Nullable)(KotlinThrowable * _Nullable))onCompletion block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("produce(_:context:capacity:start:onCompletion:block:)")));
++ (id<ReceiveChannel>)produce:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity start:(CoroutineStart *)start onCompletion:(void (^ _Nullable)(KotlinThrowable * _Nullable cause))onCompletion block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("produce(_:context:capacity:start:onCompletion:block:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))

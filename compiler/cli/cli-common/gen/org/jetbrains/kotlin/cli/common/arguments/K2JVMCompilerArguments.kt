@@ -56,11 +56,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-no-jdk",
         description = "Don't automatically include the Java runtime in the classpath.",
@@ -113,11 +108,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-module-name",
         valueDescription = "<name>",
@@ -129,11 +119,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.JVM_TARGET_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
@@ -145,11 +130,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-java-parameters",
         description = "Generate metadata for Java 1.8 reflection on method parameters.",
@@ -160,11 +140,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.JVM_DEFAULT_MODES,
-        gradleInputType = GradleInputTypes.INPUT,
-        gradleName = "jvmDefault",
-    )
     @Argument(
         value = "-jvm-default",
         valueDescription = "{enable|no-compatibility|disable}",
@@ -482,7 +457,7 @@ The default value is 'enable'.""",
         value = "-Xjspecify-annotations",
         valueDescription = "ignore|strict|warn",
         description = """Specify the behavior of 'jspecify' annotations.
-The default value is 'warn'.""",
+The default value is 'strict'.""",
     )
     var jspecifyAnnotations: String? = null
         set(value) {
@@ -490,6 +465,7 @@ The default value is 'warn'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Deprecated("This flag is deprecated. Use `-jvm-default` instead")
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
@@ -650,7 +626,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         value = "-Xindy-allow-annotated-lambdas",
         description = "Allow using 'invokedynamic' for lambda expressions with annotations",
     )
-    var indyAllowAnnotatedLambdas: Boolean = false
+    var indyAllowAnnotatedLambdas: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
@@ -788,6 +764,7 @@ See KT-45671 for more details.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xlink-via-signatures",
         description = """Link JVM IR symbols via signatures instead of descriptors.
@@ -846,30 +823,10 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
-        value = "-Xir-inliner",
-        description = "Inline functions using the IR inliner instead of the bytecode inliner.",
-    )
-    var enableIrInliner: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xuse-inline-scopes-numbers",
         description = "Use inline scopes numbers for inline marker variables.",
     )
     var useInlineScopesNumbers: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-k2-kapt",
-        description = "Enable the experimental support for K2 KAPT.",
-    )
-    var useK2Kapt: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
@@ -904,6 +861,21 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         set(value) {
             checkFrozen()
             field = value
+        }
+
+    @Argument(
+        value = "-Xwhen-expressions",
+        valueDescription = "{indy|inline}",
+        description = """Select the code generation scheme for type-checking 'when' expressions:
+-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
+                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+The default value is 'inline'.""",
+    )
+    var whenExpressionsGeneration: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @get:Transient

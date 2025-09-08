@@ -21,3 +21,6 @@ fun test2() {
     val a = <!MISSING_DEPENDENCY_CLASS!>produceBoxedInaccessibleType<!>()
     <!MISSING_DEPENDENCY_CLASS!>consumeBoxedInaccessibleType<!>(<!ARGUMENT_TYPE_MISMATCH, MISSING_DEPENDENCY_CLASS!>a<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, outProjection,
+propertyDeclaration, typeParameter */

@@ -9,3 +9,6 @@ enum class A {
 
     fun foo(): Int = Companion.foo()
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, integerLiteral,
+objectDeclaration */

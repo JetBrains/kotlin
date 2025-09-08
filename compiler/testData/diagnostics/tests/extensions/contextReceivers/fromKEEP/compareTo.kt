@@ -19,3 +19,8 @@ fun test() {
         Pair("OK", "fail").max
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, data, disjunctionExpression, equalityExpression,
+flexibleType, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, getter, ifExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, propertyWithExtensionReceiver, smartcast, stringLiteral, thisExpression, typeParameter */

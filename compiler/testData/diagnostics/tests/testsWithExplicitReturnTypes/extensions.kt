@@ -16,3 +16,6 @@ public class C {
     message = "This function is prohibited",
 )
 public fun Int.<!NO_EXPLICIT_RETURN_TYPE_IN_API_MODE!>deprecatedFunction<!>() = 42
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

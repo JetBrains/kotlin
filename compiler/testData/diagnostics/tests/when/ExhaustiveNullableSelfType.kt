@@ -55,3 +55,7 @@ fun <T> testNullableTypeParameter(arg: T?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
     null -> true
     <!USELESS_IS_CHECK!>is <!CANNOT_CHECK_FOR_ERASED!>T<!><!> -> false
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, isExpression, nestedClass, nullableType, objectDeclaration, sealed, smartcast, typeParameter,
+whenExpression, whenWithSubject */

@@ -28,7 +28,7 @@ abstract class IntrinsicFunction(
 ) {
     abstract fun genInvokeInstruction(v: InstructionAdapter)
 
-    open fun invoke(
+    fun invoke(
         v: InstructionAdapter,
         codegen: ExpressionCodegen,
         data: BlockInfo,

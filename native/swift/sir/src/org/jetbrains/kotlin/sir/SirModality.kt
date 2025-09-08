@@ -12,7 +12,12 @@ enum class SirModality {
 }
 
 val SirClassMemberDeclaration.effectiveModality: SirModality
-    get() = when ((this.parent as? SirClass)?.modality) {
-        SirModality.FINAL -> SirModality.FINAL
+    get() = when (val parent = this.parent) {
+        is SirClass -> when (parent.modality) {
+            SirModality.FINAL -> SirModality.FINAL
+            else -> this.modality
+        }
+        is SirExtension -> SirModality.FINAL
+        is SirProtocol -> SirModality.OPEN
         else -> this.modality
     }

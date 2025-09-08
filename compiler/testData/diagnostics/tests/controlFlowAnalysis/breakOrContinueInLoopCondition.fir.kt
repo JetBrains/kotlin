@@ -33,3 +33,7 @@ fun test2(b: Boolean) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, continue, doWhileLoop, equalityExpression, forLoop, functionDeclaration,
+ifExpression, incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration, rangeExpression,
+whileLoop */

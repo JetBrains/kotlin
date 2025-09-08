@@ -32,3 +32,7 @@ fun testInstanceOf(list: List<Any?>) {
         list.map { it.<!UNRESOLVED_REFERENCE!>length<!> }
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, funWithExtensionReceiver,
+functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, smartcast, thisExpression, typeConstraint,
+typeParameter */

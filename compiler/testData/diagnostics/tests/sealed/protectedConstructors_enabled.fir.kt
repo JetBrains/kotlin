@@ -40,3 +40,6 @@ sealed class Case5() {
     <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>public constructor(x: Long) : this()<!>
     constructor(x: Double) : this()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nestedClass, primaryConstructor, propertyDeclaration, sealed,
+secondaryConstructor, stringLiteral */

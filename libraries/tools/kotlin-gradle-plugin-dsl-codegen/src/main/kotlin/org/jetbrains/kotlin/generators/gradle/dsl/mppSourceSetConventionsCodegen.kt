@@ -94,6 +94,7 @@ private val commonSourceSetConventions = listOf(
     CommonSourceSetConvention("linux", "all declared Linux targets", "linuxX64", "linuxArm64"),
     CommonSourceSetConvention("mingw", "all declared Mingw targets", "mingwX64", "mingwX86"),
     CommonSourceSetConvention("androidNative", "all declared Android Native targets", "androidNativeX64", "androidNativeArm64"),
+    CommonSourceSetConvention("web", "all declared JS and WasmJS targets", "js", "wasmJs"),
 )
 
 private val nonNativeSourceSetConventions = listOf(

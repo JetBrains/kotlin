@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -24,6 +25,7 @@ abstract class FirResolvedErrorReference : FirResolvedNamedReference(), FirDiagn
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val resolvedSymbol: FirBasedSymbol<*>
+    abstract override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -32,4 +34,6 @@ abstract class FirResolvedErrorReference : FirResolvedNamedReference(), FirDiagn
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedErrorReference(this, data) as E
+
+    abstract override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
 }

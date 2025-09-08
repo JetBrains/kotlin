@@ -50,3 +50,7 @@ class KlassB {
 open class BaseKlassC(base: BaseBuildee<TargetType>)
 
 open class BaseKlassD(base: BaseBuildee<TargetType>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inheritanceDelegation,
+interfaceDeclaration, lambdaLiteral, localClass, nullableType, primaryConstructor, secondaryConstructor, thisExpression,
+typeParameter, typeWithExtension */

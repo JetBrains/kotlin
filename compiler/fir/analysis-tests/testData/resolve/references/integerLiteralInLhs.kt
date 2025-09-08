@@ -8,3 +8,5 @@ fun test() {
     // should resolve to Int.foo
     testRef(1::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral */

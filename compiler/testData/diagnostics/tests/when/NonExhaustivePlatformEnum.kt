@@ -29,3 +29,6 @@ fun foo(): Int {
         J.A -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, whenExpression,
+whenWithSubject */

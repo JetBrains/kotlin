@@ -28,3 +28,6 @@ fun main() {
     <!UNRESOLVED_REFERENCE!>foo<!>() + 1
     bar() + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+propertyDeclaration */

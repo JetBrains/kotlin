@@ -46,6 +46,7 @@ interface Interval {
 
 interface SplittableInterval<out T : Interval> : Interval {
     fun split(splitBy: Interval, keepStart: Boolean): SplitPair<T>
+    fun copyWithNewBounds(newBounds: Interval): T
 }
 
 interface IntervalWithHandler : Interval {
@@ -70,17 +71,20 @@ class TryCatchBlockNodeInfo(
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
             node.end = splitBy.startLabel
-            Pair(splitBy.endLabel, oldEnd)
+            SimpleInterval(splitBy.endLabel, oldEnd)
         } else {
             val oldStart = startLabel
             node.start = splitBy.endLabel
-            Pair(oldStart, splitBy.startLabel)
+            SimpleInterval(oldStart, splitBy.startLabel)
         }
         return SplitPair(
             this,
-            TryCatchBlockNodeInfo(TryCatchBlockNode(newPartInterval.first, newPartInterval.second, handler, type), onlyCopyNotProcess)
+            copyWithNewBounds(newPartInterval)
         )
     }
+
+    override fun copyWithNewBounds(newBounds: Interval): TryCatchBlockNodeInfo =
+        TryCatchBlockNodeInfo(TryCatchBlockNode(newBounds.startLabel, newBounds.endLabel, handler, type), onlyCopyNotProcess)
 }
 
 val TryCatchBlockNodeInfo.bodyInstuctions

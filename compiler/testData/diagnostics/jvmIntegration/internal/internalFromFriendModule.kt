@@ -30,3 +30,6 @@ private fun test(i: InternalInterface): InternalTypealias {
 
     return i
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral, typeAliasDeclaration */

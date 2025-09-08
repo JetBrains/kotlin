@@ -15,3 +15,6 @@ inline fun <R> inlineFun(p: () -> R) {
     }
     a()
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, localFunction, localProperty,
+nullableType, propertyDeclaration, typeParameter */

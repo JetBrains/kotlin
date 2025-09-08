@@ -64,3 +64,7 @@ fun main() {
     System.out.println(e.message)
   }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, checkNotNullCall, comparisonExpression, equalityExpression,
+flexibleType, forLoop, functionDeclaration, ifExpression, integerLiteral, javaFunction, javaProperty, localProperty,
+nullableType, propertyDeclaration, rangeExpression, stringLiteral, tryExpression */

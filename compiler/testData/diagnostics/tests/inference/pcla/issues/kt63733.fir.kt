@@ -33,3 +33,7 @@ class BoundedBuildee<BTV: TargetTypeBase> {
 fun <PBTV: TargetTypeBase> boundedBuild(instructions: BoundedBuildee<PBTV>.() -> Unit): BoundedBuildee<PBTV> {
     return BoundedBuildee<PBTV>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeConstraint,
+typeParameter, typeWithExtension */

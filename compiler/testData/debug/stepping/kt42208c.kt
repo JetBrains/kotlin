@@ -1,5 +1,5 @@
-
-// IGNORE_INLINER: IR
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// ^^^ KT-80626: Wrong source file for debuginfo in splitted stepping tests
 // FILE: test.kt
 
 fun box() {
@@ -40,12 +40,12 @@ fun baz(v:(() -> Unit)) {
 // test1.kt:12 box
 // test.kt:6 box
 // test3.kt:16 baz
-// test1.kt:10 box$lambda
+// test.kt:2 box$lambda
 // test3.kt:17 baz
 // test1.kt:12 box
 // test.kt:8 box
 // test3.kt:16 baz
-// test1.kt:10 box$lambda
+// test.kt:2 box$lambda
 // test3.kt:17 baz
 // test.kt:9 box
 
@@ -56,10 +56,10 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:16 $baz (4)
 
 // EXPECTATIONS ClassicFrontend WASM
-// test.kt:10 $box$lambda.invoke (12)
+// test1.kt:13 $box$lambda.invoke (0)
 
 // EXPECTATIONS FIR WASM
-// test.kt:10 $box$lambda.invoke (13)
+// test1.kt:13 $box$lambda.invoke (1)
 
 // EXPECTATIONS WASM
 // test3.kt:16 $baz (4)
@@ -70,13 +70,12 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:16 $baz (4)
 
 // EXPECTATIONS ClassicFrontend WASM
-// test.kt:10 $box$lambda.invoke (12)
+// test1.kt:13 $box$lambda.invoke (0)
 
 // EXPECTATIONS FIR WASM
-// test.kt:10 $box$lambda.invoke (13)
+// test1.kt:13 $box$lambda.invoke (1)
 
 // EXPECTATIONS WASM
 // test3.kt:16 $baz (4)
 // test3.kt:17 $baz (1)
-// test.kt:8 $box (4)
 // test.kt:9 $box (1)

@@ -18,3 +18,5 @@ fun foo(arg: Int): Int {
         else -> return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

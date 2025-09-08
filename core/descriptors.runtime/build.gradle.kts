@@ -1,8 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("jps-compatible")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
@@ -12,27 +13,35 @@ dependencies {
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
 
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":generators:test-generator"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(intellijCore())
 
-    testApi(intellijCore())
-    testApi(platform(libs.junit.bom))
+    testFixturesApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)
 }
 
 sourceSets {
     "main" { projectDefault() }
+    "testFixtures" { projectDefault() }
     "test" {
         projectDefault()
         generatedTestDir()
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
+projectTests {
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":compiler").isolated, "testData/loadJava8")
+    withJvmStdlibAndReflect()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withScriptRuntime()
+    withTestJar()
+    withAnnotations()
 
-projectTest(parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
+    testTask(jUnitMode = JUnitMode.JUnit4)
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
 }
 
 testsJar()

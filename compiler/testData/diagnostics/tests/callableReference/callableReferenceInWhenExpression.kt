@@ -17,3 +17,6 @@ fun testOnClass(rootClass: Class<Any>): Int {
         else -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, equalityExpression, functionDeclaration, integerLiteral, whenExpression,
+whenWithSubject */

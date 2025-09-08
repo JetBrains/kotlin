@@ -18,3 +18,6 @@ fun foo(b: MyClass<B>, c: MyClass<C>) {
     val set1 : Set<MyClass<out D>> = hashSetOf(b, c) //type inference expected type mismatch
     val set2  = hashSetOf(b, c) //Set<MyClass<out Any>> is inferred
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter, vararg */

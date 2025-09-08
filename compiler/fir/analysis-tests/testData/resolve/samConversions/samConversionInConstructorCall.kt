@@ -16,3 +16,5 @@ public class Foo {
 fun test() {
     Foo { it }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

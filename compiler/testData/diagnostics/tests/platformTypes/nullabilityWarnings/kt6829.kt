@@ -24,3 +24,6 @@ fun foo(collection: Collection<J>) {
 public fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
     null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+javaFunction, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

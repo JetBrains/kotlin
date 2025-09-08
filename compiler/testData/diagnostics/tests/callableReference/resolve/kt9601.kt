@@ -15,3 +15,5 @@ fun test() {
     B::foo
     ::bar
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration */

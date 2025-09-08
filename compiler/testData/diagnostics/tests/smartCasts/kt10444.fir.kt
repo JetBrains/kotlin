@@ -38,3 +38,7 @@ open class Bar<T: Foo>(open val a: T?, open val b: T?) {
     fun check(a: T?, b: T) {
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, comparisonExpression, dnnType, equalityExpression,
+functionDeclaration, ifExpression, in, integerLiteral, isExpression, javaFunction, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, stringLiteral, typeConstraint, typeParameter */

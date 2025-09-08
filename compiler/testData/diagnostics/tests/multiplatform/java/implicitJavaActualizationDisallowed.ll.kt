@@ -13,3 +13,5 @@ public class Foo {
     public void foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor */

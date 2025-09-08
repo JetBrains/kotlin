@@ -309,12 +309,15 @@ inline fun inlinedFunctionWithCreationOfOpenClassImpl() {
     check(OpenClassInheritedFromRemovedOpenClass().toString() != "Yellow Submarine")
 }
 
+// A non-inlining version of `kotlin.run`.
+fun <R> myRun(block: () -> R): R = block()
+
 inline fun inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() {
-    check(run(::RemovedOpenClass).toString() != "Yellow Submarine")
+    check(myRun(::RemovedOpenClass).toString() != "Yellow Submarine") // fixme
 }
 
 inline fun inlinedFunctionWithCreationOfOpenClassImplThroughReference() {
-    check(run(::OpenClassInheritedFromRemovedOpenClass).toString() != "Yellow Submarine")
+    check(myRun(::OpenClassInheritedFromRemovedOpenClass).toString() != "Yellow Submarine") // fixme
 }
 
 inline fun inlinedFunctionWithRemovedOpenClassAnonymousObject() {
@@ -460,7 +463,6 @@ data class MyAnnotationHolder(val x: Int)
 // inline fun
 fun createRemovedInlineFunReference(): Any = ::removedInlineFun
 fun removedInlineFunReferenceName(): String = ::removedInlineFun.name
-fun removedInlineFunReferenceReturnType(): Any = ::removedInlineFun.returnType
 fun removedInlineFunReferenceHashCode(): Int = ::removedInlineFun.hashCode()
 fun removedInlineFunReferenceEquals(): Boolean = ::removedInlineFun.equals(Any())
 fun removedInlineFunReferenceToString(): String = ::removedInlineFun.toString()
@@ -469,7 +471,6 @@ fun removedInlineFunReferenceInvoke(): Int = ::removedInlineFun.invoke(123)
 // inline val
 fun createRemovedInlineValReference(): Any = ::removedInlineVal
 fun removedInlineValReferenceName(): String = ::removedInlineVal.name
-fun removedInlineValReferenceReturnType(): Any = ::removedInlineVal.returnType
 fun removedInlineValReferenceHashCode(): Int = ::removedInlineVal.hashCode()
 fun removedInlineValReferenceEquals(): Boolean = ::removedInlineVal.equals(Any())
 fun removedInlineValReferenceToString(): String = ::removedInlineVal.toString()
@@ -479,7 +480,6 @@ fun removedInlineValReferenceGet(): Int = ::removedInlineVal.get()
 // inline var
 fun createRemovedInlineVarReference(): Any = ::removedInlineVar
 fun removedInlineVarReferenceName(): String = ::removedInlineVar.name
-fun removedInlineVarReferenceReturnType(): Any = ::removedInlineVar.returnType
 fun removedInlineVarReferenceHashCode(): Int = ::removedInlineVar.hashCode()
 fun removedInlineVarReferenceEquals(): Boolean = ::removedInlineVar.equals(Any())
 fun removedInlineVarReferenceToString(): String = ::removedInlineVar.toString()

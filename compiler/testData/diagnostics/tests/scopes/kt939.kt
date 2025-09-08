@@ -18,3 +18,6 @@ fun test() {
     val x = System.getProperty("path.separator")?.length ?: 4
     x * 55 + 5
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, elvisExpression, flexibleType, functionDeclaration, integerLiteral,
+javaFunction, localProperty, multiplicativeExpression, nullableType, propertyDeclaration, safeCall, stringLiteral */

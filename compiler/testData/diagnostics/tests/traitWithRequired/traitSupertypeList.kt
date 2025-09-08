@@ -9,3 +9,5 @@ interface Foo2 : <!INTERFACE_WITH_SUPERCLASS!>bar<!>, Foo {
 
 open class Foo1() : bar(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_APPEARS_TWICE, SUPERTYPE_NOT_INITIALIZED!>bar<!>, Foo, <!SUPERTYPE_APPEARS_TWICE!>Foo<!>() {}
 open class Foo12 : bar(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_APPEARS_TWICE, SUPERTYPE_NOT_INITIALIZED!>bar<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, primaryConstructor */

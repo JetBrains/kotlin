@@ -17,3 +17,6 @@ class A() {
     val z : Int
     get() = 3
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration */

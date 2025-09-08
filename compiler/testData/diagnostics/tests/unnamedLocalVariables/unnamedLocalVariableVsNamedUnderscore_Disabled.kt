@@ -20,3 +20,6 @@ fun h() {
     val <!UNDERSCORE_IS_RESERVED!>_<!> = "three"
     println(<!UNRESOLVED_REFERENCE!>`_`<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, unnamedLocalVariable */

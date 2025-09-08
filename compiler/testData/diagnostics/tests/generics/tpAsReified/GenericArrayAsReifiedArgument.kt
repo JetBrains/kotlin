@@ -24,3 +24,6 @@ fun <T> bar() {
 fun test(x: Array<String>, y: Array<*>) {
     bar<Int>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, nullableType, reified, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -38,3 +38,7 @@ actual fun StringDemoInterface.<!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>plusK<!
 class StringDemo(override val value: String) : StringDemoInterface
 
 fun box() = StringDemo("O").plusK()
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral,
+thisExpression, typeAliasDeclaration */

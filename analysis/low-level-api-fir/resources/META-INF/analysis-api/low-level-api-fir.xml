@@ -23,6 +23,20 @@
     />
 
 
+    <registryKey
+        defaultValue="true"
+        description="Perform partial body analysis in Kotlin. Speeds up occasional reference resolution, e.g. in Find Usages."
+        key="kotlin.analysis.partialBodyAnalysis"
+        restartRequired="true"
+    />
+
+    <registryKey
+        defaultValue="5"
+        description="Maximum number of partial body analysis attempts, after which the body is analyzed entirely."
+        key="kotlin.analysis.partialBodyAnalysis.attemptCount"
+        restartRequired="true"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser"
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLRealFirElementByPsiElementChooser"

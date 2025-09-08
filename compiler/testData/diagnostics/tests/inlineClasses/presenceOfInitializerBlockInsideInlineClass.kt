@@ -10,3 +10,5 @@ inline class Foo(val x: Int) {
         val f = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, integerLiteral, localProperty, primaryConstructor, propertyDeclaration */

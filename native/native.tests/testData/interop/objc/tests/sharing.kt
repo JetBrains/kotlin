@@ -26,6 +26,7 @@ private class NSObjectImpl : NSObject() {
             val obj1 = array.objectAtIndex(0) as NSObjectImpl
             assertFailsWith<InvalidMutabilityException> {
                 obj1.x = 333
+                Unit // required for K1
             }
         }
         assertEquals(222, obj.x)

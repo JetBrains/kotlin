@@ -5,6 +5,9 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.components.containingModule
+import org.jetbrains.kotlin.analysis.api.components.samConstructor
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -13,22 +16,31 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.extractDeclarations
+import org.jetbrains.kotlin.sir.providers.getSirParent
+import org.jetbrains.kotlin.sir.providers.sirAvailability
+import org.jetbrains.kotlin.sir.providers.sirDeclarationName
+import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-import org.jetbrains.sir.lightclasses.BindableBridgedType
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
+import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import kotlin.lazy
 
 internal open class SirProtocolFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -44,7 +56,7 @@ internal open class SirProtocolFromKtSymbol(
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(useSiteSession)
+            ktSymbol.getSirParent()
         }
         set(_) = Unit
 
@@ -56,6 +68,11 @@ internal open class SirProtocolFromKtSymbol(
         ktSymbol.superTypes
             .mapNotNull { it.symbol as? KaClassSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
+            .filter {
+                it.sirAvailability().let {
+                    it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
+                }
+            }
             .mapNotNull {
                 it.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()?.also {
                     ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
@@ -67,9 +84,10 @@ internal open class SirProtocolFromKtSymbol(
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations()
             .flatMap { declaration ->
                 when (declaration) {
+                    is SirOperatorAuxiliaryDeclaration -> emptyList() // FIXME: rectify where auxiliary declarations should go.
                     is SirVariable, is SirFunction -> listOf(declaration)
                     is SirNamedDeclaration -> listOfNotNull(
                         (declaration.visibility == SirVisibility.PUBLIC).ifTrue {
@@ -95,6 +113,20 @@ internal open class SirProtocolFromKtSymbol(
         SirMarkerProtocolFromKtSymbol(this)
             .also { it.parent = this.parent }
     }
+
+    internal val samConverter: SirDeclaration? by lazyWithSessions {
+        ktSymbol.samConstructor?.let {
+            SirRelocatedFunction(SirFunctionFromKtSymbol(it, sirSession)).also {
+                it.parent = this@SirProtocolFromKtSymbol.parent
+                it.name = this@SirProtocolFromKtSymbol.name.let { name ->
+                    val decapitalized = decapitalizeNameSemantically(name)
+                    decapitalized.takeIf { it != name } ?: "${decapitalized}FromFunction"
+                }
+            }
+        }
+    }
+
+    override val bridges: List<SirBridge> = emptyList()
 }
 
 /**
@@ -105,19 +137,28 @@ internal open class SirProtocolFromKtSymbol(
  */
 internal class SirMarkerProtocolFromKtSymbol(
     val target: SirProtocolFromKtSymbol
-) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol>, BindableBridgedType {
+) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol> {
     override val ktSymbol: KaNamedClassSymbol get() = target.ktSymbol
     override val sirSession: SirSession get() = target.sirSession
 
     override lateinit var parent: SirDeclarationParent
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
-    override val visibility: SirVisibility = SirVisibility.INTERNAL
+    override val visibility: SirVisibility = SirVisibility.PACKAGE
     override val documentation: String? = null
     override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
     override val name: String get() = "_${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol> get() = target.protocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
+
+    override val bridges: List<SirBridge> by lazyWithSessions {
+        listOfNotNull(
+            sirSession.generateTypeBridge(
+                ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
+                swiftFqName = swiftFqName,
+                swiftSymbolName = objcClassSymbolName,
+            ))
+    }
 }
 
 /**
@@ -154,7 +195,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
 
     override val constraints: List<SirTypeConstraint> by lazy {
         listOf(
-            SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridged))
+            SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridgeable))
         )
     }
 
@@ -162,11 +203,12 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations()
             .mapNotNull {
                 when (it) {
                     is SirFunction -> SirRelocatedFunction(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
                     is SirVariable -> SirRelocatedVariable(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
+                    is SirSubscript -> SirRelocatedSubscript(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
                     else -> null
                 }
             }
@@ -174,8 +216,9 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     }
 }
 
+
 /**
- * Relocatied function
+ * Relocated function
  * Mirrors the `source` declaration, but allows for changing parent.
  *
  * @property source The original declaration
@@ -188,15 +231,24 @@ private class SirRelocatedFunction(
     override val origin: SirOrigin get() = source.origin
     override val visibility: SirVisibility get() = source.visibility
     override val documentation: String? get() = source.documentation
-    override val name: String get() = source.name
+    private var _name: String? = null
+    override var name: String
+        get() = _name ?: source.name
+        set(newValue) { _name = newValue }
     override val returnType: SirType get() = source.returnType
     override val isOverride: Boolean get() = false
-    override val isInstance: Boolean get() = true
+    override val isInstance: Boolean get() = source.isInstance
     override val modality: SirModality get() = SirModality.UNSPECIFIED
+    override val fixity: SirFixity? get() = source.fixity
     override val attributes: List<SirAttribute> get() = source.attributes
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val parameters: List<SirParameter> get() = source.parameters
     override val errorType: SirType get() = source.errorType
+
+    override val bridges: List<SirBridge> get() {
+            val result = source.bridges
+            return result
+        }
 
     override var body: SirFunctionBody?
         get() = source.body
@@ -223,6 +275,31 @@ private class SirRelocatedVariable(
     override val isInstance: Boolean get() = true
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
+    override val getter: SirGetter get() = source.getter
+    override val setter: SirSetter? get() = source.setter
+    override val bridges: List<SirBridge> get() = source.bridges
+}
+
+/**
+ * Relocatied subscript
+ * Mirrors the `source` declaration, but allows for changing parent.
+ *
+ * @property source The original declaration
+ */
+private class SirRelocatedSubscript(
+    val source: SirSubscript,
+) : SirSubscript() {
+    override lateinit var parent: SirDeclarationParent
+
+    override val origin: SirOrigin get() = source.origin
+    override val visibility: SirVisibility get() = source.visibility
+    override val documentation: String? get() = source.documentation
+    override val attributes: List<SirAttribute> get() = source.attributes
+    override val isOverride: Boolean get() = source.isOverride
+    override val isInstance: Boolean get() = source.isInstance
+    override val modality: SirModality get() = source.modality
+    override val parameters: List<SirParameter> get() = source.parameters
+    override val returnType: SirType get() = source.returnType
     override val getter: SirGetter get() = source.getter
     override val setter: SirSetter? get() = source.setter
 }

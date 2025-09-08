@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, -ForbidExposingPackagePrivateInInternal
 
 // FILE: test/Internal.java
 
@@ -40,3 +40,5 @@ import test.My
 class Your {
     internal fun bar() = <!INACCESSIBLE_TYPE!>My.foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction */

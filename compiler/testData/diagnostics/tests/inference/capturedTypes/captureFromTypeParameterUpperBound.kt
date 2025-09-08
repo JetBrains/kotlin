@@ -11,3 +11,6 @@ fun <Y: X, X : Inv<out String>> foo(x: X, y: Y) {
 }
 
 fun <Y> bar(l: Inv<Y>): Y = TODO()
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, typeConstraint, typeParameter */

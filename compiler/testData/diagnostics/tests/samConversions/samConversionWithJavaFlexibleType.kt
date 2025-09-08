@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-67651
 // FULL_JDK
 
@@ -27,3 +27,6 @@ fun test(){
         override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = JavaBox(null).a
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, flexibleType, functionDeclaration, javaFunction, javaType,
+lambdaLiteral, localProperty, nullableType, override, propertyDeclaration */

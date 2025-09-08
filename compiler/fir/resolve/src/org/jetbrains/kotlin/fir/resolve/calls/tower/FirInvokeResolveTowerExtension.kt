@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
@@ -18,11 +19,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.dfa.PersistentTypeStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -304,20 +305,12 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
             candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol, notFunctionAsOperatorDiagnostics
         )
-        is FirRegularClassSymbol -> buildResolvedQualifierForClass(
+        is FirClassLikeSymbol -> buildResolvedQualifierForClass(
             symbol,
             sourceElement = info.fakeSourceForImplicitInvokeCallReceiver,
+            explicitParent = info.explicitReceiver as? FirResolvedQualifier,
             nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
         )
-        is FirTypeAliasSymbol -> {
-            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-            val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
-            buildResolvedQualifierForClass(
-                expansionRegularClassSymbol,
-                sourceElement = symbol.fir.source,
-                nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
-            )
-        }
         else -> throw AssertionError()
     }
 }
@@ -335,13 +328,13 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
         calleeReference = when {
             returnTypeRef is FirErrorTypeRef -> FirErrorReferenceWithCandidate(
-                fakeSource, symbol.callableId.callableName, candidate, returnTypeRef.diagnostic,
+                fakeSource, symbol.name, candidate, returnTypeRef.diagnostic,
             )
 
-            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.callableId.callableName, candidate)
+            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.name, candidate)
 
             else -> FirErrorReferenceWithCandidate(
-                fakeSource, symbol.callableId.callableName, candidate,
+                fakeSource, symbol.name, candidate,
                 createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
             )
         }
@@ -362,8 +355,25 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         source = fakeSource
     }.build().let {
         callCompleter.completeCall(it, ResolutionMode.ReceiverResolution)
-    }.let {
-        transformExpressionUsingSmartcastInfo(it)
+    }.let { expression ->
+        // This manual picking is necessary since we don't support snapshots/backtracking for DFA and are so unable
+        // to rely on `dataFlowAnalyzer.exitQualifiedAccessExpression(it)`: the implicit `invoke()` candidate may not
+        // end up being chosen during resolution, so we can't commit anything into our DFA just yet.
+        val field = (symbol as? FirPropertySymbol)?.tryAccessExplicitFieldSymbol(inlineFunction, session, candidate.hasVisibleBackingField)
+
+        val smartcastStatement = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression) { variable, statement ->
+            if (field == null) {
+                statement
+            } else {
+                PersistentTypeStatement(
+                    variable = statement?.variable ?: variable,
+                    upperTypes = (statement?.upperTypes.orEmpty() + field.resolvedReturnType).toPersistentSet(),
+                    lowerTypes = statement?.lowerTypes.orEmpty().toPersistentSet()
+                )
+            }
+        } ?: return@let expression
+
+        transformExpressionUsingSmartcastInfo(expression, smartcastStatement)
     }
 }
 

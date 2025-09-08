@@ -14,3 +14,5 @@ package b
 import a.Outer
 
 class My : Outer.Nested()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

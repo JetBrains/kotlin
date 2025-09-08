@@ -38,3 +38,7 @@ fun test_2(base: Base) {
         D -> 6
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, interfaceDeclaration, isExpression, localProperty, nestedClass, objectDeclaration, propertyDeclaration,
+sealed, smartcast, whenExpression, whenWithSubject */

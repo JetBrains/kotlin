@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// LATEST_LV_DIFFERENCE
 
 // FILE: case1.kt
 internal open class My
@@ -32,3 +31,7 @@ class Wrapper<T>(val it: T)
 fun <T: Inter?> public(a: T & Any) = Wrapper(a)
 
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>other<!>() = public(object : Inter {})
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, dnnType, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection,
+typeConstraint, typeParameter */

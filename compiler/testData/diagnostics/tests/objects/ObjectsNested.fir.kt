@@ -28,3 +28,5 @@ val b = B
 val c = A.B
 val d = A.B.A
 val e = B.<!UNRESOLVED_REFERENCE!>A<!>.B
+
+/* GENERATED_FIR_TAGS: nestedClass, objectDeclaration, propertyDeclaration, thisExpression */

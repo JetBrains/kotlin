@@ -1,16 +1,15 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:cli"))
-    testApi(intellijCore())
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(intellijCore())
 
-    testRuntimeOnly(project(":core:descriptors.runtime"))
-
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
@@ -19,7 +18,6 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" { projectDefault() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
-
-testsJar()

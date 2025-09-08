@@ -17,7 +17,7 @@ object FirExplicitBackingFieldsUnsupportedChecker : FirBackingFieldChecker(MppCh
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirBackingField) {
         if (declaration !is FirDefaultPropertyBackingField) {
-            declaration.requireFeatureSupport(LanguageFeature.ExplicitBackingFields, context, reporter)
+            declaration.requireFeatureSupport(LanguageFeature.ExplicitBackingFields)
         }
     }
 }

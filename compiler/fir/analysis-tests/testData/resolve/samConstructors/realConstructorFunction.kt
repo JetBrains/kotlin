@@ -21,3 +21,6 @@ fun main() {
 
     foo(<!ARGUMENT_TYPE_MISMATCH!>MyRunnable(x)<!>)
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, functionalType, integerLiteral, javaType,
+lambdaLiteral, localProperty, propertyDeclaration */

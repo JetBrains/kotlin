@@ -15,3 +15,6 @@ suspend fun demo(callback: suspend () -> Unit) = when {
     }
     else -> TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+operator, primaryConstructor, propertyDeclaration, stringLiteral, suspend, typeParameter, whenExpression */

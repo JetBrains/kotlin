@@ -12,3 +12,6 @@ fun accept(arg: Bar<String?>) {
 fun main() {
     accept(b)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+typeParameter */

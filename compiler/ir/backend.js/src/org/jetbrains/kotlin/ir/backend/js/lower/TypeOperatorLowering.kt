@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 
 class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val unit = context.irBuiltIns.unitType
@@ -60,6 +61,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val booleanMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "boolean")
     private val functionMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "function")
     private val numberMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "number")
+    private val bigintMarker get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, "bigint")
 
     private val litTrue: IrExpression get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     private val litFalse: IrExpression get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
@@ -164,6 +166,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                         type.isInt() ||
                         type.isFloat() ||
                         type.isDouble() ||
+                        (type.isLong() && context.configuration.compileLongAsBigint) ||
                         type.isBoolean() ||
                         type.isFunctionOrKFunction() ||
                         type.isString()
@@ -323,6 +326,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType.isFunctionOrKFunction() -> functionMarker
                     toType.isBoolean() -> booleanMarker
                     toType.isString() -> stringMarker
+                    toType.isLong() -> bigintMarker
                     else -> numberMarker
                 }
 
@@ -401,7 +405,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val casted = when {
                     toType.isByte() -> maskOp(argument(), byteMask, lit24)
                     toType.isShort() -> maskOp(argument(), shortMask, lit16)
-                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
+                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.longFromInt).apply {
                         arguments[0] = argument()
                     }
                     else -> compilationException(

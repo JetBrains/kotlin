@@ -1,5 +1,6 @@
 // MODULE: lib
 // FILE: lib.kt
+// WITH_PLATFORM_LIBS
 
 package foo
 

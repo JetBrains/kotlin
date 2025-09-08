@@ -135,8 +135,6 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
                     }
                 is IrConstructorCall,
                 is IrGetSingletonValue,
-                is IrFunctionExpression,
-                is IrCallableReference<*>,
                 is IrClassReference,
                 is IrGetClass ->
                     false

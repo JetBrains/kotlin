@@ -25,3 +25,6 @@ fun foo() {
     <!OPT_IN_MARKER_ON_WRONG_TARGET!>@OtherOptInMarker<!>
     val value = 2
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, equalityExpression, functionDeclaration, getter,
+integerLiteral, localProperty, multiplicativeExpression, primaryConstructor, propertyDeclaration */

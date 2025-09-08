@@ -10,3 +10,5 @@ public open class C : A() {
         internal open class E : A.B()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

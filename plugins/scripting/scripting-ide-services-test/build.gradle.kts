@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 project.updateJvmTarget("1.8")
@@ -33,7 +34,7 @@ dependencies {
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(intellijCore())
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
 
@@ -57,23 +58,25 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true) {
-    dependsOn(":kotlin-compiler:distKotlinc")
-    workingDir = rootDir
-    doFirst {
-        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":kotlin-compiler:distKotlinc")
+        workingDir = rootDir
+        doFirst {
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
     }
-}
 
-// This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
-// To make it work, the dependencies to the intellij sdk should be eliminated
-projectTest(taskName = "embeddableTest", parallel = true) {
-    workingDir = rootDir
-    dependsOn(embeddableTestRuntime)
-    classpath = embeddableTestRuntime
+    // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
+    // To make it work, the dependencies to the intellij sdk should be eliminated
+    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
+        workingDir = rootDir
+        dependsOn(embeddableTestRuntime)
+        classpath = embeddableTestRuntime
 
-    exclude("**/JvmReplIdeTest.class")
-    doFirst {
-        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        exclude("**/JvmReplIdeTest.class")
+        doFirst {
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
     }
 }

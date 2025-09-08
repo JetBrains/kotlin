@@ -36,3 +36,6 @@ fun main(aI: A, bI: B) {
     x.a
     x.b
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, suspend, thisExpression, typeParameter, typeWithExtension */

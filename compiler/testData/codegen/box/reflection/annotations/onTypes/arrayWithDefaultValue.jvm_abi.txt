@@ -1,0 +1,9 @@
+MODULE main
+	CLASS test/A.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/Array;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(values: kotlin/Array<kotlin/String> /* = ... */)
+					K2
+						(values: kotlin/Array<kotlin/String> = ["Fail"])

@@ -21,3 +21,6 @@ fun test4() {
     var x = AAA
     x = ++<!VARIABLE_EXPECTED!>AAA<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, localProperty, objectDeclaration,
+operator, propertyDeclaration, thisExpression */

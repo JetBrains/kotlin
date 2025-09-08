@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getBridgeReceiverType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun ObjCExportContext.translateToObjCProperty(symbol: KaPropertySymbol): ObjCProperty? {
     if (!analysisSession.isVisibleInObjC(symbol)) return null
@@ -24,12 +24,13 @@ fun ObjCExportContext.translateToObjCProperty(symbol: KaPropertySymbol): ObjCPro
  */
 fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     val propertyName = getObjCPropertyName(symbol)
-    val name = propertyName.objCName
+    val objCName = propertyName.objCName
+    val swiftName = propertyName.swiftName
     val symbolGetter = symbol.getter
     val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)
     val type = mapReturnType(symbolGetter, getterBridge.returnBridge)
     val attributes = mutableListOf<String>()
-    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
+    val declarationAttributes = mutableListOf(symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName))
 
     if (!analysisSession.getBridgeReceiverType(symbol).isInstance) attributes += "class"
 
@@ -40,14 +41,14 @@ fun ObjCExportContext.buildProperty(symbol: KaPropertySymbol): ObjCProperty {
     declarationAttributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
 
     return ObjCProperty(
-        name = name,
+        name = objCName,
         comment = analysisSession.translateToObjCComment(symbol.annotations),
         origin = analysisSession.getObjCExportStubOrigin(symbol),
         type = type,
         propertyAttributes = attributes,
-        setterName = getObjCPropertySetter(symbol, name),
-        getterName = getObjCPropertyGetter(symbol, name),
-        declarationAttributes = declarationAttributes
+        setterName = getObjCPropertySetter(symbol, objCName),
+        getterName = getObjCPropertyGetter(symbol, objCName),
+        declarationAttributes = declarationAttributes.toList()
     )
 }
 

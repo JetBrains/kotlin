@@ -39,3 +39,7 @@ enum class ECCurve {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, lambdaLiteral, localClass, localFunction, localProperty, propertyDeclaration, propertyDelegate,
+stringLiteral, whenExpression, whenWithSubject */

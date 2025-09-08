@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 @RequiresOptIn
 annotation class CheckersComponentInternal
 
+/**
+ * [CheckersComponent] stores various kinds of checkers in the CLI compiler mode. In the Analysis API mode, this component is not
+ * registered, as `LLCheckersFactory` is used instead.
+ */
 @NoMutableState
 class CheckersComponent : FirSessionComponent {
     val commonDeclarationCheckers: DeclarationCheckers get() = _commonDeclarationCheckers
@@ -82,4 +86,7 @@ class CheckersComponent : FirSessionComponent {
     }
 }
 
-val FirSession.checkersComponent: CheckersComponent by FirSession.sessionComponentAccessor()
+val FirSession.nullableCheckersComponent: CheckersComponent? by FirSession.nullableSessionComponentAccessor()
+
+val FirSession.checkersComponent: CheckersComponent
+    get() = nullableCheckersComponent ?: error("Expected `${CheckersComponent::class}` to be registered in CLI compiler mode.")

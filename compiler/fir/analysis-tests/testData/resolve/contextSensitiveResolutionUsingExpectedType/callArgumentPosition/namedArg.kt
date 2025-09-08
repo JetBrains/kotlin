@@ -53,3 +53,6 @@ fun testNamedArgs() {
     namedArgumentHolder(arg = <!UNRESOLVED_REFERENCE!>superFunc<!>())
     namedArgumentHolder(arg = <!ARGUMENT_TYPE_MISMATCH!>lazyProp<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration, lambdaLiteral,
+nestedClass, objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral */

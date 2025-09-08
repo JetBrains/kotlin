@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.lifetime
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
  * A token which is used as an anchor for determining the lifetime of a [session][org.jetbrains.kotlin.analysis.api.KaSession]'s
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
  * See the documentation for [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] and [KaLifetimeOwner] to find out more about lifetime
  * management.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public abstract class KaLifetimeToken {
     /**
      * Whether the lifetime token is valid, i.e. the underlying information is still up-to-date. Invalidation most often occurs after
@@ -63,6 +65,7 @@ public inline fun KaLifetimeToken.assertIsAccessible() {
 }
 
 @KaImplementationDetail
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaIllegalLifetimeOwnerAccessException : IllegalStateException()
 
 @KaImplementationDetail

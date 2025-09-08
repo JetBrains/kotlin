@@ -1,10 +1,11 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // ISSUE: KT-67185
 // WITH_STDLIB
 
 fun noop() {}
 
 fun foo(list: List<Pair<String, String>>) {
-    list.map { (a, b) -> { noop() } }
+    list.map { [a, b] -> { noop() } }
         .forEach { it() }
 }
 

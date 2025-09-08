@@ -1,0 +1,71 @@
+KtNameReferenceExpression(8,12): 'test'
+  KtSimpleNameReference:
+    package test
+
+KtNameReferenceExpression(102,105): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(140,147): 'MyClass'
+  KtSimpleNameReference:
+    (in test) class MyClass
+
+KtNameReferenceExpression(167,174): 'MyAlias'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(175,185): 'function()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(175,183): 'function'
+  KtSimpleNameReference:
+    (in test.MyClass.Companion) fun function()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(190,197): 'MyAlias'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(198,206): 'property'
+  KtSimpleNameReference:
+    (in test.MyClass.Companion) val property: kotlin.Int
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(212,219): 'MyAlias'
+  KtSimpleNameReference:
+    (in test) typealias MyAlias = test.MyClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(221,229): 'function'
+  KtSimpleNameReference:
+    (in test.MyClass.Companion) fun function()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(234,241): 'MyAlias'
+  KtSimpleNameReference:
+    (in test) typealias MyAlias = test.MyClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(243,251): 'property'
+  KtSimpleNameReference:
+    (in test.MyClass.Companion) val property: kotlin.Int
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -46,3 +46,6 @@ class Derived : Base() {
 }
 
 inline fun default11(s : () -> Derived = ::Derived) {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration,
+functionalType, inline, lambdaLiteral, objectDeclaration, operator, override, propertyDeclaration, stringLiteral */

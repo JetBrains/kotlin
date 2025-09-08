@@ -14,3 +14,6 @@ fun test(x: Inv<String>) {
     foo(x, ::getOne)
     foo(x, ::getTwo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+nullableType, stringLiteral, typeParameter */

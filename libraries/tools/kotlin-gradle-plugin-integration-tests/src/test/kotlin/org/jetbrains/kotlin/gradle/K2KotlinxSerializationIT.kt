@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.resolveRepoPath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -34,6 +35,10 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     @GradleTest
     fun `test kotlinx serialization K2 against K1`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationK2AgainstK1", gradleVersion) {
+            subprojects("app", "lib").buildScriptInjection {
+                project.plugins.apply("org.jetbrains.kotlin.plugin.serialization")
+                dependencies.add("implementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+            }
             build(":app:run") {
                 assertTasksExecuted(":app:run")
             }
@@ -41,6 +46,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
     }
 
     @DisplayName("Compile code with kotlinx.serialization K2 against old K1 library without enum factory support (KT-57704).")
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Old Kotlin release is not compatible with Gradle 9.+
     @GradleTest
     fun `test kotlinx serialization K2 against K1 library`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         project(
@@ -57,7 +63,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")
-                val publishedLib = tempDir.resolve("com/example/serialization_lib/serialization_lib/1.0")
+                val publishedLib = tempDir.resolveRepoPath("com.example.serialization_lib", "serialization_lib", "1.0")
                 assertDirectoryExists(publishedLib)
                 assertTrue(publishedLib.listDirectoryEntries().isNotEmpty())
             }

@@ -8,3 +8,6 @@ data class Data<out T> private constructor(val t: T) {
         copy()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, inline, nullableType, out, primaryConstructor,
+propertyDeclaration, typeParameter */

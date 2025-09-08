@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -14,9 +15,9 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
-interface Fir2IrComponents {
-    val session: FirSession
-    val scopeSession: ScopeSession
+interface Fir2IrComponents : SessionAndScopeSessionHolder {
+    override val session: FirSession
+    override val scopeSession: ScopeSession
 
     /**
      * It's important to use this fir provider in fir2ir instead of provider from session,

@@ -8,3 +8,5 @@ fun test() {}
 annotation class foo
 annotation class bar
 annotation class baz
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, functionDeclaration */

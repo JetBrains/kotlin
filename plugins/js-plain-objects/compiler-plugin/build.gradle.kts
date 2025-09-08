@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("project-tests-convention")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -28,16 +29,16 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
 
-    testImplementation(projectTests(":js:js.tests"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":js:js.tests")))
+    testFixtures(testFixtures(project(":generators:test-generator")))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixtures(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -62,6 +63,7 @@ sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
+        java.srcDirs("testFixtures")
         generatedTestDir()
     }
 }
@@ -75,19 +77,20 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
-    workingDir = rootDir
+        workingDir = rootDir
 
-    dependsOn(jsoIrRuntimeForTests)
+        dependsOn(jsoIrRuntimeForTests)
 
-    val localJsPlainObjectsIrRuntimePath: FileCollection = jsoIrRuntimeForTests
+        val localJsPlainObjectsIrRuntimePath: FileCollection = jsoIrRuntimeForTests
 
-    doFirst {
-        systemProperty("jso.runtime.path", localJsPlainObjectsIrRuntimePath.asPath)
+        doFirst {
+            systemProperty("jso.runtime.path", localJsPlainObjectsIrRuntimePath.asPath)
+        }
     }
-}
 
-val generateTests by generator("org.jetbrains.kotlinx.jspo.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
+}

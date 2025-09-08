@@ -29,3 +29,5 @@ fun test() {
     <!MISSING_DEPENDENCY_CLASS!>bar<!> <!MISSING_DEPENDENCY_CLASS!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.toString() }<!>
     <!MISSING_DEPENDENCY_CLASS!>bar<!> { <!MISSING_DEPENDENCY_CLASS!>some<!> -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral */

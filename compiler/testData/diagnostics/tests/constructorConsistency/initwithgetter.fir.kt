@@ -18,3 +18,6 @@ class My {
 
     val z = "1"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, equalityExpression, getter, ifExpression, init,
+integerLiteral, propertyDeclaration, stringLiteral, thisExpression */

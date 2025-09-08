@@ -23,3 +23,6 @@ actual class Member {
     actual val bar: String
         get() = ""
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

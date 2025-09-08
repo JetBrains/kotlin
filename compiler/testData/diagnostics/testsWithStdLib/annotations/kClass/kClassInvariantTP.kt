@@ -22,3 +22,5 @@ class MyClass3
 
 @Ann2(B::class)
 class MyClass4
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, primaryConstructor, propertyDeclaration */

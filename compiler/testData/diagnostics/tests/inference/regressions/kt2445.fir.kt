@@ -10,3 +10,5 @@ fun main() {
 }
 
 fun <R> test(callback: (R) -> Unit):Unit = callback(null!!)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

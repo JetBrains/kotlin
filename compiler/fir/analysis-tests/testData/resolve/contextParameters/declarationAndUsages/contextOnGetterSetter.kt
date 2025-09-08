@@ -16,3 +16,5 @@ var <!REDECLARATION!>b<!>: String
     get() = ""
     <!UNSUPPORTED!>context(c: A)<!>
     set(value) { }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, propertyDeclaration, setter, stringLiteral */

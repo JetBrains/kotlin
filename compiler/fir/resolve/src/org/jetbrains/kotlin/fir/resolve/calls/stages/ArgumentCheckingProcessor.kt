@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -51,8 +54,8 @@ internal object ArgumentCheckingProcessor {
          * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
          */
         val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
-    ) {
-        val session: FirSession
+    ) : SessionHolder {
+        override val session: FirSession
             get() = context.session
 
         fun reportDiagnostic(diagnostic: ResolutionDiagnostic) {
@@ -100,11 +103,13 @@ internal object ArgumentCheckingProcessor {
         atom: ConeResolutionAtomWithPostponedChild,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
-        returnTypeVariable: ConeTypeVariableForLambdaReturnType?
+        returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
+        anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ): ConeResolvedLambdaAtom {
         val argumentContext = ArgumentContext(
             candidate, csBuilder, expectedType, sink = null,
-            context, isReceiver = false, isDispatch = false
+            context, isReceiver = false, isDispatch = false,
+            anonymousFunctionIfReturnExpression,
         )
         return argumentContext.createResolvedLambdaAtom(atom, duringCompletion = true, returnTypeVariable)
     }
@@ -174,6 +179,13 @@ internal object ArgumentCheckingProcessor {
         resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
     }
 
+    private fun ArgumentContext.createArgumentConstraintPosition(atom: ConeResolutionAtom): ArgumentConstraintPosition<*> {
+        return when (val containingLambda = anonymousFunctionIfReturnExpression) {
+            null -> ConeArgumentConstraintPosition(atom.expression)
+            else -> ConeRegularLambdaArgumentConstraintPosition(containingLambda, atom.expression)
+        }
+    }
+
     private fun ArgumentContext.resolvePlainArgumentType(
         atom: ConeResolutionAtom,
         argumentType: ConeKotlinType,
@@ -183,7 +195,7 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.expression
         val position = when {
             isReceiver -> ConeReceiverConstraintPosition(expression, sourceForReceiver)
-            else -> ConeArgumentConstraintPosition(expression)
+            else -> createArgumentConstraintPosition(atom)
         }
 
         val capturedType = prepareCapturedType(argumentType, context.session)
@@ -212,7 +224,7 @@ internal object ArgumentCheckingProcessor {
         // Currently, we only apply conversions for arguments, not lambda's return expressions
         if (anonymousFunctionIfReturnExpression != null) {
             // For latest LV it's equal to `return false`
-            return !session.languageVersionSettings.supportsFeature(LanguageFeature.DoNotRunSuspendConversionForLambdaReturnStatements)
+            return !LanguageFeature.DoNotRunSuspendConversionForLambdaReturnStatements.isEnabled()
         }
         return true
     }
@@ -321,7 +333,10 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.preprocessCallableReference(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.callableReferenceExpression
         val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(expression)
-        val postponedAtom = ConeResolvedCallableReferenceAtom(expression, expectedType, lhs, context.session)
+        val postponedAtom = ConeResolvedCallableReferenceAtom(
+            expression, expectedType, lhs, context.session,
+            anonymousFunctionIfReturnExpression,
+        )
         atom.setPostponedSubAtom(postponedAtom)
         candidate.addPostponedAtom(postponedAtom)
     }
@@ -329,7 +344,7 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.preprocessSimpleNameReferenceForContextSensitiveResolution(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.expression as FirPropertyAccessExpression
 
-        if (expectedType == null || !session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) {
+        if (expectedType == null || !LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) {
             atom.useFallbackSubAtom()
             resolveArgumentExpression(atom.subAtom!!)
             return
@@ -368,7 +383,12 @@ internal object ArgumentCheckingProcessor {
         if (explicitTypeArgument != null && explicitTypeArgument.typeArguments.isEmpty()) {
             return false
         }
-        ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
+        ConeLambdaWithTypeVariableAsExpectedTypeAtom(
+            atom.lambdaExpression,
+            expectedType,
+            candidate,
+            anonymousFunctionIfReturnExpression,
+        ).also {
             candidate.addPostponedAtom(it)
             atom.setPostponedSubAtom(it)
         }
@@ -409,7 +429,7 @@ internal object ArgumentCheckingProcessor {
                 contextParameters = resolvedArgument.contextParameterTypes,
             )
 
-            val position = ConeArgumentConstraintPosition(resolvedArgument.anonymousFunction)
+            val position = createArgumentConstraintPosition(resolvedArgument)
             if (duringCompletion) {
                 csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
             } else {

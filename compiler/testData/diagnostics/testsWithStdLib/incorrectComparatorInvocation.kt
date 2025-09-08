@@ -4,3 +4,5 @@
 fun main(args: Array<String>) {
     val comparator = <!FUNCTION_CALL_EXPECTED!><!NO_VALUE_FOR_PARAMETER!>Comparator<!><Long?><!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

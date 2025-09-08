@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,8 +64,8 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         path.walkTopDown {
             val sourceFile = KtIoFileSourceFile(it)
-            val (code, linesMapping) = with(it.inputStream().reader(Charsets.UTF_8)) {
-                this.readSourceFileWithMapping()
+            val (code, linesMapping) = it.inputStream().reader(Charsets.UTF_8).use {
+                it.readSourceFileWithMapping()
             }
             time += measureNanoTime {
                 generateFirFromLightTree(onlyLightTree, lightTreeConverter, code, sourceFile, linesMapping)

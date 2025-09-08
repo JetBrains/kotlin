@@ -25,3 +25,4 @@ fun test() {
     baz(0, "", <!ARGUMENT_TYPE_MISMATCH!>false<!>)
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral, vararg */

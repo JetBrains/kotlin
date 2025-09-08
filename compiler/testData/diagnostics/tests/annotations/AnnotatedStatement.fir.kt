@@ -51,3 +51,7 @@ fun foo(list: MutableList<Int>, arr: Array<String>) {
 }
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, break, forLoop, functionDeclaration,
+ifExpression, integerLiteral, javaType, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral, whenExpression,
+whileLoop */

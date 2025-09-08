@@ -207,6 +207,7 @@ internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean)
     else
         this.copyOf()
 
+@IgnorableReturnValue
 @PublishedApi
 internal actual fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
@@ -215,6 +216,7 @@ internal actual fun checkIndexOverflow(index: Int): Int {
     return index
 }
 
+@IgnorableReturnValue
 @PublishedApi
 internal actual fun checkCountOverflow(count: Int): Int {
     if (count < 0) {

@@ -13,3 +13,5 @@ fun test(a: A) {
     a.foo()
     a.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

@@ -54,3 +54,7 @@ fun usage(a: Intersection) {
     a.getB("context")
     a.bar("context", "receiver", "value")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, getter, interfaceDeclaration, javaFunction, javaType, lambdaLiteral, nullableType,
+override, propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

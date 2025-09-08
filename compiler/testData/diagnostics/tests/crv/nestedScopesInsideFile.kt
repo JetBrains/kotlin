@@ -5,12 +5,32 @@
 
 fun localFun() {
     fun local(): Int = 123
-    local()     //unused
+    @IgnorableReturnValue fun localIgnorable() = ""
+    local()
+    localIgnorable()
 }
 
-class A {
-    fun foo(): Int = 123
-    fun test() {
-        foo()               //unused
+class Outer {
+    fun foo(): String {
+        class Inner {
+            @IgnorableReturnValue fun bar() {
+                fun local() = ""
+                local()
+            }
+            fun inner() = ""
+        }
+        Inner()
+        Inner().inner()
+        Inner().bar()
+        return ""
     }
+
+    fun bar(): String = ""
 }
+
+fun main() {
+    Outer().foo()
+    Outer().bar()
+}
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, integerLiteral, localFunction */

@@ -52,3 +52,6 @@ fun foo() {
         val base = find(externalsMap.keys) { isAncestor(it, file, false) }
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, javaFunction, javaType, lambdaLiteral,
+localFunction, localProperty, nullableType, propertyDeclaration, samConversion */

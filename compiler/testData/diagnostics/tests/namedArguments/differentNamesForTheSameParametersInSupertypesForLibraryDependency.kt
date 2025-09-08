@@ -15,3 +15,5 @@ interface B {
 
 // K1 reports DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES here, hence it's not a problem that K2 also reports that diagnostic
 <!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface C<!> : A, B
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration */

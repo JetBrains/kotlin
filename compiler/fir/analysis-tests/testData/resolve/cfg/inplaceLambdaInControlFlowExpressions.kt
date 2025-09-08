@@ -24,3 +24,6 @@ fun test_2() {
 fun test_3() {
     val x: String = run { materialize() }!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression, typeParameter */

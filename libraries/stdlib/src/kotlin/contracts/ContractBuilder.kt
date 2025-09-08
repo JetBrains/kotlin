@@ -23,6 +23,20 @@ import kotlin.internal.InlineOnly
 public annotation class ExperimentalContracts
 
 /**
+ * This marker distinguishes the experimental extended contract declaration API and is used to opt-in for that feature
+ * when declaring extended contracts of user functions.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalExtendedContracts` must be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalExtendedContracts::class)`,
+ * or by using the compiler argument `-opt-in=kotlin.contracts.ExperimentalExtendedContracts`.
+ */
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.2")
+@RequiresOptIn
+@MustBeDocumented
+public annotation class ExperimentalExtendedContracts
+
+/**
  * Provides a scope, where the functions of the contract DSL, such as [returns], [callsInPlace], etc.,
  * can be used to describe the contract of a function.
  *
@@ -41,6 +55,7 @@ public interface ContractBuilder {
      *
      */
     // @sample samples.contracts.returnsContract
+    @IgnorableReturnValue
     @ContractsDsl public fun returns(): Returns
 
     /**
@@ -54,6 +69,7 @@ public interface ContractBuilder {
     // @sample samples.contracts.returnsTrueContract
     // @sample samples.contracts.returnsFalseContract
     // @sample samples.contracts.returnsNullContract
+    @IgnorableReturnValue
     @ContractsDsl public fun returns(value: Any?): Returns
 
     /**
@@ -63,6 +79,7 @@ public interface ContractBuilder {
      *
      */
     // @sample samples.contracts.returnsNotNullContract
+    @IgnorableReturnValue
     @ContractsDsl public fun returnsNotNull(): ReturnsNotNull
 
     /**
@@ -82,7 +99,32 @@ public interface ContractBuilder {
     * @sample samples.contracts.callsInPlaceExactlyOnceContract
     * @sample samples.contracts.callsInPlaceUnknownContract
     */
+    @IgnorableReturnValue
     @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
+
+    /**
+     * Specifies the effect that will be observed if the condition passed as a receiver argument holds.
+     *
+     * Only [ReturnsNotNull] effect is supported for now.
+     *
+     * Note: the receiver can accept only a subset of boolean expressions,
+     * where a function parameter or receiver (`this`) undergoes
+     * - null-checks (`== null`, `!= null`);
+     * - instance-checks (`is`, `!is`);
+     */
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public infix fun Boolean.implies(value: ReturnsNotNull)
+
+    /**
+     * Specifies the condition, passed as a receiver argument, that is guaranteed to be true in the body of a function parameter [lambda].
+     *
+     * Note: the receiver accepts only a restricted boolean expression representing the condition, where the expression may include
+     * only the boolean parameter of the function defining the contract, or its negation.
+     */
+    @ExperimentalExtendedContracts
+    @ContractsDsl
+    public infix fun <R> Boolean.holdsIn(lambda: Function<R>): HoldsIn
 }
 
 /**

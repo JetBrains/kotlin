@@ -23,3 +23,6 @@ fun Int.main() {
 
     checkSubtype<KFunction1<A, A.Inner>>(y)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

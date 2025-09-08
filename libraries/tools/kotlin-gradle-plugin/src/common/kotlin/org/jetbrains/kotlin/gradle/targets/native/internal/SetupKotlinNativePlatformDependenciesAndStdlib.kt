@@ -43,22 +43,23 @@ internal val SetupKotlinNativePlatformDependenciesAndStdlib = KotlinProjectSetup
     launch { kotlin.excludeStdlibFromNativeSourceSetDependencies() }
 }
 
-
-private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
-    stdlib: FileCollection,
-) {
-
-    val commonizerTarget = commonizerTarget.await() ?: return
+internal suspend fun AbstractKotlinNativeCompilation.retrievePlatformDependencies(): FileCollection {
+    val commonizerTarget = commonizerTarget.await() ?: return project.files()
     val nativeBundleBuildService = KotlinNativeBundleBuildService.registerIfAbsent(project)
     val nativeDependency = KotlinNativeBundleBuildService.getNativeDistributionDependencies(
         project,
         commonizerTarget,
         nativeBundleBuildService
     )
+    return nativeDependency
+}
 
+private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDependencies(
+    stdlib: FileCollection,
+) {
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
-        nativeDependency,
+        retrievePlatformDependencies(),
         compileDependencyFiles
     )
 

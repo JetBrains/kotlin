@@ -8,3 +8,5 @@ enum class E {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

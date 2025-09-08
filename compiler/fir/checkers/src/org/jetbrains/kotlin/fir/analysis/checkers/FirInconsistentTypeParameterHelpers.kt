@@ -13,19 +13,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkInconsistentTypeParameters(
-    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
+    firTypeRefClasses: List<Pair<FirTypeRef?, FirClassSymbol<*>>>,
     source: KtSourceElement?,
     isValues: Boolean,
 ) {
-    val result = buildDeepSubstitutionMultimap(firTypeRefClasses, context)
+    val result = buildDeepSubstitutionMultimap(firTypeRefClasses)
     for ((typeParameterSymbol, typeAndProjections) in result) {
         val projections = typeAndProjections.projections
         if (projections.size > 1) {
@@ -38,16 +37,14 @@ fun checkInconsistentTypeParameters(
                 typeAndProjections.classSymbol,
                 // Report `Any?` instead of `*` for star projections because diagnostics renderer doesn't support type projections
                 // Moreover, K1 report `Any?` instead of `*`
-                projections.map { it.type ?: StandardTypes.NullableAny },
-                context
-            )
+                projections.map { it.type ?: StandardTypes.NullableAny })
         }
     }
 }
 
+context(context: CheckerContext)
 private fun buildDeepSubstitutionMultimap(
-    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
-    context: CheckerContext,
+    firTypeRefClasses: List<Pair<FirTypeRef?, FirClassSymbol<*>>>,
 ): Map<FirTypeParameterSymbol, ClassSymbolAndProjections> {
     val result = mutableMapOf<FirTypeParameterSymbol, ClassSymbolAndProjections>()
     val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
@@ -56,7 +53,11 @@ private fun buildDeepSubstitutionMultimap(
     val substitutor = FE10LikeConeSubstitutor(substitution, session)
     val visitedSupertypes = mutableSetOf<ConeKotlinType>()
 
-    fun fillInDeepSubstitutor(typeArguments: Array<out ConeTypeProjection>?, classSymbol: FirRegularClassSymbol, context: CheckerContext) {
+    context(context: CheckerContext)
+    fun fillInDeepSubstitutor(
+        typeArguments: Array<out ConeTypeProjection>?,
+        classSymbol: FirClassSymbol<*>
+    ) {
         if (typeArguments != null) {
             val typeParameterSymbols = classSymbol.typeParameterSymbols
             val count = minOf(typeArguments.size, typeParameterSymbols.size)
@@ -89,23 +90,23 @@ private fun buildDeepSubstitutionMultimap(
         }
 
         for (superTypeRef in classSymbol.resolvedSuperTypeRefs) {
-            val fullyExpandedType = superTypeRef.coneType.fullyExpandedType(session)
+            val fullyExpandedType = superTypeRef.coneType.fullyExpandedType()
             if (!visitedSupertypes.add(fullyExpandedType)) continue
 
-            val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
+            val superClassSymbol = fullyExpandedType.toRegularClassSymbol()
             if (!fullyExpandedType.isEnum && superClassSymbol != null) {
-                fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol, context)
+                fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol)
             }
         }
     }
 
     for ((typeRef, regularClassSymbol) in firTypeRefClasses) {
-        fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType(session)?.typeArguments, regularClassSymbol, context)
+        fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType()?.typeArguments, regularClassSymbol)
     }
     return result
 }
 
 private data class ClassSymbolAndProjections(
-    val classSymbol: FirRegularClassSymbol,
+    val classSymbol: FirClassSymbol<*>,
     val projections: MutableList<ConeTypeProjection>
 )

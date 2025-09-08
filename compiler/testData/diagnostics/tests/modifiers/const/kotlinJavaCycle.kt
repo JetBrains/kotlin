@@ -19,3 +19,6 @@ class Baz {
         const val BAZ = Bar.BAR + 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, const, integerLiteral, javaProperty,
+objectDeclaration, propertyDeclaration */

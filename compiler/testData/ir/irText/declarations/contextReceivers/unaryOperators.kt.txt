@@ -29,7 +29,7 @@ data class Result {
     when {
       other !is Result -> return false
     }
-    val tmp_0: Result = other as Result
+    val tmp_0: Result = other /*as Result */
     when {
       EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
@@ -111,4 +111,3 @@ operator fun Result.unaryPlus(): Result {
     else -> <this>.<get-i>()
   })
 }
-

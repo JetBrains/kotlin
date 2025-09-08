@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 // FILE: GenericTypeAnnotationNotNull.java
 import org.jetbrains.annotations.NotNull;
@@ -71,3 +71,6 @@ fun genericTypeAnnotationCheck(
 }
 
 class KotlinNullableWithDnn<T>: GenericTypeAnnotationNullable<T&Any>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, flexibleType, functionDeclaration, javaFunction, javaType,
+localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

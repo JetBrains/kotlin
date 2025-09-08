@@ -12,3 +12,5 @@ fun foo(x: String) : String {
         return x
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, tryExpression */

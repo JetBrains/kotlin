@@ -18,3 +18,6 @@ fun <OT> pcla(lambda: (TypeVariableOwner<OT>) -> Unit): OT = null!!
 class ScopeOwner {
     operator fun plus(other: ScopeOwner): ScopeOwner = this
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, functionDeclaration,
+functionalType, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, thisExpression, typeParameter */

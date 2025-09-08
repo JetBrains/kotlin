@@ -25,3 +25,5 @@ class Test {
 fun main(x: B<*>) {
     Test.foo(x)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, starProjection */

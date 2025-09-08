@@ -9,3 +9,5 @@ fun bar(f: (Boolean) -> Unit) {}
 fun test() {
     bar(::<!NONE_APPLICABLE!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType */

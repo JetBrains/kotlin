@@ -25,3 +25,6 @@ open class A(protected open val foo: Base) {
 class B(override val foo: Derived): A(foo) {
     override fun bar(): Derived = Derived()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, override, primaryConstructor,
+propertyDeclaration, whenExpression, whenWithSubject */

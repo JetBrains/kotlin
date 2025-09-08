@@ -17,3 +17,6 @@ fun findComparisonNegationOperators(x: PyTokenTypes?): Pair<String, String>? {
     return comparisonStrings.getValue(x) to
             comparisonStrings.getValue(x)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, nullableType, propertyDeclaration,
+stringLiteral */

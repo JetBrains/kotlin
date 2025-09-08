@@ -29,3 +29,5 @@ fun test() {
     MyDemo1().<!INVISIBLE_MEMBER!>demo<!>()
     MyDemo2().<!INVISIBLE_MEMBER!>demo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, superExpression */

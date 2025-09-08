@@ -48,3 +48,5 @@ fun main(a: A) {
     a.foo3(a.bar3().get())
     B(a.bar3().get())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, outProjection */

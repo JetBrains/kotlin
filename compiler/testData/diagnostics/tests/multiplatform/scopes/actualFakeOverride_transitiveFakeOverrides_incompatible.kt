@@ -17,3 +17,6 @@ interface A : B {
 interface B {
     fun foo(param: Int = 3) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+override */

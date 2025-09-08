@@ -107,3 +107,6 @@ class C {
     val Int.extensionVsContextReceiver: Int get() = 0
     context(Int) val extensionVsContextReceiver: String get() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, nullableType, propertyDeclaration,
+propertyDeclarationWithContext, propertyWithExtensionReceiver, stringLiteral, typeConstraint, typeParameter */

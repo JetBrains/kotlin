@@ -15,3 +15,6 @@ open class OpenApiKlassInheritor: <!OPT_IN_USAGE("ApiMarker; This declaration ne
 fun check(klass: <!OPT_IN_USAGE("ApiMarker; This declaration needs opt-in. Its usage should be marked with '@ApiMarker' or '@OptIn(ApiMarker::class)'")!>OpenApiKlass<!>){}
 
 class FinalImplA: <!OPT_IN_TO_INHERITANCE("ApiMarker; This class or interface requires opt-in to be implemented. Its usage should be marked with '@ApiMarker', '@OptIn(ApiMarker::class)' or '@SubclassOptInRequired(ApiMarker::class)'")!>OpenKlass<!>()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+functionDeclaration */

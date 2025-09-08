@@ -16,3 +16,6 @@ class Refiner {
 
     private fun TypeConstructor.foo(): Boolean = true
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, typeConstraint, typeParameter */

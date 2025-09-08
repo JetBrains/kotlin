@@ -15,3 +15,6 @@ expect class Foo(
 expect annotation class Ann(val s: String)
 
 expect value class ValueClass(val s: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, expect, primaryConstructor, propertyDeclaration,
+secondaryConstructor, value */

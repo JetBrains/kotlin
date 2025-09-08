@@ -62,3 +62,6 @@ class D extends B {
     @Override
     int bar(@NotNull String x, @NotNull String y);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, javaType,
+localProperty, nullableType, override, propertyDeclaration, stringLiteral */

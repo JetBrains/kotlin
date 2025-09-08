@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.isInlineParameter
+import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -53,87 +53,21 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 if (!rootCallee.isInline)
                     return super.visitCall(expression, data)
 
-                val inlineLambdas = mutableListOf<IrFunction>()
+                val inlinableLambdas = mutableListOf<IrFunction>()
                 for (index in expression.arguments.indices) {
                     val argument = expression.arguments[index]
                     val inlineLambda = when (argument) {
-                       is IrFunctionExpression -> argument.function
-                       is IrRichPropertyReference -> argument.getterFunction
-                       is IrRichFunctionReference -> argument.invokeFunction
-                       else -> null
+                        is IrRichPropertyReference -> argument.getterFunction
+                        is IrRichFunctionReference -> argument.invokeFunction
+                        else -> null
                     }?.takeIf { rootCallee.parameters[index].isInlineParameter() }
                     if (inlineLambda == null)
                         expression.arguments[index] = argument?.transform(this, data)
                     else
-                        inlineLambdas.add(inlineLambda)
+                        inlinableLambdas.add(inlineLambda)
                 }
 
-                val localClasses = mutableSetOf<IrClass>()
-                val localFunctions = mutableSetOf<IrFunction>()
-                val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
-                val transformer = this
-                for (lambda in inlineLambdas) {
-                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitClass(declaration: IrClass) {
-                            declaration.transformChildren(transformer, declaration)
-
-                            localClasses.add(declaration)
-                        }
-
-                        override fun visitFunctionExpression(expression: IrFunctionExpression) {
-                            expression.function.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this)  }
-                            expression.invokeFunction.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this)  }
-                            expression.getterFunction.acceptChildrenVoid(this)
-                            expression.setterFunction?.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitFunction(declaration: IrFunction) {
-                            declaration.transformChildren(transformer, declaration)
-
-                            localFunctions.add(declaration)
-                        }
-
-                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
-                            // Do not extract local delegates from the inline function.
-                            // Doing that can lead to inconsistent IR. Local delegated property consists of two elements: property and
-                            // accessors to it. Inside the accessor we have a reference to the property.
-                            // `LocalClassesInInlineLambdasLowering` can only extract the accessor out of inline lambda, leaving the
-                            // property in place. Because of this, we have not entirely correct reference.
-                            return
-                        }
-
-                        override fun visitCall(expression: IrCall) {
-                            val callee = expression.symbol.owner
-                            if (!callee.isInline) {
-                                expression.acceptChildrenVoid(this)
-                                return
-                            }
-
-                            expression.arguments.zip(callee.parameters).forEach { (argument, parameter) ->
-                                // Skip adapted function references and inline lambdas - they will be inlined later.
-                                val shouldSkip = argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
-                                if (parameter.isInlineParameter() && shouldSkip)
-                                    adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
-                                else
-                                    argument?.acceptVoid(this)
-                            }
-                        }
-                    })
-                }
-
-                if (localClasses.isEmpty() && localFunctions.isEmpty())
+                if (inlinableLambdas.isEmpty())
                     return expression
 
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
@@ -143,33 +77,121 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     context,
                     visibilityPolicy = object : VisibilityPolicy {
                         /**
-                         * Local classes extracted from inline lambdas are not yet lifted, so their visibility should remain local.
-                         * They will be visited for the second time _after_ function inlining, and only then will they be lifted to
-                         * the nearest declaration container by [LocalClassPopupLowering],
+                         * Local classes and local functions extracted from inline lambdas are not yet lifted,
+                         * so their visibility should remain unchanged. They will be visited for the second time on the second compilation
+                         * stage, and only then will they be lifted to the nearest declaration container by [LocalDeclarationPopupLowering],
                          * so that's when we will change their visibility to private.
                          */
-                        override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-                            declaration.visibility
+                        override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean) = declaration.visibility
+                        override fun forSimpleFunction(declaration: IrSimpleFunction, ownerIsLocal: Boolean) = declaration.visibility
                     },
                     // Lambdas cannot introduce new type parameters to the scope, which means that all the captured type parameters
                     // are also present in the inline lambda's parent declaration,
                     // which we will extract the local class to.
-                    remapTypesInExtractedLocalDeclarations = false,
-                )
-                    .lower(irBlock, container, data, localClasses, adaptedFunctions)
-                irBlock.statements.addAll(0, localClasses)
+                    remapCapturedTypesInExtractedLocalDeclarations = false,
+                ).lower(irBlock = irBlock, container = container, closestParent = data)
 
-                for (lambda in inlineLambdas) {
+                val localDeclarationsToPopUp = mutableListOf<IrDeclaration>()
+
+                val outerTransformer = this
+                for (lambda in inlinableLambdas) {
                     lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
-                        override fun visitClass(declaration: IrClass): IrStatement {
-                            return IrCompositeImpl(
-                                declaration.startOffset, declaration.endOffset,
-                                context.irBuiltIns.unitType
-                            )
+                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+                            /*
+                             * Keep the `delegate` variable separately from the rest of the local delegated property.
+                             * Extract the local delegated property but keep the variable in place.
+                             *
+                             * Illustrative example:
+                             *
+                             * // before the transformation:
+                             * IrCall {
+                             *     arguments[N] = <inlinable-lambda> {
+                             *         ...
+                             *         IrLocalDelegatedProperty {
+                             *             delegate = IrVariableImpl {
+                             *                 symbol = X,
+                             *                 initializer = ...,
+                             *             }
+                             *             getter = IrFunctionImpl {
+                             *                 body = // reads the state of the variable with the symbol 'X'
+                             *             }
+                             *             setter = IrFunctionImpl {
+                             *                 body = // modifies the state of the variable with the symbol 'X'
+                             *             }
+                             *         }
+                             *         ...
+                             *     }
+                             * }
+                             *
+                             * // after the transformation:
+                             * IrLocalDelegatedProperty {
+                             *     delegate = null
+                             *     getter = IrFunctionImpl {
+                             *         body = // reads the state of the variable with the symbol 'X'
+                             *     }
+                             *     setter = IrFunctionImpl {
+                             *         body = // modifies the state of the variable with the symbol 'X'
+                             *     }
+                             * }
+                             * ...
+                             * IrCall {
+                             *     arguments[N] = <inlinable-lambda> {
+                             *         ...
+                             *         IrVariableImpl {
+                             *             symbol = X,
+                             *             initializer = ...,
+                             *         }
+                             *         ...
+                             *     }
+                             * }
+                             */
+                            val delegate = declaration.delegate
+                                ?: error("Local delegated property ${declaration.render()} has not delegate")
+
+                            declaration.delegate = null
+                            localDeclarationsToPopUp += declaration
+
+                            return delegate
                         }
+
+                        override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                            expression.boundValues.forEach { it.transformStatement(this) }
+                            expression.invokeFunction.transformChildrenVoid(this)
+                            return expression
+                        }
+
+                        override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
+                            expression.boundValues.forEach { it.transformStatement(this) }
+                            expression.getterFunction.transformChildrenVoid(this)
+                            expression.setterFunction?.transformChildrenVoid(this)
+                            return expression
+                        }
+
+                        override fun visitClass(declaration: IrClass): IrStatement = visitSimpleFunctionOrClass(declaration)
+
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
+                            visitSimpleFunctionOrClass(declaration)
+
+                        private fun visitSimpleFunctionOrClass(declaration: IrDeclaration): IrStatement {
+                            // Recursive call to outer transformer for handling nested inline lambdas
+                            declaration.transformChildren(outerTransformer, declaration as IrDeclarationParent)
+                            return if (declaration.isOriginallyLocalDeclaration) {
+                                localDeclarationsToPopUp += declaration
+                                IrCompositeImpl(
+                                    declaration.startOffset, declaration.endOffset,
+                                    context.irBuiltIns.unitType
+                                )
+                            } else declaration
+                        }
+
                     })
                 }
-                localClasses.forEach { it.setDeclarationsParent(data) }
+
+                if (localDeclarationsToPopUp.isEmpty())
+                    return expression
+
+                irBlock.statements.addAll(0, localDeclarationsToPopUp)
+                localDeclarationsToPopUp.forEach { it.setDeclarationsParent(data) }
 
                 return irBlock
             }

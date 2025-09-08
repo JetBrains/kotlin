@@ -320,7 +320,7 @@ internal class OperatorExpressionGenerator(
         if (operandClassId == targetClassId) return eraseImplicitCast()
         val operandFirClass = session.getRegularClassSymbolByClassId(operandClassId)
             ?: error("No symbol for $operandClassId")
-        val conversionFirFunction = operandFirClass.unsubstitutedScope(c)
+        val conversionFirFunction = operandFirClass.unsubstitutedScope()
             .getFunctions(Name.identifier("to${targetType.lookupTag.classId.shortClassName.asString()}"))
             .singleOrNull()
             ?: error("No conversion function for $operandType ~> $targetType")

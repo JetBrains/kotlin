@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
@@ -76,6 +75,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS by key<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
 
+    val COMPILE_LONG_AS_BIGINT by key<Boolean>("compile Long as BigInt")
+
     val GENERATE_REGION_COMMENTS by key<Boolean>(
         "generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA"
     )
@@ -95,8 +96,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val GENERATE_INLINE_ANONYMOUS_FUNCTIONS by key<Boolean>("translate lambdas into in-line anonymous functions")
 
     val GENERATE_STRICT_IMPLICIT_EXPORT by key<Boolean>("enable strict implicitly exported entities types inside d.ts files")
-
-    val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
 
     val OPTIMIZE_GENERATED_JS by key<Boolean>("perform additional optimizations on the generated JS code")
 

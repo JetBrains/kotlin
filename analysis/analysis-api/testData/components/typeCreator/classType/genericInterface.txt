@@ -1,0 +1,4 @@
+CLASS_TYPE_BY_CLASS_ID
+   KaType: A<out kotlin.String>
+CLASS_TYPE_BY_SYMBOL
+   KaType: A<out kotlin.String>

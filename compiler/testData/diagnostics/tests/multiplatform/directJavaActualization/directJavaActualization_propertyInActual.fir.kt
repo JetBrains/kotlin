@@ -60,3 +60,5 @@ open class Base {
     @Override public int getVarOverriddenGetterAndSetter_missingBothAnnotations() { return 0; }
     @Override public void setVarOverriddenGetterAndSetter_missingBothAnnotations(int value) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, integerLiteral, propertyDeclaration */

@@ -1,4 +1,4 @@
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // FILE: lib.kt
 @file:JsModule("lib")
 package foo

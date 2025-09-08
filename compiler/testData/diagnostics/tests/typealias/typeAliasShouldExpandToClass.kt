@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
 typealias Dyn = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS, UNSUPPORTED!>dynamic<!>
@@ -18,3 +17,6 @@ class Outer {
     typealias ToTypeParam3<T1, T2> = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>ToTypeParam2<T1><!>
     typealias ToTypeParam4 = ToTypeParam1<Any>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionalType, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

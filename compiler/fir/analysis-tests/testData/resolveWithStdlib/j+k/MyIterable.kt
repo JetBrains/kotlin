@@ -15,3 +15,6 @@ fun test(some: Iterable<String>) {
     val it = some.iterator()
     val split = some.spliterator()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaType, localProperty,
+propertyDeclaration */

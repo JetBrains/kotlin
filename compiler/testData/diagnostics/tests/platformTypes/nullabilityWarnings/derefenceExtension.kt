@@ -45,3 +45,6 @@ fun test() {
 
 fun J.foo() {}
 fun J?.bar() {}
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty, javaType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration */

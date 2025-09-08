@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("project-tests-convention")
 }
 
 kotlin {
@@ -15,11 +16,10 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
-    testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
     testImplementation(gradleKotlinDsl())
@@ -30,8 +30,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = false) {
-    workingDir = projectDir
+projectTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        workingDir = projectDir
+    }
 }
 
 runtimeJar()

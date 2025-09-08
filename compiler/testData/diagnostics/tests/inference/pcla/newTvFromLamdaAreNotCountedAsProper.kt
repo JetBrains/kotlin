@@ -23,3 +23,7 @@ fun main(x: List<String>) {
         yield(languages[0].length)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, out, propertyDeclaration, suspend, typeConstraint, typeParameter,
+typeWithExtension */

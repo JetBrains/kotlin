@@ -20,3 +20,6 @@ class A(val a: A) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, primaryConstructor, propertyDeclaration,
+tailrec, thisExpression */

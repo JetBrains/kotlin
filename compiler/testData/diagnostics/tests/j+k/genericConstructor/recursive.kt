@@ -10,3 +10,5 @@ public class C {
 // FILE: main.kt
 
 fun foo() = C<!NO_VALUE_FOR_PARAMETER!>()<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

@@ -37,3 +37,6 @@ fun test2(ab_c: a.b.c) {
     ab_c.<!UNRESOLVED_REFERENCE!>a_bc<!>()
     ab_c.ab_c()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, nullableType,
+propertyDeclaration, typeParameter */

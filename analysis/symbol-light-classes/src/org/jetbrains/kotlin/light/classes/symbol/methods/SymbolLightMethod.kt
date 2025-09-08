@@ -40,32 +40,35 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    protected val argumentsSkipMask: BitSet?,
+    protected val valueParameterPickMask: BitSet?,
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
+    isJvmExposedBoxed: Boolean,
 ) : SymbolLightMethodBase(
-    lightMemberOrigin,
-    containingClass,
-    methodIndex,
+    lightMemberOrigin = lightMemberOrigin,
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    isJvmExposedBoxed = isJvmExposedBoxed,
 ) {
     internal constructor(
-        ktAnalysisSession: KaSession,
         functionSymbol: FType,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassBase,
         methodIndex: Int,
-        argumentsSkipMask: BitSet? = null,
+        isJvmExposedBoxed: Boolean,
+        valueParameterPickMask: BitSet? = null,
     ) : this(
-        functionSymbolPointer = with(ktAnalysisSession) {
+        functionSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             functionSymbol.createPointer() as KaSymbolPointer<FType>
         },
         lightMemberOrigin = lightMemberOrigin,
         containingClass = containingClass,
         methodIndex = methodIndex,
-        argumentsSkipMask = argumentsSkipMask,
+        valueParameterPickMask = valueParameterPickMask,
         functionDeclaration = functionSymbol.sourcePsiSafe(),
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
+        isJvmExposedBoxed = isJvmExposedBoxed,
     )
 
     protected inline fun <T> withFunctionSymbol(crossinline action: KaSession.(FType) -> T): T =
@@ -82,11 +85,10 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
 
             withFunctionSymbol { functionSymbol ->
                 functionSymbol.valueParameters.mapIndexed { index, parameter ->
-                    val needToSkip = argumentsSkipMask?.get(index) == true
+                    val needToSkip = valueParameterPickMask?.get(index) == false
                     if (!needToSkip) {
                         builder.addParameter(
                             SymbolLightValueParameter(
-                                ktAnalysisSession = this,
                                 parameterSymbol = parameter,
                                 containingMethod = this@SymbolLightMethod,
                             )
@@ -138,10 +140,12 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightMethod<*> ||
-            other.methodIndex != methodIndex ||
+        if (other == null ||
+            other::class != this::class ||
+            (other as SymbolLightMethod<*>).methodIndex != methodIndex ||
+            other.isJvmExposedBoxed != isJvmExposedBoxed ||
             other.ktModule != ktModule ||
-            other.argumentsSkipMask != argumentsSkipMask
+            other.valueParameterPickMask != valueParameterPickMask
         ) return false
 
         if (functionDeclaration != null || other.functionDeclaration != null) {

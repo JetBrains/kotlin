@@ -27,3 +27,6 @@ fun main() {
     val d = b.attr
     d {}      // no error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, localProperty,
+operator, propertyDeclaration, propertyWithExtensionReceiver, typeWithExtension */

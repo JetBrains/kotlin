@@ -28,3 +28,7 @@ fun failingSmartCastInWhen(x: Any, y: String) {
         y -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, comparisonExpression, equalityExpression, functionDeclaration,
+guardCondition, integerLiteral, isExpression, lambdaLiteral, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

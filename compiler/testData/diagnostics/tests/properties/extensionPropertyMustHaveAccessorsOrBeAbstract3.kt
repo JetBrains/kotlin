@@ -11,3 +11,6 @@ var i: Int = TODO()
 
 var A.i: Int
     get() = 0
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, propertyDeclaration, propertyWithExtensionReceiver,
+thisExpression */

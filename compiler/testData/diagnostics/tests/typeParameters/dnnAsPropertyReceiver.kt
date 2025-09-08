@@ -9,3 +9,6 @@ interface Base {
 
     val <T : Number?> List<T & Any>.prop : T
 }
+
+/* GENERATED_FIR_TAGS: dnnType, getter, interfaceDeclaration, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression, typeConstraint, typeParameter */

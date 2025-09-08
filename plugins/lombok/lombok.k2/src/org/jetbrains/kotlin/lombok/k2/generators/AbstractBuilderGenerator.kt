@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
@@ -259,8 +260,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     @OptIn(SymbolInternals::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
+        val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
         return buildList {
-            val annotationSymbol = annotationClassId.toSymbol(session) as FirRegularClassSymbol
             val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
 
             if (allowedTargets.contains(KotlinTarget.CLASS)) {
@@ -291,8 +292,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         addSpecialBuilderMethods(builder, entitySymbol, builderSymbol, existingFunctionNames)
 
         val items = when (builderDeclaration) {
-            is FirClassLikeDeclaration -> entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
-            is FirConstructor -> builderDeclaration.valueParameters
+            is FirJavaClass -> {
+                if (entityJavaClass.isRecord) {
+                    entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
+                } else {
+                    entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
+                }
+            }
+            is FirJavaConstructor -> builderDeclaration.valueParameters
             else -> emptyList()
         }
         for (item in items) {

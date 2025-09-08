@@ -34,3 +34,6 @@ public @interface BenchmarkMode {
 
     Mode[] value();
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, enumEntry, expect, javaType, outProjection,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration, vararg */

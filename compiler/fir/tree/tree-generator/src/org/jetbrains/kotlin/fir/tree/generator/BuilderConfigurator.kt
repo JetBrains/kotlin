@@ -251,7 +251,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(errorProperty) {
             parents += variableBuilder
             parents += typeParametersOwnerBuilder
-            defaultFalse("isLocal")
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
         }
 
@@ -317,8 +316,36 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(stubReferenceType)
         }
 
+        builder(resolvedNamedReference, "FirResolvedNamedReferenceImpl") {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
+        builder(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
+        builder(resolvedErrorReference) {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
+        builder(resolvedCallableReference) {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
+        builder(delegateFieldReference) {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
+        builder(backingFieldReference) {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
+        builder(propertyWithExplicitBackingFieldResolvedNamedReference) {
+            defaultNull("resolvedSymbolOrigin")
+        }
+
         builder(resolvedTypeRef) {
-            defaultNull("delegatedTypeRef")
+            defaultNull("delegatedTypeRef", "resolvedSymbolOrigin")
             withCopy()
         }
 
@@ -353,6 +380,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(smartCastExpression) {
+            withCopy()
+        }
+
+        builder(inaccessibleReceiverExpression) {
+            withCopy()
         }
 
         builder(tryExpression) {
@@ -413,11 +445,13 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultNull("resolvedSymbolOrigin")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultNull("resolvedSymbolOrigin")
         }
 
 //        builder(safeCallExpression) {

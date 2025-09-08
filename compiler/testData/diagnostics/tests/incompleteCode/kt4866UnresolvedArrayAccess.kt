@@ -4,3 +4,5 @@
 fun test(i: Int, j: Int) {
     <!UNRESOLVED_REFERENCE!>foo<!>[i, j]
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

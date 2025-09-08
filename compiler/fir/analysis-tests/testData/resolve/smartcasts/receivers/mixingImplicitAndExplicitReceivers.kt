@@ -13,3 +13,6 @@ class Wrapper(val s: String?) {
 }
 
 <!CONFLICTING_OVERLOADS!>fun takeString(s: String)<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, thisExpression */

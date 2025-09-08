@@ -7,7 +7,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-bom</artifactId>
-    <version>2.2.255-SNAPSHOT</version>
+    <version>2.3.255-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->
@@ -50,8 +50,8 @@
         neither it is visible in the consumer project.
         -->
         <kotlin.version>${project.version}</kotlin.version>
-        <deploy-snapshot-repo>sonatype-nexus-staging</deploy-snapshot-repo>
-        <deploy-snapshot-url>https://oss.sonatype.org/content/repositories/snapshots/</deploy-snapshot-url>
+        <deploy-snapshot-repo>invalid-staging-repo</deploy-snapshot-repo>
+        <deploy-snapshot-url>invalid-snapshot-url</deploy-snapshot-url>
     </properties>
 
     <dependencyManagement>

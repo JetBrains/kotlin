@@ -49,7 +49,11 @@ public abstract interface SomeInterface /* SomeInterface*/ {
 
   public abstract void setMemberPropInExtension(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  setMemberPropInExtension(java.lang.String, int)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* SomeInterface.DefaultImpls*/ {
+    public static int getMemberPropInExtension(@org.jetbrains.annotations.NotNull() SomeInterface, @org.jetbrains.annotations.NotNull() java.lang.String);//  getMemberPropInExtension(SomeInterface, java.lang.String)
+
+    public static void setMemberPropInExtension(@org.jetbrains.annotations.NotNull() SomeInterface, @org.jetbrains.annotations.NotNull() java.lang.String, int);//  setMemberPropInExtension(SomeInterface, java.lang.String, int)
+  }
 }
 
 public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {

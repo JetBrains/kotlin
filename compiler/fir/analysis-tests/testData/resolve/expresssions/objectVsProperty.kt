@@ -11,3 +11,5 @@ fun bar() {
     val b = A
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, objectDeclaration, propertyDeclaration,
+stringLiteral */

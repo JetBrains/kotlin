@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+@file:OptIn(ExperimentalWasmJsInterop::class)
 
 package kotlin.js
 
@@ -46,6 +47,7 @@ private fun jsCatch(f: () -> Unit): JsAny? {
  * For a Dynamic value caught in JS, returns the corresponding [Throwable]
  * if it was thrown from Kotlin, or null otherwise.
  */
+@ExperimentalWasmJsInterop
 public fun JsAny.toThrowableOrNull(): Throwable? {
     val thisAny: Any = this
     if (thisAny is Throwable) return thisAny

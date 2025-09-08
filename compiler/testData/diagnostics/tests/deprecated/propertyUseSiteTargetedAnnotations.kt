@@ -31,3 +31,7 @@ fun literals() {
     PropertyHolder::withGetter
     PropertyHolder::withSetter
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, assignment, callableReference, classDeclaration, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, stringLiteral */

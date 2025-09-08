@@ -33,3 +33,6 @@ actual <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class B<!> : ExtensionBase {
     }
     <!NOTHING_TO_OVERRIDE!>override<!> val a: String = ""
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, funWithExtensionReceiver, functionDeclaration, getter,
+interfaceDeclaration, override, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

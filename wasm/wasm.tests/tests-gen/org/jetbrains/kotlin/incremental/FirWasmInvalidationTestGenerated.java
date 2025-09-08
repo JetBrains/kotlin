@@ -20,6 +20,18 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidationTest {
   @Test
+  @TestMetadata("abstractClassWithJsExport")
+  public void testAbstractClassWithJsExport() {
+    runTest("js/js.translator/testData/incremental/invalidation/abstractClassWithJsExport/");
+  }
+
+  @Test
+  @TestMetadata("addJsFunCall")
+  public void testAddJsFunCall() {
+    runTest("js/js.translator/testData/incremental/invalidation/addJsFunCall/");
+  }
+
+  @Test
   @TestMetadata("addUpdateRemoveDependentFile")
   public void testAddUpdateRemoveDependentFile() {
     runTest("js/js.translator/testData/incremental/invalidation/addUpdateRemoveDependentFile/");
@@ -55,6 +67,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("circleInlineImportsUpdateWithIntraModuleInliner")
+  public void testCircleInlineImportsUpdateWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/circleInlineImportsUpdateWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("class")
   public void testClass() {
     runTest("js/js.translator/testData/incremental/invalidation/class/");
@@ -67,9 +85,21 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("classWithJsExport")
+  public void testClassWithJsExport() {
+    runTest("js/js.translator/testData/incremental/invalidation/classWithJsExport/");
+  }
+
+  @Test
   @TestMetadata("companionConstVal")
   public void testCompanionConstVal() {
     runTest("js/js.translator/testData/incremental/invalidation/companionConstVal/");
+  }
+
+  @Test
+  @TestMetadata("companionConstValWithIntraModuleInliner")
+  public void testCompanionConstValWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/companionConstValWithIntraModuleInliner/");
   }
 
   @Test
@@ -88,6 +118,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   @TestMetadata("companionProperties")
   public void testCompanionProperties() {
     runTest("js/js.translator/testData/incremental/invalidation/companionProperties/");
+  }
+
+  @Test
+  @TestMetadata("companionPropertiesWithIntraModuleInliner")
+  public void testCompanionPropertiesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/companionPropertiesWithIntraModuleInliner/");
   }
 
   @Test
@@ -139,6 +175,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("enumEntriesInlining")
+  public void testEnumEntriesInlining() {
+    runTest("js/js.translator/testData/incremental/invalidation/enumEntriesInlining/");
+  }
+
+  @Test
   @TestMetadata("enumsInInlineFunctions")
   public void testEnumsInInlineFunctions() {
     runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctions/");
@@ -157,6 +199,18 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("exportsThroughInlineFunctionWithIntraModuleInliner")
+  public void testExportsThroughInlineFunctionWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/exportsThroughInlineFunctionWithIntraModuleInliner/");
+  }
+
+  @Test
+  @TestMetadata("externalOverriddenProperty")
+  public void testExternalOverriddenProperty() {
+    runTest("js/js.translator/testData/incremental/invalidation/externalOverriddenProperty/");
+  }
+
+  @Test
   @TestMetadata("fakeOverrideClassFunctionQualifiers")
   public void testFakeOverrideClassFunctionQualifiers() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideClassFunctionQualifiers/");
@@ -166,6 +220,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   @TestMetadata("fakeOverrideInheritance")
   public void testFakeOverrideInheritance() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritance/");
+  }
+
+  @Test
+  @TestMetadata("fakeOverrideInheritanceWithIntraModuleInliner")
+  public void testFakeOverrideInheritanceWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideInheritanceWithIntraModuleInliner/");
   }
 
   @Test
@@ -202,6 +262,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   @TestMetadata("fastPath2")
   public void testFastPath2() {
     runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
+  }
+
+  @Test
+  @TestMetadata("fileNameClash")
+  public void testFileNameClash() {
+    runTest("js/js.translator/testData/incremental/invalidation/fileNameClash/");
   }
 
   @Test
@@ -259,9 +325,21 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("inlineFunctionAnnotations")
+  public void testInlineFunctionAnnotations() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAnnotations/");
+  }
+
+  @Test
   @TestMetadata("inlineFunctionAsFunctionReference")
   public void testInlineFunctionAsFunctionReference() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReference/");
+  }
+
+  @Test
+  @TestMetadata("inlineFunctionAsFunctionReferenceWithIntraModuleInliner")
+  public void testInlineFunctionAsFunctionReferenceWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsFunctionReferenceWithIntraModuleInliner/");
   }
 
   @Test
@@ -307,9 +385,75 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("interfaceWithJsExport")
+  public void testInterfaceWithJsExport() {
+    runTest("js/js.translator/testData/incremental/invalidation/interfaceWithJsExport/");
+  }
+
+  @Test
+  @TestMetadata("jsCode")
+  public void testJsCode() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
+  }
+
+  @Test
+  @TestMetadata("jsCodeWithConstString")
+  public void testJsCodeWithConstString() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstString/");
+  }
+
+  @Test
+  @TestMetadata("jsCodeWithConstStringFromOtherModule")
+  public void testJsCodeWithConstStringFromOtherModule() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModule/");
+  }
+
+  @Test
+  @TestMetadata("jsCodeWithConstStringFromOtherModuleWithIntraModuleInliner")
+  public void testJsCodeWithConstStringFromOtherModuleWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModuleWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("jsExport")
   public void testJsExport() {
     runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
+  }
+
+  @Test
+  @TestMetadata("jsExportReexport")
+  public void testJsExportReexport() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportReexport/");
+  }
+
+  @Test
+  @TestMetadata("jsExportWithClass")
+  public void testJsExportWithClass() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportWithClass/");
+  }
+
+  @Test
+  @TestMetadata("jsExportWithMultipleFiles")
+  public void testJsExportWithMultipleFiles() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsExportWithMultipleFiles/");
+  }
+
+  @Test
+  @TestMetadata("jsModuleAnnotation")
+  public void testJsModuleAnnotation() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
+  }
+
+  @Test
+  @TestMetadata("jsModuleAnnotationOnObjectWithUsage")
+  public void testJsModuleAnnotationOnObjectWithUsage() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotationOnObjectWithUsage/");
+  }
+
+  @Test
+  @TestMetadata("jsName")
+  public void testJsName() {
+    runTest("js/js.translator/testData/incremental/invalidation/jsName/");
   }
 
   @Test
@@ -361,6 +505,18 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("moveAndModifyInlineFunctionWithIntraModuleInliner")
+  public void testMoveAndModifyInlineFunctionWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunctionWithIntraModuleInliner/");
+  }
+
+  @Test
+  @TestMetadata("moveExternalDeclarationsBetweenFiles")
+  public void testMoveExternalDeclarationsBetweenFiles() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
+  }
+
+  @Test
   @TestMetadata("moveExternalDeclarationsBetweenJsModules")
   public void testMoveExternalDeclarationsBetweenJsModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenJsModules/");
@@ -373,9 +529,21 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("moveFilesBetweenModulesWithIntraModuleInliner")
+  public void testMoveFilesBetweenModulesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModulesWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("moveInlineFunctionBetweenModules")
   public void testMoveInlineFunctionBetweenModules() {
     runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+  }
+
+  @Test
+  @TestMetadata("moveInlineFunctionBetweenModulesWithIntraModuleInliner")
+  public void testMoveInlineFunctionBetweenModulesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModulesWithIntraModuleInliner/");
   }
 
   @Test
@@ -418,6 +586,12 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   @TestMetadata("privateDeclarationLeakThroughDefaultParam")
   public void testPrivateDeclarationLeakThroughDefaultParam() {
     runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParam/");
+  }
+
+  @Test
+  @TestMetadata("privateDeclarationLeakThroughDefaultParamWithIntraModuleInliner")
+  public void testPrivateDeclarationLeakThroughDefaultParamWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParamWithIntraModuleInliner/");
   }
 
   @Test
@@ -499,9 +673,27 @@ public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidatio
   }
 
   @Test
+  @TestMetadata("toplevelPropertiesWithIntraModuleInliner")
+  public void testToplevelPropertiesWithIntraModuleInliner() {
+    runTest("js/js.translator/testData/incremental/invalidation/toplevelPropertiesWithIntraModuleInliner/");
+  }
+
+  @Test
   @TestMetadata("transitiveInlineFunction")
   public void testTransitiveInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
+  }
+
+  @Test
+  @TestMetadata("typeScriptExportsPerFile")
+  public void testTypeScriptExportsPerFile() {
+    runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerFile/");
+  }
+
+  @Test
+  @TestMetadata("typeScriptExportsPerModule")
+  public void testTypeScriptExportsPerModule() {
+    runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerModule/");
   }
 
   @Test

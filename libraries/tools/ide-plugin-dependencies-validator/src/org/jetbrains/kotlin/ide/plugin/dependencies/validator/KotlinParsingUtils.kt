@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ide.plugin.dependencies.validator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.impl.PsiFileFactoryImpl
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -40,6 +41,7 @@ private fun Path.parseAsKtFile(project: Project): KtFile {
 }
 
 private fun createProjectForParsing(): Project {
+    @OptIn(K1Deprecation::class)
     return KotlinCoreEnvironment.createForProduction(
         Disposer.newDisposable("Disposable for project of ${ExperimentalOptInUsageInSourceChecker::class.simpleName}"),
         CompilerConfiguration(),

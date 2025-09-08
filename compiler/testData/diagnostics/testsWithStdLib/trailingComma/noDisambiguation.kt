@@ -10,3 +10,5 @@ fun main() {
     val x = foo()
     val y = foo(<!SYNTAX!>,<!><!SYNTAX!><!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, vararg */

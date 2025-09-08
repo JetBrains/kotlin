@@ -60,3 +60,6 @@ fun foo(c: B3) {
     val a = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B3(1)<!>
     val b = <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B1(2, "s")<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration, setter, stringLiteral */

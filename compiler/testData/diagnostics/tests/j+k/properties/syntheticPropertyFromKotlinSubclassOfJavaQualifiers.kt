@@ -63,3 +63,6 @@ class KotlinSubclassOfJavaQualifiers : JavaBaseClass() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, javaProperty, javaType, localProperty,
+propertyDeclaration, superExpression */

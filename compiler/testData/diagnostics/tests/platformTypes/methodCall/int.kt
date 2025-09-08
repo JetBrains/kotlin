@@ -16,3 +16,5 @@ fun test() {
     J()._int(1)
     J()._int(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, nullableType */

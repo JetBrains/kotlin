@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.evolution;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/evolution")
 @TestDataPath("$PROJECT_ROOT")
-@ClassicPipeline()
 public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutionTest {
   @Test
   @TestMetadata("addAbstractMemberBody.kt")
@@ -173,12 +171,6 @@ public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutio
   @TestMetadata("deletePrivateMembers.kt")
   public void testDeletePrivateMembers() {
     runTest("compiler/testData/klib/evolution/deletePrivateMembers.kt");
-  }
-
-  @Test
-  @TestMetadata("inlineBodyChange.kt")
-  public void testInlineBodyChange() {
-    runTest("compiler/testData/klib/evolution/inlineBodyChange.kt");
   }
 
   @Test

@@ -36,3 +36,5 @@ public abstract class MyString implements CharSequence {
 abstract class B3 : MyString(), Java2 {
     override fun get(i: Int?): Char? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, operator, override */

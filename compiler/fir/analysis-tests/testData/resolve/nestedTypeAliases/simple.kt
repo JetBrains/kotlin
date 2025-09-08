@@ -16,3 +16,5 @@ class C {
 
     fun test1(): Nested = SubNested()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, typeAliasDeclaration */

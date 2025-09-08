@@ -31,7 +31,7 @@ interface TestContent {
 @ComposableInferredTarget(scheme = "[0[0]]")
 fun Test(content: TestContent, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)*<Conten...>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(content)*<Conten...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (if (%changed and 0b1000 == 0) {

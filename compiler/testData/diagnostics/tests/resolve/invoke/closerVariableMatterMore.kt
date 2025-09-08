@@ -14,3 +14,6 @@ fun test_1() {
     val res = bar() // should resolve to (1)
     takeDouble(res) // should be OK
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction, localProperty,
+operator, propertyDeclaration */

@@ -10,3 +10,6 @@ val bar = fun(<!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>a<!>){}
 
 val la = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>a<!> -> }
 val las = { a: Int -> }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, lambdaLiteral, primaryConstructor,
+propertyDeclaration */

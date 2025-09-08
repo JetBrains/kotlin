@@ -27,3 +27,5 @@ fun main(args: Array<String>) {
     JavaOuter.JavaNested()
     test.<!UNRESOLVED_REFERENCE!>`JavaOuter$JavaNested`<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, nestedClass */

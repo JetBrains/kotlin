@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -33,10 +33,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsStandardLibrarySpecialCompatibilityChecker
-import org.jetbrains.kotlin.ir.backend.js.checkers.WasmStandardLibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -59,17 +57,17 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
 
+        val isWasm = configuration.wasmCompilation
+
+        val klibs = loadWebKlibsInProductionPipeline(configuration, configuration.platformChecker)
+
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
         val moduleStructure = ModulesStructure(
             project = environmentForJS.project,
             mainModule = mainModule,
             compilerConfiguration = configuration,
-            libraryPaths = libraries,
-            friendDependenciesPaths = friendLibraries
+            klibs = klibs,
         )
-
-        val isWasm = configuration.wasmCompilation
-        runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = isWasm, messageCollector)
 
         val lookupTracker = configuration.lookupTracker ?: LookupTracker.DO_NOTHING
 
@@ -226,12 +224,10 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             // TODO: !!! dependencies module data?
         }
 
-        val resolvedLibraries = moduleStructure.allDependencies
-
         val sessionsWithSources = if (useWasmPlatform) {
             prepareWasmSessions(
                 files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-                resolvedLibraries, dependencyList, extensionRegistrars,
+                moduleStructure.klibs.all, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
                 icData = incrementalDataProvider?.let(::KlibIcData),
@@ -239,7 +235,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         } else {
             prepareJsSessions(
                 files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-                resolvedLibraries, dependencyList, extensionRegistrars,
+                moduleStructure.klibs.all, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
                 icData = incrementalDataProvider?.let(::KlibIcData),
@@ -251,14 +247,5 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         }
 
         return outputs
-    }
-
-    private fun runStandardLibrarySpecialCompatibilityChecks(
-        libraries: List<KotlinLibrary>,
-        isWasm: Boolean,
-        messageCollector: MessageCollector,
-    ) {
-        val checker = if (isWasm) WasmStandardLibrarySpecialCompatibilityChecker else JsStandardLibrarySpecialCompatibilityChecker
-        checker.check(libraries, messageCollector)
     }
 }

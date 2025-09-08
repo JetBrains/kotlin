@@ -29,6 +29,9 @@ fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerforman
             PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
             PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
             PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
+            PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
+            PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
+            PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
             PhaseType.IrLowering -> {
                 codegenTime += time
                 GradleBuildTime.IR_LOWERING
@@ -40,6 +43,10 @@ fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerforman
         }
 
         addTimeMetricNs(gradleBuildTime, time.nanos)
+
+        moduleStats.dynamicStats?.filter { it.parentPhaseType == phaseType }?.forEach { (_, name, time) ->
+            addDynamicTimeMetricNs(name, gradleBuildTime, time.nanos)
+        }
 
         if (phaseType == PhaseType.Analysis) {
             reportLps(GradleBuildPerformanceMetric.ANALYSIS_LPS, time)

@@ -2003,3 +2003,5 @@ enum class Foo(val v: Int) {
     A1998(1998),
     A1999(1999)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, primaryConstructor, propertyDeclaration */

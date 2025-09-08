@@ -15,3 +15,6 @@ class XXX : Usage()
 fun main() {
     println(XXX())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, typeConstraint,
+typeParameter */

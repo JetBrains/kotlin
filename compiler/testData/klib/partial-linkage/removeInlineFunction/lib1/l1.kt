@@ -1,0 +1,15 @@
+inline fun topLevelInlineFunction() = "topLevelInlineFunction"
+
+inline fun topLevelInlineFunctionWithParam(p: String) = "topLevelInlineFunctionWithParam $p"
+
+context(c: String)
+inline fun String.topLevelInlineFunctionWithReceiver() = "$this.topLevelInlineFunctionWithReceiver with context $c"
+
+class C {
+    inline fun classlInlineFunction() = "classlInlineFunction"
+
+    inline fun classlInlineFunctionWithParam(p: String) = "classlInlineFunctionWithParam $p"
+
+    context(c: String)
+    inline fun String.classlInlineFunctionWithReceiver() = "$this.classlInlineFunctionWithReceiver with context $c"
+}

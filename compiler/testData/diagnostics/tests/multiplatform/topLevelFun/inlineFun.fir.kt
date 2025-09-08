@@ -11,3 +11,5 @@ expect fun nonInlineFun()
 
 actual fun <!EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET!>inlineFun<!>() { }
 actual fun nonInlineFun() { }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, inline */

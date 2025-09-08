@@ -2,6 +2,7 @@
 // WITH_REFLECT
 package test
 
+import kotlin.coroutines.SuspendFunction0
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -60,7 +61,7 @@ fun f(): @Anno(
     AnnotationTarget.EXPRESSION,
     Nested("1"),
     ["lmao"],
-    [Double::class, Unit::class, LongArray::class, Array<String>::class],
+    [Double::class, Unit::class, LongArray::class, Array<String>::class, Function0::class, SuspendFunction0::class],
     [AnnotationTarget.TYPEALIAS, AnnotationTarget.FIELD],
     [Nested("2"), Nested("3")]
 ) Unit {}
@@ -71,7 +72,7 @@ fun box(): String {
         "@test.Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
                 "ba=[-1], ca=[y], da=[-3.14159], fa=[2.7218], ia=[424242], ja=[239239239239], sa=[-43], za=[false, true], " +
                 "str=lol, k=class java.lang.Number, k2=class [I, e=EXPRESSION, a=@test.Nested(value=1), stra=[lmao], " +
-                "ka=[class java.lang.Double, class kotlin.Unit, class [J, class [Ljava.lang.String;], " +
+                "ka=[class java.lang.Double, class kotlin.Unit, class [J, class [Ljava.lang.String;, interface kotlin.jvm.functions.Function0, interface kotlin.jvm.functions.Function1], " +
                 "ea=[TYPEALIAS, FIELD], aa=[@test.Nested(value=2), @test.Nested(value=3)])",
         anno.toString()
     )

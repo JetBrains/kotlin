@@ -44,8 +44,6 @@ internal abstract class SymbolLightField protected constructor(
         return this
     }
 
-    override fun toString(): String = "KtLightField:$name"
-
     override fun getTypeElement(): PsiTypeElement? = null
 
     @Throws(IncorrectOperationException::class)

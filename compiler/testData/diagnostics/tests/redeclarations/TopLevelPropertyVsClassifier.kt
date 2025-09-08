@@ -22,3 +22,5 @@ class <!REDECLARATION!>Test6<!>
 
 class <!REDECLARATION!>Test5<!>
 val <!REDECLARATION!>Test6<!> = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, objectDeclaration, propertyDeclaration */

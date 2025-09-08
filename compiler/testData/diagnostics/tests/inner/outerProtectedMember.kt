@@ -13,3 +13,6 @@ class Foo {
         override val x : String = this@Foo.x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, interfaceDeclaration, override, propertyDeclaration, stringLiteral,
+thisExpression */

@@ -16,3 +16,6 @@ value class Test1(val x: Any) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELE
 
 @JvmInline
 value class Test2(val x: IFoo) : IFoo by x
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, inheritanceDelegation, interfaceDeclaration,
+objectDeclaration, primaryConstructor, propertyDeclaration, value */

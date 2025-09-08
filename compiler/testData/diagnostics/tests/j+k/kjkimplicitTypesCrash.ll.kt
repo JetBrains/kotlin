@@ -21,3 +21,5 @@ class B : Java1() {
 open class KotlinClass {
     open var e = "1"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, override, propertyDeclaration, stringLiteral, superExpression */

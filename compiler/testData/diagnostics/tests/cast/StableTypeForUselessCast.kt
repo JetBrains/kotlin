@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface I1
@@ -14,3 +14,6 @@ fun bar(i: I1) {
         foo(i as I2)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, smartcast */

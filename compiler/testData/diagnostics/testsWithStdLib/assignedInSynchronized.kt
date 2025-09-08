@@ -12,3 +12,6 @@ class A {
 
     fun bar() = false
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+propertyDeclaration, thisExpression */

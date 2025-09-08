@@ -16,3 +16,6 @@ public class JavaClass<T> {
 interface I<T> {
     T doIt(T t);
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral, samConversion,
+stringLiteral */

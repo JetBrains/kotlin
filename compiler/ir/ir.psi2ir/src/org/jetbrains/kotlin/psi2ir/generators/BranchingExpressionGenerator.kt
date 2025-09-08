@@ -234,7 +234,7 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                 hasDispatchReceiver = true,
                 hasExtensionReceiver = false,
             ).apply {
-                dispatchReceiverViaCachedCalleeData = irInstanceOf
+                arguments[0] = irInstanceOf
             }
         else
             irInstanceOf
@@ -265,7 +265,7 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiverViaCachedCalleeData = irInCall
+                    arguments[0] = irInCall
                 }
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }

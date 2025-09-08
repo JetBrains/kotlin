@@ -17,3 +17,6 @@ fun test(j: J) {
         "".foo("1", "2")
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, javaFunction, javaType,
+lambdaLiteral, stringLiteral, vararg */

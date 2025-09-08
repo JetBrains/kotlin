@@ -18,3 +18,6 @@ val bar: Bar
     get() = null!!
 
 actual open class Foo : Bar by bar
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, functionDeclaration, getter,
+inheritanceDelegation, interfaceDeclaration, propertyDeclaration */

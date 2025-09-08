@@ -37,9 +37,9 @@ public expect class StringBuilder : Appendable, CharSequence {
 
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 
-    override fun append(value: Char): StringBuilder
-    override fun append(value: CharSequence?): StringBuilder
-    override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder
+    @IgnorableReturnValue override fun append(value: Char): StringBuilder
+    @IgnorableReturnValue override fun append(value: CharSequence?): StringBuilder
+    @IgnorableReturnValue override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder
 
     /**
      * Reverses the contents of this string builder and returns this instance.
@@ -50,7 +50,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * Note that the reverse operation may produce new surrogate pairs that were unpaired low-surrogates and high-surrogates before the operation.
      * For example, reversing `"\uDC00\uD800"` produces `"\uD800\uDC00"` which is a valid surrogate pair.
      */
-    public fun reverse(): StringBuilder
+    @IgnorableReturnValue public fun reverse(): StringBuilder
 
     /**
      * Appends the string representation of the specified object [value] to this string builder and returns this instance.
@@ -58,7 +58,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    public fun append(value: Any?): StringBuilder
+    @IgnorableReturnValue public fun append(value: Any?): StringBuilder
 
     /**
      * Appends the string representation of the specified boolean [value] to this string builder and returns this instance.
@@ -67,7 +67,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * and then that string was appended to this string builder.
      */
     @SinceKotlin("1.3")
-    public fun append(value: Boolean): StringBuilder
+    @IgnorableReturnValue public fun append(value: Boolean): StringBuilder
 
     /**
      * Appends the string representation of the specified int [value] to this string builder and returns this instance.
@@ -76,7 +76,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * and then that string was appended to this string builder.
      */
     @SinceKotlin("1.9")
-    public fun append(value: Int): StringBuilder
+    @IgnorableReturnValue public fun append(value: Int): StringBuilder
 
     /**
      * Appends the string representation of the specified long [value] to this string builder and returns this instance.
@@ -85,7 +85,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * and then that string was appended to this string builder.
      */
     @SinceKotlin("1.9")
-    public fun append(value: Long): StringBuilder
+    @IgnorableReturnValue public fun append(value: Long): StringBuilder
 
     /**
      * Appends the string representation of the specified float [value] to this string builder and returns this instance.
@@ -94,7 +94,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * and then that string was appended to this string builder.
      */
     @SinceKotlin("1.9")
-    public fun append(value: Float): StringBuilder
+    @IgnorableReturnValue public fun append(value: Float): StringBuilder
 
     /**
      * Appends the string representation of the specified double [value] to this string builder and returns this instance.
@@ -103,7 +103,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * and then that string was appended to this string builder.
      */
     @SinceKotlin("1.9")
-    public fun append(value: Double): StringBuilder
+    @IgnorableReturnValue public fun append(value: Double): StringBuilder
 
     /**
      * Appends characters in the specified character array [value] to this string builder and returns this instance.
@@ -111,7 +111,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * Characters are appended in order, starting at the index 0.
      */
     @SinceKotlin("1.4")
-    public fun append(value: CharArray): StringBuilder
+    @IgnorableReturnValue public fun append(value: CharArray): StringBuilder
 
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
@@ -119,7 +119,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * If [value] is `null`, then the four characters `"null"` are appended.
      */
     @SinceKotlin("1.3")
-    public fun append(value: String?): StringBuilder
+    @IgnorableReturnValue public fun append(value: String?): StringBuilder
 
     /**
      * Returns the current capacity of this string builder.
@@ -184,7 +184,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public fun insert(index: Int, value: Boolean): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Boolean): StringBuilder
 
     /**
      * Inserts the string representation of the specified int [value] into this string builder at the specified [index] and returns this instance.
@@ -195,7 +195,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.9")
-    public fun insert(index: Int, value: Int): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Int): StringBuilder
 
     /**
      * Inserts the string representation of the specified long [value] into this string builder at the specified [index] and returns this instance.
@@ -206,7 +206,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.9")
-    public fun insert(index: Int, value: Long): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Long): StringBuilder
 
     /**
      * Inserts the string representation of the specified float [value] into this string builder at the specified [index] and returns this instance.
@@ -217,7 +217,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.9")
-    public fun insert(index: Int, value: Float): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Float): StringBuilder
 
     /**
      * Inserts the string representation of the specified double [value] into this string builder at the specified [index] and returns this instance.
@@ -228,7 +228,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.9")
-    public fun insert(index: Int, value: Double): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Double): StringBuilder
 
     /**
      * Inserts the specified character [value] into this string builder at the specified [index] and returns this instance.
@@ -236,7 +236,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public fun insert(index: Int, value: Char): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Char): StringBuilder
 
     /**
      * Inserts characters in the specified character array [value] into this string builder at the specified [index] and returns this instance.
@@ -246,7 +246,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public fun insert(index: Int, value: CharArray): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: CharArray): StringBuilder
 
     /**
      * Inserts characters in the specified character sequence [value] into this string builder at the specified [index] and returns this instance.
@@ -259,7 +259,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public fun insert(index: Int, value: CharSequence?): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: CharSequence?): StringBuilder
 
     /**
      * Inserts the string representation of the specified object [value] into this string builder at the specified [index] and returns this instance.
@@ -270,7 +270,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public fun insert(index: Int, value: Any?): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: Any?): StringBuilder
 
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
@@ -280,7 +280,7 @@ public expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    public fun insert(index: Int, value: String?): StringBuilder
+    @IgnorableReturnValue public fun insert(index: Int, value: String?): StringBuilder
 
     /**
      *  Sets the length of this string builder to the specified [newLength].
@@ -331,7 +331,7 @@ public expect class StringBuilder : Appendable, CharSequence {
  * and then that string was appended to this string builder.
  */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.append(value: Byte): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.append(value: Byte): StringBuilder
 
 /**
  * Appends the string representation of the specified short [value] to this string builder and returns this instance.
@@ -340,7 +340,7 @@ public expect fun StringBuilder.append(value: Byte): StringBuilder
  * and then that string was appended to this string builder.
  */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.append(value: Short): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.append(value: Short): StringBuilder
 
 /**
  * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
@@ -351,7 +351,7 @@ public expect fun StringBuilder.append(value: Short): StringBuilder
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.insert(index: Int, value: Byte): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.insert(index: Int, value: Byte): StringBuilder
 
 /**
  * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
@@ -362,7 +362,7 @@ public expect fun StringBuilder.insert(index: Int, value: Byte): StringBuilder
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.insert(index: Int, value: Short): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.insert(index: Int, value: Short): StringBuilder
 
 /**
  * Clears the content of this string builder making it empty and returns this instance.
@@ -370,7 +370,7 @@ public expect fun StringBuilder.insert(index: Int, value: Short): StringBuilder
  * @sample samples.text.Strings.clearStringBuilder
  */
 @SinceKotlin("1.3")
-public expect fun StringBuilder.clear(): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.clear(): StringBuilder
 
 /**
  * Sets the character at the specified [index] to the specified [value].
@@ -390,7 +390,7 @@ public expect operator fun StringBuilder.set(index: Int, value: Char)
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder
 
 /**
  * Removes the character at the specified [index] from this string builder and returns this instance.
@@ -402,7 +402,7 @@ public expect fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.deleteAt(index: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.deleteAt(index: Int): StringBuilder
 
 /**
  * Removes characters in the specified range from this string builder and returns this instance.
@@ -413,7 +413,7 @@ public expect fun StringBuilder.deleteAt(index: Int): StringBuilder
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder
 
 /**
  * Copies characters from this string builder into the [destination] character array.
@@ -442,7 +442,7 @@ public expect fun StringBuilder.toCharArray(destination: CharArray, destinationO
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder
 
 /**
  * Appends a subsequence of the specified character sequence [value] to this string builder and returns this instance.
@@ -454,7 +454,7 @@ public expect fun StringBuilder.appendRange(value: CharArray, startIndex: Int, e
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
 
 /**
  * Inserts characters in a subarray of the specified character array [value] into this string builder at the specified [index] and returns this instance.
@@ -470,7 +470,7 @@ public expect fun StringBuilder.appendRange(value: CharSequence, startIndex: Int
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder
 
 /**
  * Inserts characters in a subsequence of the specified character sequence [value] into this string builder at the specified [index] and returns this instance.
@@ -486,11 +486,12 @@ public expect fun StringBuilder.insertRange(index: Int, value: CharArray, startI
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-public expect fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @Deprecated("Use append(value: Any?) instead", ReplaceWith("append(value = obj)"), DeprecationLevel.WARNING)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun StringBuilder.append(obj: Any?): StringBuilder = this.append(obj)
 
 /**
@@ -517,7 +518,7 @@ public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> 
 /**
  * Appends all arguments to the given StringBuilder.
  */
-public fun StringBuilder.append(vararg value: String?): StringBuilder {
+@IgnorableReturnValue public fun StringBuilder.append(vararg value: String?): StringBuilder {
     for (item in value)
         append(item)
     return this
@@ -526,7 +527,7 @@ public fun StringBuilder.append(vararg value: String?): StringBuilder {
 /**
  * Appends all arguments to the given StringBuilder.
  */
-public fun StringBuilder.append(vararg value: Any?): StringBuilder {
+@IgnorableReturnValue public fun StringBuilder.append(vararg value: Any?): StringBuilder {
     for (item in value)
         append(item)
     return this
@@ -536,63 +537,63 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
 @Deprecated("Use appendRange instead.", ReplaceWith("this.appendRange(str, offset, offset + len)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
 @Suppress("UNUSED_PARAMETER")
-public inline fun StringBuilder.append(str: CharArray, offset: Int, len: Int): StringBuilder = throw NotImplementedError()
+@IgnorableReturnValue public inline fun StringBuilder.append(str: CharArray, offset: Int, len: Int): StringBuilder = throw NotImplementedError()
 
 /** Appends a line feed character (`\n`) to this StringBuilder. */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(): StringBuilder = append('\n')
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(): StringBuilder = append('\n')
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: CharSequence?): StringBuilder = append(value).appendLine()
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(value: CharSequence?): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: String?): StringBuilder = append(value).appendLine()
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(value: String?): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Any?): StringBuilder = append(value).appendLine()
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(value: Any?): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: CharArray): StringBuilder = append(value).appendLine()
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(value: CharArray): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Char): StringBuilder = append(value).appendLine()
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(value: Char): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Boolean): StringBuilder = append(value).appendLine()
+@IgnorableReturnValue public inline fun StringBuilder.appendLine(value: Boolean): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.appendLine(value: Byte): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendLine(value: Byte): StringBuilder
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.appendLine(value: Short): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendLine(value: Short): StringBuilder
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.appendLine(value: Int): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendLine(value: Int): StringBuilder
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.appendLine(value: Long): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendLine(value: Long): StringBuilder
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.appendLine(value: Float): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendLine(value: Float): StringBuilder
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.9")
-public expect fun StringBuilder.appendLine(value: Double): StringBuilder
+@IgnorableReturnValue public expect fun StringBuilder.appendLine(value: Double): StringBuilder

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -30,14 +29,14 @@ internal class FirJavaDeclaredMembersOnlyScope(
     }
 
     private fun FirCallableDeclaration.isDeclared(): Boolean =
-        symbol.callableId.classId == owner.classId
+        symbol.callableId?.classId == owner.classId
                 && origin !is FirDeclarationOrigin.SubstitutionOverride
                 && origin != FirDeclarationOrigin.IntersectionOverride
 
     private fun FirRegularClass.isDeclared(): Boolean = symbol.classId.parentClassId == owner.classId
 
     override fun isTargetCallable(callable: FirCallableSymbol<*>): Boolean =
-        callable.callableId.callableName != SpecialNames.INIT && callable.fir.isDeclared()
+        callable.callableId?.callableName != SpecialNames.INIT && callable.fir.isDeclared()
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegate.processDeclaredConstructors(processor)

@@ -8,3 +8,6 @@ class My {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,
+objectDeclaration */

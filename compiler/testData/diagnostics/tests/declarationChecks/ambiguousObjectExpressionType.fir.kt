@@ -173,3 +173,7 @@ fun fooPackage() {
     fooPackageLocal().f1()
     fooPackageLocal().f2()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, getter,
+inheritanceDelegation, init, interfaceDeclaration, lambdaLiteral, localFunction, localProperty, nestedClass,
+nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, typeParameter */

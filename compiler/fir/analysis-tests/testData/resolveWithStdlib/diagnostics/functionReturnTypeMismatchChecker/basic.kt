@@ -54,3 +54,6 @@ fun blockReturnValueTypeMatch2() : Int {
     else return <!RETURN_TYPE_MISMATCH!>1.0<!>
     return <!RETURN_TYPE_MISMATCH!>2.0<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, stringLiteral, typeWithExtension */

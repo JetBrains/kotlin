@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.util.allCauses
-import org.jetbrains.kotlin.gradle.util.androidLibrary
-import org.jetbrains.kotlin.gradle.util.asKotlinVersion
-import org.jetbrains.kotlin.gradle.util.assertContains
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -281,12 +278,17 @@ class LanguageSettingsTests {
             "nativeTest" to "compileKotlinMetadata",
             "wasmJsMain" to "compileKotlinWasmJs",
             "wasmJsTest" to "compileTestKotlinWasmJs",
+            "webMain" to "compileKotlinMetadata",
+            "webTest" to "compileKotlinMetadata",
         )
         val actualTasks = project.kotlinExtension.sourceSets.associate { sourceSet ->
             sourceSet.name to (sourceSet.languageSettings as DefaultLanguageSettingsBuilder).compilerPluginOptionsTask.value?.name
         }
 
-        assertEquals(sourceSetToCompileTask, actualTasks)
+        assertEquals(
+            sourceSetToCompileTask.prettyPrinted.toString(),
+            actualTasks.prettyPrinted.toString(),
+        )
     }
 
     companion object {

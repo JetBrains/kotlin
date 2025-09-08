@@ -30,3 +30,6 @@ fun usage() {
         Derived().b
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, lambdaLiteral,
+nullableType, override, propertyDeclaration, propertyDeclarationWithContext, stringLiteral, typeParameter */

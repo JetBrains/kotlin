@@ -26,3 +26,6 @@ val y8: B<String> = B("")
 
 val y9 = B(1)
 val y10 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>B<!>("")
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, typeParameter */

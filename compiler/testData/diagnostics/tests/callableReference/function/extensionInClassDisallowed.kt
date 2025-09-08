@@ -20,3 +20,6 @@ fun main() {
     A::<!UNRESOLVED_REFERENCE!>extInt<!>
     A::<!UNRESOLVED_REFERENCE!>extA<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral */

@@ -26,3 +26,7 @@ fun test_2(x: Any) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, getter,
+ifExpression, inline, isExpression, nullableType, propertyDeclaration, propertyWithExtensionReceiver, reified, safeCall,
+smartcast, thisExpression, typeParameter */

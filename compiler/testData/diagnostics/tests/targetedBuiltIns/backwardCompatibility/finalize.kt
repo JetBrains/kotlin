@@ -10,3 +10,5 @@ enum class TestEnum {
 class TestFinalize {
     fun finalize() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, override */

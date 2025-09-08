@@ -36,3 +36,5 @@ sourceSets {
         resources.srcDir(updateWasmResources)
     }
 }
+
+optInToK1Deprecation()

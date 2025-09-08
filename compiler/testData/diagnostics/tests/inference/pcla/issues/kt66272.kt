@@ -20,3 +20,7 @@ open class A<O, F> {
         fun <T> create(a: (A<T, T>) -> A<T, T>) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, data, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter */

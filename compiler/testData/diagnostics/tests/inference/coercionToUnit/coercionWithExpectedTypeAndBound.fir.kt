@@ -10,3 +10,5 @@ fun b(): Unit = run {
         <!CANNOT_INFER_PARAMETER_TYPE!>materializeNumber<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, typeConstraint, typeParameter */

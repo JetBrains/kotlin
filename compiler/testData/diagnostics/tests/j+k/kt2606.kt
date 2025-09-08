@@ -13,3 +13,5 @@ fun bar() : Iterator<Int>? {
     val a : Annotation
     return null
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

@@ -47,3 +47,4 @@ public class TestNN {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

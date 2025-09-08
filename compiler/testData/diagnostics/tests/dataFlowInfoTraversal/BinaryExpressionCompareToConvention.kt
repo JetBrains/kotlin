@@ -17,3 +17,7 @@ fun bar(a: A, b: B): Boolean {
     checkSubtype<B>(<!DEBUG_INFO_SMARTCAST!>a<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, comparisonExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, interfaceDeclaration,
+localProperty, nullableType, operator, propertyDeclaration, smartcast, thisExpression, typeParameter, typeWithExtension */

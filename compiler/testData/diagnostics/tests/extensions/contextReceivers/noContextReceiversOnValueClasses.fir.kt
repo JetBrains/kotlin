@@ -20,3 +20,6 @@ value class B2(val x: Int)
 <!VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS!>context<!>(A)
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class C(val x: Int, val y: Int)
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral, value */

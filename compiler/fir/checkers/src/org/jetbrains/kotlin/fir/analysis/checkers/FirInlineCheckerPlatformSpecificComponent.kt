@@ -16,19 +16,18 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 abstract class FirInlineCheckerPlatformSpecificComponent : FirSessionComponent {
-    open fun isGenerallyOk(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter): Boolean = true
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    open fun isGenerallyOk(declaration: FirDeclaration, ): Boolean = true
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     open fun checkSuspendFunctionalParameterWithDefaultValue(
         param: FirValueParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     open fun checkFunctionalParametersWithInheritedDefaultValues(
         function: FirSimpleFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<FirCallableDeclaration>>,
     ) {
     }

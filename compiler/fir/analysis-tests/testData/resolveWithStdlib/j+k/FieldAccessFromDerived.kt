@@ -12,3 +12,5 @@ class Derived : Base() {
 
     fun foo() = value
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType */

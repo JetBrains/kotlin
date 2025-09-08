@@ -11,3 +11,5 @@ expect fun <T : A> foo(t: T): String
 
 fun <T : A> <!ACTUAL_MISSING!>foo<!>(t: T): T = TODO()
 fun <T> foo(t: T): String = TODO()
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint, typeParameter */

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
@@ -22,8 +23,11 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isDeserializedPropertyFromAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter.Companion.PLATFORM_DEPENDENT_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,8 +42,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmFir2IrExtensions(
     configuration: CompilerConfiguration,
@@ -91,6 +94,8 @@ class JvmFir2IrExtensions(
         return null
     }
 
+    override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
+
     override val irNeedsDeserialization: Boolean =
         configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
 
@@ -109,6 +114,12 @@ class JvmFir2IrExtensions(
                 // to propagate default values
                 property.isDeserializedPropertyFromAnnotation == true ||
                 Fir2IrExtensions.Default.hasBackingField(property, session)
+
+    override fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility? {
+        return runIf(firProperty.hasJvmFieldAnnotation(session)) {
+            firProperty.status.visibility
+        }
+    }
 
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {
         require(this.irBuiltIns == null) { "BuiltIns are already initialized" }

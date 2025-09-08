@@ -4,8 +4,8 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("__root___testListAny__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___")
-public fun __root___testListAny__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun __root___testListAny__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any>>(l)
     val _result = testListAny(__l)
     return _result.objcPtr()
@@ -32,8 +32,8 @@ public fun __root___testListNothing__TypesOfArguments__Swift_Array_Swift_Never__
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_KotlinRuntime_KotlinBase____")
-public fun __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_KotlinRuntime_KotlinBase____(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____")
+public fun __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any?>>(l)
     val _result = testListOptAny(__l)
     return _result.objcPtr()
@@ -88,8 +88,8 @@ public fun __root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
-@ExportedBridge("__root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___")
-public fun __root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testStarList__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun __root___testStarList__TypesOfArguments__Swift_Array_anyU20KotlinRuntimeSupport__KotlinBridgeable___(l: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __l = interpretObjCPointer<kotlin.collections.List<kotlin.Any>>(l)
     val _result = testStarList(__l)
     return _result.objcPtr()

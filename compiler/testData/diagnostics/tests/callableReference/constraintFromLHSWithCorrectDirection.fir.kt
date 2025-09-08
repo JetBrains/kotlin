@@ -22,3 +22,7 @@ fun <R : A> B<R>.test(){
     <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(A::<!INAPPLICABLE_CANDIDATE!>bla<!>)
     star(A::bla)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+inProjection, integerLiteral, interfaceDeclaration, nullableType, outProjection, propertyDeclaration,
+propertyWithExtensionReceiver, starProjection, typeConstraint, typeParameter */

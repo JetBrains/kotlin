@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.processAllClassifiers
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
-import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -74,10 +74,10 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             return leaves
         }
 
+        context(context: CheckerContext)
         private fun MutableSet<FirJsStableName>.addStableJavaScriptName(
             targetSymbol: FirCallableSymbol<*>?,
             overriddenSymbol: FirCallableSymbol<*>?,
-            context: CheckerContext,
         ) {
             val stableName = when {
                 targetSymbol == null || overriddenSymbol == null -> return
@@ -102,19 +102,19 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             }
         }
 
+        context(context: CheckerContext)
         private fun MutableSet<FirJsStableName>.addAllStableJavaScriptNames(
             targetSymbol: FirCallableSymbol<*>,
             overriddenSymbol: FirCallableSymbol<*>,
-            context: CheckerContext,
         ) {
-            addStableJavaScriptName(targetSymbol, overriddenSymbol, context)
+            addStableJavaScriptName(targetSymbol, overriddenSymbol)
             if (targetSymbol is FirPropertySymbol && overriddenSymbol is FirPropertySymbol) {
-                addStableJavaScriptName(targetSymbol.getterSymbol, overriddenSymbol.getterSymbol, context)
-                addStableJavaScriptName(targetSymbol.setterSymbol, overriddenSymbol.setterSymbol, context)
+                addStableJavaScriptName(targetSymbol.getterSymbol, overriddenSymbol.getterSymbol)
+                addStableJavaScriptName(targetSymbol.setterSymbol, overriddenSymbol.setterSymbol)
             }
         }
 
-        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>, sessionHolder: SessionHolder) {
+        fun addAllSymbolsFrom(symbols: Collection<FirCallableSymbol<*>>, sessionHolder: SessionAndScopeSessionHolder) {
             for (symbol in symbols) {
                 when (symbol) {
                     is FirIntersectionCallableSymbol -> {
@@ -134,14 +134,15 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             }
         }
 
-        fun processStableJavaScriptNamesForMembers(declaration: FirClass, context: CheckerContext) {
+        context(context: CheckerContext)
+        fun processStableJavaScriptNamesForMembers(declaration: FirClass) {
             declaration.symbol.processAllClassifiers(context.session) { classMemberSymbol ->
                 if (classMemberSymbol is FirClassLikeSymbol) {
                     jsStableNames.addIfNotNull(FirJsStableName.createStableNameOrNull(classMemberSymbol, context.session))
                 }
             }
 
-            val scope = declaration.symbol.unsubstitutedScope(context)
+            val scope = declaration.symbol.unsubstitutedScope()
 
             scope.processDeclaredConstructors(allSymbols::add)
             addAllSymbolsFrom(scope.collectAllFunctions(), context.sessionHolder)
@@ -150,7 +151,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             for (callableMemberSymbol in allSymbols) {
                 val overriddenLeaves = scope.collectOverriddenLeaves(callableMemberSymbol)
                 for (symbol in overriddenLeaves) {
-                    jsStableNames.addAllStableJavaScriptNames(callableMemberSymbol, symbol, context)
+                    jsStableNames.addAllStableJavaScriptNames(callableMemberSymbol, symbol)
                 }
             }
         }
@@ -201,7 +202,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         }
 
         val stableNameCollector = StableNamesCollector()
-        stableNameCollector.processStableJavaScriptNamesForMembers(declaration, context)
+        stableNameCollector.processStableJavaScriptNamesForMembers(declaration)
 
         val membersGroupedByName = stableNameCollector.jsStableNames.groupBy { it.name }
 

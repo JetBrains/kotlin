@@ -14,3 +14,6 @@ fun main() {
         <!CANNOT_INFER_RECEIVER_PARAMETER_TYPE!>this<!>.<!UNRESOLVED_REFERENCE!>add<!>("1")
     }<!>)
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, lambdaLiteral, nullableType, outProjection,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

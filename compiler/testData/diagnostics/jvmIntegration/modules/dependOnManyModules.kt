@@ -54,3 +54,5 @@ fun usage() {
     B()
     C()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

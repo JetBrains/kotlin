@@ -11,3 +11,6 @@ class Relation<Source: Persistent, Target: Persistent>(
 ) {
     fun opposite() = Relation(targets, sources)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

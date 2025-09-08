@@ -24,3 +24,7 @@ context(labelAInt@A<Int>, A<String>, labelB@B) val C.p: Int
         this.c
         return 1
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, integerLiteral,
+nullableType, primaryConstructor, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver,
+thisExpression, typeParameter */

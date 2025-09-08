@@ -9,3 +9,6 @@ fun foo(y: String?) {
         x<!UNSAFE_CALL!>.<!>length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral, thisExpression */

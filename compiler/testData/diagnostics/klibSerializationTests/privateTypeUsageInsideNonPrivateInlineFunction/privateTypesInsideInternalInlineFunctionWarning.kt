@@ -1,4 +1,4 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
+// LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
 // LANGUAGE: -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs +ContextReceivers
 // IGNORE_FIR_DIAGNOSTICS
 // DIAGNOSTICS: -NOTHING_TO_INLINE -CONTEXT_RECEIVERS_DEPRECATED -CONTEXT_CLASS_OR_CONSTRUCTOR -CAST_NEVER_SUCCEEDS
@@ -60,7 +60,7 @@ internal inline fun internalInline() {
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!><!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>privateInlineI<!>()<!>
     privateInlineAC()
     privateInlineEC()
-    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>class Local : <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>><!>() {}<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!><!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>><!>() {}<!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>val withContext = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!><!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>makeWithContext<!>()<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>withContext<!>.toString()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!><!>
@@ -94,7 +94,8 @@ private class B {
         publicMakeLocal()
         makeEffectivelyPrivateLocal()
         privateInline()
-        class Local : Generic<A>() {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : Generic<A>() {}
+        object : Generic<A>() {}
         null as A
         null as A.Nested
         A::class
@@ -112,7 +113,8 @@ internal class C {
                 publicMakeLocal()
                 makeEffectivelyPrivateLocal()
                 privateInline()
-                class Local : Generic<A>() {}
+                <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : Generic<A>() {}
+                object : Generic<A>() {}
                 null as A
                 null as A.Nested
                 A::class
@@ -124,7 +126,7 @@ internal class C {
 internal inline fun withAnonymousObject() {
     object {
         private inner class Inner {}
-        fun foo() { <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>Inner<!>() }
+        fun foo() { Inner() }
     }.foo()
 }
 
@@ -140,7 +142,8 @@ internal fun inlineInsideAnonymousObject() {
             makeEffectivelyPrivateLocal()
             privateInline()
             Inner()
-            class Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
+            <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
+            object : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
             null as A
             null as A.Nested
             A::class

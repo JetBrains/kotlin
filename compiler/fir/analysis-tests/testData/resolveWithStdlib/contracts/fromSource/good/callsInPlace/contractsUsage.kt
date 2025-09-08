@@ -37,3 +37,6 @@ fun foo(x: () -> Unit, y: () -> Unit) {
 
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, thisExpression */

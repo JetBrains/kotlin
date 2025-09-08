@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LATEST_LV_DIFFERENCE
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
@@ -44,8 +43,8 @@ fun foo(y: IntArray) {
     var z = 1
     <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x + z<!>
 
-    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!><!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@Ann1 x<!> = x + 2<!>
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@Ann1 x<!> += z + 2
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!><!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>@Ann1 x<!> = x + 2<!>
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x <!UNRESOLVED_REFERENCE!>+=<!> z + 2<!>
 
     <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x + 6 * 2<!> > 0
     <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann1 x * 6<!> + 2 > 0
@@ -62,3 +61,8 @@ fun foo(y: IntArray) {
 }
 
 infix fun Int.foo(other: Int) = 1
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, anonymousObjectExpression, assignment,
+comparisonExpression, funWithExtensionReceiver, functionDeclaration, functionalType, incrementDecrementExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, multiplicativeExpression, operator, primaryConstructor,
+propertyDeclaration, stringLiteral */

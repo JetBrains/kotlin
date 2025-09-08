@@ -6,3 +6,5 @@ fun foo(list: List<String>) {
 }
 
 fun bar(vararg args: String) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, vararg */

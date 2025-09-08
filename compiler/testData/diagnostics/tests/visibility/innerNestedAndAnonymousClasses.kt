@@ -75,3 +75,7 @@ abstract class B<T: B<T>> {
         obj?.let { this.x }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, inner, interfaceDeclaration, lambdaLiteral, localClass, nestedClass, nullableType, override,
+primaryConstructor, propertyDeclaration, safeCall, thisExpression, typeConstraint, typeParameter */

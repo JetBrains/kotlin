@@ -23,3 +23,5 @@ fun test() {
     val a: A = B().a
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

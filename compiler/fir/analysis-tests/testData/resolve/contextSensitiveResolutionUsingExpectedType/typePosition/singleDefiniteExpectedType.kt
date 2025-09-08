@@ -74,9 +74,9 @@ fun <T: SealedClass?>testDefinitelyNotNullIntersection(instance: T & Any): Strin
 fun testFakeIntersection2(instance: Any): String {
     if (instance is SealedInterface && instance is SealedInterface.NestedInheritor) {
         return when(instance) {
-            is <!UNRESOLVED_REFERENCE!>NestedInheritor<!> -> instance.<!UNRESOLVED_REFERENCE!>prop<!>
+            <!USELESS_IS_CHECK!>is NestedInheritor<!> -> instance.<!UNRESOLVED_REFERENCE!>prop<!>
             is <!UNRESOLVED_REFERENCE!>NestedNestedInheritor<!> -> instance.<!UNRESOLVED_REFERENCE!>propNested<!>
-            else -> "100"
+            <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "100"
         }
     }
     return "100"
@@ -115,3 +115,8 @@ fun test(arg: ITestContravariant2<<!REDUNDANT_PROJECTION!>in<!> SealedClass>): S
     is <!UNRESOLVED_REFERENCE!>SealedInheritor2<!> -> "201"
     else -> "301"
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, dnnType, equalityExpression, flexibleType, functionDeclaration,
+guardCondition, ifExpression, in, inProjection, integerLiteral, interfaceDeclaration, intersectionType, isExpression,
+javaProperty, javaType, localProperty, nestedClass, nullableType, override, primaryConstructor, propertyDeclaration,
+sealed, smartcast, stringLiteral, typeConstraint, typeParameter, whenExpression, whenWithSubject */

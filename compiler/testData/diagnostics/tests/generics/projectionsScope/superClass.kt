@@ -12,3 +12,7 @@ fun test(clazz: Clazz<*>) {
     clazz.getSuperClass() checkType { _<Clazz<*>>() }
     clazz.getSuperClass().t checkType { _<Any?>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+inProjection, infix, interfaceDeclaration, lambdaLiteral, nullableType, outProjection, propertyDeclaration,
+starProjection, typeParameter, typeWithExtension */

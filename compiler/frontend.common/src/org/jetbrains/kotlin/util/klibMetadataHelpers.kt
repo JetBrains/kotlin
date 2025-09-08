@@ -10,22 +10,11 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.metadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import java.util.*
 
-val KLIB_LEGACY_METADATA_VERSION = MetadataVersion(1, 4, 1)
+private val KLIB_LEGACY_METADATA_VERSION = MetadataVersion(1, 4, 1)
 
-private val LANGUAGE_TO_KLIB_METADATA_VERSION = EnumMap<LanguageVersion, MetadataVersion>(LanguageVersion::class.java).apply {
-    LanguageVersion.entries.forEach { this[it] = KLIB_LEGACY_METADATA_VERSION }
-    // TODO KT-74417 Uncomment in version 2.3 to bump metadata version
-    this[LanguageVersion.KOTLIN_2_3] = KLIB_LEGACY_METADATA_VERSION // MetadataVersion(2, 3, 0)
-
-    check(size == LanguageVersion.entries.size) {
-        "Please add mappings from the missing LanguageVersion instances to the corresponding MetadataVersion " +
-                "in `LANGUAGE_TO_KLIB_METADATA_VERSION`"
-    }
-}
-
-fun LanguageVersion.toKlibMetadataVersion(): MetadataVersion = LANGUAGE_TO_KLIB_METADATA_VERSION.getValue(this)
+fun LanguageVersion.toKlibMetadataVersion(): MetadataVersion =
+    if (this < LanguageVersion.KOTLIN_2_3) KLIB_LEGACY_METADATA_VERSION else toJvmMetadataVersion()
 
 fun CompilerConfiguration.klibMetadataVersionOrDefault(
     languageVersion: LanguageVersion = languageVersionSettings.languageVersion

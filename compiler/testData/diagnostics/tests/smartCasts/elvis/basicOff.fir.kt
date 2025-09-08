@@ -47,3 +47,6 @@ fun baz(o: Boolean?) {
         o.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

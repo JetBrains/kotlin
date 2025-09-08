@@ -35,6 +35,8 @@ public inline fun Path.reader(charset: Charset = Charsets.UTF_8, vararg options:
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ *
  * @param charset character set to use for reading text, UTF-8 by default.
  * @param bufferSize necessary size of the buffer.
  * @param options options to determine how the file is opened.
@@ -70,6 +72,8 @@ public inline fun Path.writer(charset: Charset = Charsets.UTF_8, vararg options:
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
+ *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
  *
  * @param charset character set to use for writing text, UTF-8 by default.
  * @param bufferSize necessary size of the buffer.

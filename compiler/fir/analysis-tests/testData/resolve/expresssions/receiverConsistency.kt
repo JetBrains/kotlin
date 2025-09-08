@@ -20,3 +20,5 @@ fun test() {
     val err = C()
     err.<!UNRESOLVED_REFERENCE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

@@ -51,3 +51,6 @@ fun test8() {
         <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
     )
 }
+
+/* GENERATED_FIR_TAGS: dnnType, elvisExpression, functionDeclaration, inline, interfaceDeclaration, nullableType,
+reified, typeConstraint, typeParameter */

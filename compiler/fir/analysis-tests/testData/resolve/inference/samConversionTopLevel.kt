@@ -28,3 +28,7 @@ fun main() {
     var local: MyFun = { it.length }
     local = { it.length + 1 }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funInterface, functionDeclaration, getter,
+integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration,
+samConversion */

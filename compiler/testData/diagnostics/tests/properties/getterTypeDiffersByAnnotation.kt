@@ -10,3 +10,6 @@ class Kotlin {
     val unannotatedGetter: @TypeAnn("1") Int
         get(): Int = 123
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

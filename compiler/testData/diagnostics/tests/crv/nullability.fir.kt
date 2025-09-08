@@ -32,3 +32,6 @@ fun notNullCall2(s: String?) {
     val x = s!!
     val y = nsf()!!
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, checkNotNullCall, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral */

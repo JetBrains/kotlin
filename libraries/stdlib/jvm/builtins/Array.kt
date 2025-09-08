@@ -14,7 +14,8 @@
 package kotlin
 
 /**
- * A generic array of objects. When targeting the JVM, instances of this class are represented as `T[]`.
+ * A generic array of objects.
+ * Instances of this class are represented as `T[]`.
  * Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]
  * standard library functions.
  *
@@ -42,8 +43,7 @@ public actual class Array<T> {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): T
 
@@ -55,8 +55,7 @@ public actual class Array<T> {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: T): Unit
 

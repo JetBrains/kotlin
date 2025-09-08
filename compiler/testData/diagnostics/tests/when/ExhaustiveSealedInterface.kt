@@ -120,3 +120,6 @@ fun testExhaustiveBySuperInterface(x: SealedInterfaceOverDisjointSealedInterface
         is BaseDisjointSealedInterface2 -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, sealed, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

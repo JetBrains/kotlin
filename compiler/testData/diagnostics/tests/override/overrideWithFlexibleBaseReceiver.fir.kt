@@ -42,3 +42,6 @@ class FooImpl<E> : Foo<E> {
     <!NOTHING_TO_OVERRIDE!>override<!> val E?.prop2: String
         get() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, getter, interfaceDeclaration, javaType, nullableType, override,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeParameter */

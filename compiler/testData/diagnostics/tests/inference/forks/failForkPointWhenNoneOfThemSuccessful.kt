@@ -23,3 +23,7 @@ fun test_3_2(algorithm: Base.A<*, Token.TokenB, Data>) {
     algorithm <!UNCHECKED_CAST!>as Base.B<Type<out Data>, Data><!>
     algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // should be wrong receiver
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, intersectionType, nestedClass, objectDeclaration, out, outProjection, sealed, smartcast,
+starProjection, typeConstraint, typeParameter */

@@ -49,3 +49,7 @@ inline fun <reified T> case_5() {
         <!UNRESOLVED_REFERENCE!>println<!>(a)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, functionDeclaration, ifExpression, inline,
+integerLiteral, intersectionType, isExpression, localProperty, nullableType, propertyDeclaration, reified, smartcast,
+typeParameter */

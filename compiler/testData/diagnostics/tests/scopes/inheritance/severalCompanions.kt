@@ -22,3 +22,6 @@ class C: B() {
         val c: String = bar("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, integerLiteral, localProperty,
+objectDeclaration, propertyDeclaration, stringLiteral */

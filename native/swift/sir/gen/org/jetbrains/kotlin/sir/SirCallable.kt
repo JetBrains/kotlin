@@ -8,15 +8,21 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.callable]
  */
-sealed interface SirCallable : SirDeclaration {
-    override val origin: SirOrigin
-    override val visibility: SirVisibility
-    override val documentation: String?
-    override var parent: SirDeclarationParent
-    override val attributes: List<SirAttribute>
-    var body: SirFunctionBody?
-    val errorType: SirType
+sealed class SirCallable : SirBridged(), SirDeclaration {
+    abstract override val origin: SirOrigin
+    abstract override val visibility: SirVisibility
+    abstract override val documentation: String?
+    abstract override var parent: SirDeclarationParent
+    abstract override val attributes: List<SirAttribute>
+    abstract override val bridges: List<SirBridge>
+    abstract var body: SirFunctionBody?
+    abstract val errorType: SirType
+    override fun toString(): String {
+        return this.debugString
+    }
 }

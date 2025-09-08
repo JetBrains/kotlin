@@ -57,3 +57,5 @@ fun use1() {
 }
 
 fun use2(f: <!OPT_IN_USAGE!>C.D.E.F<!>) = <!OPT_IN_USAGE!>f<!>.<!OPT_IN_USAGE!>hashCode<!>()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, nestedClass */

@@ -79,3 +79,5 @@ tailrec fun foo7_return() {
     return "hello ${<!NON_TAIL_RECURSIVE_CALL!>foo11<!>()}"
 }
 
+/* GENERATED_FIR_TAGS: break, classDeclaration, continue, functionDeclaration, ifExpression, integerLiteral, localClass,
+localFunction, localProperty, propertyDeclaration, stringLiteral, tailrec, whileLoop */

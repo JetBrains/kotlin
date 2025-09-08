@@ -1,0 +1,3 @@
+STEP 0:
+    arguments: -Xklib-ir-inliner=full -Xskip-prerelease-check -Xcontext-parameters
+    dependencies: stdlib, full, intraModule, disabled

@@ -17,18 +17,19 @@
 package org.jetbrains.kotlin.cli.common.output
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import java.io.File
 import java.io.FileNotFoundException
 
-fun OutputFileCollection.writeAll(outputDir: File, report: ((sources: List<File>, output: File) -> Unit)?) {
+fun OutputFileCollection.writeAll(outputDir: File, report: ((outputInfo: OutputFile, output: File) -> Unit)?) {
     for (file in asList()) {
-        val sources = file.sourceFiles
         val output = File(outputDir, file.relativePath)
-        report?.invoke(sources, output)
+        report?.invoke(file, output)
         try {
             FileUtil.writeToFile(output, file.asByteArray())
         } catch (e: FileNotFoundException) {
@@ -44,14 +45,32 @@ fun OutputFileCollection.writeAll(outputDir: File, report: ((sources: List<File>
 }
 
 fun OutputFileCollection.writeAllTo(outputDir: File) {
-    writeAll(outputDir, null)
+    writeAll(outputDir, report = null)
 }
 
-fun OutputFileCollection.writeAll(outputDir: File, messageCollector: MessageCollector, reportOutputFiles: Boolean) {
+fun OutputFileCollection.writeAll(
+    outputDir: File,
+    messageCollector: MessageCollector,
+    reportOutputFiles: Boolean,
+    fileMappingTracker: ICFileMappingTracker?,
+) {
     try {
-        if (!reportOutputFiles) writeAllTo(outputDir)
-        else writeAll(outputDir) { sources, output ->
-            messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+        if (!reportOutputFiles && fileMappingTracker == null) writeAllTo(outputDir)
+        else writeAll(outputDir) { outputInfo, output ->
+            fileMappingTracker?.let { tracker ->
+                when (outputInfo.generatedForCompilerPlugin) {
+                    false -> tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+                    true -> {
+                        check(outputInfo.sourceFiles.none { it.exists() }) {
+                            "Plugin generated file shouldn't have sources, but got ${outputInfo.sourceFiles.joinToString { it.path }}"
+                        }
+                        tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+                    }
+                }
+            }
+            if (reportOutputFiles) {
+                messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
+            }
         }
     } catch (e: NoPermissionException) {
         messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)

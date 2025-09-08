@@ -30,7 +30,7 @@ sealed class SealedClass {
 
 fun testAs(instance: SealedClass) {
     val SealedInheritor1 = instance as SealedInheritor1
-    val SealedInheritor2 = instance as <!UNRESOLVED_REFERENCE!>SealedInheritor2<!>
+    val SealedInheritor2 = instance <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
 }
 
 fun testTypeAnnotation(arg: SealedClass) {
@@ -55,3 +55,7 @@ fun testConstraint() {
 }
 
 class SubSealed : SealedInterface, <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, inner, integerLiteral,
+interfaceDeclaration, localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, typeConstraint, typeParameter */

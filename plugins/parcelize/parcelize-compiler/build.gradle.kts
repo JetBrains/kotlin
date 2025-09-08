@@ -6,6 +6,8 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("android-sdk-provisioner")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val robolectricClasspath by configurations.creating
@@ -22,33 +24,35 @@ dependencies {
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.backend")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.cli")) { isTransitive = false }
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testApi(intellijCore())
+    testFixturesApi(intellijCore())
 
-    testApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
+    testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
 
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:ir.backend.common"))
-    testApi(project(":compiler:backend.jvm"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":plugins:parcelize:parcelize-runtime"))
-    testApi(kotlinTest())
+    testFixturesApi(project(":compiler:util"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:ir.backend.common"))
+    testFixturesApi(project(":compiler:backend.jvm"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":plugins:parcelize:parcelize-runtime"))
+    testFixturesApi(kotlinTest())
 
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     // FIR dependencies
-    testApi(project(":compiler:fir:plugin-utils"))
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":compiler:fir:checkers:checkers.js"))
-    testApi(project(":compiler:fir:checkers:checkers.native"))
+    testFixturesApi(project(":compiler:fir:plugin-utils"))
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
@@ -57,7 +61,7 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
-    testImplementation(libs.junit4)
+    testFixturesApi(libs.junit4)
 
     robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")
 
@@ -80,6 +84,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 runtimeJar()
@@ -93,37 +98,37 @@ val prepareRobolectricDependencies by tasks.registering(Copy::class) {
     into(robolectricDependencyDir)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
-    dependsOn(parcelizeRuntimeForTests)
-    dependsOn(robolectricClasspath)
-    dependsOn(robolectricDependency)
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(parcelizeRuntimeForTests)
+        dependsOn(robolectricClasspath)
+        dependsOn(robolectricDependency)
 
-    dependsOn(prepareRobolectricDependencies)
-    dependsOn(":dist")
-    workingDir = rootDir
-    androidSdkProvisioner {
-        provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
+        dependsOn(prepareRobolectricDependencies)
+        dependsOn(":dist")
+        workingDir = rootDir
+        androidSdkProvisioner {
+            provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
+        }
+
+        val parcelizeRuntimeForTestsConf: FileCollection = parcelizeRuntimeForTests
+        val robolectricClasspathConf: FileCollection = robolectricClasspath
+        val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
+        val layoutLibConf: FileCollection = layoutLib
+        val layoutLibApiConf: FileCollection = layoutLibApi
+        doFirst {
+            systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsConf.asPath)
+            systemProperty("robolectric.classpath", robolectricClasspathConf.asPath)
+
+            systemProperty("robolectric.offline", "true")
+            systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile)
+
+            systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
+            systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
+        }
     }
 
-    val parcelizeRuntimeForTestsConf: FileCollection = parcelizeRuntimeForTests
-    val robolectricClasspathConf: FileCollection = robolectricClasspath
-    val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
-    val layoutLibConf: FileCollection = layoutLib
-    val layoutLibApiConf: FileCollection = layoutLibApi
-    doFirst {
-        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsConf.asPath)
-        systemProperty("robolectric.classpath", robolectricClasspathConf.asPath)
+    testGenerator("org.jetbrains.kotlin.parcelize.test.TestGeneratorKt")
 
-        systemProperty("robolectric.offline", "true")
-        systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile)
-
-        systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
-        systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
-    }
-    doLast {
-        println(filter)
-        println(filter.excludePatterns)
-        println(filter.includePatterns)
-    }
+    withJvmStdlibAndReflect()
 }

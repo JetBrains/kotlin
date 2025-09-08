@@ -27,3 +27,6 @@ class Adapter : B, C
 class AdapterJ : BJ, C
 
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class DJ<!>(val adapter: AdapterJ) : BJ by adapter, C by adapter
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, javaType,
+primaryConstructor, propertyDeclaration */

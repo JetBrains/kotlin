@@ -27,3 +27,6 @@ fun test() {
     useMixedStringArgs3(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
     useTwoStringArrays(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, outProjection,
+stringLiteral, vararg */

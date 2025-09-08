@@ -22,3 +22,5 @@ actual val <!AMBIGUOUS_EXPECTS!>x1<!> = 1
 actual val <!REDECLARATION!>x2<!> = 2
 
 val <!ACTUAL_MISSING, REDECLARATION!>x3<!> = 3
+
+/* GENERATED_FIR_TAGS: actual, expect, integerLiteral, propertyDeclaration */

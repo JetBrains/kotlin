@@ -76,3 +76,6 @@ class B5 : A5() {
 fun test5() {
     B5().<!INVISIBLE_SETTER!>attribute<!> = "c"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, override, propertyDeclaration,
+stringLiteral, superExpression */

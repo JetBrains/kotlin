@@ -1,5 +1,8 @@
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.config.MavenComparableVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
@@ -26,23 +29,6 @@ project.configureTests()
 //  - idea seems unable to exclude common buildDir from indexing
 // therefore it is disabled by default
 // buildDir = File(commonBuildDir, project.name)
-
-afterEvaluate {
-    run configureCompilerClasspath@{
-        val bootstrapCompilerClasspath by rootProject.buildscript.configurations
-        configurations.findByName("kotlinCompilerClasspath")?.let {
-            dependencies.add(it.name, files(bootstrapCompilerClasspath))
-        }
-        val bootstrapBuildToolsApiClasspath by rootProject.buildscript.configurations
-        configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
-            it.dependencies.clear() // it's different from `bootstrapCompilerClasspath` as this configuration does not use "default dependencies"
-            dependencies.add(it.name, files(bootstrapBuildToolsApiClasspath))
-        }
-
-        configurations.findByName("kotlinCompilerPluginClasspath")
-            ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
-    }
-}
 
 fun Project.addImplicitDependenciesConfiguration() {
     configurations.maybeCreate("implicitDependencies").apply {
@@ -158,7 +144,7 @@ fun Project.configureKotlinCompilationOptions() {
             //  The value for property 'freeCompilerArgs' is final and cannot be changed any further.
             if (project.path != ":native:kotlin-test-native-xctest" &&
                 !project.path.startsWith(":native:objcexport-header-generator") &&
-                !project.path.startsWith(":native:analysis-api-klib-reader") &&
+                !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
                 !project.path.startsWith(":native:external-projects-test-utils")
             ) {
                 doFirst {
@@ -183,14 +169,34 @@ fun Project.configureKotlinCompilationOptions() {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
 
-                if (!skipJvmDefaultAllForModule(project.path)) {
-                    freeCompilerArgs.add("-Xjvm-default=all")
+                if (!skipJvmDefaultForModule(project.path)) {
+                    freeCompilerArgs.add(
+                        if (project.shouldUseOldJvmDefaultArgument(this@configureEach))
+                            "-Xjvm-default=all"
+                        else
+                            "-jvm-default=no-compatibility"
+                    )
                 } else {
-                    freeCompilerArgs.add("-Xjvm-default=disable")
+                    freeCompilerArgs.add(
+                        if (project.shouldUseOldJvmDefaultArgument(this@configureEach))
+                            "-Xjvm-default=disable"
+                        else
+                            "-jvm-default=disable"
+                    )
                 }
             }
         }
     }
+}
+
+private fun Project.shouldUseOldJvmDefaultArgument(task: KotlinJvmCompile): Boolean {
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+    val isOldCompilerVersion =
+        MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
+
+    // In most projects which enable old compiler version, test tasks still use the bootstrap compiler.
+    return isOldCompilerVersion && task.name != "compileTestKotlin" && task.name != "compileFunctionalTestKotlin" &&
+            (task.name != "compileTestFixturesKotlin" || path == ":kotlin-gradle-plugin")
 }
 
 fun Project.configureArtifacts() {
@@ -309,7 +315,7 @@ fun Project.configureTests() {
     }
 
     tasks.withType<Test>().configureEach {
-        if (!plugins.hasPlugin("compiler-tests-convention")) {
+        if (!plugins.hasPlugin("project-tests-convention") && !plugins.hasPlugin("test-inputs-check")) {
             outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
         }
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
@@ -326,7 +332,7 @@ fun Project.configureTests() {
 }
 
 // TODO: migrate remaining modules to the new JVM default scheme.
-fun skipJvmDefaultAllForModule(path: String): Boolean =
+fun skipJvmDefaultForModule(path: String): Boolean =
 // Gradle plugin modules are disabled because different Gradle versions bundle different Kotlin compilers,
     // and not all of them support the new JVM default scheme.
     "-gradle" in path || "-runtime" in path || path == ":kotlin-project-model" ||

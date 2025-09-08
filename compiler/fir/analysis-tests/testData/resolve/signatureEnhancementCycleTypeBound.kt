@@ -25,3 +25,5 @@ public class JavaBLeaf extends JavaB<JavaALeaf> {
 class KotlinA : JavaA<JavaB<JavaALeaf>>()
 
 class KotlinB : JavaB<JavaA<JavaBLeaf>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

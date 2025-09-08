@@ -16,3 +16,5 @@ get() = z
 
 val w : Int = 56
 get() = field
+
+/* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */

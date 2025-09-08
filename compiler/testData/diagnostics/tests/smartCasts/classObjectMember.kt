@@ -21,3 +21,6 @@ fun test() {
 }
 
 fun useInt(i: Int) = i
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, equalityExpression, functionDeclaration, ifExpression,
+nullableType, objectDeclaration, propertyDeclaration, smartcast */

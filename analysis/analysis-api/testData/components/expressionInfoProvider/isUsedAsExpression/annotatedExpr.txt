@@ -1,3 +1,4 @@
 expression: ANNOTATED_EXPRESSION
 text: @OptIn(Deprecated::class) args
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

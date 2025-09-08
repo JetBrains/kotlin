@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * @Foo5([Color.RED, Color.GREEN, Color.BLUE])  // Arrays
  * ```
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
      * The [KtElement] underlying the annotation value. This is only defined for annotations in source files. For libraries, it always
@@ -46,6 +48,7 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
      *
      * @see KaConstantValue
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ConstantValue : KaAnnotationValue {
         /**
          * A constant value (a number, [Boolean], [Char], or [String]) wrapped into the [KaConstantValue] abstraction.
@@ -56,6 +59,7 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
      * An enum entry annotation value, such as `Color.RED`.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface EnumEntryValue : KaAnnotationValue {
         /**
          * The fully qualified [CallableId] of the enum entry.
@@ -66,6 +70,7 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
      * A class literal annotation value, such as `String::class` or `Array<String>::class`.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ClassLiteralValue : KaAnnotationValue {
         /**
          * The [KaType] of the class reference, such as `String` for the `String::class` reference.
@@ -83,6 +88,7 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
      * Represents a nested annotation value, such as `ReplaceWith("bar()")` in `@Deprecated("Use 'bar()' instead", ReplaceWith("bar()"))`.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NestedAnnotationValue : KaAnnotationValue {
         /**
          * The [KaAnnotation] which is applied as an annotation argument through this nested annotation value.
@@ -93,6 +99,7 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
      * Represents an array of annotation values, such as `arrayOf(1, 2)` or `[1, 2]`.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ArrayValue : KaAnnotationValue {
         /**
          * The list of annotation values contained in the array.
@@ -103,6 +110,7 @@ public sealed interface KaAnnotationValue : KaLifetimeOwner {
     /**
      * Represents an unsupported expression used as an annotation value.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface UnsupportedValue : KaAnnotationValue
 }
 

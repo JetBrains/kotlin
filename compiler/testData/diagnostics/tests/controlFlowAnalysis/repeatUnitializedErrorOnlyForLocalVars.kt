@@ -14,3 +14,6 @@ fun foo() {
     <!UNINITIALIZED_VARIABLE!>a<!> + 1
     a + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

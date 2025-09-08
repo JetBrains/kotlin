@@ -32,3 +32,6 @@ fun some() {
     <!DEPRECATION!>Some<!>.use()
     <!DEPRECATION!>Some<!>.Companion.use()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, integerLiteral, localProperty,
+objectDeclaration, propertyDeclaration, stringLiteral */

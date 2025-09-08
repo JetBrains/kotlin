@@ -9,3 +9,6 @@ class C<T> {
 }
 
 val p1: C<String>.P2 = Pair("", 1)
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

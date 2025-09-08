@@ -17,3 +17,6 @@ fun takeFunWithA(func: (A) -> Unit) {}
 fun test() {
     takeFunWithA(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, javaCallableReference, javaFunction, samConversion, vararg */

@@ -45,3 +45,7 @@ fun testMaterialize() {
     }
     checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<Function0<Unit>>; Buildee<Function1<UserKlass, Unit>>")!>buildee<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, asExpression, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localFunction, localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression,
+typeParameter, typeWithExtension */

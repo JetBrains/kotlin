@@ -20,3 +20,5 @@ fun test(a: A) {
     //to copy this invocation many times (and to comment/uncomment inappropriate functions) to see the difference
     foo(foo(a, foo(a, foo(a, a.testVal))), a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration */

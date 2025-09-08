@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
+import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.powerassert.isEqualOperator
 import org.jetbrains.kotlin.powerassert.isImplicitArgument
@@ -113,7 +114,15 @@ fun buildTree(
     val tree = RootNode()
     expression.accept(
         object : IrVisitor<Unit, Node>() {
+            private val calls = mutableListOf<IrCall>()
             private val whenSubjects = mutableListOf<IrVariableSymbol>()
+
+            private fun IrFunctionExpression.isInlineParameter(): Boolean {
+                val call = calls.lastOrNull() ?: return false
+                val index = call.arguments.indexOf(this)
+                val parameter = call.symbol.owner.parameters.getOrNull(index) ?: return false
+                return parameter.isInlineParameter()
+            }
 
             private fun IrExpression.isWhenSubjectAccess(): Boolean = this is IrGetValue && this.symbol in whenSubjects
 
@@ -126,7 +135,16 @@ fun buildTree(
                     // Do not transform object access.
                     data.addChild(HiddenNode(expression))
                 } else if (expression is IrFunctionExpression) {
+                    if (expression.isInlineParameter()) {
+                        // Completely skip this argument so it can still be inlined.
+                        // This may result in the function call arguments being reordered,
+                        // but this is safe for inline lambdas as they do not capture
+                        // and reordering is inherent to the inlining process regardless.
+                        return
+                    }
+
                     // Do not transform lambda expressions, especially their body.
+                    // But extract to a local variable so capturing behaves correctly.
                     data.addChild(HiddenNode(expression))
                 } else if (expression.isImplicitArgument()) {
                     // Do not diagram implicit arguments.
@@ -246,13 +264,18 @@ fun buildTree(
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.dispatchReceiver!!.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
+                } else if (expression.origin == IrStatementOrigin.EXCLEXCL) {
+                    // Skip displaying results of '!!' operator.
+                    expression.acceptChildren(this, data)
                 } else if (expression.isEqualOperator() && expression.arguments.getOrNull(0)?.isWhenSubjectAccess() == true) {
                     // Exclude equality call for when-with-subject branches.
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.acceptChildren(this, chainNode)
                     chainNode.addChild(HiddenNode(expression))
                 } else {
+                    calls.add(expression)
                     super.visitCall(expression, data)
+                    calls.removeLast()
                 }
             }
 

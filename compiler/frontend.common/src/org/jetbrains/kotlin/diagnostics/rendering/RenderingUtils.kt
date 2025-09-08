@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.NO_ISSUE_SPECIFIED
 
 fun String.toDeprecationWarningMessage(deprecatingFeature: LanguageFeature): String {
     return buildString {
@@ -19,20 +20,24 @@ fun String.toDeprecationWarningMessage(deprecatingFeature: LanguageFeature): Str
     }
 }
 
-fun StringBuilder.appendDeprecationWarningSuffix(deprecatingFeature: LanguageFeature, ticket: String? = null) {
-    append("This will become an error")
-    val sinceVersion = deprecatingFeature.sinceVersion
-    if (sinceVersion != null) {
-        append(" in language version ")
-        append(sinceVersion.versionString)
-    } else {
-        append(" in a future release")
-    }
+fun StringBuilder.appendDeprecationWarningSuffix(deprecatingFeature: LanguageFeature) {
+    append("This will become an error ")
+    appendVersion(deprecatingFeature)
     append(".")
 
-    ticket?.let {
+    deprecatingFeature.issue.takeUnless { it == NO_ISSUE_SPECIFIED }?.let {
         append(" See https://youtrack.jetbrains.com/issue/")
         append(it)
         append(".")
+    }
+}
+
+fun StringBuilder.appendVersion(deprecatingFeature: LanguageFeature) {
+    val sinceVersion = deprecatingFeature.sinceVersion
+    if (sinceVersion != null) {
+        append("in language version ")
+        append(sinceVersion.versionString)
+    } else {
+        append("in a future release")
     }
 }

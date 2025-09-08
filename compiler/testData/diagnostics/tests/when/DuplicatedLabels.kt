@@ -69,3 +69,7 @@ fun sixth(arg: Any?) = when (arg) {
     Foo -> ""
     else -> null
 }
+
+/* GENERATED_FIR_TAGS: const, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+isExpression, nullableType, objectDeclaration, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

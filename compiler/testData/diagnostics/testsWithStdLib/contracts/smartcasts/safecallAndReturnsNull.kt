@@ -17,3 +17,6 @@ fun test(x: Int?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, safeCall, smartcast, thisExpression */

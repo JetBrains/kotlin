@@ -37,6 +37,10 @@ open annotation class kotlin.contracts/ExperimentalContracts : kotlin/Annotation
     constructor <init>() // kotlin.contracts/ExperimentalContracts.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.contracts/ExperimentalExtendedContracts : kotlin/Annotation { // kotlin.contracts/ExperimentalExtendedContracts|null[0]
+    constructor <init>() // kotlin.contracts/ExperimentalExtendedContracts.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.coroutines/RestrictsSuspension : kotlin/Annotation { // kotlin.coroutines/RestrictsSuspension|null[0]
     constructor <init>() // kotlin.coroutines/RestrictsSuspension.<init>|<init>(){}[0]
 }
@@ -797,6 +801,8 @@ abstract interface kotlin.contracts/CallsInPlace : kotlin.contracts/Effect // ko
 abstract interface kotlin.contracts/ConditionalEffect : kotlin.contracts/Effect // kotlin.contracts/ConditionalEffect|null[0]
 
 abstract interface kotlin.contracts/ContractBuilder { // kotlin.contracts/ContractBuilder|null[0]
+    abstract fun (kotlin/Boolean).implies(kotlin.contracts/ReturnsNotNull) // kotlin.contracts/ContractBuilder.implies|implies@kotlin.Boolean(kotlin.contracts.ReturnsNotNull){}[0]
+    abstract fun <#A1: kotlin/Any?> (kotlin/Boolean).holdsIn(kotlin/Function<#A1>): kotlin.contracts/HoldsIn // kotlin.contracts/ContractBuilder.holdsIn|holdsIn@kotlin.Boolean(kotlin.Function<0:0>){0§<kotlin.Any?>}[0]
     abstract fun <#A1: kotlin/Any?> callsInPlace(kotlin/Function<#A1>, kotlin.contracts/InvocationKind = ...): kotlin.contracts/CallsInPlace // kotlin.contracts/ContractBuilder.callsInPlace|callsInPlace(kotlin.Function<0:0>;kotlin.contracts.InvocationKind){0§<kotlin.Any?>}[0]
     abstract fun returns(): kotlin.contracts/Returns // kotlin.contracts/ContractBuilder.returns|returns(){}[0]
     abstract fun returns(kotlin/Any?): kotlin.contracts/Returns // kotlin.contracts/ContractBuilder.returns|returns(kotlin.Any?){}[0]
@@ -804,6 +810,8 @@ abstract interface kotlin.contracts/ContractBuilder { // kotlin.contracts/Contra
 }
 
 abstract interface kotlin.contracts/Effect // kotlin.contracts/Effect|null[0]
+
+abstract interface kotlin.contracts/HoldsIn : kotlin.contracts/Effect // kotlin.contracts/HoldsIn|null[0]
 
 abstract interface kotlin.contracts/Returns : kotlin.contracts/SimpleEffect // kotlin.contracts/Returns|null[0]
 
@@ -1386,6 +1394,14 @@ final class <#A: kotlin/Any?> kotlin.concurrent.atomics/AtomicReference { // kot
 
     // Targets: [native]
     final fun getAndSet(#A): #A // kotlin.concurrent.atomics/AtomicReference.getAndSet|getAndSet(1:0){}[0]
+}
+
+final class <#A: kotlin/Any?> kotlin.internal/SharedVariableBox { // kotlin.internal/SharedVariableBox|null[0]
+    constructor <init>(#A) // kotlin.internal/SharedVariableBox.<init>|<init>(1:0){}[0]
+
+    final var element // kotlin.internal/SharedVariableBox.element|{}element[0]
+        final fun <get-element>(): #A // kotlin.internal/SharedVariableBox.element.<get-element>|<get-element>(){}[0]
+        final fun <set-element>(#A) // kotlin.internal/SharedVariableBox.element.<set-element>|<set-element>(1:0){}[0]
 }
 
 final class <#A: kotlin/Any?> kotlin.time/TimedValue { // kotlin.time/TimedValue|null[0]
@@ -2097,6 +2113,9 @@ final class kotlin.uuid/Uuid : kotlin.io/Serializable, kotlin/Comparable<kotlin.
         final fun parse(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parse|parse(kotlin.String){}[0]
         final fun parseHex(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHex|parseHex(kotlin.String){}[0]
         final fun parseHexDash(kotlin/String): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.parseHexDash|parseHexDash(kotlin.String){}[0]
+        final fun parseHexDashOrNull(kotlin/String): kotlin.uuid/Uuid? // kotlin.uuid/Uuid.Companion.parseHexDashOrNull|parseHexDashOrNull(kotlin.String){}[0]
+        final fun parseHexOrNull(kotlin/String): kotlin.uuid/Uuid? // kotlin.uuid/Uuid.Companion.parseHexOrNull|parseHexOrNull(kotlin.String){}[0]
+        final fun parseOrNull(kotlin/String): kotlin.uuid/Uuid? // kotlin.uuid/Uuid.Companion.parseOrNull|parseOrNull(kotlin.String){}[0]
         final fun random(): kotlin.uuid/Uuid // kotlin.uuid/Uuid.Companion.random|random(){}[0]
     }
 }
@@ -3480,7 +3499,6 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
     final inline fun times(kotlin/Float): kotlin/Float // kotlin/Long.times|times(kotlin.Float){}[0]
     final inline fun times(kotlin/Int): kotlin/Long // kotlin/Long.times|times(kotlin.Int){}[0]
     final inline fun times(kotlin/Short): kotlin/Long // kotlin/Long.times|times(kotlin.Short){}[0]
-    final inline fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 
     final object Companion { // kotlin/Long.Companion|null[0]
         final const val MAX_VALUE // kotlin/Long.Companion.MAX_VALUE|{}MAX_VALUE[0]
@@ -3495,6 +3513,9 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
 
     // Targets: [native, wasmJs, wasmWasi]
     final inline fun toLong(): kotlin/Long // kotlin/Long.toLong|toLong(){}[0]
+
+    // Targets: [native, wasmJs, wasmWasi]
+    final inline fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 
     // Targets: [js, native]
     final fun compareTo(kotlin/Long): kotlin/Int // kotlin/Long.compareTo|compareTo(kotlin.Long){}[0]
@@ -3567,6 +3588,9 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
 
     // Targets: [js]
     final fun toLong(): kotlin/Long // kotlin/Long.toLong|toLong(){}[0]
+
+    // Targets: [js]
+    final fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 }
 
 final class kotlin/LongArray { // kotlin/LongArray|null[0]
@@ -4681,6 +4705,8 @@ final object kotlin.coroutines/EmptyCoroutineContext : kotlin.coroutines/Corouti
     final fun plus(kotlin.coroutines/CoroutineContext): kotlin.coroutines/CoroutineContext // kotlin.coroutines/EmptyCoroutineContext.plus|plus(kotlin.coroutines.CoroutineContext){}[0]
     final fun toString(): kotlin/String // kotlin.coroutines/EmptyCoroutineContext.toString|toString(){}[0]
 }
+
+final object kotlin.internal/SyntheticConstructorMarker // kotlin.internal/SyntheticConstructorMarker|null[0]
 
 final object kotlin.properties/Delegates { // kotlin.properties/Delegates|null[0]
     final fun <#A1: kotlin/Any> notNull(): kotlin.properties/ReadWriteProperty<kotlin/Any?, #A1> // kotlin.properties/Delegates.notNull|notNull(){0§<kotlin.Any>}[0]
@@ -6645,6 +6671,8 @@ final fun kotlin.internal/getProgressionLastElement(kotlin/Int, kotlin/Int, kotl
 final fun kotlin.internal/getProgressionLastElement(kotlin/Long, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.Long;kotlin.Long;kotlin.Long){}[0]
 final fun kotlin.internal/getProgressionLastElement(kotlin/UInt, kotlin/UInt, kotlin/Int): kotlin/UInt // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.UInt;kotlin.UInt;kotlin.Int){}[0]
 final fun kotlin.internal/getProgressionLastElement(kotlin/ULong, kotlin/ULong, kotlin/Long): kotlin/ULong // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.ULong;kotlin.ULong;kotlin.Long){}[0]
+final fun kotlin.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
+final fun kotlin.internal/throwUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.internal/throwUnsupportedOperationException|throwUnsupportedOperationException(kotlin.String){}[0]
 final fun kotlin.io/print(kotlin/Any?) // kotlin.io/print|print(kotlin.Any?){}[0]
 final fun kotlin.io/println() // kotlin.io/println|println(){}[0]
 final fun kotlin.io/println(kotlin/Any?) // kotlin.io/println|println(kotlin.Any?){}[0]
@@ -6668,6 +6696,18 @@ final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|
 final fun kotlin/ulongDivide(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongDivide|ulongDivide(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongRemainder(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongRemainder|ulongRemainder(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongToDouble(kotlin/Long): kotlin/Double // kotlin/ulongToDouble|ulongToDouble(kotlin.Long){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/fetchAndUpdate(kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int // kotlin.concurrent.atomics/fetchAndUpdate|fetchAndUpdate@kotlin.concurrent.atomics.AtomicInt(kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/update(kotlin/Function1<kotlin/Int, kotlin/Int>) // kotlin.concurrent.atomics/update|update@kotlin.concurrent.atomics.AtomicInt(kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicInt).kotlin.concurrent.atomics/updateAndFetch(kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int // kotlin.concurrent.atomics/updateAndFetch|updateAndFetch@kotlin.concurrent.atomics.AtomicInt(kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/fetchAndUpdateAt(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int // kotlin.concurrent.atomics/fetchAndUpdateAt|fetchAndUpdateAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/updateAndFetchAt(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/Int // kotlin.concurrent.atomics/updateAndFetchAt|updateAndFetchAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicIntArray).kotlin.concurrent.atomics/updateAt(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>) // kotlin.concurrent.atomics/updateAt|updateAt@kotlin.concurrent.atomics.AtomicIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/fetchAndUpdate(kotlin/Function1<kotlin/Long, kotlin/Long>): kotlin/Long // kotlin.concurrent.atomics/fetchAndUpdate|fetchAndUpdate@kotlin.concurrent.atomics.AtomicLong(kotlin.Function1<kotlin.Long,kotlin.Long>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/update(kotlin/Function1<kotlin/Long, kotlin/Long>) // kotlin.concurrent.atomics/update|update@kotlin.concurrent.atomics.AtomicLong(kotlin.Function1<kotlin.Long,kotlin.Long>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicLong).kotlin.concurrent.atomics/updateAndFetch(kotlin/Function1<kotlin/Long, kotlin/Long>): kotlin/Long // kotlin.concurrent.atomics/updateAndFetch|updateAndFetch@kotlin.concurrent.atomics.AtomicLong(kotlin.Function1<kotlin.Long,kotlin.Long>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/fetchAndUpdateAt(kotlin/Int, kotlin/Function1<kotlin/Long, kotlin/Long>): kotlin/Long // kotlin.concurrent.atomics/fetchAndUpdateAt|fetchAndUpdateAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int;kotlin.Function1<kotlin.Long,kotlin.Long>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/updateAndFetchAt(kotlin/Int, kotlin/Function1<kotlin/Long, kotlin/Long>): kotlin/Long // kotlin.concurrent.atomics/updateAndFetchAt|updateAndFetchAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int;kotlin.Function1<kotlin.Long,kotlin.Long>){}[0]
+final inline fun (kotlin.concurrent.atomics/AtomicLongArray).kotlin.concurrent.atomics/updateAt(kotlin/Int, kotlin/Function1<kotlin/Long, kotlin/Long>) // kotlin.concurrent.atomics/updateAt|updateAt@kotlin.concurrent.atomics.AtomicLongArray(kotlin.Int;kotlin.Function1<kotlin.Long,kotlin.Long>){}[0]
 final inline fun (kotlin.ranges/CharRange).kotlin.ranges/contains(kotlin/Char?): kotlin/Boolean // kotlin.ranges/contains|contains@kotlin.ranges.CharRange(kotlin.Char?){}[0]
 final inline fun (kotlin.ranges/CharRange).kotlin.ranges/random(): kotlin/Char // kotlin.ranges/random|random@kotlin.ranges.CharRange(){}[0]
 final inline fun (kotlin.ranges/CharRange).kotlin.ranges/randomOrNull(): kotlin/Char? // kotlin.ranges/randomOrNull|randomOrNull@kotlin.ranges.CharRange(){}[0]
@@ -6731,6 +6771,7 @@ final inline fun (kotlin/BooleanArray).kotlin.collections/component2(): kotlin/B
 final inline fun (kotlin/BooleanArray).kotlin.collections/component3(): kotlin/Boolean // kotlin.collections/component3|component3@kotlin.BooleanArray(){}[0]
 final inline fun (kotlin/BooleanArray).kotlin.collections/component4(): kotlin/Boolean // kotlin.collections/component4|component4@kotlin.BooleanArray(){}[0]
 final inline fun (kotlin/BooleanArray).kotlin.collections/component5(): kotlin/Boolean // kotlin.collections/component5|component5@kotlin.BooleanArray(){}[0]
+final inline fun (kotlin/BooleanArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Boolean>): kotlin/BooleanArray // kotlin.collections/copyOf|copyOf@kotlin.BooleanArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Boolean>){}[0]
 final inline fun (kotlin/BooleanArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.BooleanArray(){}[0]
 final inline fun (kotlin/BooleanArray).kotlin.collections/count(kotlin/Function1<kotlin/Boolean, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.BooleanArray(kotlin.Function1<kotlin.Boolean,kotlin.Boolean>){}[0]
 final inline fun (kotlin/BooleanArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Boolean, kotlin/Boolean>): kotlin.collections/List<kotlin/Boolean> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.BooleanArray(kotlin.Function1<kotlin.Boolean,kotlin.Boolean>){}[0]
@@ -6817,6 +6858,7 @@ final inline fun (kotlin/ByteArray).kotlin.collections/component2(): kotlin/Byte
 final inline fun (kotlin/ByteArray).kotlin.collections/component3(): kotlin/Byte // kotlin.collections/component3|component3@kotlin.ByteArray(){}[0]
 final inline fun (kotlin/ByteArray).kotlin.collections/component4(): kotlin/Byte // kotlin.collections/component4|component4@kotlin.ByteArray(){}[0]
 final inline fun (kotlin/ByteArray).kotlin.collections/component5(): kotlin/Byte // kotlin.collections/component5|component5@kotlin.ByteArray(){}[0]
+final inline fun (kotlin/ByteArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Byte>): kotlin/ByteArray // kotlin.collections/copyOf|copyOf@kotlin.ByteArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Byte>){}[0]
 final inline fun (kotlin/ByteArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.ByteArray(){}[0]
 final inline fun (kotlin/ByteArray).kotlin.collections/count(kotlin/Function1<kotlin/Byte, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.ByteArray(kotlin.Function1<kotlin.Byte,kotlin.Boolean>){}[0]
 final inline fun (kotlin/ByteArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Byte, kotlin/Boolean>): kotlin.collections/List<kotlin/Byte> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.ByteArray(kotlin.Function1<kotlin.Byte,kotlin.Boolean>){}[0]
@@ -6883,6 +6925,7 @@ final inline fun (kotlin/CharArray).kotlin.collections/component2(): kotlin/Char
 final inline fun (kotlin/CharArray).kotlin.collections/component3(): kotlin/Char // kotlin.collections/component3|component3@kotlin.CharArray(){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/component4(): kotlin/Char // kotlin.collections/component4|component4@kotlin.CharArray(){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/component5(): kotlin/Char // kotlin.collections/component5|component5@kotlin.CharArray(){}[0]
+final inline fun (kotlin/CharArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Char>): kotlin/CharArray // kotlin.collections/copyOf|copyOf@kotlin.CharArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Char>){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.CharArray(){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/count(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.CharArray(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin.collections/List<kotlin/Char> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.CharArray(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
@@ -7023,6 +7066,7 @@ final inline fun (kotlin/DoubleArray).kotlin.collections/component2(): kotlin/Do
 final inline fun (kotlin/DoubleArray).kotlin.collections/component3(): kotlin/Double // kotlin.collections/component3|component3@kotlin.DoubleArray(){}[0]
 final inline fun (kotlin/DoubleArray).kotlin.collections/component4(): kotlin/Double // kotlin.collections/component4|component4@kotlin.DoubleArray(){}[0]
 final inline fun (kotlin/DoubleArray).kotlin.collections/component5(): kotlin/Double // kotlin.collections/component5|component5@kotlin.DoubleArray(){}[0]
+final inline fun (kotlin/DoubleArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Double>): kotlin/DoubleArray // kotlin.collections/copyOf|copyOf@kotlin.DoubleArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Double>){}[0]
 final inline fun (kotlin/DoubleArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.DoubleArray(){}[0]
 final inline fun (kotlin/DoubleArray).kotlin.collections/count(kotlin/Function1<kotlin/Double, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.DoubleArray(kotlin.Function1<kotlin.Double,kotlin.Boolean>){}[0]
 final inline fun (kotlin/DoubleArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Double, kotlin/Boolean>): kotlin.collections/List<kotlin/Double> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.DoubleArray(kotlin.Function1<kotlin.Double,kotlin.Boolean>){}[0]
@@ -7091,6 +7135,7 @@ final inline fun (kotlin/FloatArray).kotlin.collections/component2(): kotlin/Flo
 final inline fun (kotlin/FloatArray).kotlin.collections/component3(): kotlin/Float // kotlin.collections/component3|component3@kotlin.FloatArray(){}[0]
 final inline fun (kotlin/FloatArray).kotlin.collections/component4(): kotlin/Float // kotlin.collections/component4|component4@kotlin.FloatArray(){}[0]
 final inline fun (kotlin/FloatArray).kotlin.collections/component5(): kotlin/Float // kotlin.collections/component5|component5@kotlin.FloatArray(){}[0]
+final inline fun (kotlin/FloatArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Float>): kotlin/FloatArray // kotlin.collections/copyOf|copyOf@kotlin.FloatArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Float>){}[0]
 final inline fun (kotlin/FloatArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.FloatArray(){}[0]
 final inline fun (kotlin/FloatArray).kotlin.collections/count(kotlin/Function1<kotlin/Float, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.FloatArray(kotlin.Function1<kotlin.Float,kotlin.Boolean>){}[0]
 final inline fun (kotlin/FloatArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Float, kotlin/Boolean>): kotlin.collections/List<kotlin/Float> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.FloatArray(kotlin.Function1<kotlin.Float,kotlin.Boolean>){}[0]
@@ -7169,6 +7214,7 @@ final inline fun (kotlin/IntArray).kotlin.collections/component2(): kotlin/Int /
 final inline fun (kotlin/IntArray).kotlin.collections/component3(): kotlin/Int // kotlin.collections/component3|component3@kotlin.IntArray(){}[0]
 final inline fun (kotlin/IntArray).kotlin.collections/component4(): kotlin/Int // kotlin.collections/component4|component4@kotlin.IntArray(){}[0]
 final inline fun (kotlin/IntArray).kotlin.collections/component5(): kotlin/Int // kotlin.collections/component5|component5@kotlin.IntArray(){}[0]
+final inline fun (kotlin/IntArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Int>): kotlin/IntArray // kotlin.collections/copyOf|copyOf@kotlin.IntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Int>){}[0]
 final inline fun (kotlin/IntArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.IntArray(){}[0]
 final inline fun (kotlin/IntArray).kotlin.collections/count(kotlin/Function1<kotlin/Int, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.IntArray(kotlin.Function1<kotlin.Int,kotlin.Boolean>){}[0]
 final inline fun (kotlin/IntArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Int, kotlin/Boolean>): kotlin.collections/List<kotlin/Int> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.IntArray(kotlin.Function1<kotlin.Int,kotlin.Boolean>){}[0]
@@ -7248,6 +7294,7 @@ final inline fun (kotlin/LongArray).kotlin.collections/component2(): kotlin/Long
 final inline fun (kotlin/LongArray).kotlin.collections/component3(): kotlin/Long // kotlin.collections/component3|component3@kotlin.LongArray(){}[0]
 final inline fun (kotlin/LongArray).kotlin.collections/component4(): kotlin/Long // kotlin.collections/component4|component4@kotlin.LongArray(){}[0]
 final inline fun (kotlin/LongArray).kotlin.collections/component5(): kotlin/Long // kotlin.collections/component5|component5@kotlin.LongArray(){}[0]
+final inline fun (kotlin/LongArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Long>): kotlin/LongArray // kotlin.collections/copyOf|copyOf@kotlin.LongArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Long>){}[0]
 final inline fun (kotlin/LongArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.LongArray(){}[0]
 final inline fun (kotlin/LongArray).kotlin.collections/count(kotlin/Function1<kotlin/Long, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.LongArray(kotlin.Function1<kotlin.Long,kotlin.Boolean>){}[0]
 final inline fun (kotlin/LongArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Long, kotlin/Boolean>): kotlin.collections/List<kotlin/Long> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.LongArray(kotlin.Function1<kotlin.Long,kotlin.Boolean>){}[0]
@@ -7335,6 +7382,7 @@ final inline fun (kotlin/ShortArray).kotlin.collections/component2(): kotlin/Sho
 final inline fun (kotlin/ShortArray).kotlin.collections/component3(): kotlin/Short // kotlin.collections/component3|component3@kotlin.ShortArray(){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/component4(): kotlin/Short // kotlin.collections/component4|component4@kotlin.ShortArray(){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/component5(): kotlin/Short // kotlin.collections/component5|component5@kotlin.ShortArray(){}[0]
+final inline fun (kotlin/ShortArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Short>): kotlin/ShortArray // kotlin.collections/copyOf|copyOf@kotlin.ShortArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Short>){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/count(): kotlin/Int // kotlin.collections/count|count@kotlin.ShortArray(){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/count(kotlin/Function1<kotlin/Short, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.ShortArray(kotlin.Function1<kotlin.Short,kotlin.Boolean>){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/Short, kotlin/Boolean>): kotlin.collections/List<kotlin/Short> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.ShortArray(kotlin.Function1<kotlin.Short,kotlin.Boolean>){}[0]
@@ -7445,6 +7493,7 @@ final inline fun (kotlin/UByteArray).kotlin.collections/component5(): kotlin/UBy
 final inline fun (kotlin/UByteArray).kotlin.collections/copyInto(kotlin/UByteArray, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/UByteArray // kotlin.collections/copyInto|copyInto@kotlin.UByteArray(kotlin.UByteArray;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/UByteArray).kotlin.collections/copyOf(): kotlin/UByteArray // kotlin.collections/copyOf|copyOf@kotlin.UByteArray(){}[0]
 final inline fun (kotlin/UByteArray).kotlin.collections/copyOf(kotlin/Int): kotlin/UByteArray // kotlin.collections/copyOf|copyOf@kotlin.UByteArray(kotlin.Int){}[0]
+final inline fun (kotlin/UByteArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/UByte>): kotlin/UByteArray // kotlin.collections/copyOf|copyOf@kotlin.UByteArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.UByte>){}[0]
 final inline fun (kotlin/UByteArray).kotlin.collections/copyOfRange(kotlin/Int, kotlin/Int): kotlin/UByteArray // kotlin.collections/copyOfRange|copyOfRange@kotlin.UByteArray(kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/UByteArray).kotlin.collections/count(kotlin/Function1<kotlin/UByte, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.UByteArray(kotlin.Function1<kotlin.UByte,kotlin.Boolean>){}[0]
 final inline fun (kotlin/UByteArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/UByte, kotlin/Boolean>): kotlin.collections/List<kotlin/UByte> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.UByteArray(kotlin.Function1<kotlin.UByte,kotlin.Boolean>){}[0]
@@ -7534,6 +7583,7 @@ final inline fun (kotlin/UIntArray).kotlin.collections/component5(): kotlin/UInt
 final inline fun (kotlin/UIntArray).kotlin.collections/copyInto(kotlin/UIntArray, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/UIntArray // kotlin.collections/copyInto|copyInto@kotlin.UIntArray(kotlin.UIntArray;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/UIntArray).kotlin.collections/copyOf(): kotlin/UIntArray // kotlin.collections/copyOf|copyOf@kotlin.UIntArray(){}[0]
 final inline fun (kotlin/UIntArray).kotlin.collections/copyOf(kotlin/Int): kotlin/UIntArray // kotlin.collections/copyOf|copyOf@kotlin.UIntArray(kotlin.Int){}[0]
+final inline fun (kotlin/UIntArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/UInt>): kotlin/UIntArray // kotlin.collections/copyOf|copyOf@kotlin.UIntArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.UInt>){}[0]
 final inline fun (kotlin/UIntArray).kotlin.collections/copyOfRange(kotlin/Int, kotlin/Int): kotlin/UIntArray // kotlin.collections/copyOfRange|copyOfRange@kotlin.UIntArray(kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/UIntArray).kotlin.collections/count(kotlin/Function1<kotlin/UInt, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.UIntArray(kotlin.Function1<kotlin.UInt,kotlin.Boolean>){}[0]
 final inline fun (kotlin/UIntArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/UInt, kotlin/Boolean>): kotlin.collections/List<kotlin/UInt> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.UIntArray(kotlin.Function1<kotlin.UInt,kotlin.Boolean>){}[0]
@@ -7621,6 +7671,7 @@ final inline fun (kotlin/ULongArray).kotlin.collections/component5(): kotlin/ULo
 final inline fun (kotlin/ULongArray).kotlin.collections/copyInto(kotlin/ULongArray, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/ULongArray // kotlin.collections/copyInto|copyInto@kotlin.ULongArray(kotlin.ULongArray;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/ULongArray).kotlin.collections/copyOf(): kotlin/ULongArray // kotlin.collections/copyOf|copyOf@kotlin.ULongArray(){}[0]
 final inline fun (kotlin/ULongArray).kotlin.collections/copyOf(kotlin/Int): kotlin/ULongArray // kotlin.collections/copyOf|copyOf@kotlin.ULongArray(kotlin.Int){}[0]
+final inline fun (kotlin/ULongArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/ULong>): kotlin/ULongArray // kotlin.collections/copyOf|copyOf@kotlin.ULongArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.ULong>){}[0]
 final inline fun (kotlin/ULongArray).kotlin.collections/copyOfRange(kotlin/Int, kotlin/Int): kotlin/ULongArray // kotlin.collections/copyOfRange|copyOfRange@kotlin.ULongArray(kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/ULongArray).kotlin.collections/count(kotlin/Function1<kotlin/ULong, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.ULongArray(kotlin.Function1<kotlin.ULong,kotlin.Boolean>){}[0]
 final inline fun (kotlin/ULongArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/ULong, kotlin/Boolean>): kotlin.collections/List<kotlin/ULong> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.ULongArray(kotlin.Function1<kotlin.ULong,kotlin.Boolean>){}[0]
@@ -7708,6 +7759,7 @@ final inline fun (kotlin/UShortArray).kotlin.collections/component5(): kotlin/US
 final inline fun (kotlin/UShortArray).kotlin.collections/copyInto(kotlin/UShortArray, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/UShortArray // kotlin.collections/copyInto|copyInto@kotlin.UShortArray(kotlin.UShortArray;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/UShortArray).kotlin.collections/copyOf(): kotlin/UShortArray // kotlin.collections/copyOf|copyOf@kotlin.UShortArray(){}[0]
 final inline fun (kotlin/UShortArray).kotlin.collections/copyOf(kotlin/Int): kotlin/UShortArray // kotlin.collections/copyOf|copyOf@kotlin.UShortArray(kotlin.Int){}[0]
+final inline fun (kotlin/UShortArray).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/UShort>): kotlin/UShortArray // kotlin.collections/copyOf|copyOf@kotlin.UShortArray(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.UShort>){}[0]
 final inline fun (kotlin/UShortArray).kotlin.collections/copyOfRange(kotlin/Int, kotlin/Int): kotlin/UShortArray // kotlin.collections/copyOfRange|copyOfRange@kotlin.UShortArray(kotlin.Int;kotlin.Int){}[0]
 final inline fun (kotlin/UShortArray).kotlin.collections/count(kotlin/Function1<kotlin/UShort, kotlin/Boolean>): kotlin/Int // kotlin.collections/count|count@kotlin.UShortArray(kotlin.Function1<kotlin.UShort,kotlin.Boolean>){}[0]
 final inline fun (kotlin/UShortArray).kotlin.collections/dropLastWhile(kotlin/Function1<kotlin/UShort, kotlin/Boolean>): kotlin.collections/List<kotlin/UShort> // kotlin.collections/dropLastWhile|dropLastWhile@kotlin.UShortArray(kotlin.Function1<kotlin.UShort,kotlin.Boolean>){}[0]
@@ -8420,6 +8472,12 @@ final inline fun <#A: kotlin/Any?> (kotlin.collections/MutableMap<in kotlin/Stri
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Set<#A>).kotlin.collections/minusElement(#A): kotlin.collections/Set<#A> // kotlin.collections/minusElement|minusElement@kotlin.collections.Set<0:0>(0:0){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Set<#A>).kotlin.collections/plusElement(#A): kotlin.collections/Set<#A> // kotlin.collections/plusElement|plusElement@kotlin.collections.Set<0:0>(0:0){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Set<#A>?).kotlin.collections/orEmpty(): kotlin.collections/Set<#A> // kotlin.collections/orEmpty|orEmpty@kotlin.collections.Set<0:0>?(){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.concurrent.atomics/AtomicArray<#A>).kotlin.concurrent.atomics/fetchAndUpdateAt(kotlin/Int, kotlin/Function1<#A, #A>): #A // kotlin.concurrent.atomics/fetchAndUpdateAt|fetchAndUpdateAt@kotlin.concurrent.atomics.AtomicArray<0:0>(kotlin.Int;kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.concurrent.atomics/AtomicArray<#A>).kotlin.concurrent.atomics/updateAndFetchAt(kotlin/Int, kotlin/Function1<#A, #A>): #A // kotlin.concurrent.atomics/updateAndFetchAt|updateAndFetchAt@kotlin.concurrent.atomics.AtomicArray<0:0>(kotlin.Int;kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.concurrent.atomics/AtomicArray<#A>).kotlin.concurrent.atomics/updateAt(kotlin/Int, kotlin/Function1<#A, #A>) // kotlin.concurrent.atomics/updateAt|updateAt@kotlin.concurrent.atomics.AtomicArray<0:0>(kotlin.Int;kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.concurrent.atomics/AtomicReference<#A>).kotlin.concurrent.atomics/fetchAndUpdate(kotlin/Function1<#A, #A>): #A // kotlin.concurrent.atomics/fetchAndUpdate|fetchAndUpdate@kotlin.concurrent.atomics.AtomicReference<0:0>(kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.concurrent.atomics/AtomicReference<#A>).kotlin.concurrent.atomics/update(kotlin/Function1<#A, #A>) // kotlin.concurrent.atomics/update|update@kotlin.concurrent.atomics.AtomicReference<0:0>(kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin.concurrent.atomics/AtomicReference<#A>).kotlin.concurrent.atomics/updateAndFetch(kotlin/Function1<#A, #A>): #A // kotlin.concurrent.atomics/updateAndFetch|updateAndFetch@kotlin.concurrent.atomics.AtomicReference<0:0>(kotlin.Function1<0:0,0:0>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.coroutines/Continuation<#A>).kotlin.coroutines/resume(#A) // kotlin.coroutines/resume|resume@kotlin.coroutines.Continuation<0:0>(0:0){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.coroutines/Continuation<#A>).kotlin.coroutines/resumeWithException(kotlin/Throwable) // kotlin.coroutines/resumeWithException|resumeWithException@kotlin.coroutines.Continuation<0:0>(kotlin.Throwable){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.coroutines/SuspendFunction0<#A>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturn(kotlin.coroutines/Continuation<#A>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturn|startCoroutineUninterceptedOrReturn@kotlin.coroutines.SuspendFunction0<0:0>(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
@@ -8463,6 +8521,7 @@ final inline fun <#A: kotlin/Any?> (kotlin.sequences/Sequence<#A>).kotlin.sequen
 final inline fun <#A: kotlin/Any?> (kotlin.sequences/Sequence<#A>?).kotlin.sequences/orEmpty(): kotlin.sequences/Sequence<#A> // kotlin.sequences/orEmpty|orEmpty@kotlin.sequences.Sequence<0:0>?(){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.time/TimeSource).kotlin.time/measureTimedValue(kotlin/Function0<#A>): kotlin.time/TimedValue<#A> // kotlin.time/measureTimedValue|measureTimedValue@kotlin.time.TimeSource(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin.time/TimeSource.Monotonic).kotlin.time/measureTimedValue(kotlin/Function0<#A>): kotlin.time/TimedValue<#A> // kotlin.time/measureTimedValue|measureTimedValue@kotlin.time.TimeSource.Monotonic(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.collections/copyOf(kotlin/Int, kotlin/Function1<kotlin/Int, #A>): kotlin/Array<#A> // kotlin.collections/copyOf|copyOf@kotlin.Array<0:0>(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.collections/plusElement(#A): kotlin/Array<#A> // kotlin.collections/plusElement|plusElement@kotlin.Array<0:0>(0:0){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/all(kotlin/Function1<#A, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/all|all@kotlin.Array<out|0:0>(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/any(kotlin/Function1<#A, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/any|any@kotlin.Array<out|0:0>(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
@@ -8824,6 +8883,8 @@ final inline fun <#A: kotlin/Any?> kotlin/suspend(noinline kotlin.coroutines/Sus
 final inline fun <#A: kotlin/AutoCloseable?, #B: kotlin/Any?> (#A).kotlin/use(kotlin/Function1<#A, #B>): #B // kotlin/use|use@0:0(kotlin.Function1<0:0,0:1>){0§<kotlin.AutoCloseable?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/CharSequence> (#A).kotlin.text/onEach(kotlin/Function1<kotlin/Char, kotlin/Unit>): #A // kotlin.text/onEach|onEach@0:0(kotlin.Function1<kotlin.Char,kotlin.Unit>){0§<kotlin.CharSequence>}[0]
 final inline fun <#A: kotlin/CharSequence> (#A).kotlin.text/onEachIndexed(kotlin/Function2<kotlin/Int, kotlin/Char, kotlin/Unit>): #A // kotlin.text/onEachIndexed|onEachIndexed@0:0(kotlin.Function2<kotlin.Int,kotlin.Char,kotlin.Unit>){0§<kotlin.CharSequence>}[0]
+final inline fun <#A: kotlin/Comparable<#A>, #B: kotlin.collections/Iterable<#A> & kotlin.ranges/ClosedRange<#A>> (#B).kotlin.ranges/contains(#A?): kotlin/Boolean // kotlin.ranges/contains|contains@0:1(0:0?){0§<kotlin.Comparable<0:0>>;1§<kotlin.ranges.ClosedRange<0:0>&kotlin.collections.Iterable<0:0>>}[0]
+final inline fun <#A: kotlin/Comparable<#A>, #B: kotlin.collections/Iterable<#A> & kotlin.ranges/OpenEndRange<#A>> (#B).kotlin.ranges/contains(#A?): kotlin/Boolean // kotlin.ranges/contains|contains@0:1(0:0?){0§<kotlin.Comparable<0:0>>;1§<kotlin.ranges.OpenEndRange<0:0>&kotlin.collections.Iterable<0:0>>}[0]
 final inline fun <#A: kotlin/Comparable<#A>> (kotlin/BooleanArray).kotlin.collections/maxBy(kotlin/Function1<kotlin/Boolean, #A>): kotlin/Boolean // kotlin.collections/maxBy|maxBy@kotlin.BooleanArray(kotlin.Function1<kotlin.Boolean,0:0>){0§<kotlin.Comparable<0:0>>}[0]
 final inline fun <#A: kotlin/Comparable<#A>> (kotlin/BooleanArray).kotlin.collections/maxByOrNull(kotlin/Function1<kotlin/Boolean, #A>): kotlin/Boolean? // kotlin.collections/maxByOrNull|maxByOrNull@kotlin.BooleanArray(kotlin.Function1<kotlin.Boolean,0:0>){0§<kotlin.Comparable<0:0>>}[0]
 final inline fun <#A: kotlin/Comparable<#A>> (kotlin/BooleanArray).kotlin.collections/maxOf(kotlin/Function1<kotlin/Boolean, #A>): #A // kotlin.collections/maxOf|maxOf@kotlin.BooleanArray(kotlin.Function1<kotlin.Boolean,0:0>){0§<kotlin.Comparable<0:0>>}[0]
@@ -8954,6 +9015,7 @@ final inline fun <#A: reified kotlin/Any?> (kotlin.collections/Iterable<*>).kotl
 final inline fun <#A: reified kotlin/Any?> (kotlin.sequences/Sequence<*>).kotlin.sequences/filterIsInstance(): kotlin.sequences/Sequence<#A> // kotlin.sequences/filterIsInstance|filterIsInstance@kotlin.sequences.Sequence<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> (kotlin/Array<*>).kotlin.collections/filterIsInstance(): kotlin.collections/List<#A> // kotlin.collections/filterIsInstance|filterIsInstance@kotlin.Array<*>(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> kotlin.concurrent.atomics/AtomicArray(kotlin/Int, kotlin/Function1<kotlin/Int, #A>): kotlin.concurrent.atomics/AtomicArray<#A> // kotlin.concurrent.atomics/AtomicArray|AtomicArray(kotlin.Int;kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
+final inline fun <#A: reified kotlin/Any?> kotlin.concurrent.atomics/atomicArrayOfNulls(kotlin/Int): kotlin.concurrent.atomics/AtomicArray<#A?> // kotlin.concurrent.atomics/atomicArrayOfNulls|atomicArrayOfNulls(kotlin.Int){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Any?> kotlin.reflect/typeOf(): kotlin.reflect/KType // kotlin.reflect/typeOf|typeOf(){0§<kotlin.Any?>}[0]
 final inline fun <#A: reified kotlin/Enum<#A>> kotlin.enums/enumEntries(): kotlin.enums/EnumEntries<#A> // kotlin.enums/enumEntries|enumEntries(){0§<kotlin.Enum<0:0>>}[0]
 final inline fun <#A: reified kotlin/Enum<#A>> kotlin/enumValueOf(kotlin/String): #A // kotlin/enumValueOf|enumValueOf(kotlin.String){0§<kotlin.Enum<0:0>>}[0]
@@ -9910,6 +9972,13 @@ open annotation class kotlinx.cinterop.internal/CCall : kotlin/Annotation { // k
         constructor <init>() // kotlinx.cinterop.internal/CCall.ConsumesReceiver.<init>|<init>(){}[0]
     }
 
+    open annotation class Direct : kotlin/Annotation { // kotlinx.cinterop.internal/CCall.Direct|null[0]
+        constructor <init>(kotlin/String) // kotlinx.cinterop.internal/CCall.Direct.<init>|<init>(kotlin.String){}[0]
+
+        final val name // kotlinx.cinterop.internal/CCall.Direct.name|{}name[0]
+            final fun <get-name>(): kotlin/String // kotlinx.cinterop.internal/CCall.Direct.name.<get-name>|<get-name>(){}[0]
+    }
+
     open annotation class ReturnsRetained : kotlin/Annotation { // kotlinx.cinterop.internal/CCall.ReturnsRetained|null[0]
         constructor <init>() // kotlinx.cinterop.internal/CCall.ReturnsRetained.<init>|<init>(){}[0]
     }
@@ -9973,6 +10042,28 @@ open annotation class kotlinx.cinterop.internal/CStruct : kotlin/Annotation { //
         final val size // kotlinx.cinterop.internal/CStruct.VarType.size|{}size[0]
             final fun <get-size>(): kotlin/Long // kotlinx.cinterop.internal/CStruct.VarType.size.<get-size>|<get-size>(){}[0]
     }
+}
+
+// Targets: [native]
+open annotation class kotlinx.cinterop.internal/CToKotlinBridge : kotlin/Annotation { // kotlinx.cinterop.internal/CToKotlinBridge|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // kotlinx.cinterop.internal/CToKotlinBridge.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val declaration // kotlinx.cinterop.internal/CToKotlinBridge.declaration|{}declaration[0]
+        final fun <get-declaration>(): kotlin/String // kotlinx.cinterop.internal/CToKotlinBridge.declaration.<get-declaration>|<get-declaration>(){}[0]
+    final val language // kotlinx.cinterop.internal/CToKotlinBridge.language|{}language[0]
+        final fun <get-language>(): kotlin/String // kotlinx.cinterop.internal/CToKotlinBridge.language.<get-language>|<get-language>(){}[0]
+}
+
+// Targets: [native]
+open annotation class kotlinx.cinterop.internal/KotlinToCBridge : kotlin/Annotation { // kotlinx.cinterop.internal/KotlinToCBridge|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // kotlinx.cinterop.internal/KotlinToCBridge.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val impl // kotlinx.cinterop.internal/KotlinToCBridge.impl|{}impl[0]
+        final fun <get-impl>(): kotlin/String // kotlinx.cinterop.internal/KotlinToCBridge.impl.<get-impl>|<get-impl>(){}[0]
+    final val language // kotlinx.cinterop.internal/KotlinToCBridge.language|{}language[0]
+        final fun <get-language>(): kotlin/String // kotlinx.cinterop.internal/KotlinToCBridge.language.<get-language>|<get-language>(){}[0]
+    final val library // kotlinx.cinterop.internal/KotlinToCBridge.library|{}library[0]
+        final fun <get-library>(): kotlin/String // kotlinx.cinterop.internal/KotlinToCBridge.library.<get-library>|<get-library>(){}[0]
 }
 
 // Targets: [native]
@@ -10708,15 +10799,6 @@ final class <#A: kotlin/Any?> kotlin.native.internal/KMutableProperty0Impl : kot
     final fun hashCode(): kotlin/Int // kotlin.native.internal/KMutableProperty0Impl.hashCode|hashCode(){}[0]
     final fun set(#A) // kotlin.native.internal/KMutableProperty0Impl.set|set(1:0){}[0]
     final fun toString(): kotlin/String // kotlin.native.internal/KMutableProperty0Impl.toString|toString(){}[0]
-}
-
-// Targets: [native]
-final class <#A: kotlin/Any?> kotlin.native.internal/Ref { // kotlin.native.internal/Ref|null[0]
-    constructor <init>() // kotlin.native.internal/Ref.<init>|<init>(){}[0]
-
-    final var element // kotlin.native.internal/Ref.element|{}element[0]
-        final fun <get-element>(): #A // kotlin.native.internal/Ref.element.<get-element>|<get-element>(){}[0]
-        final fun <set-element>(#A) // kotlin.native.internal/Ref.element.<set-element>|<set-element>(1:0){}[0]
 }
 
 // Targets: [native]
@@ -12525,6 +12607,9 @@ final fun <#A: kotlin/Any?> kotlin.test/assertSame(#A, #A, kotlin/String? = ...)
 final fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any?> kotlinx.cinterop.internal/interopCallMarker(#A): #A // kotlinx.cinterop.internal/interopCallMarker|interopCallMarker(0:0){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any?> kotlinx.cinterop/interpretObjCPointerOrNull(kotlin.native.internal/NativePtr): #A? // kotlinx.cinterop/interpretObjCPointerOrNull|interpretObjCPointerOrNull(kotlin.native.internal.NativePtr){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
@@ -12570,7 +12655,7 @@ final fun <#A: kotlin/Long> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/
 final fun <#A: kotlin/Short> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/ShortVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.Short>}[0]
 
 // Targets: [native]
-final fun <#A: kotlin/Throwable> kotlin.test/checkResultIsFailure(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Result<kotlin/Unit>): #A // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Result<kotlin.Unit>){0§<kotlin.Throwable>}[0]
+final fun <#A: kotlin/Throwable> kotlin.test/checkResultIsFailure(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Result<kotlin/Any?>): #A // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Result<kotlin.Any?>){0§<kotlin.Throwable>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/UByte> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/UByteVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.UByte>}[0]
@@ -12729,9 +12814,6 @@ final fun kotlin.native.internal/ThrowClassCastException(kotlin/Any, kotlin.nati
 final fun kotlin.native.internal/ThrowInvalidReceiverTypeException(kotlin.reflect/KClass<*>): kotlin/Nothing // kotlin.native.internal/ThrowInvalidReceiverTypeException|ThrowInvalidReceiverTypeException(kotlin.reflect.KClass<*>){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowIrLinkageError(kotlin/String?): kotlin/Nothing // kotlin.native.internal/ThrowIrLinkageError|ThrowIrLinkageError(kotlin.String?){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/ThrowKotlinNothingValueException(): kotlin/Nothing // kotlin.native.internal/ThrowKotlinNothingValueException|ThrowKotlinNothingValueException(){}[0]
 
 // Targets: [native]
@@ -12742,12 +12824,6 @@ final fun kotlin.native.internal/ThrowNullPointerException(): kotlin/Nothing // 
 
 // Targets: [native]
 final fun kotlin.native.internal/ThrowTypeCastException(kotlin/Any, kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowTypeCastException|ThrowTypeCastException(kotlin.Any;kotlin.String){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowUninitializedPropertyAccessException|ThrowUninitializedPropertyAccessException(kotlin.String){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowUnsupportedOperationException|ThrowUnsupportedOperationException(kotlin.String){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal/areEqualByValue(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/areEqualByValue|areEqualByValue(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
@@ -13095,7 +13171,7 @@ final fun kotlin.test/assertNull(kotlin/Any?, kotlin/String? = ...) // kotlin.te
 final fun kotlin.test/assertTrue(kotlin/Boolean, kotlin/String? = ...) // kotlin.test/assertTrue|assertTrue(kotlin.Boolean;kotlin.String?){}[0]
 
 // Targets: [native]
-final fun kotlin.test/checkResultIsFailure(kotlin/String?, kotlin/Result<kotlin/Unit>): kotlin/Throwable // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.String?;kotlin.Result<kotlin.Unit>){}[0]
+final fun kotlin.test/checkResultIsFailure(kotlin/String?, kotlin/Result<kotlin/Any?>): kotlin/Throwable // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.String?;kotlin.Result<kotlin.Any?>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/fail(kotlin/String? = ...): kotlin/Nothing // kotlin.test/fail|fail(kotlin.String?){}[0]
@@ -13231,6 +13307,15 @@ final fun kotlinx.cinterop/vectorOf(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/I
 
 // Targets: [native]
 final fun kotlinx.cinterop/writeBits(kotlin.native.internal/NativePtr, kotlin/Long, kotlin/Int, kotlin/Long) // kotlinx.cinterop/writeBits|writeBits(kotlin.native.internal.NativePtr;kotlin.Long;kotlin.Int;kotlin.Long){}[0]
+
+// Targets: [native]
+final inline fun (kotlin.concurrent.atomics/AtomicNativePtr).kotlin.concurrent.atomics/fetchAndUpdate(kotlin/Function1<kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr>): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/fetchAndUpdate|fetchAndUpdate@kotlin.concurrent.atomics.AtomicNativePtr(kotlin.Function1<kotlin.native.internal.NativePtr,kotlin.native.internal.NativePtr>){}[0]
+
+// Targets: [native]
+final inline fun (kotlin.concurrent.atomics/AtomicNativePtr).kotlin.concurrent.atomics/update(kotlin/Function1<kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr>) // kotlin.concurrent.atomics/update|update@kotlin.concurrent.atomics.AtomicNativePtr(kotlin.Function1<kotlin.native.internal.NativePtr,kotlin.native.internal.NativePtr>){}[0]
+
+// Targets: [native]
+final inline fun (kotlin.concurrent.atomics/AtomicNativePtr).kotlin.concurrent.atomics/updateAndFetch(kotlin/Function1<kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr>): kotlin.native.internal/NativePtr // kotlin.concurrent.atomics/updateAndFetch|updateAndFetch@kotlin.concurrent.atomics.AtomicNativePtr(kotlin.Function1<kotlin.native.internal.NativePtr,kotlin.native.internal.NativePtr>){}[0]
 
 // Targets: [native]
 final inline fun (kotlin/Any?).kotlin/toString(): kotlin/String // kotlin/toString|toString@kotlin.Any?(){}[0]
@@ -13398,7 +13483,13 @@ final inline fun <#A: kotlin/Short> (kotlinx.cinterop/CPointer<kotlinx.cinterop/
 final inline fun <#A: kotlin/Short> (kotlinx.cinterop/CPointer<kotlinx.cinterop/ShortVarOf<#A>>).kotlinx.cinterop/set(kotlin/Long, #A) // kotlinx.cinterop/set|set@kotlinx.cinterop.CPointer<kotlinx.cinterop.ShortVarOf<0:0>>(kotlin.Long;0:0){0§<kotlin.Short>}[0]
 
 // Targets: [native]
+final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/Function0<kotlin/Any?>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.Function0<kotlin.Any?>){0§<kotlin.Throwable>}[0]
+
+// Targets: [native]
 final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/Function0<kotlin/Unit>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.Function0<kotlin.Unit>){0§<kotlin.Throwable>}[0]
+
+// Targets: [native]
+final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Function0<kotlin/Any?>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Function0<kotlin.Any?>){0§<kotlin.Throwable>}[0]
 
 // Targets: [native]
 final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Function0<kotlin/Unit>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Function0<kotlin.Unit>){0§<kotlin.Throwable>}[0]
@@ -13587,6 +13678,9 @@ final inline fun <#A: reified kotlin/Number> (kotlin/Number).kotlinx.cinterop/na
 final inline fun <#A: reified kotlin/Number> (kotlin/Number).kotlinx.cinterop/signExtend(): #A // kotlinx.cinterop/signExtend|signExtend@kotlin.Number(){0§<kotlin.Number>}[0]
 
 // Targets: [native]
+final inline fun <#A: reified kotlin/Throwable> kotlin.test/assertFailsWith(kotlin/String? = ..., kotlin/Function0<kotlin/Any?>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.String?;kotlin.Function0<kotlin.Any?>){0§<kotlin.Throwable>}[0]
+
+// Targets: [native]
 final inline fun <#A: reified kotlin/Throwable> kotlin.test/assertFailsWith(kotlin/String? = ..., kotlin/Function0<kotlin/Unit>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.String?;kotlin.Function0<kotlin.Unit>){0§<kotlin.Throwable>}[0]
 
 // Targets: [native]
@@ -13677,7 +13771,13 @@ final inline fun kotlin.system/measureTimeMicros(kotlin/Function0<kotlin/Unit>):
 final inline fun kotlin.system/measureTimeMillis(kotlin/Function0<kotlin/Unit>): kotlin/Long // kotlin.system/measureTimeMillis|measureTimeMillis(kotlin.Function0<kotlin.Unit>){}[0]
 
 // Targets: [native]
+final inline fun kotlin.test/assertFails(kotlin/Function0<kotlin/Any?>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.Function0<kotlin.Any?>){}[0]
+
+// Targets: [native]
 final inline fun kotlin.test/assertFails(kotlin/Function0<kotlin/Unit>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.Function0<kotlin.Unit>){}[0]
+
+// Targets: [native]
+final inline fun kotlin.test/assertFails(kotlin/String?, kotlin/Function0<kotlin/Any?>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.String?;kotlin.Function0<kotlin.Any?>){}[0]
 
 // Targets: [native]
 final inline fun kotlin.test/assertFails(kotlin/String?, kotlin/Function0<kotlin/Unit>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.String?;kotlin.Function0<kotlin.Unit>){}[0]
@@ -13781,6 +13881,10 @@ abstract interface <#A: kotlin/Any> kotlin.reflect/KClass : kotlin.reflect/KClas
     abstract fun equals(kotlin/Any?): kotlin/Boolean // kotlin.reflect/KClass.equals|equals(kotlin.Any?){}[0]
     abstract fun hashCode(): kotlin/Int // kotlin.reflect/KClass.hashCode|hashCode(){}[0]
     abstract fun isInstance(kotlin/Any?): kotlin/Boolean // kotlin.reflect/KClass.isInstance|isInstance(kotlin.Any?){}[0]
+
+    // Targets: [js]
+    abstract val isInterface // kotlin.reflect/KClass.isInterface|{}isInterface[0]
+        abstract fun <get-isInterface>(): kotlin/Boolean // kotlin.reflect/KClass.isInterface.<get-isInterface>|<get-isInterface>(){}[0]
 }
 
 // Targets: [js, wasmJs, wasmWasi]
@@ -13859,6 +13963,11 @@ final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.co
 final inline fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs]
+open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
+    constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[0]
+}
+
+// Targets: [js, wasmJs]
 open annotation class kotlin.js/JsExport : kotlin/Annotation { // kotlin.js/JsExport|null[0]
     constructor <init>() // kotlin.js/JsExport.<init>|<init>(){}[0]
 
@@ -13892,12 +14001,25 @@ open annotation class kotlin.js/JsQualifier : kotlin/Annotation { // kotlin.js/J
 }
 
 // Targets: [js, wasmJs]
+open annotation class kotlin/JsFun : kotlin/Annotation { // kotlin/JsFun|null[0]
+    constructor <init>(kotlin/String) // kotlin/JsFun.<init>|<init>(kotlin.String){}[0]
+
+    final val code // kotlin/JsFun.code|{}code[0]
+        final fun <get-code>(): kotlin/String // kotlin/JsFun.code.<get-code>|<get-code>(){}[0]
+}
+
+// Targets: [js, wasmJs]
 final val kotlin.js/definedExternally // kotlin.js/definedExternally|{}definedExternally[0]
     final fun <get-definedExternally>(): kotlin/Nothing // kotlin.js/definedExternally.<get-definedExternally>|<get-definedExternally>(){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 open annotation class kotlin.wasm.unsafe/UnsafeWasmMemoryApi : kotlin/Annotation { // kotlin.wasm.unsafe/UnsafeWasmMemoryApi|null[0]
     constructor <init>() // kotlin.wasm.unsafe/UnsafeWasmMemoryApi.<init>|<init>(){}[0]
+}
+
+// Targets: [wasmJs, wasmWasi]
+open annotation class kotlin.wasm/ExperimentalWasmInterop : kotlin/Annotation { // kotlin.wasm/ExperimentalWasmInterop|null[0]
+    constructor <init>() // kotlin.wasm/ExperimentalWasmInterop.<init>|<init>(){}[0]
 }
 
 // Targets: [wasmJs, wasmWasi]
@@ -13992,7 +14114,13 @@ final fun (kotlin/Short).kotlin.text/toString(kotlin/Int): kotlin/String // kotl
 final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines/SuspendFunction2<#A, #B, #C>, #A, #B, kotlin.coroutines/Continuation<#C>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic2|startCoroutineUninterceptedOrReturnIntrinsic2(kotlin.coroutines.SuspendFunction2<0:0,0:1,0:2>;0:0;0:1;kotlin.coroutines.Continuation<0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.coroutines/SuspendFunction1<#A, #B>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl(#A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl|startCoroutineUninterceptedOrReturnImpl@kotlin.coroutines.SuspendFunction1<0:0,0:1>(0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic1(kotlin.coroutines/SuspendFunction1<#A, #B>, #A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.wasm.internal/startCoroutineUninterceptedOrReturnIntrinsic1|startCoroutineUninterceptedOrReturnIntrinsic1(kotlin.coroutines.SuspendFunction1<0:0,0:1>;0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?> (kotlin.coroutines/SuspendFunction0<#A>).kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl(kotlin.coroutines/Continuation<#A>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnImpl|startCoroutineUninterceptedOrReturnImpl@kotlin.coroutines.SuspendFunction0<0:0>(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/createSimpleCoroutineFromSuspendFunction(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/CoroutineImpl // kotlin.coroutines.intrinsics/createSimpleCoroutineFromSuspendFunction|createSimpleCoroutineFromSuspendFunction(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
@@ -14013,7 +14141,7 @@ final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValueOfIntrinsic(kotlin
 final fun <#A: kotlin/Enum<#A>> kotlin.wasm.internal/enumValuesIntrinsic(): kotlin/Array<#A> // kotlin.wasm.internal/enumValuesIntrinsic|enumValuesIntrinsic(){0§<kotlin.Enum<0:0>>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin/Long): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.Long){}[0]
+final fun kotlin.wasm.internal/findAssociatedObject(kotlin.reflect/KClass<*>, kotlin.reflect/KClass<*>): kotlin/Any? // kotlin.wasm.internal/findAssociatedObject|findAssociatedObject(kotlin.reflect.KClass<*>;kotlin.reflect.KClass<*>){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun kotlin.wasm.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.wasm.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
@@ -14094,10 +14222,10 @@ final inline fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // ko
 final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
+final suspend inline fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final suspend fun kotlin.wasm.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.wasm.internal/getCoroutineContext|getCoroutineContext(){}[0]
+final suspend inline fun kotlin.wasm.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.wasm.internal/getCoroutineContext|getCoroutineContext(){}[0]
 
 // Targets: [js]
 open annotation class kotlin.js/EagerInitialization : kotlin/Annotation { // kotlin.js/EagerInitialization|null[0]
@@ -14532,6 +14660,14 @@ final val kotlin.js/kotlin // kotlin.js/kotlin|@kotlin.js.JsClass<0:0>{0§<kotli
     final fun <#A1: kotlin/Any> (kotlin.js/JsClass<#A1>).<get-kotlin>(): kotlin.reflect/KClass<#A1> // kotlin.js/kotlin.<get-kotlin>|<get-kotlin>@kotlin.js.JsClass<0:0>(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
+final val kotlin.js/length // kotlin.js/length|@kotlin.Array<*>{}length[0]
+    final inline fun (kotlin/Array<*>).<get-length>(): kotlin/Int // kotlin.js/length.<get-length>|<get-length>@kotlin.Array<*>(){}[0]
+
+// Targets: [js]
+final val kotlin.js/thrownValue // kotlin.js/thrownValue|@kotlin.Throwable{}thrownValue[0]
+    final inline fun (kotlin/Throwable).<get-thrownValue>(): kotlin/Any? // kotlin.js/thrownValue.<get-thrownValue>|<get-thrownValue>@kotlin.Throwable(){}[0]
+
+// Targets: [js]
 final val kotlin.js/undefined // kotlin.js/undefined|{}undefined[0]
     final fun <get-undefined>(): kotlin/Nothing? // kotlin.js/undefined.<get-undefined>|<get-undefined>(){}[0]
 
@@ -14570,6 +14706,12 @@ final fun (kotlin/FloatArray).kotlin.collections/elementAt(kotlin/Int): kotlin/F
 
 // Targets: [js]
 final fun (kotlin/IntArray).kotlin.collections/elementAt(kotlin/Int): kotlin/Int // kotlin.collections/elementAt|elementAt@kotlin.IntArray(kotlin.Int){}[0]
+
+// Targets: [js]
+final fun (kotlin/Long).kotlin.js/toJsBigInt(): kotlin/Long // kotlin.js/toJsBigInt|toJsBigInt@kotlin.Long(){}[0]
+
+// Targets: [js]
+final fun (kotlin/Long).kotlin.js/toLong(): kotlin/Long // kotlin.js/toLong|toLong@kotlin.Long(){}[0]
 
 // Targets: [js]
 final fun (kotlin/LongArray).kotlin.collections/elementAt(kotlin/Int): kotlin/Long // kotlin.collections/elementAt|elementAt@kotlin.LongArray(kotlin.Int){}[0]
@@ -14809,6 +14951,12 @@ final inline fun (kotlin/Any).kotlin.js/nativeSort(noinline kotlin/Function2<dyn
 final inline fun (kotlin/Any?).kotlin.js/asDynamic(): dynamic // kotlin.js/asDynamic|asDynamic@kotlin.Any?(){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/Boolean).kotlin.js/toBoolean(): kotlin/Boolean // kotlin.js/toBoolean|toBoolean@kotlin.Boolean(){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Boolean).kotlin.js/toJsBoolean(): kotlin/Boolean // kotlin.js/toJsBoolean|toJsBoolean@kotlin.Boolean(){}[0]
+
+// Targets: [js]
 final inline fun (kotlin/BooleanArray).kotlin.collections/asList(): kotlin.collections/List<kotlin/Boolean> // kotlin.collections/asList|asList@kotlin.BooleanArray(){}[0]
 
 // Targets: [js]
@@ -14864,6 +15012,15 @@ final inline fun (kotlin/CharArray).kotlin.collections/plus(kotlin/CharArray): k
 
 // Targets: [js]
 final inline fun (kotlin/CharArray).kotlin.collections/sort(noinline kotlin/Function2<kotlin/Char, kotlin/Char, kotlin/Int>) // kotlin.collections/sort|sort@kotlin.CharArray(kotlin.Function2<kotlin.Char,kotlin.Char,kotlin.Int>){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Double).kotlin.js/toDouble(): kotlin/Double // kotlin.js/toDouble|toDouble@kotlin.Double(){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Double).kotlin.js/toInt(): kotlin/Int // kotlin.js/toInt|toInt@kotlin.Double(){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Double).kotlin.js/toJsNumber(): kotlin/Double // kotlin.js/toJsNumber|toJsNumber@kotlin.Double(){}[0]
 
 // Targets: [js]
 final inline fun (kotlin/Double).kotlin.math/pow(kotlin/Double): kotlin/Double // kotlin.math/pow|pow@kotlin.Double(kotlin.Double){}[0]
@@ -14929,6 +15086,9 @@ final inline fun (kotlin/FloatArray).kotlin.collections/plus(kotlin/FloatArray):
 final inline fun (kotlin/FloatArray).kotlin.collections/sort(noinline kotlin/Function2<kotlin/Float, kotlin/Float, kotlin/Int>) // kotlin.collections/sort|sort@kotlin.FloatArray(kotlin.Function2<kotlin.Float,kotlin.Float,kotlin.Int>){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/Int).kotlin.js/toJsNumber(): kotlin/Double // kotlin.js/toJsNumber|toJsNumber@kotlin.Int(){}[0]
+
+// Targets: [js]
 final inline fun (kotlin/Int).kotlin/countLeadingZeroBits(): kotlin/Int // kotlin/countLeadingZeroBits|countLeadingZeroBits@kotlin.Int(){}[0]
 
 // Targets: [js]
@@ -14983,6 +15143,9 @@ final inline fun (kotlin/ShortArray).kotlin.collections/plus(kotlin/ShortArray):
 final inline fun (kotlin/ShortArray).kotlin.collections/sort(noinline kotlin/Function2<kotlin/Short, kotlin/Short, kotlin/Int>) // kotlin.collections/sort|sort@kotlin.ShortArray(kotlin.Function2<kotlin.Short,kotlin.Short,kotlin.Int>){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/String).kotlin.js/toJsString(): kotlin/String // kotlin.js/toJsString|toJsString@kotlin.String(){}[0]
+
+// Targets: [js]
 final inline fun (kotlin/String).kotlin.text/concat(kotlin/String): kotlin/String // kotlin.text/concat|concat@kotlin.String(kotlin.String){}[0]
 
 // Targets: [js]
@@ -15007,7 +15170,19 @@ final inline fun (kotlin/String).kotlin.text/toUpperCase(): kotlin/String // kot
 final inline fun (kotlin/String).kotlin.text/uppercase(): kotlin/String // kotlin.text/uppercase|uppercase@kotlin.String(){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/Throwable).kotlin.js/asJsException(): kotlin/Throwable // kotlin.js/asJsException|asJsException@kotlin.Throwable(){}[0]
+
+// Targets: [js]
 final inline fun /withType(kotlin/String, dynamic): dynamic // /withType|withType(kotlin.String;<dynamic>){}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin/Any // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.Any(){0§<kotlin.Any>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@kotlin.Any(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.js.collections/JsReadonlyMap<#A, #B>).kotlin.js.collections/toMap(): kotlin.collections/Map<#A, #B> // kotlin.js.collections/toMap|toMap@kotlin.js.collections.JsReadonlyMap<0:0,0:1>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
@@ -15026,6 +15201,9 @@ final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.collections/linkedMap
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> (dynamic).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@<dynamic>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin.collections/List<#A>).kotlin.js/toJsArray(): kotlin/Array<#A> // kotlin.js/toJsArray|toJsArray@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> (kotlin.js.collections/JsReadonlyArray<#A>).kotlin.js.collections/toList(): kotlin.collections/List<#A> // kotlin.js.collections/toList|toList@kotlin.js.collections.JsReadonlyArray<0:0>(){0§<kotlin.Any?>}[0]
@@ -15061,6 +15239,21 @@ final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.collections/plus(ko
 final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.collections/plus(kotlin/Array<out #A>): kotlin/Array<#A> // kotlin.collections/plus|plus@kotlin.Array<0:0>(kotlin.Array<out|0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/get(kotlin/Int): #A? // kotlin.js/get|get@kotlin.Array<0:0>(kotlin.Int){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/set(kotlin/Int, #A) // kotlin.js/set|set@kotlin.Array<0:0>(kotlin.Int;0:0){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/toArray(): kotlin/Array<#A> // kotlin.js/toArray|toArray@kotlin.Array<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/toJsArray(): kotlin/Array<#A> // kotlin.js/toJsArray|toJsArray@kotlin.Array<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/toList(): kotlin.collections/List<#A> // kotlin.js/toList|toList@kotlin.Array<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
 final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/copyInto(kotlin/Array<#A>, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/Array<#A> // kotlin.collections/copyInto|copyInto@kotlin.Array<out|0:0>(kotlin.Array<0:0>;kotlin.Int;kotlin.Int;kotlin.Int){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
@@ -15080,6 +15273,9 @@ final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>?).kotlin.collections/or
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> kotlin.collections/linkedSetOf(): kotlin.collections/LinkedHashSet<#A> // kotlin.collections/linkedSetOf|linkedSetOf(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> kotlin.js/JsArray(): kotlin/Array<#A> // kotlin.js/JsArray|JsArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> kotlin/synchronized(kotlin/Any, kotlin/Function0<#A>): #A // kotlin/synchronized|synchronized(kotlin.Any;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
@@ -15289,14 +15485,6 @@ final suspend inline fun <#A: kotlin/Any?> kotlin.js/suspendCoroutineUnintercept
 final suspend inline fun kotlin.js/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.js/getCoroutineContext|getCoroutineContext(){}[0]
 
 // Targets: [wasmJs]
-open annotation class kotlin/JsFun : kotlin/Annotation { // kotlin/JsFun|null[0]
-    constructor <init>(kotlin/String) // kotlin/JsFun.<init>|<init>(kotlin.String){}[0]
-
-    final val code // kotlin/JsFun.code|{}code[0]
-        final fun <get-code>(): kotlin/String // kotlin/JsFun.code.<get-code>|<get-code>(){}[0]
-}
-
-// Targets: [wasmJs]
 abstract interface kotlin.js/Dynamic : kotlin.js/JsAny // kotlin.js/Dynamic|null[0]
 
 // Targets: [wasmJs]
@@ -15340,7 +15528,7 @@ final class kotlin.js/JsBoolean : kotlin.js/JsAny // kotlin.js/JsBoolean|null[0]
 // Targets: [wasmJs]
 final class kotlin.js/JsException : kotlin/Throwable { // kotlin.js/JsException|null[0]
     final val message // kotlin.js/JsException.message|{}message[0]
-        final fun <get-message>(): kotlin/String // kotlin.js/JsException.message.<get-message>|<get-message>(){}[0]
+        final fun <get-message>(): kotlin/String? // kotlin.js/JsException.message.<get-message>|<get-message>(){}[0]
     final val thrownValue // kotlin.js/JsException.thrownValue|{}thrownValue[0]
         final fun <get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/JsException.thrownValue.<get-thrownValue>|<get-thrownValue>(){}[0]
 }
@@ -15350,6 +15538,17 @@ final class kotlin.js/JsNumber : kotlin.js/JsAny // kotlin.js/JsNumber|null[0]
 
 // Targets: [wasmJs]
 final class kotlin.js/JsString : kotlin.js/JsAny // kotlin.js/JsString|null[0]
+
+// Targets: [wasmJs]
+final val kotlin.js/length // kotlin.js/length|@kotlin.js.JsArray<*>{}length[0]
+    final inline fun (kotlin.js/JsArray<*>).<get-length>(): kotlin/Int // kotlin.js/length.<get-length>|<get-length>@kotlin.js.JsArray<*>(){}[0]
+
+// Targets: [wasmJs]
+final val kotlin.js/thrownValue // kotlin.js/thrownValue|@kotlin.js.JsException{}thrownValue[0]
+    final fun (kotlin.js/JsException).<get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/thrownValue.<get-thrownValue>|<get-thrownValue>@kotlin.js.JsException(){}[0]
+
+// Targets: [wasmJs]
+final fun (kotlin.js/JsAny).kotlin.js/asJsException(): kotlin.js/JsException // kotlin.js/asJsException|asJsException@kotlin.js.JsAny(){}[0]
 
 // Targets: [wasmJs]
 final fun (kotlin.js/JsAny).kotlin.js/toThrowableOrNull(): kotlin/Throwable? // kotlin.js/toThrowableOrNull|toThrowableOrNull@kotlin.js.JsAny(){}[0]
@@ -15407,6 +15606,9 @@ final fun <#A: kotlin.js/JsAny?> (kotlin.js/JsArray<#A>).kotlin.js/toList(): kot
 
 // Targets: [wasmJs]
 final fun <#A: kotlin.js/JsAny?> (kotlin/Array<#A>).kotlin.js/toJsArray(): kotlin.js/JsArray<#A> // kotlin.js/toJsArray|toJsArray@kotlin.Array<0:0>(){0§<kotlin.js.JsAny?>}[0]
+
+// Targets: [wasmJs]
+final fun <#A: kotlin.js/JsAny?> kotlin.js/JsArray(): kotlin.js/JsArray<#A> // kotlin.js/JsArray|JsArray(){0§<kotlin.js.JsAny?>}[0]
 
 // Targets: [wasmJs]
 final fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin.js/JsReference<#A> // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]

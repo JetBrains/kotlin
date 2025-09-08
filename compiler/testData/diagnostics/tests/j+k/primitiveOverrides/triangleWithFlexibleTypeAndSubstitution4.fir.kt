@@ -27,3 +27,6 @@ interface D : B<Int>
 fun main() {
     E().foo(42)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaType,
+nullableType, stringLiteral, typeParameter */

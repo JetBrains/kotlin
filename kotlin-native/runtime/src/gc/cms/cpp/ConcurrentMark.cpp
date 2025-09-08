@@ -17,9 +17,7 @@ class FlushActionActivator final : public mm::ExtraSafePointActionActivator<Flus
 
 } // namespace
 
-void gc::mark::ConcurrentMark::ThreadData::onSuspendForGC() noexcept {
-    mark_.runOnMutator(threadData_);
-}
+void gc::mark::ConcurrentMark::ThreadData::onSuspendForGC() noexcept {}
 
 bool gc::mark::ConcurrentMark::ThreadData::tryLockRootSet() noexcept {
     bool expected = false;
@@ -34,15 +32,9 @@ bool gc::mark::ConcurrentMark::ThreadData::tryLockRootSet() noexcept {
 
 void gc::mark::ConcurrentMark::ThreadData::publish() noexcept {
     threadData_.Publish();
-    published_.store(true, std::memory_order_release);
-}
-
-bool gc::mark::ConcurrentMark::ThreadData::published() const noexcept {
-    return published_.load(std::memory_order_acquire);
 }
 
 void gc::mark::ConcurrentMark::ThreadData::clearMarkFlags() noexcept {
-    published_.store(false, std::memory_order_relaxed);
     rootSetLocked_.store(false, std::memory_order_release);
 }
 
@@ -54,7 +46,7 @@ void gc::mark::ConcurrentMark::ThreadData::onSafePoint() noexcept {
     FlushActionActivator::doIfActive([this] { ensureFlushActionExecuted(); });
 }
 
-void gc::mark::ConcurrentMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
+void gc::mark::ConcurrentMark::setupBeforeSTW(GCHandle gcHandle) {
     gcHandle_ = gcHandle;
 
     lockedMutatorsList_ = mm::ThreadRegistry::Instance().LockForIter();
@@ -68,7 +60,7 @@ void gc::mark::ConcurrentMark::endMarkingEpoch() {
     lockedMutatorsList_ = std::nullopt;
 }
 
-void gc::mark::ConcurrentMark::runMainInSTW() {
+void gc::mark::ConcurrentMark::markInSTW() {
     std::unique_lock markLock(markMutex_);
     ParallelProcessor::Worker mainWorker(*parallelProcessor_);
     GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
@@ -101,7 +93,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
         ++iter;
         if (iter == compiler::concurrentMarkMaxIterations()) {
             GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after (%zu concurrent attempts)", iter);
-            stopTheWorld(gcHandle(), "GC stop the world #2: concurrent mark took too long");
+            stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
             terminateInSTW = true;
         }
     } while (!tryTerminateMark(everSharedBatches));
@@ -113,7 +105,7 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
 
     if (!terminateInSTW) {
-        stopTheWorld(gcHandle(), "GC stop the world #2: prepare to sweep");
+        stopTheWorld(gcHandle(), "GC stop the world: prepare to sweep");
     }
 
     barriers::disableBarriers();
@@ -122,10 +114,6 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
         thread.gc().impl().mark_.markQueue().destroy();
     }
     endMarkingEpoch();
-}
-
-void gc::mark::ConcurrentMark::runOnMutator(mm::ThreadData&) {
-    // no-op
 }
 
 gc::GCHandle& gc::mark::ConcurrentMark::gcHandle() {

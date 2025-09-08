@@ -20,6 +20,10 @@ class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
         return renderersMap.containsKey(factory)
     }
 
+    fun put(factory: KtSourcelessDiagnosticFactory, message: String) {
+        put(factory, KtSourcelessDiagnosticRenderer(message))
+    }
+
     fun put(factory: KtDiagnosticFactory0, message: String) {
         put(factory, SimpleKtDiagnosticRenderer(message))
     }

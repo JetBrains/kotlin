@@ -11,7 +11,7 @@ import java.io.File
 /**
  * All features of Kotlin ABI Validation tool.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 public interface AbiToolsInterface {
     /**

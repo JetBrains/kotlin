@@ -226,6 +226,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal abstract val taskOutputsBackupExcludes: SetProperty<File>
 
+    @get:Input
+    internal abstract val separateKmpCompilation: Property<Boolean>
+
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         kotlinGradleBuildServices.orNull // KT-76379: just instantiate the build service if it wasn't yet
@@ -233,7 +236,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
         buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
             buildFusService.orNull?.reportFusMetrics {
-                CompileKotlinTaskMetrics.collectMetrics(name, compilerOptions, it)
+                CompileKotlinTaskMetrics.collectMetrics(
+                    name,
+                    compilerOptions,
+                    separateKmpCompilation.get(),
+                    firRunnerEnabled = (this as? KotlinCompile)?.useFirRunner?.get() == true,
+                    it
+                )
             }
             validateCompilerClasspath()
             systemPropertiesService.get().startIntercept()

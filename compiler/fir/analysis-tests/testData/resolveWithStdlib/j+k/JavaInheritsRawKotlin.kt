@@ -16,3 +16,6 @@ public class Some implements Strange {
 interface Strange<out T> {
     fun foo(): T
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType, out,
+typeParameter */

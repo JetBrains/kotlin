@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: WASM
-// ^KT-74392: references are incorrectly merged to one in wasm now
 val <T> T.foo get() = 42
 
 class A

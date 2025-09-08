@@ -21,3 +21,6 @@ class AImpl {
 }
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>A<!> = AImpl
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
+typeAliasDeclaration */

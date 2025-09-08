@@ -6,13 +6,14 @@
 package kotlin.native.internal
 
 import kotlin.UnsupportedOperationException
+import kotlin.internal.throwIrLinkageError
 import kotlin.reflect.*
 
 @PublishedApi
 internal abstract class KPropertyImplBase(private val reflectionTargetLinkageError: String?) {
     protected fun maybeThrowPLError(): Nothing? {
         reflectionTargetLinkageError?.let {
-            ThrowIrLinkageError(it)
+            throwIrLinkageError(it)
         }
         return null
     }

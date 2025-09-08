@@ -60,3 +60,7 @@ fun castsInIf() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, asExpression, classReference, comparisonExpression,
+funWithExtensionReceiver, functionDeclaration, getter, ifExpression, integerLiteral, isExpression, localProperty,
+outProjection, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

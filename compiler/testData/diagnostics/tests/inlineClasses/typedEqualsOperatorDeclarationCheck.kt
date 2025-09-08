@@ -51,3 +51,6 @@ value class IC7<T, R>(val x: T) {
 value class IC8<T, R>(val x: T) {
     operator fun equals(other: IC8<*, *>): Nothing = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter, value */

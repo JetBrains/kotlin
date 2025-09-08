@@ -41,3 +41,6 @@ fun testNullableCharSequence(x: CharSequence?): Int {
 
     return i
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, integerLiteral,
+isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

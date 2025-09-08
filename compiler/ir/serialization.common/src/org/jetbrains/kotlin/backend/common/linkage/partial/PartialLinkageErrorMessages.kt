@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -47,7 +46,7 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
         }
 
         is InvalidSamConversion -> expression(expression) {
-            invalidSamConversion(expression, abstractFunctionSymbols, abstractPropertySymbol)
+            invalidSamConversion(this@renderLinkageError)
         }
 
         is SuspendableFunctionCallWithoutCoroutineContext -> expression(expression) {
@@ -416,7 +415,27 @@ private fun Appendable.unusableClassifier(
 }
 
 private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
-    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol)
+    append("No ").declarationKind(symbol, capitalized = false).append(" found for symbol ").signature(symbol).also {
+        val signature = symbol.signature
+        val fromCInteropLibrary = signature?.run { with(this) { Flags.IS_NATIVE_INTEROP_LIBRARY.test() } }
+        if (fromCInteropLibrary == true) {
+            val packageFqName = signature.packageFqName().asString()
+            val platformLibraryName = packageFqName.removePrefix("org.jetbrains.kotlin.native.platform.")
+            if (platformLibraryName != packageFqName) {
+                it.append(". This looks like a Kotlin/Native $platformLibraryName platform library issue.")
+                it.append(" It could happen if one of the dependencies was compiled with a different version")
+                it.append(" of the Kotlin/Native compiler than the version used to compile this binary.")
+                it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                it.append(" See https://youtrack.jetbrains.com/issue/KT-78063 for more details.")
+            } else {
+                it.append(". This looks like a cinterop-generated library issue. It could happen if there is a transitive dependency which")
+                it.append(" uses cinterop and the resulting libraries are not binary compatible. Or there might be a cinterop dependency")
+                it.append(" generated with a different version of the Kotlin/Native compiler than the version used to compile this binary.")
+                it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
+                it.append(" See https://youtrack.jetbrains.com/issue/KT-78062 for more details.")
+            }
+        }
+    }
 
 private fun Appendable.declarationWithUnusableClassifier(
     declarationSymbol: IrSymbol,
@@ -523,17 +542,24 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
         .append(mismatch.forParameters.joinToString() { it.name.asString() })
 }
 
-private fun Appendable.invalidSamConversion(
-    expression: IrTypeOperatorCall,
-    abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
-    abstractPropertySymbol: IrPropertySymbol?,
-): Appendable {
-    declarationKindName(expression.typeOperand.classifierOrFail, capitalized = true)
-    return when {
-        abstractPropertySymbol != null -> append(" has abstract ").declarationKindName(abstractPropertySymbol, capitalized = false)
-        abstractFunctionSymbols.isEmpty() -> append(" does not have an abstract function")
-        else -> append(" has more than one abstract function: ").sortedDeclarationsName(abstractFunctionSymbols)
+private fun Appendable.invalidSamConversion(case: InvalidSamConversion): Appendable = when(case) {
+    is InvalidSamConversion.NotAFunInterface ->
+        declarationKindName(case.classifier, capitalized = true).append(" is not a fun interface")
+    is InvalidSamConversion.FunInterfaceHasNotSingleFunction -> {
+        declarationKindName(case.funInterface, capitalized = true)
+        if (case.abstractFunctionSymbols.isEmpty()) append(" does not have an abstract function")
+        else append(" has more than one abstract function: ").sortedDeclarationsName(case.abstractFunctionSymbols)
     }
+    is InvalidSamConversion.FunInterfaceHasAbstractProperty ->
+        declarationKindName(case.funInterface, capitalized = true).append(" has abstract ")
+            .declarationKindName(case.abstractPropertySymbol, capitalized = false)
+    is InvalidSamConversion.FunctionIsIncompatible ->
+        append("Cannot convert from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
+    is InvalidSamConversion.SamChanged ->
+        append("The single abstract method of ").declarationKindName(case.funInterface, capitalized = false)
+            .append(" changed from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
 }
 
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =

@@ -18,22 +18,19 @@ internal class FakeOverrideCopier(
     private val valueParameters: MutableMap<IrValueParameterSymbol, IrValueParameterSymbol>,
     private val typeParameters: MutableMap<IrTypeParameterSymbol, IrTypeParameterSymbol>,
     private val typeRemapper: TypeRemapper,
-    private val parentClass: IrClass,
-    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
+    private val parentClass: IrClass
 ) {
     fun copySimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
-        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parentClass)
-
         return declaration.factory.createFunctionWithLateBinding(
             startOffset = parentClass.startOffset,
             endOffset = parentClass.endOffset,
-            origin = customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
+            origin = IrDeclarationOrigin.FAKE_OVERRIDE,
             name = declaration.name,
             visibility = declaration.visibility,
             isInline = declaration.isInline,
             isExpect = declaration.isExpect,
             returnType = declaration.returnType,
-            modality = customization.modality ?: declaration.modality,
+            modality = declaration.modality,
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
             isOperator = declaration.isOperator,
@@ -53,14 +50,12 @@ internal class FakeOverrideCopier(
     }
 
     fun copyProperty(declaration: IrProperty): IrProperty {
-        val customization = unimplementedOverridesStrategy.computeCustomization(declaration, parentClass)
-
         return declaration.factory.createPropertyWithLateBinding(
             parentClass.startOffset, parentClass.endOffset,
-            customization.origin ?: IrDeclarationOrigin.FAKE_OVERRIDE,
+            IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
             declaration.visibility,
-            customization.modality ?: declaration.modality,
+            declaration.modality,
             isVar = declaration.isVar,
             isConst = declaration.isConst,
             isLateinit = declaration.isLateinit,

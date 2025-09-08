@@ -14,3 +14,6 @@ fun foo() {
 }
 
 fun bar(w: Out<String?>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, out, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

@@ -7,3 +7,6 @@ data class Data private constructor(val x: Int) {
 fun local(data: Data) {
     data.copy()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

@@ -18,3 +18,5 @@ public class J {
 class A : List<String> by J.staticNN
 class B : List<String> by <!TYPE_MISMATCH!>J.staticN<!>
 class C : List<String> by J.staticJ
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, inheritanceDelegation, javaProperty, nullableType */

@@ -6,3 +6,5 @@ fun main() {
         println(get(0))
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

@@ -11,3 +11,5 @@ fun main() {
 annotation class Anno
 
 val prop: @Anno <!UNRESOLVED_REFERENCE!>Foo<!>? = null
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, localProperty, propertyDeclaration, stringLiteral */

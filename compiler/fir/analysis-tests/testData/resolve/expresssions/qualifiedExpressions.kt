@@ -32,3 +32,6 @@ fun main() {
     val e = a.b.E.entry
     val e1 = E.entry
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+integerLiteral, localProperty, nestedClass, objectDeclaration, propertyDeclaration */

@@ -38,7 +38,7 @@ class KlibPublicAPITest {
 
     @Test
     fun nativeStdlib() {
-        Assume.assumeTrue("Skipped, pass kotlin.native.enabled gradle property to enable", NATIVE_ENABLED)
+        Assume.assumeTrue("Skipped, to enable it, either pass `kotlin.native.enabled` gradle property (if running with Gradle; the preferred way, see `ReadMe.md`), or `-Dnative.enabled=true` (if using the generated JUnit config; discouraged as it won't rebuild stdlib artifacts).", NATIVE_ENABLED)
         val dump = nativeDump("kotlin-stdlib-native", "../../../kotlin-native/runtime/build/nativeStdlib")
         mergeAndCompare("kotlin-stdlib", dump)
     }

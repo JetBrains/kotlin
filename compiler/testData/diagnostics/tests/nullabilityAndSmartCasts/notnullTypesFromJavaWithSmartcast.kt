@@ -19,3 +19,6 @@ fun <T : Any> test() {
 
     <!DEBUG_INFO_SMARTCAST!>value<!>.hashCode() // unsafe call error
 }
+
+/* GENERATED_FIR_TAGS: assignment, dnnType, equalityExpression, functionDeclaration, ifExpression, javaFunction,
+localProperty, nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

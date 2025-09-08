@@ -118,3 +118,8 @@ const val Z: String = "CONSTANT"
 
 const val A: String = <!UNINITIALIZED_VARIABLE!>B<!>
 const val B: String = "CONSTANT"
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
+companionObject, const, contractCallsEffect, contracts, flexibleType, functionDeclaration, functionalType, getter,
+inheritanceDelegation, inline, integerLiteral, lambdaLiteral, nullableType, objectDeclaration, override,
+propertyDeclaration, propertyDelegate, stringLiteral, typeParameter */

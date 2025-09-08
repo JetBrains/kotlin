@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNu
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
@@ -30,8 +31,8 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
+        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) return
+        if (!LanguageFeature.MultiplatformRestrictions.isEnabled()) return
         if (!declaration.isActual) return
 
         val actualSymbol = declaration.symbol
@@ -39,19 +40,23 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
 
         val actualContainingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
         val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
-        checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass, context, reporter)
+        checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationsMatch(
         expectSymbol: FirBasedSymbol<*>,
         actualSymbol: FirBasedSymbol<*>,
         expectContainingClass: FirRegularClassSymbol?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val matchingContext = context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)
         val incompatibility =
-            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, expectContainingClass, matchingContext) ?: return
+            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(
+                expectSymbol,
+                actualSymbol,
+                expectContainingClass,
+                matchingContext
+            ) ?: return
         val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as FirSourceElement).element
 
         reporter.reportOn(
@@ -60,8 +65,6 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
             incompatibility.expectSymbol as FirBasedSymbol<*>,
             incompatibility.actualSymbol as FirBasedSymbol<*>,
             actualAnnotationTargetSourceElement,
-            incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation },
-            context
-        )
+            incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation })
     }
 }

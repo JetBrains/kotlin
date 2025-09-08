@@ -14,3 +14,5 @@ fun test() {
 
     if (true) make() else TODO()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, typeParameter, vararg */

@@ -29,3 +29,6 @@ fun main() {
     baz(<!TYPE_MISMATCH!>id(MyObject::compute)<!>)
     bar(id(MyObject::compute))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, data, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+objectDeclaration, override, typeAliasDeclaration, typeParameter */

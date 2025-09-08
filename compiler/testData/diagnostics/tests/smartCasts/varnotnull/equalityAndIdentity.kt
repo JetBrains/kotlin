@@ -38,3 +38,6 @@ fun test(a: String?) {
         consume(<!TYPE_MISMATCH!>it<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, lambdaLiteral,
+nullableType, smartcast, typeParameter */

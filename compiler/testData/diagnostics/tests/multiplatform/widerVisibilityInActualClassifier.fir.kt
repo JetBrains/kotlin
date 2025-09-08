@@ -34,3 +34,4 @@ public open class PlatformOther { // should be allowed
 
 internal actual typealias Other = PlatformOther // should be allowed
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

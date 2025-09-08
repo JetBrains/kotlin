@@ -9,3 +9,6 @@ fun foo() {
 }
 
 fun <R> myRun(block: () -> R): R = block()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

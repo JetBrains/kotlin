@@ -10,3 +10,6 @@ fun test() {
     val b = B<String?>()
     accept(b)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+typeParameter */

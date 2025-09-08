@@ -15,3 +15,5 @@ expect class <!ACTUAL_WITHOUT_EXPECT!>Foo<!>
 // MODULE: main()()(common)
 actual fun foo() {}
 actual class Foo {}
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

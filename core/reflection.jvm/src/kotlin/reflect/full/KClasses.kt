@@ -20,8 +20,6 @@
 package kotlin.reflect.full
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
@@ -67,7 +65,9 @@ val KClass<*>.companionObjectInstance: Any?
 )
 @SinceKotlin("1.1")
 val KClass<*>.defaultType: KType
-    get() = KTypeImpl((this as KClassImpl<*>).descriptor.defaultType) { jClass }
+    get() = createType(typeParameters.map { typeParameter ->
+        KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
+    })
 
 
 /**
@@ -192,13 +192,12 @@ val KClass<*>.allSupertypes: Collection<KType>
         { current ->
             val klass = current.classifier as? KClass<*> ?: throw KotlinReflectionInternalError("Supertype not a class: $current")
             val supertypes = klass.supertypes
-            val typeArguments = current.arguments
-            if (typeArguments.isEmpty()) supertypes
-            else TypeSubstitutor.create((current as KTypeImpl).type).let { substitutor ->
-                supertypes.map { supertype ->
-                    val substituted = substitutor.substitute((supertype as KTypeImpl).type, Variance.INVARIANT)
-                        ?: throw KotlinReflectionInternalError("Type substitution failed: $supertype ($current)")
-                    KTypeImpl(substituted)
+            if (current.arguments.isEmpty()) {
+                supertypes
+            } else {
+                val substitutor = KTypeSubstitutor.create(klass, current.arguments)
+                supertypes.map {
+                    substitutor.substitute(it).type ?: throw KotlinReflectionInternalError("Incorrect type substitution: $it")
                 }
             }
         },

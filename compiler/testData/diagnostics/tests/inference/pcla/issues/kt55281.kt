@@ -29,3 +29,7 @@ class DerivedBuildee<TA>: Buildee<TA>()
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return DerivedBuildee<PTV>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

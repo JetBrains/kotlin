@@ -31,3 +31,6 @@ fun huh(arg: Foo?) {
     arg?.nestedIdentityProperty()()("")
     arg?.nestedIdentityProperty()()[42]("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, nullableType, operator,
+propertyDeclaration, safeCall, stringLiteral, thisExpression */

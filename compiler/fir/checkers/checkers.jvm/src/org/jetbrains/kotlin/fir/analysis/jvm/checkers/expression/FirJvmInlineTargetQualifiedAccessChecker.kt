@@ -39,28 +39,27 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val isInline = when (callableSymbol) {
             is FirFunctionSymbol<*> -> callableSymbol.isInline
             is FirPropertySymbol -> {
-                val accessor = if (expression.isLhsOfAssignment(context)) callableSymbol.setterSymbol else callableSymbol.getterSymbol
+                val accessor = if (expression.isLhsOfAssignment()) callableSymbol.setterSymbol else callableSymbol.getterSymbol
                 accessor != null && accessor.isInline
             }
             else -> false
         }
 
         if (isInline) {
-            checkInlineTargetVersion(callableSymbol, context, reporter, expression)
+            checkInlineTargetVersion(callableSymbol, expression)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInlineTargetVersion(
         callableSymbol: FirCallableSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         element: FirElement,
     ) {
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget ?: return
 
         val containingClass = callableSymbol.containingClassLookupTag()
         val binaryClass = if (containingClass != null) {
-            val containingClassSymbol = containingClass.toRegularClassSymbol(context.session) ?: return
+            val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
 
             @OptIn(SymbolInternals::class)
             val sourceElement = containingClassSymbol.fir.sourceElement as? KotlinJvmBinarySourceElement ?: return
@@ -78,8 +77,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 element.toReference(context.session)?.source ?: element.source,
                 FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM,
                 JvmTarget.getDescription(inlinedVersion),
-                JvmTarget.getDescription(currentVersion),
-                context,
+                JvmTarget.getDescription(currentVersion)
             )
         }
     }

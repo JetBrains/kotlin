@@ -15,3 +15,6 @@ class A<T> {
         q.y
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localProperty, nullableType, propertyDeclaration, typeParameter */

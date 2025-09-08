@@ -26,3 +26,7 @@ fun test(a: Out<Nothing>, b: Out<MutableList<J>>) {
     v checkType { _<MutableList<J>>() }
     v checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><MutableList<J?>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, interfaceDeclaration, javaFunction, javaType, lambdaLiteral, localProperty, nullableType, out,
+propertyDeclaration, typeParameter, typeWithExtension */

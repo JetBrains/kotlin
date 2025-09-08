@@ -33,3 +33,6 @@ fun test2(): Map<Int, Int> = run {
         mapOf("" to "")
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localFunction, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral, tryExpression */

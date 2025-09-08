@@ -39,3 +39,7 @@ val enumAnonFuncProp: (arg: Boolean) -> MyEnum = fun(arg: Boolean): MyEnum {
 val withContextProp : context(MyEnum)() -> Unit = {
     contextOf<MyEnum>() == Option1
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, companionObject, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, functionalType, ifExpression, lambdaLiteral, localProperty, objectDeclaration, propertyDeclaration,
+stringLiteral, tryExpression, typeWithContext */

@@ -80,3 +80,6 @@ fun test6() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, continue, crossinline, forLoop, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, noinline, propertyDeclaration, rangeExpression */

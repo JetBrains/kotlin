@@ -16,3 +16,6 @@ class Val() : Var(), VarT {
 class Var2() : Var() {
   override var v : Int = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, interfaceDeclaration, override, primaryConstructor,
+propertyDeclaration */

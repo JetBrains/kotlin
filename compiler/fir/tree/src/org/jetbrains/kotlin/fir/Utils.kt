@@ -31,11 +31,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATORS
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
@@ -126,6 +129,7 @@ fun FirDeclarationStatus.copy(
     isFromEnumClass: Boolean = this.isFromEnumClass,
     isFun: Boolean = this.isFun,
     hasStableParameterNames: Boolean = this.hasStableParameterNames,
+    returnValueStatus: ReturnValueStatus = this.returnValueStatus
 ): FirDeclarationStatus {
     val newVisibility = visibility ?: this.visibility
     val newModality = modality ?: this.modality
@@ -157,6 +161,7 @@ fun FirDeclarationStatus.copy(
         isFromEnumClass = isFromEnumClass,
         isFun = isFun,
         hasStableParameterNames = hasStableParameterNames,
+        returnValueStatus = returnValueStatus,
     )
     return newStatus
 }
@@ -207,6 +212,7 @@ private fun copyStatusAttributes(
     isFromEnumClass: Boolean = from.isFromEnumClass,
     isFun: Boolean = from.isFun,
     hasStableParameterNames: Boolean = from.hasStableParameterNames,
+    returnValueStatus: ReturnValueStatus = from.returnValueStatus,
 ) {
     to.isExpect = isExpect
     to.isActual = isActual
@@ -228,6 +234,7 @@ private fun copyStatusAttributes(
     to.isFromEnumClass = isFromEnumClass
     to.isFun = isFun
     to.hasStableParameterNames = hasStableParameterNames
+    to.returnValueStatus = returnValueStatus
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
@@ -363,6 +370,10 @@ val FirExpression.isStatementLikeExpression: Boolean
 
 private val FirExpression.isIndexedAssignment: Boolean
     get() = this is FirBlock && statements.lastOrNull()?.source?.kind == KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion
+
+fun shouldSuppressInlineContextAt(element: FirElement?, container: FirBasedSymbol<*>?): Boolean {
+    return element != null && container.let { it is FirValueParameterSymbol && it.isNoinline && it.fir.defaultValue == element }
+}
 
 fun FirBasedSymbol<*>.packageFqName(): FqName {
     return when (this) {

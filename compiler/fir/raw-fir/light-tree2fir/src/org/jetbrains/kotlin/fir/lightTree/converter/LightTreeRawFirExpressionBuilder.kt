@@ -23,12 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.*
@@ -45,7 +40,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -53,8 +48,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
@@ -100,16 +95,23 @@ class LightTreeRawFirExpressionBuilder(
             converted is R -> when {
                 isValidExpression(converted) -> converted
                 else -> buildErrorExpression(
-                    converted.source?.realElement() ?: expression?.toFirSourceElement() ?: sourceWhenInvalidExpression.toFirSourceElement(),
-                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                    converted,
+                    source = converted.source?.realElement()
+                        ?: expression?.toFirSourceElement()
+                        ?: sourceWhenInvalidExpression.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
+                    diagnostic = ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                    element = converted,
                 )
             }
             else -> buildErrorExpression(
-                converted?.source?.realElement() ?: expression?.toFirSourceElement() ?: sourceWhenInvalidExpression.toFirSourceElement(),
-                if (expression == null) ConeSyntaxDiagnostic(errorReason)
-                else ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                converted,
+                source = converted?.source?.realElement()
+                    ?: expression?.toFirSourceElement()
+                    ?: sourceWhenInvalidExpression.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
+                diagnostic = if (expression == null) {
+                    ConeSyntaxDiagnostic(errorReason)
+                } else {
+                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+                },
+                element = converted,
             )
         } as R
     }
@@ -130,12 +132,7 @@ class LightTreeRawFirExpressionBuilder(
         return when (expression.tokenType) {
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
-            BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
-                this.getOperationSymbol().toFirOperation()
-            }
-            IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression) {
-                if (this == "is") FirOperation.IS else FirOperation.NOT_IS
-            }
+            BINARY_WITH_TYPE, IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression)
             LABELED_EXPRESSION -> convertLabeledExpression(expression)
             PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
             ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
@@ -231,7 +228,7 @@ class LightTreeRawFirExpressionBuilder(
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef
                         this.name = name
-                        symbol = FirValueParameterSymbol(name)
+                        symbol = FirValueParameterSymbol()
                         defaultValue = null
                         isCrossinline = false
                         isNoinline = false
@@ -242,7 +239,7 @@ class LightTreeRawFirExpressionBuilder(
                         baseModuleData,
                         multiDeclaration,
                         multiParameter,
-                        tmpVariable = false,
+                        isTmpVariable = false,
                         forceLocal = true,
                     )
                     multiParameter
@@ -312,18 +309,14 @@ class LightTreeRawFirExpressionBuilder(
             val node = input.pop()
             when (node?.tokenType) {
                 BINARY_EXPRESSION -> {
-                    val (leftNode, opNode, rightNode) = extractBinaryExpression(node)
+                    val (leftNode, operationReference, rightNode) = extractBinaryExpression(node)
 
-                    if (opNode.asText.getOperationSymbol() != PLUS) {
+                    if (operationReference.getOperationSymbol(tree) != PLUS) {
                         return null
                     }
 
                     input.add(leftNode)
                     input.add(rightNode)
-                }
-                PARENTHESIZED -> {
-                    val content = node.getExpressionInParentheses()
-                    input.add(content)
                 }
                 else -> {
                     if (node?.tokenType != STRING_TEMPLATE) {
@@ -379,10 +372,10 @@ class LightTreeRawFirExpressionBuilder(
     }
 
     private fun convertBinaryExpressionFallback(binaryExpression: LighterASTNode): FirStatement {
-        val (leftArgNode, opNode, rightArgNode) = extractBinaryExpression(binaryExpression)
-        val operationReferenceSource = opNode.toFirSourceElement()
-        val operationTokenName = opNode.asText
-        val operationToken = operationTokenName.getOperationSymbol()
+        val (leftArgNode, operationReference, rightArgNode) = extractBinaryExpression(binaryExpression)
+        val operationReferenceSource = operationReference.toFirSourceElement()
+        val operationTokenName = operationReference.asText
+        val operationToken = operationReference.getOperationSymbol(tree)
         val baseSource = binaryExpression.toFirSourceElement()
         if (operationToken == IDENTIFIER) {
             context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
@@ -456,16 +449,13 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitBinaryWithTypeRHSExpression
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitIsExpression
      */
-    private fun convertBinaryWithTypeRHSExpression(
-        binaryExpression: LighterASTNode,
-        toFirOperation: String.() -> FirOperation,
-    ): FirTypeOperatorCall {
-        lateinit var operationTokenName: String
+    private fun convertBinaryWithTypeRHSExpression(binaryExpression: LighterASTNode): FirTypeOperatorCall {
+        lateinit var operationReference: LighterASTNode
         var leftArgAsFir: FirExpression? = null
         lateinit var firType: FirTypeRef
         binaryExpression.forEachChildren {
             when (it.tokenType) {
-                OPERATION_REFERENCE -> operationTokenName = it.asText
+                OPERATION_REFERENCE -> operationReference = it
                 TYPE_REFERENCE -> firType = declarationBuilder.convertType(it)
                 else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
             }
@@ -473,7 +463,7 @@ class LightTreeRawFirExpressionBuilder(
 
         return buildTypeOperatorCall {
             source = binaryExpression.toFirSourceElement()
-            operation = operationTokenName.toFirOperation()
+            operation = operationReference.getOperationSymbol(tree).toFirOperation()
             conversionTypeRef = firType
             argumentList = buildUnaryArgumentList(
                 leftArgAsFir ?: buildErrorExpression(binaryExpression.toFirSourceElement(), ConeSyntaxDiagnostic("No left operand"))
@@ -518,20 +508,18 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitUnaryExpression
      */
     private fun convertUnaryExpression(unaryExpression: LighterASTNode): FirExpression {
-        lateinit var operationTokenName: String
         var argument: LighterASTNode? = null
-        var operationReference: LighterASTNode? = null
+        lateinit var operationReference: LighterASTNode
         unaryExpression.forEachChildren {
             when (it.tokenType) {
                 OPERATION_REFERENCE -> {
                     operationReference = it
-                    operationTokenName = it.asText
                 }
                 else -> if (it.isExpression()) argument = it
             }
         }
 
-        val operationToken = operationTokenName.getOperationSymbol()
+        val operationToken = operationReference.getOperationSymbol(tree)
         val conventionCallName = operationToken.toUnaryName()
         return when {
             operationToken == EXCLEXCL -> {
@@ -562,7 +550,7 @@ class LightTreeRawFirExpressionBuilder(
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {
-                        source = operationReference?.toFirSourceElement() ?: this@buildFunctionCall.source
+                        source = operationReference.toFirSourceElement()
                         name = conventionCallName
                     }
                     explicitReceiver = receiver
@@ -770,6 +758,20 @@ class LightTreeRawFirExpressionBuilder(
 
         val source = callSuffix.toFirSourceElement()
 
+        // TODO(KT-22765) drop workaround when suspend modifier for lambdas is implemented
+        if (imitateLambdaSuspendModifier &&
+            name == StandardClassIds.Callables.suspend.callableName.identifier &&
+            !callSuffix.getParent().let { it.selectorExpression == callSuffix && it.receiverExpression != null } &&
+            valueArguments.singleOrNull()?.tokenType == LAMBDA_ARGUMENT &&
+            firTypeArguments.isEmpty()
+        ) {
+            valueArguments.single().getFirstChild()?.let {
+                return getAsFirExpression<FirAnonymousFunctionExpression>(it).apply {
+                    anonymousFunction.replaceStatus(anonymousFunction.status.copy(isSuspend = true))
+                }
+            }
+        }
+
         val (calleeReference, receiverForInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
@@ -841,8 +843,11 @@ class LightTreeRawFirExpressionBuilder(
 
     private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): Collection<FirExpression> {
         val firExpressions = mutableListOf<FirExpression>()
-        this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START) {
-            firExpressions.add(getAsFirExpression(it, errorReason))
+        this?.forEachChildren {
+            when (it.tokenType) {
+                LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START -> return@forEachChildren
+                else -> firExpressions.add(getAsFirExpression(it, errorReason))
+            }
         }
         return firExpressions
     }
@@ -874,8 +879,7 @@ class LightTreeRawFirExpressionBuilder(
                         name = variable.name
                         initializer = variable.initializer
                         isVar = false
-                        symbol = FirPropertySymbol(variable.name)
-                        isLocal = true
+                        symbol = FirLocalPropertySymbol()
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         receiverParameter = variable.receiverParameter?.let { receiverParameter ->
                             buildReceiverParameterCopy(receiverParameter) {
@@ -906,8 +910,7 @@ class LightTreeRawFirExpressionBuilder(
                 this.name = name
                 initializer = subjectExpression
                 isVar = false
-                symbol = FirPropertySymbol(name)
-                isLocal = true
+                symbol = FirLocalPropertySymbol()
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
             }
         }
@@ -1344,7 +1347,7 @@ class LightTreeRawFirExpressionBuilder(
                             baseModuleData,
                             multiDeclaration,
                             firLoopParameter,
-                            tmpVariable = true,
+                            isTmpVariable = true,
                             forceLocal = true,
                         )
                     } else {
@@ -1413,9 +1416,8 @@ class LightTreeRawFirExpressionBuilder(
                         returnTypeRef = parameter.returnTypeRef
                         isVar = false
                         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
-                        isLocal = true
                         this.name = parameter.name
-                        symbol = FirPropertySymbol(CallableId(name))
+                        symbol = FirLocalPropertySymbol()
                         annotations += parameter.annotations
                     }.also {
                         it.isCatchParameter = true

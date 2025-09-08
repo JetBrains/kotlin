@@ -21,3 +21,5 @@ class C : B() {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

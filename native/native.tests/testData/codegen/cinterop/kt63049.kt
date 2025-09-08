@@ -1,9 +1,13 @@
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: kt63049.def
 depends = Foundation
 language = Objective-C
 headers = kt63049.h
+
+# Workaround for https://youtrack.jetbrains.com/issue/KT-80470.
+linkerOpts = -all_load
 
 // FILE: kt63049.h
 #import "Foundation/NSObject.h"

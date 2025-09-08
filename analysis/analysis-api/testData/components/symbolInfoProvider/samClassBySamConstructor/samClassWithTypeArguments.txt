@@ -17,7 +17,6 @@ CONSTRUCTOR:
     abbreviation: null
     annotations: []
     classId: Predicate
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Predicate
@@ -27,7 +26,6 @@ CONSTRUCTOR:
             abbreviation: null
             annotations: []
             name: A
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -44,6 +42,9 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: false
         ]
     ]
     symbol: KaNamedClassSymbol(Predicate)
@@ -52,7 +53,6 @@ CONSTRUCTOR:
         abbreviation: null
         annotations: []
         name: A
-        nullability: NON_NULLABLE
         symbol: KaTypeParameterSymbol:
           annotations: []
           compilerVisibility: Local
@@ -69,7 +69,13 @@ CONSTRUCTOR:
           getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
           getContainingModule: KaSourceModule "Sources of main"
           deprecationStatus: null
+        isMarkedNullable: false
+        isNullable: true
+        hasFlexibleNullability: false
     ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
@@ -119,13 +125,11 @@ CONSTRUCTOR:
         hasReceiver: false
         isReflectType: false
         isSuspend: false
-        nullability: NON_NULLABLE
         parameterTypes: [
           KaTypeParameterType:
             abbreviation: null
             annotations: []
             name: A
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -142,6 +146,9 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: false
         ]
         parameters: [
           KaBaseFunctionValueParameter [name: null, type: null]
@@ -155,7 +162,6 @@ CONSTRUCTOR:
                 abbreviation: null
                 annotations: []
                 name: A
-                nullability: NON_NULLABLE
                 symbol: KaTypeParameterSymbol:
                   annotations: []
                   compilerVisibility: Local
@@ -172,11 +178,13 @@ CONSTRUCTOR:
                   getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
                   getContainingModule: KaSourceModule "Sources of main"
                   deprecationStatus: null
+                isMarkedNullable: false
+                isNullable: true
+                hasFlexibleNullability: false
               KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: kotlin/Boolean
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Boolean
@@ -185,6 +193,9 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         receiverType: null
@@ -192,7 +203,6 @@ CONSTRUCTOR:
           abbreviation: null
           annotations: []
           classId: kotlin/Boolean
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Boolean
@@ -201,13 +211,15 @@ CONSTRUCTOR:
           ]
           symbol: KaNamedClassSymbol(kotlin/Boolean)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         symbol: KaNamedClassSymbol(kotlin/Function1)
         typeArguments: [
           KaTypeParameterType:
             abbreviation: null
             annotations: []
             name: A
-            nullability: NON_NULLABLE
             symbol: KaTypeParameterSymbol:
               annotations: []
               compilerVisibility: Local
@@ -224,11 +236,13 @@ CONSTRUCTOR:
               getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
+            isMarkedNullable: false
+            isNullable: true
+            hasFlexibleNullability: false
           KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: kotlin/Boolean
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Boolean
@@ -237,7 +251,13 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Boolean)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
       getContainingJvmClassName: SamClassWithTypeArgumentsKt
@@ -273,7 +293,6 @@ CLASS:
       abbreviation: null
       annotations: []
       classId: kotlin/Any
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Any
@@ -282,6 +301,9 @@ CLASS:
       ]
       symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   typeParameters: [
     KaTypeParameterSymbol:

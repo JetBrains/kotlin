@@ -17,3 +17,6 @@ private fun f1() {
 fun foo(s: String) {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, localFunction,
+primaryConstructor, propertyDeclaration */

@@ -9,3 +9,5 @@ expect external fun foo()
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual external fun foo()
+
+/* GENERATED_FIR_TAGS: actual, expect, external, functionDeclaration */

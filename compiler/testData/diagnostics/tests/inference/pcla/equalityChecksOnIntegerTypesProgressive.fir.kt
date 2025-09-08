@@ -19,3 +19,5 @@ fun main(x: Long, y: Int) {
         yield("")
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

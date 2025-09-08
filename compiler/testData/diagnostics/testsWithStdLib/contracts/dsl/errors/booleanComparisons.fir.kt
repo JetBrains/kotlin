@@ -22,3 +22,6 @@ fun bar(b: Boolean?): Boolean {
     if (b == null) throw java.lang.IllegalArgumentException("")
     return b
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, ifExpression,
+javaFunction, lambdaLiteral, nullableType, smartcast, stringLiteral */

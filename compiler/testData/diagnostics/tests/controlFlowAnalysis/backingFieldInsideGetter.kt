@@ -22,3 +22,6 @@ class R {
             return b
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, getter, ifExpression, javaFunction,
+nullableType, propertyDeclaration, stringLiteral */

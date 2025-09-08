@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // JVM_TARGET: 1.8
-// FIXATION_LOGS
+// DUMP_INFERENCE_LOGS: FIXATION
 
 // FILE: Function.java
 public interface Function<I, O> {
@@ -54,3 +54,7 @@ fun test2(manager: Manager) {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, flexibleType, functionDeclaration, inProjection,
+integerLiteral, javaFunction, javaProperty, javaType, lambdaLiteral, nullableType, safeCall, samConversion,
+stringLiteral, typeParameter, whenExpression, whenWithSubject */

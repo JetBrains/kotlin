@@ -17,3 +17,6 @@ inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
 
 private inline fun <reified T> KAnnotatedElement.findAnnotation(): T? =
     annotations.firstIsInstanceOrNull()
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, inline, nullableType,
+primaryConstructor, propertyDeclaration, reified, starProjection, typeConstraint, typeParameter */

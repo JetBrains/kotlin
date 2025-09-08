@@ -24,7 +24,7 @@ data class Tag<out RenderingT : Any?> {
     when {
       other !is Tag<RenderingT> -> return false
     }
-    val tmp_0: Tag<RenderingT> = other as Tag<RenderingT>
+    val tmp_0: Tag<RenderingT> = other /*as Tag<RenderingT> */
     when {
       EQEQ(arg0 = <this>.#action, arg1 = tmp_0.#action).not() -> return false
     }

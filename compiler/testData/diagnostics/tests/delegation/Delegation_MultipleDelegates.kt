@@ -19,3 +19,6 @@ interface TwoImpl : Two {
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class Test1<!>() : TwoImpl, OneImpl {}
 class Test2(a : One) : One by a, Two {}
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Test3<!>(a : One, b : Two) : Two by b, One by a {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, override, primaryConstructor */

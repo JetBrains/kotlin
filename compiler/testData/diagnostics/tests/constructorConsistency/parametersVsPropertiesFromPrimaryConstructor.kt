@@ -30,3 +30,6 @@ class Test(
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, init, lambdaLiteral, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, thisExpression */

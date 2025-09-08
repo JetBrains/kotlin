@@ -17,3 +17,6 @@ fun <K> foo(i: Inv<K>) {}
 fun test(f: Form) {
     foo(f[Sample::str])
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, operator,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

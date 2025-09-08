@@ -22,3 +22,6 @@ fun Result.isSuccess2(arg: Result): Boolean {
     }
     return arg is <!UNRESOLVED_REFERENCE!>Success<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, contractConditionalEffect,
+contracts, funWithExtensionReceiver, functionDeclaration, isExpression, lambdaLiteral, nestedClass */

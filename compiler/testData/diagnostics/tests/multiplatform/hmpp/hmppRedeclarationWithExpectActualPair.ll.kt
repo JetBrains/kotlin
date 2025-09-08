@@ -25,3 +25,5 @@ class <!ACTUAL_MISSING!>A<!>
 actual class B
 
 actual class C
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

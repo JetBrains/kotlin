@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
@@ -127,7 +128,11 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
             declaration.parentClassOrNull?.thisReceiver?.acceptVoid(it)
         }
 
-    val functionContext = context.newDeclaration(declaration, localNameGenerator)
+    val functionContext = context.newDeclaration(
+        declaration,
+        localNameGenerator,
+        declaration.sourceFileWhenInlined ?: context.currentFileEntry
+    )
 
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
@@ -404,7 +409,7 @@ internal fun translateNonDispatchCallArguments(
     return function.nonDispatchParameters
         .map { parameter ->
             val argument = expression.arguments[parameter.indexInParameters]
-            if (argument == null && !(validWithNullArgs || parameter.isBoxParameter)) {
+            if (argument == null && !(validWithNullArgs || parameter.isBoxParameter || parameter.isProxyParameterForExportedSuspendFunction)) {
                 compilationException("Argument for parameter ${parameter.name} cannot be null", expression)
             }
             var jsArgument = when {
@@ -571,7 +576,7 @@ private fun JsLocation.withEmbeddedSource(
 }
 
 fun IrElement.getStartSourceLocation(container: IrDeclaration): JsLocation? {
-    val fileEntry = container.fileOrNull?.fileEntry ?: return null
+    val fileEntry = container.getSourceFile() ?: return null
     return getStartSourceLocation(fileEntry)
 }
 

@@ -110,3 +110,7 @@ fun test_5() {
 fun getNullableString(): String? = null
 fun getString(): String = "hello"
 fun noInlineRun(block: () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, forLoop, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression, smartcast,
+stringLiteral */

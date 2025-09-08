@@ -12,3 +12,6 @@ fun test(logger: KaptLogger) {
     else
         logger::error
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, ifExpression, interfaceDeclaration, localProperty,
+propertyDeclaration */

@@ -12,3 +12,6 @@ fun main() {
 
     val a: (Box<Int>) -> Int = Box<<!UNRESOLVED_REFERENCE!>_<!>>::property
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, typeParameter */

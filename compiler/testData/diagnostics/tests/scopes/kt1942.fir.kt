@@ -18,3 +18,5 @@ class A : C() {
         val v = <!INVISIBLE_REFERENCE!>myValue<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, localProperty, propertyDeclaration */

@@ -3,3 +3,4 @@ text: object {
         val x = 4
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

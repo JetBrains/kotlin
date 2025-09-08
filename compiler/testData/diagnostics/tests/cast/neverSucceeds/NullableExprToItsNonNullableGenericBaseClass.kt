@@ -18,3 +18,6 @@ fun test2(value: FooBar?) {
     value <!USELESS_CAST!>as Foo<*>?<!>
     value <!USELESS_CAST!>as? Foo<*>?<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nullableType, smartcast, starProjection,
+typeParameter */

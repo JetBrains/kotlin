@@ -21,3 +21,5 @@ class A {
 
 @Test
 <!UNSUPPORTED_SUSPEND_TEST!>suspend<!> fun test() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, suspend, typeAliasDeclaration */

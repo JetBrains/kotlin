@@ -8,19 +8,5 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.fir.*
 
 @OptIn(PrivateSessionConstructor::class)
-class FirCliSession @PrivateSessionConstructor constructor(
-    sessionProvider: FirProjectSessionProvider,
-    kind: Kind
-) : FirSession(sessionProvider, kind)
+class FirCliSession @PrivateSessionConstructor constructor(kind: Kind) : FirSession(kind)
 
-class FirProjectSessionProvider : FirSessionProvider() {
-    override fun getSession(moduleData: FirModuleData): FirSession? {
-        return sessionCache[moduleData]
-    }
-
-    fun registerSession(moduleData: FirModuleData, session: FirSession) {
-        sessionCache[moduleData] = session
-    }
-
-    private val sessionCache: MutableMap<FirModuleData, FirSession> = mutableMapOf()
-}

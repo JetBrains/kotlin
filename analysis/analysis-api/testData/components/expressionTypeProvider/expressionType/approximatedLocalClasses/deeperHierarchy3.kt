@@ -1,7 +1,7 @@
 // APPROXIMATE_TYPE
 interface T
 
-fun foo() {
+fun f<caret>oo() {
     open class A
     class B : A()
 

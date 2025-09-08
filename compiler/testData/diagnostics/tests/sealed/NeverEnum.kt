@@ -6,3 +6,5 @@
 
     class Derived: SealedEnum()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, nestedClass, sealed */

@@ -9,26 +9,22 @@
 language = C
 ---
 #include <stdint.h>
-
-void assertNativeThreadState();
-
-int32_t answer() {
-    assertNativeThreadState();
-    return 42;
-}
-
-// FILE: threadStates.cpp
 #include <stdio.h>
 #include <stdlib.h>
 
-// Implemented in the runtime for test purposes.
-extern "C" bool Kotlin_Debugging_isThreadStateNative();
+void assertNativeThreadState() {
+    // Implemented in the runtime for test purposes.
+    _Bool Kotlin_Debugging_isThreadStateNative(void);
 
-extern "C" void assertNativeThreadState() {
     if (!Kotlin_Debugging_isThreadStateNative()) {
         printf("Incorrect thread state. Expected native thread state.");
         abort();
     }
+}
+
+int32_t answer() {
+    assertNativeThreadState();
+    return 42;
 }
 
 // MODULE: main(cinterop)

@@ -23,3 +23,5 @@ fun unreachable4(array: Array<Any>) {
 
 fun bar(a: Any) {}
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

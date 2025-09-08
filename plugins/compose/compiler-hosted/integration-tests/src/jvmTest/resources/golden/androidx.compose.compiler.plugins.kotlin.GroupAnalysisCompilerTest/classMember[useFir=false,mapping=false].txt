@@ -1,0 +1,30 @@
+//
+// Source
+// ------------------------------------------
+
+interface Test {
+    @Composable
+    fun Test()
+}
+
+class TestImpl : Test {
+    @Composable
+    override fun Test() {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestImpl {
+    file: Test.kt
+    Test(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 11 }
+}
+
+TestImpl$Test$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}

@@ -73,3 +73,5 @@ fun test_3_break() {
     }
 }
 
+/* GENERATED_FIR_TAGS: break, classReference, continue, contractCallsEffect, contracts, elvisExpression,
+functionDeclaration, functionalType, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, whileLoop */

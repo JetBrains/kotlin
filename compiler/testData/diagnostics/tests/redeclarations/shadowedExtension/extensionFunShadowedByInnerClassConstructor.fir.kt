@@ -30,3 +30,6 @@ fun Outer.TestNested() {}
 fun Outer.TestInternal() {}
 fun Outer.TestProtected() {}
 fun Outer.TestPrivate() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, integerLiteral,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, secondaryConstructor, typeConstraint, typeParameter */

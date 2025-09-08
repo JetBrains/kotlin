@@ -15,3 +15,6 @@ class CustomEnumMap<KK : Enum<KK>, VV> private constructor(
 }
 
 fun <KKK, VVV> mapOf(p: Pair<KKK, VVV>): Map<KKK, VVV> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inheritanceDelegation, javaFunction,
+nullableType, primaryConstructor, propertyDeclaration, secondaryConstructor, typeConstraint, typeParameter */

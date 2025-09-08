@@ -27,7 +27,7 @@
 > s
 > bt
 * thread #1, [..] stop reason = step in
-  * frame #0: [..]`kfun:#bar(kotlin.Int){}kotlin.Int [inlined] [..]foo[..] at lib.kt:18:12
+  * frame #0: [..]foo[..] at lib.kt:18:12[..]
     frame #1: [..]`kfun:#bar(x=42){}kotlin.Int at main.kt:5:15
     frame #2: [..]`kfun:#main(){} at main.kt:13:13
     frame #3: [..]`Konan_start(args=[..]) at [..]

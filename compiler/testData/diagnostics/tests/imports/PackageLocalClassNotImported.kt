@@ -17,3 +17,5 @@ import pack1.*
 import pack2.*
 
 class X : SomeClass()
+
+/* GENERATED_FIR_TAGS: classDeclaration */

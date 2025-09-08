@@ -145,7 +145,7 @@ public:
         stats_.keptCount += 1;
         stats_.keptSizeBytes += sizeBytes;
     }
-    // Custom allocator only. To be finalized objects are kept alive.
+    // To be finalized objects are kept alive.
     void addMarkedObject() noexcept {
         requireValid();
         markedCount_ += 1;

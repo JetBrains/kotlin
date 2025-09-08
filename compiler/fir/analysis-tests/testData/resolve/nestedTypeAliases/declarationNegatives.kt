@@ -18,19 +18,19 @@ class TAOwner {
 
     var prop: String = ""
         get() {
-            <!UNSUPPORTED!>typealias LocalInGet = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!><!>
+            typealias LocalInGet = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!>
             return field
         }
 
     fun testLocalTA(): Unit {
-        <!UNSUPPORTED!>typealias LocalInMethod = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!><!>
+        typealias LocalInMethod = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!>
         class Local {
-            <!UNSUPPORTED!>typealias LocalInLocalClass = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!><!>
+            typealias LocalInLocalClass = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!>
         }
     }
 
     init {
-        <!UNSUPPORTED!>typealias LocalInInit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!><!>
+        typealias LocalInInit = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Class<!>
     }
 
     class <!REDECLARATION!>Nested<!>
@@ -62,3 +62,7 @@ class CapturingTAOwner<T> {
 
     typealias FunTA = (Int, List<<!UNRESOLVED_REFERENCE!>T<!>>) -> Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, in, init, inner, localClass,
+nestedClass, nullableType, out, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

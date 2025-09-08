@@ -17,4 +17,7 @@ fun foo() {
 }
 
 @Anno("str")
-<!UNSUPPORTED!>context(@Anno("param") parameter1 : @Anno("1" + "2") <!UNRESOLVED_REFERENCE!>Unresolved<!>, parameter2: List<@Anno("str") <!UNRESOLVED_REFERENCE!>Unresolved<!>>)<!><!SYNTAX!><!>
+context(@Anno("param") parameter1 : @Anno("1" + "2") <!UNRESOLVED_REFERENCE!>Unresolved<!>, parameter2: List<@Anno("str") <!UNRESOLVED_REFERENCE!>Unresolved<!>>)<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, localClass, primaryConstructor,
+propertyDeclaration, stringLiteral */

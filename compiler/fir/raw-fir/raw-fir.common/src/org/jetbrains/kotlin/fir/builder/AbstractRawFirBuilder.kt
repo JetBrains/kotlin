@@ -66,9 +66,14 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
     protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
+    protected val imitateLambdaSuspendModifier: Boolean =
+        baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ParseLambdaWithSuspendModifier)
+
+    val nameBasedDestructuringShortForm: Boolean =
+        baseSession.languageVersionSettings.supportsFeature(LanguageFeature.EnableNameBasedDestructuringShortForm)
+
     abstract val T.elementType: IElementType
     abstract val T.asText: String
-    abstract val T.unescapedValue: String
     abstract fun T.getReferencedNameAsName(): Name
     abstract fun T.getLabelName(): String?
     abstract fun T.getExpressionInParentheses(): T?
@@ -482,7 +487,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     sourceElement,
                     kind,
                     number,
-                    ConeSimpleDiagnostic("Incorrect integer literal: $text", diagnostic)
+                    "integer",
+                    text,
+                    diagnostic,
                 )
             }
             FLOAT_CONSTANT ->
@@ -491,14 +498,18 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         sourceElement,
                         ConstantValueKind.Float,
                         convertedText,
-                        ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.FloatLiteralOutOfRange)
+                        "float",
+                        text,
+                        DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 } else {
                     buildConstOrErrorExpression(
                         sourceElement,
                         ConstantValueKind.Double,
                         convertedText as? Double,
-                        ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.FloatLiteralOutOfRange)
+                        "double",
+                        text,
+                        DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 }
             CHARACTER_CONSTANT -> {
@@ -507,10 +518,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     sourceElement,
                     ConstantValueKind.Char,
                     characterWithDiagnostic.value,
-                    ConeSimpleDiagnostic(
-                        "Incorrect character: $text",
-                        characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
-                    )
+                    "character",
+                    text,
+                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                 )
             }
             BOOLEAN_CONSTANT ->
@@ -587,16 +597,20 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                             )
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
-                            sb.append(entry.unescapedValue)
-                            val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
+                            val entryText = entry.asText
+                            val characterWithDiagnostic = escapedStringToCharacter(entryText)
+                            val unescapedCharacter = characterWithDiagnostic.value
+                            if (unescapedCharacter != null) {
+                                sb.append(unescapedCharacter)
+                            }
+
                             arguments += buildConstOrErrorExpression(
                                 entry.toFirSourceElement(),
                                 ConstantValueKind.String,
-                                characterWithDiagnostic.value?.toString(),
-                                ConeSimpleDiagnostic(
-                                    "Incorrect character: ${entry.asText}",
-                                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
-                                )
+                                unescapedCharacter?.toString(),
+                                "character",
+                                entryText,
+                                characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                             )
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
@@ -936,7 +950,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     statements += result
                 }
                 statements += buildUnitExpression {
-                    source = this@buildBlock.source?.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
+                    source = baseSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
                 }
             }
         }
@@ -1153,7 +1167,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
-    protected fun FirRegularClass.initContainingClassForLocalAttr() {
+    protected fun FirClassLikeDeclaration.initContainingClassForLocalAttr() {
         if (isLocal) {
             val currentDispatchReceiverType = currentDispatchReceiverType()
             if (currentDispatchReceiverType != null) {
@@ -1421,7 +1435,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
                 origin = declarationOrigin
                 returnTypeRef = propertyReturnTypeRef
                 name = propertyName
-                symbol = FirValueParameterSymbol(propertyName)
+                symbol = FirValueParameterSymbol()
                 defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                 isCrossinline = false
                 isNoinline = false

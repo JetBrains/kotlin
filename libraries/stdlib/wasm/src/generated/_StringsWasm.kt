@@ -18,6 +18,6 @@ package kotlin.text
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharSequence.elementAt(index: Int): Char {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, length: $length}") }
 }
 

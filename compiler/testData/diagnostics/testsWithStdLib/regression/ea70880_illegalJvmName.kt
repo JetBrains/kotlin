@@ -7,3 +7,5 @@ fun bar() {}
 
 @JvmName("a", <!TOO_MANY_ARGUMENTS!>"b"<!>)
 fun baz() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

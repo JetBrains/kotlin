@@ -9,8 +9,7 @@ package org.jetbrains.kotlin.cli.common.arguments
  * @param value should be one of [DefaultValue] enum values
  * @param gradleInputType should be one of [GradleInputTypes] enum values
  */
-@Retention(AnnotationRetention.RUNTIME)
-annotation class GradleOption(
+class GradleOption(
     val value: DefaultValue,
     val gradleInputType: GradleInputTypes,
     val shouldGenerateDeprecatedKotlinOptions: Boolean = false,

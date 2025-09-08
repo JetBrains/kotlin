@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationFirstArgument
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isEnumEntries
+import org.jetbrains.kotlin.fir.resolve.expandedConeTypeWithEnsuredPhase
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -41,7 +43,7 @@ import org.jetbrains.kotlin.types.Variance
 object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        if (!declaration.symbol.isExportedObject(context) || declaration !is FirMemberDeclaration) {
+        if (!declaration.symbol.isExportedObject() || declaration !is FirMemberDeclaration) {
             return
         }
 
@@ -71,11 +73,11 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind)
         }
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AllowExpectDeclarationsInJsExport) && declaration.isExpect) {
+        if (!LanguageFeature.AllowExpectDeclarationsInJsExport.isEnabled() && declaration.isExpect) {
             reportWrongExportedDeclaration("expect")
         }
 
-        validateDeclarationOnConsumableName(declaration, context, reporter)
+        validateDeclarationOnConsumableName(declaration)
 
         when (declaration) {
             is FirFunction -> {
@@ -92,7 +94,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                if (declaration.isSuspend) {
+                if (declaration.isSuspend && !context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowExportingSuspendFunctions)) {
                     reportWrongExportedDeclaration("suspend function")
                     return
                 }
@@ -208,9 +210,11 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             else -> typeParameterSymbols.any { it.isReified }
         }
 
+    context(context: CheckerContext)
     private fun ConeKotlinType.isExportableReturn(session: FirSession, currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf()) =
         isUnit || isExportable(session, currentlyProcessed)
 
+    context(context: CheckerContext)
     private fun ConeKotlinType.isExportableTypeArguments(
         session: FirSession,
         currentlyProcessed: MutableSet<ConeKotlinType>
@@ -218,7 +222,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         if (typeArguments.isEmpty()) {
             return true
         }
-        val symbol = toRegularClassSymbol(session) ?: return false
+        val symbol = toRegularClassSymbol() ?: return false
         for (i in 0 until typeArguments.size) {
             val parameter = symbol.typeParameterSymbols.getOrNull(i) ?: return false
             if (!typeArguments[i].isExportable(session, parameter, currentlyProcessed)) {
@@ -228,21 +232,14 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         return true
     }
 
+    context(context: CheckerContext)
     private fun ConeTypeProjection.isExportable(
         session: FirSession,
         declarationSite: FirTypeParameterSymbol,
         currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf(),
     ): Boolean {
         val typeFromProjection = when (kind) {
-            ProjectionKind.INVARIANT -> type
-            ProjectionKind.IN -> when (declarationSite.variance) {
-                Variance.IN_VARIANCE -> type
-                else -> null
-            }
-            ProjectionKind.OUT -> when (declarationSite.variance) {
-                Variance.OUT_VARIANCE -> type
-                else -> null
-            }
+            ProjectionKind.INVARIANT, ProjectionKind.OUT, ProjectionKind.IN -> type
             ProjectionKind.STAR -> when (declarationSite.variance) {
                 Variance.INVARIANT -> null
                 else -> declarationSite.getProjectionForRawType(session, makeNullable = false)
@@ -253,6 +250,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 || typeFromProjection.isExportable(session, currentlyProcessed)
     }
 
+    context(context: CheckerContext)
     private fun ConeKotlinType.isExportable(
         session: FirSession,
         currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf(),
@@ -261,12 +259,12 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             return true
         }
 
-        val expandedType = fullyExpandedType(session)
+        val expandedType = fullyExpandedType(session, FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 
-        val isFunctionType = expandedType.isBasicFunctionType(session)
+        val isExportableFunctionType = expandedType.isBasicFunctionType(session)
         val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed)
         currentlyProcessed.remove(this)
-        if (isFunctionType || !isExportableArgs) {
+        if (isExportableFunctionType || !isExportableArgs) {
             return isExportableArgs
         }
 
@@ -274,7 +272,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         val isPrimitiveExportableType = nonNullable.isAny || nonNullable.isNullableAny
                 || nonNullable is ConeDynamicType || nonNullable.isPrimitiveExportableConeKotlinType
 
-        val symbol = expandedType.toSymbol(session)
+        val symbol = expandedType.toSymbol()
 
         return when {
             isPrimitiveExportableType -> true
@@ -284,12 +282,13 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         }
     }
 
+    context(context: CheckerContext)
     private val ConeKotlinType.isPrimitiveExportableConeKotlinType: Boolean
         get() = this is ConeTypeParameterType
                 || isBoolean
                 || isThrowableOrNullableThrowable
                 || isString
-                || isPrimitiveNumberOrNullableType && !isLong
+                || isPrimitiveNumberOrNullableType && (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowLongInExportedDeclarations) || !isLong)
                 || isNothingOrNullableNothing
                 || isPrimitiveArray
                 || isNonPrimitiveArray
@@ -300,10 +299,9 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 || isMap
                 || isMutableMap
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun validateDeclarationOnConsumableName(
         declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (!context.isTopLevel || declaration.nameOrSpecialName.isSpecial) {
             return
@@ -317,6 +315,6 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             return
         }
 
-        reporter.reportOn(reportTarget, FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER, name, context)
+        reporter.reportOn(reportTarget, FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER, name)
     }
 }

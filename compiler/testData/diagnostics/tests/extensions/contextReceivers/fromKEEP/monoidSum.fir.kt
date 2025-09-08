@@ -34,3 +34,7 @@ fun test() {
         listOf("1", "2", "3").sum()
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, infix, inline, integerLiteral, interfaceDeclaration, lambdaLiteral,
+nullableType, objectDeclaration, override, propertyDeclaration, stringLiteral, thisExpression, typeParameter, vararg */

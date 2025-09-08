@@ -62,3 +62,6 @@ fun test_6(b: Boolean) {
         if (b) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, stringLiteral,
+whenExpression */

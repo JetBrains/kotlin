@@ -15,3 +15,5 @@ fun B.foo(a: A?) {
     }
 }
 
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral */

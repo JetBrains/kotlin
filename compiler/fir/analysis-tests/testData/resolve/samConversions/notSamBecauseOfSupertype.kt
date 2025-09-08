@@ -29,3 +29,6 @@ fun main() {
 
     JavaUsage.foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, integerLiteral, javaFunction, javaType, lambdaLiteral,
+localProperty, propertyDeclaration */

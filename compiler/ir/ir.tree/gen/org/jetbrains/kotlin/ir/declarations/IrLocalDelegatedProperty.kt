@@ -28,7 +28,19 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
 
     abstract var isVar: Boolean
 
-    abstract var delegate: IrVariable
+    /**
+     * Normally, all local delegated properties have non-null value in [delegate].
+     *
+     * The `null` value can happen only in a very special case:
+     * * The local delegated property was used inside an inlinable lambda argument of an inline function.
+     * * A KLIB-based compiler (Kotlin/Native, Kotlin/JS, Kotlin/Wasm) with the enabled IR inliner on
+     *   the first stage pre-processed the call site of the inliner function, so that the [delegate]
+     *   variable was "detached" from the local delegated property and left inside the lambda while
+     *   the property itself was extracted to the same level as the call site.
+     *
+     * This is called a "soft-extraction" of local delegated properties. It was implemented in KT-78856.
+     */
+    abstract var delegate: IrVariable?
 
     abstract var getter: IrSimpleFunction
 
@@ -38,13 +50,13 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
         visitor.visitLocalDelegatedProperty(this, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
-        delegate.accept(visitor, data)
+        delegate?.accept(visitor, data)
         getter.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
-        delegate = delegate.transform(transformer, data) as IrVariable
+        delegate = delegate?.transform(transformer, data) as IrVariable?
         getter = getter.transform(transformer, data) as IrSimpleFunction
         setter = setter?.transform(transformer, data) as IrSimpleFunction?
     }

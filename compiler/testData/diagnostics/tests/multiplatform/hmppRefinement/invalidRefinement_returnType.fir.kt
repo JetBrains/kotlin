@@ -18,3 +18,5 @@ expect class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> {
 actual class Foo {
     actual fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

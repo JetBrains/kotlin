@@ -10,3 +10,6 @@ fun foo(b: String) {
         else -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, rangeExpression, whenExpression,
+whenWithSubject */

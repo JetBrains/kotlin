@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -28,6 +29,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var coneType: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null
+    var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirResolvedTypeRef {
@@ -36,6 +38,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
             annotations.toMutableOrEmpty(),
             coneType,
             delegatedTypeRef,
+            resolvedSymbolOrigin,
         )
     }
 
@@ -59,5 +62,6 @@ inline fun buildResolvedTypeRefCopy(original: FirResolvedTypeRef, init: FirResol
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.coneType = original.coneType
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
+    copyBuilder.resolvedSymbolOrigin = original.resolvedSymbolOrigin
     return copyBuilder.apply(init).build()
 }

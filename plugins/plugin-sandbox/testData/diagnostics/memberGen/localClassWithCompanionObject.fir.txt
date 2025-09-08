@@ -10,7 +10,7 @@ FILE: localClassWithCompanionObject.kt
                     super<R|kotlin/Any|>()
                 }
 
-                public final companion object Companion : R|kotlin/Any| {
+                local final companion object Companion : R|kotlin/Any| {
                     public final fun foo(): R|kotlin/Int|
 
                     private constructor(): R|<local>/SomeClass.Nested.Companion| {
@@ -21,7 +21,7 @@ FILE: localClassWithCompanionObject.kt
 
             }
 
-            public final companion object Companion : R|kotlin/Any| {
+            local final companion object Companion : R|kotlin/Any| {
                 public final fun foo(): R|kotlin/Int|
 
                 private constructor(): R|<local>/SomeClass.Companion| {

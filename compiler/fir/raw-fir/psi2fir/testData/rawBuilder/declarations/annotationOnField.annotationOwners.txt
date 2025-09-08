@@ -3,20 +3,20 @@ owner -> FirConstructorSymbol /SomeClass.SomeClass
 context -> FirConstructorSymbol /SomeClass.SomeClass
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /SomeClass.simpleProperty
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.simpleProperty
+owner -> FirRegularPropertySymbol /SomeClass.simpleProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.simpleProperty
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /SomeClass.simplePropertyWithAnnotationList
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.simplePropertyWithAnnotationList
+owner -> FirRegularPropertySymbol /SomeClass.simplePropertyWithAnnotationList
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.simplePropertyWithAnnotationList
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /SomeClass.delegatedProperty
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.delegatedProperty
+owner -> FirRegularPropertySymbol /SomeClass.delegatedProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.delegatedProperty
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /SomeClass.propertyWithCustomGetter
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /SomeClass.propertyWithCustomGetter
+owner -> FirRegularPropertySymbol /SomeClass.propertyWithCustomGetter
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.propertyWithCustomGetter
 
 @FIELD:Ann()
 owner -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeClass.anotherFun
@@ -24,7 +24,7 @@ context -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeCl
 
 @FIELD:Ann()
 owner -> FirNamedFunctionSymbol /SomeClass.anotherFun
-context -> FirPropertySymbol <local>/localVariable from FirNamedFunctionSymbol /SomeClass.anotherFun
+context -> FirLocalPropertySymbol <local>/localVariable from FirNamedFunctionSymbol /SomeClass.anotherFun
 
 @FIELD:Ann()
 owner -> FirNamedFunctionSymbol /SomeClass.anotherFun
@@ -35,5 +35,5 @@ owner -> FirRegularClassSymbol SomeClass
 context -> FirRegularClassSymbol SomeClass
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /WithPrimaryConstructor.a
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /WithPrimaryConstructor.a
+owner -> FirRegularPropertySymbol /WithPrimaryConstructor.a
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /WithPrimaryConstructor.a

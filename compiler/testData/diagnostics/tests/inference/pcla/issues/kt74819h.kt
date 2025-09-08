@@ -20,3 +20,6 @@ fun main() {
         otherFlatMap({ listOf("") }, this)
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, stringLiteral, thisExpression, typeParameter */

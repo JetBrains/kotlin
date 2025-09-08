@@ -66,3 +66,7 @@ fun outerFun() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, enumDeclaration,
+funWithExtensionReceiver, functionDeclaration, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration,
+propertyDeclaration */

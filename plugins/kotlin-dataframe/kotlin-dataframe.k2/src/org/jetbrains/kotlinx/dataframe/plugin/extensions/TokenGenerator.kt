@@ -19,19 +19,18 @@ import org.jetbrains.kotlin.fir.plugin.createConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey
+import org.jetbrains.kotlinx.dataframe.plugin.utils.CallableIdOrSymbol
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 
@@ -43,13 +42,10 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
             val callShapeData = k.fir.callShapeData ?: return@createCache null
             when (callShapeData) {
                 is CallShapeData.Schema -> callShapeData.columns.withIndex().associate { (index, property) ->
-                    val resolvedTypeRef = buildResolvedTypeRef {
-                        coneType = property.dataRowReturnType
-                    }
                     val identifier = property.propertyName.identifier
                     identifier to listOf(
                         buildProperty(
-                            resolvedTypeRef,
+                            property.dataRowReturnType,
                             identifier,
                             k,
                             property.propertyName.columnNameAnnotation,
@@ -59,34 +55,30 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val identifier = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    identifier to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), identifier, k, isScopeProperty = true))
+                    identifier to listOf(buildProperty(it.defaultType(), identifier, k, isScopeProperty = true))
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
                     val propertyName = schemaProperty.propertyName
                     val callableId = CallableId(k.classId, propertyName.identifier)
                     val dataRowExtension = generateExtensionProperty(
-                        callableId = callableId,
-                        receiverType = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
-                            typeArguments = arrayOf(schemaProperty.marker),
-                            isMarkedNullable = false
+                        callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
+                        receiverType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
+                            typeArguments = arrayOf(schemaProperty.marker)
                         ),
-                        propertyName = propertyName,
-                        returnTypeRef = schemaProperty.dataRowReturnType.toFirResolvedTypeRef(),
+                        propertyName = propertyName.identifier,
+                        returnType = schemaProperty.dataRowReturnType,
                         symbol = k,
                         effectiveVisibility = EffectiveVisibility.Local,
                         source = callShapeData.source
                     )
 
                     val columnContainerExtension = generateExtensionProperty(
-                        callableId = callableId,
-                        receiverType = ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(Names.COLUMNS_SCOPE_CLASS_ID),
-                            typeArguments = arrayOf(schemaProperty.marker),
-                            isMarkedNullable = false
+                        callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
+                        receiverType = Names.COLUMNS_SCOPE_CLASS_ID.constructClassLikeType(
+                            typeArguments = arrayOf(schemaProperty.marker)
                         ),
-                        propertyName = propertyName,
-                        returnTypeRef = schemaProperty.columnContainerReturnType.toFirResolvedTypeRef(),
+                        propertyName = propertyName.identifier,
+                        returnType = schemaProperty.columnContainerReturnType,
                         symbol = k,
                         effectiveVisibility = EffectiveVisibility.Local,
                         source = callShapeData.source
@@ -115,14 +107,14 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
     }
 
     private fun buildProperty(
-        resolvedTypeRef: FirResolvedTypeRef,
+        returnType: ConeKotlinType,
         propertyName: Name,
         k: FirClassSymbol<*>,
         columnNameAnnotation: FirAnnotation? = null,
         isScopeProperty: Boolean = false,
         order: Int? = null,
     ): FirProperty {
-        return createMemberProperty(k, DataFrameTokenContentKey, propertyName, resolvedTypeRef.coneType) {
+        return createMemberProperty(k, DataFrameTokenContentKey, propertyName, returnType = returnType) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
         }.apply {

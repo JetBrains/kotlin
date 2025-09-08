@@ -10,3 +10,5 @@
 
 actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
 actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

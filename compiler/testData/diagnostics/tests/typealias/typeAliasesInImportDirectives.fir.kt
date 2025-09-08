@@ -46,3 +46,6 @@ import test.EnumAlias.<!UNRESOLVED_IMPORT!>Nested3<!>.*
 import test.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR!>EnumAlias<!>.Entry
 
 fun f() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass, objectDeclaration,
+typeAliasDeclaration */

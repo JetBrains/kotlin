@@ -12,3 +12,6 @@ fun test() {
     runTest(::test)
     runTestGeneric<Int>(::test)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, nullableType,
+typeParameter */

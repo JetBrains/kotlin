@@ -108,3 +108,7 @@ val E.component2: I get() = I()
 fun useComponentN() {
     val (<!NOT_FUNCTION_AS_OPERATOR!>x<!>, <!NOT_FUNCTION_AS_OPERATOR!>y<!>) = e
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, destructuringDeclaration, forLoop,
+funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, localProperty, nullableType, operator, override,
+propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter */

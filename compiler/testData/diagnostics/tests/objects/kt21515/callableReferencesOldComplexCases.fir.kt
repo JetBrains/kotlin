@@ -68,3 +68,6 @@ object D {
         val a = <!UNRESOLVED_REFERENCE!>FromBaseCompanion<!>::foo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

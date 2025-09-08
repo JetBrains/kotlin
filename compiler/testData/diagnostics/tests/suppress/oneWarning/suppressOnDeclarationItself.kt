@@ -4,3 +4,4 @@ class A {
     override fun foo() {}
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override, stringLiteral */

@@ -24,3 +24,7 @@ fun foo4(x: Number, cond: Boolean): Boolean {
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, classDeclaration, disjunctionExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, typeParameter, typeWithExtension */

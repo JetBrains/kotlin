@@ -1,6 +1,6 @@
 KT element: KtProperty
 KT element text:
-public const val aMin: kotlin.UInt = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+public const val aMin: kotlin.UInt = COMPILED_CODE /* compiled code */
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

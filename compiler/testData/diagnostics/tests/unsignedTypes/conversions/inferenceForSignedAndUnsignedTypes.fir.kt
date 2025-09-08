@@ -18,3 +18,6 @@ fun foo() {
 
     id<UInt>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, starProjection, typeParameter, typeWithExtension, unsignedLiteral */

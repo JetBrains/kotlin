@@ -12,3 +12,6 @@ fun <T> test(x: T) where T : C?, T : B? {
         <!DEBUG_INFO_SMARTCAST!>x<!>.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+nullableType, safeCall, smartcast, typeConstraint, typeParameter */

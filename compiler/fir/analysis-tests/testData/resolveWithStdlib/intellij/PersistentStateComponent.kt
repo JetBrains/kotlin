@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DISABLE_JAVA_FACADE
 // FILE: ComponentSerializationUtil.java
 
@@ -22,8 +22,11 @@ fun <T> deserializeAndLoadState(
 ) {}
 
 fun use(beforeRunTask: BeforeRunTask<*>) {
-    if (<!USELESS_IS_CHECK!>beforeRunTask is PersistentStateComponent<*><!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>beforeRunTask is PersistentStateComponent<*><!>) {
         deserializeAndLoadState(beforeRunTask)
     }
 }
 
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, classReference, flexibleType, functionDeclaration, ifExpression,
+interfaceDeclaration, intersectionType, isExpression, javaFunction, nullableType, smartcast, starProjection,
+typeParameter */

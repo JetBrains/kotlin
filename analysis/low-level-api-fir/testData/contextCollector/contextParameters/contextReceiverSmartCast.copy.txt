@@ -34,13 +34,13 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSmartCast.kt
     context([ResolvedTo(RAW_FIR)] Int)
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/Any|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/Any|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
             (this@R|context of /foo| is R|kotlin/Int|) ->  {
                 context(this@R|context of /foo|) R|/bar|()
             }
         }
 
-        R|/bar|()
+        bar#()
     }

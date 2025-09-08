@@ -8,3 +8,6 @@ fun main() {
     val x: List<Int>? = listOf()
     xSelectButton2({ matcher -> x ?: emptyList() }) { this.inv() }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, thisExpression, typeConstraint, typeParameter, typeWithExtension */

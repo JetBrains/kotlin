@@ -69,3 +69,6 @@ public class Case6 {
     @kotlin.annotations.jvm.KotlinActual
     public <S extends Comparable<S>> List<S> baz() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, in, nullableType, out, typeConstraint,
+typeParameter */

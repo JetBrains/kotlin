@@ -12,3 +12,5 @@ public annotation class FileAnn
 
 // FILE: 2.kt
 @file:FileAnn
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile */

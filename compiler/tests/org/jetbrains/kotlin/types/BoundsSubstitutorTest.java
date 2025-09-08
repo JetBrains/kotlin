@@ -71,6 +71,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
 
     private void doTest(String text, String expected) {
         KtFile ktFile = new KtPsiFactory(getProject()).createFile("fun.kt", text);
+        @SuppressWarnings("deprecation")
         ModuleDescriptor module = JvmResolveUtil.analyze(ktFile, getEnvironment()).getModuleDescriptor();
         Collection<? extends SimpleFunctionDescriptor> functions =
                 module.getPackage(FqName.ROOT).getMemberScope().getContributedFunctions(Name.identifier("f"), NoLookupLocation.FROM_TEST);

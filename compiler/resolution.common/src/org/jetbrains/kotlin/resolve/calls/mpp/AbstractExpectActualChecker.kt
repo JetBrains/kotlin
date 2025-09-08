@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.mpp
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
@@ -91,6 +93,11 @@ object AbstractExpectActualChecker {
         }
     }
 
+    private fun ExpectActualMatchingContext<*>.isInterfaceActualizedAsAny(
+        expectClassSymbol: RegularClassSymbolMarker,
+        actualClassSymbol: RegularClassSymbolMarker,
+    ) = expectClassSymbol.classKind == ClassKind.INTERFACE && actualClassSymbol.defaultType.typeConstructor().isAnyConstructor()
+
     private fun ExpectActualMatchingContext<*>.getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
@@ -110,8 +117,13 @@ object AbstractExpectActualChecker {
             onErroneousTypealias = { return@getClassifiersCompatibility emptyList() },
         )!!
 
+        val allowUsingAnyAsActualInterface =
+            languageVersionSettings.supportsFeature(LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface)
+
         if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) {
-            add(ExpectActualIncompatibility.ClassKind)
+            if (!allowUsingAnyAsActualInterface || !isInterfaceActualizedAsAny(expectClassSymbol, actualClass)) {
+                add(ExpectActualIncompatibility.ClassKind)
+            }
         } else {
             // Don't report modality mismatch when classifiers don't match by ClassKind.
             // Different classifiers might have different modality (e.g. interface vs class)
@@ -390,6 +402,12 @@ object AbstractExpectActualChecker {
             sizesAreEqualAndElementsNotEqualBy(expectedContextParameters, actualContextParameters) { nameOf(it) }
         ) {
             add(ExpectActualIncompatibility.ContextParameterNames)
+        }
+
+        if (languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) {
+            if (mustUseMatcher?.matches(expectDeclaration, actualDeclaration, expectContainingClass) == false) {
+                add(ExpectActualIncompatibility.IgnorabilityIsDifferent)
+            }
         }
 
         if (sizesAreEqualAndElementsNotEqualBy(expectedTypeParameters, actualTypeParameters) { nameOf(it) }) {

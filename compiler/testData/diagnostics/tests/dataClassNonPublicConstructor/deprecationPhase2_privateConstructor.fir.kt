@@ -28,3 +28,6 @@ fun local() {
         <!DATA_CLASS_INVISIBLE_COPY_USAGE_ERROR!>copy<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localClass, localFunction, objectDeclaration, primaryConstructor, propertyDeclaration, thisExpression */

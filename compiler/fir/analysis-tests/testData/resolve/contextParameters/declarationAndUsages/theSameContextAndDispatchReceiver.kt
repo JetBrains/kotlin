@@ -21,3 +21,6 @@ fun usageOutsideClass() {
         propertyMember
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, lambdaLiteral,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

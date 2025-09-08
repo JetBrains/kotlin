@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,6 +51,11 @@ internal class KaFirClassErrorType(
             }
         }
 
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
     override val nullability: KaTypeNullability
         get() = withValidityAssertion {
             val coneType = coneType
@@ -102,8 +107,8 @@ private class KaFirClassErrorTypePointer(
     builder: KaSymbolByFirBuilder,
 ) : KaTypePointer<KaClassErrorType> {
     private val coneTypePointer: ConeTypePointer<*> = if (coneType !is ConeErrorType) {
-        val classSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
-        if (classSymbol != null) {
+        val classLikeSymbol = builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+        if (classLikeSymbol != null) {
             coneType.createPointer(builder)
         } else {
             val coneErrorType = ConeErrorType(

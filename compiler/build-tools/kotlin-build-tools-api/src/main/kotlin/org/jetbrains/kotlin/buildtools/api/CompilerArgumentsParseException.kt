@@ -10,4 +10,5 @@ package org.jetbrains.kotlin.buildtools.api
  *
  *  @param message A description of the exception.
  */
+@ExperimentalBuildToolsApi
 public class CompilerArgumentsParseException(message: String) : KotlinBuildToolsException(message)

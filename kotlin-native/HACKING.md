@@ -105,6 +105,11 @@ See the table of property names and values below.
 | `eagerGroupCreation`    | Group more tests into an executable: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `xctest`                | Compile and run tests with XCTest: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
+ #### Passing arbitrary binary options
+
+It is possible to pass binary options to all tests by using `-Pkn.binaryOptions=<key=value>,<key=value>,<key=value>`.
+A list of available binary options is available in [BinaryOptions.kt](../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/backend/konan/BinaryOptions.kt).
+
  #### Generating JUnit test classes
 
 Most compiler integration tests are defined by test data files,
@@ -242,7 +247,7 @@ Additionally, even if you build with Gradle, you can extract command-line
 compiler arguments from the detailed Gradle output of your project's build
 process.
 This will allow you to run the command-line compiler instead of Gradle, which might be helpful when debugging.
-To get the detailed Gradle output, run the Gradle command with `-i` flag.
+To get the detailed Gradle output, run the Gradle command with `-Pkotlin.internal.compiler.arguments.log.level=warning` flag.
 See also [degrade](tools/degrade) tool -- it automates extracting Kotlin/Native command-line tools invocations from Gradle builds.
 
 ### Attaching with IntelliJ IDEA

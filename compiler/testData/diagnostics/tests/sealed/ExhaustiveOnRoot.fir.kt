@@ -22,3 +22,6 @@ fun test3(x: Expr): String =
         when (x) {
             <!USELESS_IS_CHECK!>is Stmt<!> -> "stmt"
         }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, nestedClass, objectDeclaration, sealed,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

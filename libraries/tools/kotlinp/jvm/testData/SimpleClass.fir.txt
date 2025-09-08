@@ -24,7 +24,7 @@ public final class SimpleClass<in T#0 /* A */> : kotlin/Any {
   // setter: SET_X(J)V
   public final var x: kotlin/Long
     public final /* non-default */ external get
-    public final /* non-default */ set(value: kotlin/Long)
+    public final set
 
   // module name: test-module
 }

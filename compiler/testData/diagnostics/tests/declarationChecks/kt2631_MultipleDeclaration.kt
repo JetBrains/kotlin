@@ -1,3 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 
@@ -16,15 +18,19 @@ class MyClass2 {}
 operator fun MyClass2.component1() = 1.2
 
 fun test(mc1: MyClass, mc2: MyClass2) {
-    val (a, b) = mc1
+    val [a, b] = mc1
     checkSubtype<Int>(a)
     checkSubtype<String>(b)
 
-    val (c) = mc2
+    val [c] = mc2
     checkSubtype<Double>(c)
 
     //check no error types
-    checkSubtype<Boolean>(<!TYPE_MISMATCH!>a<!>)
-    checkSubtype<Boolean>(<!TYPE_MISMATCH!>b<!>)
-    checkSubtype<Boolean>(<!TYPE_MISMATCH!>c<!>)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, localProperty, nullableType, operator, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

@@ -6,3 +6,5 @@ fun foo() {
     <!WRONG_MODIFIER_TARGET!>protected<!> class C
     <!WRONG_MODIFIER_TARGET!>internal<!> class D
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass */

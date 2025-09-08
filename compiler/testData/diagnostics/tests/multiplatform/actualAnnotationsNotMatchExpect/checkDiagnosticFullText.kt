@@ -70,3 +70,7 @@ actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inTypeParam<!>() {}
 actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetter<!>: String = ""
 
 actual fun onType(param: Any) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration, expect,
+functionDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeParameter */

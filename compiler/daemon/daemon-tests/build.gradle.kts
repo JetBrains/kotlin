@@ -3,6 +3,7 @@ description = "Kotlin Daemon Tests"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -12,7 +13,7 @@ dependencies {
     testImplementation(project(":kotlin-daemon-client"))
     testImplementation(libs.junit4)
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(projectTests(":compiler:tests-integration"))
+    testImplementation(testFixtures(project(":compiler:tests-integration")))
     testImplementation(intellijCore())
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
@@ -23,14 +24,14 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
 
-    useJUnitPlatform()
-
-    val testClassesDirs = testSourceSet.output.classesDirs
-    doFirst {
-        systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
+        val testClassesDirs = testSourceSet.output.classesDirs
+        doFirst {
+            systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
+        }
     }
 }

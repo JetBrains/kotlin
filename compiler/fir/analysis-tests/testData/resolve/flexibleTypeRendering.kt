@@ -9,3 +9,5 @@ fun foo(p: AAA<String>, s: Int?) {
 public class AAA<P> {
     public final <Q extends P> void process(Q q) {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, nullableType */

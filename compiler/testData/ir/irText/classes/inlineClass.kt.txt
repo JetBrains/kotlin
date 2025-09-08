@@ -13,7 +13,7 @@ value class Test {
     when {
       other !is Test -> return false
     }
-    val tmp_0: Test = other as Test
+    val tmp_0: Test = other /*as Test */
     when {
       EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
     }
@@ -29,4 +29,3 @@ value class Test {
   }
 
 }
-

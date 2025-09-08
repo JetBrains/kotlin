@@ -12,3 +12,6 @@ fun <ItemType> setupListSpeedSearch() {
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>MatchedItem1<Int>::class<!>
     MatchedItem1<Int>::item
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, functionDeclaration, localClass,
+nullableType, primaryConstructor, propertyDeclaration, typeParameter */

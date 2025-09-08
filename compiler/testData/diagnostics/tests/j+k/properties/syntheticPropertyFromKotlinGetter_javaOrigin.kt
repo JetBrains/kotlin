@@ -57,3 +57,6 @@ fun test_4(d: D) {
     d.x3
     d.x4
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, override,
+stringLiteral */

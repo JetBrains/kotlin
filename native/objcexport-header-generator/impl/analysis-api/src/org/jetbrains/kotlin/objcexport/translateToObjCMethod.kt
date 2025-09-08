@@ -7,10 +7,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
@@ -29,7 +27,6 @@ internal val KaSymbol.isConstructor: Boolean
 fun ObjCExportContext.translateToObjCMethod(symbol: KaFunctionSymbol): ObjCMethod? {
     if (!analysisSession.isVisibleInObjC(symbol)) return null
     if (symbol.isFakeOverride) return null
-    if (symbol is KaNamedFunctionSymbol && analysisSession.isClone(symbol)) return null
     return buildObjCMethod(symbol)
 }
 
@@ -53,7 +50,6 @@ internal fun ObjCExportContext.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
 
-    val exportContext = this
     val bridge = getBaseFunctionMethodBridge(symbol)
     val returnType: ObjCType = mapReturnType(symbol, bridge.returnBridge)
     val parameters = translateToObjCParameters(symbol, bridge)
@@ -65,7 +61,7 @@ internal fun ObjCExportContext.buildObjCMethod(
     val comment = analysisSession.translateToObjCComment(symbol, bridge, parameters)
     val throws = analysisSession.getDefinedThrows(symbol).map { it }.toList()
 
-    val isMethodInstance = if (isExtensionOfMappedObjCType(symbol)) false else bridge.isInstance
+    val isMethodInstance = bridge.isInstance
 
     fun buildAttributes(mangleNameAttribute: (String) -> String = { it }): List<String> {
         val attributes = mutableListOf<String>()
@@ -121,19 +117,18 @@ internal fun KaCallableSymbol.getSwiftPrivateAttribute(): String? =
     if (isRefinedInSwift()) "swift_private" else null
 
 internal fun KaCallableSymbol.isRefinedInSwift(): Boolean = when {
-    // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
-    //overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift() //TODO: implement isRefinedInSwift
     else -> ClassId.topLevel(KonanFqNames.refinesInSwift) in annotations
 }
 
 internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
-    //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
-    if (symbol is KaNamedSymbol) {
-        anyMethodSwiftNames[symbol.name]?.let { return it }
-    }
 
+    val anyMethodSelector = anyMethodSwiftNames[symbol.name]
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
+
+    if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
+        return anyMethodSelector
+    }
 
     val sb = StringBuilder().apply {
         append(getMangledName(symbol, forSwift = true))
@@ -142,14 +137,19 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
         parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
-                    parameter?.isReceiver == true -> "_"
+                    parameter?.isReceiver == true -> {
+                        val objCNameAnnotation = symbol.receiverParameter?.resolveObjCNameAnnotation()
+                        objCNameAnnotation?.swiftName ?: objCNameAnnotation?.objCName ?: "_"
+                    }
                     method is KaPropertySetterSymbol -> when (parameters.size) {
                         1 -> "_"
                         else -> "value"
                     }
                     else -> {
                         if (parameter == null) continue@parameters
-                        else if (parameter.isReceiver) "_" else parameter.name
+                        else if (parameter.isReceiver) "_" else {
+                            parameter.objNameAnnotation?.swiftName ?: parameter.objNameAnnotation?.objCName ?: parameter.name
+                        }
                     }
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
@@ -165,7 +165,6 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
 
     return sb.toString() //mangle
 }
-
 
 internal object Predefined {
     val anyMethodSelectors = mapOf(
@@ -221,17 +220,29 @@ internal fun splitSelector(selector: String): List<String> {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
-fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
-    if (symbol is KaNamedSymbol) {
-        val name = symbol.name
-
-        anyMethodSelectors[name]?.let { return it }
-        objCReservedNameMethodSelectors[name]?.let { return it }
-    }
+fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge, isPropertyGetter: Boolean = false): String {
 
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
     val sb = StringBuilder()
+    val anyMethodSelector = anyMethodSelectors[symbol.name]
+    val reservedNameSelector = objCReservedNameMethodSelectors[symbol.name]
+
+    if (reservedNameSelector != null && parameters.isEmpty()) {
+        /**
+         * We take reserved name only when there are no parameters.
+         * If there is at least one parameter then there will be no conflict with reserved name:
+         * ```kotlin
+         * fun release(param: String) -> "releaseParam"
+         * fun release() -> "release_"
+         * ```
+         */
+        return reservedNameSelector
+    }
+
+    if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
+        return anyMethodSelector
+    }
 
     sb.append(getMangledName(symbol, forSwift = false))
 
@@ -239,7 +250,10 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {
-                parameter?.isReceiver == true -> ""
+                parameter?.isReceiver == true -> {
+                    val objCNameAnnotation = symbol.receiverParameter?.resolveObjCNameAnnotation()
+                    objCNameAnnotation?.objCName ?: ""
+                }
                 method is KaPropertySetterSymbol -> when (parameters.size) {
                     1 -> ""
                     else -> "value"
@@ -267,7 +281,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
             sb.append(name)
         }
 
-        sb.append(':')
+        if (!isPropertyGetter) sb.append(':')
     }
     return sb.toString()
 }

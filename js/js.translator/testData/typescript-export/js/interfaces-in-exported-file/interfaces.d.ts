@@ -28,17 +28,21 @@ declare namespace JS_TESTS {
             getOwnerName(): string;
             readonly __doNotUseOrImplementIt: foo.TestInterface["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace TestInterfaceImpl.$metadata$ {
-            const constructor: abstract new () => TestInterfaceImpl;
+        namespace TestInterfaceImpl {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => TestInterfaceImpl;
+            }
         }
         class ChildTestInterfaceImpl extends foo.TestInterfaceImpl.$metadata$.constructor implements foo.AnotherExportedInterface {
             constructor();
             readonly __doNotUseOrImplementIt: foo.TestInterfaceImpl["__doNotUseOrImplementIt"] & foo.AnotherExportedInterface["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace ChildTestInterfaceImpl.$metadata$ {
-            const constructor: abstract new () => ChildTestInterfaceImpl;
+        namespace ChildTestInterfaceImpl {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ChildTestInterfaceImpl;
+            }
         }
         function processInterface(test: foo.TestInterface): string;
         interface WithTheCompanion {
@@ -47,14 +51,19 @@ declare namespace JS_TESTS {
                 readonly "foo.WithTheCompanion": unique symbol;
             };
         }
-        abstract class WithTheCompanion extends KtSingleton<WithTheCompanion.$metadata$.constructor>() {
-            private constructor();
-        }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace WithTheCompanion.$metadata$ {
-            abstract class constructor {
-                companionFunction(): string;
+        namespace WithTheCompanion {
+            function companionStaticFunction(): string;
+            abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
                 private constructor();
+            }
+            namespace Companion {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor {
+                        companionFunction(): string;
+                        private constructor();
+                    }
+                }
             }
         }
         function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
@@ -82,9 +91,11 @@ declare namespace JS_TESTS {
             foo(x?: number): number;
             readonly __doNotUseOrImplementIt: foo.InterfaceWithDefaultArguments["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace ImplementorOfInterfaceWithDefaultArguments.$metadata$ {
-            const constructor: abstract new () => ImplementorOfInterfaceWithDefaultArguments;
+        namespace ImplementorOfInterfaceWithDefaultArguments {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ImplementorOfInterfaceWithDefaultArguments;
+            }
         }
     }
 }

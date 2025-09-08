@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.types
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.types.Variance
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.types.Variance
  * [KaTypeProjection] represents a type argument used in the context of a class or function type. It provides information about the type and
  * its variance.
  */
+
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaTypeProjection : KaLifetimeOwner {
     /**
      * The projected type, or `null` for the star projection.
@@ -24,6 +27,7 @@ public sealed interface KaTypeProjection : KaLifetimeOwner {
  * Represents a [star projection](https://kotlinlang.org/docs/generics.html#star-projections) (`*`) used in type arguments. It indicates
  * that the specific type argument is not important or unknown.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaStarTypeProjection : KaTypeProjection {
     override val type: KaType? get() = withValidityAssertion { null }
 }
@@ -31,6 +35,7 @@ public interface KaStarTypeProjection : KaTypeProjection {
 /**
  * Represents a type argument with an explicit type and [variance](https://kotlinlang.org/docs/generics.html#use-site-variance-type-projections).
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeArgumentWithVariance : KaTypeProjection {
     /**
      * The projected type.

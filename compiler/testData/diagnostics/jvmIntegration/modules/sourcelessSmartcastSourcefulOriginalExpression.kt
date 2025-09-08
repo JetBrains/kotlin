@@ -10,3 +10,6 @@ fun Any.test() = when {
     this is sun.swing.<!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>ImageIconUIResource<!> -> description
     else -> "emptyness"
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, isExpression, javaProperty,
+smartcast, stringLiteral, thisExpression, whenExpression */

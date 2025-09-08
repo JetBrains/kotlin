@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
@@ -99,7 +100,7 @@ object ClassicPositioningStrategies {
                         element.modifierList
                     }
                     K1ExpectActualCompatibility.Incompatible.PropertyKind -> {
-                        element.node.findChildByType(PositioningStrategies.propertyKindTokens)?.psi
+                        element.node.findChildByType(VAL_VAR)?.psi
                     }
                     K1ExpectActualCompatibility.Incompatible.Supertypes -> {
                         (element as? KtClassOrObject)?.getSuperTypeList()

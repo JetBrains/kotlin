@@ -58,7 +58,13 @@ public static abstract interface Delegate /* Container.Delegate*/<R>  {
 
   public abstract void setValue(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R);//  setValue(java.lang.Object, kotlin.reflect.KProperty<?>, R)
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* Container.Delegate.DefaultImpls*/ {
+    @java.lang.Deprecated()
+    public static <R> R getValue(@org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);// <R>  getValue(Container.Delegate<R>, java.lang.Object, kotlin.reflect.KProperty<?>)
+
+    @java.lang.Deprecated()
+    public static <R> void setValue(@org.jetbrains.annotations.NotNull() Container.Delegate<R>, @org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, R);// <R>  setValue(Container.Delegate<R>, java.lang.Object, kotlin.reflect.KProperty<?>, R)
+  }
 }
 
 public static final class Derived /* Container.Derived*/ extends Container.Base {

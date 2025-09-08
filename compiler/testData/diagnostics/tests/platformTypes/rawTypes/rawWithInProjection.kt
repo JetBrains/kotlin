@@ -11,3 +11,5 @@ class Test {
 fun main() {
     Test.foo(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction */

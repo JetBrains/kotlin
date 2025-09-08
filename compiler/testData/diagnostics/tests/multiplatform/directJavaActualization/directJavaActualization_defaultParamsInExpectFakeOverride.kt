@@ -16,3 +16,5 @@ open class Base {
 // FILE: Foo.java
 @kotlin.annotations.jvm.KotlinActual public class Foo extends Base {
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, integerLiteral */

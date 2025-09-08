@@ -4,3 +4,5 @@
 package kotlin
 
 class collections
+
+/* GENERATED_FIR_TAGS: classDeclaration */

@@ -14,3 +14,7 @@ fun foo() {
         val <@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"type param $prop"<!>) F : @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"bound $prop"<!>) Number> @receiver:Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"receiver annotation: $prop"<!>) <!REPEATED_ANNOTATION!>@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"receiver type $prop"<!>)<!> F.explicitType: @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"bound $prop"<!>) Int get() = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetReceiver, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, localClass, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeConstraint, typeParameter */

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.types.model.makeDefinitelyNotNullOrNotNull
 
 sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypeParameterChecker(mppKind) {
     object Regular : FirTypeParameterBoundsChecker(MppCheckerKind.Platform) {
@@ -33,7 +36,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         override fun check(declaration: FirTypeParameter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
             if (containingDeclaration.isExpect()) return
-            check(declaration, containingDeclaration, context, reporter)
+            check(declaration, containingDeclaration)
         }
     }
 
@@ -42,7 +45,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         override fun check(declaration: FirTypeParameter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
             if (!containingDeclaration.isExpect()) return
-            check(declaration, containingDeclaration, context, reporter)
+            check(declaration, containingDeclaration)
         }
     }
 
@@ -52,71 +55,73 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         ClassKind.OBJECT
     )
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     protected fun check(
         declaration: FirTypeParameter,
         containingDeclaration: FirBasedSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (containingDeclaration is FirConstructorSymbol) return
 
-        checkFinalUpperBounds(declaration, containingDeclaration, context, reporter)
-        checkExtensionOrContextFunctionTypeBound(declaration, context, reporter)
+        checkFinalUpperBounds(declaration, containingDeclaration)
+        checkExtensionOrContextFunctionTypeBound(declaration)
 
         if ((containingDeclaration as? FirCallableSymbol)?.isInlineOnly(context.session) != true) {
-            checkOnlyOneTypeParameterBound(declaration, context, reporter)
+            checkOnlyOneTypeParameterBound(declaration)
         }
 
-        checkBoundUniqueness(declaration, context, reporter)
-        checkConflictingBounds(declaration, context, reporter)
-        checkTypeAliasBound(declaration, containingDeclaration, context, reporter)
-        checkDynamicBounds(declaration, context, reporter)
-        checkInconsistentTypeParameterBounds(declaration, context, reporter)
+        checkBoundUniqueness(declaration)
+        checkConflictingBounds(declaration)
+        checkTypeAliasBound(declaration, containingDeclaration)
+        checkDynamicBounds(declaration)
+        checkInconsistentTypeParameterBounds(declaration)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkFinalUpperBounds(
         declaration: FirTypeParameter,
         containingDeclaration: FirBasedSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
-        if (containingDeclaration is FirNamedFunctionSymbol && containingDeclaration.isOverride) return
-        if (containingDeclaration is FirPropertySymbol && containingDeclaration.isOverride) return
+        if (containingDeclaration is FirCallableSymbol && containingDeclaration.isOverride) return
 
         declaration.symbol.resolvedBounds.forEach { bound ->
             val boundType = bound.coneType
             // DYNAMIC_UPPER_BOUND will be reported separately
             if (boundType is ConeDynamicType) return@forEach
             if (!boundType.canHaveSubtypesAccordingToK1(context.session)) {
-                reporter.reportOn(bound.source, FirErrors.FINAL_UPPER_BOUND, bound.coneType, context)
+                reporter.reportOn(bound.source, FirErrors.FINAL_UPPER_BOUND, bound.coneType)
             }
         }
     }
 
-    private fun checkExtensionOrContextFunctionTypeBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkExtensionOrContextFunctionTypeBound(
+        declaration: FirTypeParameter,
+    ) {
         declaration.symbol.resolvedBounds.forEach { bound ->
-            if (bound.coneType.fullyExpandedType(context.session).unwrapToSimpleTypeUsingLowerBound()
+            if (bound.coneType.fullyExpandedType().unwrapToSimpleTypeUsingLowerBound()
                     .let { it.isExtensionFunctionType || it.hasContextParameters }
             ) {
-                reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE, context)
+                reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAliasBound(
         declaration: FirTypeParameter,
         containingDeclaration: FirBasedSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (containingDeclaration is FirTypeAliasSymbol) {
             declaration.bounds.filter { it.source?.kind == KtRealSourceElementKind }.forEach { bound ->
-                reporter.reportOn(bound.source, FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, context)
+                reporter.reportOn(bound.source, FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED)
             }
         }
     }
 
-    private fun checkOnlyOneTypeParameterBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkOnlyOneTypeParameterBound(
+        declaration: FirTypeParameter,
+    ) {
         val bounds = declaration.symbol.resolvedBounds.distinctBy { it.coneType }
         val (boundWithParam, otherBounds) = bounds.partition { it.coneType is ConeTypeParameterType }
         if (boundWithParam.size > 1 || (boundWithParam.size == 1 && otherBounds.isNotEmpty())) {
@@ -135,29 +140,37 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
                 } else {
                     declaration.source
                 }
-            reporter.reportOn(reportOn, FirErrors.BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER, context)
+            reporter.reportOn(reportOn, FirErrors.BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER)
         }
     }
 
-    private fun checkBoundUniqueness(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkBoundUniqueness(declaration: FirTypeParameter) {
         val seenClasses = mutableSetOf<FirRegularClassSymbol>()
         val allNonErrorBounds = declaration.symbol.resolvedBounds.filter { it !is FirErrorTypeRef }
         val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.fullyExpandedClassId(context.session) ?: it.coneType }
+        val allowUsingClassTypeAsInterface =
+            context.session.languageVersionSettings.supportsFeature(LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface)
 
         uniqueBounds.forEach { bound ->
-            bound.coneType.toRegularClassSymbol(context.session)?.let { symbol ->
+            val boundConeType = bound.coneType.takeIf { coneType ->
+                !allowUsingClassTypeAsInterface || coneType.fullyExpandedType().let { it.abbreviatedType == null || !it.isAnyOrNullableAny }
+            }
+
+            boundConeType?.toRegularClassSymbol()?.let { symbol ->
                 if (classKinds.contains(symbol.classKind) && seenClasses.add(symbol) && seenClasses.size > 1) {
-                    reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED, context)
+                    reporter.reportOn(bound.source, FirErrors.ONLY_ONE_CLASS_BOUND_ALLOWED)
                 }
             }
         }
 
         allNonErrorBounds.minus(uniqueBounds).forEach { bound ->
-            reporter.reportOn(bound.source, FirErrors.REPEATED_BOUND, context)
+            reporter.reportOn(bound.source, FirErrors.REPEATED_BOUND)
         }
     }
 
-    private fun checkConflictingBounds(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkConflictingBounds(declaration: FirTypeParameter) {
         fun anyConflictingTypes(types: List<ConeKotlinType>): Boolean {
             types.forEach { type ->
                 if (!type.canHaveSubtypesAccordingToK1(context.session)) {
@@ -172,14 +185,15 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         }
 
         if (declaration.bounds.size >= 2 && anyConflictingTypes(declaration.symbol.resolvedBounds.map { it.coneType })) {
-            reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol, context)
+            reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol)
         }
     }
 
-    private fun checkDynamicBounds(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkDynamicBounds(declaration: FirTypeParameter) {
         declaration.bounds.forEach { bound ->
             if (bound.coneType is ConeDynamicType) {
-                reporter.reportOn(bound.source, FirErrors.DYNAMIC_UPPER_BOUND, context)
+                reporter.reportOn(bound.source, FirErrors.DYNAMIC_UPPER_BOUND)
             }
         }
     }
@@ -187,10 +201,9 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
     private fun KotlinTypeMarker.isRelated(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
         isSubtypeOf(context, type) || isSupertypeOf(context, type)
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInconsistentTypeParameterBounds(
         declaration: FirTypeParameter,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (declaration.bounds.size <= 1) return
 
@@ -207,6 +220,6 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
             firTypeRefClasses.add(bound to classSymbol)
         }
 
-        checkInconsistentTypeParameters(firTypeRefClasses, context, reporter, declaration.source, isValues = false)
+        checkInconsistentTypeParameters(firTypeRefClasses, declaration.source, isValues = false)
     }
 }

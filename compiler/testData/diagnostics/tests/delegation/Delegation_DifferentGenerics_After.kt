@@ -117,3 +117,6 @@ class C6(client: JKC) : KI by client{
         return null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, javaType, nullableType, override, primaryConstructor, typeParameter */

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // KT-5068 Add special error for scala-like syntax 'fun foo(): Int = { 1 }'
 
@@ -36,3 +35,6 @@ class Outer {
         fun test6(): Int = <!TYPE_MISMATCH!>fun (): Int = 1<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localFunction, localProperty, nestedClass, propertyDeclaration */

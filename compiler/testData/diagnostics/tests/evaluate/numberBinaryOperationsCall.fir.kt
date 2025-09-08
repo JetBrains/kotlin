@@ -25,3 +25,5 @@ fun test() {
     fooLong(1.rem(1))
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1.rem(1)<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

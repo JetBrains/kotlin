@@ -67,3 +67,6 @@ fun testPublic() {
     OuterClass.<!INVISIBLE_REFERENCE!>ProtectedTA<!>() // ERROR (invisible)
     OuterClass.PublicTA() // OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration,
+typeAliasDeclaration */

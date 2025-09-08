@@ -22,3 +22,6 @@ fun @Ann A.test() {
         b()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, thisExpression, typeWithExtension */

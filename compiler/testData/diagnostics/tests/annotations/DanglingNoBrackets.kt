@@ -13,3 +13,5 @@ class C {
 }
 
 @Ann<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, localClass */

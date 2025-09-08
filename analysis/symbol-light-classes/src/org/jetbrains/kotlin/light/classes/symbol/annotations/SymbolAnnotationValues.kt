@@ -42,7 +42,7 @@ internal class SymbolPsiArrayInitializerMemberValue(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ SymbolPsiArrayInitializerMemberValue::class.java,
             /* vclass = */ List::class.java,
-            /* fieldName = */ "cachedArguments",
+            /* fieldName = */ SymbolPsiArrayInitializerMemberValue::cachedArguments.name,
         )
     }
 }

@@ -17,3 +17,7 @@ fun main() {
     f(C("hello"))
     f(C(null))
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, localProperty, nullableType, override, primaryConstructor, propertyDeclaration, smartcast, starProjection,
+stringLiteral, typeConstraint, typeParameter */

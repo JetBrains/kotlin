@@ -17,3 +17,6 @@ fun usage() {
 
     1 infixWithContextValue { implicit<A>().foo("") }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, infix, integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithContext */

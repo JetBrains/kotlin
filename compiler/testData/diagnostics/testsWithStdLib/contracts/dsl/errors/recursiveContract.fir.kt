@@ -24,3 +24,5 @@ fun case_4(): Boolean {
     kotlin.contracts.contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies case_1()<!> }
     return true
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, lambdaLiteral, nullableType */

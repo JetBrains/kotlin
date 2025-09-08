@@ -41,3 +41,6 @@ fun usage4() {
     prop2
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType, getter,
+lambdaLiteral, nullableType, propertyDeclaration, propertyDeclarationWithContext, setter, stringLiteral, typeParameter,
+typeWithContext */

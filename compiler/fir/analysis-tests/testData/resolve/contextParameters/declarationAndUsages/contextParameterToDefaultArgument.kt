@@ -28,3 +28,6 @@ fun usage(){
         test3()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, forLoop, functionDeclaration, functionDeclarationWithContext,
+lambdaLiteral, localProperty, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

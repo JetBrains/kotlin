@@ -45,3 +45,6 @@ class A {
         y = 9
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, integerLiteral, propertyDeclaration,
+secondaryConstructor */

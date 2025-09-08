@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -38,7 +39,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // ----------------------------------- declaration origins -----------------------------------
 
-fun FirClass.irOrigin(c: Fir2IrComponents): IrDeclarationOrigin = when {
+context(c: Fir2IrComponents)
+fun FirClass.irOrigin(): IrDeclarationOrigin = when {
     // In Kmp scenario, it's possible to find a non-null containing file even for a Java class,
     // in case it's an actualization of a Kotlin expect class
     isJava -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB

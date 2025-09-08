@@ -17,3 +17,6 @@ fun main() {
   val by : C<out String> = bar()
   val bz : C<*> = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

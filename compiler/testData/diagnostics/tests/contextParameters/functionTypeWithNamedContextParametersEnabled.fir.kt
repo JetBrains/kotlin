@@ -8,3 +8,5 @@ fun foo(
 }
 
 fun bar(f: context(<!NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE!>_: String<!>) () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithContext */

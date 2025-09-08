@@ -10,3 +10,7 @@ sealed class Maybe<T> {
         is Yeah -> meat
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, nestedClass, nullableType,
+primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral, typeParameter, whenExpression,
+whenWithSubject */

@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 
 /**
  * Driver orchestrates and connects different parts of the compiler into a complete pipeline.
@@ -62,31 +64,30 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
 
-        val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+        val (objCExportedInterface, linkKlibsOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
-            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            val (linkKlibsOutput, objCCodeSpec) = engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
             if (config.omitFrameworkBinary) {
                 return
             }
-            require(psiToIrOutput is PsiToIrOutput.ForBackend)
-            Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
+            Triple(objCExportedInterface, linkKlibsOutput, objCCodeSpec)
         }
 
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
         }
-        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
+        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
 
-        val (psiToIrOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+        val (linkKlibsOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            engine.linkKlibs(frontendOutput) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)
                 } else {
@@ -94,12 +95,10 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 }
             }
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
-        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
+        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
@@ -107,7 +106,11 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             serializeKLibK2(engine, config, environment)
         else
             serializeKlibK1(engine, config, environment)
-        serializerOutput?.let { engine.writeKlib(it) }
+        serializerOutput?.let {
+            performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                engine.writeKlib(it)
+            }
+        }
     }
 
     private fun serializeKLibK2(
@@ -120,22 +123,38 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         require(frontendOutput is FirOutput.Full)
 
         return if (config.metadataKlib) {
-            engine.runFirSerializer(frontendOutput)
+            performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                engine.runFirSerializer(frontendOutput)
+            }
         } else {
-            performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-                val fir2IrOutput = engine.runFir2Ir(frontendOutput)
+            val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+                engine.runFir2Ir(frontendOutput)
+            }
+            engine.runK2SpecialBackendChecks(fir2IrOutput)
 
-                val headerKlibPath = config.headerKlibPath
-                if (!headerKlibPath.isNullOrEmpty()) {
-                    val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
-                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
-                    // Don't overwrite the header klib with the full klib and stop compilation here.
-                    // By providing the same path for both regular output and header klib we can skip emitting the full klib.
-                    if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+            val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
+                engine.runPreSerializationLowerings(fir2IrOutput, environment)
+            }
+            val headerKlibPath = config.headerKlibPath
+            if (!headerKlibPath.isNullOrEmpty()) {
+                // Child performance manager is needed since otherwise the phase ordering is broken
+                PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
+                    it?.notifyPhaseFinished(PhaseType.Initialization)
+
+                    val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                        engine.runFir2IrSerializer(FirSerializerInput(loweredIr, produceHeaderKlib = true))
+                    }
+                    it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                        engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                    }
+                    performanceManager?.addOtherUnitStats(it?.unitStats)
                 }
+                // Don't overwrite the header klib with the full klib and stop compilation here.
+                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+            }
 
-                engine.runK2SpecialBackendChecks(fir2IrOutput)
-                val loweredIr = engine.runPreSerializationLowerings(fir2IrOutput, environment)
+            performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
             }
         }
@@ -147,21 +166,32 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return null
-        return performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            val psiToIrOutput = if (config.metadataKlib) {
+        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+            if (config.metadataKlib) {
                 null
             } else {
-                engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
+                engine.runPsiToIr(frontendOutput)
             }
+        }
+        val headerKlibPath = config.headerKlibPath
+        if (!headerKlibPath.isNullOrEmpty()) {
+            // Child performance manager is needed since otherwise the phase ordering is broken
+            PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
+                it?.notifyPhaseFinished(PhaseType.Initialization)
 
-            val headerKlibPath = config.headerKlibPath
-            if (!headerKlibPath.isNullOrEmpty()) {
-                val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
-                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true,)
-                // Don't overwrite the header klib with the full klib and stop compilation here.
-                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
-                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+                val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                    engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
+                }
+                it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                }
+                performanceManager?.addOtherUnitStats(it?.unitStats)
             }
+            // Don't overwrite the header klib with the full klib and stop compilation here.
+            // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+            if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+        }
+        return performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
             engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         }
     }
@@ -172,11 +202,9 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
 
-        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
+        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.linkKlibs(frontendOutput) }
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
+        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<PhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
@@ -209,29 +237,28 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
-        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.runPhase(CreateTestBundlePhase, frontendOutput)
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+            engine.linkKlibs(frontendOutput)
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
+        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
     private fun createBackendContext(
             config: KonanConfig,
             frontendOutput: FrontendPhaseOutput.Full,
-            psiToIrOutput: PsiToIrOutput.ForBackend,
+            linkKlibsOutput: LinkKlibsOutput,
             additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,
             frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
-            psiToIrOutput.irBuiltIns,
-            psiToIrOutput.irModules,
-            psiToIrOutput.irLinker,
-            psiToIrOutput.symbols,
-            psiToIrOutput.symbolTable,
+            linkKlibsOutput.irBuiltIns,
+            linkKlibsOutput.irModules,
+            linkKlibsOutput.irLinker,
+            linkKlibsOutput.symbols,
+            linkKlibsOutput.symbolTable,
     ).also {
         additionalDataSetter(it)
     }

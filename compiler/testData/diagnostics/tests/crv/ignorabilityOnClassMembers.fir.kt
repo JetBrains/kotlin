@@ -64,3 +64,8 @@ fun usage(a: A) {
     <!RETURN_VALUE_NOT_USED!>a.h<!>
     <!UNUSED_EXPRESSION!>A.MyTypealias<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, getter, integerLiteral, lambdaLiteral, lateinit, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, propertyDelegate, propertyWithExtensionReceiver, secondaryConstructor, setter,
+stringLiteral, thisExpression, typeAliasDeclaration */

@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 
@@ -7,5 +8,8 @@ class SimpleKlass {
 }
 
 fun test(simpleKlass: SimpleKlass) {
-    val (s1) = <!COMPONENT_FUNCTION_MISSING!>simpleKlass<!>
+    val [s1] = <!COMPONENT_FUNCTION_MISSING!>simpleKlass<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, integerLiteral, localProperty,
+operator, propertyDeclaration, stringLiteral */

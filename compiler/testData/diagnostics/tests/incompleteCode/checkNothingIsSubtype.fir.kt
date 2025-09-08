@@ -14,3 +14,6 @@ fun sum(a : IntArray) : Int {
 <!ITERATOR_MISSING!>for (n
 <!SYNTAX!>return<!><!SYNTAX!><!> "?"<!>
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

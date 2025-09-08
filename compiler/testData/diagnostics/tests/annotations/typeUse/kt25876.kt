@@ -12,3 +12,6 @@ fun foo(x: String): @Anno(<!UNRESOLVED_REFERENCE!>Lorem<!>, <!TOO_MANY_ARGUMENTS
 abstract class Foo : @Anno(<!UNRESOLVED_REFERENCE!>o_O<!>) Throwable()  // OK
 
 abstract class Bar<T : @Anno(<!UNRESOLVED_REFERENCE!>O_o<!>) Any>  // OK
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, classReference, functionDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

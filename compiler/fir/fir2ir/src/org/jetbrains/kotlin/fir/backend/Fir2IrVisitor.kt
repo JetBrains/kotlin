@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_RECEIVER_NAME_PREFIX
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -26,12 +27,14 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -59,6 +62,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultValueForType
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -79,14 +83,14 @@ class Fir2IrVisitor(
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, Any?>() {
-    private val memberGenerator = ClassMemberGenerator(c, this, conversionScope)
+    private val cleaner: FirDeclarationsContentCleaner = FirDeclarationsContentCleaner.create()
+    private val memberGenerator = ClassMemberGenerator(c, this, conversionScope, cleaner)
 
     private val operatorGenerator = OperatorExpressionGenerator(c, this, conversionScope)
-
     private var _annotationMode: Boolean = false
+
     val annotationMode: Boolean
         get() = _annotationMode
-
     private val unitType: ConeClassLikeType = session.builtinTypes.unitType.coneType
 
     internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
@@ -124,6 +128,7 @@ class Fir2IrVisitor(
             annotationGenerator.generate(this, file)
             metadata = FirMetadataSource.File(file)
         }
+        cleaner.cleanFile(file)
         return irFile
     }
 
@@ -200,6 +205,7 @@ class Fir2IrVisitor(
                 irEnumEntry
             }
         }
+        cleaner.cleanEnumEntry(enumEntry)
         return irEnumEntry
     }
 
@@ -218,11 +224,12 @@ class Fir2IrVisitor(
         }
         val irClass = classifierStorage.getIrClass(regularClass)
         if (regularClass.isSealed) {
-            irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses(c)
+            irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses()
         }
         conversionScope.withParent(irClass) {
             memberGenerator.convertClassContent(irClass, regularClass)
         }
+        cleaner.cleanClass(regularClass)
         return irClass
     }
 
@@ -439,6 +446,8 @@ class Fir2IrVisitor(
                     )
                 )
             )
+        }.also {
+            cleaner.cleanAnonymousObject(anonymousObject)
         }
     }
 
@@ -449,6 +458,8 @@ class Fir2IrVisitor(
         val irConstructor = declarationStorage.getCachedIrConstructorSymbol(constructor)!!.owner
         return conversionScope.withFunction(irConstructor) {
             memberGenerator.convertFunctionContent(irConstructor, constructor, containingClass = conversionScope.containerFirClass())
+        }.also {
+            cleaner.cleanConstructor(constructor)
         }
     }
 
@@ -464,6 +475,7 @@ class Fir2IrVisitor(
                 else convertToIrBlockBody(anonymousInitializer.body!!)
         }
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
+        cleaner.cleanAnonymousInitializer(anonymousInitializer)
         return irAnonymousInitializer
     }
 
@@ -480,6 +492,8 @@ class Fir2IrVisitor(
             memberGenerator.convertFunctionContent(
                 irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
             )
+        }.also {
+            cleaner.cleanSimpleFunction(simpleFunction)
         }
     }
 
@@ -502,13 +516,15 @@ class Fir2IrVisitor(
                 memberGenerator.convertFunctionContent(irFunction, anonymousFunction, containingClass = null)
             }
 
-            val type = anonymousFunction.typeRef.toIrType()
+            val type = anonymousFunction.typeRef.coneType.approximateFunctionTypeInputs().toIrType()
 
             IrFunctionExpressionImpl(
                 startOffset, endOffset, type, irFunction,
                 if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) IrStatementOrigin.LAMBDA
                 else IrStatementOrigin.ANONYMOUS_FUNCTION
             )
+        }.also {
+            cleaner.cleanAnonymousFunction(anonymousFunction)
         }
     }
 
@@ -517,7 +533,9 @@ class Fir2IrVisitor(
         val delegate = variable.delegate
         if (delegate != null) {
             val irProperty = declarationStorage.createAndCacheIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
-            irProperty.delegate.initializer = convertToIrExpression(delegate, isDelegate = true)
+            val irDelegate = irProperty.delegate
+            requireNotNull(irDelegate) { "Local delegated property ${irProperty.render()} has no delegate" }
+            irDelegate.initializer = convertToIrExpression(delegate, isDelegate = true)
             conversionScope.withFunction(irProperty.getter) {
                 memberGenerator.convertFunctionContent(irProperty.getter, variable.getter, null)
             }
@@ -569,6 +587,8 @@ class Fir2IrVisitor(
             )
         return conversionScope.withProperty(irProperty, property) {
             memberGenerator.convertPropertyContent(irProperty, property)
+        }.also {
+            cleaner.cleanProperty(property)
         }
     }
 
@@ -886,6 +906,7 @@ class Fir2IrVisitor(
         }
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun generateThisReceiverAccessForCallable(
         thisReceiverExpression: FirThisReceiverExpression,
         firCallableSymbol: FirCallableSymbol<*>
@@ -902,6 +923,10 @@ class Fir2IrVisitor(
             is FirPropertySymbol ->
                 when (val property = declarationStorage.getIrPropertySymbol(firCallableSymbol)) {
                     is IrPropertySymbol -> conversionScope.parentAccessorOfPropertyFromStack(property)
+                        // TODO: the following change should be reverted, along with the one in [parentAccessorOfPropertyFromStack] on fixing KT-79107
+                        ?: if (firCallableSymbol.fir.isScriptTopLevelDeclaration != true && session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true) {
+                            error("Accessor of property ${property.owner.render()} not found on parent stack")
+                        } else null
                     is IrLocalDelegatedPropertySymbol -> conversionScope.parentAccessorOfDelegatedPropertyFromStack(property)
                     else -> null
                 }
@@ -1101,7 +1126,7 @@ class Fir2IrVisitor(
         val calleeReference = calleeReference
         if (calleeReference.isError()) return ConeErrorType(calleeReference.diagnostic)
 
-        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(c)?.fir
+        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
         if (referencedDeclaration?.origin == FirDeclarationOrigin.DynamicScope) return ConeDynamicType.create(session)
 
         // When calling an inner class constructor through a typealias, the extension receiver is actually the dispatch receiver
@@ -1120,7 +1145,7 @@ class Fir2IrVisitor(
             }
             extensionReceiver -> {
                 val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
-                val substitutor = buildSubstitutorByCalledCallable(c)
+                val substitutor = buildSubstitutorByCalledCallable()
                 val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
                 // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
                 c.session.typeApproximator.approximateToSuperType(
@@ -1550,7 +1575,7 @@ class Fir2IrVisitor(
                                 ?: error("Unexpected shape of for loop body: missing body statements: ${whileLoop.render()}")
 
                             val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
-                                it is FirProperty && it.initializer is FirComponentCall
+                                it is FirProperty && it.initializer?.source?.kind is KtFakeSourceElementKind.DestructuringInitializer
                             }
                             val firBlock = realStatements.singleOrNull() as? FirBlock
                                 ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}. Loop: ${whileLoop.render()}")
@@ -1787,7 +1812,7 @@ class Fir2IrVisitor(
     }
 
     private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? {
-        return this?.lookupTag?.toClassSymbol(session)?.let {
+        return this?.lookupTag?.toClassSymbol()?.let {
             classifierStorage.getIrClassSymbol(it)
         }
     }

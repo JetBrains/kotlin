@@ -17,3 +17,6 @@ fun foo(s: Sealed?): Int {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression,
+whenWithSubject */

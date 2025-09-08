@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.SimpleType
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class KaFe10TypeCreator(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -52,10 +50,7 @@ internal class KaFe10TypeCreator(
     private fun buildClassType(builder: KaBaseClassTypeBuilder): KaType {
         val descriptor: ClassDescriptor? = when (builder) {
             is KaBaseClassTypeBuilder.ByClassId -> {
-                val fqName = builder.classId.asSingleFqName()
-                analysisContext.resolveSession
-                    .getTopLevelClassifierDescriptors(fqName, NoLookupLocation.FROM_IDE)
-                    .firstIsInstanceOrNull()
+                analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(builder.classId)
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
                 getSymbolDescriptor(builder.symbol) as? ClassDescriptor
@@ -88,7 +83,7 @@ internal class KaFe10TypeCreator(
             descriptor.defaultType
         }
 
-        val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.nullability == KaTypeNullability.NULLABLE)
+        val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)
         return KaFe10UsualClassType(typeWithNullability as SimpleType, descriptor, analysisContext)
     }
 
@@ -98,7 +93,8 @@ internal class KaFe10TypeCreator(
             val descriptor = getSymbolDescriptor(builder.symbol) as? TypeParameterDescriptor
             val kotlinType = descriptor?.defaultType
                 ?: ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_TYPE_PARAMETER, builder.toString())
-            return kotlinType.toKtType(analysisContext) as KaTypeParameterType
+            val typeWithNullability = TypeUtils.makeNullableAsSpecified(kotlinType, builder.isMarkedNullable)
+            return typeWithNullability.toKtType(analysisContext) as KaTypeParameterType
         }
     }
 }

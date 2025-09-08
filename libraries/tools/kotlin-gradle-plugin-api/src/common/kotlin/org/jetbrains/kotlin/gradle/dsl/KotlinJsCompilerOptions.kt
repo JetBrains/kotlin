@@ -98,16 +98,6 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
     val target: org.gradle.api.provider.Property<kotlin.String>
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend.
-     * It is deprecated and will be removed in a future release.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    @get:org.gradle.api.tasks.Input
-    val typedArrays: org.gradle.api.provider.Property<kotlin.Boolean>
-
-    /**
      * Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
      *
      * Default value: null

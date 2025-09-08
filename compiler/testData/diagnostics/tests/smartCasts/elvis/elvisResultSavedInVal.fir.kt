@@ -114,3 +114,7 @@ fun test13(test: TestTypeParameter<*>?){
         test<!UNSAFE_CALL!>.<!>doAction()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, elvisExpression, equalityExpression,
+functionDeclaration, functionalType, ifExpression, localProperty, nullableType, outProjection, propertyDeclaration,
+safeCall, smartcast, starProjection, typeParameter */

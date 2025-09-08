@@ -12,3 +12,6 @@ class Wrapper(val si: SamInterface?)
 fun test(w: Wrapper?) {
     Wrapper(w?.let { it.si })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, safeCall */

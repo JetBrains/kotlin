@@ -13,3 +13,6 @@ fun test() {
 fun <S> newList() : ArrayList<S> {
     return ArrayList<S>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration,
+typeParameter */

@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -35,6 +36,7 @@ public class PropertyBuildingContext(
     private val returnTypeProvider: (List<FirTypeParameterRef>) -> ConeKotlinType,
     private val isVal: Boolean,
     private val hasBackingField: Boolean,
+    private val containingFileName: String?,
 ) : DeclarationBuildingContext<FirProperty>(session, key, owner) {
     private var setterVisibility: Visibility? = null
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
@@ -72,7 +74,7 @@ public class PropertyBuildingContext(
 
             source = getSourceForFirDeclaration()
 
-            symbol = FirPropertySymbol(callableId)
+            symbol = FirRegularPropertySymbol(callableId)
             name = callableId.callableName
 
             val resolvedStatus = generateStatus()
@@ -139,8 +141,12 @@ public class PropertyBuildingContext(
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             }
-            isLocal = false
             bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
+        }.also {
+            if (containingFileName != null) {
+                require(callableId.classId == null) { "containingFileName could be set only for top-level declarations, but $callableId is a member" }
+            }
+            it.fileNameForPluginGeneratedCallable = containingFileName
         }
     }
 }
@@ -176,7 +182,10 @@ public fun FirExtension.createMemberProperty(
     config: PropertyBuildingContext.() -> Unit = {}
 ): FirProperty {
     val callableId = CallableId(owner.classId, name)
-    return PropertyBuildingContext(session, key, owner, callableId, returnTypeProvider, isVal, hasBackingField).apply(config).apply {
+    return PropertyBuildingContext(
+        session, key, owner, callableId, returnTypeProvider, isVal, hasBackingField,
+        containingFileName = null
+    ).apply(config).apply {
         status {
             isExpect = owner.isExpect
         }
@@ -188,6 +197,10 @@ public fun FirExtension.createMemberProperty(
  *
  * If you create top-level extension property don't forget to set [hasBackingField] to false,
  *   since such properties never have backing fields
+ *
+ * @param containingFileName defines the name for a newly created file with this property.
+ * The full file path would be `package/of/the/property/containingFileName.kt.
+ * If null is passed, then `__GENERATED BUILTINS DECLARATIONS__.kt` would be used
  */
 @ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelProperty(
@@ -196,9 +209,10 @@ public fun FirExtension.createTopLevelProperty(
     returnType: ConeKotlinType,
     isVal: Boolean = true,
     hasBackingField: Boolean = true,
+    containingFileName: String? = null,
     config: PropertyBuildingContext.() -> Unit = {}
 ): FirProperty {
-    return createTopLevelProperty(key, callableId, { returnType }, isVal, hasBackingField, config)
+    return createTopLevelProperty(key, callableId, { returnType }, isVal, hasBackingField, containingFileName, config)
 }
 
 /**
@@ -208,6 +222,10 @@ public fun FirExtension.createTopLevelProperty(
  *   since such properties never have backing fields
  *
  * Use this overload when those types use type parameters of constructed property
+ *
+ * @param containingFileName defines the name for a newly created file with this property.
+ * The full file path would be `package/of/the/property/containingFileName.kt.
+ * If null is passed, then `__GENERATED BUILTINS DECLARATIONS__.kt` would be used
  */
 @ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelProperty(
@@ -216,8 +234,11 @@ public fun FirExtension.createTopLevelProperty(
     returnTypeProvider: (List<FirTypeParameterRef>) -> ConeKotlinType,
     isVal: Boolean = true,
     hasBackingField: Boolean = true,
+    containingFileName: String? = null,
     config: PropertyBuildingContext.() -> Unit = {}
 ): FirProperty {
     require(callableId.classId == null)
-    return PropertyBuildingContext(session, key, owner = null, callableId, returnTypeProvider, isVal, hasBackingField).apply(config).build()
+    return PropertyBuildingContext(
+        session, key, owner = null, callableId, returnTypeProvider, isVal, hasBackingField, containingFileName
+    ).apply(config).build()
 }

@@ -20,3 +20,6 @@ value class B(val u: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE{JVM}!>U<!>)
 <!ACTUAL_TYPE_ALIAS_TO_NOTHING!>actual typealias N = Nothing<!>
 
 actual typealias U = Unit
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, propertyDeclaration, typeAliasDeclaration,
+value */

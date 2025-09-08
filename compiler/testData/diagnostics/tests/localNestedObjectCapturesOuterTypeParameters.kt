@@ -27,3 +27,7 @@ fun short() {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object Skip<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, integerLiteral, localClass,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, sealed, typeParameter, whenExpression,
+whenWithSubject */

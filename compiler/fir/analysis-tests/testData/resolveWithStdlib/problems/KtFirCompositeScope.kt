@@ -18,3 +18,7 @@ class KtFirCompositeScope(val subScopes: List<KtScope>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, inline,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter, typeWithExtension */

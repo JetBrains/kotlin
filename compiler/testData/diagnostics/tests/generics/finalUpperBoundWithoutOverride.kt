@@ -82,3 +82,7 @@ object MessageManager15 : Manager<Int> {
         get() = 10
         set(value) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, enumDeclaration, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, sealed, setter, typeConstraint, typeParameter */

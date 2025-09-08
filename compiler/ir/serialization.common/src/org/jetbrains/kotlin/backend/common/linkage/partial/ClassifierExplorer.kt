@@ -226,7 +226,6 @@ internal class ClassifierExplorer(
             if (illegalSuperClassSymbols.isNotEmpty())
                 return InvalidInheritance(symbol, illegalSuperClassSymbols)
         } else {
-            // Check the number of non-interface supertypes.
             val superClassSymbols = superTypeSymbols.filter { !it.owner.isInterface }
             val superClassSymbol = when (superClassSymbols.size) {
                 0 -> return null // It can be only Any.

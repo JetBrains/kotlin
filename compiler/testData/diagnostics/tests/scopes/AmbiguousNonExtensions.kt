@@ -18,3 +18,5 @@ import b.*
 
 val vv = <!OVERLOAD_RESOLUTION_AMBIGUITY!>v<!>
 val ff = <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration */

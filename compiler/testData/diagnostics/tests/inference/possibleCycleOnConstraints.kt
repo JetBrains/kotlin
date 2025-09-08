@@ -12,3 +12,6 @@ fun test() {
     val y = g<Int> { Collections.emptyList() }
     val z : List<Int> = g { Collections.emptyList() }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaFunction, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, typeParameter */

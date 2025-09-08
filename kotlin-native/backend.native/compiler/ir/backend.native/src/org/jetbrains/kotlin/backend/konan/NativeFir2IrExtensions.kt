@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
@@ -13,7 +14,9 @@ import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProper
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
@@ -27,6 +30,8 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = listOf(IrObjCOverridabilityCondition)
     override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? = null
+    override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
+
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean {
         return if (property.isExternalObjCClassProperty(session)) {
             property.isLateInit
@@ -34,6 +39,8 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
             Fir2IrExtensions.Default.hasBackingField(property, session)
         }
     }
+
+    override fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility? = null
 
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
     override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true

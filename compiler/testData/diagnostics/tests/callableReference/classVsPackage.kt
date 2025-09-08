@@ -24,3 +24,5 @@ class c {
 package test
 
 fun test() = a.b.c::foo
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nestedClass */

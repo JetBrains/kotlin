@@ -1,3 +1,4 @@
 expression: BOOLEAN_CONSTANT
 text: true
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

@@ -7,3 +7,6 @@ open class A(val a: Any) {
 object B : A(<!UNINITIALIZED_VARIABLE!>B.foo<!>) { // call B.foo should be not-allowed
     val foo = 4
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, objectDeclaration, override,
+primaryConstructor, propertyDeclaration */

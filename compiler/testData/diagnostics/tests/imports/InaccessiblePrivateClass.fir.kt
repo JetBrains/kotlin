@@ -17,3 +17,5 @@ import p2.*
 
 val x: X = X()
 val <!EXPOSED_PROPERTY_TYPE!>y<!>: <!INVISIBLE_REFERENCE!>Y<!> = <!INVISIBLE_REFERENCE!>Y<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, propertyDeclaration */

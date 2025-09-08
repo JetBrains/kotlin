@@ -12,3 +12,6 @@ fun test(s: String?, l: MutableList<String>) {
     s?.fff(l)
 
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, nullableType, safeCall, thisExpression,
+typeConstraint, typeParameter */

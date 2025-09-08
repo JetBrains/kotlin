@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72941
 
 @Target(AnnotationTarget.EXPRESSION)
@@ -13,3 +12,6 @@ fun foo(y: Int) {
     @Ann
     x += 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration */

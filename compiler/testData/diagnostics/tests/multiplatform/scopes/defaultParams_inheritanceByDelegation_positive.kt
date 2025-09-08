@@ -21,3 +21,6 @@ actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>E<!>(i: I) : I by i
 actual class E2(i: I) : I by i {
     actual override fun f<!ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS!>(x: Int)<!> = x
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, override, primaryConstructor */

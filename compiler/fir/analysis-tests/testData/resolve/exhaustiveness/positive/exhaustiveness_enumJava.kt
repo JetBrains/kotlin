@@ -16,7 +16,7 @@ fun test_1(e: JavaEnum) {
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
-        <!USELESS_IS_CHECK!>is String<!> -> 3
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 3
     }.plus(0)
 
     val c = when (e) {
@@ -59,3 +59,6 @@ fun test_3(e: JavaEnum) {
         JavaEnum.C -> 2
     }.plus(0)
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

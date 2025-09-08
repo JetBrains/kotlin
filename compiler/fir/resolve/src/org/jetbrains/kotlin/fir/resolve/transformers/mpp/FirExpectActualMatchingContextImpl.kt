@@ -69,7 +69,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val TypeAliasSymbolMarker.classId: ClassId
         get() = asSymbol().classId
     override val CallableSymbolMarker.callableId: CallableId
-        get() = asSymbol().callableId
+        get() = asSymbol().callableId!!
 
     override val TypeParameterSymbolMarker.parameterName: Name
         get() = asSymbol().name
@@ -108,6 +108,19 @@ class FirExpectActualMatchingContextImpl private constructor(
         get() = asSymbol().resolvedStatus.modality
     override val CallableSymbolMarker.visibility: Visibility
         get() = asSymbol().resolvedStatus.visibility
+
+    override val mustUseMatcher: ExpectActualMatchingContext.MustUseMatcher = object : ExpectActualMatchingContext.MustUseMatcher {
+        override fun matches(
+            expectCallable: CallableSymbolMarker,
+            actualCallable: CallableSymbolMarker,
+            containingExpectClass: RegularClassSymbolMarker?,
+        ): Boolean = actualSession.mustUseReturnValueStatusComponent.isExpectActualIgnorabilityCompatible(
+            actualSession,
+            expectCallable.asSymbol(),
+            actualCallable.asSymbol(),
+            containingExpectClass?.asSymbol()
+        )
+    }
 
     override val CallableSymbolMarker.isExpect: Boolean
         get() = asSymbol().resolvedStatus.isExpect

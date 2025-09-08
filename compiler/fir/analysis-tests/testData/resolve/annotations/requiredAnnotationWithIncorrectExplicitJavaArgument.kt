@@ -8,3 +8,5 @@ public enum JavaTarget {
 // FILE: MyAnnotation.kt
 @Target(<!ARGUMENT_TYPE_MISMATCH!>JavaTarget.ANNOTATION_CLASS<!>)
 annotation class MyAnnotation
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, javaProperty, javaType */

@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("generated-sources")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -27,14 +28,15 @@ sourceSets {
     "test" { none() }
 }
 
-allprojects {
-    optInToExperimentalCompilerApi()
-}
+optInToExperimentalCompilerApi()
+optInToK1Deprecation()
 
 testsJar {}
 
-projectTest {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 generatedConfigurationKeys("CLIConfigurationKeys")

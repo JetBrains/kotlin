@@ -15,20 +15,20 @@ owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotati
 context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /annotationWithConstructor
 
 @Ann()
-owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
-context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
+owner -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationOnContextProperty
+context -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationOnContextProperty
 
 @Ann()
-owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
-context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationOnContextProperty
+owner -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationOnContextProperty
+context -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationOnContextProperty
 
 @AnnotationWithConstructor(String())
-owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
-context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+owner -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationWithConstructorProperty
+context -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationWithConstructorProperty
 
 @AnnotationWithConstructor(String())
-owner -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
-context -> FirValueParameterSymbol <local>/a from FirPropertySymbol /annotationWithConstructorProperty
+owner -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationWithConstructorProperty
+context -> FirValueParameterSymbol <local>/a from FirRegularPropertySymbol /annotationWithConstructorProperty
 
 @Ann()
 owner -> FirValueParameterSymbol <local>/f from FirNamedFunctionSymbol /functionType

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.JavaVersion
@@ -19,9 +20,9 @@ import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.gradle.testbase.useAsZipFile
 import org.jetbrains.kotlin.gradle.testing.PrettyPrint
@@ -49,6 +50,28 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             "empty",
             version,
         )
+    }
+
+    @GradleTest
+    fun testMultipleInjections(version: GradleVersion) {
+        project("empty", version) {
+            val subproject = project("empty", version)
+            include(subproject, "subproject")
+            subproject.buildScriptInjection {
+                println("subproject buildscript injection 1")
+            }
+            subProject("subproject").buildScriptInjection {
+                println("subproject buildscript injection 2")
+            }
+            subProject("subproject").buildScriptInjection {
+                println("subproject buildscript injection 3")
+            }
+            build(":subproject:help") {
+                assertOutputContains("subproject buildscript injection 1")
+                assertOutputContains("subproject buildscript injection 2")
+                assertOutputContains("subproject buildscript injection 3")
+            }
+        }
     }
 
     @GradleTest
@@ -499,6 +522,59 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     project.extensions.findByName(notAppliedExtension) == null
                 }.buildAndReturn(),
                 "Extension is expected to not be registered at \"$notAppliedExtension\"",
+            )
+        }
+    }
+
+    @GradleAndroidTest
+    fun pluginApplicationSugarAgpGroovy(
+        version: GradleVersion,
+        agpVersion: String,
+    ) = testPluginApplicationSugarAgp("empty", version, agpVersion)
+
+    @GradleAndroidTest
+    fun pluginApplicationSugarAgp(
+        version: GradleVersion,
+        agpVersion: String,
+    ) = testPluginApplicationSugarAgp("emptyKts", version, agpVersion)
+
+    private fun testPluginApplicationSugarAgp(
+        template: String,
+        version: GradleVersion,
+        agpVersion: String,
+    ) {
+        project(
+            template,
+            version,
+            defaultBuildOptions.copy(androidVersion = agpVersion)
+        ) {
+            assertTrue(
+                buildScriptReturn {
+                    try {
+                        this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name)
+                    } catch (e: NoClassDefFoundError) {
+                        return@buildScriptReturn true
+                    }
+                    return@buildScriptReturn false
+                }.buildAndReturn(),
+                "Build script is not supposed to see AGP classes at this point",
+            )
+            plugins {
+                id("com.android.library")
+            }
+            buildScriptInjection {
+                with(project.extensions.getByType(LibraryExtension::class.java)) {
+                    compileSdk = 23
+                    namespace = "kotlin"
+                }
+            }
+            assertTrue(
+                buildScriptReturn {
+                    this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
+                        project.extensions.getByName("android")
+                    )
+                }.buildAndReturn(),
+                "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }
     }

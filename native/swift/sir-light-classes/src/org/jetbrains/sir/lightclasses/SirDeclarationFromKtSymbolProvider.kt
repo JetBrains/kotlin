@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.sir.SirFunction
@@ -14,9 +13,9 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.sir.lightclasses.nodes.*
+import org.jetbrains.sir.lightclasses.utils.SirOperatorTranslationStrategy
 
 public class SirDeclarationFromKtSymbolProvider(
-    private val ktModule: KaModule,
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
     public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
@@ -31,7 +30,8 @@ public class SirDeclarationFromKtSymbolProvider(
                         declaration = protocol,
                         bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
                         markerDeclaration = protocol.existentialMarker,
-                        existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol)
+                        existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol),
+                        samConverter = protocol.samConverter,
                     )
                 } else {
                     createSirClassFromKtSymbol(
@@ -47,10 +47,11 @@ public class SirDeclarationFromKtSymbolProvider(
                 ).let(SirTranslationResult::Constructor)
             }
             is KaNamedFunctionSymbol -> {
-                SirFunctionFromKtSymbol(
-                    ktSymbol = ktSymbol,
-                    sirSession = sirSession,
-                ).let(SirTranslationResult::RegularFunction)
+                SirOperatorTranslationStrategy(ktSymbol)?.translate(sirSession)
+                    ?: SirFunctionFromKtSymbol(
+                        ktSymbol = ktSymbol,
+                        sirSession = sirSession,
+                    ).let(SirTranslationResult::RegularFunction)
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {
@@ -69,6 +70,7 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }
+
     private fun KaPropertyAccessorSymbol.toSirFunction(ktPropertySymbol: KaPropertySymbol): SirFunction = SirFunctionFromKtPropertySymbol(
         ktPropertySymbol = ktPropertySymbol,
         ktSymbol = this,

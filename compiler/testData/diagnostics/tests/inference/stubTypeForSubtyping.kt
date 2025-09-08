@@ -15,3 +15,6 @@ fun test_1(s: String?, flag: Boolean): Int? {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, lambdaLiteral, nullableType, safeCall,
+smartcast, whenExpression, whenWithSubject */

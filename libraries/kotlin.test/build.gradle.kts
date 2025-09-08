@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -105,6 +106,10 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs()
+        (this as KotlinJsTargetDsl).compilerOptions {
+            freeCompilerArgs.add("-source-map=false")
+            freeCompilerArgs.add("-source-map-embed-sources=")
+        }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
@@ -112,6 +117,10 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         nodejs()
+        (this as KotlinJsTargetDsl).compilerOptions {
+            freeCompilerArgs.add("-source-map=false")
+            freeCompilerArgs.add("-source-map-embed-sources=")
+        }
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }

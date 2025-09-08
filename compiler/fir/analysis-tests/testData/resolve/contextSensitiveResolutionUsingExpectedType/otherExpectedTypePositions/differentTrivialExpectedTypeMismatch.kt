@@ -39,3 +39,6 @@ fun bar(b: Boolean): MyClass {
     if (b) return X
     return <!RETURN_TYPE_MISMATCH!>Y<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, functionDeclaration, getter, ifExpression,
+localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral */

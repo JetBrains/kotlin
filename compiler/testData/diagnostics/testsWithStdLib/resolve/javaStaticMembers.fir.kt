@@ -11,3 +11,6 @@ fun ff() {
     System.out.println(a + b)
     <!NO_COMPANION_OBJECT!>System<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>out<!>.println(a + b)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty,
+nullableType, propertyDeclaration, safeCall */

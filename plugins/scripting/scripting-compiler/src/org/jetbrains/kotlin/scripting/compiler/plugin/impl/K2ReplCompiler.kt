@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
@@ -131,13 +130,10 @@ class K2ReplCompiler(
             val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
             val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
 
-            val sessionProvider = FirProjectSessionProvider()
-
             val moduleDataProvider = ReplModuleDataProvider(classpath.map(File::toPath))
 
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = moduleName,
-                sessionProvider = sessionProvider,
                 projectEnvironment = projectEnvironment,
                 extensionRegistrars = extensionRegistrars,
                 packagePartProvider = packagePartProvider,
@@ -146,7 +142,6 @@ class K2ReplCompiler(
             )
 
             FirJvmSessionFactory.createLibrarySession(
-                sessionProvider = sessionProvider,
                 sharedLibrarySession,
                 moduleDataProvider = moduleDataProvider,
                 projectEnvironment = projectEnvironment,
@@ -163,7 +158,6 @@ class K2ReplCompiler(
                 predefinedJavaComponents,
                 projectEnvironment,
                 moduleDataProvider,
-                sessionProvider,
                 messageCollector,
                 compilerContext,
                 packagePartProvider,
@@ -179,7 +173,6 @@ class K2ReplCompilationState(
     internal val predefinedJavaComponents: FirSharableJavaComponents,
     internal val projectEnvironment: VfsBasedProjectEnvironment,
     internal val moduleDataProvider: ReplModuleDataProvider,
-    internal val sessionProvider: FirProjectSessionProvider,
     internal val messageCollector: ScriptDiagnosticsMessageCollector,
     internal val compilerContext: SharedScriptCompilationContext,
     internal val packagePartProvider: PackagePartProvider,
@@ -312,7 +305,6 @@ private fun compileImpl(
     val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
     if (libModuleData != null) {
         FirJvmSessionFactory.createLibrarySession(
-            sessionProvider = state.sessionProvider,
             sharedLibrarySession = state.sharedLibrarySession,
             moduleDataProvider = SingleModuleDataProvider(libModuleData),
             projectEnvironment = state.projectEnvironment,
@@ -327,7 +319,6 @@ private fun compileImpl(
 
     val session = FirJvmSessionFactory.createSourceSession(
         moduleData,
-        state.sessionProvider,
         AbstractProjectFileSearchScope.EMPTY,
         state.projectEnvironment,
         createIncrementalCompilationSymbolProviders = { null },

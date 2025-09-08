@@ -9,3 +9,5 @@ fun test() {
     fork { Unit }
     fork { 42 }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, typeConstraint, typeParameter */

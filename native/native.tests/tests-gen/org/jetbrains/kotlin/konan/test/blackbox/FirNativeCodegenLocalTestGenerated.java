@@ -340,6 +340,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
+      @TestMetadata("strings.kt")
+      public void testStrings() {
+        runTest("native/native.tests/testData/codegen/cinterop/basics/strings.kt");
+      }
+
+      @Test
+      @TestMetadata("stringsWithLatin1.kt")
+      public void testStringsWithLatin1() {
+        runTest("native/native.tests/testData/codegen/cinterop/basics/stringsWithLatin1.kt");
+      }
+
+      @Test
       @TestMetadata("structAnonRecordMember_ExplicitAlignment.kt")
       public void testStructAnonRecordMember_ExplicitAlignment() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_ExplicitAlignment.kt");
@@ -419,6 +431,124 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Nested
+    @TestMetadata("native/native.tests/testData/codegen/cinterop/cCallDirect")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class CCallDirect {
+      @Test
+      public void testAllFilesPresentInCCallDirect() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("differentFunctions.kt")
+      public void testDifferentFunctions() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/differentFunctions.kt");
+      }
+
+      @Test
+      @TestMetadata("functionWithAsmAttribute.kt")
+      public void testFunctionWithAsmAttribute() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/functionWithAsmAttribute.kt");
+      }
+
+      @Test
+      @TestMetadata("sameFunctionWithDifferentSignatures.kt")
+      public void testSameFunctionWithDifferentSignatures() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameFunctionWithDifferentSignatures.kt");
+      }
+
+      @Test
+      @TestMetadata("smoke.kt")
+      public void testSmoke() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/smoke.kt");
+      }
+
+      @Nested
+      @TestMetadata("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction")
+      @TestDataPath("$PROJECT_ROOT")
+      @UseExtTestCaseGroupProvider()
+      public class FlagInteraction {
+        @Test
+        public void testAllFilesPresentInFlagInteraction() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("both_direct.kt")
+        public void testBoth_direct() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/both_direct.kt");
+        }
+
+        @Test
+        @TestMetadata("both_directOrIndirect.kt")
+        public void testBoth_directOrIndirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/both_directOrIndirect.kt");
+        }
+
+        @Test
+        @TestMetadata("both_indirect.kt")
+        public void testBoth_indirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/both_indirect.kt");
+        }
+
+        @Test
+        @TestMetadata("both_indirectOrDirect.kt")
+        public void testBoth_indirectOrDirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/both_indirectOrDirect.kt");
+        }
+
+        @Test
+        @TestMetadata("direct_direct.kt")
+        public void testDirect_direct() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/direct_direct.kt");
+        }
+
+        @Test
+        @TestMetadata("direct_directOrIndirect.kt")
+        public void testDirect_directOrIndirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/direct_directOrIndirect.kt");
+        }
+
+        @Test
+        @TestMetadata("direct_indirect.kt")
+        public void testDirect_indirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/direct_indirect.kt");
+        }
+
+        @Test
+        @TestMetadata("direct_indirectOrDirect.kt")
+        public void testDirect_indirectOrDirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/direct_indirectOrDirect.kt");
+        }
+
+        @Test
+        @TestMetadata("indirect_direct.kt")
+        public void testIndirect_direct() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/indirect_direct.kt");
+        }
+
+        @Test
+        @TestMetadata("indirect_directOrIndirect.kt")
+        public void testIndirect_directOrIndirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/indirect_directOrIndirect.kt");
+        }
+
+        @Test
+        @TestMetadata("indirect_indirect.kt")
+        public void testIndirect_indirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/indirect_indirect.kt");
+        }
+
+        @Test
+        @TestMetadata("indirect_indirectOrDirect.kt")
+        public void testIndirect_indirectOrDirect() {
+          runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/flagInteraction/indirect_indirectOrDirect.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("native/native.tests/testData/codegen/cinterop/exceptions")
     @TestDataPath("$PROJECT_ROOT")
     @UseExtTestCaseGroupProvider()
@@ -476,15 +606,9 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
-      @TestMetadata("kt48816_lazy_ir_disable.kt")
-      public void testKt48816_lazy_ir_disable() {
-        runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_disable.kt");
-      }
-
-      @Test
-      @TestMetadata("kt48816_lazy_ir_enable.kt")
-      public void testKt48816_lazy_ir_enable() {
-        runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816_lazy_ir_enable.kt");
+      @TestMetadata("kt48816.kt")
+      public void testKt48816() {
+        runTest("native/native.tests/testData/codegen/cinterop/objc/kt48816.kt");
       }
 
       @Test
@@ -1728,23 +1852,6 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     @TestMetadata("kclass0.kt")
     public void testKclass0() {
       runTest("native/native.tests/testData/codegen/kclass/kclass0.kt");
-    }
-  }
-
-  @Nested
-  @TestMetadata("native/native.tests/testData/codegen/ktype")
-  @TestDataPath("$PROJECT_ROOT")
-  @UseExtTestCaseGroupProvider()
-  public class Ktype {
-    @Test
-    public void testAllFilesPresentInKtype() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/ktype"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-    }
-
-    @Test
-    @TestMetadata("ktype1_anonymousObject.kt")
-    public void testKtype1_anonymousObject() {
-      runTest("native/native.tests/testData/codegen/ktype/ktype1_anonymousObject.kt");
     }
   }
 

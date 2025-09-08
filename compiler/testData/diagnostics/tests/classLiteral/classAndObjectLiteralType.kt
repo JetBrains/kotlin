@@ -16,3 +16,6 @@ val test1: KClass<DerivedClass> = DerivedClass::class
 val test2: KClass<DerivedObject> = DerivedObject::class
 val test3: KClass<TestEnum> = TestEnum::class
 val test4: KClass<out TestEnum> = TestEnum.TEST_ENTRY::class
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, enumDeclaration, enumEntry, objectDeclaration, outProjection,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

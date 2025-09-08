@@ -46,3 +46,5 @@ fun foo() {
     ImplDirectFromBaseWithOverride().foo()
     ImplViaIntermediate().foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration, override, stringLiteral */

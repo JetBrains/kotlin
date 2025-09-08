@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.asJava.canHaveSyntheticAccessors
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -113,14 +114,24 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         val targets = unwrappedTargets
         val manager = candidateTarget.manager
 
-        if (targets.any { manager.areElementsEquivalent(unwrappedCandidate, it) }) {
-            return true
+        for (target in targets) {
+            if (manager.areElementsEquivalent(unwrappedCandidate, target)) {
+                // Kotlin implicit constructors can be referenced only in the non-type position
+                if (candidateTarget !is KtLightMethod || unwrappedCandidate !is KtClass || !candidateTarget.isConstructor || element.parent !is KtTypeElement) {
+                    return true
+                } else {
+                    continue
+                }
+            }
+
+            if (target.isConstructorOf(unwrappedCandidate) ||
+                target is KtObjectDeclaration && target.isCompanion() && target.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
+            ) {
+                return true
+            }
         }
 
-        return targets.any {
-            it.isConstructorOf(unwrappedCandidate) ||
-                    it is KtObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
-        }
+        return false
     }
 
     private fun KtSimpleNameReference.isAccessorReference(): Boolean {

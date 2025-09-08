@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.forceK2Kapt
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.JdkVersions
-import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
@@ -24,8 +22,4 @@ class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {}
-
-    override fun TestProject.customizeProject() {
-        forceK2Kapt()
-    }
 }

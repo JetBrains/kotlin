@@ -23,3 +23,5 @@ fun main() {
     val s: javax.<!UNRESOLVED_REFERENCE!>swing<!>.JFrame? = null
     println(s)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

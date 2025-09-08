@@ -1,8 +1,7 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-70507
 // DIAGNOSTICS: -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 
 class A {
     operator fun plus(x: String): A = this
@@ -34,3 +33,6 @@ fun bak() {
     val it = mutableListOf(mutableListOf(10))
     (it[0]) += 20
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration, stringLiteral, thisExpression */

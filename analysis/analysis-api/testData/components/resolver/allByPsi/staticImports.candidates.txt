@@ -193,64 +193,13 @@ KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
     isInBestCandidates = false
 
 KtDotQualifiedExpression(326,333): 'one.two'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.TopLevelObject
-          symbol = <constructor>(): one.two.TopLevelObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(326,329): 'one'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.TopLevelObject
-          symbol = <constructor>(): one.two.TopLevelObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(330,333): 'two'
-  KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.TopLevelObject
-          symbol = <constructor>(): one.two.TopLevelObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(334,348): 'TopLevelObject'
   KaInapplicableCallCandidateInfo:
@@ -557,8 +506,8 @@ KtNameReferenceExpression(564,578): 'TopLevelObject'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = one.two.TopLevelObject.NestedObject
-          symbol = <constructor>(): one.two.TopLevelObject.NestedObject
+          returnType = one.two.TopLevelObject
+          symbol = <constructor>(): one.two.TopLevelObject
           valueParameters = []
           contextParameters = []
           callableId = null

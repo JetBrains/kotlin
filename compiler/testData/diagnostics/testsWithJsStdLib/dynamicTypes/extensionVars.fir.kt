@@ -27,12 +27,12 @@ fun test(d: dynamic) {
     (d as String).onStringVar
     (d as Any).onAnyVar
     (d as Any?).onNullableAnyVar
-    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicVar<!>
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVar<!>
 
     (d as String).onStringVar = 1
     (d as Any).onAnyVar = 1
     (d as Any?).onNullableAnyVar = 1
-    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicVar<!> = 1
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVar<!> = 1
 }
 
 var Any.onAnyVar: Int

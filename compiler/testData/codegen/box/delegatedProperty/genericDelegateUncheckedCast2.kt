@@ -1,6 +1,5 @@
 // See the end of KT-8135 description: The same problem appears when using delegating properties with unchecked casts inside
 // Test fail reason: ClassCastException is not thrown when using delegating properties with unchecked casts inside
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
 // FIR status: not supported in JVM

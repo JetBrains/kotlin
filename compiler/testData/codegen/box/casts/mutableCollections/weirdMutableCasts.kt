@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 fun unsupported(): Nothing = throw UnsupportedOperationException()
 
 class Weird : Iterator<String>, MutableIterable<String>, MutableMap.MutableEntry<String, String> {
@@ -103,6 +104,7 @@ inline fun <reified T> reifiedSafeAsReturnsNull(x: Any?, operation: String) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val w: Any = Weird()
 

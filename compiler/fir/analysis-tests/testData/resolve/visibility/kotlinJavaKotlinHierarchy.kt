@@ -17,3 +17,5 @@ public class B extends A {
 abstract class A {
     abstract fun foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override */

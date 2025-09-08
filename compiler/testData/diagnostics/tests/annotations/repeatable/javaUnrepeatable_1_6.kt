@@ -33,3 +33,5 @@ class UseClazz
 
 @Source <!REPEATED_ANNOTATION!>@Source<!>
 class UseSource
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

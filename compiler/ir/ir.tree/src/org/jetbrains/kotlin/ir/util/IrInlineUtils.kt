@@ -6,27 +6,42 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
 
 /**
- * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
- * For example, in the JVM backend it is safe to check the original call of an inlined function, and on other backends it's not.
- * To discourage usages of such APIs in non-JVM backends, this opt-in annotation was introduced.
+ * If this was a local declaration in an inline function, marks which file it was originally defined in.
+ * In other words, to which file do [IrElement.startOffset] and [IrElement.endOffset] of elements in this
+ * IR subtree point to.
+ *
+ * It is an analogy of [IrInlinedFunctionBlock.inlinedFunctionFileEntry], but for declarations instead of expressions.
  */
-@RequiresOptIn(
-    message = "This API is supposed to be used only inside JVM backend.",
-)
-annotation class JvmIrInlineExperimental
+var IrDeclaration.sourceFileWhenInlined: IrFileEntry? by irAttribute(copyByDefault = true)
 
-@JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(copyByDefault = true)
-@JvmIrInlineExperimental
-var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefault = true)
+/**
+ * Find the file entry where this declaration was originally defined.
+ *
+ * ### Limitations:
+ * * Returns null for declarations from other modules, expect for inlined functions.
+ * * Does not work for local declarations before they are extracted by [LocalDeclarationsLowering].
+ */
+tailrec fun IrDeclaration.getSourceFile(): IrFileEntry? {
+    sourceFileWhenInlined?.let {
+        return it
+    }
+    return when (val parent = parent) {
+        is IrFile -> parent.fileEntry
+        is IrExternalPackageFragment -> null
+        else -> (parent as IrDeclaration).getSourceFile()
+    }
+}
 
-var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrModuleFragment.preparedInlineFunctionCopies: List<IrSimpleFunction>? by irAttribute(copyByDefault = true)
+var IrSimpleFunction.preparedInlineFunctionCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrSimpleFunction.originalOfPreparedInlineFunctionCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
 
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
     return this.inlinedFunctionSymbol != null

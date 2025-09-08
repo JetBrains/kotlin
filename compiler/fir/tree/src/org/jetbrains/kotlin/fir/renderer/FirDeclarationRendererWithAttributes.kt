@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.renderer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
@@ -42,9 +41,9 @@ open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
     }
 
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {
-        is FirCallableSymbol<*> -> callableId.toString()
+        is FirCallableSymbol<*> -> callableIdAsString()
         is FirClassLikeSymbol<*> -> classId.asString()
-        is FirCallableDeclaration -> symbol.callableId.toString()
+        is FirCallableDeclaration -> symbol.callableIdAsString()
         else -> toString()
     }
 }

@@ -25,3 +25,5 @@ fun test2() = B2().foo()
 open actual class A1 {
     open actual fun foo(): String = "OK"
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, stringLiteral */

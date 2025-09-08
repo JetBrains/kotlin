@@ -34,3 +34,7 @@ fun poll83(): Flow<String> {
         <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, getter, in,
+integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out,
+primaryConstructor, propertyDeclaration, setter, suspend, typeParameter, typeWithExtension */

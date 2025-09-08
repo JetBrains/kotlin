@@ -13,3 +13,5 @@ class Payload3
 
 @OuterAnnotation(InnerAnnotation("x" + "x"))
 class Payload4
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -35,3 +35,6 @@ public class C {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, flexibleType, functionDeclaration, javaFunction,
+javaType, localProperty, nullableType, propertyDeclaration, starProjection, typeParameter */

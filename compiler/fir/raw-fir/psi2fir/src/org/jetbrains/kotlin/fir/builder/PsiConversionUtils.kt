@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.buildWhenSubjectAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -17,12 +17,16 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildEqualityOperatorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
 
 internal fun KtWhenCondition.toFirWhenCondition(
     subjectVariable: FirVariable?,
@@ -96,9 +100,8 @@ internal fun generateTemporaryVariable(
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
-        symbol = FirPropertySymbol(name)
+        symbol = FirLocalPropertySymbol()
         isVar = false
-        isLocal = true
         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         (source.psi as? KtAnnotated)?.extractAnnotationsTo(this)
     }
@@ -121,8 +124,8 @@ internal fun generateTemporaryVariable(
         extractAnnotationsTo,
     )
 
+context(c: DestructuringContext<KtDestructuringDeclarationEntry>)
 internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
-    c: DestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
@@ -132,7 +135,6 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
         source = multiDeclaration.toKtPsiSourceElement(KtFakeSourceElementKind.DestructuringBlock)
         addDestructuringVariables(
             statements,
-            c,
             moduleData,
             multiDeclaration,
             container,
@@ -142,9 +144,9 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
     }
 }
 
+context(c: DestructuringContext<KtDestructuringDeclarationEntry>)
 internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
     destination: MutableList<in FirVariable>,
-    c: DestructuringContext<KtDestructuringDeclarationEntry>,
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
     container: FirVariable,
@@ -154,13 +156,12 @@ internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
 ) {
     addDestructuringVariables(
         destination,
-        c,
         moduleData,
         container,
         multiDeclaration.entries,
-        multiDeclaration.isVar,
-        tmpVariable,
-        forceLocal,
-        configure
+        isNameBased = !multiDeclaration.hasSquareBrackets() && (multiDeclaration.isFullForm || nameBasedDestructuringShortForm),
+        isTmpVariable = tmpVariable,
+        forceLocal = forceLocal,
+        configure,
     )
 }

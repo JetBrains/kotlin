@@ -20,3 +20,6 @@ fun <A> main() {
 
     val с: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, inline, localProperty, nullableType, propertyDeclaration,
+reified, typeParameter */

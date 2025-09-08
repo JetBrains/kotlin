@@ -20,3 +20,5 @@ actual open class Foo : Base() {
 
     actual fun foo(param: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, stringLiteral */

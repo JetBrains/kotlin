@@ -100,3 +100,6 @@ abstract class AC {
 
 @JvmInline
 value class A6(val i: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>AC<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, localProperty,
+nullableType, override, primaryConstructor, propertyDeclaration, typeParameter, value */

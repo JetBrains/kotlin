@@ -31,3 +31,6 @@ fun foo() {
     m <!UNRESOLVED_REFERENCE!>%=<!> 1
     m.modAssign(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, multiplicativeExpression, objectDeclaration,
+operator, propertyDeclaration */

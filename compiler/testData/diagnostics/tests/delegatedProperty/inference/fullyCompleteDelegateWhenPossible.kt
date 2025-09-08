@@ -15,3 +15,6 @@ fun foo() {
         Cached { "B" }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

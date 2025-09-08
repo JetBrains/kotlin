@@ -5,3 +5,5 @@
 fun test() {
     <!UNRESOLVED_REFERENCE!>`java.lang.Short.TYPE`<!>.getConstructor(TODO())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

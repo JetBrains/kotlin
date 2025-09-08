@@ -10,3 +10,5 @@ import kotlin.streams.toList
 fun testStreams(list: ArrayList<String>) {
     list.stream().toList()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration */

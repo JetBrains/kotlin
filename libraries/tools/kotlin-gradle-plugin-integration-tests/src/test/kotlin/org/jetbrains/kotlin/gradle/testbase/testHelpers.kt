@@ -85,13 +85,15 @@ fun TestProject.makeSnapshotTo(
             |""".trimMargin()
         )
 
-        setPosixFilePermissions(
-            setOf(
-                PosixFilePermission.OWNER_EXECUTE,
-                PosixFilePermission.OWNER_READ,
-                PosixFilePermission.OWNER_WRITE,
+        if ("Windows" !in System.getProperty("os.name")) {
+            setPosixFilePermissions(
+                setOf(
+                    PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.OWNER_READ,
+                    PosixFilePermission.OWNER_WRITE,
+                )
             )
-        )
+        }
     }
 
     dest.resolve("run.bat").run {
@@ -284,3 +286,28 @@ val Throwable.fullMessage
  */
 internal val TestProject.isWithJavaSupported: Boolean
     get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
+
+/**
+ * Returns a list of subprojects for the [TestProject], explicitly specified by their names.
+ * This method can be used as an explicit alternative to `subprojects { ... }`.
+ * If a subproject name is an empty string (`""`) or a single dot (`"."`), it will be replaced by the [TestProject] itself.
+ *
+ * @return A list of subprojects corresponding to the specified names, with special handling for empty or dot names.
+ */
+internal fun TestProject.subprojects(firstName: String, vararg names: String): Iterable<GradleProject> {
+    return arrayOf(firstName, *names).map { name ->
+        when (name) {
+            "", "." -> this
+            else -> subProject(name)
+        }
+    }
+}
+
+/**
+ * Injects build script with a lambda that will be executed by every project's build script at configuration time.
+ *
+ * @see org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
+ */
+internal fun Iterable<GradleProject>.buildScriptInjection(
+    code: GradleProjectBuildScriptInjectionContext.() -> Unit,
+) = forEach { project -> project.buildScriptInjection(code) }

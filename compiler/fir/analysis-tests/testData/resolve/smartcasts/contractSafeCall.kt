@@ -8,3 +8,5 @@ fun test(list: List<Any>?) {
     }
     list<!UNSAFE_CALL!>.<!>size // should be unsafe call
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType, safeCall */

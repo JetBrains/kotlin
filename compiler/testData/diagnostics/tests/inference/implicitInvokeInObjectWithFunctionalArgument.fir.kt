@@ -13,3 +13,7 @@ fun test(s: String): String {
     val b = TestClass { return s }
     b checkType { _<Nothing>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, typeParameter,
+typeWithExtension */

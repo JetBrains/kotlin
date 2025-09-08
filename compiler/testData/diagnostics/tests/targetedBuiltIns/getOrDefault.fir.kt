@@ -19,3 +19,5 @@ fun foo(x: Map<Int, String>, a: A, b: java.util.HashMap<Int, String>) {
     b.getOrDefault(1, <!ARGUMENT_TYPE_MISMATCH!>2<!>)
     b.getOrDefault(<!ARGUMENT_TYPE_MISMATCH!>""<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, stringLiteral */

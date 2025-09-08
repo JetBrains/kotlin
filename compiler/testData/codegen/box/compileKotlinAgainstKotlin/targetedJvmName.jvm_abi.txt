@@ -2,8 +2,18 @@ MODULE lib
 	CLASS lib/AKt.class
 		PACKAGE METADATA
 			PROPERTY renamedGetFoo()Ljava/lang/String;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
+				Property: class.metadata.property.setterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
 				Property: class.metadata.property.setterValueParameter
 					K1
 						<set-?>: kotlin/String
 					K2
-						value: kotlin/String
+						---

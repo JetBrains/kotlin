@@ -16,3 +16,6 @@ open class OpenKlassInheritor :
 open class OpenApiKlassInheritor : <!OPT_IN_USAGE("ApiMarker; API Unstable!")!>OpenApiKlass<!>()
 
 fun check(klass: <!OPT_IN_USAGE("ApiMarker; API Unstable!")!>OpenApiKlass<!>){}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+functionDeclaration, stringLiteral */

@@ -25,3 +25,7 @@ fun Box.test() {
 }
 
 fun myRun(block: () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+smartcast, stringLiteral, thisExpression */

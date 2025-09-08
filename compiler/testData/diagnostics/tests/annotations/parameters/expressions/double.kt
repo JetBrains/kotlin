@@ -11,3 +11,6 @@ annotation class Ann(
 @Ann(1.0 + 1.0, 1.0 + 1, 1 + 1.0) class MyClass
 
 // EXPECTED: @Ann(d1 = 2.0.toDouble(), d2 = 2.0.toDouble(), d3 = 2.0.toDouble())
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

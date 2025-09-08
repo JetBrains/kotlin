@@ -39,3 +39,6 @@ fun usage() {
         bar
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType, getter,
+inline, lambdaLiteral, propertyDeclaration, propertyDeclarationWithContext, setter, stringLiteral */

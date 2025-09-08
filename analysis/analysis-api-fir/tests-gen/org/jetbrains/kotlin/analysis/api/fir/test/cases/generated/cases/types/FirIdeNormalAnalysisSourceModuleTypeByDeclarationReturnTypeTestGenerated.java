@@ -100,6 +100,12 @@ public class FirIdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGene
   }
 
   @Test
+  @TestMetadata("localTypeAlias.kt")
+  public void testLocalTypeAlias() {
+    runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("referenceToExtensionFunctionOfStarProjectionType.kt")
   public void testReferenceToExtensionFunctionOfStarProjectionType() {
     runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/referenceToExtensionFunctionOfStarProjectionType.kt");

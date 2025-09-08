@@ -16,3 +16,5 @@ fun main() {
     val t2: MyEnum = L
     val t3: MyEnum = <!UNRESOLVED_REFERENCE!>UNRESOLVED<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

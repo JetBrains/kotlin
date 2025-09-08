@@ -2,6 +2,8 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -17,14 +19,14 @@ dependencies {
     testApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
-    testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testApi(projectTests(":generators:test-generator"))
-    testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testFixturesApi(project(":kotlin-scripting-compiler"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
@@ -35,38 +37,42 @@ dependencies {
     testRuntimeOnly(toolsJar())
 }
 
+optInToK1Deprecation()
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" {}
+    "testFixtures" { projectDefault() }
     "test" {
         projectDefault()
         generatedTestDir()
     }
 }
 
-projectTest(
-    parallel = true,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-) {
-    dependsOn(":dist")
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit4,
+        parallel = true,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+    ) {
+        dependsOn(":dist")
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
-    filter {
-        excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
+        filter {
+            excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
+        }
+
+        workingDir = rootDir
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-}
-
-if (kotlinBuildProperties.isTeamcityBuild) {
-    projectTest("fastJarFSLongTests") {
+    testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
     }
-} else {
-    // avoiding IntelliJ test configuration selection menu (see comments in compiler/fir/fir2ir/build.gradle.kts for details)
-    tasks.register("fastJarFSLongTests")
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.TestGeneratorForCompilerTestsKt")
+
+    withJvmStdlibAndReflect()
 }
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")

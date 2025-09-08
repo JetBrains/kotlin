@@ -12,3 +12,6 @@ fun test() {
     var c = RemAndRemAssign
     c <!ASSIGN_OPERATOR_AMBIGUITY!>%=<!> 1
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, localProperty, objectDeclaration, operator,
+propertyDeclaration */

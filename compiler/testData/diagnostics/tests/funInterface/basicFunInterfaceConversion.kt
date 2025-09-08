@@ -12,3 +12,5 @@ fun foo(f: Foo) {}
 fun test() {
     foo {}
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, samConversion */

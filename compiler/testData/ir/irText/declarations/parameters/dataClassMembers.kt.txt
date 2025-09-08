@@ -32,7 +32,7 @@ data class Test<T : Any?> {
     when {
       other !is Test<T> -> return false
     }
-    val tmp_0: Test<T> = other as Test<T>
+    val tmp_0: Test<T> = other /*as Test<T> */
     when {
       EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
     }
@@ -56,4 +56,3 @@ data class Test<T : Any?> {
   }
 
 }
-

@@ -95,6 +95,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.explicitApiMode
                 .value(explicitApiMode)
                 .finalizeValueOnRead()
+            task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
         }
     }
 
@@ -139,7 +140,8 @@ private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> =
 
     val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
     val isMainAndroidCompilation = androidCompilation?.let {
-        getTestedVariantData(it.androidVariant) == null
+        @Suppress("DEPRECATION") val variant = it.androidVariant
+        variant != null && getTestedVariantData(variant) == null
     } == true
 
     if (isMain || isCommonCompilation || isMainAndroidCompilation) {

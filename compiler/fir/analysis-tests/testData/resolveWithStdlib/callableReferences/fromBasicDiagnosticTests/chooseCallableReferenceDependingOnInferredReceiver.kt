@@ -32,3 +32,6 @@ fun test() {
 }
 
 inline fun <T, R> myWith(receiver: T, block: T.() -> R): R = TODO()
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

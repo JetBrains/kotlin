@@ -8,3 +8,6 @@ class C {
     typealias SS = String
     typealias SF<T> = (T) -> String
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

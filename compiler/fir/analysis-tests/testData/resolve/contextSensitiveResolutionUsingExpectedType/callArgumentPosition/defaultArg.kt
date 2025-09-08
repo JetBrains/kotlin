@@ -19,3 +19,6 @@ fun defaultArgHolder1(
     sealedArg: MyClass = InheritorObject,
     sealedArg2: MyClass = <!UNRESOLVED_REFERENCE!>func<!>()
 ) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration, nestedClass,
+objectDeclaration */

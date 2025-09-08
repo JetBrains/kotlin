@@ -8,3 +8,5 @@ fun foo(x: (A, String) -> Int) {}
 fun main() {
     foo(A::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType */

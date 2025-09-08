@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.originalFunctionForDefaultImpl
+import org.jetbrains.kotlin.backend.jvm.staticSuspendImplMethod
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
-import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
@@ -39,11 +38,6 @@ private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
             // of the inline function are copy-pasted into the `invoke` method, and may require a continuation.
             // (TODO: maybe the reference itself should be the continuation, just like lambdas?)
             && (parentAsClass.attributeOwnerId as? IrFunctionReference)?.symbol?.owner?.isInline != true
-
-private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
-    isSuspend && this is IrSimpleFunction && (parent as? IrClass)?.functions?.any {
-        it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX && it.attributeOwnerId == attributeOwnerId
-    } == true
 
 private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean {
     if (isStaticInlineClassReplacement) return false
@@ -73,7 +67,7 @@ private val BRIDGE_ORIGINS = setOf(
 fun IrFunction.isNonBoxingSuspendDelegation(): Boolean =
     origin in BRIDGE_ORIGINS ||
             isMultifileBridge() ||
-            isBridgeToSuspendImplMethod() ||
+            staticSuspendImplMethod != null ||
             isStaticInlineClassReplacementForDefaultInterfaceMethod() ||
             isDefaultImplsBridgeInJvmDefaultEnableMode()
 
@@ -91,7 +85,7 @@ private fun IrFunction.isDefaultImplsBridgeInJvmDefaultEnableMode(): Boolean =
             (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
             // (Note that we could've checked this directly via `context.config.jvmDefaultMode`, but that would require passing `context`
             // to utilities in this file, and all their call sites.)
-            ((body as? IrExpressionBody)?.expression as? IrCall)?.symbol?.owner == originalFunctionForDefaultImpl
+            isBodyBridgeCallTo(originalFunctionForDefaultImpl)
 
 fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
         // These functions also contain a single `suspend` tail call, but if it returns an unboxed inline class value,

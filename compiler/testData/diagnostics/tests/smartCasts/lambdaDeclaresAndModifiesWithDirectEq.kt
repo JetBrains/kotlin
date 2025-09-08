@@ -19,3 +19,6 @@ class My {
         <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, thisExpression */

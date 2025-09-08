@@ -14,3 +14,6 @@ fun test(f: () -> Int, s: SubInt) {
     foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)
     foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
+samConversion */

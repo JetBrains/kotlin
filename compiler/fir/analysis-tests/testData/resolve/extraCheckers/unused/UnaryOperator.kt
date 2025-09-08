@@ -22,3 +22,6 @@ fun testDecrementPostfix() {
     var x = 1
     use(<!ASSIGNED_VALUE_IS_NEVER_READ!>x<!>--)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, localProperty,
+propertyDeclaration */

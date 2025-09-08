@@ -9,3 +9,5 @@ open class Left() : Base
 interface Right : Base
 
 class Diamond() : Left(), Right
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, primaryConstructor */

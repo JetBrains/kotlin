@@ -1,11 +1,11 @@
 public open class NonTrivialFunctionType : R|kotlin/Any| {
     public open fun foo(filenameFilter: R|java/io/FilenameFilter!|): R|kotlin/Unit|
 
-    public open fun foo(comparator: R|ft<java/util/Comparator<kotlin/String!>, java/util/Comparator<kotlin/String!>?>|): R|kotlin/Unit|
+    public open fun foo(comparator: R|java/util/Comparator<kotlin/String!>!|): R|kotlin/Unit|
 
-    public open fun wildcardUnbound(comparator: R|ft<java/util/Comparator<*>, java/util/Comparator<*>?>|): R|kotlin/Unit|
+    public open fun wildcardUnbound(comparator: R|java/util/Comparator<*>!|): R|kotlin/Unit|
 
-    public open fun wildcardBound(comparator: R|ft<java/util/Comparator<in kotlin/CharSequence!>, java/util/Comparator<in kotlin/CharSequence!>?>|): R|kotlin/Unit|
+    public open fun wildcardBound(comparator: R|java/util/Comparator<in kotlin/CharSequence!>!|): R|kotlin/Unit|
 
     public constructor(): R|test/NonTrivialFunctionType|
 

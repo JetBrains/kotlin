@@ -38,7 +38,7 @@ const char* toString(BarriersPhase barriersPhase) {
 }
 
 std::atomic barriersPhase = BarriersPhase::kDisabled;
-std::atomic<int64_t> markingEpoch = 0;
+std::atomic<uint64_t> markingEpoch = 0;
 
 BarriersPhase currentPhase() noexcept {
     return barriersPhase.load(std::memory_order_acquire);
@@ -66,7 +66,7 @@ void switchPhase(BarriersPhase from, BarriersPhase to) noexcept {
 }
 
 auto& markDispatcher() noexcept {
-    return mm::GlobalData::Instance().gc().impl().markDispatcher_;
+    return mm::GlobalData::Instance().gc().impl().mark_;
 }
 
 inline constexpr auto kTagBarriers = logging::Tag::kBarriers;
@@ -103,7 +103,7 @@ PERFORMANCE_INLINE void gc::barriers::BarriersThreadData::onAllocation(ObjHeader
     }
 }
 
-void gc::barriers::enableBarriers(int64_t epoch) noexcept {
+void gc::barriers::enableBarriers(uint64_t epoch) noexcept {
     auto mutators = mm::ThreadRegistry::Instance().LockForIter();
     markingEpoch.store(epoch, std::memory_order_relaxed);
     switchPhase(BarriersPhase::kDisabled, BarriersPhase::kMarkClosure);

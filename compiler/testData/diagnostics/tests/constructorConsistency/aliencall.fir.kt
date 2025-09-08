@@ -28,3 +28,6 @@ class My {
 }
 
 fun Your.other() = "3"
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, propertyDeclaration, stringLiteral */

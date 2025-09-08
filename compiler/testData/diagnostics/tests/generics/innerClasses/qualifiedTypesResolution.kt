@@ -50,3 +50,6 @@ fun error5(): Outer<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><A><
 fun error6(): Outer.Obj<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><A><!>.Nested2<B>.Inner5<C> = null!!
 
 fun error7(): test<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>.Outer.Obj.Nested2<A>.Inner5<B> = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, nestedClass, nullableType, objectDeclaration, typeParameter, typeWithExtension */

@@ -12,3 +12,6 @@ inline fun case_4(block: () -> Unit) {
 object SampleObject {
     val invocationKind = InvocationKind.EXACTLY_ONCE
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

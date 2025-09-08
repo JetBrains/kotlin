@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol /foo]] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /foo]] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
             ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
         }
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirPropertySymbol /foo]] val [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /foo]] val [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<kotlin/Int>|.bar: R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
             ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
         }

@@ -33,3 +33,6 @@ class C : I {
     @Suppress("OPT_IN_OVERRIDE_ERROR")
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, override,
+stringLiteral, typeAliasDeclaration */

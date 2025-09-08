@@ -60,6 +60,7 @@ fun testStructWithNSObject() {
             struct.set = TODO()
             struct.dictionary = TODO()
             struct.mutableArray = TODO()
+            Unit // required for K1
         }
     }
 }

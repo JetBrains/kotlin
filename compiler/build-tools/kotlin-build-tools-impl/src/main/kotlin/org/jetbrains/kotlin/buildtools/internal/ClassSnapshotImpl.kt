@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.buildtools.internal
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.InaccessibleClassSnapshot
 
-class AccessibleClassSnapshotImpl(override val classAbiHash: Long) : AccessibleClassSnapshot
+internal class AccessibleClassSnapshotImpl(override val classAbiHash: Long) : AccessibleClassSnapshot
 
-object InaccessibleClassSnapshotImpl : InaccessibleClassSnapshot
+internal object InaccessibleClassSnapshotImpl : InaccessibleClassSnapshot

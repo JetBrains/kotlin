@@ -38,3 +38,5 @@ class A : B {
     constructor(x1: Double, x2: Double, x3: Double): this(x1, x2, x3, 1.0)
     constructor(x1: Double, x2: Double, x3: Double, x4: Double): super(1.toByte())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, secondaryConstructor, stringLiteral */

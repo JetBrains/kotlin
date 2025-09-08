@@ -16,3 +16,6 @@ class A {
 }
 
 fun takeInt(x: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localFunction, localProperty, propertyDeclaration, stringLiteral, typeWithExtension */

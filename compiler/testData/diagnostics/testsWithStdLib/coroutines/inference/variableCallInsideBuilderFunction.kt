@@ -17,3 +17,6 @@ fun <K> filter(e: K, predicate: (K) -> Boolean) =
         predicate(e)
         yield(42)
     }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

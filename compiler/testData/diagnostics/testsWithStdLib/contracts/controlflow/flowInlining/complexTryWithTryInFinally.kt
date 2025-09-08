@@ -29,3 +29,6 @@ inline fun myLet(block: () -> Unit) {
     }
     return block()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, contractCallsEffect, contracts, functionDeclaration,
+functionalType, ifExpression, inline, lambdaLiteral, tryExpression */

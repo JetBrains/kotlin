@@ -11,3 +11,6 @@ fun box(): String {
         "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral, intersectionType, lambdaLiteral, localProperty,
+propertyDeclaration, rangeExpression, smartcast, stringLiteral, tryExpression */

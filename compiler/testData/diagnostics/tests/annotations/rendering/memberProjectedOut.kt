@@ -14,3 +14,6 @@ class C<T> {
 fun test(a: C<out CharSequence>) {
     a[1] = <!CONSTANT_EXPECTED_TYPE_MISMATCH("integer; Nothing")!>25<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, functionDeclaration, integerLiteral,
+nullableType, operator, outProjection, typeParameter */

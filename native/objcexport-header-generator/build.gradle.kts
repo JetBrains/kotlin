@@ -2,6 +2,7 @@
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 sourceSets {
@@ -19,7 +20,7 @@ dependencies {
     testApi(libs.junit.jupiter.api)
     testApi(libs.junit.jupiter.engine)
     testApi(libs.junit.jupiter.params)
-    testApi(project(":compiler:tests-common", "tests-jar"))
+    testApi(testFixtures(project(":compiler:tests-common")))
 }
 
 kotlin {
@@ -47,12 +48,14 @@ tasks.test.configure {
     enabled = false
 }
 
-objCExportHeaderGeneratorTest("testK1", testDisplayNameTag = "K1") {
-    classpath += k1TestRuntimeClasspath
-}
+projectTests {
+    objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
+        classpath += k1TestRuntimeClasspath
+    }
 
-objCExportHeaderGeneratorTest("testAnalysisApi", testDisplayNameTag = "AA") {
-    classpath += analysisApiRuntimeClasspath
+    objCExportHeaderGeneratorTestTask("testAnalysisApi", testDisplayNameTag = "AA") {
+        classpath += analysisApiRuntimeClasspath
+    }
 }
 
 tasks.check.configure {

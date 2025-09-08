@@ -1,0 +1,9 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidExposingPackagePrivateInInternal
+// FILE: Foo.java
+class Foo {}
+
+// FILE: test.kt
+internal fun <T : <!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>Foo<!>> <!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>Foo<!>.<!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>bar<!>(<!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>f: Foo<!>): Foo = Foo()
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, javaType */

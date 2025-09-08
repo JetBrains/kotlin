@@ -14,3 +14,6 @@ class Foo {
 fun doesNotWork(bi: Bar<Int>, bs: Bar<String>) {
     Foo().add(bi).add(bs)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, thisExpression,
+typeParameter */

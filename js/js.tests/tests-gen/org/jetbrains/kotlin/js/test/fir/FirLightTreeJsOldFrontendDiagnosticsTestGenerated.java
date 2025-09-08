@@ -44,6 +44,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("extensionFunctionInExternalDeclarationPositioning.kt")
+  public void testExtensionFunctionInExternalDeclarationPositioning() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/extensionFunctionInExternalDeclarationPositioning.kt");
+  }
+
+  @Test
   @TestMetadata("externalFunctionsWithContextParameters.kt")
   public void testExternalFunctionsWithContextParameters() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalFunctionsWithContextParameters.kt");
@@ -134,6 +140,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("localInsideInlineInsideLocal.kt")
+  public void testLocalInsideInlineInsideLocal() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/localInsideInlineInsideLocal.kt");
+  }
+
+  @Test
   @TestMetadata("moreThanOneOverriddenExternals.kt")
   public void testMoreThanOneOverriddenExternals() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/moreThanOneOverriddenExternals.kt");
@@ -182,6 +194,28 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("arrays_after.kt")
     public void testArrays_after() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_after.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DefaultArguments {
+    @Test
+    public void testAllFilesPresentInDefaultArguments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValue.kt")
+    public void testInheritedDefaultValue() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValueWithIntersectionOverride.kt")
+    public void testInheritedDefaultValueWithIntersectionOverride() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");
     }
   }
 
@@ -628,6 +662,24 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("wrongExportedDeclarationInExportedFileWhenIgnored.kt")
     public void testWrongExportedDeclarationInExportedFileWhenIgnored() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWhenIgnored.kt");
+    }
+
+    @Test
+    @TestMetadata("wrongExportedDeclarationInExportedFileWithExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationInExportedFileWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("wrongExportedDeclarationWithExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("wrongExportedDeclarationWithoutExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationWithoutExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithoutExportableSuspendFunctions.kt");
     }
   }
 

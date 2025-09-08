@@ -26,3 +26,6 @@ fun e() {}
 @file:JvmPackageName(<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>f<!>)
 package f
 const val name = "f"
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, const, functionDeclaration, integerLiteral,
+propertyDeclaration, stringLiteral */

@@ -33,13 +33,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -79,7 +80,9 @@ internal class KaFirSymbolRelationProvider(
 
             getContainingDeclarationForDependentDeclaration(this)?.let { return it }
 
-            val firSymbol = firSymbol
+            // Handle intersection overrides on synthetic properties
+            val firSymbol = (firSymbol as? FirSimpleSyntheticPropertySymbol)?.getterSymbol?.delegateFunctionSymbol
+                ?: firSymbol
             val symbolFirSession = firSymbol.llFirSession
             val symbolModule = symbolFirSession.ktModule
 
@@ -140,7 +143,7 @@ internal class KaFirSymbolRelationProvider(
         }
 
     private fun getContainingDeclarationsForLocalClass(firSymbol: FirBasedSymbol<*>, symbolFirSession: FirSession): KaDeclarationSymbol? {
-        val fir = firSymbol.fir as? FirRegularClass ?: return null
+        val fir = firSymbol.fir as? FirClassLikeDeclaration ?: return null
         val containerSymbol = fir.containingClassForLocalAttr?.toSymbol(symbolFirSession) ?: return null
         return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containerSymbol)
     }
@@ -425,9 +428,10 @@ internal class KaFirSymbolRelationProvider(
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) {
-            this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            val owningExpectSymbols =
+                this.owningCallableSymbol.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            return owningExpectSymbols
                 .filterIsInstance<FirCallableSymbol<*>>()
-                // TODO: KT-73050. This code in fact does nothing
                 .mapNotNull { callableSymbol ->
                     callableSymbol.receiverParameterSymbol?.let {
                         analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)

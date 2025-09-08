@@ -57,7 +57,8 @@
             "kotlinVersions",
             "jvmTargets",
             "explicitApiModes",
-            "returnValueCheckerMode"
+            "returnValueCheckerMode",
+            "klibIrInlinerMode"
          ],
          "properties": {
             "kotlinVersions": {
@@ -287,6 +288,63 @@
                   }
                },
                "title": "SetReturnValueCheckerMode"
+            },
+            "klibIrInlinerMode": {
+               "type": "object",
+               "required": [
+                  "type",
+                  "values"
+               ],
+               "properties": {
+                  "type": {
+                     "type": "string",
+                     "title": "String"
+                  },
+                  "values": {
+                     "type": "array",
+                     "items": {
+                        "type": "object",
+                        "required": [
+                           "name",
+                           "releaseVersionsMetadata"
+                        ],
+                        "properties": {
+                           "name": {
+                              "type": "string",
+                              "title": "String"
+                           },
+                           "releaseVersionsMetadata": {
+                              "type": "object",
+                              "required": [
+                                 "introducedVersion"
+                              ],
+                              "properties": {
+                                 "introducedVersion": {
+                                    "type": "string",
+                                    "title": "KotlinReleaseVersion"
+                                 },
+                                 "stabilizedVersion": {
+                                    "type": "string",
+                                    "title": "KotlinReleaseVersion"
+                                 },
+                                 "deprecatedVersion": {
+                                    "type": "string",
+                                    "title": "KotlinReleaseVersion"
+                                 },
+                                 "removedVersion": {
+                                    "type": "string",
+                                    "title": "KotlinReleaseVersion"
+                                 }
+                              },
+                              "title": "KotlinReleaseVersionLifecycle"
+                           }
+                        },
+                        "title": "KlibIrInlinerMode"
+                     },
+                     "title": "LinkedHashSet<KlibIrInlinerMode>"
+                  }
+               },
+               "title": "SetKlibIrInlinerMode"
             }
          },
          "title": "AllKotlinArgumentTypes"
@@ -563,6 +621,96 @@
                                  }
                               },
                               "title": "IntType"
+                           },
+                           {
+                              "type": "object",
+                              "required": [
+                                 "isNullable",
+                                 "defaultValue"
+                              ],
+                              "properties": {
+                                 "isNullable": {
+                                    "type": "object",
+                                    "required": [
+                                       "current",
+                                       "valueInVersions"
+                                    ],
+                                    "properties": {
+                                       "current": {
+                                          "type": "boolean",
+                                          "title": "Boolean"
+                                       },
+                                       "valueInVersions": {
+                                          "type": "array",
+                                          "items": {
+                                             "type": "object",
+                                             "required": [
+                                                "minReleaseVersion",
+                                                "maxReleaseVersion",
+                                                "value"
+                                             ],
+                                             "properties": {
+                                                "minReleaseVersion": {
+                                                   "type": "string",
+                                                   "title": "KotlinReleaseVersion"
+                                                },
+                                                "maxReleaseVersion": {
+                                                   "type": "string",
+                                                   "title": "KotlinReleaseVersion"
+                                                },
+                                                "value": {
+                                                   "type": "boolean",
+                                                   "title": "Boolean"
+                                                }
+                                             },
+                                             "title": "ClosedRangeKotlinReleaseVersion"
+                                          },
+                                          "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                       }
+                                    },
+                                    "title": "ReleaseDependent"
+                                 },
+                                 "defaultValue": {
+                                    "type": "object",
+                                    "required": [
+                                       "valueInVersions"
+                                    ],
+                                    "properties": {
+                                       "current": {
+                                          "type": "string",
+                                          "title": "KlibIrInlinerMode"
+                                       },
+                                       "valueInVersions": {
+                                          "type": "array",
+                                          "items": {
+                                             "type": "object",
+                                             "required": [
+                                                "minReleaseVersion",
+                                                "maxReleaseVersion"
+                                             ],
+                                             "properties": {
+                                                "minReleaseVersion": {
+                                                   "type": "string",
+                                                   "title": "KotlinReleaseVersion"
+                                                },
+                                                "maxReleaseVersion": {
+                                                   "type": "string",
+                                                   "title": "KotlinReleaseVersion"
+                                                },
+                                                "value": {
+                                                   "type": "string",
+                                                   "title": "KlibIrInlinerMode"
+                                                }
+                                             },
+                                             "title": "ClosedRangeKotlinReleaseVersion"
+                                          },
+                                          "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                       }
+                                    },
+                                    "title": "ReleaseDependent"
+                                 }
+                              },
+                              "title": "KlibIrInlinerModeType"
                            },
                            {
                               "type": "object",
@@ -1515,6 +1663,96 @@
                                              "properties": {
                                                 "current": {
                                                    "type": "string",
+                                                   "title": "KlibIrInlinerMode"
+                                                },
+                                                "valueInVersions": {
+                                                   "type": "array",
+                                                   "items": {
+                                                      "type": "object",
+                                                      "required": [
+                                                         "minReleaseVersion",
+                                                         "maxReleaseVersion"
+                                                      ],
+                                                      "properties": {
+                                                         "minReleaseVersion": {
+                                                            "type": "string",
+                                                            "title": "KotlinReleaseVersion"
+                                                         },
+                                                         "maxReleaseVersion": {
+                                                            "type": "string",
+                                                            "title": "KotlinReleaseVersion"
+                                                         },
+                                                         "value": {
+                                                            "type": "string",
+                                                            "title": "KlibIrInlinerMode"
+                                                         }
+                                                      },
+                                                      "title": "ClosedRangeKotlinReleaseVersion"
+                                                   },
+                                                   "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                }
+                                             },
+                                             "title": "ReleaseDependent"
+                                          }
+                                       },
+                                       "title": "KlibIrInlinerModeType"
+                                    },
+                                    {
+                                       "type": "object",
+                                       "required": [
+                                          "isNullable",
+                                          "defaultValue"
+                                       ],
+                                       "properties": {
+                                          "isNullable": {
+                                             "type": "object",
+                                             "required": [
+                                                "current",
+                                                "valueInVersions"
+                                             ],
+                                             "properties": {
+                                                "current": {
+                                                   "type": "boolean",
+                                                   "title": "Boolean"
+                                                },
+                                                "valueInVersions": {
+                                                   "type": "array",
+                                                   "items": {
+                                                      "type": "object",
+                                                      "required": [
+                                                         "minReleaseVersion",
+                                                         "maxReleaseVersion",
+                                                         "value"
+                                                      ],
+                                                      "properties": {
+                                                         "minReleaseVersion": {
+                                                            "type": "string",
+                                                            "title": "KotlinReleaseVersion"
+                                                         },
+                                                         "maxReleaseVersion": {
+                                                            "type": "string",
+                                                            "title": "KotlinReleaseVersion"
+                                                         },
+                                                         "value": {
+                                                            "type": "boolean",
+                                                            "title": "Boolean"
+                                                         }
+                                                      },
+                                                      "title": "ClosedRangeKotlinReleaseVersion"
+                                                   },
+                                                   "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                }
+                                             },
+                                             "title": "ReleaseDependent"
+                                          },
+                                          "defaultValue": {
+                                             "type": "object",
+                                             "required": [
+                                                "valueInVersions"
+                                             ],
+                                             "properties": {
+                                                "current": {
+                                                   "type": "string",
                                                    "title": "ExplicitApiMode"
                                                 },
                                                 "valueInVersions": {
@@ -2353,6 +2591,96 @@
                                                    }
                                                 },
                                                 "title": "IntType"
+                                             },
+                                             {
+                                                "type": "object",
+                                                "required": [
+                                                   "isNullable",
+                                                   "defaultValue"
+                                                ],
+                                                "properties": {
+                                                   "isNullable": {
+                                                      "type": "object",
+                                                      "required": [
+                                                         "current",
+                                                         "valueInVersions"
+                                                      ],
+                                                      "properties": {
+                                                         "current": {
+                                                            "type": "boolean",
+                                                            "title": "Boolean"
+                                                         },
+                                                         "valueInVersions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                               "type": "object",
+                                                               "required": [
+                                                                  "minReleaseVersion",
+                                                                  "maxReleaseVersion",
+                                                                  "value"
+                                                               ],
+                                                               "properties": {
+                                                                  "minReleaseVersion": {
+                                                                     "type": "string",
+                                                                     "title": "KotlinReleaseVersion"
+                                                                  },
+                                                                  "maxReleaseVersion": {
+                                                                     "type": "string",
+                                                                     "title": "KotlinReleaseVersion"
+                                                                  },
+                                                                  "value": {
+                                                                     "type": "boolean",
+                                                                     "title": "Boolean"
+                                                                  }
+                                                               },
+                                                               "title": "ClosedRangeKotlinReleaseVersion"
+                                                            },
+                                                            "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                         }
+                                                      },
+                                                      "title": "ReleaseDependent"
+                                                   },
+                                                   "defaultValue": {
+                                                      "type": "object",
+                                                      "required": [
+                                                         "valueInVersions"
+                                                      ],
+                                                      "properties": {
+                                                         "current": {
+                                                            "type": "string",
+                                                            "title": "KlibIrInlinerMode"
+                                                         },
+                                                         "valueInVersions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                               "type": "object",
+                                                               "required": [
+                                                                  "minReleaseVersion",
+                                                                  "maxReleaseVersion"
+                                                               ],
+                                                               "properties": {
+                                                                  "minReleaseVersion": {
+                                                                     "type": "string",
+                                                                     "title": "KotlinReleaseVersion"
+                                                                  },
+                                                                  "maxReleaseVersion": {
+                                                                     "type": "string",
+                                                                     "title": "KotlinReleaseVersion"
+                                                                  },
+                                                                  "value": {
+                                                                     "type": "string",
+                                                                     "title": "KlibIrInlinerMode"
+                                                                  }
+                                                               },
+                                                               "title": "ClosedRangeKotlinReleaseVersion"
+                                                            },
+                                                            "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                         }
+                                                      },
+                                                      "title": "ReleaseDependent"
+                                                   }
+                                                },
+                                                "title": "KlibIrInlinerModeType"
                                              },
                                              {
                                                 "type": "object",
@@ -3305,6 +3633,96 @@
                                                                "properties": {
                                                                   "current": {
                                                                      "type": "string",
+                                                                     "title": "KlibIrInlinerMode"
+                                                                  },
+                                                                  "valueInVersions": {
+                                                                     "type": "array",
+                                                                     "items": {
+                                                                        "type": "object",
+                                                                        "required": [
+                                                                           "minReleaseVersion",
+                                                                           "maxReleaseVersion"
+                                                                        ],
+                                                                        "properties": {
+                                                                           "minReleaseVersion": {
+                                                                              "type": "string",
+                                                                              "title": "KotlinReleaseVersion"
+                                                                           },
+                                                                           "maxReleaseVersion": {
+                                                                              "type": "string",
+                                                                              "title": "KotlinReleaseVersion"
+                                                                           },
+                                                                           "value": {
+                                                                              "type": "string",
+                                                                              "title": "KlibIrInlinerMode"
+                                                                           }
+                                                                        },
+                                                                        "title": "ClosedRangeKotlinReleaseVersion"
+                                                                     },
+                                                                     "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                  }
+                                                               },
+                                                               "title": "ReleaseDependent"
+                                                            }
+                                                         },
+                                                         "title": "KlibIrInlinerModeType"
+                                                      },
+                                                      {
+                                                         "type": "object",
+                                                         "required": [
+                                                            "isNullable",
+                                                            "defaultValue"
+                                                         ],
+                                                         "properties": {
+                                                            "isNullable": {
+                                                               "type": "object",
+                                                               "required": [
+                                                                  "current",
+                                                                  "valueInVersions"
+                                                               ],
+                                                               "properties": {
+                                                                  "current": {
+                                                                     "type": "boolean",
+                                                                     "title": "Boolean"
+                                                                  },
+                                                                  "valueInVersions": {
+                                                                     "type": "array",
+                                                                     "items": {
+                                                                        "type": "object",
+                                                                        "required": [
+                                                                           "minReleaseVersion",
+                                                                           "maxReleaseVersion",
+                                                                           "value"
+                                                                        ],
+                                                                        "properties": {
+                                                                           "minReleaseVersion": {
+                                                                              "type": "string",
+                                                                              "title": "KotlinReleaseVersion"
+                                                                           },
+                                                                           "maxReleaseVersion": {
+                                                                              "type": "string",
+                                                                              "title": "KotlinReleaseVersion"
+                                                                           },
+                                                                           "value": {
+                                                                              "type": "boolean",
+                                                                              "title": "Boolean"
+                                                                           }
+                                                                        },
+                                                                        "title": "ClosedRangeKotlinReleaseVersion"
+                                                                     },
+                                                                     "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                  }
+                                                               },
+                                                               "title": "ReleaseDependent"
+                                                            },
+                                                            "defaultValue": {
+                                                               "type": "object",
+                                                               "required": [
+                                                                  "valueInVersions"
+                                                               ],
+                                                               "properties": {
+                                                                  "current": {
+                                                                     "type": "string",
                                                                      "title": "ExplicitApiMode"
                                                                   },
                                                                   "valueInVersions": {
@@ -4143,6 +4561,96 @@
                                                                      }
                                                                   },
                                                                   "title": "IntType"
+                                                               },
+                                                               {
+                                                                  "type": "object",
+                                                                  "required": [
+                                                                     "isNullable",
+                                                                     "defaultValue"
+                                                                  ],
+                                                                  "properties": {
+                                                                     "isNullable": {
+                                                                        "type": "object",
+                                                                        "required": [
+                                                                           "current",
+                                                                           "valueInVersions"
+                                                                        ],
+                                                                        "properties": {
+                                                                           "current": {
+                                                                              "type": "boolean",
+                                                                              "title": "Boolean"
+                                                                           },
+                                                                           "valueInVersions": {
+                                                                              "type": "array",
+                                                                              "items": {
+                                                                                 "type": "object",
+                                                                                 "required": [
+                                                                                    "minReleaseVersion",
+                                                                                    "maxReleaseVersion",
+                                                                                    "value"
+                                                                                 ],
+                                                                                 "properties": {
+                                                                                    "minReleaseVersion": {
+                                                                                       "type": "string",
+                                                                                       "title": "KotlinReleaseVersion"
+                                                                                    },
+                                                                                    "maxReleaseVersion": {
+                                                                                       "type": "string",
+                                                                                       "title": "KotlinReleaseVersion"
+                                                                                    },
+                                                                                    "value": {
+                                                                                       "type": "boolean",
+                                                                                       "title": "Boolean"
+                                                                                    }
+                                                                                 },
+                                                                                 "title": "ClosedRangeKotlinReleaseVersion"
+                                                                              },
+                                                                              "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                           }
+                                                                        },
+                                                                        "title": "ReleaseDependent"
+                                                                     },
+                                                                     "defaultValue": {
+                                                                        "type": "object",
+                                                                        "required": [
+                                                                           "valueInVersions"
+                                                                        ],
+                                                                        "properties": {
+                                                                           "current": {
+                                                                              "type": "string",
+                                                                              "title": "KlibIrInlinerMode"
+                                                                           },
+                                                                           "valueInVersions": {
+                                                                              "type": "array",
+                                                                              "items": {
+                                                                                 "type": "object",
+                                                                                 "required": [
+                                                                                    "minReleaseVersion",
+                                                                                    "maxReleaseVersion"
+                                                                                 ],
+                                                                                 "properties": {
+                                                                                    "minReleaseVersion": {
+                                                                                       "type": "string",
+                                                                                       "title": "KotlinReleaseVersion"
+                                                                                    },
+                                                                                    "maxReleaseVersion": {
+                                                                                       "type": "string",
+                                                                                       "title": "KotlinReleaseVersion"
+                                                                                    },
+                                                                                    "value": {
+                                                                                       "type": "string",
+                                                                                       "title": "KlibIrInlinerMode"
+                                                                                    }
+                                                                                 },
+                                                                                 "title": "ClosedRangeKotlinReleaseVersion"
+                                                                              },
+                                                                              "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                           }
+                                                                        },
+                                                                        "title": "ReleaseDependent"
+                                                                     }
+                                                                  },
+                                                                  "title": "KlibIrInlinerModeType"
                                                                },
                                                                {
                                                                   "type": "object",
@@ -5095,6 +5603,96 @@
                                                                                  "properties": {
                                                                                     "current": {
                                                                                        "type": "string",
+                                                                                       "title": "KlibIrInlinerMode"
+                                                                                    },
+                                                                                    "valueInVersions": {
+                                                                                       "type": "array",
+                                                                                       "items": {
+                                                                                          "type": "object",
+                                                                                          "required": [
+                                                                                             "minReleaseVersion",
+                                                                                             "maxReleaseVersion"
+                                                                                          ],
+                                                                                          "properties": {
+                                                                                             "minReleaseVersion": {
+                                                                                                "type": "string",
+                                                                                                "title": "KotlinReleaseVersion"
+                                                                                             },
+                                                                                             "maxReleaseVersion": {
+                                                                                                "type": "string",
+                                                                                                "title": "KotlinReleaseVersion"
+                                                                                             },
+                                                                                             "value": {
+                                                                                                "type": "string",
+                                                                                                "title": "KlibIrInlinerMode"
+                                                                                             }
+                                                                                          },
+                                                                                          "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                       },
+                                                                                       "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                    }
+                                                                                 },
+                                                                                 "title": "ReleaseDependent"
+                                                                              }
+                                                                           },
+                                                                           "title": "KlibIrInlinerModeType"
+                                                                        },
+                                                                        {
+                                                                           "type": "object",
+                                                                           "required": [
+                                                                              "isNullable",
+                                                                              "defaultValue"
+                                                                           ],
+                                                                           "properties": {
+                                                                              "isNullable": {
+                                                                                 "type": "object",
+                                                                                 "required": [
+                                                                                    "current",
+                                                                                    "valueInVersions"
+                                                                                 ],
+                                                                                 "properties": {
+                                                                                    "current": {
+                                                                                       "type": "boolean",
+                                                                                       "title": "Boolean"
+                                                                                    },
+                                                                                    "valueInVersions": {
+                                                                                       "type": "array",
+                                                                                       "items": {
+                                                                                          "type": "object",
+                                                                                          "required": [
+                                                                                             "minReleaseVersion",
+                                                                                             "maxReleaseVersion",
+                                                                                             "value"
+                                                                                          ],
+                                                                                          "properties": {
+                                                                                             "minReleaseVersion": {
+                                                                                                "type": "string",
+                                                                                                "title": "KotlinReleaseVersion"
+                                                                                             },
+                                                                                             "maxReleaseVersion": {
+                                                                                                "type": "string",
+                                                                                                "title": "KotlinReleaseVersion"
+                                                                                             },
+                                                                                             "value": {
+                                                                                                "type": "boolean",
+                                                                                                "title": "Boolean"
+                                                                                             }
+                                                                                          },
+                                                                                          "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                       },
+                                                                                       "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                    }
+                                                                                 },
+                                                                                 "title": "ReleaseDependent"
+                                                                              },
+                                                                              "defaultValue": {
+                                                                                 "type": "object",
+                                                                                 "required": [
+                                                                                    "valueInVersions"
+                                                                                 ],
+                                                                                 "properties": {
+                                                                                    "current": {
+                                                                                       "type": "string",
                                                                                        "title": "ExplicitApiMode"
                                                                                     },
                                                                                     "valueInVersions": {
@@ -5933,6 +6531,96 @@
                                                                                        }
                                                                                     },
                                                                                     "title": "IntType"
+                                                                                 },
+                                                                                 {
+                                                                                    "type": "object",
+                                                                                    "required": [
+                                                                                       "isNullable",
+                                                                                       "defaultValue"
+                                                                                    ],
+                                                                                    "properties": {
+                                                                                       "isNullable": {
+                                                                                          "type": "object",
+                                                                                          "required": [
+                                                                                             "current",
+                                                                                             "valueInVersions"
+                                                                                          ],
+                                                                                          "properties": {
+                                                                                             "current": {
+                                                                                                "type": "boolean",
+                                                                                                "title": "Boolean"
+                                                                                             },
+                                                                                             "valueInVersions": {
+                                                                                                "type": "array",
+                                                                                                "items": {
+                                                                                                   "type": "object",
+                                                                                                   "required": [
+                                                                                                      "minReleaseVersion",
+                                                                                                      "maxReleaseVersion",
+                                                                                                      "value"
+                                                                                                   ],
+                                                                                                   "properties": {
+                                                                                                      "minReleaseVersion": {
+                                                                                                         "type": "string",
+                                                                                                         "title": "KotlinReleaseVersion"
+                                                                                                      },
+                                                                                                      "maxReleaseVersion": {
+                                                                                                         "type": "string",
+                                                                                                         "title": "KotlinReleaseVersion"
+                                                                                                      },
+                                                                                                      "value": {
+                                                                                                         "type": "boolean",
+                                                                                                         "title": "Boolean"
+                                                                                                      }
+                                                                                                   },
+                                                                                                   "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                                },
+                                                                                                "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                             }
+                                                                                          },
+                                                                                          "title": "ReleaseDependent"
+                                                                                       },
+                                                                                       "defaultValue": {
+                                                                                          "type": "object",
+                                                                                          "required": [
+                                                                                             "valueInVersions"
+                                                                                          ],
+                                                                                          "properties": {
+                                                                                             "current": {
+                                                                                                "type": "string",
+                                                                                                "title": "KlibIrInlinerMode"
+                                                                                             },
+                                                                                             "valueInVersions": {
+                                                                                                "type": "array",
+                                                                                                "items": {
+                                                                                                   "type": "object",
+                                                                                                   "required": [
+                                                                                                      "minReleaseVersion",
+                                                                                                      "maxReleaseVersion"
+                                                                                                   ],
+                                                                                                   "properties": {
+                                                                                                      "minReleaseVersion": {
+                                                                                                         "type": "string",
+                                                                                                         "title": "KotlinReleaseVersion"
+                                                                                                      },
+                                                                                                      "maxReleaseVersion": {
+                                                                                                         "type": "string",
+                                                                                                         "title": "KotlinReleaseVersion"
+                                                                                                      },
+                                                                                                      "value": {
+                                                                                                         "type": "string",
+                                                                                                         "title": "KlibIrInlinerMode"
+                                                                                                      }
+                                                                                                   },
+                                                                                                   "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                                },
+                                                                                                "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                             }
+                                                                                          },
+                                                                                          "title": "ReleaseDependent"
+                                                                                       }
+                                                                                    },
+                                                                                    "title": "KlibIrInlinerModeType"
                                                                                  },
                                                                                  {
                                                                                     "type": "object",
@@ -6885,6 +7573,96 @@
                                                                                                    "properties": {
                                                                                                       "current": {
                                                                                                          "type": "string",
+                                                                                                         "title": "KlibIrInlinerMode"
+                                                                                                      },
+                                                                                                      "valueInVersions": {
+                                                                                                         "type": "array",
+                                                                                                         "items": {
+                                                                                                            "type": "object",
+                                                                                                            "required": [
+                                                                                                               "minReleaseVersion",
+                                                                                                               "maxReleaseVersion"
+                                                                                                            ],
+                                                                                                            "properties": {
+                                                                                                               "minReleaseVersion": {
+                                                                                                                  "type": "string",
+                                                                                                                  "title": "KotlinReleaseVersion"
+                                                                                                               },
+                                                                                                               "maxReleaseVersion": {
+                                                                                                                  "type": "string",
+                                                                                                                  "title": "KotlinReleaseVersion"
+                                                                                                               },
+                                                                                                               "value": {
+                                                                                                                  "type": "string",
+                                                                                                                  "title": "KlibIrInlinerMode"
+                                                                                                               }
+                                                                                                            },
+                                                                                                            "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                                         },
+                                                                                                         "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                                      }
+                                                                                                   },
+                                                                                                   "title": "ReleaseDependent"
+                                                                                                }
+                                                                                             },
+                                                                                             "title": "KlibIrInlinerModeType"
+                                                                                          },
+                                                                                          {
+                                                                                             "type": "object",
+                                                                                             "required": [
+                                                                                                "isNullable",
+                                                                                                "defaultValue"
+                                                                                             ],
+                                                                                             "properties": {
+                                                                                                "isNullable": {
+                                                                                                   "type": "object",
+                                                                                                   "required": [
+                                                                                                      "current",
+                                                                                                      "valueInVersions"
+                                                                                                   ],
+                                                                                                   "properties": {
+                                                                                                      "current": {
+                                                                                                         "type": "boolean",
+                                                                                                         "title": "Boolean"
+                                                                                                      },
+                                                                                                      "valueInVersions": {
+                                                                                                         "type": "array",
+                                                                                                         "items": {
+                                                                                                            "type": "object",
+                                                                                                            "required": [
+                                                                                                               "minReleaseVersion",
+                                                                                                               "maxReleaseVersion",
+                                                                                                               "value"
+                                                                                                            ],
+                                                                                                            "properties": {
+                                                                                                               "minReleaseVersion": {
+                                                                                                                  "type": "string",
+                                                                                                                  "title": "KotlinReleaseVersion"
+                                                                                                               },
+                                                                                                               "maxReleaseVersion": {
+                                                                                                                  "type": "string",
+                                                                                                                  "title": "KotlinReleaseVersion"
+                                                                                                               },
+                                                                                                               "value": {
+                                                                                                                  "type": "boolean",
+                                                                                                                  "title": "Boolean"
+                                                                                                               }
+                                                                                                            },
+                                                                                                            "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                                         },
+                                                                                                         "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                                      }
+                                                                                                   },
+                                                                                                   "title": "ReleaseDependent"
+                                                                                                },
+                                                                                                "defaultValue": {
+                                                                                                   "type": "object",
+                                                                                                   "required": [
+                                                                                                      "valueInVersions"
+                                                                                                   ],
+                                                                                                   "properties": {
+                                                                                                      "current": {
+                                                                                                         "type": "string",
                                                                                                          "title": "ExplicitApiMode"
                                                                                                       },
                                                                                                       "valueInVersions": {
@@ -7733,6 +8511,78 @@
                                                                                                             "properties": {
                                                                                                                "current": {
                                                                                                                   "type": "string",
+                                                                                                                  "title": "KlibIrInlinerMode"
+                                                                                                               },
+                                                                                                               "valueInVersions": {
+                                                                                                                  "type": "array",
+                                                                                                                  "items": {
+                                                                                                                     "type": "object",
+                                                                                                                     "required": [
+                                                                                                                        "minReleaseVersion",
+                                                                                                                        "maxReleaseVersion"
+                                                                                                                     ],
+                                                                                                                     "properties": {
+                                                                                                                        "minReleaseVersion": {},
+                                                                                                                        "maxReleaseVersion": {},
+                                                                                                                        "value": {}
+                                                                                                                     },
+                                                                                                                     "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                                                  },
+                                                                                                                  "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                                               }
+                                                                                                            },
+                                                                                                            "title": "ReleaseDependent"
+                                                                                                         }
+                                                                                                      },
+                                                                                                      "title": "KlibIrInlinerModeType"
+                                                                                                   },
+                                                                                                   {
+                                                                                                      "type": "object",
+                                                                                                      "required": [
+                                                                                                         "isNullable",
+                                                                                                         "defaultValue"
+                                                                                                      ],
+                                                                                                      "properties": {
+                                                                                                         "isNullable": {
+                                                                                                            "type": "object",
+                                                                                                            "required": [
+                                                                                                               "current",
+                                                                                                               "valueInVersions"
+                                                                                                            ],
+                                                                                                            "properties": {
+                                                                                                               "current": {
+                                                                                                                  "type": "boolean",
+                                                                                                                  "title": "Boolean"
+                                                                                                               },
+                                                                                                               "valueInVersions": {
+                                                                                                                  "type": "array",
+                                                                                                                  "items": {
+                                                                                                                     "type": "object",
+                                                                                                                     "required": [
+                                                                                                                        "minReleaseVersion",
+                                                                                                                        "maxReleaseVersion",
+                                                                                                                        "value"
+                                                                                                                     ],
+                                                                                                                     "properties": {
+                                                                                                                        "minReleaseVersion": {},
+                                                                                                                        "maxReleaseVersion": {},
+                                                                                                                        "value": {}
+                                                                                                                     },
+                                                                                                                     "title": "ClosedRangeKotlinReleaseVersion"
+                                                                                                                  },
+                                                                                                                  "title": "ArrayList<ClosedRangeKotlinReleaseVersion>"
+                                                                                                               }
+                                                                                                            },
+                                                                                                            "title": "ReleaseDependent"
+                                                                                                         },
+                                                                                                         "defaultValue": {
+                                                                                                            "type": "object",
+                                                                                                            "required": [
+                                                                                                               "valueInVersions"
+                                                                                                            ],
+                                                                                                            "properties": {
+                                                                                                               "current": {
+                                                                                                                  "type": "string",
                                                                                                                   "title": "ExplicitApiMode"
                                                                                                                },
                                                                                                                "valueInVersions": {
@@ -8382,6 +9232,39 @@
                                                                                                                      "title": "ReleaseDependent"
                                                                                                                   }
                                                                                                                },
+                                                                                                               "title": "KlibIrInlinerModeType"
+                                                                                                            },
+                                                                                                            {
+                                                                                                               "type": "object",
+                                                                                                               "required": [
+                                                                                                                  "isNullable",
+                                                                                                                  "defaultValue"
+                                                                                                               ],
+                                                                                                               "properties": {
+                                                                                                                  "isNullable": {
+                                                                                                                     "type": "object",
+                                                                                                                     "required": [
+                                                                                                                        "current",
+                                                                                                                        "valueInVersions"
+                                                                                                                     ],
+                                                                                                                     "properties": {
+                                                                                                                        "current": {},
+                                                                                                                        "valueInVersions": {}
+                                                                                                                     },
+                                                                                                                     "title": "ReleaseDependent"
+                                                                                                                  },
+                                                                                                                  "defaultValue": {
+                                                                                                                     "type": "object",
+                                                                                                                     "required": [
+                                                                                                                        "valueInVersions"
+                                                                                                                     ],
+                                                                                                                     "properties": {
+                                                                                                                        "current": {},
+                                                                                                                        "valueInVersions": {}
+                                                                                                                     },
+                                                                                                                     "title": "ReleaseDependent"
+                                                                                                                  }
+                                                                                                               },
                                                                                                                "title": "KotlinExplicitApiModeType"
                                                                                                             },
                                                                                                             {
@@ -8690,6 +9573,12 @@
                                                                                                                },
                                                                                                                "valueType": {
                                                                                                                   "anyOf": [
+                                                                                                                     {
+                                                                                                                        "type": {},
+                                                                                                                        "required": {},
+                                                                                                                        "properties": {},
+                                                                                                                        "title": {}
+                                                                                                                     },
                                                                                                                      {
                                                                                                                         "type": {},
                                                                                                                         "required": {},

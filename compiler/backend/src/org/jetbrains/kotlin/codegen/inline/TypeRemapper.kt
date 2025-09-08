@@ -44,10 +44,9 @@ class TypeRemapper private constructor(
     }
 
     fun registerTypeParameter(name: String) {
-        //TODO: enable after KT-34656 proper fix
-//        assert(typeParametersMapping[name] == null) {
-//            "Type parameter already registered $name"
-//        }
+        assert(typeParametersMapping[name] == null) {
+            "Type parameter already registered $name"
+        }
         typeParametersMapping[name] = null
     }
 

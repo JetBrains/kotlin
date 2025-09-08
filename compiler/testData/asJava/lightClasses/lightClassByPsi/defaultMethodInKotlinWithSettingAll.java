@@ -3,5 +3,7 @@ public abstract interface KtInterface /* KtInterface*/ {
 
   public abstract void withoutBody();//  withoutBody()
 
-  class DefaultImpls ...
+  public static final class DefaultImpls /* KtInterface.DefaultImpls*/ {
+    public static void defaultFun(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() KtInterface);//  defaultFun(@org.jetbrains.annotations.NotNull() KtInterface)
+  }
 }

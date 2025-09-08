@@ -32,3 +32,6 @@ class Creature() {
         C().ccc++
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, incrementDecrementExpression, init, integerLiteral,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

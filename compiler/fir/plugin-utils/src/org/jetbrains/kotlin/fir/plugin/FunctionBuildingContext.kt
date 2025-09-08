@@ -85,7 +85,7 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
             origin = valueParameter.key.origin
             returnTypeRef = valueParameter.typeProvider.invoke(functionTypeParameters).toFirResolvedTypeRef()
             name = valueParameter.name
-            symbol = FirValueParameterSymbol(name)
+            symbol = FirValueParameterSymbol()
             if (valueParameter.hasDefaultValue) {
                 // TODO: check how it will actually work in fir2ir
                 defaultValue = buildExpressionStub { coneTypeOrNull = session.builtinTypes.nothingType.coneType }

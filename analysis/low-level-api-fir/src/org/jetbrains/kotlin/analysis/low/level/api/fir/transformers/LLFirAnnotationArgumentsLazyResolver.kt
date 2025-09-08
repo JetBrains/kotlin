@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
@@ -144,7 +143,6 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
             target,
             target.llFirSession,
             AnnotationArgumentsStateKeepers.DECLARATION,
-            prepareTarget = FirLazyBodiesCalculator::calculateAnnotations,
         ) {
             transformAnnotations(target)
         }
@@ -199,7 +197,10 @@ internal object AnnotationArgumentsStateKeepers {
     private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, _, session ->
         builder.add(ANNOTATION_BASE, session)
         builder.add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
-        builder.add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
+        builder.add(FirAnnotation::typeArguments, FirAnnotation::replaceTypeArguments) { typeArguments ->
+            // To avoid modification of the original list
+            if (typeArguments.isEmpty()) typeArguments else ArrayList(typeArguments)
+        }
     }
 
     private val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { builder, annotation, session ->
@@ -208,14 +209,34 @@ internal object AnnotationArgumentsStateKeepers {
         }
     }
 
-    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { builder, annotationCall, session ->
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { builder, _, _ ->
         builder.add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
+        builder.add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList)
+    }
 
-        val argumentList = annotationCall.argumentList
-        if (argumentList !is FirResolvedArgumentList && argumentList !is FirEmptyArgumentList) {
-            builder.add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
+    val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { builder, target, session ->
+        val annotationCalls = hashSetOf<FirAnnotationCall>()
+
+        val visitor = object : NonLocalAnnotationVisitor<Unit>() {
+            override fun processAnnotation(annotation: FirAnnotation, data: Unit) {
+                builder.entity(annotation, ANNOTATION, session)
+
+                if (annotation is FirAnnotationCall) {
+                    annotationCalls += annotation
+                }
+            }
+        }
+
+        target.accept(visitor, Unit)
+
+        // Argument calculation has to be done after the state keeper finished to properly handle possible exception from the argument calculation
+        builder.postProcess {
+            for (annotationCall in annotationCalls) {
+                val oldList = annotationCall.argumentList
+                if (oldList is FirResolvedArgumentList || oldList is FirEmptyArgumentList) continue
+
                 val newArguments = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotationCall, session).arguments
-                buildArgumentList {
+                val newList = buildArgumentList {
                     source = oldList.source
                     for ((index, argument) in oldList.arguments.withIndex()) {
                         val replacement = when {
@@ -226,20 +247,9 @@ internal object AnnotationArgumentsStateKeepers {
                         arguments.add(replacement)
                     }
                 }
+
+                annotationCall.replaceArgumentList(newList)
             }
         }
-    }
-
-    val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { builder, target, session ->
-        val visitor = object : NonLocalAnnotationVisitor<Unit>() {
-            override fun processAnnotation(annotation: FirAnnotation, data: Unit) {
-                builder.entity(annotation, ANNOTATION, session)
-            }
-        }
-
-        target.accept(visitor, Unit)
     }
 }
-
-private val FirAnnotation.typeArgumentsCopied: List<FirTypeProjection>
-    get() = if (typeArguments.isEmpty()) emptyList() else ArrayList(typeArguments)

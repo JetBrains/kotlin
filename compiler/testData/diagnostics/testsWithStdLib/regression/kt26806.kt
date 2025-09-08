@@ -9,3 +9,5 @@ fun f() {}
 
 @Anno(myPi)
 fun g() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, functionDeclaration, primaryConstructor, propertyDeclaration */

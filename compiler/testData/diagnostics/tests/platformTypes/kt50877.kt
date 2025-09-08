@@ -31,3 +31,7 @@ val model = SortedListModel<Schematic>(Comparator.comparing { b1: Schematic ->
         else -> 0
     }
 }.thenComparing { b1: Schematic -> b1.name!! })
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, flexibleType, functionDeclaration,
+inProjection, integerLiteral, javaFunction, javaType, lambdaLiteral, nullableType, outProjection, override,
+propertyDeclaration, samConversion, stringLiteral, whenExpression */

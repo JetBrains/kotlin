@@ -1,5 +1,3 @@
-// TODO: should be fixed for FIR, see KT-60764
-
 package test
 
 class SuspendLambda {
@@ -22,6 +20,9 @@ class SuspendLambda {
 
     fun override(p: String, b: (suspend (P) -> Unit)) = null
     fun override(b: (suspend (P) -> Unit)) = null
+
+    fun annotatedReturnSuspend(): @A suspend (P) -> Unit = {}
+    fun returnSuspend(): suspend (P) -> Unit = {}
 }
 
 interface P

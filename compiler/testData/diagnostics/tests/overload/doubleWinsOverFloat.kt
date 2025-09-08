@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
 // DIAGNOSTICS: -USELESS_IS_CHECK, -DEBUG_INFO_SMARTCAST
 // ISSUE: KT-57194
@@ -19,3 +19,6 @@ fun test(arg: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, ifExpression, intersectionType,
+isExpression, smartcast */

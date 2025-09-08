@@ -91,3 +91,6 @@ fun test(){
     Test3(Base1Impl2(1), Base2Impl2(7.8)).foo(1)
 }
 
+/* GENERATED_FIR_TAGS: actual, asExpression, classDeclaration, expect, functionDeclaration, getter,
+inheritanceDelegation, integerLiteral, interfaceDeclaration, intersectionType, nullableType, override,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

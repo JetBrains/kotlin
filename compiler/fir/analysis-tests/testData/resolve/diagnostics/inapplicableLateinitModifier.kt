@@ -37,3 +37,6 @@ fun rest() {
     lateinit var a: A
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var b: B<String> = B()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, lateinit, localProperty, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, setter, stringLiteral, typeConstraint, typeParameter */

@@ -30,3 +30,6 @@ fun <Y : Any> inANullable(x: Array<in Y?>): Array<Y> = TODO()
 
 fun <X : Any> outA(x: Array<out X>): Array<X> = TODO()
 fun <Y : Any> inA(x: Array<in Y>): Array<Y> = TODO()
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, dnnType, functionDeclaration, inProjection, localProperty,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

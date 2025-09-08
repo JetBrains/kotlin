@@ -29,3 +29,6 @@ class A {
     var a = 24.<!SYNTAX!><!>
     var b = 42.0
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, integerLiteral, localFunction,
+localProperty, propertyDeclaration, stringLiteral */

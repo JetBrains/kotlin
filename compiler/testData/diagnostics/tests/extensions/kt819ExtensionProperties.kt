@@ -36,3 +36,7 @@ class B() : A() {
         s.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, ifExpression,
+integerLiteral, isExpression, javaFunction, override, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, smartcast, thisExpression */

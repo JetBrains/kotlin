@@ -28,3 +28,6 @@ fun main() {
     val c = C.create()
     c.foo
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, override, propertyDeclaration */

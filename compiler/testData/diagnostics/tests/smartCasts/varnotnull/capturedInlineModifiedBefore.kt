@@ -14,3 +14,6 @@ fun test() {
     }
     <!SMARTCAST_IMPOSSIBLE!>label<!>.isBlank()
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

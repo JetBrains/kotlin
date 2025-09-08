@@ -13,3 +13,5 @@ fun test() {
         "b" to ::bar,
     )
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, nullableType, stringLiteral */

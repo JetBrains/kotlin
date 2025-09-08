@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
@@ -42,12 +43,12 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirBasicExpressionCheck
             else -> null
         } ?: return
 
-        val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol(context.session) ?: return
+        val dispatchClassSymbol = dispatchReceiver.resolvedType.toRegularClassSymbol() ?: return
         val calleeReference = expression.toReference(context.session)
         val resolvedSymbol = calleeReference?.toResolvedCallableSymbol() ?: return
 
         if (resolvedSymbol is FirPropertySymbol &&
-            context.languageVersionSettings.supportsFeature(LanguageFeature.AllowAccessToProtectedFieldFromSuperCompanion)
+            LanguageFeature.AllowAccessToProtectedFieldFromSuperCompanion.isEnabled()
         ) {
             if (resolvedSymbol.isConst) return
 

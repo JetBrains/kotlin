@@ -21,3 +21,6 @@ fun test2() {
         mlist.add("") // kotlin.Boolean
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, javaProperty,
+localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral, whenExpression, whenWithSubject */

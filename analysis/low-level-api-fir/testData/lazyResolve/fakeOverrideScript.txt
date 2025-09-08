@@ -4,9 +4,9 @@ FILE: [ResolvedTo(RAW_FIR)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,9 +49,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(RAW_FIR)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -94,9 +94,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun expression([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -139,9 +139,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun expression([ResolvedTo(COMPANION_GENERATION)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(COMPANION_GENERATION)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -184,9 +184,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun expression([ResolvedTo(SUPER_TYPES)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(SUPER_TYPES)] expression: IrConst<*>): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -229,9 +229,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun expression([ResolvedTo(TYPES)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(TYPES)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -274,9 +274,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun expression([ResolvedTo(STATUS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(STATUS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,9 +319,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun expression([ResolvedTo(EXPECT_ACTUAL_MATCHING)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(EXPECT_ACTUAL_MATCHING)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -364,9 +364,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -387,7 +387,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -409,9 +409,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -432,7 +432,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -454,9 +454,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -477,7 +477,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -499,9 +499,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -522,7 +522,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(RAW_FIR)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -544,7 +544,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(BODY_RESOLVE)] lval kind: R|Kind<out kotlin/Any?>| = R|<local>/expression|.R|SubstitutionOverride</IrConst.kind: R|Kind<CapturedType(*)>|>|) {
                 ($subj$ is R|Kind.Null|) ->  {
                     R|<local>/kind|.R|SubstitutionOverride</Kind.Null.valueOf: R|kotlin/Nothing?|>|(R|<local>/expression|)
@@ -555,7 +555,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=Kind] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/Kind.asString] asString: R|kotlin/String|): R|Kind<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -578,7 +578,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(STATUS)] T>(): R|IrConst<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -600,7 +600,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
             when ([ResolvedTo(BODY_RESOLVE)] lval kind: R|Kind<out kotlin/Any?>| = R|<local>/expression|.R|SubstitutionOverride</IrConst.kind: R|Kind<CapturedType(*)>|>|) {
                 ($subj$ is R|Kind.Null|) ->  {
                     R|<local>/kind|.R|SubstitutionOverride</Kind.Null.valueOf: R|kotlin/Nothing?|>|(R|<local>/expression|)
@@ -611,7 +611,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
 
         }
 
-        public sealed [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public sealed [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class Kind<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Kind] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Kind.asString] asString: R|kotlin/String|): R|Kind<T>| {
                 super<R|kotlin/Any|>()
             }
@@ -636,7 +636,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class IrConst<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class IrConst<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|IrConst<T>| {
                 super<R|kotlin/Any|>()
             }

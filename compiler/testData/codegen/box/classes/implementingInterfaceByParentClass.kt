@@ -4,6 +4,9 @@ package com.example
 
 interface SimpleRouter<ROUTE> {
     val currentRoute: ROUTE
+
+    // `navigate_rnj4s8_k$` is the original (generic) function. We generate exactly one bridge from where it's called.
+    // FUNCTION_CALLED_TIMES: navigate_rnj4s8_k$ count=1
     fun navigate(route: ROUTE)
 }
 

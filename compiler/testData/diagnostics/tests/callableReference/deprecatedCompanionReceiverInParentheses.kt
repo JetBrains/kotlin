@@ -33,3 +33,7 @@ fun case() {
 
     (V.Companion)::a checkType { _<KProperty0<Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, infix, integerLiteral, lambdaLiteral, nullableType, objectDeclaration,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeParameter, typeWithExtension */

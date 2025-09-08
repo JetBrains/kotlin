@@ -25,3 +25,6 @@ class KotlinDerived2 : Derived() {
 fun main() {
     Derived().foo<String>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType,
+nullableType, override, typeConstraint, typeParameter */

@@ -11,3 +11,6 @@ fun Array<String>.length() : Int {
 fun test(array : Array<String?>?) {
     array?.sure<Array<String?>>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>length<!>()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+safeCall, thisExpression, typeConstraint, typeParameter */

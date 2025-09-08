@@ -52,3 +52,7 @@ fun testInOut() {
 
     Inv<Int>().outf(<!TOO_MANY_ARGUMENTS!>1<!>) // Wrong Arg
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, inProjection, infix, integerLiteral, nullableType, out, outProjection, primaryConstructor,
+starProjection, stringLiteral, typeParameter, typeWithExtension */

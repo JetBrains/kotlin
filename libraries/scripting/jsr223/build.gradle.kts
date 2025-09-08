@@ -30,6 +30,3 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 standardPublicJars()
-
-projectTest(parallel = true)
-

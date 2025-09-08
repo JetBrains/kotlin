@@ -14,3 +14,6 @@ public fun box() : Int {
     val m = ++<!DEBUG_INFO_SMARTCAST!>i<!>
     return <!DEBUG_INFO_SMARTCAST!>j<!> + k + m + <!DEBUG_INFO_SMARTCAST!>i<!> + ii
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

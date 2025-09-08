@@ -27,3 +27,5 @@ interface KDerived12a : K1, K2, J
 interface KDerived12b : K1, J, K2
 
 interface KDerived12c : J, K1, K2
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType */

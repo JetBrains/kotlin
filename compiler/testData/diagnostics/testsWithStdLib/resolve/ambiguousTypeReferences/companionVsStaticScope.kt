@@ -19,3 +19,6 @@ fun <T> take(it: T): T = it
 val x = Foo.Bar            // K1: val Bar, K2: object Bar
 val y = take(Foo.Bar)      // K1: val Bar, K2: object Bar
 val z = Foo.Bar.let { it } // K1 & K2: object Bar
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, lambdaLiteral,
+nestedClass, nullableType, objectDeclaration, override, propertyDeclaration, stringLiteral, typeParameter */

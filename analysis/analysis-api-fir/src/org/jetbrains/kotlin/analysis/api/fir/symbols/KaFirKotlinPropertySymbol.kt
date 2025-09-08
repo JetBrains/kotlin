@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -115,7 +116,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
@@ -131,7 +132,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
                     KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this), this)
                 } else {
                     KaFirTopLevelPropertySymbolPointer(
-                        firSymbol.callableId,
+                        firSymbol.callableId!!,
                         FirCallableSignature.createSignature(firSymbol),
                         this
                     )
@@ -330,8 +331,6 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
     override val hasBackingField: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null) {
-                backingPsi.greenStub?.hasBackingField?.let { return it }
-
                 val fastAnswer = when {
                     backingPsi.isExpectDeclaration() -> false
                     backingPsi.hasModifier(KtTokens.ABSTRACT_KEYWORD) -> false

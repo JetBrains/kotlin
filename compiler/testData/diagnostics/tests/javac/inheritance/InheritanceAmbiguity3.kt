@@ -25,3 +25,5 @@ public class x implements i, i2 {
 package a
 
 fun test() = x().<!MISSING_DEPENDENCY_CLASS!>getZ<!>()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

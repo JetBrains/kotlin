@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
+import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
@@ -17,20 +20,25 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     firFileBuilder: LLFirFileBuilder,
@@ -247,6 +255,36 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
 }
 
 /**
+ * Whether a non-local declaration of the given type supports partial body analysis.
+ *
+ * The function only checks the declaration type.
+ * It does not perform other important checks such as a number of body statements, or even whether the body is present at all.
+ */
+internal val FirElementWithResolveState.isPartialBodyResolvable: Boolean
+    get() = when (this) {
+        is FirConstructor -> !isPrimary
+        is FirSimpleFunction, is FirAnonymousInitializer -> true
+        else -> false
+    }
+
+/**
+ * Whether a declaration body block supports partial body analysis.
+ * For empty blocks and blocks with a single statement, partial analysis is unavailable.
+ */
+internal val FirBlock.isPartialAnalyzable: Boolean
+    get() = statements.size > 1
+
+/**
+ * A declaration body (a block with statements).
+ */
+internal val FirElementWithResolveState.body: FirBlock?
+    get() = when (this) {
+        is FirFunction -> body
+        is FirAnonymousInitializer -> body
+        else -> null
+    }
+
+/**
  * Some "local" declarations are not local from the lazy resolution perspective.
  */
 internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
@@ -291,3 +329,14 @@ fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
         it is FirSimpleFunction && it.name == OperatorNameConventions.PLUS
     }?.symbol as? FirNamedFunctionSymbol
 }
+
+internal fun PsiClass.classIdOrError(): ClassId =
+    classId
+        ?: errorWithAttachment("No classId for non-local class") {
+            withPsiEntry(
+                "psiClass",
+                this@classIdOrError,
+                KotlinProjectStructureProvider.getModule(project, this@classIdOrError, useSiteModule = null)
+            )
+            withEntry("qualifiedName", qualifiedName)
+        }

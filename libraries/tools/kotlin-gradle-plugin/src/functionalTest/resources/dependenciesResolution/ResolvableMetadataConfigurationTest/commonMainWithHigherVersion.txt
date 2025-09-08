@@ -26,3 +26,7 @@ nativeMain
   test:lib:2.0
 nativeTest
   test:lib:2.0
+webMain
+  test:lib:2.0
+webTest
+  test:lib:2.0

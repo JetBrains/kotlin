@@ -18,3 +18,6 @@ fun test(
 ) {
     foo.doSomething(bar)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, inProjection, interfaceDeclaration, javaType,
+nullableType, outProjection, samConversion, typeParameter */

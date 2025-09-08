@@ -11,3 +11,6 @@ class A {
     @Ann2(2)
     constructor(x1: Int, x2: Int)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

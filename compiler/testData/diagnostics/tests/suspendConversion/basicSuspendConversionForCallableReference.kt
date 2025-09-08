@@ -17,3 +17,6 @@ fun test() {
 
     foo2(42, <!TYPE_MISMATCH!>::bar1<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, nullableType,
+stringLiteral, suspend, typeParameter */

@@ -41,3 +41,6 @@ fun test3() = runBlocking {
     takeRef { ::fun1.apply { } }
     takeRef { ::<!NON_LOCAL_SUSPENSION_POINT!>fun1<!> }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, propertyDeclaration, suspend, typeParameter */

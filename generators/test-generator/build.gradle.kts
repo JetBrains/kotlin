@@ -1,26 +1,25 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":core:util.runtime"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(kotlinStdlib())
-    testImplementation(libs.junit4)
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(project(":generators"))
+    testFixturesApi(project(":core:util.runtime"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(kotlinStdlib())
+    testFixturesImplementation(libs.junit4)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesApi(project(":generators"))
 
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testRuntimeOnly(project(":core:descriptors.runtime"))
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {
-    "main" { }
-    "test" { projectDefault() }
+    "main" { none() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

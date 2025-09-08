@@ -36,3 +36,6 @@ class C<in T>(t: T) {
         val x: String = a.<!INVISIBLE_MEMBER!>tt<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, in, inner, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, thisExpression, typeParameter */

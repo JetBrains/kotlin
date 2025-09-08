@@ -26,3 +26,6 @@ fun foo(): Bar {
     }
     return Bar()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, thisExpression, whileLoop */

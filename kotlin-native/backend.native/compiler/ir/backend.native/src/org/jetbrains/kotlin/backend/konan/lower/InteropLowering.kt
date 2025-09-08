@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -41,43 +42,40 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
+internal class InteropLowering(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         // TODO: merge these lowerings.
-        InteropLoweringPart1(generationState).lower(irFile)
-        InteropLoweringPart2(generationState).lower(irFile)
+        InteropLoweringPart1(context, fileLowerState).lower(irFile)
+        InteropLoweringPart2(context, fileLowerState).lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        InteropLoweringPart1(generationState).lower(irBody, container)
-        InteropLoweringPart2(generationState).lower(irBody, container)
+        InteropLoweringPart1(context, fileLowerState).lower(irBody, container)
+        InteropLoweringPart2(context, fileLowerState).lower(irBody, container)
     }
 }
 
-private fun getUniqueName(packageFragment: IrPackageFragment, fileName: String) =
-        packageFragment.moduleDescriptor.name.asString().let { it.substring(1, it.lastIndex) } + fileName
+private class NameCounter {
+    private var counter = 0
 
-private val IrFile.uniqueName: String
-    get() = getUniqueName(this, fileEntry.name)
-
-private fun IrDeclaration.getUniqueName(context: Context) =
-        getUniqueName(this.getPackageFragment(), context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this))
+    fun getNext() = ++counter
+}
 
 private abstract class BaseInteropIrTransformer(
-        protected val generationState: NativeGenerationState,
+        protected val context: Context,
+        protected val fileLowerState: FileLowerState,
         protected val irFile: IrFile?,
-        private val uniqueName: String,
-) : IrBuildingTransformer(generationState.context) {
-    protected val context = generationState.context
+) : IrBuildingTransformer(context) {
     protected val symbols = context.symbols
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
+            nameCounter: NameCounter,
             owner: IrDeclarationContainer,
             element: IrElement? = null,
             block: KotlinStubs.() -> T
     ): T {
         val addedDeclarations = mutableListOf<IrDeclaration>()
-        val result = createKotlinStubs(element) {
+        val result = createKotlinStubs(nameCounter, element) {
             it.parent = owner
             addedDeclarations += it
         }.block()
@@ -93,40 +91,26 @@ private abstract class BaseInteropIrTransformer(
             block: KotlinStubs.() -> IrExpression
     ): IrExpression {
         val addedDeclarations = mutableListOf<IrDeclaration>()
-        val result = createKotlinStubs(element) {
+        val result = createKotlinStubs(NameCounter(), element) {
             it.parent = parent
             addedDeclarations += it
         }.block()
         return if (addedDeclarations.isEmpty())
             result
-        else irBlock {
-            addedDeclarations.forEach {
-                it.transform(this@BaseInteropIrTransformer, null)
-                (it as? IrDeclarationWithVisibility)?.visibility = DescriptorVisibilities.LOCAL
-                +it
+        else irCall(symbols.interopCallMarker, result.type, listOf(result.type)).apply {
+            arguments[0] = irBlock {
+                addedDeclarations.forEach {
+                    it.transform(this@BaseInteropIrTransformer, null)
+                    (it as? IrDeclarationWithVisibility)?.visibility = DescriptorVisibilities.LOCAL
+                    +it
+                }
+                +result
             }
-            +result
         }
     }
 
-    private fun createKotlinStubs(element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
-        val location = if (element != null && irFile != null) {
-            element.getCompilerMessageLocation(irFile)
-        } else {
-            builder.getCompilerMessageLocation()
-        }
-
-        val uniquePrefix = buildString {
-            append('_')
-            uniqueName.toByteArray().joinTo(this, "") {
-                (0xFF and it.toInt()).toString(16).padStart(2, '0')
-            }
-            append('_')
-        }
-
+    private fun createKotlinStubs(nameCounter: NameCounter, element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
         return object : KotlinStubs {
-            private val context = generationState.context
-            private val cStubsManager = generationState.cStubsManager
 
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.symbols
@@ -145,15 +129,10 @@ private abstract class BaseInteropIrTransformer(
                 addKotlin(declaration)
             }
 
-            override fun addC(lines: List<String>) {
-                cStubsManager.addStub(location, lines, language)
-            }
-
-            override fun getUniqueCName(prefix: String) =
-                    "$uniquePrefix${cStubsManager.getUniqueName(prefix)}"
+            override fun getUniqueCName(prefix: String) = "\$$prefix${nameCounter.getNext()}\$"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
-                    generationState.fileLowerState.getFunctionReferenceImplUniqueName(prefix)
+                    fileLowerState.getFunctionReferenceImplUniqueName(prefix)
 
             override val target get() = context.config.target
 
@@ -170,12 +149,11 @@ private abstract class BaseInteropIrTransformer(
             renderCompilerError(irFile, element, message)
 }
 
-private class InteropLoweringPart1(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
-    private val context = generationState.context
+private class InteropLoweringPart1(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     private var topLevelInitializersCounter = 0
 
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformerPart1(generationState, irFile, irFile.uniqueName)
+        val transformer = InteropTransformerPart1(context, fileLowerState, irFile)
         irFile.transformChildrenVoid(transformer)
         transformer.eagerTopLevelInitializersForObjCClasses.forEach {
             irFile.addTopLevelInitializer(it, threadLocal = false, eager = true)
@@ -183,7 +161,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val transformer = InteropTransformerPart1(generationState, container.fileOrNull, container.getUniqueName(context))
+        val transformer = InteropTransformerPart1(context, fileLowerState, container.fileOrNull)
         container.transform(transformer, null)
         require(transformer.eagerTopLevelInitializersForObjCClasses.isEmpty()) { "A local Obj-C class in an inline function is not supported" }
     }
@@ -215,10 +193,10 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 }
 
 private class InteropTransformerPart1(
-        generationState: NativeGenerationState,
+        context: Context,
+        fileLowerState: FileLowerState,
         irFile: IrFile?,
-        uniqueName: String,
-) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
     val eagerTopLevelInitializersForObjCClasses = mutableListOf<IrExpression>()
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
@@ -573,11 +551,6 @@ private class InteropTransformerPart1(
             call: IrFunctionAccessExpression,
             method: IrSimpleFunction
     ): IrExpression = generateExpressionWithStubs(call) {
-        if (method.parent !is IrClass) {
-            // Category-provided.
-            generationState.dependenciesTracker.add(method)
-        }
-
         this.generateObjCCall(
                 this@genLoweredObjCMethodCall,
                 method,
@@ -733,28 +706,27 @@ private class InteropTransformerPart1(
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
-    private val context = generationState.context
-
+private class InteropLoweringPart2(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformerPart2(generationState, irFile, irFile.uniqueName)
+        val transformer = InteropTransformerPart2(context, fileLowerState, irFile)
         irFile.transformChildrenVoid(transformer)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val transformer = InteropTransformerPart2(generationState, container.fileOrNull, container.getUniqueName(context))
+        val transformer = InteropTransformerPart2(context, fileLowerState, container.fileOrNull)
         container.transform(transformer, null)
     }
 }
 
 private class InteropTransformerPart2(
-        generationState: NativeGenerationState,
+        context: Context,
+        fileLowerState: FileLowerState,
         irFile: IrFile?,
-        uniqueName: String,
-) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
         if (declaration.isKotlinObjCClass()) {
+            val nameCounter = NameCounter()
             val uniq = mutableSetOf<String>()  // remove duplicates [KT-38234]
             val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
                 function.overriddenSymbols.mapNotNull {
@@ -763,7 +735,7 @@ private class InteropTransformerPart2(
                         null
                     } else {
                         uniq += selector
-                        generateDeclarationWithStubs(declaration, it.owner) {
+                        generateDeclarationWithStubs(nameCounter, declaration, it.owner) {
                             generateCFunctionAndFakeKotlinExternalFunction(
                                     function,
                                     it.owner,
@@ -838,15 +810,43 @@ private class InteropTransformerPart2(
         return initializer.shallowCopy()
     }
 
-    private fun generateCCall(expression: IrCall): IrExpression {
+    private fun generateCCall(expression: IrCall, direct: Boolean): IrExpression {
         val function = expression.symbol.owner
 
-        generationState.dependenciesTracker.add(function)
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
-        return builder.generateExpressionWithStubs(expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
+        return builder.generateExpressionWithStubs(expression) {
+            generateCCall(
+                    expression,
+                    builder,
+                    isInvoke = false,
+                    exceptionMode,
+                    direct = direct
+            )
+        }
     }
+
+    private fun tryGenerateIndirectCCall(expression: IrCall): IrExpression? =
+            if (expression.symbol.owner.hasAnnotation(RuntimeNames.cCall)) {
+                generateCCall(expression, direct = false)
+            } else {
+                null
+            }
+
+    private fun tryGenerateDirectCCall(expression: IrCall): IrExpression? =
+            if (expression.symbol.owner.hasAnnotation(RuntimeNames.cCallDirect)) {
+                generateCCall(expression, direct = true)
+            } else {
+                null
+            }
+
+    private fun generateCFunctionCallOrGlobalAccess(expression: IrCall): IrExpression = when (context.config.cCallMode) {
+        CCallMode.Indirect -> tryGenerateIndirectCCall(expression)
+        CCallMode.IndirectOrDirect -> tryGenerateIndirectCCall(expression) ?: tryGenerateDirectCCall(expression)
+        CCallMode.DirectOrIndirect -> tryGenerateDirectCCall(expression) ?: tryGenerateIndirectCCall(expression)
+        CCallMode.Direct -> tryGenerateDirectCCall(expression)
+    } ?: error(renderCompilerError(expression, "the call is incompatible with cCallMode=${context.config.cCallMode}"))
 
     private fun lowerObjCInitBy(expression: IrCall): IrExpression {
         val argument = expression.arguments[1]!!
@@ -947,8 +947,8 @@ private class InteropTransformerPart2(
             }
         }
 
-        if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
-            return generateCCall(expression)
+        if (function.isCFunctionOrGlobalAccessor()) {
+            return generateCFunctionCallOrGlobalAccess(expression)
         }
 
         val failCompilation = { msg: String -> error(irFile, expression, msg) }
@@ -977,7 +977,7 @@ private class InteropTransformerPart2(
                     }
                 }
                 IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
-                    builder.generateExpressionWithStubs { generateCCall(expression, builder, isInvoke = true) }
+                    builder.generateExpressionWithStubs { generateCCall(expression, builder, isInvoke = true, direct = false) }
                 }
                 IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 
@@ -999,7 +999,6 @@ private class InteropTransformerPart2(
                             require(receiverTypeIndex <= typeOperandIndex) { renderCompilerError(expression) }
                         IntrinsicType.INTEROP_NARROW ->
                             require(receiverTypeIndex >= typeOperandIndex) { renderCompilerError(expression) }
-                        else -> error(intrinsicType)
                     }
 
                     val receiverClass = symbols.integerClasses.single {
@@ -1043,7 +1042,10 @@ private class InteropTransformerPart2(
                     builder.generateExpressionWithStubs {
                         val blockPtr = expression.arguments.single()!!
                         val functionType = expression.typeArguments[0]!!
-                        convertBlockPtrToKotlinFunction(builder, blockPtr, functionType)
+                        val state = CBridgeGenState(this)
+                        state.convertBlockPtrToKotlinFunction(builder, blockPtr, functionType).also {
+                            require(state.getC().isEmpty()) { "No C code generation is expected" }
+                        }
                     }
                 }
                 else -> expression

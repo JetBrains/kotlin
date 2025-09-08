@@ -342,7 +342,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertyCall.kt
                       ARG prop: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE reflectionTarget='val x: kotlin.String by (...)'
                         getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-x> visibility:local modality:FINAL returnType:kotlin.Nothing
                           BLOCK_BODY
-                            CALL 'internal final fun throwUnsupportedOperationException (message: kotlin.String): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+                            CALL 'internal final fun throwUnsupportedOperationException (message: kotlin.String): kotlin.Nothing declared in kotlin.internal' type=kotlin.Nothing origin=null
                               ARG message: CONST String type=kotlin.String value="Not supported for local property reference."
             CALL 'local final fun <get-x> (): kotlin.String declared in <root>.box' type=kotlin.String origin=GET_LOCAL_PROPERTY
           CATCH parameter=val e: kotlin.UnsupportedOperationException declared in <root>.box

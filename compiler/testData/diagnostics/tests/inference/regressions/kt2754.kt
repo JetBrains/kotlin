@@ -28,3 +28,7 @@ fun test() {
     val foo2 = foo1.copy { y = 3 } // this doesn't work
     foo2 checkType { _<Foo>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, nullableType, out, override,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

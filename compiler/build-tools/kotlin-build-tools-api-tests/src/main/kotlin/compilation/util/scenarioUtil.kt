@@ -5,29 +5,35 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.util
 
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
 
-
-fun Scenario.moduleWithInlineSnapshotting(
+fun Scenario.moduleWithoutInlineSnapshotting(
     moduleName: String,
     dependencies: List<ScenarioModule>,
 ) = module(
     moduleName = moduleName,
     dependencies = dependencies,
-    snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+    snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
 )
 
+@OptIn(ExperimentalCompilerArgument::class)
 fun Scenario.moduleWithFir(
     moduleName: String,
-    additionalCompilerArguments: List<String> = emptyList()
+    compilationOperationConfig: (JvmCompilationOperation) -> Unit = {},
 ) = module(
     moduleName = moduleName,
-    additionalCompilationArguments = additionalCompilerArguments + listOf("-Xuse-fir-ic"),
-    incrementalCompilationOptionsModifier = { incrementalOptions ->
-        (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
+    compilationConfigAction = {
+        it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
+        compilationOperationConfig(it)
+    },
+    icOptionsConfigAction = {
+        it[USE_FIR_RUNNER] = true
     }
 )

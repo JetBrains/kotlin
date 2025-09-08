@@ -1,0 +1,23 @@
+//
+// Source
+// ------------------------------------------
+
+val a = @Composable {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposableSingletons$TestKt {
+    file: Test.kt
+    lambda__486040309$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 4 }
+}
+
+========= FunctionMeta: false, OptimizeGroups: true =========
+ComposableSingletons$TestKt {
+    file: Test.kt
+    lambda__486040309$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 4 }
+}

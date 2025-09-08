@@ -29,3 +29,6 @@ open class CheckNested(a: Any) {
 open class Foo5(val prop: Int) {
     object MyObject : Foo5(with(MyObject) { <!SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR!>prop<!> })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, lambdaLiteral, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, thisExpression */

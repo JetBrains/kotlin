@@ -5,6 +5,7 @@ gradle.beforeProject {
     // Should be in sync with 'gradle-settings-conventions/gradle.properties'
     extensions
         .getByType(ExtraPropertiesExtension::class.java)
+        // Should be in sync with settings in the Maven build in libraries/pom.xml#<properties>#<kotlin.compiler.daemon.jvmArgs>
         .set("kotlin.daemon.jvmargs", "-Xmx3g")
 }
 

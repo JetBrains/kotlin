@@ -1,0 +1,14 @@
+<caret_1>:
+  KDocName(328,341): 'SomeClass.ext'
+    KDocReference:
+      (in ROOT) fun GenericFoo<A>.ext()
+
+<caret_2>:
+  KDocName(347,362): 'SomeClassIn.ext'
+    KDocReference:
+      (in ROOT) fun GenericFooIn<B>.ext()
+
+<caret_3>:
+  KDocName(368,384): 'SomeClassOut.ext'
+    KDocReference:
+      (in ROOT) fun GenericFooOut<A>.ext()

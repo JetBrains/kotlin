@@ -13,8 +13,6 @@ import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.gradle.model.ModelContainer
-import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -27,6 +25,7 @@ import java.io.InputStream
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.lang.management.ManagementFactory
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -82,7 +81,7 @@ fun KGPBaseTest.project(
         .create()
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(testKitDir.toAbsolutePath().toFile())
-        .withGradleVersion(gradleVersion.version)
+        .withGradleDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip"))
 
     val testProject = TestProject(
         gradleRunner = gradleRunner,
@@ -94,13 +93,12 @@ fun KGPBaseTest.project(
         enableGradleDebug = enableGradleDebug,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        environmentVariables = environmentVariables
+        environmentVariables = environmentVariables,
+        counter = KGPBaseTest.counter.get(),
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
-
-    testProject.customizeProject()
 
     val result = runCatching {
         testProject.test()
@@ -354,36 +352,6 @@ private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buil
     }
 }
 
-internal inline fun <reified T> TestProject.getModels(
-    crossinline assertions: ModelContainer<T>.() -> Unit,
-) {
-    val allBuildArguments = commonBuildSetup(
-        buildArguments = emptyList(),
-        buildOptions = buildOptions,
-        enableBuildCacheDebug = false,
-        enableBuildScan = enableBuildScan,
-        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
-        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        connectSubprocessVMToDebugger = false,
-        gradleVersion = gradleVersion
-    )
-
-    val connector = GradleConnector
-        .newConnector()
-        .useGradleUserHomeDir(getGradleUserHome())
-        .useGradleVersion(gradleVersion.version)
-        .forProjectDirectory(projectPath.toAbsolutePath().toFile())
-
-    connector.connect().use {
-        assertions(
-            it
-                .action(ModelFetcherBuildAction(T::class.java))
-                .withArguments(allBuildArguments)
-                .run()
-        )
-    }
-}
-
 fun TestProject.enableLocalBuildCache(
     buildCacheLocation: Path,
 ) {
@@ -425,6 +393,7 @@ fun String.wrapIntoBlock(s: String): String =
 open class GradleProject(
     val projectName: String,
     val projectPath: Path,
+    val counter: KGPBaseTest.Counter,
 ) {
     val buildGradle: Path get() = projectPath.resolve("build.gradle")
     val buildGradleKts: Path get() = projectPath.resolve("build.gradle.kts")
@@ -460,9 +429,8 @@ open class GradleProject(
         files: List<Path>,
     ): List<Path> = files.map { projectPath.relativize(it) }
 
-    private var counter = 0
     fun generateIdentifier(): String {
-        return counter.toString().also { counter += 1 }
+        return counter.counter++.toString()
     }
 
     fun markAsUsingInjections() {
@@ -505,8 +473,9 @@ class TestProject(
      */
     val kotlinDaemonDebugPort: Int? = null,
     val environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
-) : GradleProject(projectName, projectPath) {
-    fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
+    counter: KGPBaseTest.Counter,
+) : GradleProject(projectName, projectPath, counter) {
+    fun subProject(name: String) = GradleProject(name, projectPath.resolve(name), counter)
 
     /**
      * Includes another project as a submodule in the current project.
@@ -575,13 +544,14 @@ class TestProject(
     }
 
     /**
-     * Copies the contents of a directory from the test data of another project into this project's directory structure.
+     * Copies a directory from the test data of another project into the current test project.
      *
-     * @param otherProjectName The name of the other project whose directory is copied from its test data.
+     * @param otherProjectName The name of the other project whose directory will be copied.
+     * @param destination The target path in the current project where the directory will be copied. Defaults to the value of [otherProjectName].
      */
-    fun embedDirectoryFromTestData(otherProjectName: String) {
+    fun embedDirectoryFromTestData(otherProjectName: String, destination: String = otherProjectName) {
         val otherProjectPath = otherProjectName.testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+        otherProjectPath.copyRecursively(projectPath.resolve(destination))
     }
 }
 
@@ -648,7 +618,7 @@ private fun collectGradleJvmOptions(
     connectSubprocessVMToDebugger: Boolean,
 ): List<String> = buildList {
     if (useFileLeakDetectorToFile != null) {
-        val fileLeakDetector = File("src/test/resources/common/file-leak-detector-1.15-jar-with-dependencies.jar")
+        val fileLeakDetector = File("src/test/resources/common/file-leak-detector-1.18-jar-with-dependencies.jar")
         add("-javaagent:${fileLeakDetector.absolutePath}=trace=${useFileLeakDetectorToFile.absolutePath}")
     }
     // Limiting Gradle daemon heap size to reduce memory pressure on CI agents
@@ -839,6 +809,47 @@ internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert
     return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
 }
 
+internal fun String.insertBlockToBuildScriptAfterPluginManagementAndImports(blockToInsert: String): String {
+    val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
+    val pluginManagementBlockStartPattern = Regex("pluginManagement\\s*\\{")
+
+    val lastImportIndex = importsPattern.findAll(this).map { it.range.last }.maxOrNull()
+    val pluginManagementBlockStartingIndex = pluginManagementBlockStartPattern.find(this)?.range?.last
+    val pluginManagementBlockEndIndex = pluginManagementBlockStartingIndex?.let { findMatchingBraceIndex(it) }
+    if (pluginManagementBlockEndIndex == -1) throw IllegalStateException("Could not find a matching '}' for plugin management block:\n$this")
+
+    val insertionIndex = listOfNotNull(lastImportIndex, pluginManagementBlockEndIndex).maxOrNull() ?: return blockToInsert + this
+
+    return StringBuilder(this).insert(insertionIndex + 1, "\n$blockToInsert\n").toString()
+}
+
+/**
+ * Finds the index of the matching closing brace '}' for the opening brace '{' located at the specified index.
+ * The function accounts for nested braces and ensures proper matching based on nesting levels.
+ *
+ * @param openBraceIndex The index of the opening brace '{' in the string.
+ * @return The index of the corresponding closing brace '}' if matching is found, or -1 if no match exists.
+ */
+private fun String.findMatchingBraceIndex(openBraceIndex: Int): Int {
+    if (get(openBraceIndex) != '{') return -1
+
+    var nestingLevel = 0
+
+    for (i in openBraceIndex until length) {
+        when (get(i)) {
+            '{' -> nestingLevel++
+            '}' -> {
+                nestingLevel--
+                if (nestingLevel == 0) {
+                    return i
+                }
+            }
+        }
+    }
+
+    return -1
+}
+
 internal fun String.insertBlockToBuildScriptAfterImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
 
@@ -878,7 +889,6 @@ internal fun Path.addPluginManagementToSettings() {
         }
 
         Files.exists(buildGradle) -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
-
         Files.exists(buildGradleKts) -> settingsGradleKts.toFile().writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
 
         else -> error("No build-file or settings file found")
@@ -1032,7 +1042,8 @@ internal fun Path.enableAndroidSdk() {
 
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current Gradle module project dir
-    val redirectorScript = Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+    val redirectorScript =
+        Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     assert(redirectorScript.exists()) {
         "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }
@@ -1078,11 +1089,12 @@ internal fun Path.enableCacheRedirector() {
 }
 
 private fun GradleProject.addHeapDumpOptions() {
+    val heapDumpPath = Path(System.getProperty("user.dir")).resolve("build").absolute().normalize().invariantSeparatorsPathString
     addPropertyToGradleProperties(
         propertyName = "org.gradle.jvmargs",
         mapOf(
             "-XX:+HeapDumpOnOutOfMemoryError" to "-XX:+HeapDumpOnOutOfMemoryError",
-            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
+            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"$heapDumpPath\""
         ),
     )
 }

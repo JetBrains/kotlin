@@ -7,3 +7,6 @@ fun <R> myRun(x: () -> R): R = x()
 
 private val a = foo { myRun { <!RETURN_TYPE_MISMATCH!>"OK"<!> } }
 private val b: Int = myRun { <!RETURN_TYPE_MISMATCH!>"OK"<!> }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

@@ -24,3 +24,5 @@ public class Configuration implements KotlinInterface {
 interface KotlinInterface {
     var selectedOptions: Int
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, propertyDeclaration */

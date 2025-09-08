@@ -1,6 +1,6 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-63852, KT-63843, different naming of setter parameters
+// JVM_ABI_K1_K2_DIFF: KT-69075, different naming of setter parameters
 
 // Please make sure that this test is consistent with the diagnostic test "annotationsTargetingNonExistentAccessor.kt"
 

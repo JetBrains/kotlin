@@ -3,3 +3,4 @@ text: object {
         fun getBool(): Boolean = b
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

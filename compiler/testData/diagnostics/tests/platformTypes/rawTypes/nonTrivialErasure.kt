@@ -28,3 +28,6 @@ fun main() {
     rawA.listOfDoubles = strList
     rawA.listOfDoubles = <!TYPE_MISMATCH!>""<!> // first should be List
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, javaProperty, localProperty,
+nullableType, outProjection, propertyDeclaration, starProjection, stringLiteral */

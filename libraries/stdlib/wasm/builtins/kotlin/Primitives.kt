@@ -2167,7 +2167,7 @@ public actual class Float private constructor(private val value: Float) : Number
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun rem(other: Float): Float =
-        wasm_f32_copysign(this - (wasm_f32_truncate(this / other) * other), this)
+        kotlin.math.fdlibm.__ieee754_fmodf(this, other)
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2577,7 +2577,7 @@ public actual class Double private constructor(private val value: Double) : Numb
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun rem(other: Double): Double =
-        wasm_f64_copysign(this - (wasm_f64_truncate(this / other) * other), this)
+        kotlin.math.fdlibm.__ieee754_fmod(this, other)
 
     /**
      * Returns this value incremented by one.

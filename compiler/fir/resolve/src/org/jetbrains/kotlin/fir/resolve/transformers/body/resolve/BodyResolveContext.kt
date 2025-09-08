@@ -7,16 +7,21 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -29,6 +34,7 @@ import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.shouldSuppressInlineContextAt
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -112,7 +118,7 @@ class BodyResolveContext(
     @set:PrivateForInline
     var targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet()
 
-    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
+    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = hashMapOf()
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
@@ -125,6 +131,17 @@ class BodyResolveContext(
         }
     }
 
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withTowerDataContext(newContext: FirTowerDataContext, f: () -> T): T {
+        val initialContext = towerDataContext
+        return try {
+            replaceTowerDataContext(newContext)
+            f()
+        } finally {
+            replaceTowerDataContext(initialContext)
+        }
+    }
+
     inline fun <R> withLambdaBeingAnalyzedInDependentContext(lambda: FirAnonymousFunctionSymbol, l: () -> R): R {
         anonymousFunctionsAnalyzedInDependentContext.add(lambda)
         return try {
@@ -132,6 +149,28 @@ class BodyResolveContext(
         } finally {
             anonymousFunctionsAnalyzedInDependentContext.remove(lambda)
         }
+    }
+
+    var inlineFunction: FirFunction? = null
+
+    inline fun <T> withInlineFunction(function: FirFunction?, block: () -> T): T {
+        val oldValue = inlineFunction
+        return try {
+            inlineFunction = function
+            block()
+        } finally {
+            inlineFunction = oldValue
+        }
+    }
+
+    inline fun <T> withInlineFunctionIfApplicable(function: FirFunction, block: () -> T): T = when {
+        function.isInline -> withInlineFunction(function, block)
+        else -> block()
+    }
+
+    inline fun <T> withSuppressedInlineFunctionIfNeeded(element: FirElement?, block: () -> T): T = when {
+        shouldSuppressInlineContextAt(element, containers.lastOrNull()?.symbol) -> withInlineFunction(null, block)
+        else -> block()
     }
 
     @PrivateForInline
@@ -173,6 +212,17 @@ class BodyResolveContext(
             l()
         } finally {
             replaceTowerDataContext(initialContext)
+        }
+    }
+
+    // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
+    @PrivateForInline
+    inline fun <R> withConditionalTowerDataCleanup(skipCleanup: Boolean, l: () -> R): R {
+        val initialContext = towerDataContext
+        return try {
+            l()
+        } finally {
+            if (!skipCleanup) replaceTowerDataContext(initialContext)
         }
     }
 
@@ -246,7 +296,7 @@ class BodyResolveContext(
         labelName: Name?,
         owner: FirCallableDeclaration,
         type: ConeKotlinType?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         additionalLabelName: Name? = null,
         f: () -> T
     ): T = withTowerDataCleanup {
@@ -299,7 +349,7 @@ class BodyResolveContext(
     @PrivateForInline
     fun addInaccessibleImplicitReceiverValue(
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
     ) {
         if (owningClass == null) return
         addReceiver(
@@ -340,9 +390,9 @@ class BodyResolveContext(
         regularTowerDataContexts.primaryConstructorAllParametersScope
 
     @OptIn(PrivateForInline::class)
-    fun storeClassIfNotNested(klass: FirRegularClass, session: FirSession) {
+    fun storeClassOrTypealiasIfNotNested(classOrTypeAlias: FirClassLikeDeclaration, session: FirSession) {
         if (containerIfAny is FirClass) return
-        updateLastScope { storeClass(klass, session) }
+        updateLastScope { storeClassOrTypeAlias(classOrTypeAlias, session) }
     }
 
     @OptIn(PrivateForInline::class)
@@ -428,7 +478,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withFile(
         file: FirFile,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         clear()
@@ -446,10 +496,10 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> forRegularClassBody(
         regularClass: FirRegularClass,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
-        storeClassIfNotNested(regularClass, holder.session)
+        storeClassOrTypealiasIfNotNested(regularClass, holder.session)
         return withSwitchedTowerDataModeForStaticNestedClass(regularClass) {
             withScopesForClass(regularClass, holder) {
                 withContainerRegularClass(regularClass, f)
@@ -499,7 +549,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousObject(
         anonymousObject: FirAnonymousObject,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         crossinline f: () -> T
     ): T {
         return withScopesForClass(anonymousObject, holder) {
@@ -514,7 +564,7 @@ class BodyResolveContext(
      */
     fun <T> withScopesForClass(
         owner: FirClass,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         val labelName = (owner as? FirRegularClass)?.name
@@ -598,7 +648,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> withScript(
         owner: FirScript,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         val towerElementsForScript = holder.collectTowerDataElementsForScript(owner)
@@ -645,7 +695,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> withReplSnippet(
         replSnippet: FirReplSnippet,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         return withContainer(replSnippet) {
@@ -678,7 +728,7 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    fun <T> withCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
+    fun <T> withCodeFragment(codeFragment: FirCodeFragment, holder: SessionAndScopeSessionHolder, f: () -> T): T {
         val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
         val towerDataContext = codeFragmentContext.towerDataContext
 
@@ -730,7 +780,9 @@ class BodyResolveContext(
         }
 
         return withTypeParametersOf(simpleFunction) {
-            withContainer(simpleFunction, f)
+            withInlineFunctionIfApplicable(simpleFunction) {
+                withContainer(simpleFunction, f)
+            }
         }
     }
 
@@ -739,7 +791,7 @@ class BodyResolveContext(
      * Also contains required implicit receivers.
      */
     @OptIn(PrivateForInline::class)
-    fun <T> withParameters(callable: FirCallableDeclaration, holder: SessionHolder, f: () -> T): T = withTowerDataCleanup {
+    fun <T> withParameters(callable: FirCallableDeclaration, holder: SessionAndScopeSessionHolder, f: () -> T): T = withTowerDataCleanup {
         addLocalScope(FirLocalScope(holder.session))
         for (contextParameter in callable.contextParameters) {
             storeValueParameterIfNeeded(contextParameter, holder.session)
@@ -763,7 +815,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> forFunctionBody(
         function: FirFunction,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T = withTowerDataCleanup {
         if (function is FirSimpleFunction) {
@@ -821,7 +873,7 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun <T> withAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         return withTowerDataCleanup {
@@ -872,7 +924,10 @@ class BodyResolveContext(
         session: FirSession,
         f: () -> T
     ): T {
-        return withTowerDataCleanup {
+        // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
+        val skipCleanup = anonymousInitializer.isScriptTopLevelDeclaration == true &&
+                session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true
+        return withConditionalTowerDataCleanup(skipCleanup) {
             getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
             addLocalScope(FirLocalScope(session))
             addAnonymousInitializer(anonymousInitializer)
@@ -887,7 +942,9 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         storeValueParameterIfNeeded(valueParameter, session)
-        return withContainer(valueParameter, f)
+        return withContainer(valueParameter) {
+            withSuppressedInlineFunctionIfNeeded(valueParameter.defaultValue, f)
+        }
     }
 
     fun storeValueParameterIfNeeded(valueParameter: FirValueParameter, session: FirSession) {
@@ -925,7 +982,7 @@ class BodyResolveContext(
     fun <T> withPropertyAccessor(
         property: FirProperty,
         accessor: FirPropertyAccessor,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         forContracts: Boolean = false,
         f: () -> T
     ): T {
@@ -960,8 +1017,9 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> forPropertyInitializer(f: () -> T): T {
-        return withTowerDataCleanup {
+    // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
+    inline fun <T> forPropertyInitializer(skipCleanup: Boolean, f: () -> T): T {
+        return withConditionalTowerDataCleanup(skipCleanup) {
             getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
             f()
         }
@@ -977,7 +1035,7 @@ class BodyResolveContext(
     inline fun <T> forConstructorParameters(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         // Default values of constructor can't access members of constructing class
@@ -990,7 +1048,7 @@ class BodyResolveContext(
     inline fun <T> forDelegatedConstructorCallChildren(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         return forConstructorParametersOrDelegatedConstructorCallChildren(constructor, owningClass, holder, f)
@@ -1014,7 +1072,7 @@ class BodyResolveContext(
     inline fun <T> forConstructorParametersOrDelegatedConstructorCallChildren(
         constructor: FirConstructor,
         owningClass: FirRegularClass?,
-        holder: SessionHolder,
+        holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
         require(towerDataMode == FirTowerDataMode.CONSTRUCTOR_HEADER)

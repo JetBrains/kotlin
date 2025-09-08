@@ -10,7 +10,10 @@ repositories {
 
 dependencies {
     commonCompileOnly(gradleKotlinDsl())
-    commonCompileOnly(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
+    commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
+        overrideTargetJvmVersion(11)
+        isTransitive = false
+    }
 }
 
 gradlePlugin {

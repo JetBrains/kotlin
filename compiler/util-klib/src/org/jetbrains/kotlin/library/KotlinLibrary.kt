@@ -39,7 +39,6 @@ const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
-const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -104,7 +103,6 @@ interface IrLibrary {
     val hasIr: Boolean
     val hasFileEntriesTable: Boolean
     fun irDeclaration(index: Int, fileIndex: Int): ByteArray
-    fun irInlineDeclaration(index: Int, fileIndex: Int): ByteArray
     fun type(index: Int, fileIndex: Int): ByteArray
     fun signature(index: Int, fileIndex: Int): ByteArray
     fun string(index: Int, fileIndex: Int): ByteArray
@@ -120,6 +118,17 @@ interface IrLibrary {
     fun declarations(fileIndex: Int): ByteArray
     fun bodies(fileIndex: Int): ByteArray
     fun fileEntries(fileIndex: Int): ByteArray?
+
+    // Those duplicated structures store prepared copies of inlinable functions, see KT-75794.
+    val hasIrOfInlineableFuns: Boolean
+    fun irFileOfInlineableFuns(): ByteArray
+    fun irDeclarationOfInlineableFuns(index: Int): ByteArray
+    fun typeOfInlineableFuns(index: Int): ByteArray
+    fun signatureOfInlineableFuns(index: Int): ByteArray
+    fun stringOfInlineableFuns(index: Int): ByteArray
+    fun bodyOfInlineableFuns(index: Int): ByteArray
+    fun debugInfoOfInlineableFuns(index: Int): ByteArray?
+    fun fileEntryOfInlineableFuns(index: Int): ByteArray
 }
 
 /** Whether [this] is a Kotlin/Native stdlib. */
@@ -137,6 +146,14 @@ val BaseKotlinLibrary.isWasmStdlib: Boolean
 /** Whether [this] is either Kotlin/Native, Kotlin/JS or Kotlin/Wasm stdlib. */
 val BaseKotlinLibrary.isAnyPlatformStdlib: Boolean
     get() = isNativeStdlib || isJsStdlib || isWasmStdlib
+
+/** Whether [this] is a Kotlin/JS kotlin-test. */
+val BaseKotlinLibrary.isJsKotlinTest: Boolean
+    get() = uniqueName == KOTLINTEST_MODULE_NAME && builtInsPlatform == BuiltInsPlatform.JS
+
+/** Whether [this] is a Kotlin/Wasm kotlin-test. */
+val BaseKotlinLibrary.isWasmKotlinTest: Boolean
+    get() = uniqueName == KOTLINTEST_MODULE_NAME && builtInsPlatform == BuiltInsPlatform.WASM
 
 val BaseKotlinLibrary.uniqueName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
@@ -179,9 +196,6 @@ val BaseKotlinLibrary.nativeTargets: List<String>
 
 val BaseKotlinLibrary.wasmTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_WASM_TARGETS)
-
-val KotlinLibrary.containsErrorCode: Boolean
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"
 
 val BaseKotlinLibrary.commonizerTarget: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_COMMONIZER_TARGET)

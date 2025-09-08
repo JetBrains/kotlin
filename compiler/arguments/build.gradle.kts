@@ -4,7 +4,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("project-tests-convention")
 }
+
+description = "Contains a unified representation of Kotlin compiler arguments for current and old Kotlin releases."
 
 sourceSets {
     "main" {
@@ -15,6 +18,11 @@ sourceSets {
         projectDefault()
     }
 }
+
+publish {
+    artifactId = "kotlin-compiler-arguments-description"
+}
+standardPublicJars()
 
 // schema-kenerator-* dependency is only compatible with JDK 11+
 tasks.named<KotlinJvmCompile>("compileTestKotlin") {
@@ -28,9 +36,13 @@ tasks.named<JavaCompile>("compileTestJava") {
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":compiler:arguments.common"))
 
     implementation(libs.kotlinx.serialization.json)
+
+    compileOnly(project(":compiler:arguments.common"))
+    embedded(project(":compiler:arguments.common")) {
+        isTransitive = false
+    }
 
     testApi(kotlinTest("junit5"))
     testImplementation(project(":compiler:config.jvm"))
@@ -40,15 +52,16 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(project(":compiler:util"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(libs.schema.kenerator.core)
     testImplementation(libs.schema.kenerator.serialization)
     testImplementation(libs.schema.kenerator.jsonschema)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
-    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    }
 }
 
 val generateJson = tasks.register<JavaExec>("generateJson") {
@@ -68,5 +81,8 @@ val generateJson = tasks.register<JavaExec>("generateJson") {
 }
 
 tasks.named("processResources") {
+    dependsOn(generateJson)
+}
+tasks.named("sourcesJar") {
     dependsOn(generateJson)
 }

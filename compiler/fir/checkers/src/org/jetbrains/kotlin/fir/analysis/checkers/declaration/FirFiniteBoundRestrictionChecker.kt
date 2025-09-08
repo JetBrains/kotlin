@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.DFS
 
 /**
@@ -50,7 +51,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
             }
         }
 
-        val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol(context.session) }
+        val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol() }
 
         val containers = problemSymbols.map { it.containingDeclarationSymbol }
         if (containers.any { it.origin !is FirDeclarationOrigin.Java }) return
@@ -63,7 +64,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
         val visitedSymbols = mutableSetOf<FirClassifierSymbol<*>>()
         fun visit(coneType: ConeKotlinType) {
             val constituentTypes = mutableSetOf<ConeKotlinType>()
-            for (type in coneType.collectUpperBounds()) {
+            for (type in coneType.collectUpperBounds(session.typeContext)) {
                 type.forEachType { constituentTypes.add(it) }
             }
 

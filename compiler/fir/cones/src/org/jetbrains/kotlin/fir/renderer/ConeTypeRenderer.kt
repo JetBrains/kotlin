@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 open class ConeTypeRenderer(
-    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
+    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString,
+    private var renderCapturedDetails: Boolean = false,
 ) {
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
@@ -136,9 +137,19 @@ open class ConeTypeRenderer(
                 builder.append("CapturedType(")
                 constructor.projection.render()
                 builder.append(")")
+                if (renderCapturedDetails) {
+                    builder.append(
+                        " with lowerType=${constructor.lowerType?.let(::render)}, supertypes=["
+                    )
+                    // To prevent recursion
+                    renderCapturedDetails = false
+                    constructor.supertypes?.forEach(::render)
+                    renderCapturedDetails = true
+                    builder.append("]")
+                }
             }
 
-            is ConeClassLikeErrorLookupTag -> builder.append("ERROR CLASS: ${constructor.diagnostic?.reason}")
+            is ConeClassLikeErrorLookupTag -> builder.append("ERROR CLASS: ${constructor.diagnostic.reason}")
 
             is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
             is ConeClassifierLookupTag -> builder.append(constructor.name.asString())
@@ -167,6 +178,11 @@ open class ConeTypeRenderer(
     }
 
     private fun ConeFlexibleType.renderForSameLookupTags(): Boolean {
+        if (isTrivial && lowerBound !is ConeDefinitelyNotNullType) {
+            render(lowerBound, nullabilityMarker = "!")
+            return true
+        }
+
         if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
             lowerBound.lookupTag == upperBound.lookupTag &&
             !lowerBound.isMarkedNullable && upperBound.isMarkedNullable

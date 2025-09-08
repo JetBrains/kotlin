@@ -8,3 +8,6 @@ class TestSome<P> {
     companion object : ToResolve<<!UNRESOLVED_REFERENCE!>P<!>>(<!ARGUMENT_TYPE_MISMATCH!>{testFun(it)}<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, objectDeclaration, primaryConstructor, typeParameter */

@@ -7,3 +7,4 @@ text: var property: Int = 58
             field += 45
         }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

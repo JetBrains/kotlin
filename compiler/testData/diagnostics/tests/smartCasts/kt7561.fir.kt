@@ -14,3 +14,6 @@ public fun box() : Int {
     val m = ++i
     return j + k + m + i + ii
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

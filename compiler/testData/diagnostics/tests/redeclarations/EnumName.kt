@@ -4,3 +4,5 @@ enum class A {
     <!REDECLARATION!>ordinal<!>,
     <!DEPRECATED_DECLARATION_OF_ENUM_ENTRY!>entries,<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

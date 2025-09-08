@@ -31,3 +31,7 @@ fun usageOutside() {
 }
 
 fun <A, R> context(context: A, block: context(A) () -> R): R = block(context)
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionDeclarationWithContext,
+functionalType, getter, lambdaLiteral, nullableType, objectDeclaration, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral, typeParameter, typeWithContext */

@@ -52,3 +52,7 @@ fun ExhaustiveWithGuard(x: BooleanHolder) {
         is False -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, comparisonExpression, disjunctionExpression, equalityExpression,
+functionDeclaration, guardCondition, ifExpression, integerLiteral, isExpression, nullableType, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

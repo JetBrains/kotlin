@@ -85,6 +85,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     resolvedSymbol,
                     // We don't allow inner classes capturing outer type parameters
                     ConeSubstitutor.Empty,
+                    FirResolvedSymbolOrigin.ContextSensitive,
                 )
             }
 
@@ -102,7 +103,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val resolvedSymbol = resolveSymbol(symbol, qualifier.subList(1, qualifier.size), qualifierResolver)
 
                 if (resolvedSymbol != null) {
-                    collector.processCandidate(resolvedSymbol, substitutorFromScope)
+                    collector.processCandidate(resolvedSymbol, substitutorFromScope, scope.toResolvedSymbolOrigin())
                 }
             }
 
@@ -119,26 +120,28 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         if (collector.applicability != CandidateApplicability.RESOLVED) {
             val symbol = qualifierResolver.resolveFullyQualifiedSymbol(qualifier)
             if (symbol != null) {
-                collector.processCandidate(symbol, null)
+                collector.processCandidate(symbol, null, resolvedSymbolOrigin = FirResolvedSymbolOrigin.Qualified)
             }
         }
 
         return collector.getResult()
     }
 
-    private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
-        if (symbol !is FirRegularClassSymbol || !symbol.isLocal) {
+    private fun resolveLocalClassChain(outermostClassLikeSymbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirClassLikeSymbol<*>? {
+        if (outermostClassLikeSymbol !is FirRegularClassSymbol || !outermostClassLikeSymbol.isLocal) {
             return null
         }
 
-        fun resolveLocalClassChain(classSymbol: FirRegularClassSymbol, qualifierIndex: Int): FirRegularClassSymbol? {
+        fun resolveLocalClassChain(classLikeSymbol: FirClassLikeSymbol<*>, qualifierIndex: Int): FirClassLikeSymbol<*>? {
             if (qualifierIndex == remainingQualifier.size) {
-                return classSymbol
+                return classLikeSymbol
             }
 
+            if (classLikeSymbol !is FirRegularClassSymbol) return null
+
             val qualifierName = remainingQualifier[qualifierIndex].name
-            for (declarationSymbol in classSymbol.declarationSymbols) {
-                if (declarationSymbol is FirRegularClassSymbol) {
+            for (declarationSymbol in classLikeSymbol.declarationSymbols) {
+                if (declarationSymbol is FirClassLikeSymbol<*>) {
                     if (declarationSymbol.toLookupTag().name == qualifierName) {
                         return resolveLocalClassChain(declarationSymbol, qualifierIndex + 1)
                     }
@@ -148,7 +151,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             return null
         }
 
-        return resolveLocalClassChain(symbol, 0)
+        return resolveLocalClassChain(outermostClassLikeSymbol, 0)
     }
 
     @OptIn(SymbolInternals::class)
@@ -209,7 +212,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                 }
                 result is TypeResolutionResult.Ambiguity -> {
-                    ConeAmbiguityError(typeRef.qualifier.last().name, result.typeCandidates.first().applicability, result.typeCandidates)
+                    ConeAmbiguityError(
+                        typeRef.qualifier.last().name,
+                        result.typeCandidates.first().applicability,
+                        result.typeCandidates.associateWith { it.diagnostic }
+                    )
                 }
                 else -> {
                     ConeUnresolvedTypeQualifierError(typeRef.qualifier)
@@ -391,7 +398,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
+                val potentiallyResolvedCandidate = result.resolvedCandidateOrNull()
+                val resolvedTypeSymbol = potentiallyResolvedCandidate?.symbol
                 // We can expand typealiases from dependencies right away, as it won't depend on us back,
                 // so there will be no problems with recursion.
                 // In the ideal world, this should also work with some source dependencies as the only case
@@ -409,7 +417,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                     else -> resolvedType
                 }
-                FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
+
+                FirTypeResolutionResult(
+                    resolvedExpandedType,
+                    potentiallyResolvedCandidate?.diagnostic,
+                    potentiallyResolvedCandidate?.resolvedSymbolOrigin
+                )
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {

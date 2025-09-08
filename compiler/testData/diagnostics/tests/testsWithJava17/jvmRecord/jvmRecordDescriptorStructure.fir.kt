@@ -16,3 +16,4 @@ data class VarInConstructor(<!JVM_RECORD_NOT_VAL_PARAMETER!>var x: String<!>)
 @JvmRecord
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class BasicRecordWithSuperClass<!>(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record<!>()
 
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration */

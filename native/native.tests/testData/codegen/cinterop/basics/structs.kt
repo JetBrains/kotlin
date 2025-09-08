@@ -1,4 +1,6 @@
 // TARGET_BACKEND: NATIVE
+// IGNORE_BACKEND_K1: NATIVE
+// ^ K1 does not support coercing assigment to Any?
 // MODULE: cinterop
 // FILE: cstructs.def
 nonStrictEnums = NonStrict

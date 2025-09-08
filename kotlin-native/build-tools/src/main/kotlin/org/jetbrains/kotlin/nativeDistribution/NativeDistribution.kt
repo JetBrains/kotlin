@@ -157,6 +157,17 @@ class NativeDistribution(val root: Directory) {
      * Static compiler cache of standard library for a specific [target].
      */
     fun stdlibCache(target: String): Directory = cache(name = "stdlib", target)
+
+    /**
+     * Fingerprint of the contents of [compilerJars] and [nativeLibs].
+     */
+    val compilerFingerprint: RegularFile
+        get() = root.file("konan/compiler.fingerprint")
+
+    /**
+     * Fingerprint of [runtime] contents for [target].
+     */
+    fun runtimeFingerprint(target: String) = root.file("konan/targets/$target/runtime.fingerprint")
 }
 
 /**

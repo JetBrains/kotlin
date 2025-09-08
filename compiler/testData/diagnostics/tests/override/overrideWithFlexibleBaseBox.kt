@@ -23,3 +23,6 @@ class FooImpl2<E1> : Foo<E1> {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl3<!><E1> : Foo<E1> {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo(t: KotlinBox<out E1 & Any>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, javaType, nullableType, outProjection, override,
+typeParameter */

@@ -36,7 +36,7 @@ object FirExpectActualResolver {
             val result: Map<ExpectActualMatchingCompatibility, List<FirBasedSymbol<*>>> = when (actualSymbol) {
                 is FirCallableSymbol<*> -> {
                     val callableId = actualSymbol.callableId
-                    val classId = callableId.classId
+                    val classId = callableId!!.classId
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {

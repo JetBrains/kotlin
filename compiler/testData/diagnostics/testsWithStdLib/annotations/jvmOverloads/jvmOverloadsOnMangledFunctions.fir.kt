@@ -29,3 +29,6 @@ class C {
     @JvmOverloads
     fun testMemberFunction3(x: Int = 0): Z = Z(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

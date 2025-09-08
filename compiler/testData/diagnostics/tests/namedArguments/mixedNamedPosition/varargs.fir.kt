@@ -56,3 +56,5 @@ fun main() {
     foo3(1, p3 = doubleArrayOf(2.0, 3.0), <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>"4"<!>)<!>
     foo3(1, p3 = doubleArrayOf(2.0, 3.0), p2 = "4")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral, vararg */

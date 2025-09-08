@@ -15,3 +15,5 @@ fun test(c: C<Int>) {
     c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>a<!> = 1)
     c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>b<!> = 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, nullableType, typeParameter */

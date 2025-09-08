@@ -28,17 +28,18 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicUnstableAndK2LanguageFeaturesSkipConfigurator
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.preprocessors.JvmInlineSourceTransformer
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
@@ -121,7 +122,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         val file = File(target, "gradle-wrapper.properties")
         file.readLines().map {
             when {
-                it.startsWith("distributionUrl") -> "distributionUrl=https\\://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
+                it.startsWith("distributionUrl") -> "distributionUrl=https\\://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip"
                 it.startsWith("distributionSha256Sum") -> "distributionSha256Sum=$GRADLE_SHA_256"
                 else -> it
             }
@@ -373,6 +374,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         }
                     }
 
+                    if (testConfiguration.metaTestConfigurators.any { it.shouldSkipTest() }) {
+                        continue
+                    }
+
                     patchFilesAndAddTest(file, module, services, filesHolder)
                 }
             }
@@ -407,7 +412,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
-            ::CodegenHelpersSourceFilesProvider,
         )
 
         assertions = JUnit5Assertions
@@ -417,13 +421,15 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
+        useDirectives(CodegenTestDirectives)
         class AndroidTransformingPreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
             override fun process(file: TestFile, content: String): String {
                 val transformers = Android.forAll + (Android.forSpecificFile[file.originalFile]?.let { listOf(it) } ?: emptyList())
                 return transformers.fold(content) { text, transformer -> transformer(text) }
             }
         }
-        useSourcePreprocessor({ AndroidTransformingPreprocessor(it) })
+        useSourcePreprocessor({ AndroidTransformingPreprocessor(it) }, ::JvmInlineSourceTransformer)
+        useMetaTestConfigurators(::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator)
     }
 
     companion object {

@@ -94,3 +94,7 @@ sealed class Sealed {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, isExpression, nestedClass, nullableType, objectDeclaration, operator, override,
+sealed, smartcast, thisExpression, whenExpression, whenWithSubject */

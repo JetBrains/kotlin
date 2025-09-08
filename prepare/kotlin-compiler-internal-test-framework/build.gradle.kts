@@ -2,12 +2,14 @@ plugins {
     java
 }
 
-val testModules = listOf(
+val testFixturesModules = listOf(
     ":compiler:test-infrastructure",
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-compiler-utils",
     ":compiler:tests-common-new",
-    ":generators:test-generator"
+    ":generators:test-generator",
+    ":kotlin-build-common",
+    ":js:js.tests",
 )
 
 val mainModules = listOf(
@@ -17,22 +19,25 @@ val mainModules = listOf(
 )
 
 dependencies {
-    mainModules.forEach {
-        embedded(project(it)) { isTransitive = false }
+    fun List<String>.registerDependencies(notation: (String) -> Dependency) {
+        this.forEach {
+            embedded(notation(it)) {
+                if (this is ModuleDependency) isTransitive = false
+            }
+        }
     }
-    testModules.forEach {
-        embedded(projectTests(it)) { isTransitive = false }
-    }
+
+    mainModules.registerDependencies { project(it) }
+    testFixturesModules.registerDependencies { testFixtures(project(it)) }
 }
 
 publish()
 runtimeJar()
 sourcesJar {
     from {
-        mainModules.map { project(it).mainSourceSet.allSource } + testModules.map { project(it).testSourceSet.allSource }
+        mainModules.map { project(it).mainSourceSet.allSource } +
+                testFixturesModules.map { project(it).testFixturesSourceSet.allSource }
     }
-
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
 }
 
 javadocJar()

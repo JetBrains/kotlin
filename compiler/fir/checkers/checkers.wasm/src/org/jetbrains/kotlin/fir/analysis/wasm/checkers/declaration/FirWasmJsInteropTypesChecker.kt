@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.isJsExportedDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -53,7 +54,7 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
         }
 
         if (declaration is FirFunction && isJsExportedDeclaration(declaration, session)) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (LanguageFeature.ContextParameters.isEnabled()) {
                 if (declaration.contextParameters.isNotEmpty()) {
                     reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
@@ -86,13 +87,13 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
             if (isBasicFunctionType(session)) return true
 
             // aside from the aforementioned cases, only external types are supported
-            return toRegularClassSymbol(session)?.isEffectivelyExternal(session) == true
+            return this.toRegularClassSymbol()?.isEffectivelyExternal(session) == true
         }
 
         fun FirTypeRef.checkSupportInJsInterop(position: Position, fallbackSource: KtSourceElement?) {
             val type = coneType.let {
                 val unexpandedType = if (position == Position.VARARG_VALUE_PARAMETER_TYPE) it.varargElementType() else it
-                unexpandedType.fullyExpandedType(session)
+                unexpandedType.fullyExpandedType()
             }
 
             if (!type.isSupportedInJsInterop(position)) {

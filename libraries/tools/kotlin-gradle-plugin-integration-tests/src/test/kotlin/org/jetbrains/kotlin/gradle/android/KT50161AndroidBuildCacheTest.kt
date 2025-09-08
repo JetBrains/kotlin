@@ -26,6 +26,7 @@ class KT50161AndroidBuildCacheTest : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
         @TempDir localBuildCacheDir: Path
     ) {
+        val enableVariantFilterProperty = "enableVariantFilter"
         project(
             "kt-50161-androidBuildCacheWithVariantFilter",
             gradleVersion,
@@ -35,9 +36,22 @@ class KT50161AndroidBuildCacheTest : KGPBaseTest() {
             ),
             buildJdk = jdkVersion.location,
         ) {
+            subprojects("app").buildScriptInjection {
+                val enableVariantFilter = project.providers.gradleProperty(enableVariantFilterProperty)
+                project.plugins.withId("com.android.application") {
+                    if (enableVariantFilter.orNull != null) {
+                        project.logger.quiet(enableVariantFilterProperty)
+                        @Suppress("DEPRECATION")
+                        androidApp.variantFilter { variant ->
+                            variant.ignore = variant.buildType.name != "debug"
+                        }
+                    }
+                }
+            }
+
             enableLocalBuildCache(localBuildCacheDir)
 
-            build("assembleDebug", buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)) {
+            build("assembleDebug") {
                 assertTasksExecuted(":app:assembleDebug")
                 getCompileKotlinTasks().forEach { task ->
                     assertTasksExecuted(task.path)
@@ -52,8 +66,8 @@ class KT50161AndroidBuildCacheTest : KGPBaseTest() {
             }
             build("clean")
 
-            build("assembleDebug", "-PenableVariantFilter") {
-                assertOutputContains("enableVariantFilter")
+            build("assembleDebug", "-P$enableVariantFilterProperty") {
+                assertOutputContains(enableVariantFilterProperty)
                 getCompileKotlinTasks().forEach { task ->
                     assertTasksFromCache(task.path)
                 }

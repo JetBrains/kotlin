@@ -1,5 +1,5 @@
 // See KT-64725
-// IGNORE_INLINER_K2: IR
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -55,5 +55,4 @@ fun box() {
 // test.kt:6 $foo (39, 46)
 // test.kt:7 $flaf (46, 57)
 // test.kt:15 $flaf (1)
-// test.kt:18 $box (4)
 // test.kt:19 $box (1)

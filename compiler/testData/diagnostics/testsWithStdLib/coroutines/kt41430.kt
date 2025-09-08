@@ -26,3 +26,5 @@ fun test_4(list: List<Set<A>>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableSet<A>")!>list.flatMapTo(mutableSetOf()) { it }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral */

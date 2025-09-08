@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
+// LANGUAGE: -NoBuilderInferenceWithoutAnnotationRestriction
 // SKIP_TXT
 
 fun List<Int>.myExt() {}
@@ -69,3 +70,6 @@ fun test4() {
         <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("D; buildPartList")!>right = { add("") }<!>
     )
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, intersectionType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

@@ -19,3 +19,6 @@ fun problematic(x: String): Problem = when (x) {
     "database" -> DATABASE
     else -> UNKNOWN
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // FIR_DUMP
 
@@ -16,3 +16,6 @@ fun checkCannotAccess() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, ifExpression, isExpression,
+localProperty, nestedClass, propertyDeclaration */

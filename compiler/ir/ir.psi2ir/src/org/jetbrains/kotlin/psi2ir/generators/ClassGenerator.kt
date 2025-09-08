@@ -473,18 +473,20 @@ internal class ClassGenerator(
         ktClassOrObject: KtPureClassOrObject
     ) {
         ktClassOrObject.primaryConstructor?.let { ktPrimaryConstructor ->
-            irPrimaryConstructor.valueParameters.forEach {
+            irPrimaryConstructor.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.forEach {
                 context.symbolTable.descriptorExtension.introduceValueParameter(it)
             }
 
-            ktPrimaryConstructor.valueParameters.forEachIndexed { i, ktParameter ->
-                val irValueParameter = irPrimaryConstructor.valueParameters[i + ktClassOrObject.contextReceivers.size]
-                if (ktParameter.hasValOrVar()) {
-                    val irProperty = PropertyGenerator(declarationGenerator)
-                        .generatePropertyForPrimaryConstructorParameter(ktParameter, irValueParameter)
-                    irClass.addMember(irProperty)
+            irPrimaryConstructor.parameters
+                .filter { it.kind == IrParameterKind.Regular }
+                .zip(ktPrimaryConstructor.valueParameters)
+                .forEach { (irValueParameter, ktParameter) ->
+                    if (ktParameter.hasValOrVar()) {
+                        val irProperty = PropertyGenerator(declarationGenerator)
+                            .generatePropertyForPrimaryConstructorParameter(ktParameter, irValueParameter)
+                        irClass.addMember(irProperty)
+                    }
                 }
-            }
         }
     }
 

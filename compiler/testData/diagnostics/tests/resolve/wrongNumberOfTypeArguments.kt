@@ -15,3 +15,5 @@ fun <T, R> bar(t: T, r: R) {}
 fun test2() {
     bar<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>(0, "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

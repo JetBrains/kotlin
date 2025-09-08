@@ -12,3 +12,6 @@ fun <K : Inv<L>, L : N, N: <!FINAL_UPPER_BOUND!>Int<!>> main() {
     val foo = Foo<K>()
     Bar<Inv<Number>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, intersectionType, localProperty,
+nullableType, propertyDeclaration, typeConstraint, typeParameter */

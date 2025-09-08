@@ -31,7 +31,11 @@ State state = buildLogFile.readLines().collect { it.replaceAll("\\u001b[^m]*m", 
             || line.startsWith("Downloaded")
             || line.startsWith("Downloading")
             || line.startsWith("[WARNING] Language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features")
-            || line.startsWith("[INFO] PERF:")) {
+            || line.startsWith("[INFO] starting the daemon as")
+            || line.contains("retrying connecting to the daemon") // may contain text on both sides
+            || line.startsWith("[INFO] PERF:")
+            || (line.startsWith("[WARNING]") && line.contains("is deprecated")) // ignoring deprecations
+    ) {
         // ignore line
     } else if (acc.currentPlugin == "kotlin-maven-plugin") {
         def filtered = removePaths(line, basedir)

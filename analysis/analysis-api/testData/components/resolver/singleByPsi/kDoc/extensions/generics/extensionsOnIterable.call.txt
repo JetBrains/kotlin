@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(52,64): 'Iterable.map'
+    null
+
+<caret_2>:
+  KDocName(72,88): 'Iterable.flatMap'
+    null
+
+<caret_3>:
+  KDocName(96,112): 'Iterable.flatten'
+    null
+
+<caret_4>:
+  KDocName(120,132): 'Iterable.min'
+    null
+
+<caret_5>:
+  KDocName(140,148): 'List.map'
+    null
+
+<caret_6>:
+  KDocName(156,168): 'List.flatMap'
+    null
+
+<caret_7>:
+  KDocName(176,188): 'List.flatten'
+    null
+
+<caret_8>:
+  KDocName(196,204): 'List.min'
+    null

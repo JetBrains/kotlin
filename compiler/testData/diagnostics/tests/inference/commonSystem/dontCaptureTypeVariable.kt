@@ -11,3 +11,5 @@ fun test(list: ArrayList<Int>, comparatorFun: (Int, Int) -> Int) {
 
 public fun <E> sort(list: List<E>, c: Comparator<in E>) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inProjection, nullableType, typeParameter */

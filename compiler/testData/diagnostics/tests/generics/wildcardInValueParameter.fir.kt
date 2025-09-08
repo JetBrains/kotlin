@@ -13,3 +13,5 @@ fun foo() {
     JavaClass().bar(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>)
     JavaClass().bar("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.asAnnotationQualifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.getContainingSymbolsWithSelf
-import org.jetbrains.kotlin.light.classes.symbol.getTypeNullability
+import org.jetbrains.kotlin.light.classes.symbol.getRequiredNullabilityAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
@@ -36,7 +37,15 @@ internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(): Boolean {
 }
 
 internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
-    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName)
+    return stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmName)
+}
+
+internal fun KaAnnotatedSymbol.getJvmExposeBoxedNameFromAnnotation(): String? {
+    return stringArgumentFromAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID)
+}
+
+private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(annotationClassId: ClassId): String? {
+    val annotation = findAnnotation(annotationClassId)
     return annotation?.let {
         (it.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
     }
@@ -45,7 +54,11 @@ internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
 internal fun KaSession.isHiddenByDeprecation(
     symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-): Boolean = symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
+): Boolean {
+    return symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN &&
+            // see KT-80649
+            !symbol.annotations.contains(JvmStandardClassIds.Annotations.Java.Deprecated)
+}
 
 internal fun KaSession.isHiddenOrSynthetic(
     symbol: KaAnnotatedSymbol,
@@ -61,6 +74,11 @@ internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClas
 internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations
+
+/** @see org.jetbrains.kotlin.light.classes.symbol.methods.jvmExposeBoxedMode */
+internal fun KaAnnotatedSymbol.hasJvmExposeBoxedAnnotation(): Boolean {
+    return JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID in annotations
+}
 
 internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmStatic in annotations
 
@@ -156,9 +174,9 @@ fun KaSession.annotateByKtType(
 
         // Original type should be used to infer nullability
         val typeNullability = when {
-            !inferNullabilityForTypeArguments && type is KaTypeParameterType -> KaTypeNullability.UNKNOWN
-            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
-            else -> getTypeNullability(type)
+            !inferNullabilityForTypeArguments && type is KaTypeParameterType -> NullabilityAnnotation.NOT_REQUIRED
+            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> NullabilityAnnotation.NON_NULLABLE
+            else -> getRequiredNullabilityAnnotation(type)
         }
 
         val nullabilityAnnotation = typeNullability.asAnnotationQualifier?.let {

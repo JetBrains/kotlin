@@ -29,3 +29,7 @@ class Scope {
 
 class CoroutineWorker
 interface CoroutineScope
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nestedClass, nullableType, primaryConstructor, propertyDeclaration, suspend, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter, typeWithExtension */

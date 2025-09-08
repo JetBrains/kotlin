@@ -19,3 +19,6 @@ open class C1(s: String)
 // MODULE: jvm()()(common)
 // FILE: jvm.kt
 fun main() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, expect, functionDeclaration,
+primaryConstructor, propertyDeclaration, value */

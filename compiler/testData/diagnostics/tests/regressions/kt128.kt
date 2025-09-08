@@ -12,3 +12,5 @@ fun f() {
       // ...
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

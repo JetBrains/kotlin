@@ -11,16 +11,16 @@ owner -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
 context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol /function
 
 @ReceiverNestedTypeAnnotation(IntegerLiteral(6))
-owner -> FirReceiverParameterSymbol from FirPropertySymbol /property
-context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+owner -> FirReceiverParameterSymbol from FirRegularPropertySymbol /property
+context -> FirReceiverParameterSymbol from FirRegularPropertySymbol /property
 
 @ReceiverTypeAnnotation(IntegerLiteral(5))
-owner -> FirReceiverParameterSymbol from FirPropertySymbol /property
-context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+owner -> FirReceiverParameterSymbol from FirRegularPropertySymbol /property
+context -> FirReceiverParameterSymbol from FirRegularPropertySymbol /property
 
 @RECEIVER:PropertyReceiverAnnotation(IntegerLiteral(4))
-owner -> FirReceiverParameterSymbol from FirPropertySymbol /property
-context -> FirReceiverParameterSymbol from FirPropertySymbol /property
+owner -> FirReceiverParameterSymbol from FirRegularPropertySymbol /property
+context -> FirReceiverParameterSymbol from FirRegularPropertySymbol /property
 
 @ContextReceiverAnnotation(IntegerLiteral(7))
 owner -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
@@ -31,12 +31,12 @@ owner -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /funct
 context -> FirValueParameterSymbol <local>/List from FirNamedFunctionSymbol /functionWithContextReceivers
 
 @ContextReceiverAnnotation(IntegerLiteral(8))
-owner -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
-context -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+owner -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /propertyWithContextReceivers
+context -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /propertyWithContextReceivers
 
 @ContextReceiverAnnotation()
-owner -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
-context -> FirValueParameterSymbol <local>/List from FirPropertySymbol /propertyWithContextReceivers
+owner -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /propertyWithContextReceivers
+context -> FirValueParameterSymbol <local>/List from FirRegularPropertySymbol /propertyWithContextReceivers
 
 @ContextReceiverAnnotation(IntegerLiteral(9))
 owner -> FirValueParameterSymbol <local>/List from FirConstructorSymbol /MyClass.MyClass

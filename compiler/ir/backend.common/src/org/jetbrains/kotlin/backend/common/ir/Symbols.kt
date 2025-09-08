@@ -7,22 +7,26 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import kotlin.getValue
 
 @OptIn(InternalSymbolFinderAPI::class)
-open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
-    val symbolFinder = irBuiltIns.symbolFinder
-
+abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(irBuiltIns) {
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
         symbolFinder.findClass(name, *packageNameSegments)
             ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
@@ -36,8 +40,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
         val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
         type to iteratorClass
     }
-
-    val asserts = symbolFinder.findFunctions(Name.identifier("assert"), "kotlin")
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
     private fun progressionOrNull(name: String) = symbolFinder.findClass(Name.identifier(name), "kotlin", "ranges")
@@ -67,14 +69,17 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
 
     val closedRange = progression("ClosedRange")
 
-    open val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltinFunctionsByReturnType(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+    abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
-    open val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toUInt"), "kotlin")
+    val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toUInt")).functionSymbolAssociatedBy {
+        it.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
+            ?: error("Expected extension receiver for ${it.render()}")
+    }
 
-    open val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toULong"), "kotlin")
+    val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toULong")).functionSymbolAssociatedBy {
+        it.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
+            ?: error("Expected extension receiver for ${it.render()}")
+    }
 
     val any get() = irBuiltIns.anyClass
     val unit get() = irBuiltIns.unitClass
@@ -121,8 +126,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
     val unsignedTypesToUnsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
 
-    val arrays get() = primitiveTypesToPrimitiveArrays.values + unsignedTypesToUnsignedArrays.values + array
-
     val collection get() = irBuiltIns.collectionClass
     val set get() = irBuiltIns.setClass
     val list get() = irBuiltIns.listClass
@@ -139,13 +142,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val mutableIterator get() = irBuiltIns.mutableIteratorClass
     val mutableListIterator get() = irBuiltIns.mutableListIteratorClass
     val comparable get() = irBuiltIns.comparableClass
-
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
-
-    fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol =
-        irBuiltIns.getBinaryOperator(name, lhsType, rhsType)
-
-    fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol = irBuiltIns.getUnaryOperator(name, receiverType)
 
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
@@ -180,19 +176,9 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
 
         return functionSymbol == plusSymbol
     }
-}
-
-// Some symbols below are used in kotlin-native, so they can't be private
-@Suppress("MemberVisibilityCanBePrivate")
-abstract class Symbols(
-    irBuiltIns: IrBuiltIns,
-) : BuiltinSymbolsBase(irBuiltIns) {
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
-
-    abstract val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
-    abstract val throwUnsupportedOperationException: IrSimpleFunctionSymbol
 
     abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
 
@@ -204,8 +190,6 @@ abstract class Symbols(
 
     abstract val stringBuilder: IrClassSymbol
 
-    abstract val defaultConstructorMarker: IrClassSymbol
-
     abstract val coroutineImpl: IrClassSymbol
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
@@ -214,46 +198,41 @@ abstract class Symbols(
 
     abstract val continuationClass: IrClassSymbol
 
-    abstract val coroutineContextGetter: IrSimpleFunctionSymbol
-
-    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
-
-    abstract val coroutineGetContext: IrSimpleFunctionSymbol
-
     abstract val returnIfSuspended: IrSimpleFunctionSymbol
 
     abstract val functionAdapter: IrClassSymbol
 
-    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
+    abstract val defaultConstructorMarker: IrClassSymbol
 
-    open val getWithoutBoundCheckName: Name? = null
+    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol?
+        get() = null
 
-    open val setWithoutBoundCheckName: Name? = null
+    open val getWithoutBoundCheckName: Name?
+        get() = null
 
-    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
+    open val setWithoutBoundCheckName: Name?
+        get() = null
 
+    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>?
+        get() = null
+
+    /**
+     * Determines whether the provided function call is free of side effects.
+     * If it is, then we consider this function to be pure and that unblocks some backend optimizations.
+     */
     open fun isSideEffectFree(call: IrCall): Boolean {
         return false
     }
+}
 
-    companion object {
-        fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "<get-isInitialized>" &&
-                        function.isTopLevel &&
-                        function.getPackageFragment().packageFqName.asString() == "kotlin" &&
-                        function.hasShape(extensionReceiver = true) &&
-                        function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
-            }
+// TODO KT-77388 rename to `BackendKlibSymbolsImpl`
+@OptIn(InternalSymbolFinderAPI::class)
+abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, Symbols(irBuiltIns) {
+    final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
+        it.returnType.classifierOrFail
+    }
 
-        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean {
-            return if (symbol.isBound) {
-                symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                    function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME) && function.hasShape()
-                }
-            } else {
-                symbol.hasTopLevelEqualFqName(KOTLIN_REFLECT_FQ_NAME.asString(), "typeOf")
-            }
-        }
+    val primitiveSharedVariableBoxes: Map<IrType, PreSerializationKlibSymbols.SharedVariableBoxClassInfo> = PrimitiveType.entries.associate {
+        irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it)
     }
 }

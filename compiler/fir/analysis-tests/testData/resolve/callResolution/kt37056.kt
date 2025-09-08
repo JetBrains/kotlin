@@ -31,3 +31,6 @@ class Case2 {
 }
 
 class A()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration, safeCall, stringLiteral */

@@ -33,14 +33,14 @@ Smart Casts:
 FILE: [ResolvedTo(IMPORTS)] smartCastFunction.kt
     context([ResolvedTo(CONTRACTS)] <unused var>: R|kotlin/Int|)
     public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
-    context([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Any|)
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
+    public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/Any|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
             (R|<local>/c| is R|kotlin/Int|) ->  {
                 context(R|<local>/c|) R|/bar|()
             }
         }
 
-        R|/bar|()
+        bar#()
     }

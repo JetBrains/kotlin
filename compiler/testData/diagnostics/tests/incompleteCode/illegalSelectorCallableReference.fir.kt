@@ -7,3 +7,5 @@ fun test() {
     "a".<!ILLEGAL_SELECTOR!>"b"<!>.<!ILLEGAL_SELECTOR!>"c"<!>::<!UNRESOLVED_REFERENCE!>foo<!>
     "a".<!ILLEGAL_SELECTOR!>"b"<!>.<!ILLEGAL_SELECTOR!>"c"<!>::class
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, stringLiteral */

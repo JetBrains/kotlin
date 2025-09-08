@@ -1,0 +1,29 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Content(index: Int) {}
+
+@Composable
+fun Test() {
+    for (i in 0..10) {
+        Content(i)
+    }
+
+    Content(1)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Content(ILandroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 5 }
+    Test(Landroidx/compose/runtime/Composer;I)V
+        ReplaceGroup { key: <key>, line: 9 }
+        RestartGroup { key: <key>, line: 8 }
+}

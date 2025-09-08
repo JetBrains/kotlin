@@ -25,3 +25,5 @@ fun test() {
     <!INVISIBLE_REFERENCE!>O1<!>
     <!INVISIBLE_REFERENCE!>JC1<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nestedClass, objectDeclaration */

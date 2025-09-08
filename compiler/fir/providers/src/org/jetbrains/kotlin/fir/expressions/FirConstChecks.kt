@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -386,8 +388,7 @@ private class FirConstCheckVisitor(
     private fun visitConstructorCall(constructorCall: FirFunctionCall, symbol: FirConstructorSymbol): ConstantArgumentKind {
         val classKindOfParent = (symbol.getReferencedClassSymbol() as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session)?.classKind
         return when {
-            classKindOfParent == ClassKind.ANNOTATION_CLASS -> ConstantArgumentKind.VALID_CONST
-            constructorCall.getExpandedType().isUnsignedType -> {
+            classKindOfParent == ClassKind.ANNOTATION_CLASS || constructorCall.getExpandedType().isUnsignedType -> {
                 constructorCall.arguments.forEach { argumentExpression ->
                     argumentExpression.accept(this, null).ifNotValidConst { return it }
                 }
@@ -455,9 +456,9 @@ private class FirConstCheckVisitor(
         // See visitErrorExpression for details. Here we count the type as valid and take a decision later.
         if (this is FirErrorExpression) return true
 
-        val expClassId = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session).classId
+        val expType = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session)
         // TODO, KT-59823: add annotation for allowed constant types
-        return expClassId in StandardClassIds.constantAllowedTypes
+        return expType.classId in StandardClassIds.constantAllowedTypes && !expType.isMarkedNullable
     }
 
     private fun FirExpression.getExpandedType() = resolvedType.fullyExpandedType(session)

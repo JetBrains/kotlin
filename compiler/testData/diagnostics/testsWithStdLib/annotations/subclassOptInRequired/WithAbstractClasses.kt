@@ -32,3 +32,5 @@ fun useSiteTestAbstractClasses(
     d: <!OPT_IN_USAGE_ERROR!>AbstractKlassOptInApiInheritorD<!>, // usage opt-in is required
     e: AbstractKlassOptInApiInheritorE  // usage opt-in isn't required
 ) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration */

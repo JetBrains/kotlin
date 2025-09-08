@@ -6,3 +6,5 @@ package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
 class a {
     class b
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

@@ -16,3 +16,6 @@ fun guardWithoutSubject(x: Any) {
         else -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, functionDeclaration, guardCondition, ifExpression, isExpression,
+objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression */

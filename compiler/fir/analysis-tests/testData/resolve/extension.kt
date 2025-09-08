@@ -12,3 +12,5 @@ class My {
 }
 
 fun My.foo() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

@@ -10,3 +10,6 @@ val list: List<String> = buildList {
 }
 
 fun maybe(): List<String>? = null
+
+/* GENERATED_FIR_TAGS: classReference, elvisExpression, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration */

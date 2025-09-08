@@ -16,3 +16,5 @@ expect enum class En2 {
 }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, expect, primaryConstructor, secondaryConstructor */

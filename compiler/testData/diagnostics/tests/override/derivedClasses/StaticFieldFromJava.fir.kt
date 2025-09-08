@@ -22,3 +22,5 @@ import test.J
 fun test() {
     <!DEBUG_INFO_CALLABLE_OWNER("test.I.OK in test.I")!>J.OK<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty */

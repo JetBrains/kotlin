@@ -314,6 +314,7 @@ public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Th
  */
 @InlineOnly
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
@@ -328,6 +329,7 @@ public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit
  */
 @InlineOnly
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public inline fun <T> Result<T>.onSuccess(action: (value: T) -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)

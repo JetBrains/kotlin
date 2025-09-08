@@ -8,3 +8,5 @@ fun test() {
         <!TOO_MANY_ARGUMENTS!>2<!>
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

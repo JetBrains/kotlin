@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.isArrayOfNullableNothing
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -22,16 +23,16 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)) return
+        if (!LanguageFeature.NullableNothingInReifiedPosition.isEnabled()) return
         val coneType = typeRef.coneType
-        val fullyExpandedType = coneType.fullyExpandedType(context.session)
+        val fullyExpandedType = coneType.fullyExpandedType()
 
         /** Ignore vararg, see varargOfNothing.kt test */
         val lastContainingDeclaration = context.containingDeclarations.lastOrNull()
         val isVararg = (lastContainingDeclaration as? FirValueParameterSymbol)?.isVararg == true
         if (!isVararg && fullyExpandedType.isArrayOfNullableNothing()) {
             if (lastContainingDeclaration !is FirTypeAliasSymbol ||
-                lastContainingDeclaration.resolvedExpandedTypeRef.coneType.isMalformedExpandedType(context, allowNullableNothing = false)
+                lastContainingDeclaration.resolvedExpandedTypeRef.coneType.isMalformedExpandedType(allowNullableNothing = false)
             ) {
                 reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.")
             }

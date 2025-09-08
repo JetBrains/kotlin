@@ -22,3 +22,6 @@ fun main() {
     stringF().myLet { 2 }
     stringF().let { 2 }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, funWithExtensionReceiver, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, nullableType, safeCall, stringLiteral, thisExpression, typeParameter */

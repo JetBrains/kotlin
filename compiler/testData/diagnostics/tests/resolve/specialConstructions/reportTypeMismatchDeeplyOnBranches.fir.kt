@@ -26,3 +26,5 @@ fun test(a: Int?, b: Any?, c: Int?) {
         }
     }<!>)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType */

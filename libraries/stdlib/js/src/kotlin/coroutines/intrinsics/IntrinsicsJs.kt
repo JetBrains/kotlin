@@ -10,6 +10,8 @@ package kotlin.coroutines.intrinsics
 import kotlin.coroutines.*
 import kotlin.coroutines.CoroutineImpl
 import kotlin.internal.InlineOnly
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.js.Promise
 
 /**
  * Invoke 'invoke' method of suspend super type
@@ -249,6 +251,7 @@ internal inline fun <T> startCoroutineFromGeneratorFunction(
     return result
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnGeneratorVersion(
     completion: Continuation<T>
 ): Any? = startCoroutineFromGeneratorFunction(completion) {
@@ -257,6 +260,7 @@ internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnGeneratorV
     else invokeSuspendSuperType(it)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnGeneratorVersion(
     receiver: R,
     completion: Continuation<T>
@@ -266,6 +270,7 @@ internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnGener
     else invokeSuspendSuperTypeWithReceiver(receiver, it)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnGeneratorVersion(
     receiver: R,
     param: P,
@@ -276,6 +281,7 @@ internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnG
     else invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, it)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).createCoroutineUninterceptedGeneratorVersion(
     completion: Continuation<T>
 ): Continuation<Any?> =
@@ -285,6 +291,7 @@ internal fun <T> (suspend () -> T).createCoroutineUninterceptedGeneratorVersion(
         else invokeSuspendSuperType(it)
     }
 
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).createCoroutineUninterceptedGeneratorVersion(
     receiver: R,
     completion: Continuation<T>
@@ -296,6 +303,7 @@ internal fun <R, T> (suspend R.() -> T).createCoroutineUninterceptedGeneratorVer
     }
 
 
+@UsedFromCompilerGeneratedCode
 internal fun <R, T, P> (suspend R.(P) -> T).createCoroutineUninterceptedGeneratorVersion(
     receiver: R,
     param: P,
@@ -307,7 +315,24 @@ internal fun <R, T, P> (suspend R.(P) -> T).createCoroutineUninterceptedGenerato
         else invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, it)
     }
 
+@UsedFromCompilerGeneratedCode
+internal fun <T> promisify(fn: suspend () -> T): Promise<T> =
+    Promise { resolve, reject ->
+        val completion = Continuation(EmptyCoroutineContext) {
+            it.onSuccess(resolve).onFailure(reject)
+        }
+        fn.startCoroutine(completion)
+    }
 
+@UsedFromCompilerGeneratedCode
+internal suspend fun <T> await(promise: Promise<T>): T = suspendCoroutine { continuation ->
+    promise.then(
+        onFulfilled = { result -> continuation.resume(result) },
+        onRejected = { error -> continuation.resumeWithException(error) }
+    )
+}
+
+@UsedFromCompilerGeneratedCode
 internal fun suspendOrReturn(generator: (continuation: Continuation<Any?>) -> dynamic, continuation: Continuation<Any?>): Any? {
     val generatorCoroutineImpl = if (continuation.asDynamic().constructor === GeneratorCoroutineImpl::class.js) {
         continuation.unsafeCast<GeneratorCoroutineImpl>()

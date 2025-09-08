@@ -5,23 +5,17 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.AbstractPropertyReferenceLowering
-import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.name.Name
 
 class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyReferenceLowering<JsIrBackendContext>(context) {
 
@@ -32,7 +26,6 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
     override fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
         typeArguments: List<IrType>,
-        name: String?,
         getterReference: IrRichFunctionReference,
         setterReference: IrRichFunctionReference?,
     ): IrExpression {
@@ -43,11 +36,12 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
         // 4 - setter
 
         return irCall(referenceBuilderSymbol).apply {
-            arguments[0] = irString(name ?: TODO("KT-76093: Support partial linkage for names of property references"))
+            arguments[0] = propertyReferenceNameExpression(reference)
             arguments[1] = irInt(typeArguments.size - 1)
             arguments[2] = reference.getJsTypeConstructor()
             arguments[3] = getterReference
             arguments[4] = setterReference ?: irNull()
+            arguments[5] = propertyReferenceLinkageErrorExpression(reference, this@PropertyReferenceLowering.context::getVoid)
         }
     }
 

@@ -34,3 +34,5 @@ fun checkArrays3() {
 
 fun println(s: String) = s
 
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, integerLiteral, intersectionType,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter */

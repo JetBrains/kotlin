@@ -21,3 +21,5 @@ fun test_1() {
     takeGeneric(1 + 1) // ok
     takeGenericX(1 + 1) // ok
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

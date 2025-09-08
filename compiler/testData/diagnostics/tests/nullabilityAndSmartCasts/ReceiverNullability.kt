@@ -44,3 +44,6 @@ fun A?.test3() {
     this?.bar()
     this?.buzz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, safeCall,
+thisExpression */

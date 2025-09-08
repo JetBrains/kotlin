@@ -172,3 +172,6 @@ val x: Throws? = null
 val y = Throws()
 val z = Throws::exceptionClasses
 val w = Throws::class
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, functionDeclaration, nullableType, outProjection,
+propertyDeclaration */

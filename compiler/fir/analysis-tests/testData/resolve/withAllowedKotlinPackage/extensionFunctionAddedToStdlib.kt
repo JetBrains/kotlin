@@ -14,3 +14,5 @@ package kotlin
 class MyClass
 
 fun MyClass.extensionFun() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

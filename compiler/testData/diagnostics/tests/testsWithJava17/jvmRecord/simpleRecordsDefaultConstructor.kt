@@ -11,3 +11,5 @@ fun foo() {
     MyRecord("") // OK
     MyRecord<!NO_VALUE_FOR_PARAMETER!>()<!> // error
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

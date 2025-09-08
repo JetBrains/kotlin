@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>> : KaLifetimeOwner {
     /**
      * The function or variable declaration.

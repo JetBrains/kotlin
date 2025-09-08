@@ -15,3 +15,6 @@ private fun doUpdateRegularTasks() {
         fun execute() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, localFunction,
+localProperty, propertyDeclaration, smartcast, tryExpression, whileLoop */

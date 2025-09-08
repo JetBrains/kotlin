@@ -13,3 +13,5 @@ public class JavaClass {
     @Nullable
     public String getSomething() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaProperty, javaType, nullableType */

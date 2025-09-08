@@ -5,3 +5,6 @@ class C {
     @delegate:Transient
     val lazy by lazy { 1 }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFieldDelegate, classDeclaration, integerLiteral, lambdaLiteral,
+propertyDeclaration, propertyDelegate */

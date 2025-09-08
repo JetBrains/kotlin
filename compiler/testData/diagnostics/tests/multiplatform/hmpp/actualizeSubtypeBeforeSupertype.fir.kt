@@ -19,3 +19,5 @@ actual class C : B() {
 actual open class B {
     open fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, primaryConstructor */

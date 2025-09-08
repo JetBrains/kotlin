@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
  * [KaClassInitializerSymbol] represents an [anonymous initializer declaration](https://kotlinlang.org/docs/reference/grammar.html#anonymousInitializer)
  * in a class body.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaClassInitializerSymbol : KaDeclarationSymbol {
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }

@@ -22,7 +22,8 @@ public final class SomeClass /* SomeClass*/ {
 }
 
 public abstract interface SomeInterface /* SomeInterface*/ {
-  class DefaultImpls ...
+  public static final class DefaultImpls /* SomeInterface.DefaultImpls*/ {
+  }
 }
 
 public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {

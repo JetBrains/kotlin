@@ -5,3 +5,5 @@
 // WITH_STDLIB
 
 fun test() = arrayListOf(1, 2)
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

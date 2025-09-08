@@ -13,3 +13,5 @@ fun use(j: JavaClass) {
     j.<!DEPRECATION!>deprecatedField<!>
     j.regularField
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

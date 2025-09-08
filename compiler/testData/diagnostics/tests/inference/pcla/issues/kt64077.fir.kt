@@ -20,3 +20,7 @@ fun test() {
         Unit // This unit is essential!!!
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, typeParameter,
+typeWithExtension */

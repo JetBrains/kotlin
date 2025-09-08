@@ -72,3 +72,8 @@ fun test6() {
         use(::extension)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, integerLiteral, lambdaLiteral, localFunction, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, starProjection, thisExpression,
+typeParameter, typeWithExtension */

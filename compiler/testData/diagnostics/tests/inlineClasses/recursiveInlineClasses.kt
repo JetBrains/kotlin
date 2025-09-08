@@ -22,3 +22,6 @@ inline class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x
 
 inline class Id<T>(val x: T)
 inline class TestRecursionThroughId(val x: Id<TestRecursionThroughId>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.services
 import org.jetbrains.kotlin.backend.jvm.originalSnippetValueSymbol
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
@@ -215,7 +215,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val hashMapClassSymbol =
                 session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(
                     fqn2cid("kotlin.collections.HashMap")
-                )?.fullyExpandedClass(session) ?: error("HashMap class not found")
+                )?.fullyExpandedClass() ?: error("HashMap class not found")
             val firReplStateSymbol = FirRegularClassSymbol(classId)
             val constructor = buildPrimaryConstructor {
                 moduleData = session.moduleData

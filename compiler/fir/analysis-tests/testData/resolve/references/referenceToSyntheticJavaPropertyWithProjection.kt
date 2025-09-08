@@ -17,3 +17,6 @@ fun test() {
     JavaInv<out Number>::stringVal
     KotlinInv<out Number>::stringVal
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, javaCallableReference, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

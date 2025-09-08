@@ -26,3 +26,10 @@ fun getBaz(x: Foo<JsBigInt>): JsAny = js("({ baz: x.foo > 0n })")
 
 @JsExport
 fun <A, B> complexConstraint(x: A): B where A: Foo<JsBigInt>, A: Bar, B: Baz = getBaz(x).unsafeCast<B>()
+
+external interface Boo<T: JsAny> {
+    fun boo(): T
+}
+
+@JsExport
+fun nothingInTypeArgument(x: Boo<Nothing>): Boo<Nothing> = x

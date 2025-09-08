@@ -14,3 +14,6 @@ val Int.property1: Int
 val Int.property2 get() = run {
     this@property2 + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver, thisExpression */

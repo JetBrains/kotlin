@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
 class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
     private val getClassData = context.intrinsics.jsClass
     private val primitiveClassesObject = context.intrinsics.primitiveClassesObject
+    private val longArrayClassSymbol = context.intrinsics.longArrayClass
 
     private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
         primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
@@ -52,6 +54,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
             IrType::isInt to "intClass",
             IrType::isFloat to "floatClass",
             IrType::isDouble to "doubleClass",
+            { type: IrType -> type.isLong() && context.configuration.compileLongAsBigint } to "longClass",
             IrType::isArray to "arrayClass",
             IrType::isString to "stringClass",
             IrType::isBooleanArray to "booleanArrayClass",
@@ -59,7 +62,6 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
             IrType::isByteArray to "byteArrayClass",
             IrType::isShortArray to "shortArrayClass",
             IrType::isIntArray to "intArrayClass",
-            IrType::isLongArray to "longArrayClass",
             IrType::isFloatArray to "floatArrayClass",
             IrType::isDoubleArray to "doubleArrayClass"
         ).mapValues {
@@ -87,6 +89,9 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
         }
 
     override fun getFinalPrimitiveKClass(returnType: IrType, typeArgument: IrType): IrCall? {
+        if (typeArgument.isLongArray()) {
+            return JsIrBuilder.buildCall(longArrayClassSymbol, returnType)
+        }
         for ((typePredicate, v) in finalPrimitiveClasses) {
             if (typePredicate(typeArgument))
                 return getPrimitiveClass(v, returnType)
@@ -175,7 +180,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
     }
 
     private fun createDynamicType(): IrExpression {
-        return buildCall(reflectionSymbols.createDynamicKType!!)
+        return buildCall(reflectionSymbols.createDynamicKType)
     }
 
     private fun createSimpleKType(type: IrSimpleType, visitedTypeParams: MutableSet<IrTypeParameter>): IrExpression {
@@ -196,7 +201,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
 
         val isMarkedNullable = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, type.isMarkedNullable())
         return buildCall(
-            reflectionSymbols.createKType!!,
+            reflectionSymbols.createKType,
             kClassifier,
             arguments,
             isMarkedNullable
@@ -205,13 +210,13 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
 
     private fun createKTypeProjection(tp: IrTypeArgument, visitedTypeParams: MutableSet<IrTypeParameter>): IrExpression {
         if (tp !is IrTypeProjection) {
-            return buildCall(reflectionSymbols.getStarKTypeProjection!!)
+            return buildCall(reflectionSymbols.getStarKTypeProjection)
         }
 
         val factoryName = when (tp.variance) {
-            Variance.INVARIANT -> reflectionSymbols.createInvariantKTypeProjection!!
-            Variance.IN_VARIANCE -> reflectionSymbols.createContravariantKTypeProjection!!
-            Variance.OUT_VARIANCE -> reflectionSymbols.createCovariantKTypeProjection!!
+            Variance.INVARIANT -> reflectionSymbols.createInvariantKTypeProjection
+            Variance.IN_VARIANCE -> reflectionSymbols.createContravariantKTypeProjection
+            Variance.OUT_VARIANCE -> reflectionSymbols.createCovariantKTypeProjection
         }
 
         val kType = createKType(tp.type, visitedTypeParams)
@@ -247,11 +252,12 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
         }
 
         return buildCall(
-            reflectionSymbols.createKTypeParameter!!,
+            reflectionSymbols.createKTypeParameter,
             name,
             upperBounds,
             variance,
             typeParameter.isReified.toIrConst(context.irBuiltIns.booleanType),
+            typeParameter.parent.kotlinFqName.asString().toIrConst(context.irBuiltIns.stringType),
         ).also {
             visitedTypeParams.remove(typeParameter)
         }
@@ -273,7 +279,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
                 )
 
             override fun visitCall(expression: IrCall): IrExpression =
-                if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                if (PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
                     createKType(expression.typeArguments[0]!!, hashSetOf())
                 } else {
                     super.visitCall(expression)
@@ -281,4 +287,3 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
         })
     }
 }
-

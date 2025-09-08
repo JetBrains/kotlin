@@ -1,20 +1,23 @@
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
-projectTest {
-    // Disable KONAN_DATA_DIR env variable for all integration tests
-    // because we are using `konan.data.dir` gradle property instead
-    environment.remove("KONAN_DATA_DIR")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        // Disable KONAN_DATA_DIR env variable for all integration tests
+        // because we are using `konan.data.dir` gradle property instead
+        environment.remove("KONAN_DATA_DIR")
 
-    dependsOnKotlinGradlePluginInstall()
+        dependsOnKotlinGradlePluginInstall()
 
-    if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
-        // Build full Kotlin Native bundle
-        dependsOn(":kotlin-native:install")
+        if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
+            // Build full Kotlin Native bundle
+            dependsOn(":kotlin-native:install")
+        }
+
+        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     }
-
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
 }
 
 dependencies {

@@ -17,3 +17,6 @@ fun main() {
     checkSubtype<KFunction1<Int, Unit>>(y)
     checkSubtype<KFunction0<String>>(z)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

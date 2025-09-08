@@ -14,3 +14,6 @@ fun whenWithoutSubject(x: Int, list: List<Int>?) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, nullableType, smartcast, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

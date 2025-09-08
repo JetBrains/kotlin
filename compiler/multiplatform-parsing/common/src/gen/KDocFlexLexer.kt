@@ -102,7 +102,7 @@ companion object {
    * Second-level tables for translating characters to character classes
    */
   private const val ZZ_CMAP_BLOCKS_PACKED_0: String  =
-    "\u0009\u0000\u0001\u0001\u0001\u0002\u0001\u0003\u0001\u0004\u0001\u0003\u0012\u0000\u0001\u0005"+
+    "\u0009\u0000\u0001\u0001\u0001\u0002\u0001\u0003\u0001\u0004\u0001\u0005\u0012\u0000\u0001\u0001"+
     "\u0003\u0000\u0001\u0006\u0003\u0000\u0001\u0007\u0001\u0008\u0001\u0009\u0003\u0000\u0001\u000a"+
     "\u0001\u000b\u000a\u000c\u0006\u0000\u0001\u000d\u001a\u0006\u0001\u000e\u0001\u000f\u0001\u0010"+
     "\u0001\u0000\u0001\u0006\u0001\u0011\u001a\u0006\u0003\u0000\u0001\u0012\u0006\u0000\u0001\u0003"+
@@ -307,15 +307,16 @@ companion object {
    * Translates DFA states to action switch labels.
    */
   private const val ZZ_ACTION_PACKED_0: String  =
-    "\u0009\u0000\u0003\u0001\u0001\u0002\u0001\u0003\u0002\u0004\u0001\u0005\u0001\u0006\u0001\u0007"+
-    "\u0006\u0002\u0001\u0008\u0001\u0009\u0002\u0002\u0001\u000a\u0001\u000b\u0001\u000a\u0001\u000c"+
-    "\u0002\u000a\u0001\u0000\u0001\u000d\u0001\u0000\u0001\u0004\u0001\u0000\u0001\u000e\u0002\u0000"+
-    "\u0001\u000f\u0004\u0000\u0001\u0010\u0001\u0004\u0001\u0000\u0001\u0011\u0001\u0009\u0001\u0012"+
-    "\u0001\u0000\u0001\u0003\u0001\u0013\u0001\u0014"
+    "\u0009\u0000\u0003\u0001\u0001\u0002\u0001\u0003\u0001\u0004\u0001\u0005\u0001\u0006\u0001\u0007"+
+    "\u0004\u0002\u0001\u0008\u0002\u0002\u0001\u0009\u0001\u000a\u0001\u000b\u0004\u0009\u0001\u000c"+
+    "\u0001\u000d\u0001\u000e\u0001\u000c\u0001\u000f\u0002\u000c\u0001\u0000\u0001\u0010\u0003\u0000"+
+    "\u0001\u0011\u0002\u0000\u0001\u0012\u0001\u000b\u0007\u0000\u0001\u0013\u0003\u0000\u0001\u0014"+
+    "\u0002\u0000\u0001\u000b\u0001\u0000\u0001\u000b\u0001\u0000\u0001\u0015\u0002\u0000\u0001\u0016"+
+    "\u0003\u0000\u0001\u0017"
 
   @JvmStatic
   private fun zzUnpackAction(): IntArray {
-    val result: IntArray = IntArray(58)
+    val result: IntArray = IntArray(75)
     var offset: Int = 0
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result)
     return result
@@ -345,17 +346,19 @@ companion object {
    */
   private const val ZZ_ROWMAP_PACKED_0: String  =
     "\u0000\u0000\u0000\u0013\u0000\u0026\u0000\u0039\u0000\u004c\u0000\u005f\u0000\u0072\u0000\u0085"+
-    "\u0000\u0098\u0000\u00ab\u0000\u00be\u0000\u00d1\u0000\u00ab\u0000\u00e4\u0000\u00f7\u0000\u010a"+
-    "\u0000\u00ab\u0000\u00ab\u0000\u011d\u0000\u0130\u0000\u0143\u0000\u0156\u0000\u0169\u0000\u00be"+
-    "\u0000\u017c\u0000\u018f\u0000\u01a2\u0000\u01b5\u0000\u01c8\u0000\u00ab\u0000\u01db\u0000\u00be"+
-    "\u0000\u01ee\u0000\u0201\u0000\u0214\u0000\u00be\u0000\u00ab\u0000\u0227\u0000\u023a\u0000\u024d"+
-    "\u0000\u00ab\u0000\u0260\u0000\u0273\u0000\u0286\u0000\u0299\u0000\u02ac\u0000\u02bf\u0000\u02d2"+
-    "\u0000\u00ab\u0000\u02e5\u0000\u02f8\u0000\u030b\u0000\u00ab\u0000\u00ab\u0000\u031e\u0000\u02e5"+
-    "\u0000\u00ab\u0000\u0331"
+    "\u0000\u0098\u0000\u00ab\u0000\u00be\u0000\u00d1\u0000\u00ab\u0000\u00e4\u0000\u00ab\u0000\u00ab"+
+    "\u0000\u00ab\u0000\u00f7\u0000\u010a\u0000\u011d\u0000\u0130\u0000\u0143\u0000\u0156\u0000\u00be"+
+    "\u0000\u0169\u0000\u00ab\u0000\u00ab\u0000\u017c\u0000\u00be\u0000\u018f\u0000\u01a2\u0000\u01b5"+
+    "\u0000\u00ab\u0000\u01c8\u0000\u00ab\u0000\u00be\u0000\u01db\u0000\u01ee\u0000\u0201\u0000\u00be"+
+    "\u0000\u00ab\u0000\u0214\u0000\u0227\u0000\u023a\u0000\u00ab\u0000\u024d\u0000\u0260\u0000\u0273"+
+    "\u0000\u0286\u0000\u0299\u0000\u02ac\u0000\u02bf\u0000\u02d2\u0000\u02e5\u0000\u02f8\u0000\u030b"+
+    "\u0000\u00ab\u0000\u031e\u0000\u0331\u0000\u0344\u0000\u0357\u0000\u01a2\u0000\u036a\u0000\u00ab"+
+    "\u0000\u037d\u0000\u0390\u0000\u03a3\u0000\u00ab\u0000\u03b6\u0000\u03c9\u0000\u00ab\u0000\u03dc"+
+    "\u0000\u03ef\u0000\u0402\u0000\u00ab"
 
   @JvmStatic
   private fun zzUnpackRowMap(): IntArray {
-    val result: IntArray = IntArray(58)
+    val result: IntArray = IntArray(75)
     var offset: Int = 0
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result)
     return result
@@ -381,37 +384,48 @@ companion object {
    */
   private const val ZZ_TRANS_PACKED_0: String  =
     "\u0009\u000a\u0001\u000b\u0001\u000a\u0001\u000c\u0007\u000a\u0001\u000d\u0001\u000e\u0001\u000f"+
-    "\u0001\u000d\u0001\u000f\u0001\u0010\u0001\u000d\u0001\u0011\u0001\u0012\u0001\u0013\u0004\u000d"+
-    "\u0001\u0014\u0001\u0015\u0001\u000d\u0001\u0016\u0001\u0017\u0001\u000d\u0001\u000e\u0001\u000f"+
-    "\u0001\u000d\u0001\u000f\u0001\u0010\u0001\u000d\u0001\u0011\u0001\u0012\u0001\u0018\u0003\u000d"+
-    "\u0001\u0019\u0001\u0014\u0001\u0015\u0001\u000d\u0001\u0016\u0001\u0017\u0001\u000d\u0002\u001a"+
-    "\u0001\u000d\u0002\u001a\u0001\u001b\u0002\u000d\u0001\u0018\u0004\u000d\u0001\u001c\u0005\u000d"+
-    "\u0002\u001a\u0001\u000d\u0002\u001a\u0003\u000d\u0001\u0018\u0004\u000d\u0001\u001d\u0005\u000d"+
-    "\u0001\u000e\u0001\u000f\u0001\u000d\u0001\u000f\u0001\u0010\u0001\u000d\u0001\u0011\u0001\u0012"+
-    "\u0001\u0018\u0004\u000d\u0001\u0014\u0001\u0015\u0001\u000d\u0001\u0016\u0001\u0017\u0001\u001e"+
-    "\u0002\u001f\u0001\u001e\u0002\u001f\u0003\u001e\u0001\u0020\u000a\u001e\u0002\u001f\u0001\u001e"+
-    "\u0002\u001f\u0003\u001e\u0001\u0021\u0007\u001e\u0001\u0022\u0001\u0023\u0001\u001e\u0002\u001f"+
-    "\u0001\u001e\u0002\u001f\u0003\u001e\u0001\u0020\u0007\u001e\u0001\u0022\u0001\u0023\u001c\u0000"+
-    "\u0001\u0024\u0001\u0000\u0001\u0025\u0010\u0000\u0001\u0026\u000a\u0000\u0001\u000e\u0001\u000f"+
-    "\u0001\u0000\u0002\u000f\u000e\u0000\u0002\u000f\u0001\u0000\u0002\u000f\u000e\u0000\u0002\u000f"+
-    "\u0001\u0000\u0001\u000f\u0001\u0027\u0016\u0000\u0001\u0013\u0001\u0000\u0001\u0025\u000d\u0000"+
-    "\u0001\u0028\u001a\u0000\u0001\u0029\u0001\u0000\u0001\u0029\u0013\u0000\u0001\u002a\u0013\u0000"+
-    "\u0001\u002b\u0006\u0000\u0001\u002c\u000d\u0000\u0002\u001a\u0001\u0000\u0002\u001a\u0013\u0000"+
-    "\u0001\u001b\u0003\u0000\u0001\u001b\u0001\u0000\u0001\u001b\u000c\u0000\u0001\u002d\u0012\u0000"+
-    "\u0001\u002e\u000d\u0000\u0002\u001f\u0001\u0000\u0002\u001f\u0016\u0000\u0001\u0021\u0001\u0000"+
-    "\u0001\u0025\u0018\u0000\u0001\u002f\u0013\u0000\u0001\u0030\u0009\u0000\u0001\u0031\u000a\u0000"+
-    "\u0002\u000f\u0001\u0000\u0001\u000f\u0001\u0032\u0013\u0000\u0001\u0028\u0003\u0000\u0001\u0028"+
-    "\u0001\u0000\u0001\u0028\u0003\u0000\u0001\u0033\u0013\u0000\u0001\u0034\u0013\u0000\u0001\u0034"+
-    "\u0006\u0000\u0001\u002c\u0005\u0000\u0001\u002c\u000c\u0000\u0001\u002d\u0003\u0000\u0001\u002d"+
-    "\u0001\u0000\u0001\u002d\u0003\u0000\u0001\u0035\u0008\u0000\u0001\u002e\u0003\u0000\u0001\u002e"+
-    "\u0001\u0000\u0001\u002e\u0003\u0000\u0001\u0036\u0013\u0000\u0001\u0037\u0013\u0000\u0001\u0037"+
-    "\u0001\u0000\u0002\u000f\u0001\u0000\u0001\u000f\u0001\u0038\u000d\u0000\u0007\u0039\u0001\u0000"+
-    "\u0006\u0039\u0001\u0000\u0004\u0039\u0002\u0034\u0003\u0000\u000e\u0034\u0001\u0000\u0001\u0037"+
-    "\u0001\u003a\u0001\u0000\u0002\u0037\u000e\u0000\u0001\u003a\u0002\u0000\u0002\u003a\u000d\u0000"
+    "\u0001\u000d\u0001\u000e\u0001\u000f\u0001\u000d\u0001\u0010\u0001\u0011\u0001\u0012\u0004\u000d"+
+    "\u0001\u0013\u0001\u0014\u0001\u000d\u0001\u0015\u0001\u0016\u0001\u000d\u0001\u0017\u0001\u000f"+
+    "\u0001\u000d\u0001\u0017\u0001\u000f\u0001\u000d\u0001\u0010\u0001\u0011\u0001\u0018\u0003\u000d"+
+    "\u0001\u0019\u0001\u0013\u0001\u0014\u0001\u000d\u0001\u0015\u0001\u0016\u0001\u001a\u0001\u000e"+
+    "\u0001\u001b\u0001\u001a\u0001\u000e\u0001\u001b\u0001\u001c\u0002\u001a\u0001\u001d\u0004\u001a"+
+    "\u0001\u001e\u0002\u001a\u0001\u001f\u0002\u001a\u0001\u000e\u0001\u000f\u0001\u001a\u0001\u000e"+
+    "\u0001\u000f\u0003\u001a\u0001\u001d\u0004\u001a\u0001\u0020\u0004\u001a\u0001\u000d\u0001\u0017"+
+    "\u0001\u000f\u0001\u000d\u0001\u0017\u0001\u000f\u0001\u000d\u0001\u0010\u0001\u0011\u0001\u0018"+
+    "\u0004\u000d\u0001\u0013\u0001\u0014\u0001\u000d\u0001\u0015\u0001\u0016\u0001\u0021\u0001\u0022"+
+    "\u0001\u0023\u0001\u0021\u0001\u0022\u0001\u0023\u0003\u0021\u0001\u0024\u000a\u0021\u0001\u000e"+
+    "\u0001\u0023\u0001\u0021\u0001\u000e\u0001\u0023\u0003\u0021\u0001\u0025\u0007\u0021\u0001\u0026"+
+    "\u0001\u0027\u0001\u0021\u0001\u0022\u0001\u0023\u0001\u0021\u0001\u0022\u0001\u0023\u0003\u0021"+
+    "\u0001\u0024\u0007\u0021\u0001\u0026\u0001\u0027\u001c\u0000\u0001\u0028\u0001\u0000\u0001\u0029"+
+    "\u0010\u0000\u0001\u002a\u000a\u0000\u0001\u000e\u0002\u0000\u0001\u000e\u0017\u0000\u0001\u0012"+
+    "\u0001\u0000\u0001\u0029\u000d\u0000\u0001\u002b\u000a\u0000\u0001\u002c\u000f\u0000\u0001\u002d"+
+    "\u0001\u0000\u0001\u002d\u0013\u0000\u0001\u002e\u0013\u0000\u0001\u002f\u0001\u0000\u0001\u0017"+
+    "\u0002\u0000\u0001\u0017\u0014\u0000\u0001\u0030\u0012\u0000\u0001\u001c\u0003\u0000\u0001\u0031"+
+    "\u0001\u0000\u0001\u001c\u000c\u0000\u0001\u0032\u000a\u0000\u0001\u0033\u0001\u0000\u0002\u0034"+
+    "\u0001\u0000\u000e\u0034\u0001\u0000\u0001\u0034\u0006\u0000\u0001\u0035\u000a\u0000\u0001\u0036"+
+    "\u0002\u0000\u0001\u0022\u0002\u0000\u0001\u0022\u0017\u0000\u0001\u0025\u0001\u0000\u0001\u0029"+
+    "\u0018\u0000\u0001\u0037\u0013\u0000\u0001\u0038\u0009\u0000\u0001\u0039\u000f\u0000\u0001\u002b"+
+    "\u0003\u0000\u0001\u003a\u0001\u0000\u0001\u002b\u0003\u0000\u0001\u003b\u0002\u0000\u0002\u003c"+
+    "\u0001\u0000\u000e\u003c\u0001\u0000\u0001\u003c\u0011\u0000\u0001\u003d\u0013\u0000\u0001\u003d"+
+    "\u0006\u0000\u0001\u0030\u0005\u0000\u0001\u0030\u000c\u0000\u0001\u001c\u0003\u0000\u0001\u0031"+
+    "\u0006\u0000\u0001\u003e\u0007\u0000\u0001\u0032\u0003\u0000\u0001\u003f\u0001\u0000\u0001\u0032"+
+    "\u0003\u0000\u0001\u0040\u0002\u0000\u0002\u0041\u0001\u0000\u000e\u0041\u0001\u0000\u0001\u0041"+
+    "\u0002\u0034\u0001\u0000\u000e\u0034\u0001\u0042\u0001\u0034\u0006\u0000\u0001\u0035\u0003\u0000"+
+    "\u0001\u0043\u0001\u0000\u0001\u0035\u0003\u0000\u0001\u0044\u0002\u0000\u0002\u0045\u0001\u0000"+
+    "\u000e\u0045\u0001\u0000\u0001\u0045\u0011\u0000\u0001\u0046\u0013\u0000\u0001\u0046\u0006\u0000"+
+    "\u0001\u002b\u0003\u0000\u0001\u003a\u0005\u0000\u0001\u003b\u0001\u002c\u0001\u0000\u0007\u0047"+
+    "\u0001\u0000\u0006\u0047\u0001\u0000\u0004\u0047\u0002\u003c\u0001\u0000\u000e\u003c\u0001\u0048"+
+    "\u0001\u003c\u0002\u003d\u0004\u0000\u000d\u003d\u0006\u0000\u0001\u0032\u0003\u0000\u0001\u003f"+
+    "\u0005\u0000\u0001\u0040\u0001\u0033\u0001\u0000\u0002\u0041\u0001\u0000\u000e\u0041\u0001\u0049"+
+    "\u0001\u0041\u000a\u0000\u0001\u0031\u000e\u0000\u0001\u0035\u0003\u0000\u0001\u0043\u0005\u0000"+
+    "\u0001\u0044\u0001\u0036\u0001\u0000\u0002\u0045\u0001\u0000\u000e\u0045\u0001\u004a\u0001\u0045"+
+    "\u0001\u0000\u0001\u0046\u0001\u004b\u0001\u0000\u0001\u0046\u0018\u0000\u0001\u003a\u0005\u0000"+
+    "\u0001\u003b\u000c\u0000\u0001\u003f\u0005\u0000\u0001\u0040\u000c\u0000\u0001\u0043\u0005\u0000"+
+    "\u0001\u0044\u0002\u0000"
 
   @JvmStatic
   private fun zzUnpacktrans(): IntArray {
-    val result: IntArray = IntArray(836)
+    val result: IntArray = IntArray(1045)
     var offset: Int = 0
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result)
     return result
@@ -454,14 +468,15 @@ companion object {
    * ZZ_ATTRIBUTE[aState] contains the attributes of state {@code aState}
    */
   private const val ZZ_ATTRIBUTE_PACKED_0: String  =
-    "\u0009\u0000\u0001\u0009\u0002\u0001\u0001\u0009\u0003\u0001\u0002\u0009\u000b\u0001\u0001\u0009"+
-    "\u0005\u0001\u0001\u0000\u0001\u0009\u0001\u0000\u0001\u0001\u0001\u0000\u0001\u0009\u0002\u0000"+
-    "\u0001\u0001\u0004\u0000\u0001\u0009\u0001\u0001\u0001\u0000\u0001\u0001\u0002\u0009\u0001\u0000"+
-    "\u0001\u0001\u0001\u0009\u0001\u0001"
+    "\u0009\u0000\u0001\u0009\u0002\u0001\u0001\u0009\u0001\u0001\u0003\u0009\u0008\u0001\u0002\u0009"+
+    "\u0005\u0001\u0001\u0009\u0001\u0001\u0001\u0009\u0004\u0001\u0001\u0000\u0001\u0009\u0003\u0000"+
+    "\u0001\u0009\u0002\u0000\u0002\u0001\u0007\u0000\u0001\u0009\u0003\u0000\u0001\u0001\u0002\u0000"+
+    "\u0001\u0009\u0001\u0000\u0001\u0001\u0001\u0000\u0001\u0009\u0002\u0000\u0001\u0009\u0003\u0000"+
+    "\u0001\u0009"
 
   @JvmStatic
   private fun zzUnpackAttribute(): IntArray {
-    val result: IntArray = IntArray(58)
+    val result: IntArray = IntArray(75)
     var offset: Int = 0
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result)
     return result
@@ -536,16 +551,33 @@ companion object {
   private var zzEOFDone: Boolean = false
 
   /* user code: */
+  /**
+   * Counts the number of line breaks after the previous text, typically paragraph.
+   * White spaces as well as leading asterisks aren't considered as text, so, they don't reset the counter.
+   * It allows implementing markdown spec in a more convenient way.
+   * For instance, indented code blocks require two consecutive line breaks after paragraphs.
+   */
+  private var consecutiveLineBreakCount: Int = 0
+
+  private var lastBlockType: BlockType? = null
+
+  private enum class BlockType {
+      Paragraph,
+      Code,
+  }
+
+  /**
+   * It should be used by default instead of [yybegin] except in cases where manual handling of [consecutiveLineBreakCount] is needed.
+   * For instance, although the leading asterisk switches to the [CONTENTS_BEGINNING] state, it shouldn't affect [consecutiveLineBreakCount]
+   * because it's a special char that's invisible from the point of view of the plain Markdown parser.
+   */
+  private fun yybeginAndUpdate(newState: Int) {
+    consecutiveLineBreakCount = if (newState == LINE_BEGINNING || newState == CODE_BLOCK_LINE_BEGINNING) consecutiveLineBreakCount + 1 else 0
+    yybegin(newState)
+  }
+
   private val isLastToken: Boolean
     get() = zzMarkedPos == zzBuffer.length
-
-  private fun yytextContainLineBreaks(): Boolean {
-    for (i in zzStartRead until zzMarkedPos) {
-        if (zzBuffer[i].let { it == '\n' || it == '\r' }) return true
-    }
-
-    return false
-  }
 
 
 
@@ -842,141 +874,172 @@ companion object {
       else {
         when (if (zzAction < 0) zzAction else ZZ_ACTION[zzAction]) {
           1 -> {
+            lastBlockType = BlockType.Paragraph
             return SyntaxTokenTypes.BAD_CHARACTER
             }
           // fall through
-          21 -> break
+          24 -> break
           2 -> {
-            yybegin(CONTENTS)
+            lastBlockType = BlockType.Paragraph
+            yybeginAndUpdate(CONTENTS)
             return KDocTokens.TEXT
             }
           // fall through
-          22 -> break
-          3 -> {
-            if(yystate() == CONTENTS_BEGINNING) {
-                yybegin(INDENTED_CODE_BLOCK)
-                return KDocTokens.CODE_BLOCK_TEXT
-            }
-            }
-          // fall through
-          23 -> break
-          4 -> {
-            return if (yytextContainLineBreaks()) {
-                yybegin(LINE_BEGINNING)
-                SyntaxTokenTypes.WHITE_SPACE
-            }  else {
-                yybegin(if (yystate() == CONTENTS_BEGINNING) CONTENTS_BEGINNING else CONTENTS)
-                KDocTokens.TEXT  // internal white space
-            }
-            }
-          // fall through
-          24 -> break
-          5 -> {
-            yybegin(CONTENTS)
-            return KDocTokens.KDOC_LPAR
-            }
-          // fall through
           25 -> break
-          6 -> {
-            yybegin(CONTENTS)
-            return KDocTokens.KDOC_RPAR
+          3 -> {
+            return SyntaxTokenTypes.WHITE_SPACE
             }
           // fall through
           26 -> break
+          4 -> {
+            yybeginAndUpdate(LINE_BEGINNING)
+            return SyntaxTokenTypes.WHITE_SPACE
+            }
+          // fall through
+          27 -> break
+          5 -> {
+            lastBlockType = BlockType.Paragraph
+            yybeginAndUpdate(CONTENTS)
+            return KDocTokens.KDOC_LPAR
+            }
+          // fall through
+          28 -> break
+          6 -> {
+            lastBlockType = BlockType.Paragraph
+            yybeginAndUpdate(CONTENTS)
+            return KDocTokens.KDOC_RPAR
+            }
+          // fall through
+          29 -> break
           7 -> {
             yybegin(CONTENTS_BEGINNING)
             return KDocTokens.LEADING_ASTERISK
             }
           // fall through
-          27 -> break
-          8 -> {
-            if (yytextContainLineBreaks()) {
-                yybegin(LINE_BEGINNING)
-            }
-            return SyntaxTokenTypes.WHITE_SPACE
-            }
-          // fall through
-          28 -> break
-          9 -> {
-            yybegin(TAG_TEXT_BEGINNING)
-            return KDocTokens.MARKDOWN_LINK
-            }
-          // fall through
-          29 -> break
-          10 -> {
-            yybegin(if (yystate() == INDENTED_CODE_BLOCK) INDENTED_CODE_BLOCK else CODE_BLOCK)
-            return KDocTokens.CODE_BLOCK_TEXT
-            }
-          // fall through
           30 -> break
-          11 -> {
-            if (yytextContainLineBreaks()) {
-                yybegin(if (yystate() == INDENTED_CODE_BLOCK) LINE_BEGINNING else CODE_BLOCK_LINE_BEGINNING)
-                return SyntaxTokenTypes.WHITE_SPACE
+          8 -> {
+            val state = yystate()
+
+            if (
+                // Recognize indented code blocks if only the line starts with an asterisk(s)
+                state == CONTENTS_BEGINNING &&
+
+                // If there are more than 4 spaces at the beginning of the line or a tab char, we are trying to recognize indented code block
+                (zzMarkedPos - zzStartRead >= 4 || zzBuffer[zzStartRead] == '\t' || zzBuffer[zzMarkedPos - 1] == '\t') &&
+
+                // If the last block type is paragraph, more than 1 consecutive line break is required
+                (lastBlockType != BlockType.Paragraph || consecutiveLineBreakCount >= 2)
+            ) {
+                yybegin(INDENTED_CODE_BLOCK)
+                lastBlockType = BlockType.Code
+                return KDocTokens.CODE_BLOCK_TEXT
             }
-            return KDocTokens.CODE_BLOCK_TEXT
+
+            yybegin(if (yystate() == CONTENTS_BEGINNING) CONTENTS_BEGINNING else CONTENTS)
+
+            return KDocTokens.TEXT  // internal white space
             }
           // fall through
           31 -> break
+          9 -> {
+            yybeginAndUpdate(CONTENTS)
+            return KDocTokens.TEXT
+            }
+          // fall through
+          32 -> break
+          10 -> {
+            consecutiveLineBreakCount++
+            yybegin(LINE_BEGINNING)
+            return SyntaxTokenTypes.WHITE_SPACE
+            }
+          // fall through
+          33 -> break
+          11 -> {
+            yybeginAndUpdate(TAG_TEXT_BEGINNING)
+            return KDocTokens.MARKDOWN_LINK
+            }
+          // fall through
+          34 -> break
           12 -> {
+            yybeginAndUpdate(if (yystate() == INDENTED_CODE_BLOCK) INDENTED_CODE_BLOCK else CODE_BLOCK)
+            return KDocTokens.CODE_BLOCK_TEXT
+            }
+          // fall through
+          35 -> break
+          13 -> {
+            return KDocTokens.CODE_BLOCK_TEXT
+            }
+          // fall through
+          36 -> break
+          14 -> {
+            yybegin(if (yystate() == INDENTED_CODE_BLOCK) LINE_BEGINNING else CODE_BLOCK_LINE_BEGINNING)
+            return SyntaxTokenTypes.WHITE_SPACE
+            }
+          // fall through
+          37 -> break
+          15 -> {
             yybegin(CODE_BLOCK_CONTENTS_BEGINNING)
             return KDocTokens.LEADING_ASTERISK
             }
           // fall through
-          32 -> break
-          13 -> {
+          38 -> break
+          16 -> {
             return if (isLastToken) KDocTokens.END else KDocTokens.TEXT
             }
           // fall through
-          33 -> break
-          14 -> {
-            yybegin(CONTENTS)
+          39 -> break
+          17 -> {
+            lastBlockType = BlockType.Paragraph
+            yybeginAndUpdate(CONTENTS)
             return KDocTokens.MARKDOWN_ESCAPED_CHAR
             }
           // fall through
-          34 -> break
-          15 -> {
+          40 -> break
+          18 -> {
+            lastBlockType = BlockType.Paragraph
             val tag = KDocKnownTag.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos))
-            yybegin(if (tag != null && tag.isReferenceRequired) TAG_BEGINNING else TAG_TEXT_BEGINNING)
+            yybeginAndUpdate(if (tag != null && tag.isReferenceRequired) TAG_BEGINNING else TAG_TEXT_BEGINNING)
             return KDocTokens.TAG_NAME
             }
           // fall through
-          35 -> break
-          16 -> {
-            yybegin(CONTENTS_BEGINNING)
+          41 -> break
+          19 -> {
+            yybeginAndUpdate(CONTENTS_BEGINNING)
             return KDocTokens.START
             }
           // fall through
-          36 -> break
-          17 -> {
-            yybegin(CODE_BLOCK_LINE_BEGINNING)
+          42 -> break
+          20 -> {
+            lastBlockType = BlockType.Code
+            yybeginAndUpdate(CODE_BLOCK_LINE_BEGINNING)
             return KDocTokens.TEXT
             }
           // fall through
-          37 -> break
-          18 -> {
-            yybegin(CONTENTS)
+          43 -> break
+          21 -> {
+            yybeginAndUpdate(CONTENTS)
             return KDocTokens.MARKDOWN_LINK
             }
           // fall through
-          38 -> break
-          19 -> {
+          44 -> break
+          22 -> {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = zzBufferL.offsetByCodePoints(zzMarkedPos, -1)
-            yybegin(CONTENTS)
+            lastBlockType = BlockType.Paragraph
+            yybeginAndUpdate(CONTENTS)
             return KDocTokens.MARKDOWN_LINK
             }
           // fall through
-          39 -> break
-          20 -> {
+          45 -> break
+          23 -> {
             // lookahead expression with fixed base length
             zzMarkedPos = zzBufferL.offsetByCodePoints(zzStartRead, 3)
             // Code fence end
-            yybegin(CONTENTS)
+            yybeginAndUpdate(CONTENTS)
             return KDocTokens.TEXT
             }
           // fall through
-          40 -> break
+          46 -> break
           else ->
             zzScanError(ZZ_NO_MATCH)
         }

@@ -11,3 +11,5 @@ fun main() {
         return 13.0f
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction */

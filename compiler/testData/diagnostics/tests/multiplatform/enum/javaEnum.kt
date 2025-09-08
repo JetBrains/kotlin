@@ -35,3 +35,5 @@ public enum FooImpl {
 
     public abstract String getResult();
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect, javaType, typeAliasDeclaration */

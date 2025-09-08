@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
@@ -41,10 +41,11 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import kotlin.collections.set
 
-fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<IrClassSymbol> {
+context(c: Fir2IrComponents)
+fun FirRegularClass.getIrSymbolsForSealedSubclasses(): List<IrClassSymbol> {
     val symbolProvider = c.session.symbolProvider
     return getSealedClassInheritors(c.session).mapNotNull {
-        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol(c)
+        symbolProvider.getClassLikeSymbolByClassId(it)?.toIrSymbol()
     }.filterIsInstance<IrClassSymbol>()
 }
 
@@ -112,7 +113,8 @@ internal fun implicitCast(original: IrExpression, castType: IrType, typeOperator
     )
 }
 
-internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(c: Fir2IrComponents): ConeSubstitutor {
+context(c: Fir2IrComponents)
+internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): ConeSubstitutor {
     val typeParameters = when (val declaration = calleeReference.toResolvedCallableSymbol()?.fir) {
         is FirFunction -> declaration.typeParameters
         is FirProperty -> declaration.typeParameters
@@ -181,4 +183,8 @@ fun FirQualifiedAccessExpression.isConstructorCallOnTypealiasWithInnerRhs(): Boo
     return (calleeReference.symbol as? FirConstructorSymbol)?.let {
         it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
     } == true
+}
+
+internal fun <T : FirDeclaration, R> filterOutSymbolsFromCache(cache: Map<T, R>, filterOutSymbols: Set<FirBasedSymbol<*>>): Map<T, R> {
+    return cache.filterKeys { !filterOutSymbols.contains(it.symbol) }
 }

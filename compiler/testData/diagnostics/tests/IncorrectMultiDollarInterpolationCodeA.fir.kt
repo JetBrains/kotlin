@@ -296,3 +296,6 @@ fun separatedInterpolationPrefix() {
     <!SYNTAX!>$<!><!SYNTAX!>$$$ """padding"""<!>
     <!SYNTAX!>$<!><!SYNTAX!>$$$$$$$ """padding"""<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

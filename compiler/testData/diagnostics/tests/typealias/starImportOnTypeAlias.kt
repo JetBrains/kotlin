@@ -28,3 +28,6 @@ fun bar() {
     Entry
     EnumAlias.Entry
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
+typeAliasDeclaration */

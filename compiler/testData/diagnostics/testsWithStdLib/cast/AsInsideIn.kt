@@ -20,3 +20,6 @@ fun foo4(list: List<A>, arg: B): Boolean {
     // Ok
     return arg in list
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration,
+nullableType */

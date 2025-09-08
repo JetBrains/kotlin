@@ -22,3 +22,6 @@ fun test(b: B) {
     val s = b.getScope()
     b.setScope(s)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, thisExpression */

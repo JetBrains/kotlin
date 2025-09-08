@@ -16,3 +16,6 @@ fun test() {
     val i: Int = <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
     A.Companion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, getter, integerLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

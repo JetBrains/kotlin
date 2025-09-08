@@ -289,3 +289,7 @@ fun testRequireNotNullViaVariableLambda(x: StringHolder) {
     require(c)
     x.value<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+ifExpression, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+smartcast, stringLiteral */

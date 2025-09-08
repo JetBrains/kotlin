@@ -43,7 +43,26 @@ internal val KtObjCExportSession.errorInterface
         origin = null,
         attributes = emptyList(),
         superProtocols = emptyList(),
-        members = emptyList(),
+        members = listOf(
+            ObjCMethod(
+                comment = null,
+                origin = null,
+                isInstanceMethod = true,
+                returnType = ObjCInstanceType,
+                selectors = listOf("init"),
+                parameters = emptyList(),
+                attributes = listOf("swift_name(\"init()\")", "objc_designated_initializer")
+            ),
+            ObjCMethod(
+                comment = null,
+                origin = null,
+                isInstanceMethod = false,
+                returnType = ObjCInstanceType,
+                selectors = listOf("new"),
+                parameters = emptyList(),
+                attributes = listOf("availability(swift, unavailable, message=\"use object initializers instead\")")
+            )
+        ),
         categoryName = null,
         generics = emptyList(),
         superClass = getDefaultSuperClassOrProtocolName().objCName,

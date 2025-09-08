@@ -11,3 +11,6 @@ const val arrayLiteralStringConcat = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"${
 annotation class Anno(val str1: String, val str2: String)
 @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"${EnumClass.VALUE}"<!>, <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"${['1']}"<!>)
 class MyClass
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, const, enumDeclaration, enumEntry,
+primaryConstructor, propertyDeclaration */

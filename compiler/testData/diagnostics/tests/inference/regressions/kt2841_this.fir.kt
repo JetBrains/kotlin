@@ -17,3 +17,6 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+interfaceDeclaration, lambdaLiteral, nullableType, thisExpression, typeConstraint, typeParameter, typeWithExtension */

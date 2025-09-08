@@ -1,16 +1,16 @@
-PsiJetFileStubImpl[package=]
+KotlinStub$FILE[kind=File[packageFqName=<root>]]
 KotlinStub$PACKAGE_DIRECTIVE
 KotlinStub$IMPORT_LIST
 KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleDnnType, superNames=[]]
-  KotlinStub$MODIFIER_LIST[abstract public]
+  KotlinStub$MODIFIER_LIST[public abstract]
   KotlinStub$TYPE_PARAMETER_LIST
-    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=FlexibleDnnType]
+    KotlinStub$TYPE_PARAMETER[fqName=null, name=T]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=FlexibleDnnType]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
     KotlinStub$PROPERTY[fqName=FlexibleDnnType.block, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=block]
-      KotlinStub$MODIFIER_LIST[abstract public]
+      KotlinStub$MODIFIER_LIST[public abstract]
       KotlinStub$TYPE_REFERENCE
         KotlinStub$FUNCTION_TYPE
           KotlinStub$VALUE_PARAMETER_LIST

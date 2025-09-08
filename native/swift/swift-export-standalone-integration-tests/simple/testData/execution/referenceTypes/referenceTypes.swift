@@ -207,14 +207,14 @@ func typealiasPreservesIdentity() throws {
 
 @Test
 func objectsTravelBridgeAsAny() throws {
-    let obj: KotlinBase = mainObject
+    let obj: KotlinBase = mainObject as! KotlinBase
     try #require((obj as Any) is KotlinBase)
     try #require(isMainObject(obj: obj))
 }
 
 @Test
 func permanentObjectsTravelBridgeAsAny() throws {
-    let obj: KotlinBase = getMainPermanentObject()
+    let obj: KotlinBase = getMainPermanentObject() as! KotlinBase
     try #require(isMainPermanentObject(obj: obj))
     try #require(!isMainPermanentObject(obj: mainObject))
 
@@ -228,14 +228,14 @@ func anyPersistsAsProperty() throws {
     let baz = SomeBaz()
     let foo = SomeFoo(storage: bar)
 
-    try #require(foo.storage === bar)
+    try #require(foo.storage as! KotlinBase === bar)
     foo.storage = baz
-    try #require(foo.storage === baz)
+    try #require(foo.storage as! KotlinBase === baz)
 }
 
 @Test
 func depsObjectsTravelBridgeAsAny() throws {
-    let obj: KotlinBase = deps_instance
+    let obj: KotlinBase = deps_instance as! KotlinBase
     try #require((obj as Any) is KotlinBase)
     try #require(isDepsObject(obj: obj))
     try #require(isSavedDepsObject(obj: obj))
@@ -243,7 +243,7 @@ func depsObjectsTravelBridgeAsAny() throws {
 
 @Test
 func depsObjectsTravelBridgeAsAny2() throws {
-    let obj: KotlinBase = deps_instance_2
+    let obj: KotlinBase = deps_instance_2 as! KotlinBase
     try #require((obj as Any) is KotlinBase)
     try #require(isDepsObject_2(obj: obj))
     try #require(isSavedDepsObject_2(obj: obj))
@@ -257,9 +257,9 @@ func classWithFactory() throws {
 
 @Test
 func objectsHashProperly() throws {
-    let one: KotlinBase = getHashableObject(value: 1)
-    let ein: KotlinBase = getHashableObject(value: 1)
-    let two: KotlinBase = getHashableObject(value: 2)
+    let one: KotlinBase = getHashableObject(value: 1) as! KotlinBase
+    let ein: KotlinBase = getHashableObject(value: 1) as! KotlinBase
+    let two: KotlinBase = getHashableObject(value: 2) as! KotlinBase
 
     try #require(one !== ein)
     try #require(one == ein)

@@ -8,3 +8,6 @@ fun <R : Any> Inv<Int>.mapNotNull(transform: (Int) -> R?): Inv<R> = null!!
 fun test(inv: Inv<Int>) {
     inv.mapNotNull { null }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, typeConstraint, typeParameter */

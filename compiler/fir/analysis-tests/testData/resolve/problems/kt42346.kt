@@ -22,3 +22,6 @@ annotation class KotlinMagicConstant(val intValues: LongArray)
 
 @KotlinMagicConstant(intValues = [StepRequest.STEP_INTO.toLong(), StepRequest.STEP_OVER.toLong(), StepRequest.STEP_OUT.toLong()])
 val kotlinDepth: Int = 42
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, companionObject, const,
+integerLiteral, javaType, objectDeclaration, primaryConstructor, propertyDeclaration */

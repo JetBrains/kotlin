@@ -1,7 +1,7 @@
-
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// ^^^ KT-80626: Wrong source file for debuginfo in splitted stepping tests
 // This is same as kotlin/compiler/testData/codegen/boxInline/smap/smap.kt
 // FILE: test.kt
-
 import builders.*
 
 inline fun test(): String {

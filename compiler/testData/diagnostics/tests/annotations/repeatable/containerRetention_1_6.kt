@@ -40,3 +40,5 @@ annotation class D2(val value: Array<B2>)
 @Retention(BINARY)
 annotation class B3
 annotation class D3(val value: Array<B3>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, primaryConstructor, propertyDeclaration */

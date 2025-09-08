@@ -27,3 +27,6 @@ class FooImpl<E, E2> : Foo<E, E2> {
     override context(b: E2) val E.prop2: String?
         get() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, interfaceDeclaration, javaType, nullableType, override,
+propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, stringLiteral, typeParameter */

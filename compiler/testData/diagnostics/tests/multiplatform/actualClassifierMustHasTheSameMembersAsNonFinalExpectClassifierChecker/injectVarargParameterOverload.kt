@@ -15,3 +15,5 @@ expect open class Foo : Base
 actual open class Foo : Base() {
     open fun foo(vararg t: String) {} // injected
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, vararg */

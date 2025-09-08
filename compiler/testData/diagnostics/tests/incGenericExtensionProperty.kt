@@ -16,3 +16,6 @@ abstract class A : Context {
         intVar.value++
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression,
+interfaceDeclaration, nullableType, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

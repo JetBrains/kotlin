@@ -360,6 +360,8 @@ private object Predicates {
     }
 }
 
+private class DivergingAnalysisError(message: String) : Throwable(message)
+
 internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     private val not = context.irBuiltIns.booleanNotSymbol
     private val eqeq = context.irBuiltIns.eqeqSymbol
@@ -368,6 +370,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             context.irBuiltIns.ieee754equalsFunByOperandType.values.toSet()
     private val throwClassCastException = context.symbols.throwClassCastException
     private val unitType = context.irBuiltIns.unitType
+    private val nothingType = context.irBuiltIns.nothingType
 
     private fun IrExpression.isNullConst() = this is IrConst && this.value == null
 
@@ -489,8 +492,15 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         var maxSize = 0
+
+        fun updateMaxSize(size: Int) {
+            maxSize = kotlin.math.max(maxSize, size)
+            if (maxSize >= 10_000)
+                throw DivergingAnalysisError("Max size exceeded: $maxSize")
+        }
+
         val typeCheckResults = mutableMapOf<IrTypeOperatorCall, TypeCheckResult>()
-        irBody.accept(object : IrVisitor<VisitorResult, Predicate>() {
+        val visitor = object : IrVisitor<VisitorResult, Predicate>() {
             val leafTerms = mutableListOf<LeafTerm>()
             val simpleTermsMap = mutableMapOf<Pair<IrValueDeclaration, IrClass?>, Int>()
             val complexTermsMap = mutableMapOf<IrElement, Int>()
@@ -560,6 +570,8 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         cfmpInfo.predicate,
                         getFullPredicate(result.predicate, false, cfmpInfo.level)
                 )
+
+                updateMaxSize(cfmpInfo.predicate.size())
             }
 
             fun finishControlFlowMerging(irElement: IrElement, cfmpInfo: ControlFlowMergePointInfo): VisitorResult {
@@ -894,7 +906,10 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 super.visitBlock(expression, data)
                 returnableBlockCFMPInfos.remove(returnableBlock)
 
-                return finishControlFlowMerging(expression, cfmpInfo)
+                val result = finishControlFlowMerging(expression, cfmpInfo)
+                return if (expression.type == nothingType)
+                    VisitorResult.Nothing
+                else result
             }
 
             override fun visitReturn(expression: IrReturn, data: Predicate): VisitorResult {
@@ -1042,9 +1057,8 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 } while (iter < 10)
                 breaksCFMPInfos.remove(loop)
 
-                @Suppress("ControlFlowWithEmptyBody")
                 if (iter >= 10) {
-                    // TODO: fallback for diverging analysis (KT-77672).
+                    throw DivergingAnalysisError("Failed to analyse a loop: has not converged in 10 iterations")
                 }
 
                 val result = finishControlFlowMerging(loop, breaksCFMPInfo)
@@ -1131,13 +1145,13 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         val branchResult = branch.result.accept(this, conditionBooleanPredicate.ifTrue)
                         if (branchResult.predicate != Predicate.False) { // The result is not unreachable.
                             controlFlowMergePoint(cfmpInfo, branchResult)
-                            maxSize = kotlin.math.max(maxSize, cfmpInfo.predicate.size())
                         }
                         variableAliases.clear()
                         for ((variable, alias) in savedVariableAliases)
                             variableAliases[variable] = alias
                         predicate = Predicates.and(predicate, conditionBooleanPredicate.ifFalse)
-                        maxSize = kotlin.math.max(maxSize, predicate.size())
+
+                        updateMaxSize(predicate.size())
                     }
                 }
                 context.logMultiple {
@@ -1244,10 +1258,19 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
                     VisitorResult(receiverResult?.predicate ?: Predicate.Empty, phantomVariable)
                 } else {
-                    super.visitCall(expression, data)
+                    if (expression.type == nothingType)
+                        VisitorResult.Nothing
+                    else super.visitCall(expression, data)
                 }
             }
-        }, Predicate.Empty)
+        }
+
+        try {
+            irBody.accept(visitor, Predicate.Empty)
+        } catch (t: DivergingAnalysisError) {
+            context.log { "ERROR: the analysis has diverged for ${container.render()}: ${t.message}\n" }
+            return
+        }
 
         if (maxSize > 0) // TODO: fallback if size is too big (KT-77672).
             context.log { "MAX SIZE = $maxSize" }

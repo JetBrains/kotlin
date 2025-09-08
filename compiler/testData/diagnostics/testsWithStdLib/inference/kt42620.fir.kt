@@ -14,3 +14,6 @@ fun main3() = if (true) { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } else { Foo::<!
 fun main4() = try { Foo::<!UNRESOLVED_REFERENCE!>minus<!> } finally { Foo::<!UNRESOLVED_REFERENCE!>times<!> }
 
 fun main5() = Foo::<!UNRESOLVED_REFERENCE!>minus<!> ?: Foo::<!UNRESOLVED_REFERENCE!>times<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, ifExpression, tryExpression,
+whenExpression */

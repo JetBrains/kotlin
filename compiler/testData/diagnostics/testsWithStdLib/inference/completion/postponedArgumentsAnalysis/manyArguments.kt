@@ -20,3 +20,5 @@ fun main() {
         12 to {}
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

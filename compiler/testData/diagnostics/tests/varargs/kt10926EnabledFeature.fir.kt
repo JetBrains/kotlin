@@ -11,3 +11,6 @@ fun main(c: AllCollection<Any?>) {
     // KT-49620
     c.addAll(arrayOf(""), values2 = arrayOf(""))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter,
+vararg */

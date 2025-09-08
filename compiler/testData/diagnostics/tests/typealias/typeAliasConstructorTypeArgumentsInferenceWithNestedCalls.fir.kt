@@ -18,3 +18,7 @@ val test1 = C(1, C(2, null))
 val test2 = C(1, C(<!ARGUMENT_TYPE_MISMATCH!>""<!>, null))
 val test23 = <!CANNOT_INFER_PARAMETER_TYPE!>C2<!>(<!ARGUMENT_TYPE_MISMATCH!>if (true) 1 else null<!>)
 val test234 = <!CANNOT_INFER_PARAMETER_TYPE!>C2<!>(<!CANNOT_INFER_PARAMETER_TYPE!>C2<!>(<!ARGUMENT_TYPE_MISMATCH!>if (true) 1 else null<!>))
+
+/* GENERATED_FIR_TAGS: classDeclaration, ifExpression, integerLiteral, javaType, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

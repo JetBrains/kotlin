@@ -186,7 +186,7 @@ private fun extractLambdaInfoFromFunctionalType(
                 type ?: run {
                     expectedParameters.getOrNull(index)?.type?.unwrap()
                 } ?: expectedType.builtIns.nullableAnyType
-            } ?: expectedParameters.map { it.type.unwrap() }) to expectedReceiver?.unwrap()
+            } ?: expectedParameters.map { it.type.unwrap() }) to expectedReceiver.unwrap()
         }
 
         else ->

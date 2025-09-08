@@ -39,7 +39,9 @@ internal open class KotlinJsIrLinkConfig(
                         )
                 }
             ).disallowChanges()
-            task.rootCacheDirectory.set(project.layout.buildDirectory.map { it.dir("klib/cache/js/${binary.name}") })
+
+            val cacheSubdir = compilation.wasmTarget?.alias ?: "js"
+            task.rootCacheDirectory.set(project.layout.buildDirectory.map { it.dir("klib/cache/$cacheSubdir/${binary.name}") })
             task.destinationDirectory.convention(
                 binary.outputDirBase
                     .map { it.dir(NpmProject.DIST_FOLDER) }

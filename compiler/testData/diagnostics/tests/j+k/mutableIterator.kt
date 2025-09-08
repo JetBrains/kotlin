@@ -29,3 +29,5 @@ fun foo(c: JC<Int>, iterator: Iterator<Int>, iterable: Iterable<Int>) {
     c.setIterable(mutableIterable)
     c.setIterable(iterable)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration */

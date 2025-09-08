@@ -15,3 +15,5 @@ fun test() {
     bar(1, <!TOO_MANY_ARGUMENTS!>2<!>)
     <!NONE_APPLICABLE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

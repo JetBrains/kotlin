@@ -16,7 +16,6 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
-import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.jps.statistic.JpsStatisticsReportService
 import org.jetbrains.kotlin.jps.statistic.statisticsReportServiceKey
-import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -79,7 +77,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 val prefixes = listOf(
                     "org.apache.log4j.", // For logging from compiler
                     "org.jetbrains.kotlin.incremental.components.",
-                    "org.jetbrains.kotlin.incremental.js",
                     "org.jetbrains.kotlin.load.kotlin.incremental.components."
                 ) + classPrefixesToLoadByParentFromRegistry
 
@@ -114,7 +111,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun logSettings(context: CompileContext) {
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled for JVM: ${IncrementalCompilation.isEnabledForJvm()}")
-        LOG.info("is Kotlin incremental compilation enabled for JS: ${IncrementalCompilation.isEnabledForJs()}")
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")
@@ -462,10 +458,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             kotlinDirtyFilesHolder.allRemovedFilesFiles
         )
 
-        cleanJsOutputs(context, kotlinChunk, incrementalCaches, kotlinDirtyFilesHolder)
-
-
-
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.reportCompilerArguments(chunk, kotlinChunk)
         val start = System.nanoTime()
@@ -567,43 +559,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         return OK
-    }
-
-    private fun cleanJsOutputs(
-        context: CompileContext,
-        kotlinChunk: KotlinChunk,
-        incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
-        kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder
-    ) {
-        for (target in kotlinChunk.targets) {
-            val cache = incrementalCaches[target] ?: continue
-
-            if (cache is IncrementalJsCache) {
-                val filesToDelete = mutableListOf<File>()
-                val dirtyFiles = kotlinDirtyFilesHolder.getDirtyFiles(target.jpsModuleBuildTarget).keys
-                val removedFiles = kotlinDirtyFilesHolder.getRemovedFiles(target.jpsModuleBuildTarget)
-
-                for (file: File in dirtyFiles + removedFiles) {
-                    filesToDelete.addAll(cache.getOutputsBySource(file).filter { it !in filesToDelete })
-                }
-
-                if (filesToDelete.isNotEmpty()) {
-                    val deletedForThisSource = mutableSetOf<String>()
-                    val parentDirs = mutableSetOf<File>()
-
-                    for (kjsmFile in filesToDelete) {
-                        BuildOperations.deleteRecursively(kjsmFile.path, deletedForThisSource, parentDirs)
-                    }
-
-                    FSOperations.pruneEmptyDirs(context, parentDirs)
-
-                    val logger = context.loggingManager.projectBuilderLogger
-                    if (logger.isEnabled && deletedForThisSource.isNotEmpty()) {
-                        logger.logDeletedFiles(deletedForThisSource)
-                    }
-                }
-            }
-        }
     }
 
     // todo(1.2.80): got rid of ModuleChunk (replace with KotlinChunk)

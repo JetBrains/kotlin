@@ -6,3 +6,5 @@ class A {
     <!CONFLICTING_OVERLOADS!>fun a(a: Int)<!> {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral */

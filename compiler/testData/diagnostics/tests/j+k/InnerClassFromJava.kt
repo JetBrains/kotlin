@@ -16,3 +16,6 @@ public interface Foo {
 interface Boo
 
 public class Baz : Bar.I
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, interfaceDeclaration, javaType,
+objectDeclaration, propertyDeclaration */

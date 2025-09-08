@@ -18,3 +18,5 @@ class MyClass : JavaClass() {
 }
 
 fun box() = MyClass().check(<!ARGUMENT_TYPE_MISMATCH!>Nested()<!>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, stringLiteral */

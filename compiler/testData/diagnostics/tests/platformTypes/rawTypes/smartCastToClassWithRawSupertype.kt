@@ -25,3 +25,6 @@ fun foo(k: Key<Boolean>, a: NonGenericClassWithRawSuperType, b: GenericClass<*>)
         b.getUserData<Boolean>(k)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, isExpression, javaType, smartcast,
+starProjection */

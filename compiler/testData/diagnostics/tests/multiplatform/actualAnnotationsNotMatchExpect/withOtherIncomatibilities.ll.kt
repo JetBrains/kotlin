@@ -19,3 +19,5 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, EXPECT_ACTUAL_INCOMPATIBLE_FUN
 actual fun <!ACTUAL_WITHOUT_EXPECT!>hasStrongIncompatibility<!>(arg: Any?) {}
 
 actual fun hasStrongIncompatibility(arg: Double) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, inline, nullableType */

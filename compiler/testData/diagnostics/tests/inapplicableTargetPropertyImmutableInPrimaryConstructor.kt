@@ -18,3 +18,7 @@ class SimpleVarClass(
     <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@setparam:Anno<!>
     val memberVariableWithAnnotations: Long = 0L
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetSetterParameter, classDeclaration, primaryConstructor,
+propertyDeclaration */

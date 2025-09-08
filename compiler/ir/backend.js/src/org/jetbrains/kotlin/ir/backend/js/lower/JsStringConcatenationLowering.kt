@@ -93,9 +93,6 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
         if (expression.symbol.isStringPlus)
             return explicitlyConvertToStringIfNeeded()
 
-        if ((expression.dispatchReceiver as? IrFunctionReference)?.symbol?.isStringPlus == true)
-            return explicitlyConvertToStringIfNeeded()
-
         return super.visitCall(expression)
     }
 

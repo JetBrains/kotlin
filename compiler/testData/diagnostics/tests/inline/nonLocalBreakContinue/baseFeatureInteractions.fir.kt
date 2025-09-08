@@ -152,3 +152,8 @@ fun test14(x: Any?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, break, comparisonExpression, continue, disjunctionExpression, doWhileLoop,
+elvisExpression, equalityExpression, forLoop, functionDeclaration, functionalType, ifExpression, inline, integerLiteral,
+intersectionType, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression,
+smartcast, tryExpression, whenExpression, whenWithSubject, whileLoop */

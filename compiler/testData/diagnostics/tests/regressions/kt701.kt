@@ -17,3 +17,7 @@ public class Throwables() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, checkNotNullCall, classDeclaration, companionObject,
+equalityExpression, functionDeclaration, ifExpression, nullableType, objectDeclaration, primaryConstructor, safeCall,
+smartcast, stringLiteral, typeConstraint, typeParameter */

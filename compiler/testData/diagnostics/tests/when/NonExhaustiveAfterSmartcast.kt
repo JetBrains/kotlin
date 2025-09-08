@@ -36,3 +36,6 @@ fun testDoubleWhen(x: ISealed): Int {
     val b = when (<!DEBUG_INFO_SMARTCAST!>x<!>) { <!USELESS_IS_CHECK!>is ISealed.C<!> -> 2 }
     return a + b
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+isExpression, localProperty, nestedClass, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

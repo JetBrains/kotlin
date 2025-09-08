@@ -13,6 +13,7 @@ sealed interface SirType {
 
     companion object {
         val any get() = SirExistentialType()
+        val anyHashable get() = SirNominalType(SirSwiftModule.anyHashable)
         val never get() = SirNominalType(SirSwiftModule.never)
         val void get() = SirNominalType(SirSwiftModule.void)
     }
@@ -65,14 +66,14 @@ class SirOptionalType(type: SirType) : SirNominalType(
     val wrappedType: SirType get() = super.typeArguments.single()
 }
 
-class SirArrayType(type: SirType): SirNominalType(
+class SirArrayType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.array,
-    typeArguments = listOf(type)
+    typeArguments = listOf(type),
 ) {
     val elementType: SirType get() = super.typeArguments.single()
 }
 
-class SirDictionaryType(keyType: SirType, valueType: SirType): SirNominalType(
+class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.dictionary,
     typeArguments = listOf(keyType, valueType)
 ) {

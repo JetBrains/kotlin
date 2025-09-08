@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
-class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
+class BinaryOp(private val opcode: Int) : CallBasedIntrinsicMethod() {
     private fun shift(): Boolean =
         opcode == ISHL || opcode == ISHR || opcode == IUSHR
 

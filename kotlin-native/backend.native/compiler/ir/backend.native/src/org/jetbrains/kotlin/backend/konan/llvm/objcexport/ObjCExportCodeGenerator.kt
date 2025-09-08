@@ -48,7 +48,6 @@ internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
 
 internal class ObjCExportFunctionGenerationContext(
         builder: ObjCExportFunctionGenerationContextBuilder,
-        override val needCleanupLandingpadAndLeaveFrame: Boolean
 ) : FunctionGenerationContext(builder) {
     val objCExportCodegen = builder.objCExportCodegen
 
@@ -115,11 +114,12 @@ internal class ObjCExportFunctionGenerationContextBuilder(
         functionProto,
         objCExportCodegen.codegen
 ) {
-    // Unless specified otherwise, all generated bridges by ObjCExport should have `LeaveFrame`
-    // because there is no guarantee of catching Kotlin exception in Kotlin code.
-    var needCleanupLandingpadAndLeaveFrame = true
-
-    override fun build() = ObjCExportFunctionGenerationContext(this, needCleanupLandingpadAndLeaveFrame)
+    init {
+        forceCleanupLandingpad = true
+    }
+    override fun build(): ObjCExportFunctionGenerationContext {
+        return ObjCExportFunctionGenerationContext(this)
+    }
 }
 
 internal inline fun ObjCExportCodeGeneratorBase.functionGenerator(
@@ -171,7 +171,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
     val outlined = objCExportCodegen.functionGenerator(outlinedType.toProto( this.function.name.orEmpty() + "_outlined", null, LLVMLinkage.LLVMPrivateLinkage)) {
         setupBridgeDebugInfo()
         // Don't generate redundant cleanup landingpad (the generation would fail due to forbidRuntime below):
-        needCleanupLandingpadAndLeaveFrame = false
+        forceCleanupLandingpad = false
     }.generate {
         forbidRuntime = true // Don't emit safe points, frame management etc.
 
@@ -878,7 +878,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         errorOutPtr != null -> kotlinExceptionHandler { exception ->
             callFromBridge(
                     llvm.Kotlin_ObjCExport_RethrowExceptionAsNSError,
-                    listOf(exception, errorOutPtr!!, generateExceptionTypeInfoArray(baseMethod!!))
+                    listOf(exception, errorOutPtr, generateExceptionTypeInfoArray(baseMethod!!))
             )
 
             val returnValue = when (returnType) {
@@ -903,7 +903,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             // Callee haven't suspended, so it isn't going to call the completion. Call it here:
             callFromBridge(
                     context.symbols.objCExportResumeContinuationWithException.owner.llvmFunction,
-                    listOf(continuation!!, exception)
+                    listOf(continuation, exception)
             )
             // Note: completion block could be called directly instead, but this implementation is
             // simpler and avoids duplication.
@@ -1388,9 +1388,7 @@ private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): I
 private fun ObjCExportCodeGenerator.itablePlace(irFunction: IrSimpleFunction): ClassLayoutBuilder.InterfaceTablePlace? {
     assert(irFunction.isOverridable)
     val irClass = irFunction.parentAsClass
-    return if (irClass.isInterface
-            && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract()?.parent != context.irBuiltIns.anyClass.owner)
-    ) {
+    return if (irClass.isInterface && irFunction.findOverriddenMethodOfAny() == null) {
         context.getLayoutBuilder(irClass).itablePlace(irFunction)
     } else {
         null

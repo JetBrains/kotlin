@@ -12,3 +12,6 @@ fun notAnExpression() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, whenExpression, whenWithSubject */

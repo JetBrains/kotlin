@@ -69,20 +69,25 @@ public actual class HashSet<E> internal constructor(
     @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.1") // TODO: advance to HIDDEN eventually
     override fun getElement(element: E): E? = backing.getKey(element)
     override actual fun clear(): Unit = backing.clear()
+    @IgnorableReturnValue
     override actual fun add(element: E): Boolean = backing.addKey(element) >= 0
+    @IgnorableReturnValue
     override actual fun remove(element: E): Boolean = backing.removeKey(element)
     override actual fun iterator(): MutableIterator<E> = backing.keysIterator()
 
+    @IgnorableReturnValue
     override actual fun addAll(elements: Collection<E>): Boolean {
         backing.checkIsMutable()
         return super.addAll(elements)
     }
 
+    @IgnorableReturnValue
     override actual fun removeAll(elements: Collection<E>): Boolean {
         backing.checkIsMutable()
         return super.removeAll(elements)
     }
 
+    @IgnorableReturnValue
     override actual fun retainAll(elements: Collection<E>): Boolean {
         backing.checkIsMutable()
         return super.retainAll(elements)

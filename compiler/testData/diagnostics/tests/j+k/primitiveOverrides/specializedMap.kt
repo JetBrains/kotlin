@@ -113,3 +113,5 @@ fun foo(x: SpecializedMap) {
     x.put(4, 5.0)
     x.put(4, null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, nullableType */

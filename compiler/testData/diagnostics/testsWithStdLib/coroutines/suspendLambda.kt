@@ -10,3 +10,5 @@ fun bar() {
         println()
     }.startCoroutine(foo<Unit>())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, lambdaLiteral, nullableType, typeParameter */

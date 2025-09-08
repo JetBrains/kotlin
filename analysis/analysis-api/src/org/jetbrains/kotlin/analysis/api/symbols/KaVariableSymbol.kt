@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 /**
  * [KaVariableSymbol] represents a variable-like declaration, including properties, local variables, and value parameters.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol {
     /**
      * Whether the declaration is read-only.
@@ -49,6 +50,7 @@ public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol {
  *
  * @see KaPropertySymbol.backingFieldSymbol
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     /**
      * The property which is backed by the backing field.
@@ -108,6 +110,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
  *
  * `A` is an enum entry of enum class `E`. `x` is a property of `A`'s initializer and thus not accessible outside the initializer.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     /**
      * The enum entry's initializer, or `null` if the enum entry doesn't have a body.
@@ -152,6 +155,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
  * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
  * [KaEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
     override fun createPointer(): KaSymbolPointer<KaEnumEntryInitializerSymbol>
 }
@@ -159,6 +163,7 @@ public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
 /**
  * [KaJavaFieldSymbol] represents a [Java field declaration](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3).
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaJavaFieldSymbol : KaVariableSymbol() {
     /**
      * Whether the Java field is [static](https://docs.oracle.com/javase/specs/jls/se23/html/jls-8.html#jls-8.3.1.1).
@@ -335,6 +340,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
  * [KaKotlinPropertySymbol] represents a *Kotlin* property symbol, in contrast to [KaSyntheticJavaPropertySymbol].
  */
 @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaKotlinPropertySymbol : KaPropertySymbol(), KaContextParameterOwnerSymbol {
     /**
      * Whether the property is a [late-initialized property](https://kotlinlang.org/docs/properties.html#late-initialized-properties-and-variables).
@@ -373,6 +379,7 @@ public abstract class KaKotlinPropertySymbol : KaPropertySymbol(), KaContextPara
  *
  * @see KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
     /**
      * The function symbol for the original Java getter method.
@@ -435,6 +442,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 /**
  * [KaLocalVariableSymbol] represents a local variable.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
@@ -499,6 +507,7 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
  * @see KaCallableSymbol.contextParameters
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaContextParameterSymbol : KaParameterSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol>
 }
@@ -511,6 +520,7 @@ public abstract class KaContextParameterSymbol : KaParameterSymbol() {
  *
  * @see KaFunctionSymbol.valueParameters
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaValueParameterSymbol : KaParameterSymbol() {
     /**
      * The name of the value parameter.
@@ -574,6 +584,7 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
  *
  * The `String` receiver parameter of `foo` would be represented by [KaReceiverParameterSymbol].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaReceiverParameterSymbol : KaParameterSymbol() {
     /**
      * The corresponding function or property in which the receiver parameter is declared.

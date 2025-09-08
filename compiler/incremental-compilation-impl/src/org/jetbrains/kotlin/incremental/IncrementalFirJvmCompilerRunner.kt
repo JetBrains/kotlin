@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -105,12 +106,14 @@ open class IncrementalFirJvmCompilerRunner(
 
                 setupCommonArguments(args) { MetadataVersion(*it) }
 
-                if (IncrementalCompilation.isEnabledForJvm()) {
+                if (incrementalCompilationIsEnabled(args)) {
                     putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
 
                     putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
 
                     putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, services[InlineConstTracker::class.java])
+
+                    putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, services[ICFileMappingTracker::class.java])
 
                     putIfNotNull(
                         JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
@@ -130,9 +133,16 @@ open class IncrementalFirJvmCompilerRunner(
             val pluginClasspaths = args.pluginClasspaths?.toList() ?: emptyList()
             val pluginOptions = args.pluginOptions?.toMutableList() ?: ArrayList()
             val pluginConfigurations = args.pluginConfigurations?.toList() ?: emptyList()
+            val pluginOrderConstraints = args.pluginOrderConstraints?.toList() ?: emptyList()
             // TODO: add scripting support when ready in FIR
-            val pluginLoadResult =
-                PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration, rootDisposable)
+            val pluginLoadResult = PluginCliParser.loadPluginsSafe(
+                pluginClasspaths,
+                pluginOptions,
+                pluginConfigurations,
+                pluginOrderConstraints,
+                configuration,
+                rootDisposable
+            )
             if (pluginLoadResult != ExitCode.OK) return pluginLoadResult to emptyList()
             // -- /plugins
 

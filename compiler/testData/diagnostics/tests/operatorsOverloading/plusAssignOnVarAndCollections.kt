@@ -31,3 +31,5 @@ fun test6() {
     var set = mutableSetOf(1)
     set += 2
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

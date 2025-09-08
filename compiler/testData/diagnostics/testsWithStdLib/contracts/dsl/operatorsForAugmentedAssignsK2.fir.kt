@@ -89,3 +89,8 @@ fun test_indexed(a1: A, i: Int?, a2: A?) {
     a2[0] = 1
     a2.v
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, contractCallsEffect,
+contractConditionalEffect, contracts, equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, multiplicativeExpression, nullableType,
+operator, primaryConstructor, propertyDeclaration, smartcast, thisExpression */

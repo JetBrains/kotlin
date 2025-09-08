@@ -29,3 +29,6 @@ public interface Foo<T> extends Base<T> {
 
     <!NOTHING_TO_OVERRIDE!>override<!> fun (E & Any).bar() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+javaType, nullableType, override, typeParameter */

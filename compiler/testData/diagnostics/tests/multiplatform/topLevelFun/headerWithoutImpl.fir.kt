@@ -5,3 +5,5 @@
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun foo()
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration */

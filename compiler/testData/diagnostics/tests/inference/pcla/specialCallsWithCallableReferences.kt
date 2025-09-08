@@ -498,3 +498,9 @@ fun poll88(): Flow<String> {
         inv
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, capturedType, checkNotNullCall, classDeclaration,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, getter, ifExpression, in,
+integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, setter, smartcast, suspend, tryExpression,
+typeParameter, typeWithExtension, vararg, whenExpression, whenWithSubject */

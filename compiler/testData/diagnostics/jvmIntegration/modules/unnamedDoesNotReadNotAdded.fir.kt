@@ -22,3 +22,5 @@ import <!UNRESOLVED_IMPORT!>foo<!>.Foo
 fun usage() {
     <!UNRESOLVED_REFERENCE!>Foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

@@ -73,3 +73,6 @@ object D {
         val a = FromDBaseCompanion::foo
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, propertyDeclaration */

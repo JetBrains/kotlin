@@ -13,13 +13,12 @@ output/classes
 output/sources
 
 # kotlinc
--language-version 1.9
 -cp %KOTLIN_STDLIB%
 -d output/ap
 ap/Processor.kt
 
 # kapt
--language-version 1.9
+-Kapt-mode=stubsAndApt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
 -Kapt-sources=output/sources
@@ -29,6 +28,12 @@ ap/Processor.kt
 -d output/classes
 -cp output/ap:%KOTLIN_STDLIB%
 Test.kt
+
+# kotlinc
+-d output/classes
+-cp output/classes:output/ap:%KOTLIN_STDLIB%
+Test.kt
+output/sources
 
 # java
 -cp output/classes:output/ap:%KOTLIN_STDLIB%

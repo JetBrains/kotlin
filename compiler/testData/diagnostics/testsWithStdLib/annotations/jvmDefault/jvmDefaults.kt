@@ -165,3 +165,6 @@ fun test() {
     KotlinClass().test()
     KotlinClass().property
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, getter, interfaceDeclaration,
+propertyDeclaration, stringLiteral, superExpression */

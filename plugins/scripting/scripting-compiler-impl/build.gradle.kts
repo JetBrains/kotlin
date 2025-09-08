@@ -5,12 +5,13 @@ description = "Kotlin Compiler Infrastructure for Scripting"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:psi"))
+    compileOnly(project(":compiler:psi:psi-api"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:ir.serialization.js"))
@@ -32,7 +33,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.junit4)
 }
 
@@ -51,6 +52,8 @@ runtimeJar()
 sourcesJar()
 javadocJar()
 
-projectTest {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }

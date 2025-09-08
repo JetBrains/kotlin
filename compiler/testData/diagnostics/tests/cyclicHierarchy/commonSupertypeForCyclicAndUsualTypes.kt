@@ -8,3 +8,6 @@ fun <T> select(vararg xs: T): T = xs[0]
 fun foo() {
     val x = select(A(), B(), "foo")
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+outProjection, propertyDeclaration, stringLiteral, typeParameter, vararg */

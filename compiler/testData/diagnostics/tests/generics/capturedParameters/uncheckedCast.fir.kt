@@ -52,3 +52,6 @@ fun noTypeParameters(x: Any) : Any {
 
     return C()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression, inner,
+integerLiteral, intersectionType, isExpression, localClass, nullableType, smartcast, starProjection, typeParameter */

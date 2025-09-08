@@ -5,3 +5,5 @@
 fun someFunction() : Any {
     <!RETURN_TYPE_MISMATCH!>return<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

@@ -18,3 +18,5 @@ public open class Identifier2() {
         this.field = false;
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, primaryConstructor, propertyDeclaration, thisExpression */

@@ -9,3 +9,6 @@ annotation class Ann(val s: String)
 fun some(): Int {
     return 1 as @Ann(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>6<!>) Int // should error but doesn't
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, asExpression, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

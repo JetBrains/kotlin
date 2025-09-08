@@ -51,3 +51,7 @@ interface Outer {
 
 // -----------------
 fun println(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, interfaceDeclaration, nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, setter, starProjection, stringLiteral, typeParameter, unaryExpression */

@@ -12,3 +12,5 @@ interface My {
     // ok
     private fun bar() = 42
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration */

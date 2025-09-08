@@ -13,3 +13,6 @@ abstract class Middle : Base {
 abstract class MyClass : Middle()
 
 <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A<!> : MyClass(), Base by Delegate()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,
+stringLiteral */

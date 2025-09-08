@@ -134,3 +134,8 @@ open class A(a: () -> Unit) {
 }
 
 class B: A({ s -> "1" })
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, classDeclaration, enumDeclaration, enumEntry,
+equalityExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral, thisExpression, typeAliasDeclaration,
+typeParameter, typeWithExtension, whenExpression, whenWithSubject */

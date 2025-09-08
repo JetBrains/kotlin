@@ -19,3 +19,6 @@ fun main(key: String?, v: Number) {
     }.length
 }
 
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter,
+typeWithExtension */

@@ -1,5 +1,6 @@
 // IGNORE_STANDALONE
 // KT-76042
+// DISABLE_DEPENDED_MODE
 
 // MODULE: dependency
 // MODULE_KIND: LibraryBinary

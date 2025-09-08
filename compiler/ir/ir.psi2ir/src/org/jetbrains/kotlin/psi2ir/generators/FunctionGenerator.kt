@@ -208,7 +208,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 
-        val irValueParameter = irAccessor.valueParameters.single()
+        val irValueParameter = irAccessor.parameters.single { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
         irBody.statements.add(
             IrSetFieldImpl(
                 startOffset, endOffset,
@@ -303,7 +303,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                 )
             }.apply {
                 metadata = DescriptorMetadataSource.Function(it.descriptor)
-                contextReceiverParametersCount = ktContextReceiversElements.size
             }
         }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktConstructorElement, null, ktContextReceiversElements)
@@ -333,15 +332,22 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
     ) {
         val functionDescriptor = irFunction.descriptor
 
-        irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            generateReceiverParameterDeclaration(
+        functionDescriptor.dispatchReceiverParameter?.let {
+            irFunction.parameters += generateReceiverParameterDeclaration(
                 it, ktParameterOwner,
                 irFunction, IrParameterKind.DispatchReceiver
             )
         }
 
-        irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            generateReceiverParameterDeclaration(
+        irFunction.parameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
+            declareParameter(
+                contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner,
+                irFunction, IrParameterKind.Context, null, i
+            )
+        }
+
+        functionDescriptor.extensionReceiverParameter?.let {
+            irFunction.parameters += generateReceiverParameterDeclaration(
                 it, ktReceiverParameterElement ?: ktParameterOwner,
                 irFunction, IrParameterKind.ExtensionReceiver
             )
@@ -350,16 +356,9 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
 
         val contextReceiverParametersCount = functionDescriptor.contextReceiverParameters.size
-        irFunction.contextReceiverParametersCount = contextReceiverParametersCount
-        irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, contextReceiver ->
-            declareParameter(
-                contextReceiver, ktContextReceiverParameterElements.getOrNull(i) ?: ktParameterOwner,
-                irFunction, IrParameterKind.Context, null, i
-            )
-        }
 
         // Declare all the value parameters up first.
-        irFunction.valueParameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
+        irFunction.parameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
             declareParameter(
                 valueParameterDescriptor, ktParameter,
@@ -372,7 +371,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         // fun f(f1: () -> String = { f2() },
         //       f2: () -> String) = f1()
         if (withDefaultValues) {
-            irFunction.valueParameters.drop(contextReceiverParametersCount).forEachIndexed { index, irValueParameter ->
+            irFunction.parameters.filter { it.kind == IrParameterKind.Regular }.forEachIndexed { index, irValueParameter ->
                 val valueParameterDescriptor = functionDescriptor.valueParameters[index]
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->

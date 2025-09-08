@@ -36,10 +36,6 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     override val target: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java).convention("es5")
 
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    override val typedArrays: org.gradle.api.provider.Property<kotlin.Boolean> =
-        objectFactory.property(kotlin.Boolean::class.java).convention(false)
-
     override val useEsClasses: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java)
 }

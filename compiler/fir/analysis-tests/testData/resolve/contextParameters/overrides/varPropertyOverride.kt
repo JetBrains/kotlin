@@ -13,3 +13,6 @@ class Derived : Base() {
         get() = ""
         set(value) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, override, propertyDeclaration, propertyDeclarationWithContext, setter,
+stringLiteral */

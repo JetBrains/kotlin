@@ -106,9 +106,7 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
             destination.add(moduleData)
             if (paths.isEmpty()) return
             val filterSet = filtersMap.getOrPut(moduleData) { mutableSetOf() }
-            paths.mapTo(filterSet) {
-                Paths.get(it).toAbsolutePath()
-            }
+            paths.mapTo(filterSet) { Paths.get(it) }
         }
 
         fun build(): DependencyListForCliModule {

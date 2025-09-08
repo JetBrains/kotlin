@@ -72,3 +72,6 @@ fun usage() {
         <!NO_CONTEXT_ARGUMENT!>test4<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionDeclarationWithContext, inner,
+lambdaLiteral, nestedClass, nullableType, objectDeclaration, typeParameter */

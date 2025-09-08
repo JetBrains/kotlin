@@ -16,3 +16,6 @@ fun main() {
     val bar = 1L
     foo.integerProp = bar.toInt()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, javaFunction, javaProperty, javaType, localProperty,
+propertyDeclaration */

@@ -9,3 +9,6 @@ class Outer {
         constructor() : this(w)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

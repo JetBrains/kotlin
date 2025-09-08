@@ -1,20 +1,26 @@
-description = "Kotlin SamWithReceiver Compiler Plugin"
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
-dependencies {
-    testImplementation(projectTests(":kotlin-allopen-compiler-plugin"))
-    testImplementation(projectTests(":kotlin-assignment-compiler-plugin"))
-    testImplementation(projectTests(":kotlinx-serialization-compiler-plugin"))
-    testImplementation(projectTests(":kotlin-lombok-compiler-plugin"))
-    testImplementation(projectTests(":kotlin-noarg-compiler-plugin"))
-    testImplementation(projectTests(":plugins:parcelize:parcelize-compiler"))
+val beforePluginClasspath: Configuration by configurations.creating
+val middlePluginClasspath: Configuration by configurations.creating
+val afterPluginClasspath: Configuration by configurations.creating
 
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+dependencies {
+    testFixturesApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-assignment-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-lombok-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-noarg-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
+
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
+
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
@@ -24,25 +30,39 @@ dependencies {
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
+
+    beforePluginClasspath(project(":plugins:test-plugins:before"))
+    middlePluginClasspath(project(":plugins:test-plugins:middle"))
+    afterPluginClasspath(project(":plugins:test-plugins:after"))
 }
 
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 runtimeJar()
 sourcesJar()
 testsJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    useJUnitPlatform()
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
+    ) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        useJUnitPlatform()
+
+        addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
+        addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")
+        addClasspathProperty(afterPluginClasspath, "plugin.classpath.after")
+    }
+
+    testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
+
+    withJvmStdlibAndReflect()
 }

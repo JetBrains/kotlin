@@ -13,3 +13,6 @@ fun main() {
     list = Util.id(list)
     list += 2
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

@@ -24,3 +24,6 @@ fun unusedExpressions() {
 
     <!UNUSED_EXPRESSION!>fun() = 1<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+whenExpression, whenWithSubject */

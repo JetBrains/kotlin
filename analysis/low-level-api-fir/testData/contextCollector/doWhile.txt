@@ -18,16 +18,16 @@ Tower Data Context:
             Functions
                 FirNamedFunctionSymbol local final fun outerFunction(): R|kotlin/Boolean|
             Properties:
-                FirPropertySymbol lvar outerVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar outerVariable: R|kotlin/Boolean|
     Element 8
         Scope: FirLocalScope
             Functions
                 FirNamedFunctionSymbol local final fun innerFunction(): R|kotlin/Boolean|
             Properties:
-                FirPropertySymbol lvar innerVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar innerVariable: R|kotlin/Boolean|
 
 FILE: [ResolvedTo(IMPORTS)] doWhile.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/5) #1] fun foo(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] fun outerFunction(): R|kotlin/Boolean| {
             ^outerFunction Boolean(true)
         }
@@ -41,8 +41,8 @@ FILE: [ResolvedTo(IMPORTS)] doWhile.kt
 
         }
         while(R|<local>/outerVariable| || R|<local>/outerFunction|() || R|<local>/innerVariable| || R|<local>/innerFunction|())
-        [ResolvedTo(BODY_RESOLVE)] lvar unrelatedVariable: R|kotlin/Boolean| = Boolean(false)
-        local final [ResolvedTo(BODY_RESOLVE)] fun unrelatedFunction(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lvar unrelatedVariable: <implicit> = Boolean(false)
+        local final? [ResolvedTo(RAW_FIR)] fun unrelatedFunction(): R|kotlin/Unit| {
         }
 
     }

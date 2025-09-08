@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
@@ -51,9 +52,16 @@ var IrClass.isPublicAbi: Boolean by irFlag(copyByDefault = false)
 var IrClass.classNameOverride: JvmClassName? by irAttribute(copyByDefault = false)
 
 var IrFunction.viewOfOriginalSuspendFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrFunction.originalOfSuspendForInline: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrFunction.staticSuspendImplMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 var IrSimpleFunction.staticDefaultStub: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 var IrElement.isEnclosedInConstructor: Boolean by irFlag(copyByDefault = true)
 
 var IrVariable.originalSnippetValueSymbol: IrSymbol? by irAttribute(copyByDefault = false)
+
+// SpecialAccessLowering replaces inaccessible calls in code fragment with reflective ones
+// For Method.invoke(..) The original call is stored in this attribute
+// It's used in suspend calls generation
+var IrCall.originalForReflectiveCall: IrCall? by irAttribute(copyByDefault = false)

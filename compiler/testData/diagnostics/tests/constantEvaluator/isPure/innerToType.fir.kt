@@ -12,3 +12,5 @@ val prop3 = 1 + 1.toByte()
 
 // val prop4: false
 val prop4 = 1 + 1.toShort() + 1
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, propertyDeclaration, unaryExpression */

@@ -28,7 +28,7 @@ Tower Data Context:
     Element 9
         Scope: FirScriptDeclarationsScope
             Properties:
-                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                FirRegularPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
                     public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
     Element 10
         Scope: FirLocalScope

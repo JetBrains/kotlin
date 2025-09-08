@@ -166,3 +166,7 @@ fun testLambda() {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression, init,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, tryExpression,
+typeParameter, unnamedLocalVariable, whenExpression, whenWithSubject, whileLoop */

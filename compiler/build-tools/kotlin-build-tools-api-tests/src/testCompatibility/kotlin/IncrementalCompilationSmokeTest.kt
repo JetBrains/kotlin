@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
@@ -29,11 +28,48 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun multiModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val kotlinToolchain = strategyConfig.first
         Assumptions.assumeTrue(
-            compilerVersion >= KotlinToolingVersion(2, 1, 20, "Beta1"),
-            "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is $compilerVersion"
+            KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
+            "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchain.getCompilerVersion()}"
         )
         runMultiModuleTest(strategyConfig, useTrackedModules = true)
+    }
+
+    @DisplayName("IC works with a mixed Java+Kotlin project via our internal machinery, similarly to Maven")
+    @DefaultStrategyAgnosticCompilationTest
+    @TestMetadata("kotlin-java-mixed")
+    fun mixedModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val kotlinToolchain = strategyConfig.first
+        Assumptions.assumeTrue(
+            KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
+            "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchain.getCompilerVersion()}"
+        )
+        runMixedModuleTest(strategyConfig, useTrackedModules = true)
+    }
+
+    @DisplayName("IC works with a mixed Java+Kotlin project with the externally tracked changes, similarly to Gradle")
+    @DefaultStrategyAgnosticCompilationTest
+    @TestMetadata("kotlin-java-mixed")
+    fun mixedModuleExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        runMixedModuleTest(strategyConfig, useTrackedModules = false)
+    }
+
+    private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
+        scenario(strategyConfig) {
+            val module1 = if (useTrackedModules) {
+                trackedModule("kotlin-java-mixed")
+            } else {
+                module("kotlin-java-mixed")
+            }
+
+            module1.replaceFileWithVersion("main.kt", "add-argument")
+            module1.replaceFileWithVersion("apkg/AClass.java", "add-argument")
+            module1.compile { module, scenarioModule ->
+                assertCompiledSources(module, "main.kt", "bpkg/BClass.kt")
+                assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
+            }
+        }
     }
 
     private fun runMultiModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {

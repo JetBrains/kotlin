@@ -33,7 +33,7 @@ interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var javaParameters: kotlin.Boolean
         get() = options.javaParameters.get()
@@ -53,7 +53,7 @@ interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var jvmTarget: kotlin.String
         get() = options.jvmTarget.get().jvmTargetKotlinOption
@@ -67,7 +67,7 @@ interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var moduleName: kotlin.String?
         get() = options.moduleName.orNull
@@ -81,7 +81,7 @@ interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
     @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
     @Deprecated(
         message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.ERROR,
     )
     var noJdk: kotlin.Boolean
         get() = options.noJdk.get()

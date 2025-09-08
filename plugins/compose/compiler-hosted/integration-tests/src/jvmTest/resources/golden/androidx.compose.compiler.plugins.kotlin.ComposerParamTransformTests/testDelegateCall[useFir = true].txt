@@ -49,7 +49,7 @@ class Foo {
 }
 @Composable
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
-  sourceInformationMarkerStart(%composer, <>, "C(getValue)P(1):Test.kt#2487m")
+  sourceInformationMarkerStart(%composer, <>, "C(getValue)N(thisObj,property):Test.kt#2487m")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -64,7 +64,7 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
 class FooDelegate {
   @Composable
   fun getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): FooDelegate {
-    sourceInformationMarkerStart(%composer, <>, "C(getValue)P(1):Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C(getValue)N(thisObj,property):Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }

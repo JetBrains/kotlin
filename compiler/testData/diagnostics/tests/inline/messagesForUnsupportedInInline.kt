@@ -17,3 +17,6 @@ class Derived : Base() {
             <!NOT_YET_SUPPORTED_IN_INLINE("Functional parameters with inherited default values")!>f: () -> Unit<!>
     )<!> {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral, localClass,
+localFunction, override */

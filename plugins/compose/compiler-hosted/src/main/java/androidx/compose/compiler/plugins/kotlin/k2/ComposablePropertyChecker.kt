@@ -21,8 +21,11 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 
 object ComposablePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -46,4 +49,22 @@ object ComposablePropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             )
         }
     }
+}
+
+object ComposablePropertyReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCallableReferenceAccess) {
+        val property = expression.calleeReference.toResolvedPropertySymbol()
+        if (
+            property != null
+            && !property.hasDelegate
+            && property.isComposable(context.session)
+        ) {
+            reporter.reportOn(
+                expression.source,
+                ComposeErrors.COMPOSABLE_PROPERTY_REFERENCE
+            )
+        }
+    }
+
 }

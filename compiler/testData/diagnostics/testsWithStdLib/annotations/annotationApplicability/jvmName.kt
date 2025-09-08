@@ -127,3 +127,8 @@ interface Intf {
     <!INAPPLICABLE_JVM_NAME!>@set:JvmName("setBar")<!> // no error in IDE
     var foo: Int
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetPropertySetter, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, interfaceDeclaration, localFunction,
+localProperty, override, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, secondaryConstructor,
+setter, stringLiteral */

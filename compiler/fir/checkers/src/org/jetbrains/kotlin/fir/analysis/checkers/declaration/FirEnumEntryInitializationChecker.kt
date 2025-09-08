@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
@@ -34,30 +35,30 @@ object FirEnumEntryInitializationChecker : FirRegularClassChecker(MppCheckerKind
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (!declaration.isEnumClass) return
-        if (!context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
+        if (!ProperUninitializedEnumEntryAccessAnalysis.isEnabled()) return
         val enumEntries = declaration.collectEnumEntries(context.session)
         if (enumEntries.isEmpty()) return
         val enumEntrySymbols = enumEntries.mapTo(mutableSetOf()) { it.symbol }
-        checkClass(declaration, enumEntrySymbols, context, reporter)
-        checkEnumEntries(enumEntries, context, reporter)
+        checkClass(declaration, enumEntrySymbols)
+        checkEnumEntries(enumEntries)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkClass(
         klass: FirClass,
         enumEntrySymbols: Set<FirEnumEntrySymbol>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val graph = klass.controlFlowGraphReference?.controlFlowGraph ?: return
         val data = EnumEntryInitializationInfoData(enumEntrySymbols, klass.symbol, graph)
-        EnumEntryInitializationCheckProcessor.check(data, isForInitialization = true, context, reporter)
+        EnumEntryInitializationCheckProcessor.check(data, isForInitialization = true)
     }
 
-    private fun checkEnumEntries(enumEntries: List<FirEnumEntry>, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkEnumEntries(enumEntries: List<FirEnumEntry>) {
         val enumEntrySymbols = enumEntries.mapTo(mutableSetOf()) { it.symbol }
         for (enumEntry in enumEntries) {
             val entryObject = (enumEntry.initializer as? FirAnonymousObjectExpression)?.anonymousObject ?: continue
-            checkClass(entryObject, enumEntrySymbols, context, reporter)
+            checkClass(entryObject, enumEntrySymbols)
             enumEntrySymbols.remove(enumEntry.symbol)
         }
     }
@@ -80,36 +81,35 @@ private object EnumEntryInitializationCheckProcessor : VariableInitializationChe
         return data.properties
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
-    ) {}
-
-    override fun reportUninitializedVariable(
-        reporter: DiagnosticReporter,
-        expression: FirQualifiedAccessExpression,
-        symbol: FirVariableSymbol<*>,
-        context: CheckerContext,
     ) {
-        require(symbol is FirEnumEntrySymbol)
-        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_ENUM_ENTRY, symbol, context)
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun reportUninitializedVariable(
+        expression: FirQualifiedAccessExpression,
+        symbol: FirVariableSymbol<*>,
+    ) {
+        require(symbol is FirEnumEntrySymbol)
+        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_ENUM_ENTRY, symbol)
+    }
+
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
-    ) {}
+    ) {
+    }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportValReassignment(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
-    ) {}
+    ) {
+    }
 
     override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean {
         return true

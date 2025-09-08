@@ -250,21 +250,5 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
-
-@Deprecated(
-    level = DeprecationLevel.ERROR,
-    message = "This class was moved to org.jetbrains.kotlin.name.NativeStandardInteropNames.ForwardDeclarations",
-)
-object ForwardDeclarationsFqNames {
-
-    internal val cInterop = NativeStandardInteropNames.cInteropPackage
-
-    internal val cNamesStructs = NativeStandardInteropNames.ForwardDeclarations.cNamesStructsPackage
-    internal val objCNamesClasses = NativeStandardInteropNames.ForwardDeclarations.objCNamesClassesPackage
-    internal val objCNamesProtocols = NativeStandardInteropNames.ForwardDeclarations.objCNamesProtocolsPackage
-
-    val syntheticPackages = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
-}
-
 val ModuleDescriptor.isForwardDeclarationModule: Boolean
     get() = name == FORWARD_DECLARATIONS_MODULE_NAME

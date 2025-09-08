@@ -17,3 +17,5 @@ fun ok(x: Int, y: Long = 1L) {}
 fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>ok<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, stringLiteral */

@@ -28,3 +28,5 @@ import p.*
 fun test() {
     foo(M1().a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeParameter */

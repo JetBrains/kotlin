@@ -42,3 +42,6 @@ fun callTopLevelSamePsiNotFirstStatement() {
     doStuff()
     contract { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+thisExpression */

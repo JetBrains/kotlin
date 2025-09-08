@@ -27,3 +27,7 @@ fun main() {
 //  at test.TestKt$main$2.invoke(test.kt)
 //  at test.TestKt.foo(test.kt:12)
 //  at test.TestKt.main(test.kt:21)
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, tryExpression, typeParameter */

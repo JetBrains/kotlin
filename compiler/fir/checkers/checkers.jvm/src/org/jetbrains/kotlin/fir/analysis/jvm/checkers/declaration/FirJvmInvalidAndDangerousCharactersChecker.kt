@@ -17,15 +17,15 @@ object FirJvmInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker(M
     override fun check(declaration: FirDeclaration) {
         val source = declaration.source
         when (declaration) {
-            is FirRegularClass -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirSimpleFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
-            is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source, context, reporter)
+            is FirRegularClass -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirSimpleFunction -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirTypeParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirProperty -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirTypeAlias -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
+            is FirValueParameter -> FirJvmNamesChecker.checkNameAndReport(declaration.name, source)
             is FirFile -> {
                 declaration.packageDirective.packageFqName.pathSegments().forEach {
-                    FirJvmNamesChecker.checkNameAndReport(it, declaration.packageDirective.source, context, reporter)
+                    FirJvmNamesChecker.checkNameAndReport(it, declaration.packageDirective.source)
                 }
             }
             else -> return

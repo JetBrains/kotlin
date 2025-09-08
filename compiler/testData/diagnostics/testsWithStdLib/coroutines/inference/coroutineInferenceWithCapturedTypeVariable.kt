@@ -18,3 +18,6 @@ interface iFlowCollector<S> {
 }
 
 interface iFlow<out V>
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, inProjection, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, out, suspend, typeParameter, typeWithExtension */

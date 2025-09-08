@@ -1,7 +1,7 @@
 test1: ---
 assert(ref())
-       |
-       false
+       |  |
+       |  false
        fun foo(): T
 ---
 test2: ---
@@ -19,8 +19,8 @@ assert(List<T>::bar.isInfix)
 ---
 test4: ---
 assert((List<Int>::bar)(listOf()))
-        |               |
-        |               false
-        |               []
+        |              ||
+        |              |[]
+        |              false
         fun kotlin.collections.List<T>.bar(): kotlin.Boolean
 ---

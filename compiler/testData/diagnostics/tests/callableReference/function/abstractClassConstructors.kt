@@ -11,3 +11,6 @@ fun main() {
     ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>C<!>   // KT-3465
     ::<!INVISIBLE_MEMBER!>D<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, enumDeclaration, functionDeclaration,
+interfaceDeclaration */

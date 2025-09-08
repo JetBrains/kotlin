@@ -10,9 +10,11 @@ declare namespace JS_TESTS {
         class TestClass {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace TestClass.$metadata$ {
-            const constructor: abstract new () => TestClass;
+        namespace TestClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => TestClass;
+            }
         }
         class AnotherClass {
             /** @deprecated message 4 */
@@ -27,9 +29,11 @@ declare namespace JS_TESTS {
             /** @deprecated message 7 */
             get bar(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace AnotherClass.$metadata$ {
-            const constructor: abstract new () => AnotherClass;
+        namespace AnotherClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AnotherClass;
+            }
         }
         interface TestInterface {
             /** @deprecated message 8 */
@@ -44,15 +48,17 @@ declare namespace JS_TESTS {
         abstract class TestObject extends KtSingleton<TestObject.$metadata$.constructor>() {
             private constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace TestObject.$metadata$ {
-            abstract class constructor {
-                /** @deprecated message 10 */
-                foo(): void;
-                bar(): void;
-                /** @deprecated message 11 */
-                get baz(): string;
-                private constructor();
+        namespace TestObject {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor {
+                    /** @deprecated message 10 */
+                    foo(): void;
+                    bar(): void;
+                    /** @deprecated message 11 */
+                    get baz(): string;
+                    private constructor();
+                }
             }
         }
     }

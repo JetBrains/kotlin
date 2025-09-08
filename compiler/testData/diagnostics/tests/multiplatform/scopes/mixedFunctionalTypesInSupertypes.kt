@@ -22,3 +22,6 @@ expect interface I2<out R> {
 <!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias I2<R> = suspend () -> R<!>
 
 <!CONFLICTING_INHERITED_MEMBERS!>actual interface ExpectInterface<!> : <!MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES!>I1<Int>, I2<Int><!>
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, functionalType, interfaceDeclaration, nullableType, out,
+suspend, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -39,3 +39,7 @@ class CallBasedInExpressionGenerator(
             }
         }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override, primaryConstructor,
+propertyDeclaration */

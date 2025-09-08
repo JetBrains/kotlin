@@ -21,3 +21,6 @@ actual fun test() {}
 
 @Ann(Array<Typealiased>::class)
 actual fun testInArray() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, classReference, expect, functionDeclaration,
+primaryConstructor, propertyDeclaration, starProjection, typeAliasDeclaration */

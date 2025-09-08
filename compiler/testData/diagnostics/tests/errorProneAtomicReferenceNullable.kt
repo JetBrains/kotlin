@@ -26,3 +26,6 @@ fun testJava() {
     val c = AtomicReferenceArray<Int?>(1)
     c.compareAndSet(0, 128, null)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, flexibleType, functionDeclaration, integerLiteral,
+javaFunction, localProperty, nullableType, propertyDeclaration */

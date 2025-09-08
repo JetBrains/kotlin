@@ -27,12 +27,11 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
         get() = (psi as? KtBinaryExpression)?.left is KtAnnotatedExpression
                 || treeStructure.getChildrenArray(lighterASTNode).firstOrNull()?.tokenType == KtNodeTypes.ANNOTATED_EXPRESSION
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirStatement,
         source: KtPsiSourceElement,
         psi: PsiElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         var current = source.psi
         var parent = current.parent
@@ -47,15 +46,14 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
         }
 
         if (isStatementContainer(parent)) {
-            reporter.reportOn(source, FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE, context)
+            reporter.reportOn(source, FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirStatement,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         var current = source.lighterASTNode
         var parent: LighterASTNode? = source.treeStructure.getParent(current)
@@ -70,7 +68,7 @@ object FirAnnotatedBinaryExpressionChecker : FirExpressionSyntaxChecker<FirState
         }
 
         if (parent?.isStatementContainer == true) {
-            reporter.reportOn(source, FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE, context)
+            reporter.reportOn(source, FirErrors.ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE)
         }
     }
 

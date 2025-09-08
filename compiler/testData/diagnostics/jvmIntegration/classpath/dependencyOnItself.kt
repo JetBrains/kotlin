@@ -38,3 +38,5 @@ fun test(
     receiver1.erroneousExtensionFunction1()
     receiver2.erroneousExtensionFunction2()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, typeParameter */

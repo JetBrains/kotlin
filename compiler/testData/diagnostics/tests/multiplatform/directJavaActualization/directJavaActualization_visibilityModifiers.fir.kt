@@ -41,3 +41,5 @@ class Baz { }
 // FILE: Qux.java
 @kotlin.annotations.jvm.KotlinActual
 public class Qux { }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration */

@@ -6,8 +6,27 @@
 package org.jetbrains.kotlin.integration
 
 import com.intellij.openapi.util.SystemInfo
+import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.isWindows
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.modules.JavaRootPath
+import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
 import kotlin.io.path.createSymbolicLinkPointingTo
 
 class FilePathNormalizationTest : KotlinIntegrationTestBase() {
@@ -72,4 +91,292 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
     }
 
     private operator fun File.div(x: String): File = File(this, x)
+
+    // Check, that the compiler still works, when classpath entry is passed by symlink
+    fun testSymlinkInClasspath() {
+        fun compileWithClasspath(source: String, fileName: String, outputFile: File, classpath: File? = null) {
+            val programSource = File(tmpdir, fileName)
+            programSource.writeText(source)
+
+            val (stdout, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+                K2JVMCompiler(),
+                buildList {
+                    this += programSource.path
+                    this += "-d"
+                    this += outputFile.path
+                    this += "-cp"
+                    this += listOfNotNull(
+                        PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+                        classpath?.path
+                    ).joinToString(File.pathSeparator)
+                }
+            )
+            assertEquals("Compilation failed:\n$stdout", ExitCode.OK, exitCode)
+        }
+
+        // Run the compiled file
+        fun run(outDir: File, classpath: File) {
+            val stdout = ProgramWithDependencyOnCompiler.runJava(
+                tmpdir,
+                "-cp",
+                listOf(
+                    PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+                    outDir.path,
+                    classpath.path
+                ).joinToString(File.pathSeparator),
+                "MainKt"
+            )
+            assertEquals("OK", stdout)
+        }
+
+        // There are four possible scenarios:
+        // (the output is a dir | the output is a jar) x (symlink is the last path segment | symlink is not the last path segment)
+
+        // The output is a dir:
+        run {
+            val baseDir = tmpdir.resolve("base").apply { mkdirs() }
+            val libDir = baseDir.resolve("lib")
+            compileWithClasspath(
+                source = """fun foo():String = "OK" """,
+                fileName = "lib.kt",
+                outputFile = libDir
+            )
+
+            // The symlink is the last path segment:
+            run {
+                val linkToLibDir = createSymlink(libDir, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = linkToLibDir
+                )
+                run(outDir, linkToLibDir)
+            }
+
+            // The symlink is not the last path segment:
+            run {
+                val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
+                val libDirWithLink = linkToBaseDir.resolve("lib")
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = libDirWithLink
+                )
+                run(outDir, libDirWithLink)
+            }
+        }
+
+        tmpdir.deleteRecursively()
+        tmpdir.mkdirs()
+
+        // The output is a jar:
+        run {
+            val baseDir = tmpdir.resolve("base").apply { mkdirs() }
+            val libJar = baseDir.resolve("lib.jar")
+            compileWithClasspath(
+                source = """fun foo():String = "OK" """,
+                fileName = "lib.kt",
+                outputFile = libJar
+            )
+
+            // The symlink is the last path segment:
+            run {
+                val linkToLibJar = createSymlink(libJar, File(tmpdir, "liblink.jar"))
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = linkToLibJar
+                )
+                run(outDir, linkToLibJar)
+            }
+
+            // The symlink is the last path segment and without extension:
+            run {
+                val linkToLibJar = createSymlink(libJar, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = linkToLibJar
+                )
+                run(outDir, linkToLibJar)
+            }
+
+            // The symlink is not the last path segment:
+            run {
+                val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
+                val libJarWithLink = linkToBaseDir.resolve("lib.jar")
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = libJarWithLink
+                )
+                run(outDir, libJarWithLink)
+            }
+        }
+    }
+
+    fun testSymlinkInJsKlibPath() {
+        fun compileKlib(source: String, fileName: String, outputFile: File, dependency: File? = null) {
+            val programSource = File(tmpdir, fileName)
+            programSource.writeText(source)
+
+            val libraries = listOfNotNull(
+                StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
+                dependency,
+            ).joinToString(File.pathSeparator) { it.path }
+
+            val args = buildList {
+                if (outputFile.extension == "klib") {
+                    this += K2JSCompilerArguments::irProduceKlibFile.cliArgument
+                    this += K2JSCompilerArguments::outputDir.cliArgument
+                    this += outputFile.parentFile.path
+                } else {
+                    this += K2JSCompilerArguments::irProduceKlibDir.cliArgument
+                    this += K2JSCompilerArguments::outputDir.cliArgument
+                    this += outputFile.path
+                }
+                this += K2JSCompilerArguments::libraries.cliArgument
+                this += libraries
+                this += K2JSCompilerArguments::moduleName.cliArgument
+                this += outputFile.nameWithoutExtension
+                this += programSource.path
+            }.toTypedArray()
+
+            val compilerXmlOutput = ByteArrayOutputStream()
+            val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+                K2JSCompiler().execFullPathsInMessages(printStream, args)
+            }
+
+            assertEquals("Compilation failed:\n$compilerXmlOutput", ExitCode.OK, exitCode)
+        }
+
+        // There are four possible scenarios:
+        // (the output is a dir | the output is a klib) x (symlink is the last path segment | symlink is not the last path segment)
+
+        // The output is a dir:
+        run {
+            val baseDir = tmpdir.resolve("base").apply { mkdirs() }
+            val libDir = baseDir.resolve("lib")
+            compileKlib(
+                source = """fun foo():String = "OK" """,
+                fileName = "lib.kt",
+                outputFile = libDir
+            )
+
+            // The symlink is the last path segment:
+            run {
+                val linkToLibDir = createSymlink(libDir, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = linkToLibDir
+                )
+            }
+
+            // The symlink is not the last path segment:
+            run {
+                val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
+                val libDirWithLink = linkToBaseDir.resolve("lib")
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = libDirWithLink
+                )
+            }
+        }
+
+        tmpdir.deleteRecursively()
+        tmpdir.mkdirs()
+
+        // The output is a klib:
+        run {
+            val baseDir = tmpdir.resolve("base").apply { mkdirs() }
+            val libKlib = baseDir.resolve("lib.klib")
+            compileKlib(
+                source = """fun foo():String = "OK" """,
+                fileName = "lib.kt",
+                outputFile = libKlib
+            )
+
+            // The symlink is the last path segment:
+            run {
+                val linkToLibKlib = createSymlink(libKlib, File(tmpdir, "liblink.klib"))
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = linkToLibKlib
+                )
+            }
+
+            // The symlink is the last path segment and without extension:
+            run {
+                val linkToLibKlib = createSymlink(libKlib, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = linkToLibKlib
+                )
+            }
+
+            // The symlink is not the last path segment:
+            run {
+                val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
+                val libKlibWithLink = linkToBaseDir.resolve("lib.klib")
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = libKlibWithLink
+                )
+            }
+        }
+    }
+
+    // Create a symlink, if possible, and return path to it. Otherwise, return input file path.
+    private fun createSymlink(from: File, to: File): File = try {
+        to.toPath().createSymbolicLinkPointingTo(from.toPath())
+        to
+    } catch (_: Throwable) {
+        from
+    }
+
+    // Some compiler plugins use CONTENT_ROOTS. In case of symlinks, there should also be symlinks
+    fun testSymlinksInContentRoots() {
+        // Symlinks do not work on Windows
+        if (isWindows) return
+
+        val baseDir = tmpdir.resolve("base").apply { mkdirs() }
+        val libDir = baseDir.resolve("lib")
+        val linkToLibDir = createSymlink(libDir, File(tmpdir, "liblink"))
+
+        val configuration = CompilerConfiguration()
+        val module = ModuleBuilder("", "", "").apply {
+            addClasspathEntry(linkToLibDir.path)
+        }
+        configuration.configureSourceRoots(listOf(module))
+
+        val classpathRoot = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)?.singleOrNull() as? JvmClasspathRoot
+            ?: error("Not a JvmClasspathRoot")
+
+        assertTrue(classpathRoot.file.path.endsWith("liblink"))
+    }
 }

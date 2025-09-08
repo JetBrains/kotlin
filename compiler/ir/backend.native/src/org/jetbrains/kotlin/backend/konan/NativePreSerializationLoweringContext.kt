@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.konan.ir.KonanSharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -19,9 +17,10 @@ class NativePreSerializationLoweringContext(
         configuration: CompilerConfiguration,
         diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    private val konanSymbols = KonanSymbols(this, irBuiltIns, configuration)
+    override val symbols: PreSerializationNativeSymbols = PreSerializationNativeSymbols.Impl(irBuiltIns)
 
-    override val symbols: Symbols = konanSymbols
+    override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 
-    override val sharedVariablesManager: SharedVariablesManager = KonanSharedVariablesManager(irBuiltIns, konanSymbols)
+    override val allowInliningOfExternalFunctions: Boolean
+        get() = false
 }

@@ -19,3 +19,6 @@ class C : A<CharSequence> {
     constructor(x: List<String>) : <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>super<!>("", x)
     constructor(x: List<Int>, y: Int) : super("", x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,
+nullableType, primaryConstructor, secondaryConstructor, stringLiteral, typeParameter, typeWithExtension */

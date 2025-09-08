@@ -22,7 +22,7 @@ Tower Data Context:
     Element 9
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval localProperty: R|kotlin/Int|
+                FirLocalPropertySymbol lval localProperty: R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
     public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {

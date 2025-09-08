@@ -16,3 +16,4 @@ fun <S> select(a: S, b: S) = a
 
 fun <I : Comparable<I>> id(arg: I) = arg
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, nullableType, typeConstraint, typeParameter, vararg */

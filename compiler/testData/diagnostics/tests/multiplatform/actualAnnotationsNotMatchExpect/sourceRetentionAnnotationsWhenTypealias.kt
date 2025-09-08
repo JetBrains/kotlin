@@ -25,3 +25,6 @@ class SourceAvailableImpl {
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>SourceAvailable<!> = SourceAvailableImpl
 
 actual typealias FromLib = kotlin.SinceKotlin
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration,
+typeAliasDeclaration */

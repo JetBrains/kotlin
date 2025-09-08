@@ -17,3 +17,5 @@ class A {
         <!UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS!>::class<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, lambdaLiteral */

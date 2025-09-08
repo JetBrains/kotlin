@@ -15,3 +15,6 @@ fun foo(list: L<CharSequence>, b: B) {
     list.foo(b::remove)
     list.foo<CharSequence>(b::remove)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, nullableType, out, typeParameter */

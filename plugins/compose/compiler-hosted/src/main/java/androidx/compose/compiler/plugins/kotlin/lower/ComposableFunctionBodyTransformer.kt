@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -383,6 +384,8 @@ class ComposableFunctionBodyTransformer(
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
+    private val indyEnabled: Boolean,
+    private val targetRuntimeVersion: ComposeRuntimeVersion?,
     featureFlags: FeatureFlags,
 ) :
     AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -407,15 +410,6 @@ class ComposableFunctionBodyTransformer(
         composerIrClass.functions
             .first {
                 it.name.identifier == "skipToGroupEnd" && it.parameters.size == 1
-            }
-    }
-
-    // todo is this correct to be unused?
-    private val skipCurrentGroupFunction by guardedLazy {
-        composerIrClass
-            .functions
-            .first {
-                it.name.identifier == "skipCurrentGroup" && it.parameters.size == 1
             }
     }
 
@@ -592,6 +586,13 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
+    private val emitParameterNames
+        get() = indyEnabled &&
+                targetRuntimeVersion.supportsFeature(ComposeRuntimeFeature.SourceInfoParameterNames) {
+                    context.referenceClass(ComposeClassIds.SourceInformation) != null
+                }
+
+
     private var currentScope: Scope = Scope.RootScope()
 
     private fun printScopeStack(): String {
@@ -648,7 +649,33 @@ class ComposableFunctionBodyTransformer(
 
         val isTracked = declaration.returnType.isUnit()
 
-        if (declaration.body == null) return declaration
+        if (declaration.body == null) {
+            if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
+                scope.metrics.recordFunction(
+                    composable = true,
+                    restartable = restartable,
+                    skippable = false,
+                    isLambda = false,
+                    inline = false,
+                    hasDefaults = false,
+                    readonly = false
+                )
+
+                scope.allTrackedParams.forEach {
+                    val stability = stabilityInferencer.stabilityOf(it.varargElementType ?: it.type)
+                    val default = it.defaultValue?.expression
+                    scope.metrics.recordParameter(
+                        declaration = it,
+                        type = it.type,
+                        stability = stability,
+                        default = default,
+                        defaultStatic = default?.isStatic() == true,
+                        used = true,
+                    )
+                }
+            }
+            return declaration
+        }
 
         val changedParam = scope.changedParameter!!
         val defaultParam = scope.defaultParameter
@@ -788,7 +815,11 @@ class ComposableFunctionBodyTransformer(
                 irComposite(
                     statements = listOfNotNull(
                         if (emitTraceMarkers) irTraceEventEnd() else null,
-                        irEndReplaceGroup(scope = scope)
+                        irEndReplaceGroup(
+                            scope = scope,
+                            startOffset = body.endOffset,
+                            endOffset = body.endOffset
+                        )
                     )
                 )
             }
@@ -805,7 +836,9 @@ class ComposableFunctionBodyTransformer(
                             irStartReplaceGroup(
                                 body,
                                 scope,
-                                irFunctionSourceKey()
+                                irFunctionSourceKey(),
+                                startOffset = body.startOffset,
+                                endOffset = body.startOffset
                             )
                         collectSourceInformation ->
                             irSourceInformationMarkerStart(
@@ -819,7 +852,13 @@ class ComposableFunctionBodyTransformer(
                     *bodyPreamble.statements.toTypedArray(),
                     *transformed.statements.toTypedArray(),
                     when {
-                        outerGroupRequired -> irEndReplaceGroup(scope = scope)
+                        outerGroupRequired -> {
+                            irEndReplaceGroup(
+                                scope = scope,
+                                startOffset = body.endOffset,
+                                endOffset = body.endOffset
+                            )
+                        }
                         collectSourceInformation ->
                             irSourceInformationMarkerEnd(body, scope)
                         else -> null
@@ -2332,9 +2371,9 @@ class ComposableFunctionBodyTransformer(
                         this,
                         scope,
                         startOffset = startOffset,
-                        endOffset = endOffset
+                        endOffset = startOffset
                     )
-                ) + suffix + listOf(irEndReplaceGroup(startOffset, endOffset, scope))
+                ) + suffix + listOf(irEndReplaceGroup(endOffset, endOffset, scope))
             )
         }
     }
@@ -2352,9 +2391,9 @@ class ComposableFunctionBodyTransformer(
                         this,
                         scope,
                         startOffset = startOffset,
-                        endOffset = endOffset,
+                        endOffset = startOffset,
                     ),
-                    irEndReplaceGroup(startOffset, endOffset, scope)
+                    irEndReplaceGroup(endOffset, endOffset, scope)
                 )
             )
         }
@@ -2426,8 +2465,8 @@ class ComposableFunctionBodyTransformer(
             realizeGroup = {
                 if (before.statements.isEmpty()) {
                     metrics.recordGroup()
-                    before.statements.add(irStartReplaceGroup(this, scope))
-                    after.statements.add(irEndReplaceGroup(scope = scope))
+                    before.statements.add(irStartReplaceGroup(this, scope, startOffset = startOffset, endOffset = startOffset))
+                    after.statements.add(irEndReplaceGroup(scope = scope, startOffset = endOffset, endOffset = endOffset))
                 }
             },
             makeEnd = {
@@ -2460,12 +2499,12 @@ class ComposableFunctionBodyTransformer(
                 this,
                 scope,
                 startOffset = startOffset,
-                endOffset = endOffset
+                endOffset = startOffset
             )
             else irSourceInformationMarkerStart(this, scope)
         }
         val makeEnd = {
-            if (needsGroup) irEndReplaceGroup(scope = scope)
+            if (needsGroup) irEndReplaceGroup(scope = scope, startOffset = endOffset, endOffset = endOffset)
             else irSourceInformationMarkerEnd(this, scope)
         }
         if (!scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump) {
@@ -3054,7 +3093,7 @@ class ComposableFunctionBodyTransformer(
                     // ComposerParamTransformer should not allow for any null arguments on a composable
                     // invocation unless the parameter is vararg. If this is null here, we have
                     // missed something.
-                    error("Unexpected null argument for composable call")
+                    error("Unexpected null argument for composable call: ${expression.dump()}")
                 } else {
                     argsMeta.add(CallArgumentMeta(isVararg = true))
                     continue
@@ -3868,6 +3907,8 @@ class ComposableFunctionBodyTransformer(
             transformed.branches.add(
                 irElseBranch(
                     expression = irBlock(
+                        startOffset = expression.endOffset,
+                        endOffset = expression.endOffset,
                         type = context.irBuiltIns.unitType,
                         statements = emptyList()
                     )
@@ -4038,7 +4079,13 @@ class ComposableFunctionBodyTransformer(
             }
 
             private fun parameterInformation(): String =
-                function.parameterInformation()
+                if (!transformer.emitParameterNames ) {
+                    function.parameterInformation()
+                } else {
+                    // D8 removes all parameter information when processing invokedynamic.
+                    // It does not sort parameters by name though, so we only need the parameter names here.
+                    function.parameterNameInformation()
+                }
 
             override fun sourceLocationOf(call: IrElement): SourceLocation {
                 val parent = parent
@@ -4881,16 +4928,16 @@ private fun IrFunction.parameterInformation(): String {
     val parameters = namedParameters.filter {
         !it.name.asString().startsWith("$")
     }
-    val sortIndex = mapOf(
-        *parameters.mapIndexed { index, parameter ->
-            Pair(index, parameter)
-        }.sortedBy { it.second.name.asString() }
-            .mapIndexed { sortIndex, originalIndex ->
-                Pair(originalIndex.first, sortIndex)
-            }.toTypedArray()
-    )
 
-    val expectedIndexes = Array(parameters.size) { it }.toMutableList()
+    val sortIndex = IntArray(parameters.size) { it }
+    val expectedIndexes = sortIndex.toMutableList()
+    parameters
+        .mapIndexed { index, parameter -> Pair(index, parameter) }
+        .sortedBy { it.second.name }
+        .forEachIndexed { sortedIndex, (originalIndex, _) ->
+            sortIndex[originalIndex] = sortedIndex
+        }
+
     var run = 0
     var parameterEmitted = false
 
@@ -4914,23 +4961,54 @@ private fun IrFunction.parameterInformation(): String {
             emitRun(originalIndex)
             if (originalIndex > 0) builder.append(',')
             val index = sortIndex[originalIndex]
-                ?: error("missing index $originalIndex")
             builder.append(index)
             expectedIndexes.remove(index)
             if (parameter.type.isInlineClassType()) {
-                parameter.type.getClass()?.fqNameWhenAvailable?.let {
-                    builder.append(':')
-                    builder.append(
-                        it.asString()
-                            .replacePrefix("androidx.compose.", "c#")
-                    )
-                }
+                builder.appendParameterType(parameter)
             }
             parameterEmitted = true
         }
     }
     builder.append(')')
     return if (parameterEmitted) builder.toString() else ""
+}
+
+// Encodes names of the parameters of the function and corresponding value classes
+// in the following format:
+//
+//   parameters: "N(" <name> [":" <inline-class>] ["," <name> [":" <inline-class>]]* ")"
+//   name, inline-class: <chars not "," or ":">
+//
+private fun IrFunction.parameterNameInformation(): String {
+    val sourceParameters = namedParameters.filter {
+        !it.name.asString().startsWith("$")
+    }
+    return if (sourceParameters.isNotEmpty()) {
+        buildString {
+            append("N(")
+            for (i in sourceParameters.indices) {
+                if (i > 0) append(',')
+                val p = sourceParameters[i]
+                append(p.name.asString())
+                if (p.type.isInlineClassType()) {
+                    appendParameterType(p)
+                }
+            }
+            append(')')
+        }
+    } else ""
+}
+
+private fun StringBuilder.appendParameterType(
+    parameter: IrValueParameter,
+) {
+    parameter.type.getClass()?.fqNameWhenAvailable?.let {
+        append(':')
+        append(
+            it.asString()
+                .replacePrefix("androidx.compose.", "c#")
+        )
+    }
 }
 
 private fun IrFunction.packageName(): String? {

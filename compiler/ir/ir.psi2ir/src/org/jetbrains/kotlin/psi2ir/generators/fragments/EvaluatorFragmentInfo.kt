@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi2ir.generators.fragments
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -25,23 +24,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 class EvaluatorFragmentInfo(
     val classDescriptor: ClassDescriptor,
     val methodDescriptor: FunctionDescriptor,
-    // Might be null if IR for `methodDescriptor` has not been built yet (namely in K1 setup)
-    val methodIR: IrFunction?,
     val parameters: List<EvaluatorFragmentParameterInfo>,
     val typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>
-) {
-    companion object {
-        // Used in the IntelliJ Kotlin JVM Debugger Plug-In (CodeFragmentCompiler)
-        // TODO: Remove once intellij-community#1839 has landed.
-        @Suppress("unused")
-        fun createWithFragmentParameterInfo(
-            classDescriptor: ClassDescriptor,
-            methodDescriptor: FunctionDescriptor,
-            parametersWithInfo: List<EvaluatorFragmentParameterInfo>
-        ) =
-            EvaluatorFragmentInfo(classDescriptor, methodDescriptor, null, parametersWithInfo, emptyMap())
-    }
-}
+)
 
 data class EvaluatorFragmentParameterInfo(
     val descriptor: DeclarationDescriptor,

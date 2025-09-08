@@ -20,3 +20,6 @@ class A : (Int)->Unit {
     val prop: (x: Int = <!UNSUPPORTED!>0<!>)->Unit
     get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, integerLiteral, lambdaLiteral,
+localProperty, operator, override, propertyDeclaration */

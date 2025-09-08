@@ -6,3 +6,6 @@ fun foo() {
     }
     val g = x.sss()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

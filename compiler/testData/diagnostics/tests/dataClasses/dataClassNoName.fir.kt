@@ -8,3 +8,5 @@
 <!WRONG_MODIFIER_TARGET!>data<!> interface<!SYNTAX!><!> {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, interfaceDeclaration */

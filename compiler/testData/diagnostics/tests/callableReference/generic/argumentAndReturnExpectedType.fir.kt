@@ -35,3 +35,7 @@ fun <T> test2(x: T) {
     bar(listOf<T>(), 1, ::foo).checkType { _<Pair<List<T>, Int>>() }
     bar(1, listOf<T>(), ::foo).checkType { _<Pair<Int, List<T>>>() }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, intersectionType, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

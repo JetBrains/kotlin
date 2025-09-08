@@ -8,3 +8,6 @@ typealias WithBounds2<X : <!BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED!>Y<!>, Y :
 typealias WithBounds3<X> <!SYNTAX!>where X : Any<!> = Int
 
 val x: WithVariance<Int, Int> = 0
+
+/* GENERATED_FIR_TAGS: in, integerLiteral, nullableType, out, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

@@ -19,18 +19,17 @@ object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         if (expression.source?.kind is KtFakeSourceElementKind) return
-        val left = expression.rangeLeft ?: return
-        val right = expression.rangeRight ?: return
+        val comparison = expression.compareLeftAndRight() ?: return
 
         val needReport = when (expression.calleeReference.name.asString()) {
             "rangeTo" -> {
-                left > right
+                comparison > 0
             }
             "downTo" -> {
-                right > left
+                comparison < 0
             }
-            "until" -> {
-                left >= right
+            "until", "rangeUntil" -> {
+                comparison >= 0
             }
             else -> false
         }
@@ -40,14 +39,15 @@ object EmptyRangeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
         }
     }
 
-    private val FirFunctionCall.rangeLeft: Long?
-        get() {
-            return (explicitReceiver as? FirLiteralExpression)?.value as? Long
+    private fun FirFunctionCall.compareLeftAndRight(): Int? {
+        val left = (explicitReceiver as? FirLiteralExpression)?.value ?: return null
+        val right = (argumentList.arguments.getOrNull(0) as? FirLiteralExpression)?.value ?: return null
+        return when (left) {
+            is Long -> (right as? Long)?.let { left.compareTo(it) }
+            is Float -> (right as? Float)?.let { left.compareTo(it) }
+            is Double -> (right as? Double)?.let { left.compareTo(it) }
+            is Char -> (right as? Char)?.let { left.compareTo(it) }
+            else -> null
         }
-
-    private val FirFunctionCall.rangeRight: Long?
-        get() {
-            val arg = argumentList.arguments.getOrNull(0) as? FirLiteralExpression
-            return arg?.value as? Long
-        }
+    }
 }

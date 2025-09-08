@@ -275,6 +275,9 @@ public class DebugSymbolRenderer(
             appendLine()
             if (renderTypeByProperties) {
                 renderByPropertyNames(typeToRender, printer, currentSymbolStack)
+                renderComputedValue("isMarkedNullable", printer, currentSymbolStack) { typeToRender.isMarkedNullable }
+                renderComputedValue("isNullable", printer, currentSymbolStack) { typeToRender.isNullable }
+                renderComputedValue("hasFlexibleNullability", printer, currentSymbolStack) { typeToRender.hasFlexibleNullability }
             } else {
                 append("annotations: ")
                 renderAnnotationsList(typeToRender.annotations, printer, currentSymbolStack)

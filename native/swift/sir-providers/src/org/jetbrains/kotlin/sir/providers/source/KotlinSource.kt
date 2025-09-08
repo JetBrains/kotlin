@@ -12,7 +12,16 @@ import org.jetbrains.kotlin.sir.SirParameter
 
 public open class KotlinSource(
     public val symbol: KaSymbol,
-) : SirOrigin.Foreign.SourceCode
+) : SirOrigin.Foreign.SourceCode {
+    override fun toString(): String {
+        val fqName = when (symbol) {
+            is KaClassLikeSymbol -> symbol.classId?.asSingleFqName()
+            is KaCallableSymbol -> symbol.callableId?.asSingleFqName()
+            else -> null
+        }
+        return "KotlinSource(symbol=${symbol::class.simpleName ?: "?"}(fqName=${fqName ?: symbol.name ?: "?"}))"
+    }
+}
 
 public class KotlinPropertyAccessorOrigin(
     symbol: KaPropertyAccessorSymbol,

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
+// LANGUAGE: +ForbidExposingLessVisibleTypesInInline
 
 @PublishedApi
 internal class InternalClassPrivateConstructor private constructor() {
@@ -41,3 +42,6 @@ internal inline fun internalInline() {
     val pc = <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>PrivateClass<!>()
     <!DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS!>pc<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inline, integerLiteral, localProperty,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, thisExpression */

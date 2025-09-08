@@ -1,4 +1,5 @@
 // KIND: STANDALONE
+// WITH_PLATFORM_LIBS
 // MODULE: ExternalTypes
 // FILE: external_types_smoke.kt
 import platform.Foundation.dateByAddingTimeInterval

@@ -8,3 +8,5 @@ class B {
 }
 
 val a = A.B.C()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, propertyDeclaration */

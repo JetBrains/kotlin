@@ -24,3 +24,6 @@ class Test {
         this.values = list
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, integerLiteral, lambdaLiteral,
+propertyDeclaration, secondaryConstructor, thisExpression */

@@ -6,3 +6,6 @@ val x = object {
         fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, nestedClass,
+propertyDeclaration */

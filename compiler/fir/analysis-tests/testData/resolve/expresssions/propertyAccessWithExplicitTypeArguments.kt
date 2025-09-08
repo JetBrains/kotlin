@@ -86,3 +86,7 @@ fun f5() {
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>helloReified<!><Int>
     receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>helloReified<!><String>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration,
+propertyDeclarationWithContext, propertyWithExtensionReceiver, reified, stringLiteral, typeParameter */

@@ -15,3 +15,6 @@ interface C<E> {
 open <!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE!>class Z<!><R> : A<R>, B<R>(), C<R>
 
 class N<W> : Z<W>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+typeParameter */

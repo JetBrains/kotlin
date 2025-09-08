@@ -19,6 +19,6 @@ object FirInlineBodyVariableAssignmentChecker : FirVariableAssignmentChecker(Mpp
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
         val propertySymbol = expression.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
         val setterSymbol = propertySymbol.setterSymbol ?: return
-        inlineFunctionBodyContext.checkQualifiedAccess(expression, setterSymbol)
+        inlineFunctionBodyContext.check(expression, setterSymbol)
     }
 }

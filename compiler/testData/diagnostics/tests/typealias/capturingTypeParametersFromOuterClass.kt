@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 
@@ -28,3 +29,6 @@ fun <TF> foo() {
                 <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTLF = List<TLF>
             }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localFunction, nestedClass, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

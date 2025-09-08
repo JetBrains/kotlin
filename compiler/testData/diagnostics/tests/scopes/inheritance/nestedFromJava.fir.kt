@@ -89,3 +89,6 @@ class Z: C() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, init, javaFunction, javaType, nestedClass, objectDeclaration,
+propertyDeclaration */

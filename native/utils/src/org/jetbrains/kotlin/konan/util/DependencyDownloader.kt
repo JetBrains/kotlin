@@ -27,24 +27,17 @@ import java.util.concurrent.*
 typealias ProgressCallback = (url: String, currentBytes: Long, totalBytes: Long) -> Unit
 
 class DependencyDownloader(
-        var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
-        var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS,
-        customProgressCallback: ProgressCallback? = null
+    var maxAttempts: Int = DEFAULT_MAX_ATTEMPTS,
+    var attemptIntervalMs: Long = DEFAULT_ATTEMPT_INTERVAL_MS,
+    private val progressCallback: ProgressCallback,
 ) {
+    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor { r ->
+        val thread = Thread(r)
+        thread.name = "konan-dependency-downloader"
+        thread.isDaemon = true
 
-    private val progressCallback = customProgressCallback ?: TODO()/* { url, currentBytes, totalBytes ->
-        print("\nDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
-    }*/
-
-    val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor(object : ThreadFactory {
-        override fun newThread(r: Runnable?): Thread {
-            val thread = Thread(r)
-            thread.name = "konan-dependency-downloader"
-            thread.isDaemon = true
-
-            return thread
-      }
-    }))
+        thread
+    })
 
     enum class ReplacingMode {
         /** Redownload the file and replace the existing one. */
@@ -72,6 +65,12 @@ class DependencyDownloader(
         if (!predicate(responseCode)) {
             throw HTTPResponseException(originalUrl, responseCode)
         }
+    }
+
+    private fun HttpURLConnection.setTimeouts() {
+        // Set meaningful timeouts to avoid hanging connections.
+        connectTimeout = DEFAULT_CONNECT_TIMEOUT_MS
+        readTimeout = DEFAULT_READ_TIMEOUT_MS
     }
 
     private fun doDownload(originalUrl: URL,
@@ -129,6 +128,7 @@ class DependencyDownloader(
             originalConnection.disconnect()
             val rangeConnection = originalUrl.openConnection() as HttpURLConnection
             rangeConnection.setRequestProperty("range", "bytes=$currentBytes-")
+            rangeConnection.setTimeouts()
             rangeConnection.connect()
             rangeConnection.checkHTTPResponse(originalUrl) {
                 it == HttpURLConnection.HTTP_PARTIAL || it == HttpURLConnection.HTTP_OK
@@ -140,6 +140,9 @@ class DependencyDownloader(
     /** Performs an attempt to download a specified file into the specified location */
     private fun tryDownload(url: URL, tmpFile: File) {
         val connection = url.openConnection()
+        if (connection is HttpURLConnection) {
+            connection.setTimeouts()
+        }
 
         (connection as? HttpURLConnection)?.checkHTTPResponse(HttpURLConnection.HTTP_OK, url)
 
@@ -210,22 +213,12 @@ class DependencyDownloader(
         return destination
     }
 
-    private val Long.humanReadable: String
-        get() {
-            if (this < 0) {
-                return "-"
-            }
-            if (this < 1024) {
-                return "$this bytes"
-            }
-            val exp = (Math.log(this.toDouble()) / Math.log(1024.0)).toInt()
-            val prefix = "kMGTPE"[exp-1]
-            return "%.1f %siB".format(this / Math.pow(1024.0, exp.toDouble()), prefix)
-        }
-
     companion object {
         const val DEFAULT_MAX_ATTEMPTS = 10
         const val DEFAULT_ATTEMPT_INTERVAL_MS = 3000L
+
+        const val DEFAULT_CONNECT_TIMEOUT_MS = 10_000 // 10 seconds
+        const val DEFAULT_READ_TIMEOUT_MS = 30_000 // 30 seconds
 
         const val TMP_SUFFIX = "part"
     }

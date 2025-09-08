@@ -1,0 +1,13 @@
+operator fun J?.component1(): Int {
+  return 1
+}
+
+private operator fun J.component2(): Int {
+  return 2
+}
+
+fun test() {
+  val tmp_0: @FlexibleNullability J? = j()
+  val a: Int = component1(/* <this> = tmp_0 */)
+  val b: Int = component2(/* <this> = tmp_0 /*!! J */ */)
+}

@@ -28,17 +28,3 @@ kotlin {
 tasks.named("wasmJsBrowserTest") {
     enabled = false
 }
-
-rootProject.tasks
-    .withType(org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask::class.java)
-    .named("kotlinWasmNpmInstall")
-    .configure {
-        args.addAll(
-            listOf(
-                "--network-concurrency",
-                "1",
-                "--mutex",
-                "network"
-            )
-        )
-    }

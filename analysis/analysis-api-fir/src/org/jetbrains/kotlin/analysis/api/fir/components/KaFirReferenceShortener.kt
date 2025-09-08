@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -76,7 +76,7 @@ internal class KaFirReferenceShortener(
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand = withValidityAssertion {
+    ): ShortenCommand = withPsiValidityAssertion(element) {
         collectPossibleReferenceShortenings(
             element.containingKtFile,
             element.textRange,
@@ -92,7 +92,7 @@ internal class KaFirReferenceShortener(
         shortenOptions: ShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
-    ): ShortenCommand = withValidityAssertion {
+    ): ShortenCommand = withPsiValidityAssertion(file) {
         require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
 
         val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
@@ -178,20 +178,13 @@ private class FirTowerDataContextProvider private constructor(
         fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
             val firFile = targetElement.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
-            val sessionHolder = run {
-                val firSession = resolutionFacade.useSiteFirSession
-                val scopeSession = resolutionFacade.getScopeSessionFor(firSession)
-
-                SessionHolderImpl(firSession, scopeSession)
-            }
-
             val designation = ContextCollector.computeDesignation(firFile, targetElement)
 
             val contextProvider = ContextCollector.process(
                 firFile,
-                sessionHolder,
                 designation,
-                shouldCollectBodyContext = false, // we only query SELF context
+                preferBodyContext = false, // we only query SELF context
+                shouldTriggerBodyAnalysis = true,
                 filter = { ContextCollector.FilterResponse.CONTINUE }
             )
 
@@ -816,7 +809,7 @@ private class ElementsToShortenCollector(
         return !importDirectiveForDifferentSymbolWithSameNameIsPresent(classId)
     }
 
-    private fun shortenIfAlreadyImportedAsAlias(referenceExpression: KtElement, referencedSymbolFqName: FqName): ElementToShorten? {
+    private fun shortenIfAlreadyImportedAsAlias(referenceExpression: KtElement, referencedSymbolFqName: FqName?): ElementToShorten? {
         val importDirectiveForReferencedSymbol = containingFile.importDirectives.firstOrNull {
             it.importedFqName == referencedSymbolFqName && it.alias != null
         } ?: return null
@@ -1100,7 +1093,7 @@ private class ElementsToShortenCollector(
     private fun KtExpression.isCompanionMemberUsedForEnumEntryInit(resolvedSymbol: FirCallableSymbol<*>): Boolean {
         val enumEntry = getNonStrictParentOfType<KtEnumEntry>() ?: return false
         val firEnumEntry = enumEntry.resolveToFirSymbol(resolutionFacade) as? FirEnumEntrySymbol ?: return false
-        val classNameOfResolvedSymbol = resolvedSymbol.callableId.className ?: return false
+        val classNameOfResolvedSymbol = resolvedSymbol.callableId?.className ?: return false
         return firEnumEntry.callableId.className == classNameOfResolvedSymbol.parent() &&
                 classNameOfResolvedSymbol.shortName() == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
     }
@@ -1175,7 +1168,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenStrategy(propertySymbol)
         if (option == ShortenStrategy.DO_NOT_SHORTEN) return
 
-        shortenIfAlreadyImportedAsAlias(qualifiedProperty, propertySymbol.callableId.asSingleFqName())?.let {
+        shortenIfAlreadyImportedAsAlias(qualifiedProperty, propertySymbol.callableId?.asSingleFqName())?.let {
             addElementToShorten(it)
             return
         }
@@ -1227,7 +1220,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenStrategy(calledSymbol)
         if (option == ShortenStrategy.DO_NOT_SHORTEN) return
 
-        shortenIfAlreadyImportedAsAlias(qualifiedCallExpression, calledSymbol.callableId.asSingleFqName())?.let {
+        shortenIfAlreadyImportedAsAlias(qualifiedCallExpression, calledSymbol.callableId?.asSingleFqName())?.let {
             addElementToShorten(it)
             return
         }
@@ -1338,7 +1331,7 @@ private class ElementsToShortenCollector(
                     val classId = candidate.typeAliasConstructorInfo?.typeAliasSymbol?.classId ?: candidate.classIdIfExists
                     classId?.asSingleFqName()
                 }
-                else -> candidate.callableId.asSingleFqName()
+                else -> candidate.callableId?.asSingleFqName()
             }
         }
 
@@ -1568,7 +1561,7 @@ private class KDocQualifiersToShortenCollector(
         }
 
         resolvedSymbols.firstIsInstanceOrNull<KaCallableSymbol>()?.firSymbol?.let { availableCallable ->
-            return canShorten(fqName, availableCallable.callableId.asSingleFqName()) { callableShortenStrategy(availableCallable) }
+            return canShorten(fqName, availableCallable.callableId?.asSingleFqName()) { callableShortenStrategy(availableCallable) }
         }
 
         resolvedSymbols.firstIsInstanceOrNull<KaClassLikeSymbol>()?.firSymbol?.let { availableClassifier ->
@@ -1578,7 +1571,7 @@ private class KDocQualifiersToShortenCollector(
         return false
     }
 
-    private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName, getShortenStrategy: () -> ShortenStrategy): Boolean =
+    private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName?, getShortenStrategy: () -> ShortenStrategy): Boolean =
         fqNameToShorten == fqNameOfAvailableSymbol && getShortenStrategy() != ShortenStrategy.DO_NOT_SHORTEN
 
     private fun FqName.isInNewImports(additionalImports: AdditionalImports): Boolean =

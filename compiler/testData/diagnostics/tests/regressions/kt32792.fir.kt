@@ -8,3 +8,5 @@ fun main() {
         <!RETURN_TYPE_MISMATCH!>return@tryLambdas<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral, nullableType, typeParameter */

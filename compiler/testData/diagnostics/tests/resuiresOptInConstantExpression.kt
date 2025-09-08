@@ -22,3 +22,5 @@ fun test() {
     <!OPT_IN_USAGE_ERROR!>someFunction<!>()
     <!OPT_IN_USAGE_ERROR!>anotherFunction<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, stringLiteral */

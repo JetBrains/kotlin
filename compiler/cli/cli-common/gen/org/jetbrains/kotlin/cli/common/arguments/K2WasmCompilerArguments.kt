@@ -60,20 +60,10 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-optimise-lambda-calls",
-        description = "Use lambda calls optimisation using special interface table slots.",
-    )
-    var wasmOptimiseLambdaCalls: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xwasm-kclass-fqn",
         description = "Enable support for 'KClass.qualifiedName'.",
     )
-    var wasmKClassFqn: Boolean = false
+    var wasmKClassFqn: Boolean = true
         set(value) {
             checkFrozen()
             field = value
@@ -120,10 +110,10 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-attach-js-exception",
-        description = "Attach a thrown by JS-value to the JsException class",
+        value = "-Xwasm-no-jstag",
+        description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )
-    var wasmUseJsTag: Boolean = false
+    var wasmNoJsTag: Boolean = false
         set(value) {
             checkFrozen()
             field = value

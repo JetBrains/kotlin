@@ -48,7 +48,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
-        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType(context.session)
+        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType()
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
                 resolvedFullyExpandedType.isMarkedNullable ||
@@ -74,7 +74,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         }
 
         if (argument !is FirResolvedQualifier) return
-        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral()) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]
@@ -111,7 +111,8 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             return (this as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedTypeParameterSymbol()
         }
 
-    private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
+    context(context: CheckerContext)
+    private fun ConeKotlinType.isAllowedInClassLiteral(): Boolean =
         when (this) {
             is ConeClassLikeType -> {
                 val isPlatformThatAllowsNonPrimitiveArrays = context.session.firGenericArrayClassLiteralSupport.isEnabled
@@ -119,7 +120,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true
-                            is ConeKotlinTypeProjection -> !typeArgument.type.isAllowedInClassLiteral(context)
+                            is ConeKotlinTypeProjection -> !typeArgument.type.isAllowedInClassLiteral()
                         }
                     }
                 } else

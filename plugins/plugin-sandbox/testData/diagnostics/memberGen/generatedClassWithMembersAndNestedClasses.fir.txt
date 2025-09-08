@@ -28,7 +28,7 @@ FILE: generatedClassWithMembersAndNestedClasses.kt
         lval nestedBar: R|foo/AllOpenGenerated.NestedBar| = Q|foo/AllOpenGenerated|.R|foo/AllOpenGenerated.NestedBar|()
         R|<local>/nestedBar|.R|foo/AllOpenGenerated.NestedBar.materialize|().R|bar/Bar.bar|()
     }
-FILE: __GENERATED DECLARATIONS__.kt
+FILE: foo/AllOpenGenerated.kt
     package foo
 
     public final class AllOpenGenerated : R|kotlin/Any| {

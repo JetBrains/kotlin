@@ -50,21 +50,24 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(Mp
         val type = valueParameterSymbol.resolvedReturnTypeRef.coneType.lowerBoundIfFlexible()
         // Filter out handrolled contains with non-Any type
         if (!type.isAny && !type.isNullableAny) return
-        callableSymbol.check(expression.calleeReference.source, context, reporter)
+        callableSymbol.check(expression.calleeReference.source)
     }
 
-    private fun FirNamedFunctionSymbol.check(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter): Boolean {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirNamedFunctionSymbol.check(
+        source: KtSourceElement?,
+    ): Boolean {
         // Unwrap SubstitutionOverride origin if necessary
         if (originalOrSelf().callableId == CONCURRENT_HASH_MAP_CALLABLE_ID) {
-            reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR, context)
+            reporter.reportOn(source, FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR)
             return true
         }
 
         // Check explicitly overridden contains
-        val containingClass = containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return false
-        val overriddenFunctions = overriddenFunctions(containingClass, context)
+        val containingClass = containingClassLookupTag()?.toRegularClassSymbol() ?: return false
+        val overriddenFunctions = overriddenFunctions(containingClass)
         for (overriddenFunction in overriddenFunctions) {
-            if (overriddenFunction is FirNamedFunctionSymbol && overriddenFunction.check(source, context, reporter)) {
+            if (overriddenFunction is FirNamedFunctionSymbol && overriddenFunction.check(source)) {
                 return true
             }
         }

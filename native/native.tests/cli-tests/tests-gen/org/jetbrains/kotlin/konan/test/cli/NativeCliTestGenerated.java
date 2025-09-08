@@ -69,6 +69,11 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     runTest("native/native.tests/cli-tests/testData/cli/llvmIrDumpDirectoryDoesntExist.args");
   }
 
+  @TestMetadata("reportDetailedPerfPsi1stPhase.args")
+  public void testReportDetailedPerfPsi1stPhase() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportDetailedPerfPsi1stPhase.args");
+  }
+
   @TestMetadata("reportPerf.args")
   public void testReportPerf() {
     runTest("native/native.tests/cli-tests/testData/cli/reportPerf.args");
@@ -77,6 +82,16 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
   @TestMetadata("reportPerfPsi.args")
   public void testReportPerfPsi() {
     runTest("native/native.tests/cli-tests/testData/cli/reportPerfPsi.args");
+  }
+
+  @TestMetadata("reportPerfPsi1stPhase.args")
+  public void testReportPerfPsi1stPhase() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportPerfPsi1stPhase.args");
+  }
+
+  @TestMetadata("reportPerfPsi2ndPhase.args")
+  public void testReportPerfPsi2ndPhase() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportPerfPsi2ndPhase.args");
   }
 
   @TestMetadata("reportPerfWithError.args")
@@ -97,6 +112,16 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
   @TestMetadata("syntaxError_psi.args")
   public void testSyntaxError_psi() {
     runTest("native/native.tests/cli-tests/testData/cli/syntaxError_psi.args");
+  }
+
+  @TestMetadata("threadSanitizer.args")
+  public void testThreadSanitizer() {
+    runTest("native/native.tests/cli-tests/testData/cli/threadSanitizer.args");
+  }
+
+  @TestMetadata("threadSanitizerPagedAllocator.args")
+  public void testThreadSanitizerPagedAllocator() {
+    runTest("native/native.tests/cli-tests/testData/cli/threadSanitizerPagedAllocator.args");
   }
 
   @TestMetadata("warningsSuppressionDisablesErrors_Native.args")

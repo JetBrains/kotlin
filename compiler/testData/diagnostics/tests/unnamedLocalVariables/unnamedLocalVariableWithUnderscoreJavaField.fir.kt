@@ -58,3 +58,7 @@ fun test() {
         `_`
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, stringLiteral, superExpression,
+unnamedLocalVariable */

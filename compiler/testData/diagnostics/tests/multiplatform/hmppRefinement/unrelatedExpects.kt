@@ -13,3 +13,5 @@ expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
 // MODULE: main()()(common1, common2)
 actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
 actual class <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

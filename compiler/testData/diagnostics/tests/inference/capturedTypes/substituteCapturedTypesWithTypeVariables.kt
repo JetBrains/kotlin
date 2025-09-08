@@ -12,3 +12,6 @@ fun main(x: Int) {
         getFoo(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+outProjection, typeParameter */

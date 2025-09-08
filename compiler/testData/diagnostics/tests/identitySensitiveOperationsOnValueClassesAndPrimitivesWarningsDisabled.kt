@@ -12,3 +12,6 @@ fun test(p1: Int, p2: VcString) {
     System.identityHashCode(p2)
     System.identityHashCode(Integer.valueOf(1))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+primaryConstructor, propertyDeclaration, value */

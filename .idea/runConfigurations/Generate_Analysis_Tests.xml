@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="generateFrontendApiTests" />
+          <option value="generateTests" />
         </list>
       </option>
       <option name="vmOptions" />

@@ -27,3 +27,6 @@ fun test_2(option: Option<Pair<String, String>>?) {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, intersectionType, isExpression, javaType,
+localProperty, nullableType, propertyDeclaration, smartcast, starProjection */

@@ -25,7 +25,7 @@ data class MyContainer {
     when {
       other !is MyContainer -> return false
     }
-    val tmp_0: MyContainer = other as MyContainer
+    val tmp_0: MyContainer = other /*as MyContainer */
     when {
       EQEQ(arg0 = <this>.#s, arg1 = tmp_0.#s).not() -> return false
     }
@@ -78,4 +78,3 @@ operator fun MyContainer.set(index: Int, value: String) {
   }
   <this>.<set-s>(<set-?> = value)
 }
-

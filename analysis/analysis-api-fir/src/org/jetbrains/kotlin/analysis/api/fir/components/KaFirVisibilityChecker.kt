@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,34 +13,32 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
-import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.isVisibleInClass
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KaFirVisibilityChecker(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -49,22 +47,33 @@ internal class KaFirVisibilityChecker(
         useSiteFile: KaFileSymbol,
         receiverExpression: KtExpression?,
         position: PsiElement,
-    ): KaUseSiteVisibilityChecker = withValidityAssertion {
+    ): KaUseSiteVisibilityChecker = withPsiValidityAssertion(receiverExpression, position) {
         require(useSiteFile is KaFirFileSymbol)
 
         val dispatchReceiver = receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.resolutionFacade)
-
         val positionModule = resolutionFacade.moduleProvider.getModule(position)
-        val effectiveContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
+        val containingDeclarations = collectContainingDeclarations(position)
 
         KaFirUseSiteVisibilityChecker(
+            position,
             positionModule,
-            effectiveContainers,
+            containingDeclarations,
             dispatchReceiver,
             useSiteFile,
-            resolutionFacade,
+            analysisSession,
             token,
         )
+    }
+
+    private fun collectContainingDeclarations(position: PsiElement): List<FirDeclaration> {
+        val nonLocalLazilyResolvedContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
+        val closestNonLocalElement = nonLocalLazilyResolvedContainers.lastOrNull()?.psi ?: return nonLocalLazilyResolvedContainers
+        val localFullyResolvedContainers = position.parentsOfType<KtClassOrObject>()
+            .takeWhile { it != closestNonLocalElement }
+            .map { it.resolveToFirSymbol(resolutionFacade).fir }
+            .toList()
+
+        return nonLocalLazilyResolvedContainers + localFullyResolvedContainers
     }
 
     override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean = withValidityAssertion {
@@ -99,13 +108,13 @@ internal class KaFirVisibilityChecker(
     }
 }
 
-
 private class KaFirUseSiteVisibilityChecker(
+    private val position: PsiElement,
     private val positionModule: KaModule,
-    private val effectiveContainers: List<FirDeclaration>,
+    private val containingDeclarations: List<FirDeclaration>,
     private val dispatchReceiver: FirExpression?,
     private val useSiteFile: KaFirFileSymbol,
-    private val resolutionFacade: LLResolutionFacade,
+    private val analysisSession: KaFirSession,
     override val token: KaLifetimeToken,
 ) : KaUseSiteVisibilityChecker {
     override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
@@ -116,27 +125,32 @@ private class KaFirUseSiteVisibilityChecker(
         }
 
         val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
-
         val dispatchReceiverCanBeExplicit = candidateSymbol is KaCallableSymbol && !candidateSymbol.isExtension
-        val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) { dispatchReceiver }
+        val explicitDispatchReceiver = dispatchReceiver.takeIf { dispatchReceiverCanBeExplicit }
+        val targetSession = getTargetSession(candidateDeclaration)
 
-        val candidateModule = candidateDeclaration.llFirModuleData.ktModule
-
-        val effectiveSession = if (positionModule is KaDanglingFileModule && candidateModule != positionModule) {
-            @Suppress("USELESS_CAST") // Smart cast is only available in K2
-            val contextModule = (positionModule as KaDanglingFileModule).contextModule
-            resolutionFacade.getSessionFor(contextModule)
-        } else {
-            resolutionFacade.getSessionFor(positionModule)
+        if (targetSession.visibilityChecker.isVisible(
+                candidateDeclaration,
+                targetSession,
+                useSiteFile.firSymbol.fir,
+                containingDeclarations,
+                explicitDispatchReceiver
+            )
+        ) {
+            return true
         }
 
-        return effectiveSession.visibilityChecker.isVisible(
-            candidateDeclaration,
-            effectiveSession,
-            useSiteFile.firSymbol.fir,
-            effectiveContainers,
-            explicitDispatchReceiver
-        )
+        return isVisibleFromSuperInterfaceOfImplicitReceiver(candidateSymbol, explicitDispatchReceiver)
+    }
+
+    private fun getTargetSession(candidateDeclaration: FirMemberDeclaration): LLFirSession {
+        val candidateModule = candidateDeclaration.llFirModuleData.ktModule
+        val targetModule = if (positionModule is KaDanglingFileModule && candidateModule != positionModule) {
+            positionModule.contextModule
+        } else {
+            positionModule
+        }
+        return analysisSession.resolutionFacade.getSessionFor(targetModule)
     }
 
     /**
@@ -167,5 +181,37 @@ private class KaFirUseSiteVisibilityChecker(
         }
 
         else -> null
+    }
+
+    // Handle a special case: public members of "exposed" non-public super interfaces from implicit receivers (see KT-78597)
+    private fun isVisibleFromSuperInterfaceOfImplicitReceiver(
+        candidateSymbol: KaDeclarationSymbol,
+        explicitDispatchReceiver: FirExpression?,
+    ): Boolean {
+        if (explicitDispatchReceiver != null) return false
+
+        if (candidateSymbol !is KaCallableSymbol) return false
+        if (candidateSymbol.visibility != KaSymbolVisibility.PUBLIC) {
+            // Interface members can't have internal or protected visibility, and private members are definitely not visible
+            return false
+        }
+
+        with(analysisSession) {
+            val containingSymbol = candidateSymbol.containingSymbol as? KaClassSymbol ?: return false
+            if (containingSymbol.classKind != KaClassKind.INTERFACE) return false
+
+            // `position` may be a leaf PsiElement
+            val ktPosition = position.parentOfType<KtElement>(withSelf = true) ?: return false
+
+            val scopeContext = ktPosition.containingKtFile.scopeContext(ktPosition)
+            for (implicitReceiver in scopeContext.implicitReceivers) {
+                val classSymbol = implicitReceiver.type.symbol as? KaClassSymbol ?: continue
+                if (classSymbol.isSubClassOf(containingSymbol)) {
+                    return true
+                }
+            }
+
+            return false
+        }
     }
 }

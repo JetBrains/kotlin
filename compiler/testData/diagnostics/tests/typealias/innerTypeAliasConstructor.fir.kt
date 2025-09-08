@@ -18,3 +18,6 @@ val test1 = c.P1<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<X, T>(x: X, y: 
 val test2 = c.P2<!WRONG_NUMBER_OF_TYPE_ARGUMENTS("2; constructor<Y, T>(x: T, y: Y): Pair<T, Y>")!><String><!>(1, "")
 val test3 = c.P1("", 1)
 val test4 = c.P2(1, "")
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

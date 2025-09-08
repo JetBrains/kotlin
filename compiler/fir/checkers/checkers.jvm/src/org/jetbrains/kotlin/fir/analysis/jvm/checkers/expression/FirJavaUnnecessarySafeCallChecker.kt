@@ -19,9 +19,9 @@ object FirJavaUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker
     override fun check(expression: FirSafeCallExpression) {
         val receiverType = EnhancedForWarningConeSubstitutor(context.session.typeContext)
             .substituteOrNull(expression.receiver.resolvedType)
-            ?.fullyExpandedType(context.session) ?: return
+            ?.fullyExpandedType() ?: return
 
-        checkSafeCallReceiverType(receiverType, expression.source, context, reporter)
+        checkSafeCallReceiverType(receiverType, expression.source)
     }
 }
 

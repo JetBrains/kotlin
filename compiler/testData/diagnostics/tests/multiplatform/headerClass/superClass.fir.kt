@@ -20,3 +20,5 @@ actual class Foo : I, C(), J
 actual class <!EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>Bar<!>
 
 actual class WithExplicitPrimaryConstructor : C()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, primaryConstructor */

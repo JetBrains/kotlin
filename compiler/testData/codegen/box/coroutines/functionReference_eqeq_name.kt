@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 // KT-52704
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // WITH_STDLIB
 // WITH_COROUTINES
 

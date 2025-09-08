@@ -45,7 +45,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
 
-            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType(context.session) ?: continue
+            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType() ?: continue
             val typeParameter = typeParameters[index]
 
             val isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind
@@ -60,7 +60,6 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isExplicit = isExplicit,
                     isArray = false,
                     isPlaceHolder = isPlaceHolder,
-                    reporter,
                     fullyExpandedType = typeArgument,
                 )
             } else if (
@@ -104,7 +103,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         else -> unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings) != null
     }
 
-    context(context: CheckerContext)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType,
         typeParameter: FirTypeParameterSymbol,
@@ -112,8 +111,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         isExplicit: Boolean,
         isArray: Boolean,
         isPlaceHolder: Boolean,
-        reporter: DiagnosticReporter,
-        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(context.session),
+        fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(),
     ) {
         if (fullyExpandedType.classId == StandardClassIds.Array) {
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
@@ -126,7 +124,6 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isExplicit,
                     isArray = true,
                     isPlaceHolder = isPlaceHolder,
-                    reporter,
                 )
             }
             return

@@ -8,3 +8,6 @@ fun test(map: MutableMap<Int, Int>, t: Int) {
 
 //from library
 operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) : V? = this.put(key, value)
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, nullableType, operator, thisExpression,
+typeParameter */

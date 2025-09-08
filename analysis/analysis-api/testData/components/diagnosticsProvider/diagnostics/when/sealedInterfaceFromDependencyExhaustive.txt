@@ -1,1 +1,5 @@
-Diagnostics from file:
+Diagnostics from MySealedInterface.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from main.kt:
+  <NO DIAGNOSTICS>

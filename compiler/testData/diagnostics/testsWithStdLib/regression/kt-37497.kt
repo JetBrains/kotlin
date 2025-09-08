@@ -17,3 +17,6 @@ object Bug1 {
         println(list)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, inProjection, localProperty, nullableType,
+objectDeclaration, override, propertyDeclaration, stringLiteral, superExpression */

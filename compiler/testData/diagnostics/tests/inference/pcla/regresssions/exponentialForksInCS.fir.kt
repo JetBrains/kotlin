@@ -68,3 +68,7 @@ fun <T> bar(a: A<T>, w: T) {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, nullableType, smartcast,
+starProjection, suspend, typeParameter, typeWithExtension */

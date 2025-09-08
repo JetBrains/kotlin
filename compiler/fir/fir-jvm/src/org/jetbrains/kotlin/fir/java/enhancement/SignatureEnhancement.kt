@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -59,6 +58,7 @@ import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -179,7 +179,7 @@ class FirSignatureEnhancement(
                     }
                 }
 
-                val symbol = FirFieldSymbol(original.callableId)
+                val symbol = FirFieldSymbol(original.callableId!!)
                 buildJavaField {
                     this.containingClassSymbol = owner.symbol
                     source = firElement.source
@@ -219,7 +219,7 @@ class FirSignatureEnhancement(
                     symbol = FirJavaOverriddenSyntheticPropertySymbol(propertySymbol.callableId, propertySymbol.getterId)
                     delegateGetter = enhancedGetterSymbol?.fir as FirSimpleFunction? ?: getterDelegate
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction? ?: setterDelegate
-                    customStatus = firElement.status
+                    customStatus = enhanceStatus(firElement.status, predefinedEnhancementInfo = null, overriddenMembers = overridden)
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                     dispatchReceiverType = firElement.dispatchReceiverType
                 }.symbol
@@ -366,15 +366,7 @@ class FirSignatureEnhancement(
                 val builder: FirAbstractConstructorBuilder = if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
                         val resolvedStatus = firMethod.status as? FirResolvedDeclarationStatus
-                        status = if (resolvedStatus != null) {
-                            FirResolvedDeclarationStatusImpl(
-                                resolvedStatus.visibility,
-                                Modality.FINAL,
-                                resolvedStatus.effectiveVisibility
-                            )
-                        } else {
-                            FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL)
-                        }.apply {
+                        status = resolvedStatus ?: FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL).apply {
                             isInner = firMethod.isInner
                             // Java annotation class constructors have stable names, copy flag.
                             hasStableParameterNames = firMethod.hasStableParameterNames
@@ -417,7 +409,7 @@ class FirSignatureEnhancement(
                     origin = declarationOrigin
 
                     this.name = name!!
-                    status = firMethod.status
+                    status = enhanceStatus(firMethod.status, predefinedEnhancementInfo, overriddenMembers)
                     symbol = if (isIntersectionOverride) {
                         FirIntersectionOverrideFunctionSymbol(
                             methodId, overriddenMembers.map { it.symbol },
@@ -513,6 +505,23 @@ class FirSignatureEnhancement(
         return function.symbol
     }
 
+    private fun enhanceStatus(
+        original: FirDeclarationStatus,
+        predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
+        overriddenMembers: List<FirCallableDeclaration>,
+    ): FirDeclarationStatus {
+        if (original.returnValueStatus != ReturnValueStatus.Unspecified) return original
+        predefinedEnhancementInfo?.returnValueStatus?.takeIf { it != ReturnValueStatus.Unspecified }?.let { newRvStatus ->
+            return original.copy(returnValueStatus = newRvStatus)
+        }
+        overriddenMembers.firstNotNullOfOrNull { declaration ->
+            declaration.status.returnValueStatus.takeIf { it != ReturnValueStatus.Unspecified }
+        }?.let { newRvStatus ->
+            return original.copy(returnValueStatus = newRvStatus)
+        }
+        return original
+    }
+
     private fun buildEnhancedValueParameter(
         valueParameter: FirValueParameter,
         enhancedReturnType: FirResolvedTypeRef,
@@ -537,7 +546,7 @@ class FirSignatureEnhancement(
                 typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
             )
             this.name = valueParameter.name
-            symbol = FirValueParameterSymbol(this.name)
+            symbol = FirValueParameterSymbol()
             defaultValue = valueParameter.defaultValue
             isCrossinline = valueParameter.isCrossinline
             isNoinline = valueParameter.isNoinline
@@ -1073,6 +1082,9 @@ private class EnhancementSignatureParts(
 
     override val typeSystem: TypeSystemContext
         get() = session.typeContext
+
+    override val isK2: Boolean
+        get() = true
 
     override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean = this is FirJavaExternalAnnotation
 

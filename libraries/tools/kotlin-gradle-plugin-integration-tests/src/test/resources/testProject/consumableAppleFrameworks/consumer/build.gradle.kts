@@ -31,7 +31,7 @@ fun Project.resolve(request: ResolutionRequest): String? {
         isCanBeResolved = true
         attributes {
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-            attribute(ArtifactAttributes.ARTIFACT_FORMAT, FRAMEWORK)
+            attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, FRAMEWORK)
             attribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, request.buildType.name)
             attribute(Framework.frameworkTargets, request.targets.map { it.name }.toSet())
             if (request.name != null) {

@@ -28,3 +28,6 @@ fun g(x: B<Int>) {
         <!NONE_APPLICABLE!>g<!>(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, javaType, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

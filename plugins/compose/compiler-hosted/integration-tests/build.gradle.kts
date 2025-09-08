@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
@@ -61,6 +59,7 @@ kotlin {
 
                 // Compose compiler deps
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
+                implementation(project(":plugins:compose-compiler-plugin:group-mapping"))
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
                 // coroutines for runtime tests
@@ -68,6 +67,7 @@ kotlin {
 
                 // runtime tests
                 implementationArtifactOnly(composeRuntime())
+                implementationArtifactOnly(composeRuntimeAnnotations())
                 implementationArtifactOnly(composeRuntimeTestUtils())
                 implementation(libs.androidx.collections)
 

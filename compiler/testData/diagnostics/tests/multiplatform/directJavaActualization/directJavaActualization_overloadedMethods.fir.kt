@@ -36,3 +36,5 @@ public class Foo {
         return a + b;
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor, secondaryConstructor */

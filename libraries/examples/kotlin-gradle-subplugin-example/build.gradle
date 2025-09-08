@@ -46,12 +46,12 @@ def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting
     "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
 ) {
     def emptyClassifier = provider { "" }
-    RepoArtifacts.setupPublicJar(
+    SetupPublicJar.setupPublicJar(
         it,
         jarTask.flatMap { it.archiveBaseName },
         jarTask.flatMap { emptyClassifier }
     )
-    RepoArtifacts.addEmbeddedRuntime(it)
+    AddEmbeddedRuntime.addEmbeddedRuntime(it)
     it.from(sourceSet.output)
 
     // When Gradle traverses the inputs, reject the shaded compiler JAR,

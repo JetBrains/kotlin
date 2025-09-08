@@ -32,6 +32,7 @@ private const val root = "androidx.compose.runtime"
 private const val internalRoot = "$root.internal"
 private val rootFqName = FqName(root)
 private val internalRootFqName = FqName(internalRoot)
+private val toolingFqName = FqName("$root.tooling")
 
 object ComposeClassIds {
     private fun classIdFor(cname: String) =
@@ -40,11 +41,15 @@ object ComposeClassIds {
     internal fun internalClassIdFor(cname: String) =
         ClassId(internalRootFqName, Name.identifier(cname))
 
+    internal fun toolingClassIdFor(cname: String) =
+        ClassId(toolingFqName, Name.identifier(cname))
+
     val Composable = classIdFor("Composable")
     val ComposableInferredTarget = classIdFor("ComposableInferredTarget")
     val ComposableLambda = internalClassIdFor("ComposableLambda")
     val ComposableOpenTarget = classIdFor("ComposableOpenTarget")
     val ComposableTarget = classIdFor("ComposableTarget")
+    val ComposableTargetMarker = classIdFor("ComposableTargetMarker")
     val ComposeVersion = classIdFor("ComposeVersion")
     val Composer = classIdFor("Composer")
     val DisallowComposableCalls = classIdFor("DisallowComposableCalls")
@@ -56,6 +61,7 @@ object ComposeClassIds {
     val ReadOnlyComposable = classIdFor("ReadOnlyComposable")
     val State = classIdFor("State")
     val StabilityInferred = internalClassIdFor("StabilityInferred")
+    val SourceInformation = toolingClassIdFor("SourceInformation")
 }
 
 object ComposeCallableIds {
@@ -104,6 +110,7 @@ object ComposeFqNames {
     val ComposableTarget = ComposeClassIds.ComposableTarget.asSingleFqName()
     val ComposableTargetMarker = fqNameFor("ComposableTargetMarker")
     val ComposableTargetMarkerDescription = "description"
+    val ComposableTargetMarkerDescriptionName = Name.identifier(ComposableTargetMarkerDescription)
     val ComposableTargetApplierArgument = Name.identifier("applier")
     val ComposableOpenTarget = ComposeClassIds.ComposableOpenTarget.asSingleFqName()
     val ComposableOpenTargetIndexArgument = Name.identifier("index")

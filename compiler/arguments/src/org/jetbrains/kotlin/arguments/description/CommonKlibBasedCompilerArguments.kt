@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
-import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 
 val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonKlibBasedArguments) {
     compilerArgument {
@@ -21,7 +18,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Provide a base path to compute the source's relative paths in klib (default is empty).".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -30,7 +29,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Normalize absolute paths in klibs.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -39,7 +40,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Enable signature uniqueness checks.".asReleaseDependent()
         valueType = BooleanType.defaultTrue
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -49,7 +52,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         valueType = StringType.defaultNull
         valueDescription = "{enable|disable}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -59,7 +64,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         valueType = StringType.defaultNull
         valueDescription = "{info|warning|error}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -69,16 +76,29 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         valueType = StringType.defaultNull
         valueDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
     }
 
     compilerArgument {
         name = "Xklib-ir-inliner"
         compilerName = "irInlinerBeforeKlibSerialization"
-        description = "Enable experimental support to invoke IR Inliner before Klib serialization.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        description = """Set the mode of the experimental IR inliner on the first compilation stage.
+- `intra-module` mode enforces inlining of the functions only from the compiled module
+- `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+   Warning: This mode will trigger setting the `pre-release` flag for the compiled library.
+- `disabled` mode completely disables the IR inliner
+- `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
+        """.asReleaseDependent()
+        valueType = KlibIrInlinerModeType()
+        valueDescription = ReleaseDependent(
+            current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
+        )
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
     }
 
     compilerArgument {
@@ -90,6 +110,20 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xklib-zip-file-accessor-cache-limit"
+        description = "Maximum number of klibs that can be cached during compilation. Default is 64.".asReleaseDependent()
+        valueType = IntType(
+            defaultValue = 64.asReleaseDependent()
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0
+        )
     }
 }

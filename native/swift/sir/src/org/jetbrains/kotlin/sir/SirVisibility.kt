@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.sir
 
-enum class SirVisibility {
+enum class SirVisibility : Comparable<SirVisibility> {
     PRIVATE,
     FILEPRIVATE,
     INTERNAL,

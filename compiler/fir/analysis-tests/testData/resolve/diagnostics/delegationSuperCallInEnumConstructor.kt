@@ -5,3 +5,5 @@ enum class A {
     constructor(x: Int) : <!DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR!>super<!>()
     constructor(t: String) : this(10)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, secondaryConstructor */

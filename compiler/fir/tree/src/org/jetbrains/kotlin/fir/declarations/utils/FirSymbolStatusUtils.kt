@@ -1,12 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 // ---------------------- callables with status ----------------------
 
@@ -22,7 +26,7 @@ inline val FirCallableSymbol<*>.isActual: Boolean get() = rawStatus.isActual
 inline val FirCallableSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirCallableSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirCallableSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
-inline val FirCallableSymbol<*>.isOverride: Boolean get() = rawStatus.isOverride
+inline val FirCallableSymbol<*>.isOverride: Boolean get() = resolvedStatus.isOverride
 inline val FirCallableSymbol<*>.isOperator: Boolean get() = resolvedStatus.isOperator
 inline val FirCallableSymbol<*>.isInfix: Boolean get() = resolvedStatus.isInfix
 inline val FirCallableSymbol<*>.isInline: Boolean get() = rawStatus.isInline
@@ -41,7 +45,7 @@ inline val FirClassLikeSymbol<*>.modality: Modality get() = resolvedStatus.modal
 inline val FirClassLikeSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
 inline val FirClassLikeSymbol<*>.isFinal: Boolean get() = resolvedStatus.modality == Modality.FINAL
 
-inline val FirClassLikeSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
+inline val FirClassLikeSymbol<*>.visibility: Visibility get() = rawStatus.visibility
 inline val FirClassLikeSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
 
 inline val FirClassLikeSymbol<*>.isActual: Boolean get() = rawStatus.isActual
@@ -68,11 +72,9 @@ inline val FirClassLikeSymbol<*>.isSealed: Boolean get() = resolvedStatus.modali
 
 // ---------------------- common classes ----------------------
 
-inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = classId.isLocal
+inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = fir.isLocal
 
-inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
-    get() = classId.isLocal || this is FirAnonymousObjectSymbol
-
+val FirBasedSymbol<*>?.isLocalClassLike: Boolean get() = (this as? FirClassLikeSymbol<*>)?.isLocal == true
 
 inline val FirClassSymbol<*>.isClass: Boolean
     get() = classKind.isClass

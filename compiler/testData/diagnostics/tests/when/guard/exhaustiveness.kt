@@ -49,3 +49,7 @@ fun falseNegativeNotExhaustive(x: Any) {
         is Int <!UNSUPPORTED_FEATURE!>if { _ : String -> x == "10" } ("11")<!> -> println('q')
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, guardCondition,
+isExpression, lambdaLiteral, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration, sealed,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

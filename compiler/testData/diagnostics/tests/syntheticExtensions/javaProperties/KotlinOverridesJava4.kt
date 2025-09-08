@@ -28,3 +28,6 @@ public interface JavaInterface2 {
 
 // FILE: JavaInterface3.java
 public interface JavaInterface3 extends JavaInterface1, JavaInterface2 {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression, javaFunction,
+javaProperty, javaType, override, stringLiteral */

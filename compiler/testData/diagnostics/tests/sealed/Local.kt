@@ -16,3 +16,6 @@ sealed class Sealed {
     }
     val p: Sealed = object: <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Sealed<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, localProperty,
+nestedClass, objectDeclaration, propertyDeclaration, sealed, typeAliasDeclaration */

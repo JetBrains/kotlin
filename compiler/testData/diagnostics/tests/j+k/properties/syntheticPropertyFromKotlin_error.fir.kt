@@ -26,3 +26,5 @@ fun test_2(x: Impl) {
     x.<!FUNCTION_CALL_EXPECTED!>bar<!>
     x.<!FUNCTION_CALL_EXPECTED!>bar<!> = "a"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty, javaType, stringLiteral */

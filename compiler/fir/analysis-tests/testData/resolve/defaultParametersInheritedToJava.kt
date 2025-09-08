@@ -14,3 +14,5 @@ abstract class MyClass {
 public class MyJavaClass extends MyClass {
     public void bar(String y) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType */

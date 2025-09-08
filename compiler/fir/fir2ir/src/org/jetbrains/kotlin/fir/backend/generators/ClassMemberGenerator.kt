@@ -49,7 +49,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 internal class ClassMemberGenerator(
     private val c: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
-    private val conversionScope: Fir2IrConversionScope
+    private val conversionScope: Fir2IrConversionScope,
+    private val cleaner: FirDeclarationsContentCleaner,
 ) : Fir2IrComponents by c {
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
 
@@ -73,6 +74,7 @@ internal class ClassMemberGenerator(
                     enterScope(irPrimaryConstructor.symbol)
                     irPrimaryConstructor.putParametersInScope(primaryConstructor)
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
+                    cleaner.cleanConstructor(primaryConstructor)
                 }
             }
 
@@ -115,6 +117,7 @@ internal class ClassMemberGenerator(
                     visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
                         valueParameter.setDefaultValue(firValueParameter)
                     }
+                    cleaner.cleanValueParameter(firValueParameter)
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
@@ -356,13 +359,13 @@ internal class ClassMemberGenerator(
 
         // Unwrap substitution overrides from both derived class and a superclass
         val constructorSymbol = referencedSymbol
-            .unwrapCallRepresentative(c, referencedSymbol.containingClassLookupTag())
-            .unwrapCallRepresentative(c, referencedSymbol.resolvedReturnType.classLikeLookupTagIfAny)
+            .unwrapCallRepresentative(referencedSymbol.containingClassLookupTag())
+            .unwrapCallRepresentative(referencedSymbol.resolvedReturnType.classLikeLookupTagIfAny)
 
         check(constructorSymbol is FirConstructorSymbol)
 
         val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-        val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
+        val typeArguments = constructedTypeRef.coneType.fullyExpandedType().typeArguments
         val constructor = constructorSymbol.fir
         /*
          * We should generate enum constructor call only if it is used to create new enum entry (so it's a super constructor call)

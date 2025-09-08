@@ -45,3 +45,7 @@ fun test(a: Any, b: Any) {
         fun baz() = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, ifExpression,
+inline, integerLiteral, isExpression, lambdaLiteral, localClass, localProperty, nullableType, propertyDeclaration,
+smartcast, typeParameter */

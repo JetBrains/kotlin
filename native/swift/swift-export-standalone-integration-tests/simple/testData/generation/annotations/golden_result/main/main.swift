@@ -49,8 +49,8 @@ public final class deprecatedChildT: main.deprecatedT {
     }
 }
 @available(*, deprecated, message: "Deprecated")
-open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    open class deprecationInheritedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class deprecatedT: KotlinRuntime.KotlinBase {
+    open class deprecationInheritedT: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.deprecatedT.deprecationInheritedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.deprecatedT.deprecationInheritedT ") }
             let __kt = deprecatedT_deprecationInheritedT_init_allocate()
@@ -65,7 +65,7 @@ open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         }
     }
     @available(*, deprecated, message: "Deprecated")
-    open class deprecationRestatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class deprecationRestatedT: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.deprecatedT.deprecationRestatedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.deprecatedT.deprecationRestatedT ") }
             let __kt = deprecatedT_deprecationRestatedT_init_allocate()
@@ -229,9 +229,9 @@ public final class normalChildT: main.normalT {
         return normalChildT_removedF(self.__externalRCRef())
     }
 }
-open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class normalT: KotlinRuntime.KotlinBase {
     @available(*, deprecated, message: "Deprecated")
-    open class deprecatedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class deprecatedT: KotlinRuntime.KotlinBase {
         @available(*, deprecated, message: "Deprecated")
         public init(
             deprecated: Swift.Int32
@@ -248,7 +248,7 @@ open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridge
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class normalT: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.normalT.normalT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.normalT.normalT ") }
             let __kt = normalT_normalT_init_allocate()
@@ -380,7 +380,7 @@ open class normalT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridge
     }
 }
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
-public final class renamedT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class renamedT: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.renamedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.renamedT ") }
         let __kt = __root___renamedT_init_allocate()

@@ -17,3 +17,6 @@ fun foo() {
     }
     bar(x)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

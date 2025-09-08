@@ -7,23 +7,16 @@
 // DISABLE_NATIVE: isAppleTarget=false
 //   There is no JavaScriptCore on watchOS.
 // DISABLE_NATIVE: targetFamily=WATCHOS
+// WITH_PLATFORM_LIBS
 
 // MODULE: cinterop
 // FILE: kt49034.def
 headers = kt49034.h
 
 // FILE: kt49034.h
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct JSContext;
 
 struct JSContext* bar();
-
-#ifdef __cplusplus
-}
-#endif
 
 // FILE: impl.c
 #include "kt49034.h"
@@ -34,7 +27,7 @@ struct JSContext {
 
 struct JSContext global = { 15 };
 
-extern "C" struct JSContext* bar() {
+struct JSContext* bar() {
     return &global;
 }
 

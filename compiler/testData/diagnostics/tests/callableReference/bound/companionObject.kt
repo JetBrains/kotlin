@@ -40,3 +40,7 @@ fun test() {
 
     <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>C::bar<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

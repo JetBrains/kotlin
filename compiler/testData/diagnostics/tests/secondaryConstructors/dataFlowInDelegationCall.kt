@@ -6,3 +6,6 @@ class A {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length + <!DEBUG_INFO_SMARTCAST!>y<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, nullableType, secondaryConstructor,
+smartcast, stringLiteral */

@@ -31,3 +31,6 @@ fun implicitAlwaysFalseSpilling(x: Any?) {
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
+
+/* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, functionDeclaration, ifExpression,
+isExpression, lambdaLiteral, nullableType, smartcast */

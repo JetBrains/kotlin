@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun <T : CharSequence> foo(x: Array<Any>, block: (T, Int) -> Int) {
     var r: Any?
@@ -20,3 +19,7 @@ fun <T : CharSequence> foo(x: Array<Any>, block: (T, Int) -> Int) {
 
     if (i != 1) <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Suppress("UNCHECKED_CAST") i<!> += block(x[0] <!UNCHECKED_CAST!>as T<!>, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+typeConstraint, typeParameter */

@@ -9,3 +9,5 @@ class K2DuplicatesOkayBug {
         //todo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

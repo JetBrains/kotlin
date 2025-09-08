@@ -10,3 +10,6 @@ class Test<out V>(val x: Base) {
         is Derived -> null
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, isExpression, nullableType, out, primaryConstructor, propertyDeclaration,
+sealed, typeParameter, whenExpression, whenWithSubject */

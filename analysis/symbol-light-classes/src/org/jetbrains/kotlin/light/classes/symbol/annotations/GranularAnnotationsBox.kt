@@ -87,7 +87,7 @@ internal class GranularAnnotationsBox(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ GranularAnnotationsBox::class.java,
             /* vclass = */ Collection::class.java,
-            /* fieldName = */ "cachedAnnotations",
+            /* fieldName = */ GranularAnnotationsBox::cachedAnnotations.name,
         )
 
         /**

@@ -16,3 +16,6 @@ expect open class Foo<R, T : R> : Base<R> {
 actual open class Foo<E, F : E> : Base<E>() {
     override fun <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>foo<!>(): F = null!!
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, functionDeclaration, nullableType, override,
+typeConstraint, typeParameter */

@@ -11,3 +11,6 @@ fun foo() {
             get() = field
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, getter, integerLiteral,
+localClass, localProperty, propertyDeclaration */

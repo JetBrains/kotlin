@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -95,6 +96,7 @@ class JvmIrCodegenFactory(
         val shouldReferenceUndiscoveredExpectSymbols: Boolean = false,
         val shouldDeduplicateBuiltInSymbols: Boolean = false,
         val doNotLoadDependencyModuleHeaders: Boolean = false,
+        val evaluatorData: JvmEvaluatorData? = null,
     ) {
         init {
             if (shouldDeduplicateBuiltInSymbols && !shouldStubAndNotLinkUnboundSymbols) {
@@ -121,6 +123,7 @@ class JvmIrCodegenFactory(
         val context: JvmBackendContext,
         val module: IrModuleFragment,
         val allBuiltins: List<IrFile>,
+        val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
     )
 
     /**
@@ -332,14 +335,12 @@ class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
+
+        val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
         val context = JvmBackendContext(
             state, irBuiltIns, symbolTable, extensions,
-            backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext
+            backendExtension, irSerializer, JvmIrDeserializerImpl(), irProviders, irPluginContext, evaluatorData
         )
-        if (evaluatorFragmentInfoForPsi2Ir != null) {
-            context.evaluatorData =
-                JvmEvaluatorData(mutableMapOf(), evaluatorFragmentInfoForPsi2Ir.methodIR, evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap)
-        }
         val generationExtensions = state.project.filteredExtensions
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
         val intrinsics by lazy { IrIntrinsicMethods(irBuiltIns, context.symbols) }
@@ -347,7 +348,7 @@ class JvmIrCodegenFactory(
             intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }
         }
 
-        context.enumEntriesIntrinsicMappingsCache = EnumEntriesIntrinsicMappingsCacheImpl(context)
+        context.enumEntriesIntrinsicMappingsCache = EnumEntriesIntrinsicMappingsCacheImpl(context, generationExtensions)
 
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
@@ -362,11 +363,29 @@ class JvmIrCodegenFactory(
             engine.runPhase(phase, irModuleFragment)
         }
 
-        return CodegenInput(state, context, irModuleFragment, allBuiltins)
+        return CodegenInput(state, context, irModuleFragment, allBuiltins, generationExtensions)
+    }
+
+    private fun computePsiBasedEvaluatorData(irModuleFragment: IrModuleFragment): JvmEvaluatorData? {
+        val evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir ?: return null
+
+        // In K1 CodeFragment metadata is attributed to IrClass, but in K2 it is attributed IrFile
+        val fragmentFile = irModuleFragment.files.single { it.metadata is MetadataSource.CodeFragment }
+        val generatedClass = fragmentFile.declarations.single() as IrClass
+
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        val evaluationEntryPoint = generatedClass.functions
+            .single { it.descriptor == evaluatorFragmentInfoForPsi2Ir.methodDescriptor }
+
+        return JvmEvaluatorData(
+            JvmBackendContext.SharedLocalDeclarationsData(),
+            evaluationEntryPoint,
+            evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap
+        )
     }
 
     fun invokeCodegen(input: CodegenInput) {
-        val (state, context, module, allBuiltins) = input
+        val (state, context, module, allBuiltins, intrinsicExtensions) = input
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 
@@ -381,14 +400,17 @@ class JvmIrCodegenFactory(
         for (generateMultifileFacades in listOf(true, false)) {
             if (executor != null) {
                 val taskPerFile = module.files.map { irFile ->
-                    CompletableFuture.runAsync( {
-                        generateFile(context, irFile, generateMultifileFacades)
-                    }, executor)
+                    CompletableFuture.runAsync(
+                        {
+                            generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
+                        },
+                        executor
+                    )
                 }
                 CompletableFuture.allOf(*taskPerFile.toTypedArray()).get()
             } else {
                 for (irFile in module.files) {
-                    generateFile(context, irFile, generateMultifileFacades)
+                    generateFile(context, irFile, intrinsicExtensions, generateMultifileFacades)
                 }
             }
         }
@@ -409,14 +431,19 @@ class JvmIrCodegenFactory(
         state.factory.done()
     }
 
-    private fun generateFile(context: JvmBackendContext, file: IrFile, generateMultifileFacades: Boolean): IrFile {
+    private fun generateFile(
+        context: JvmBackendContext,
+        file: IrFile,
+        intrinsicExtensions: List<JvmIrIntrinsicExtension>,
+        generateMultifileFacades: Boolean,
+    ): IrFile {
         val isMultifileFacade = file.fileEntry is MultifileFacadeFileEntry
         if (isMultifileFacade == generateMultifileFacades) {
             for (loweredClass in file.declarations) {
                 if (loweredClass !is IrClass) {
                     throw AssertionError("File-level declaration should be IrClass after JvmLower: " + loweredClass.render())
                 }
-                ClassCodegen.getOrCreate(loweredClass, context).generate()
+                ClassCodegen.getOrCreate(loweredClass, context, intrinsicExtensions).generate()
             }
         }
         return file

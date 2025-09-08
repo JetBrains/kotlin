@@ -11,3 +11,6 @@ fun <K> test(c: Collection<K>) {
     var variants = stringCollection()
     variants += variants.filter { true }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, typeParameter */

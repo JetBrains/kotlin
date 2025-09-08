@@ -13,9 +13,9 @@ public abstract class C1 : MHashtable<kotlin.String, kotlin.Int> {
     public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
     public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String!, kotlin.Int!>): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -32,9 +32,9 @@ public abstract class C2 : MHashtable<kotlin.String, kotlin.Int> {
     public open override /*1*/ fun get(/*0*/ key: kotlin.String): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
     public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String!, kotlin.Int!>): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String!): kotlin.Int?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -59,9 +59,9 @@ public abstract class MHashtable</*0*/ X : kotlin.Any!, /*1*/ Y : kotlin.Any!> :
     public open override /*2*/ fun get(/*0*/ key: X!): Y?
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: X!, /*1*/ value: Y!): Y?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: X!, /*1*/ value: Y!): Y?
     public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out X!, Y!>): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: X!): Y?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: X!): Y?
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

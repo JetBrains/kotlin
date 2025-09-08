@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_VARIABLE -WRONG_ANNOTATION_TARGET -UNUSED_LAMBDA_EXPRESSION
-// LANGUAGE: -YieldIsNoMoreReserved
+// LANGUAGE: -YieldIsNoMoreReserved -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 
 // FILE: 1.kt
 
@@ -54,3 +54,8 @@ object X {
         yield::toInt
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, checkNotNullCall, destructuringDeclaration,
+enumDeclaration, enumEntry, forLoop, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, rangeExpression, typeAliasDeclaration,
+typeConstraint, typeParameter, vararg */

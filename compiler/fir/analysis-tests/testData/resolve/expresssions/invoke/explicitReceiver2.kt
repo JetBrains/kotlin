@@ -18,3 +18,6 @@ class Foo {
 
     fun bar() = x() // Should resolve to invoke (1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, operator, propertyDeclaration,
+thisExpression */

@@ -17,3 +17,5 @@ fun nullIfEmpty(list: List<String>): List<String>? {
         null
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType */

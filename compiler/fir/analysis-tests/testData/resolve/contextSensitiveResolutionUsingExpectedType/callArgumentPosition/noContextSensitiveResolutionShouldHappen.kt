@@ -33,3 +33,6 @@ fun A.foo() {
         foo(<!ARGUMENT_TYPE_MISMATCH, DSL_SCOPE_VIOLATION!>X<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, funWithExtensionReceiver,
+functionDeclaration, getter, localFunction, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

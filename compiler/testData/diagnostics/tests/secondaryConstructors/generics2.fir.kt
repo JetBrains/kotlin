@@ -25,3 +25,5 @@ class A2<T1, T2> : B<T1, Int> {
     constructor(x: T1, y: T2, z: String): super(<!ARGUMENT_TYPE_MISMATCH!>y<!>, 1)
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, secondaryConstructor,
+stringLiteral, typeParameter */

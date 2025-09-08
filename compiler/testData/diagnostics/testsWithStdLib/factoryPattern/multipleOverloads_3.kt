@@ -55,3 +55,7 @@ fun test_3(name: Name, toplevelDescriptors: List<DeclarationDescriptor>): List<D
     }
     return candidates
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

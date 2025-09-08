@@ -55,3 +55,6 @@ class Fourth {
 
     val y = <!DEBUG_INFO_LEAKING_THIS!>x<!> // null!
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, init, override, propertyDeclaration,
+secondaryConstructor, setter, stringLiteral, thisExpression */

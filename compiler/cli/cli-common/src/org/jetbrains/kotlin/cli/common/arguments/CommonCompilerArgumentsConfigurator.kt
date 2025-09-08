@@ -40,7 +40,7 @@ open class CommonCompilerArgumentsConfigurator {
                 put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
                 put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
                 put(AnalysisFlags.lenientMode, lenientMode)
-                put(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme)
+                put(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
                 fillWarningLevelMap(arguments, collector)
                 ReturnValueCheckerMode.fromString(returnValueChecker)?.also { put(AnalysisFlags.returnValueCheckerMode, it) }
                     ?: collector.report(
@@ -57,22 +57,6 @@ open class CommonCompilerArgumentsConfigurator {
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(arguments)
-
-            // Non-automatic logic as it's more complex
-            when (AnnotationDefaultTargetMode.fromStringOrNull(annotationDefaultTarget)) {
-                null -> {}
-                AnnotationDefaultTargetMode.FIRST_ONLY -> {
-                    put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.DISABLED)
-                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
-                }
-                AnnotationDefaultTargetMode.FIRST_ONLY_WARN -> {
-                    put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
-                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
-                }
-                AnnotationDefaultTargetMode.PARAM_PROPERTY -> {
-                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.ENABLED)
-                }
-            }
 
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.actuallyEnabledInProgressiveMode }.forEach {
@@ -93,11 +77,16 @@ open class CommonCompilerArgumentsConfigurator {
                 configureLanguageFeaturesFromInternalArgs(arguments, collector)
             }
 
-            configureExtraLanguageFeatures(arguments, this)
+            configureExtraLanguageFeatures(arguments, this, collector)
         }
     }
 
-    protected open fun configureExtraLanguageFeatures(arguments: CommonCompilerArguments, map: HashMap<LanguageFeature, LanguageFeature.State>) {}
+    protected open fun configureExtraLanguageFeatures(
+        arguments: CommonCompilerArguments,
+        map: HashMap<LanguageFeature, LanguageFeature.State>,
+        collector: MessageCollector,
+    ) {
+    }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(
         arguments: CommonCompilerArguments,
@@ -108,7 +97,7 @@ open class CommonCompilerArgumentsConfigurator {
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
-        for ((feature, state) in arguments.internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
+        for ((feature, state) in arguments.internalArguments) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
@@ -141,6 +130,16 @@ open class CommonCompilerArgumentsConfigurator {
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
 
             put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
+        }
+
+        val isCrossModuleInlinerEnabled = this[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] == LanguageFeature.State.ENABLED
+        val isIntraModuleInlinerEnabled = this[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] == LanguageFeature.State.ENABLED
+        if (isCrossModuleInlinerEnabled && !isIntraModuleInlinerEnabled) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization requires -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization. " +
+                        "Enable the intra-module inliner as well to avoid inconsistent configuration."
+            )
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

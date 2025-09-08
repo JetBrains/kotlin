@@ -26,7 +26,7 @@ fun Test(x: Int = 0, y: Int = 0) {
 @Composable
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<{>,<Wrap>:Test.kt")
+  sourceInformation(%composer, "C(Test)N(x,y)<{>,<Wrap>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

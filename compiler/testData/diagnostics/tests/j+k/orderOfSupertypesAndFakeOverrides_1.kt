@@ -21,3 +21,5 @@ class ClassThenInterface : Derived(), Base {}
 fun test_2(x: ClassThenInterface, s: String?) {
     x.delete(<!TYPE_MISMATCH!>s<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override */

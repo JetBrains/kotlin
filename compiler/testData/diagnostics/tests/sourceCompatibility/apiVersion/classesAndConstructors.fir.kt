@@ -22,3 +22,6 @@ fun t3(): Bar? = <!UNRESOLVED_REFERENCE!>Bar<!>()
 fun t4(): Baz = <!UNRESOLVED_REFERENCE!>Baz<!>()
 
 fun t5(): <!API_NOT_AVAILABLE!>Quux<!> = <!API_NOT_AVAILABLE!>Quux<!>()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, nullableType,
+primaryConstructor, stringLiteral */

@@ -28,3 +28,7 @@ fun bar(b: B): String {
     fun foo(b: B) = if (b is A && b is C) b else null
     return tmp.toString()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, isExpression, localFunction, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+smartcast */

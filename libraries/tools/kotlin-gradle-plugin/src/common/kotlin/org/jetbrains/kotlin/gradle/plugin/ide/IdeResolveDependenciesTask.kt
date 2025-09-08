@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import com.google.gson.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.result.ArtifactResult
+import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -16,6 +18,9 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.locateOrRegisterPartiallyResolvedDependenciesCheckerTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.tooling.core.Extras
@@ -60,6 +65,7 @@ internal abstract class IdeResolveDependenciesTask : DefaultTask() {
             .registerTypeHierarchyAdapter(IdeDependencyResolver::class.java, IdeDependencyResolverAdapter)
             .registerTypeHierarchyAdapter(Extras::class.java, ExtrasAdapter)
             .registerTypeHierarchyAdapter(IdeaKotlinDependencyCoordinates::class.java, IdeaKotlinDependencyCoordinatesAdapter)
+            .registerTypeHierarchyAdapter(ArtifactResult::class.java, ToStringAdapter)
             .registerTypeAdapter(File::class.java, gsonFileAdapter)
             .create()
 
@@ -118,6 +124,12 @@ internal abstract class IdeResolveDependenciesTask : DefaultTask() {
             } else {
                 JsonPrimitive(src.path)
             }
+        }
+    }
+
+    object ToStringAdapter : JsonSerializer<Any> {
+        override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+            return JsonPrimitive(src.toString())
         }
     }
 }

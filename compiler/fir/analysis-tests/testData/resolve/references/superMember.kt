@@ -8,3 +8,5 @@ class B : A() {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

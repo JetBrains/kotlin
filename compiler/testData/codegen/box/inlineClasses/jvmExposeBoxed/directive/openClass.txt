@@ -1,0 +1,30 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface Test {
+    // source: 'Test.kt'
+    public abstract @org.jetbrains.annotations.Nullable method getFoo-0hXNFcg(): kotlin.UInt
+    public abstract method test-IKrLr70(p0: int): int
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    // source: 'Test.kt'
+    public method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.Nullable method getFoo(): kotlin.UInt
+    public @org.jetbrains.annotations.Nullable method getFoo-0hXNFcg(): kotlin.UInt
+    public @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: kotlin.UInt): kotlin.UInt
+    public method test-IKrLr70(p0: int): int
+}
+
+@kotlin.Metadata
+public class TestClass1 {
+    // source: 'Test.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method getFoo-0hXNFcg(): kotlin.UInt
+    public method test-IKrLr70(p0: int): int
+}

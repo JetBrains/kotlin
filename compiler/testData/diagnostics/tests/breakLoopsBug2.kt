@@ -13,3 +13,5 @@ open class OCDelegatingCodeInsightTestCase {
 // FILE: B.kt
 
 class OCDelegatingCodeInsightTestCase : com.jetbrains.cidr.lang.fixtures.OCDelegatingCodeInsightTestCase.Nested()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

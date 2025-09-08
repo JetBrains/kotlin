@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
+import org.jetbrains.kotlin.gradle.util.publishMultiplatformLibrary
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -32,7 +33,10 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        project("empty", gradleVersion) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -120,7 +124,10 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        project("empty", gradleVersion) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -195,7 +202,10 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        project("empty", gradleVersion) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -271,20 +281,7 @@ class SwiftExportDslIT : KGPBaseTest() {
         @TempDir testBuildDir: Path,
     ) {
         // Publish dependency
-        val multiplatformLibrary = project("empty", gradleVersion) {
-            plugins {
-                kotlin("multiplatform")
-            }
-            settingsBuildScriptInjection {
-                settings.rootProject.name = "multiplatformLibrary"
-            }
-            buildScriptInjection {
-                project.applyMultiplatform {
-                    iosArm64()
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
-                }
-            }
-        }.publish(publisherConfiguration = PublisherConfiguration())
+        val multiplatformLibrary = publishMultiplatformLibrary(gradleVersion)
 
         project(
             "empty",
@@ -312,8 +309,8 @@ class SwiftExportDslIT : KGPBaseTest() {
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
-                val multiplatformLibrarySwiftModule = buildProductsDir.resolve("MultiplatformLibrary.swiftmodule")
-                assertDirectoryExists(multiplatformLibrarySwiftModule.toPath(), "MultiplatformLibrary.swiftmodule doesn't exist")
+                val multiplatformLibrarySwiftModule = buildProductsDir.resolve("FooMultiplatformLibrary.swiftmodule")
+                assertDirectoryExists(multiplatformLibrarySwiftModule.toPath(), "FooMultiplatformLibrary.swiftmodule doesn't exist")
             }
         }
     }
@@ -324,7 +321,10 @@ class SwiftExportDslIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
-        project("empty", gradleVersion) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
             plugins {
                 kotlin("multiplatform")
             }

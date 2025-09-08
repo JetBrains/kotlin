@@ -13,15 +13,15 @@ void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPo
 
 void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit__(void * __kt, uint16_t arg, void *_Nullable * _Nonnull __error);
 
-void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_KotlinRuntime_KotlinBase__(void * __kt, void * arg, void *_Nullable * _Nonnull __error);
+void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * arg, void *_Nullable * _Nonnull __error);
 
-void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_KotlinRuntime_KotlinBase___(void * __kt, void * _Nullable arg, void *_Nullable * _Nonnull __error);
+void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * __kt, void * _Nullable arg, void *_Nullable * _Nonnull __error);
 
 void __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Object__(void * __kt, void * arg, void *_Nullable * _Nonnull __error);
 
 void * __root___throwing_fun_any(void *_Nullable * _Nonnull _out_error);
 
-void * __root___throwing_fun_any__TypesOfArguments__KotlinRuntime_KotlinBase__(void * arg, void *_Nullable * _Nonnull _out_error);
+void * __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * arg, void *_Nullable * _Nonnull _out_error);
 
 _Bool __root___throwing_fun_boolean(void *_Nullable * _Nonnull _out_error);
 
@@ -43,11 +43,11 @@ void __root___throwing_fun_never(void *_Nullable * _Nonnull _out_error) __attrib
 
 void * _Nullable __root___throwing_fun_nullable(void *_Nullable * _Nonnull _out_error);
 
-void * _Nullable __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * _Nullable arg, void *_Nullable * _Nonnull _out_error);
+void * _Nullable __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable arg, void *_Nullable * _Nonnull _out_error);
 
 void * __root___throwing_fun_object(void *_Nullable * _Nonnull _out_error);
 
-void * __root___throwing_fun_object__TypesOfArguments__KotlinRuntime_KotlinBase__(void * arg, void *_Nullable * _Nonnull _out_error);
+void * __root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * arg, void *_Nullable * _Nonnull _out_error);
 
 void __root___throwing_fun_void(void *_Nullable * _Nonnull _out_error);
 

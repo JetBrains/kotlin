@@ -22,7 +22,9 @@ import kotlin.ranges.reversed
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component1(): T {
@@ -33,7 +35,9 @@ public inline operator fun <T> Array<out T>.component1(): T {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component1(): Byte {
@@ -44,7 +48,9 @@ public inline operator fun ByteArray.component1(): Byte {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component1(): Short {
@@ -55,7 +61,9 @@ public inline operator fun ShortArray.component1(): Short {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component1(): Int {
@@ -66,7 +74,9 @@ public inline operator fun IntArray.component1(): Int {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component1(): Long {
@@ -77,7 +87,9 @@ public inline operator fun LongArray.component1(): Long {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component1(): Float {
@@ -88,7 +100,9 @@ public inline operator fun FloatArray.component1(): Float {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component1(): Double {
@@ -99,7 +113,9 @@ public inline operator fun DoubleArray.component1(): Double {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component1(): Boolean {
@@ -110,7 +126,9 @@ public inline operator fun BooleanArray.component1(): Boolean {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component1(): Char {
@@ -121,7 +139,9 @@ public inline operator fun CharArray.component1(): Char {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component2(): T {
@@ -132,7 +152,9 @@ public inline operator fun <T> Array<out T>.component2(): T {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component2(): Byte {
@@ -143,7 +165,9 @@ public inline operator fun ByteArray.component2(): Byte {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component2(): Short {
@@ -154,7 +178,9 @@ public inline operator fun ShortArray.component2(): Short {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component2(): Int {
@@ -165,7 +191,9 @@ public inline operator fun IntArray.component2(): Int {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component2(): Long {
@@ -176,7 +204,9 @@ public inline operator fun LongArray.component2(): Long {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component2(): Float {
@@ -187,7 +217,9 @@ public inline operator fun FloatArray.component2(): Float {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component2(): Double {
@@ -198,7 +230,9 @@ public inline operator fun DoubleArray.component2(): Double {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component2(): Boolean {
@@ -209,7 +243,9 @@ public inline operator fun BooleanArray.component2(): Boolean {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component2(): Char {
@@ -220,7 +256,9 @@ public inline operator fun CharArray.component2(): Char {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component3(): T {
@@ -231,7 +269,9 @@ public inline operator fun <T> Array<out T>.component3(): T {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component3(): Byte {
@@ -242,7 +282,9 @@ public inline operator fun ByteArray.component3(): Byte {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component3(): Short {
@@ -253,7 +295,9 @@ public inline operator fun ShortArray.component3(): Short {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component3(): Int {
@@ -264,7 +308,9 @@ public inline operator fun IntArray.component3(): Int {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component3(): Long {
@@ -275,7 +321,9 @@ public inline operator fun LongArray.component3(): Long {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component3(): Float {
@@ -286,7 +334,9 @@ public inline operator fun FloatArray.component3(): Float {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component3(): Double {
@@ -297,7 +347,9 @@ public inline operator fun DoubleArray.component3(): Double {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component3(): Boolean {
@@ -308,7 +360,9 @@ public inline operator fun BooleanArray.component3(): Boolean {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component3(): Char {
@@ -319,7 +373,9 @@ public inline operator fun CharArray.component3(): Char {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component4(): T {
@@ -330,7 +386,9 @@ public inline operator fun <T> Array<out T>.component4(): T {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component4(): Byte {
@@ -341,7 +399,9 @@ public inline operator fun ByteArray.component4(): Byte {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component4(): Short {
@@ -352,7 +412,9 @@ public inline operator fun ShortArray.component4(): Short {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component4(): Int {
@@ -363,7 +425,9 @@ public inline operator fun IntArray.component4(): Int {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component4(): Long {
@@ -374,7 +438,9 @@ public inline operator fun LongArray.component4(): Long {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component4(): Float {
@@ -385,7 +451,9 @@ public inline operator fun FloatArray.component4(): Float {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component4(): Double {
@@ -396,7 +464,9 @@ public inline operator fun DoubleArray.component4(): Double {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component4(): Boolean {
@@ -407,7 +477,9 @@ public inline operator fun BooleanArray.component4(): Boolean {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component4(): Char {
@@ -418,7 +490,9 @@ public inline operator fun CharArray.component4(): Char {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component5(): T {
@@ -429,7 +503,9 @@ public inline operator fun <T> Array<out T>.component5(): T {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component5(): Byte {
@@ -440,7 +516,9 @@ public inline operator fun ByteArray.component5(): Byte {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component5(): Short {
@@ -451,7 +529,9 @@ public inline operator fun ShortArray.component5(): Short {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component5(): Int {
@@ -462,7 +542,9 @@ public inline operator fun IntArray.component5(): Int {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component5(): Long {
@@ -473,7 +555,9 @@ public inline operator fun LongArray.component5(): Long {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component5(): Float {
@@ -484,7 +568,9 @@ public inline operator fun FloatArray.component5(): Float {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component5(): Double {
@@ -495,7 +581,9 @@ public inline operator fun DoubleArray.component5(): Double {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component5(): Boolean {
@@ -506,7 +594,9 @@ public inline operator fun BooleanArray.component5(): Boolean {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component5(): Char {
@@ -4007,6 +4097,7 @@ public inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boole
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4021,6 +4112,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (index: Int, Byte) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4035,6 +4127,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (index: Int, Short) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4049,6 +4142,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (index: Int, Int) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4063,6 +4157,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (index: Int, Long) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4077,6 +4172,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (index: Int, Float) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4091,6 +4187,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (index: Int, Double) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4105,6 +4202,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (index: Int, Boolean) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4119,6 +4217,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexed
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -4140,6 +4239,7 @@ public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
+@IgnorableReturnValue
 public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
@@ -4240,6 +4340,7 @@ public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
  * 
  * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
     return destination
@@ -4250,6 +4351,7 @@ public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4260,6 +4362,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(dest
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4270,6 +4373,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4280,6 +4384,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4290,6 +4395,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destinati
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4300,6 +4406,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4310,6 +4417,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4320,6 +4428,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(des
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4330,6 +4439,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -4340,6 +4450,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4350,6 +4461,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destina
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4360,6 +4472,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destinatio
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4370,6 +4483,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destinat
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4380,6 +4494,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination:
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4390,6 +4505,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destinatio
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4400,6 +4516,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destinat
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4410,6 +4527,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destin
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -4420,6 +4538,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(dest
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -6176,6 +6295,8 @@ public fun CharArray.shuffle(random: Random): Unit {
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
  * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortBy
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -6186,6 +6307,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selecto
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
  * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortByDescending
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
@@ -7223,6 +7346,7 @@ public expect fun CharArray?.contentToString(): String
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T>
 
 /**
@@ -7242,6 +7366,7 @@ public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -7261,6 +7386,7 @@ public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray
 
 /**
@@ -7280,6 +7406,7 @@ public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray
 
 /**
@@ -7299,6 +7426,7 @@ public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray
 
 /**
@@ -7318,6 +7446,7 @@ public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray
 
 /**
@@ -7337,6 +7466,7 @@ public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray
 
 /**
@@ -7356,6 +7486,7 @@ public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray
 
 /**
@@ -7375,6 +7506,7 @@ public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public expect fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray
 
 /**
@@ -7538,6 +7670,249 @@ public expect fun CharArray.copyOf(newSize: Int): CharArray
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
 public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(newSize: Int, init: (Int) -> T): Array<T> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    @Suppress("UNCHECKED_CAST") return copy as Array<T>
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfByteArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(newSize: Int, init: (Int) -> Byte): ByteArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfShortArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(newSize: Int, init: (Int) -> Short): ShortArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfIntArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(newSize: Int, init: (Int) -> Int): IntArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfLongArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(newSize: Int, init: (Int) -> Long): LongArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfFloatArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(newSize: Int, init: (Int) -> Float): FloatArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfDoubleArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(newSize: Int, init: (Int) -> Double): DoubleArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfBooleanArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(newSize: Int, init: (Int) -> Boolean): BooleanArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfCharArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(newSize: Int, init: (Int) -> Char): CharArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
 
 /**
  * Returns a new array which is a copy of the specified range of the original array.
@@ -8960,6 +9335,7 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8976,6 +9352,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -8992,6 +9369,7 @@ public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9008,6 +9386,7 @@ public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9024,6 +9403,7 @@ public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9040,6 +9420,7 @@ public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9056,6 +9437,7 @@ public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9072,6 +9454,7 @@ public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9088,6 +9471,7 @@ public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateBy
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9104,6 +9488,7 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9120,6 +9505,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateBy
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9136,6 +9522,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9152,6 +9539,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9168,6 +9556,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9184,6 +9573,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9200,6 +9590,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9216,6 +9607,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9232,6 +9624,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9247,6 +9640,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9262,6 +9656,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9277,6 +9672,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9292,6 +9688,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9307,6 +9704,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destin
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9322,6 +9720,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9337,6 +9736,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9352,6 +9752,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9367,6 +9768,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9535,6 +9937,7 @@ public inline fun <V> CharArray.associateWith(valueSelector: (Char) -> V): Map<C
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Array<out K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -9551,6 +9954,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Array<out K>.associateWithT
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Byte, in V>> ByteArray.associateWithTo(destination: M, valueSelector: (Byte) -> V): M {
     for (element in this) {
@@ -9568,6 +9972,7 @@ public inline fun <V, M : MutableMap<in Byte, in V>> ByteArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Short, in V>> ShortArray.associateWithTo(destination: M, valueSelector: (Short) -> V): M {
     for (element in this) {
@@ -9585,6 +9990,7 @@ public inline fun <V, M : MutableMap<in Short, in V>> ShortArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Int, in V>> IntArray.associateWithTo(destination: M, valueSelector: (Int) -> V): M {
     for (element in this) {
@@ -9602,6 +10008,7 @@ public inline fun <V, M : MutableMap<in Int, in V>> IntArray.associateWithTo(des
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Long, in V>> LongArray.associateWithTo(destination: M, valueSelector: (Long) -> V): M {
     for (element in this) {
@@ -9619,6 +10026,7 @@ public inline fun <V, M : MutableMap<in Long, in V>> LongArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Float, in V>> FloatArray.associateWithTo(destination: M, valueSelector: (Float) -> V): M {
     for (element in this) {
@@ -9636,6 +10044,7 @@ public inline fun <V, M : MutableMap<in Float, in V>> FloatArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Double, in V>> DoubleArray.associateWithTo(destination: M, valueSelector: (Double) -> V): M {
     for (element in this) {
@@ -9653,6 +10062,7 @@ public inline fun <V, M : MutableMap<in Double, in V>> DoubleArray.associateWith
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Boolean, in V>> BooleanArray.associateWithTo(destination: M, valueSelector: (Boolean) -> V): M {
     for (element in this) {
@@ -9670,6 +10080,7 @@ public inline fun <V, M : MutableMap<in Boolean, in V>> BooleanArray.associateWi
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Char, in V>> CharArray.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
     for (element in this) {
@@ -9681,6 +10092,7 @@ public inline fun <V, M : MutableMap<in Char, in V>> CharArray.associateWithTo(d
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9691,6 +10103,7 @@ public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destinatio
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9701,6 +10114,7 @@ public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: 
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9711,6 +10125,7 @@ public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9721,6 +10136,7 @@ public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C)
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9731,6 +10147,7 @@ public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: 
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9741,6 +10158,7 @@ public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9751,6 +10169,7 @@ public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destinati
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9761,6 +10180,7 @@ public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destina
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -10378,6 +10798,7 @@ public inline fun <T, R> Array<out T>.flatMapIndexed(transform: (index: Int, T) 
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Iterable<R>): C {
     var index = 0
@@ -10396,6 +10817,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexe
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapIndexedTo(destination: C, transform: (index: Int, Byte) -> Iterable<R>): C {
     var index = 0
@@ -10414,6 +10836,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapIndexedTo(de
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapIndexedTo(destination: C, transform: (index: Int, Short) -> Iterable<R>): C {
     var index = 0
@@ -10432,6 +10855,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapIndexedTo(d
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapIndexedTo(destination: C, transform: (index: Int, Int) -> Iterable<R>): C {
     var index = 0
@@ -10450,6 +10874,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapIndexedTo(des
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapIndexedTo(destination: C, transform: (index: Int, Long) -> Iterable<R>): C {
     var index = 0
@@ -10468,6 +10893,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapIndexedTo(de
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapIndexedTo(destination: C, transform: (index: Int, Float) -> Iterable<R>): C {
     var index = 0
@@ -10486,6 +10912,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapIndexedTo(d
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapIndexedTo(destination: C, transform: (index: Int, Double) -> Iterable<R>): C {
     var index = 0
@@ -10504,6 +10931,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapIndexedTo(
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapIndexedTo(destination: C, transform: (index: Int, Boolean) -> Iterable<R>): C {
     var index = 0
@@ -10522,6 +10950,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapIndexedTo
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapIndexedTo(destination: C, transform: (index: Int, Char) -> Iterable<R>): C {
     var index = 0
@@ -10540,6 +10969,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapIndexedTo(de
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedSequenceTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Sequence<R>): C {
     var index = 0
@@ -10553,6 +10983,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapIndexe
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10564,6 +10995,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(des
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destination: C, transform: (Byte) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10575,6 +11007,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destinati
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destination: C, transform: (Short) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10586,6 +11019,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destinat
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destination: C, transform: (Int) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10597,6 +11031,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destinatio
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destination: C, transform: (Long) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10608,6 +11043,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destinati
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destination: C, transform: (Float) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10619,6 +11055,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destinat
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destination: C, transform: (Double) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10630,6 +11067,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destina
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destination: C, transform: (Boolean) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10641,6 +11079,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destin
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10656,6 +11095,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destinati
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapSequenceTo")
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -10897,6 +11337,7 @@ public inline fun <K, V> CharArray.groupBy(keySelector: (Char) -> K, valueTransf
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10914,6 +11355,7 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Array<out T>.grou
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10931,6 +11373,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Byte>>> ByteArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10948,6 +11391,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Short>>> ShortArray.group
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10965,6 +11409,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Int>>> IntArray.groupByTo
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10982,6 +11427,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Long>>> LongArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -10999,6 +11445,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Float>>> FloatArray.group
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11016,6 +11463,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Double>>> DoubleArray.gro
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11033,6 +11481,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Boolean>>> BooleanArray.g
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11051,6 +11500,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<Char>>> CharArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11069,6 +11519,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Array<out T>.g
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11087,6 +11538,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ByteArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11105,6 +11557,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ShortArray.groupB
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11123,6 +11576,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> IntArray.groupByT
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11141,6 +11595,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> LongArray.groupBy
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11159,6 +11614,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> FloatArray.groupB
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.groupByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11177,6 +11633,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> DoubleArray.group
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.groupByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11195,6 +11652,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> BooleanArray.grou
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -11414,6 +11872,7 @@ public inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index:
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
@@ -11425,6 +11884,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapInde
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
@@ -11438,6 +11898,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (index: Int, Byte) -> R): C {
     var index = 0
     for (item in this)
@@ -11451,6 +11912,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destin
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (index: Int, Short) -> R): C {
     var index = 0
     for (item in this)
@@ -11464,6 +11926,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(desti
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (index: Int, Int) -> R): C {
     var index = 0
     for (item in this)
@@ -11477,6 +11940,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destina
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (index: Int, Long) -> R): C {
     var index = 0
     for (item in this)
@@ -11490,6 +11954,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destin
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (index: Int, Float) -> R): C {
     var index = 0
     for (item in this)
@@ -11503,6 +11968,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(desti
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (index: Int, Double) -> R): C {
     var index = 0
     for (item in this)
@@ -11516,6 +11982,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(dest
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (index: Int, Boolean) -> R): C {
     var index = 0
     for (item in this)
@@ -11529,6 +11996,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(des
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C {
     var index = 0
     for (item in this)
@@ -11550,6 +12018,7 @@ public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): Li
  * Applies the given [transform] function to each element in the original array
  * and appends only the non-null results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
     forEach { element -> transform(element)?.let { destination.add(it) } }
     return destination
@@ -11559,6 +12028,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotN
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11569,6 +12039,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destina
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11579,6 +12050,7 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: 
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11589,6 +12061,7 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination:
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11599,6 +12072,7 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11609,6 +12083,7 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: 
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11619,6 +12094,7 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination:
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11629,6 +12105,7 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11639,6 +12116,7 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destinatio
  * Applies the given [transform] function to each element of the original array
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -11990,22 +12468,33 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.retainAll(other)
+    val otherCollection = other.convertToListIfNotCollection()
+    val set = mutableSetOf<T>()
+    for (e in this) {
+        if (otherCollection.contains(e)) {
+            set.add(e)
+        }
+    }
     return set
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12016,9 +12505,12 @@ public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12029,9 +12521,12 @@ public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12042,9 +12537,12 @@ public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12055,9 +12553,12 @@ public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12068,9 +12569,12 @@ public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12081,9 +12585,12 @@ public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12094,9 +12601,12 @@ public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> 
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12110,17 +12620,28 @@ public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
-    val set = this.toMutableSet()
-    set.removeAll(other)
-    return set
+    val otherCollection = other.convertToListIfNotCollection()
+    val result = mutableSetOf<T>()
+    for (e in this) {
+        if (!otherCollection.contains(e)) {
+            result.add(e)
+        }
+    }
+    return result
 }
 
 /**
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
@@ -12132,6 +12653,9 @@ public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
@@ -12143,6 +12667,9 @@ public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
@@ -12154,6 +12681,9 @@ public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
@@ -12165,6 +12695,9 @@ public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
@@ -12176,6 +12709,9 @@ public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
@@ -12187,6 +12723,9 @@ public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
@@ -12198,6 +12737,9 @@ public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
@@ -12293,6 +12835,9 @@ public fun CharArray.toMutableSet(): MutableSet<Char> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
@@ -12307,6 +12852,9 @@ public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12323,6 +12871,9 @@ public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
@@ -12337,6 +12888,9 @@ public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12353,6 +12907,9 @@ public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
@@ -12367,6 +12924,9 @@ public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12383,6 +12943,9 @@ public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
@@ -12398,6 +12961,9 @@ public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
@@ -12412,6 +12978,9 @@ public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -24478,8 +25047,11 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24500,8 +25072,11 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24525,8 +25100,11 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24550,8 +25128,11 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24575,8 +25156,11 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24600,8 +25184,11 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24625,8 +25212,11 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24650,8 +25240,11 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -24675,8 +25268,11 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0

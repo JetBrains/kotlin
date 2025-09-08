@@ -35,3 +35,7 @@ class GitLabChangesProcessor: DatabaseEntity {
 fun <Self : DatabaseEntity, Target : DatabaseEntity> Self.child_many(
     clazz: Class<Target>, property: KProperty1<Target, Self?>, name: String = property.name
 ): Delegate<Self, MutableCollection<Target>> = TODO() // Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, inline, interfaceDeclaration, nullableType, propertyDeclaration,
+propertyDelegate, reified, setter, starProjection, typeConstraint, typeParameter */

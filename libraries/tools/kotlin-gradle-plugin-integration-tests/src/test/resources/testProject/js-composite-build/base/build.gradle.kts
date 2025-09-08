@@ -18,20 +18,6 @@ tasks.named("browserTest") {
     enabled = false
 }
 
-rootProject.tasks
-    .withType(org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask::class.java)
-    .named("kotlinNpmInstall")
-    .configure {
-        args.addAll(
-            listOf(
-                "--network-concurrency",
-                "1",
-                "--mutex",
-                "network"
-            )
-        )
-    }
-
 dependencies {
     implementation(npm("decamelize", "1.1.1"))
     api(npm("cowsay", "1.6.0"))

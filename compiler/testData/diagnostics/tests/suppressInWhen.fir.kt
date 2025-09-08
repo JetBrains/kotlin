@@ -18,3 +18,6 @@ fun test(arg: Any?) {
 
     val it = @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>) PrivateObjekt
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

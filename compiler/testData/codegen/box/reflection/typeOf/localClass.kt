@@ -1,6 +1,6 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_INLINER: IR
 
 
 import kotlin.reflect.*
@@ -15,8 +15,8 @@ inline fun typeOfLocal(crossinline f: () -> Unit): Pair<Any, KType> {
 
 
 fun box() : String {
-    val (a1, t1) = typeOfLocal { 123 }
-    val (a2, t2) = typeOfLocal { 1234 }
+    val [a1, t1] = typeOfLocal { 123 }
+    val [a2, t2] = typeOfLocal { 1234 }
     if (a1::class != t1.classifier) return "FAIL 1"
     if (a2::class != t2.classifier) return "FAIL 2"
     if (a1::class == a2::class) return "FAIL 3"

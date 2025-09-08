@@ -14,3 +14,5 @@ fun usageFromOnlyContextScope() {
     b.funMember()
     Base().funMember()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext */

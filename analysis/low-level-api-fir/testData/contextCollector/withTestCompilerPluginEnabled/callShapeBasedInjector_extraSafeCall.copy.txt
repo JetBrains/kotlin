@@ -21,7 +21,7 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval df1_toStringSafe: R|kotlin/String?|
+                FirLocalPropertySymbol lval df1_toStringSafe: R|kotlin/String?|
     Element 8
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|

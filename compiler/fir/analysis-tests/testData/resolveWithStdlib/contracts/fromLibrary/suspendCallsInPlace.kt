@@ -15,3 +15,6 @@ suspend fun <Result> callOnceSuspending(block: suspend () -> Result): Result {
         println("some cleanup")
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, stringLiteral, suspend, tryExpression, typeParameter */

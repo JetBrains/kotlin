@@ -4,6 +4,8 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -21,15 +23,22 @@ dependencies {
     compileOnly(libs.intellij.asm)
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(protobufFull())
+    testFixturesCompileOnly(project(":compiler:cli-common"))
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(libs.junit.jupiter.params)
+    testFixturesImplementation(libs.junit4)
+    testFixturesImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesImplementation("org.reflections:reflections:0.10.2")
+
     testCompileOnly(project(":compiler:cli-common"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.junit4)
-    testApi(protobufFull())
-    testApi(kotlinStdlib())
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation("org.reflections:reflections:0.10.2")
@@ -38,12 +47,13 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
-testsJar()
+// test jar is used for ide dependencies (`kotlin-build-common-tests-for-ide` and `kotlin-jps-plugin-tests-for-ide`)
+testsJarToBeUsedAlongWithFixtures()
 
-projectTest(parallel = true)
-
-projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
-    useJUnitPlatform()
+projectTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
+    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false)
 }

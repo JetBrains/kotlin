@@ -46,3 +46,7 @@ fun test6(x: C<in Number?>) {
     x.data.inc()
     y.inc()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, dnnType, functionDeclaration, inProjection, intersectionType,
+isExpression, localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration, smartcast,
+typeParameter */

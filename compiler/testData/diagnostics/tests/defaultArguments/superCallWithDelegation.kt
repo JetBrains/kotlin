@@ -57,3 +57,6 @@ class AB : A(), B {
         return super.baz<!NO_VALUE_FOR_PARAMETER!>()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, nullableType, override, primaryConstructor, propertyDeclaration, superExpression, typeParameter */

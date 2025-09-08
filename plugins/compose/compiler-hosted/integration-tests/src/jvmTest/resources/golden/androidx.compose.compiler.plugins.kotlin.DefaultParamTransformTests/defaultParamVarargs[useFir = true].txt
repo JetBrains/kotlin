@@ -51,7 +51,7 @@ fun Test(%composer: Composer?, %changed: Int) {
 @Composable
 fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(VarargWDefault):Test.kt")
+  sourceInformation(%composer, "C(VarargWDefault)N(values):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 == 0) {
     %composer.startMovableGroup(<>, values.size)
@@ -97,7 +97,7 @@ fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %defa
 @Composable
 fun VarargWContent(values: IntArray?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(VarargWContent)P(1):Test.kt")
+  sourceInformation(%composer, "C(VarargWContent)N(values,content):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 == 0) {
     %composer.startMovableGroup(<>, values.size)

@@ -15,3 +15,5 @@ expect open class Foo : Base
 actual open class Foo : Base() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

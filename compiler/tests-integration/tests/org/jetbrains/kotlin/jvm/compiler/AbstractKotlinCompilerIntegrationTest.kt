@@ -162,7 +162,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             args.add(K2JSCompilerArguments::outputDir.cliArgument)
             args.add(output.path)
             args.add(K2JSCompilerArguments::moduleName.cliArgument)
-            args.add("out")
+            args.add(fileName)
         } else if (compiler is K2JVMCompiler || compiler is KotlinMetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add(K2JVMCompilerArguments::classpath.cliArgument)

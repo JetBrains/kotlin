@@ -99,5 +99,4 @@ fun box() {
 // test.kt:25 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8)
 // test.kt:26 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (8, 19, 8)
 // test.kt:27 $MyInterfaceImplWithBreakpoints.testPropertyInInterfaceImpl (5)
-// test.kt:33 $box (11)
 // test.kt:34 $box (1)

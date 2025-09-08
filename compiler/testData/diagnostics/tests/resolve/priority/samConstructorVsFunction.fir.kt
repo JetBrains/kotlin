@@ -30,3 +30,6 @@ fun test() {
 }
 
 fun <T> consume(t: T) {}
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

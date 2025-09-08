@@ -8,8 +8,10 @@ package org.jetbrains.kotlinx.dataframe.plugin
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getAnnotationWithResolvedArgumentsByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
@@ -105,13 +107,22 @@ fun <T> KotlinTypeFacade.interpret(
         val expectedReturnType = expectedArgument.klass
         val value: Interpreter.Success<Any?>? = when (expectedArgument.lens) {
             is Interpreter.Value -> {
-                extractValue(it.expression, reporter)
+                context(session) {
+                    extractValue(it.expression, reporter)
+                }
             }
 
             is Interpreter.ReturnType -> {
-                (it.expression.resolvedType as? ConeClassLikeType)?.returnType(session)?.let { returnType ->
-                    Interpreter.Success(Marker(returnType))
-                }
+                val type = it.expression.resolvedType as? ConeClassLikeType
+                type
+                    ?.let {
+                        if (type.isSomeFunctionType(session)) {
+                            type.returnType(session)
+                        } else {
+                            type
+                        }
+                    }
+                    ?.let { returnType -> Interpreter.Success(Marker(returnType)) }
             }
 
             is Interpreter.Dsl -> {
@@ -181,6 +192,7 @@ fun <T> KotlinTypeFacade.interpret(
     }
 }
 
+context(session: FirSession)
 private fun KotlinTypeFacade.extractValue(
     expression: FirExpression?,
     reporter: InterpretationErrorReporter,
@@ -346,20 +358,21 @@ private fun List<FirPropertySymbol>.sortPropertiesByOrderAnnotation(sessionConte
     return result
 }
 
-private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): ColumnsResolver {
-    return result.resolvedType.let {
+context(session: FirSession)
+private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPropertyAccessExpression): ColumnsResolver {
+    return propertyAccess.resolvedType.let {
         val column = when (it.classId) {
             Names.DATA_COLUMN_CLASS_ID -> {
                 val type = when (val arg = it.typeArguments.single()) {
                     is ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
                     else -> arg as ConeClassLikeType
                 }
-                simpleColumnOf(f(result), type)
+                simpleColumnOf(propertyAccess.columnName(), type)
             }
             Names.COLUM_GROUP_CLASS_ID -> {
                 val arg = it.typeArguments.single()
-                val path = f(result)
-                SimpleColumnGroup(path, pluginDataFrameSchema(arg).columns())
+                val name = propertyAccess.columnName()
+                SimpleColumnGroup(name, pluginDataFrameSchema(arg).columns())
             }
             else -> return object : ColumnsResolver {
                 override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
@@ -369,7 +382,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
         }
         SingleColumnApproximation(
             ColumnWithPathApproximation(
-                path = ColumnPathApproximation(path(result)),
+                path = ColumnPathApproximation(path(propertyAccess)),
                 column
             )
         )
@@ -443,8 +456,9 @@ private fun SessionContext.shouldBeConvertedToFrameColumn(it: FirPropertySymbol)
 private fun isDataFrame(it: FirPropertySymbol) =
     it.resolvedReturnType.classId == Names.DF_CLASS_ID
 
+context(session: FirSession)
 fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
-    val colName = f(propertyAccessExpression)
+    val colName = propertyAccessExpression.columnName()
     val typeRef = propertyAccessExpression.dispatchReceiver?.resolvedType
     val joinDsl = ClassId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("JoinDsl"))
     if (typeRef?.classId?.equals(joinDsl) == true && colName == "right") {
@@ -463,8 +477,19 @@ fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     }
 }
 
-fun f(propertyAccessExpression: FirPropertyAccessExpression): String {
-    return propertyAccessExpression.calleeReference.resolved!!.name.identifier
+context(session: FirSession)
+fun FirPropertyAccessExpression.columnName(): String {
+    val name = toResolvedCallableSymbol()?.name
+    val columnName =
+        extensionReceiver?.resolvedType?.typeArguments?.getOrNull(0)?.type?.toRegularClassSymbol(session)
+            ?.declaredProperties(session)
+            ?.firstOrNull { it.name == name }
+            ?.let {
+                val expression = it.getAnnotationWithResolvedArgumentsByClassId(Names.COLUMN_NAME_ANNOTATION, session)
+                    ?.argumentMapping?.mapping[Names.COLUMN_NAME_ARGUMENT] as? FirLiteralExpression
+                expression?.value as? String
+            }
+    return columnName ?: calleeReference.resolved!!.name.identifier
 }
 
 internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
@@ -493,7 +518,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
         } else {
             resolvedType to it
         }
-        symbol.resolvedAnnotationsWithClassIds.firstNotNullOfOrNull {
+        symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value

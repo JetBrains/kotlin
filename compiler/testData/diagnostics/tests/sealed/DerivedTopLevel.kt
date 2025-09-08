@@ -9,3 +9,4 @@ fun test() {
     class Local: <!SEALED_SUPERTYPE!>Base<!>()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, nestedClass, sealed */

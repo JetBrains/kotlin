@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 data class Z(val p: String, val k: String)
 
 
@@ -11,7 +12,7 @@ fun create(p: Boolean): Z? {
 }
 
 fun test(p: Boolean): String {
-    val (a, b) = create(p) ?: return "null"
+    val [a, b] = create(p) ?: return "null"
     return a + b
 }
 

@@ -16,20 +16,20 @@ import kotlin.contracts.contract
 // --------------------------------------- Facts ---------------------------------------
 
 data class PersistentTypeStatement(
-    override val variable: RealVariable,
+    override val variable: DataFlowVariable,
     override val upperTypes: PersistentSet<ConeKotlinType>,
     override val lowerTypes: PersistentSet<DfaType>,
 ) : TypeStatement()
 
 class MutableTypeStatement(
-    override val variable: RealVariable,
+    override val variable: DataFlowVariable,
     override val upperTypes: MutableSet<ConeKotlinType> = linkedSetOf(),
     override val lowerTypes: MutableSet<DfaType> = linkedSetOf(),
 ) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------
 
-typealias TypeStatements = Map<RealVariable, TypeStatement>
+typealias TypeStatements = Map<DataFlowVariable, TypeStatement>
 
 // --------------------------------------- DSL ---------------------------------------
 
@@ -49,13 +49,16 @@ infix fun OperationStatement.implies(effect: Statement): Implication = Implicati
 infix fun RealVariable.valueNotEq(symbol: FirBasedSymbol<*>): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.Symbol(symbol)))
 
+infix fun RealVariable.valueNotEq(symbols: List<FirBasedSymbol<*>>): MutableTypeStatement =
+    MutableTypeStatement(this, lowerTypes = symbols.mapTo(mutableSetOf(), DfaType::Symbol))
+
 infix fun RealVariable.valueNotEq(boolean: Boolean): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.BooleanLiteral(boolean)))
 
-infix fun RealVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
+infix fun DataFlowVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type))
 
-infix fun RealVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
+infix fun DataFlowVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(DfaType.Cone(type)))
 
 

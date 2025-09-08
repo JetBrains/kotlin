@@ -33,6 +33,27 @@ fun test_4() {
     test_4()
 }
 
+class MyClass {
+    constructor(x: Boolean) {
+        contract {
+            returns(true) implies (x)
+        }
+    }
+}
+
+fun annotated() {
+    @Anno contract {
+    }
+}
+
+fun parenthesized() {
+    (contract { })
+}
+
+fun labeled() {
+    label@ contract { }
+}
+
 // should not have raw description
 
 fun test_5() {

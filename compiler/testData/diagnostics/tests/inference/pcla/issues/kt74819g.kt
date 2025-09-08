@@ -21,3 +21,6 @@ fun main() {
         optionalFlatMap { listOf("") }
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

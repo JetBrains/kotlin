@@ -15,4 +15,5 @@ public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit|
 }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun x(): R|kotlin/Unit| { LAZY_BLOCK }
+public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun x(): R|kotlin/Unit|
+    [L|Contract description] { LAZY_BLOCK }

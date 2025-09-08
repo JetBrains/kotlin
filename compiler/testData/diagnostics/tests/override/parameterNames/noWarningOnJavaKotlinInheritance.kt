@@ -27,3 +27,5 @@ class BothTraitsSubclass : JavaInterface, KotlinInterface {
         super.foo(someOtherName)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

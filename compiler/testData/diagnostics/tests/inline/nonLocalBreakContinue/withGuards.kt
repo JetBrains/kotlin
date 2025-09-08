@@ -53,3 +53,7 @@ fun test4(x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, break, continue, disjunctionExpression, elvisExpression, equalityExpression,
+forLoop, functionDeclaration, functionalType, guardCondition, inline, integerLiteral, isExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, rangeExpression, whenExpression, whenWithSubject */

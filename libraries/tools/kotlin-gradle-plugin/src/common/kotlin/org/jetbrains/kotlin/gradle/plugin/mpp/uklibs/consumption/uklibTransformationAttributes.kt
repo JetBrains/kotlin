@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption
 
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 
 // Means this is uklib itself or a platform fragment transformed from the uklib
 internal val ResolvedArtifactResult.isFromUklib: Boolean
@@ -27,3 +29,5 @@ internal val uklibStateDecompressed = "decompressed"
 
 internal val uklibViewAttribute = Attribute.of("org.jetbrains.kotlin.uklibView", String::class.java)
 internal val uklibViewAttributeWholeUklib = "whole_uklib"
+
+internal val uklibArtifactType = Uklib.UKLIB_EXTENSION

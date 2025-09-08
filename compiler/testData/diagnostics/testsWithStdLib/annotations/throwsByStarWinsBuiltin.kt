@@ -18,3 +18,5 @@ import x.*
 fun main() {
     Throws().test()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

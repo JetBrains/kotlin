@@ -13,3 +13,6 @@ fun test(ls: Sample?) {
         { <!DEBUG_INFO_SMARTCAST!>ls<!>.foo() } // OK in OI, error in NI
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

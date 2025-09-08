@@ -22,3 +22,6 @@ fun foo(s: Sealed): Int {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, isExpression,
+nestedClass, objectDeclaration, override, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression,
+whenWithSubject */

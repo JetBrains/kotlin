@@ -41,3 +41,7 @@ fun box() : String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, getter, ifExpression,
+incrementDecrementExpression, integerLiteral, multiplicativeExpression, operator, primaryConstructor,
+propertyDeclaration, stringLiteral, thisExpression */

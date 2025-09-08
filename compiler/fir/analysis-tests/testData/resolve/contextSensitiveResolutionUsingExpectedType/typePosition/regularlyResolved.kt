@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
@@ -12,7 +12,11 @@ interface Left {
 }
 
 fun MySealed.getOrElse() = when (this) {
-    is Left -> z
+    is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>Left<!> -> z
     is Right -> y
     else -> ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+intersectionType, isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

@@ -10,3 +10,5 @@ fun test_2(a: Any?) {
     (a as String?)!!
     a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, functionDeclaration, nullableType, smartcast */

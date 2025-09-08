@@ -16,3 +16,6 @@ fun <U : Any> f4(u: U?): Any = <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LH
 fun f5(c: List<*>): Any = <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>c[0]<!>::class
 
 fun f6(j: J): Any = j.platformString()::class
+
+/* GENERATED_FIR_TAGS: classReference, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+nullableType, starProjection, typeConstraint, typeParameter */

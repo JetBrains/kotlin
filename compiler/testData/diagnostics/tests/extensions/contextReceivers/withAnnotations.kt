@@ -39,3 +39,7 @@ val functionalType: @MyAnnotation context(Context) () -> Unit = {}
 val functionalTypeNullable: @MyAnnotation (context(Context) () -> Unit)? = {}
 
 val functionalTypeWithReceiver: @MyAnnotation context(Context) Receiver.() -> Unit = {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+functionalType, getter, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, propertyDeclarationWithContext,
+typeWithContext, typeWithExtension */

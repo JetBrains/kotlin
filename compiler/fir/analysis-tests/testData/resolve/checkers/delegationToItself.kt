@@ -19,3 +19,6 @@ object E : A by E {
 
     override val bar = ""
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inheritanceDelegation, integerLiteral, interfaceDeclaration,
+objectDeclaration, override, propertyDeclaration, stringLiteral, typeAliasDeclaration */

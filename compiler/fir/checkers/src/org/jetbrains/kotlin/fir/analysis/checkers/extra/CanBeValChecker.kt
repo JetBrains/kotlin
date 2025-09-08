@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.util.getChildren
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(data: VariableInitializationInfoData) {
         val isForInitialization = data.graph.kind == ControlFlowGraph.Kind.Class || data.graph.kind == ControlFlowGraph.Kind.File
         val collector = ReassignedVariableCollector(data, isForInitialization).apply { data.graph.traverse(this) }
         val iterator = data.properties.iterator()
@@ -48,7 +49,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
                     symbol.isLateInit -> FirErrors.CAN_BE_VAL_LATEINIT
                     else -> FirErrors.CAN_BE_VAL_DELAYED_INITIALIZATION
                 }
-                reporter.reportOn(source, diagnostic, context)
+                reporter.reportOn(source, diagnostic)
             }
         }
     }
@@ -57,7 +58,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
         private val data: VariableInitializationInfoData,
         private val isForInitialization: Boolean,
     ) : ControlFlowGraphVisitorVoid() {
-        private val declaredIn = mutableMapOf<FirPropertySymbol, ControlFlowGraph>()
+        private val declaredIn = hashMapOf<FirPropertySymbol, ControlFlowGraph>()
         private val reassigned = mutableSetOf<FirPropertySymbol>()
 
         override fun visitNode(node: CFGNode<*>) {}
@@ -70,7 +71,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
             val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
             if (symbol.isVar && symbol.source?.kind !is KtFakeSourceElementKind && symbol in data.properties) {
                 val isReassigned = !symbol.requiresInitialization(isForInitialization) ||
-                        data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true } ||
+                        data.getValue(node).values.any { it[symbol]?.range?.canBeRevisited() == true } ||
                         declaredIn[symbol] != node.owner.nearestNonInPlaceGraph()
                 if (isReassigned) reassigned.add(symbol)
             }

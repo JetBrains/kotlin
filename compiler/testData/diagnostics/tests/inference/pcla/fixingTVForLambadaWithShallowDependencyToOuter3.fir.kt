@@ -31,3 +31,6 @@ fun main() {
         foo(get()) { it.length.toString() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, stringLiteral,
+suspend, typeParameter, typeWithExtension */

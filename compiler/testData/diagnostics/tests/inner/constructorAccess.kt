@@ -31,3 +31,6 @@ class Outer2 {
         Inner()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, primaryConstructor,
+propertyDeclaration */

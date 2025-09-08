@@ -49,7 +49,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
-        return isLocalClass()
+        return toSymbol(session)?.isLocal == true
     }
 
     override fun TypeConstructorMarker.isAnonymous(): Boolean {
@@ -150,7 +150,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
         require(this is ConeCapturedType)
-        return this.captureStatus
+        return this.constructor.captureStatus
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
@@ -182,8 +182,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is ConeCapturedType)
-        if (!this.isMarkedNullable) return this.lowerType
-        return this.lowerType?.makeNullable()
+        if (!this.isMarkedNullable) return this.constructor.lowerType
+        return this.constructor.lowerType?.makeNullable()
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
@@ -446,9 +446,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
     }
 
-    override fun KotlinTypeMarker.isNullableType(): Boolean {
+    override fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean {
         require(this is ConeKotlinType)
-        return canBeNull(session)
+        return canBeNull(session, considerTypeVariableBounds)
+    }
+
+    override fun KotlinTypeMarker.isNullableType(): Boolean {
+        return isNullableType(considerTypeVariableBounds = true)
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
@@ -527,7 +531,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
         val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.MultiField
+        return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
+    }
+
+    private fun TypeConstructorMarker.isMultiFieldValueClassRecursionAware(
+        fields: List<Pair<Name, RigidTypeMarker>>,
+        visited: MutableSet<TypeConstructorMarker>,
+    ): Boolean {
+        if (fields.size > 1) return true
+        val fieldType = fields.singleOrNull()?.second ?: return false
+        if (!visited.add(this)) return false
+
+        val typeConstructor = fieldType.typeConstructor()
+        return !fieldType.isNullableType() && typeConstructor.getValueClassProperties()?.let {
+            typeConstructor.isMultiFieldValueClassRecursionAware(it, visited)
+        } == true
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>? {

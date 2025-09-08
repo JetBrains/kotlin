@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // ISSUE: KT-65584
@@ -38,6 +39,10 @@ internal suspend fun init(
         .flatMapLatest { playable ->
             flowOf(playable).map { Triple(it, playable, queueState.playbackEntity.stationId) }
         }
-        .collect { (likeState, playable, stationId) ->
+        .collect { [likeState, playable, stationId] ->
         }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, crossinline, funInterface, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, primaryConstructor,
+propertyDeclaration, samConversion, suspend, typeParameter */

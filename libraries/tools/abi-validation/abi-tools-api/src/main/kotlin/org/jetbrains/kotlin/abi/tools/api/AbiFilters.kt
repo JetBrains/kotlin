@@ -17,7 +17,7 @@ package org.jetbrains.kotlin.abi.tools.api
  *
  * A declaration passes the inclusion filters if there is no inclusion rules, or it matches any inclusion rule, or at least one of its members (actual for class declaration) matches any inclusion rule.
  *
- * @since 2.1.20
+ * @since 2.2.0
  */
 public class AbiFilters(
     /**

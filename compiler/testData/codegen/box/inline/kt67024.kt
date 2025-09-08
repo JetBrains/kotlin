@@ -1,6 +1,3 @@
-// Should be fixed in WASM as side effect of KT-74392
-// IGNORE_BACKEND: WASM
-
 inline fun <reified T> id(x: T) = x
 
 fun test1(block: (String) -> String = ::id)  = block("O")

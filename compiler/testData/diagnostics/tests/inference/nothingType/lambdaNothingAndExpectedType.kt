@@ -11,3 +11,6 @@ fun test2(f: ((String) -> Int)?) {
 
     select3({ it.length }, f, null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

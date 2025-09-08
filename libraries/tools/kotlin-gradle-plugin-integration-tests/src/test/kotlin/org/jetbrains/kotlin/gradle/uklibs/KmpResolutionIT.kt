@@ -9,11 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.*
-import org.jetbrains.kotlin.gradle.testing.PrettyPrint
-import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.junit.jupiter.api.DisplayName
-import kotlin.String
-import kotlin.collections.Map
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -166,7 +162,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 "foo:transitive-iosarm64:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "artifactType" to "klib",
                             "org.gradle.category" to "library",
                             "org.gradle.jvm.environment" to "non-jvm",
                             "org.gradle.usage" to "kotlin-api",
@@ -189,7 +185,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 "foo:direct-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "artifactType" to "klib",
                             "org.gradle.category" to "library",
                             "org.gradle.jvm.environment" to "non-jvm",
                             "org.gradle.usage" to "kotlin-api",
@@ -208,7 +204,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 "foo:transitive-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "artifactType" to "klib",
                             "org.gradle.category" to "library",
                             "org.gradle.jvm.environment" to "non-jvm",
                             "org.gradle.usage" to "kotlin-api",
@@ -374,7 +370,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 "foo:transitive-iosarm64:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "artifactType" to "klib",
                             "org.gradle.category" to "library",
                             "org.gradle.jvm.environment" to "non-jvm",
                             "org.gradle.usage" to "kotlin-api",
@@ -415,7 +411,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 "foo:transitive-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "artifactType" to "klib",
                             "org.gradle.category" to "library",
                             "org.gradle.jvm.environment" to "non-jvm",
                             "org.gradle.usage" to "kotlin-api",
@@ -822,7 +818,7 @@ class KmpResolutionIT : KGPBaseTest() {
                 "foo:direct-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
                     artifacts = mutableListOf(
                         mutableMapOf(
-                            "artifactType" to "org.jetbrains.kotlin.klib",
+                            "artifactType" to "klib",
                             "org.gradle.category" to "library",
                             "org.gradle.jvm.environment" to "non-jvm",
                             "org.gradle.usage" to "kotlin-api",
@@ -1028,7 +1024,6 @@ class KmpResolutionIT : KGPBaseTest() {
             addKgpToBuildScriptCompilationClasspath()
             transitiveConfiguration()
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     consumedTargetConfiguration()
                 }
@@ -1043,7 +1038,6 @@ class KmpResolutionIT : KGPBaseTest() {
             addPublishedProjectToRepositories(transitiveProducer)
             directConfiguration()
             buildScriptInjection {
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     intermediateSubsetTargetConfiguration()
                     sourceSets.commonMain.get().dependencies {
@@ -1063,7 +1057,6 @@ class KmpResolutionIT : KGPBaseTest() {
             consumerConfiguration()
             buildScriptInjection {
                 project.computeTransformedLibraryChecksum(false)
-                project.enableCrossCompilation()
                 project.applyMultiplatform {
                     consumedTargetConfiguration()
                     sourceSets.commonMain.get().dependencies {

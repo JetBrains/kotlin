@@ -34,3 +34,6 @@ fun test_ann(s: String, arr: Array<String>) {
     @Ann(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>""<!>, x = 1)
     foo()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, vararg */

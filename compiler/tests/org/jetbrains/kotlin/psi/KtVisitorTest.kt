@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.psi
 
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -27,6 +30,51 @@ class KtVisitorTest : KotlinTestWithEnvironment() {
         doTestContextReceiverVisiting("""fun foo(fn: context(String, Int) () -> Unit) {}""")
     }
 
+    fun testHiddenTokensInStringConcatenation() {
+        val expectedComments = listOf("/* Block comment before plus */", "/* Block comment after plus */", "// Line comment")
+
+        val code = """val s = "s1" ${expectedComments[0]} + ${expectedComments[1]} "s2" + ${expectedComments[2]}
+            |"s3"""".trimMargin()
+
+        val actualComments = mutableListOf<String>()
+        var insideStringConcatenation = false
+        var actualWhitespaceCount = 0
+        var actualPlusOperatorCount = 0
+
+        val ktElement = KtPsiFactory(project).createFile(code)
+        ktElement.accept(object : KtTreeVisitorVoid() {
+            override fun visitElement(element: PsiElement) {
+                when (element) {
+                    is KtStringTemplateExpression -> {
+                        insideStringConcatenation = true
+                    }
+                    is KtOperationReferenceExpression -> {
+                        if (element.operationSignTokenType == org.jetbrains.kotlin.lexer.KtTokens.PLUS) {
+                            actualPlusOperatorCount++
+                        }
+                    }
+                    else -> {
+                        super.visitElement(element)
+                    }
+                }
+            }
+
+            override fun visitComment(comment: PsiComment) {
+                actualComments.add(comment.text)
+            }
+
+            override fun visitWhiteSpace(space: PsiWhiteSpace) {
+                if (insideStringConcatenation) {
+                    actualWhitespaceCount++
+                }
+            }
+        })
+
+        assertEquals(expectedComments, actualComments)
+        assertEquals(7, actualWhitespaceCount)
+        assertEquals(2, actualPlusOperatorCount)
+    }
+
     private fun doTestContextReceiverVisiting(code: String) {
         val ktElement = KtPsiFactory(project).createFile(code)
         var visited = false
@@ -46,7 +94,7 @@ class KtVisitorTest : KotlinTestWithEnvironment() {
         }
     }
 
-    override fun createEnvironment(): KotlinCoreEnvironment? {
+    override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
         )

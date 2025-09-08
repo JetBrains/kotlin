@@ -26,3 +26,5 @@ import p.foo
 fun main() {
     foo(12)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, vararg */

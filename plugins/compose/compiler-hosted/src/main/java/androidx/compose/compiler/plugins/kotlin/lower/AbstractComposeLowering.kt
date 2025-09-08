@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -124,21 +126,24 @@ abstract class AbstractComposeLowering(
 
     fun IrType.defaultParameterType(): IrType {
         val type = this
-        val constructorAccessible = !type.isPrimitiveType() &&
-                type.classOrNull?.owner?.primaryConstructor != null
+
         return when {
             type.isPrimitiveType() -> type
-            type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
-                if (type.unboxInlineClass().isPrimitiveType()) {
-                    type
+            type.isInlineClassType() -> {
+                // TODO migrate to more precise constructor accessibility test in k2.4
+                val constructorAccessible = type.classOrNull?.owner?.primaryConstructor != null
+                if (context.platform.isJvm() || constructorAccessible) {
+                    if (type.unboxInlineClass().isPrimitiveType()) {
+                        type
+                    } else {
+                        type.makeNullable()
+                    }
                 } else {
+                    // k/js and k/native: private constructors of value classes can be not accessible.
+                    // Therefore it won't be possible to create a "fake" default argument for calls.
+                    // Making it nullable allows to pass null.
                     type.makeNullable()
                 }
-            } else {
-                // k/js and k/native: private constructors of value classes can be not accessible.
-                // Therefore it won't be possible to create a "fake" default argument for calls.
-                // Making it nullable allows to pass null.
-                type.makeNullable()
             }
             else -> type.makeNullable()
         }
@@ -150,8 +155,7 @@ abstract class AbstractComposeLowering(
                 classifier,
                 isMarkedNullable(),
                 List(arguments.size) { IrStarProjectionImpl },
-                annotations,
-                abbreviation
+                annotations
             )
 
             else -> this
@@ -361,8 +365,16 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.symbols.getBinaryOperator(name, this, paramType)
+    protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
+        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+            .single {
+                it.owner.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(this, paramType)
+                )
+            }
+    }
 
     private fun binaryOperatorCall(
         lhs: IrExpression,
@@ -735,11 +747,13 @@ abstract class AbstractComposeLowering(
     protected fun irBlock(
         type: IrType = context.irBuiltIns.unitType,
         origin: IrStatementOrigin? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
         statements: List<IrStatement>,
     ): IrBlock {
         return IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             type,
             origin,
             statements
@@ -886,7 +900,7 @@ abstract class AbstractComposeLowering(
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = propName
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = this@buildStabilityProp.visibility
         }.also { property ->
             property.parent = parent
             stabilityField.correspondingPropertySymbol = property.symbol
@@ -914,7 +928,7 @@ abstract class AbstractComposeLowering(
             endOffset = this@buildStabilityGetter.endOffset
             name = getterName
             returnType = stabilityField.type
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = this@buildStabilityGetter.visibility
             origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
         }.also { fn ->
             fn.parent = parent
@@ -1241,7 +1255,7 @@ abstract class AbstractComposeLowering(
             startOffset,
             endOffset,
             returnType,
-            symbol as IrSimpleFunctionSymbol,
+            symbol,
             symbol.owner.typeParameters.size
         ).apply {
             arguments[0] = currentComposer
@@ -1628,11 +1642,16 @@ abstract class AbstractComposeLowering(
         val copy = source.deepCopyWithSymbols(parent)
         copy.attributeOwnerId = copy
         copy.isDefaultParamStub = true
-        copy.annotations += listOfNotNull(
+        val newAnnotations = listOfNotNull(
             jvmSynthetic(),
             hiddenFromObjC(),
             hiddenDeprecated("Binary compatibility stub for default parameters")
         )
+        // Remove existing annotations that are overridden by the new ones
+        copy.annotations = copy.annotations.filterNot { annotation ->
+            newAnnotations.any { it.annotationClass?.owner?.classId == annotation.annotationClass?.owner?.classId }
+        }
+        copy.annotations += newAnnotations
         copy.body = null
         return copy
     }
@@ -1682,9 +1701,9 @@ abstract class AbstractComposeLowering(
         return origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
     }
 
-    private fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
+    protected fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
         this is IrSimpleFunction &&
-                (isVirtualFunctionWithDefaultParam != null ||
+                (isVirtualFunctionWithDefaultParam == true ||
                         overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
 }
 

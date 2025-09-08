@@ -9,3 +9,5 @@ import kotlin.contracts.*
 fun emptyContract() {
     <!ERROR_IN_CONTRACT_DESCRIPTION("Error in contract description")!>contract<!> { }
 }
+
+/* GENERATED_FIR_TAGS: contracts, functionDeclaration, lambdaLiteral */

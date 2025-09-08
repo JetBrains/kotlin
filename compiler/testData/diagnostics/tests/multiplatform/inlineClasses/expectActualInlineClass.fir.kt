@@ -29,3 +29,6 @@ actual <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>inline<!> class Foo3
 actual inline class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>NonInlineExpect<!>(val x: Int)
 
 actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_MODIFIERS!>NonInlineActual<!> actual constructor(actual val x: Int)
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

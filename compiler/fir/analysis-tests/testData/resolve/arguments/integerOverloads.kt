@@ -23,3 +23,5 @@ fun main() {
     g(123)
     g(123123123123)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, nullableType */

@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.explicitReceiverIsNotSuperRefe
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -30,18 +33,17 @@ import org.jetbrains.kotlin.name.SpecialNames.ANONYMOUS_FQ_NAME
 object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowSuperCallToJavaInterface)) return
+        if (LanguageFeature.AllowSuperCallToJavaInterface.isEnabled()) return
 
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
-        val classId = symbol?.callableId?.classId ?: return
-        if (classId.isLocal) return
+        val typeSymbol = symbol?.containingClassLookupTag()?.toRegularClassSymbol() ?: return
+        if (typeSymbol.isLocal) return
 
         if (expression.explicitReceiverIsNotSuperReference()) return
 
         val containingDeclaration = context.findClosest<FirRegularClassSymbol>() ?: return
 
         val session = context.session
-        val typeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return
 
         val jvmDefaultMode = session.jvmDefaultModeState
         if (typeSymbol.isInterface &&

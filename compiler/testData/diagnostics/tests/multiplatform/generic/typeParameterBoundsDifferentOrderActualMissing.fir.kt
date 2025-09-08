@@ -11,3 +11,6 @@ interface B
 // FILE: jvm.kt
 
 fun <T> List<T>.foo() where T : B, T : A {}
+
+/* GENERATED_FIR_TAGS: expect, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, typeConstraint,
+typeParameter */

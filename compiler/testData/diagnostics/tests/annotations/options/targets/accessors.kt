@@ -16,3 +16,6 @@ class My(x: Int) {
 
     @base <!WRONG_ANNOTATION_TARGET!>@smartget<!> <!WRONG_ANNOTATION_TARGET!>@smartset<!> fun foo() = y
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, primaryConstructor,
+propertyDeclaration */

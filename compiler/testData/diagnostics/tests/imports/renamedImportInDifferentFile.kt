@@ -22,3 +22,5 @@ interface DependencyAnalyzerDependency : A {
 fun bar(d: DependencyAnalyzerDependency) {
     foo(d)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, propertyDeclaration */

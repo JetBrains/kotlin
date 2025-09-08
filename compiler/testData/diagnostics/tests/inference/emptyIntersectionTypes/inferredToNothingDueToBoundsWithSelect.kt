@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-74999
 // FIR_DUMP
-// FIXATION_LOGS
+// DUMP_INFERENCE_LOGS: FIXATION
 
 interface Traversable {
     fun foo(): String = "fail"
@@ -24,3 +24,6 @@ fun foo(path: Path, e: Entity<*>): String {
     // Tv <: Path
     return select(e.isEqualTo(), path).foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, interfaceDeclaration, nullableType, starProjection,
+stringLiteral, typeConstraint, typeParameter */

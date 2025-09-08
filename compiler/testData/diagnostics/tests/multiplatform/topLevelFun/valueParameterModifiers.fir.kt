@@ -26,3 +26,5 @@ actual inline fun <!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_CROSSINLINE!>f5<!
 actual inline fun f6(s: () -> String) {}
 actual fun <!ACTUAL_WITHOUT_EXPECT!>f7<!>(vararg x: Any) {}
 actual fun <!ACTUAL_WITHOUT_EXPECT!>f8<!>(x: Any) {}
+
+/* GENERATED_FIR_TAGS: actual, crossinline, expect, functionDeclaration, functionalType, inline, noinline, vararg */

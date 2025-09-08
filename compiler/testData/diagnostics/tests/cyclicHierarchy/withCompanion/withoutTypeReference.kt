@@ -17,3 +17,6 @@ open class C {
         override fun m() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nestedClass, objectDeclaration, override,
+propertyDeclaration */

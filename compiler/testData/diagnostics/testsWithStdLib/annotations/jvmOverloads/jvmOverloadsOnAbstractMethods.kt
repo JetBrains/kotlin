@@ -11,3 +11,5 @@ interface T {
 abstract class C {
     <!OVERLOADS_ABSTRACT!>@kotlin.jvm.JvmOverloads<!> abstract fun foo(s: String = "OK")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, stringLiteral */

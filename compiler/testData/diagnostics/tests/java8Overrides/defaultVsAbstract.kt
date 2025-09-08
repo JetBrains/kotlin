@@ -13,3 +13,5 @@ interface IRight {
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class CDerived<!> : ILeft, IRight
 
 abstract <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class ADerived<!> : ILeft, IRight
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration */

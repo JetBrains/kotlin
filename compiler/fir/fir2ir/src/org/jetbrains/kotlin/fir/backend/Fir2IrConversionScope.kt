@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -83,7 +82,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     fun scope(): Scope = scopeStack.last()
 
-    fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction {
+    fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction? {
         // It is safe to access an owner of property symbol here, because this function may be called
         // only from property accessor of corresponding property
         // We inside accessor -> accessor is built -> property is built
@@ -95,7 +94,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
                 property.setter -> return parent as IrSimpleFunction
             }
         }
-        error("Accessor of property ${property.render()} not found on parent stack")
+        return null
     }
 
     fun parentAccessorOfDelegatedPropertyFromStack(propertySymbol: IrLocalDelegatedPropertySymbol): IrSimpleFunction {

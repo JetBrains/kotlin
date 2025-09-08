@@ -12,3 +12,5 @@ fun foo() = a
 package b
 
 object a {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration */

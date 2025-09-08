@@ -2,10 +2,13 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
-// MODULE_KIND: ES
+// JS_MODULE_KIND: ES
+// WITH_STDLIB
 // FILE: esm.kt
 
 package foo
+
+import kotlin.js.Promise
 
 @JsExport
 val value = 10
@@ -32,4 +35,19 @@ object Parent {
 }
 
 @JsExport
+interface AnInterfaceWithCompanion {
+    companion object {
+        val someValue = "OK"
+    }
+}
+
+@JsExport
 fun box(): String = "OK"
+
+@JsExport
+fun asyncList(): Promise<List<Int>> =
+    Promise.resolve(listOf(1, 2))
+
+@JsExport
+fun arrayOfLists(): Array<List<Int>> =
+    arrayOf(listOf(1, 2))

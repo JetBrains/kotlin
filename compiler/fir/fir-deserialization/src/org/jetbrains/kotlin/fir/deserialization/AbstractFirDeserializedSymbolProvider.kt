@@ -75,11 +75,11 @@ abstract class LibraryPathFilter {
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
             val isPathAbsolute = path.isAbsolute
-            val realPath by lazy(LazyThreadSafetyMode.NONE) { path.toRealPath() }
+            val absolutePath by lazy(LazyThreadSafetyMode.NONE) { path.toAbsolutePath().normalize() }
             return libs.any {
                 when {
-                    it.isAbsolute && !isPathAbsolute -> realPath.startsWith(it)
-                    !it.isAbsolute && isPathAbsolute && it.exists() -> path.startsWith(it.toRealPath())
+                    it.isAbsolute && !isPathAbsolute -> absolutePath.startsWith(it.normalize())
+                    !it.isAbsolute && isPathAbsolute -> absolutePath.startsWith(it.toAbsolutePath().normalize())
                     else -> path.startsWith(it)
                 }
             }
@@ -148,9 +148,9 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
 
-    private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, FirDeserializationContext?> =
+    private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, FirNestedTypeAliasDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
-            createValue = { classId, _ -> findAndDeserializeTypeAlias(classId) },
+            createValue = ::findAndDeserializeTypeAlias,
             postCompute = { _, symbol, postProcessor ->
                 if (postProcessor != null && symbol != null) {
                     postProcessor.invoke(symbol)
@@ -212,12 +212,39 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return computePackagePartsInfos(packageFqName)
     }
 
-    private fun findAndDeserializeTypeAlias(classId: ClassId): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
+    /**
+     * The method tries to find a type alias with the provided [classId] and return a null result if the searching is failed.
+     *
+     * The [nestedTypeAliasContext] handles info about nested type aliases deserialization data.
+     * It's not null if only the method is called from a parent's class deserialization that includes deserializing its members.
+     * It allows implementing caching of nested type aliases and avoiding useless searching for top-level type aliases.
+     */
+    private fun findAndDeserializeTypeAlias(
+        classId: ClassId,
+        nestedTypeAliasContext: FirNestedTypeAliasDeserializationContext?
+    ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
+        if (nestedTypeAliasContext != null) {
+            require(classId.isNestedClass)
+            return nestedTypeAliasContext.memberDeserializer.loadTypeAlias(
+                nestedTypeAliasContext.proto,
+                classId,
+                nestedTypeAliasContext.scopeProvider
+            ).symbol to null
+        }
+
+        if (classId.isNestedClass) {
+            // The code below can search only top-level type aliases.
+            // That's why we can drop that search if the provided `classId` is known to be nested.
+            return (null to null)
+        }
+
         return getPackageParts(classId.packageFqName).firstNotNullOfOrNull { part ->
             val ids = part.typeAliasNameIndex[classId.shortClassName]
             if (ids == null || ids.isEmpty()) return@firstNotNullOfOrNull null
             val aliasProto = part.proto.getTypeAlias(ids.single())
-            val postProcessor: DeserializedTypeAliasPostProcessor = { part.context.memberDeserializer.loadTypeAlias(aliasProto, kotlinScopeProvider, it) }
+            val postProcessor: DeserializedTypeAliasPostProcessor = {
+                part.context.memberDeserializer.loadTypeAlias(aliasProto, classId, kotlinScopeProvider, it)
+            }
             FirTypeAliasSymbol(classId) to postProcessor
         } ?: (null to null)
     }
@@ -247,6 +274,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                     sourceElement,
                     origin = defaultDeserializationOrigin,
                     deserializeNestedClass = this::getClass,
+                    deserializeNestedTypeAlias = this::getTypeAlias,
                 )
                 symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
                 symbol to null
@@ -315,16 +343,36 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return classCache.getValue(classId, parentContext)
     }
 
-    private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
-        if (!classId.relativeClassName.isOneSegmentFQN()) return null
+    /**
+     * The method tries to find a type alias with the provided [classId] and return `null` if the searching is failed.
+     * Internally it triggers [typeAliasCache], but perform some optimizations to prevent its polluting by null values.
+     * The [nestedTypeAliasContext] implies that the deserialization is being performed from an outer class.
+     * That's why if it's not null, the passed [classId] should be nested.
+     *
+     *  @see [findAndDeserializeTypeAlias] for more detail.
+     */
+    protected fun getTypeAlias(classId: ClassId, nestedTypeAliasContext: FirNestedTypeAliasDeserializationContext?): FirTypeAliasSymbol? {
+        val parentClassId = classId.outerClassId
+        if (nestedTypeAliasContext != null) {
+            require(parentClassId != null)
+            return typeAliasCache.getValue(classId, nestedTypeAliasContext)
+        }
 
-        // Don't actually query FirCache when we're sure there are no relevant value
-        // It helps to decrease the size of a cache thus leading to better query time
-        val packageFqName = classId.packageFqName
-        packageNamesForNonClassDeclarations?.let { if (packageFqName.asString() !in it) return null }
-        if (classId.shortClassName !in typeAliasesNamesByPackage.getValue(packageFqName)) return null
+        if (parentClassId == null) {
+            // Don't query FirCache when we're sure there is no relevant value
+            // It helps to decrease the size of a cache thus leading to better query time
+            val packageFqName = classId.packageFqName
+            packageNamesForNonClassDeclarations?.let { if (packageFqName.asString() !in it) return null }
+            if (classId.shortClassName !in typeAliasesNamesByPackage.getValue(packageFqName)) return null
+        } else {
+            val alreadyLoadedTypeAlias = typeAliasCache.getValueIfComputed(classId)
+            if (alreadyLoadedTypeAlias != null) return alreadyLoadedTypeAlias
+            // Deserialize the parent class and its child declarations.
+            // Nested type alias with the provided `classId` should be deserialized after the call if it exists
+            getClass(parentClassId, parentContext = null)
+        }
 
-        return typeAliasCache.getValue(classId)
+        return typeAliasCache.getValue(classId, nestedTypeAliasContext)
     }
 
     // ------------------------ SymbolProvider methods ------------------------
@@ -373,6 +421,6 @@ abstract class AbstractFirDeserializedSymbolProvider(
         if (clazz != null && !clazz.isExpect) {
             return clazz
         }
-        return getTypeAlias(classId) ?: clazz
+        return getTypeAlias(classId, nestedTypeAliasContext = null) ?: clazz
     }
 }

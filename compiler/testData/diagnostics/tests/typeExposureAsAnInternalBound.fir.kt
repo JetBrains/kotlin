@@ -15,3 +15,4 @@ internal open class Bar
 fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING!>Box<Unit, Bar><!>> bar(x: T?) = x
 fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND!>Box<Bar, Foo><!>> baz(x: T?) = x
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

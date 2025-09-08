@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 class Foo<T : Any> {
     fun doSmthng(arg: T) {}
@@ -17,7 +16,7 @@ fun main(arg: Any) {
         this.a = 57
         this.<!ILLEGAL_SELECTOR, VARIABLE_EXPECTED!>(a)<!> = 57
         a = x
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a)<!> = x
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a)<!> = x
         a.<!FUNCTION_CALL_EXPECTED, VARIABLE_EXPECTED!>hashCode<!> = 99
         if (arg is String) {
             a = arg
@@ -25,3 +24,7 @@ fun main(arg: Any) {
     }
     println(value.a?.<!NONE_APPLICABLE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, ifExpression, integerLiteral,
+intersectionType, isExpression, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+rangeExpression, safeCall, smartcast, stringLiteral, thisExpression, typeConstraint, typeParameter, typeWithExtension */

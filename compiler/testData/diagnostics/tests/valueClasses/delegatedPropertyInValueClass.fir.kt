@@ -34,3 +34,6 @@ value class Z(val data: Int) {
     val testValBySingleton by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>ValObject<!>
     var testVarBySingleton by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>VarObject<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter, value */

@@ -3,6 +3,9 @@ description = "Kotlin Assignment Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -11,23 +14,24 @@ dependencies {
     embedded(project(":kotlin-assignment-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-assignment-compiler-plugin.cli")) { isTransitive = false }
 
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":kotlin-assignment-compiler-plugin.cli"))
-    testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":kotlin-assignment-compiler-plugin.cli"))
+    testFixturesImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
-    testApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testImplementation(project(":kotlin-reflect"))
+    testFixturesImplementation(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(toolsJar())
 
-    testApi(intellijCore())
+    testFixturesApi(intellijCore())
 }
 
 optInToExperimentalCompilerApi()
@@ -35,8 +39,10 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { none() }
     "test" {
-        projectDefault()
         generatedTestDir()
+    }
+    "testFixtures" {
+        projectDefault()
     }
 }
 
@@ -47,8 +53,16 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testData(project.isolated, "testData")
+
+    testGenerator("org.jetbrains.kotlin.assignment.plugin.TestGeneratorKt")
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }

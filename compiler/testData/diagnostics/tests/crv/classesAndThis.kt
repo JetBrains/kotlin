@@ -56,3 +56,8 @@ fun main() {
     A()
     A().foo("x")
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, asExpression, classDeclaration,
+classReference, collectionLiteral, companionObject, disjunctionExpression, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, inheritanceDelegation, integerLiteral, interfaceDeclaration, nullableType,
+objectDeclaration, operator, override, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, thisExpression */

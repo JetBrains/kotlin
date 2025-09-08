@@ -21,3 +21,6 @@ fun foo() = flow {
     }
     emit(0)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, functionalType, in, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, out, suspend, typeParameter, typeWithExtension */

@@ -14,3 +14,7 @@ open class Super {
 
 class Sub1(val prop1: String) : Super()
 class Sub2(val prop2: Int) : Super()
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, comparisonExpression, functionDeclaration, guardCondition,
+integerLiteral, isExpression, primaryConstructor, propertyDeclaration, smartcast, thisExpression, whenExpression,
+whenWithSubject */

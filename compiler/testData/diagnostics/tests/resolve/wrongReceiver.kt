@@ -19,3 +19,6 @@ fun String.test() {
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extFun<!>()
     "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extFun<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

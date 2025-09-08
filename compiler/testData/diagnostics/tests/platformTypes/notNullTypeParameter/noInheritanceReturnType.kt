@@ -24,3 +24,5 @@ fun test() {
     A.create().bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
     A<String?>().bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType, safeCall */

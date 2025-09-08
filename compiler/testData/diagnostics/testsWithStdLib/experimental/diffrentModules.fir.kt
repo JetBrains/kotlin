@@ -16,3 +16,6 @@ fun test(d: DataClass) {
     val (<!OPT_IN_USAGE_ERROR!>x<!>) = d
     val c = d.<!OPT_IN_USAGE_ERROR!>component1<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetProperty, classDeclaration, data,
+destructuringDeclaration, functionDeclaration, localProperty, primaryConstructor, propertyDeclaration */

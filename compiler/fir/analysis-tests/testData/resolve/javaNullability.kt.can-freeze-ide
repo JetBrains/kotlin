@@ -37,3 +37,6 @@ class Example {
             .let { it }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+lambdaLiteral */

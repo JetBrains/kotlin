@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parcelize.ParcelizeCommandLineProcessor.Companion.COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.parcelize.fir.FirParcelizeExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -55,6 +56,8 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
             configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
         )
     }
+
+    override val pluginId: String get() = COMPILER_PLUGIN_ID
 
     override val supportsK2: Boolean
         get() = true

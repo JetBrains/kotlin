@@ -12,3 +12,6 @@ fun test() {
 
 // from standard library
 fun <T> arrayListOf(vararg values: T) : MutableList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, intersectionType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, vararg */

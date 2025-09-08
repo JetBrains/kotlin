@@ -10,13 +10,11 @@ KaFunctionType:
   hasReceiver: false
   isReflectType: false
   isSuspend: false
-  nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -25,6 +23,9 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   parameters: [
     KaBaseFunctionValueParameter [name: null, type: kotlin/String]
@@ -38,7 +39,6 @@ KaFunctionType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -47,11 +47,13 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/Int
-          nullability: NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Int
@@ -60,6 +62,9 @@ KaFunctionType:
           ]
           symbol: KaNamedClassSymbol(kotlin/Int)
           typeArguments: []
+          isMarkedNullable: true
+          isNullable: true
+          hasFlexibleNullability: false
       ]
   ]
   receiverType: null
@@ -67,7 +72,6 @@ KaFunctionType:
     abbreviation: null
     annotations: []
     classId: kotlin/Int
-    nullability: NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: Int
@@ -76,13 +80,15 @@ KaFunctionType:
     ]
     symbol: KaNamedClassSymbol(kotlin/Int)
     typeArguments: []
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: String
@@ -91,11 +97,13 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
     KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/Int
-      nullability: NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Int
@@ -104,4 +112,10 @@ KaFunctionType:
       ]
       symbol: KaNamedClassSymbol(kotlin/Int)
       typeArguments: []
+      isMarkedNullable: true
+      isNullable: true
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

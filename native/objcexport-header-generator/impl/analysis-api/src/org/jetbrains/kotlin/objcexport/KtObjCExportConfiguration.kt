@@ -22,5 +22,7 @@ data class KtObjCExportConfiguration(
      * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamingHelper.canBeSwiftInner]
      */
     val objcGenerics: Boolean = true,
+
+    val objcExportBlockExplicitParameterNames: Boolean = true,
 )
 

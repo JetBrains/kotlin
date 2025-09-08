@@ -317,6 +317,92 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MustUseReturnValue {
+    @Test
+    public void testAllFilesPresentInMustUseReturnValue() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueFullEnabled.kt")
+    public void testMustUseReturnValueFullEnabled() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueFullEnabledFromLibrary.kt")
+    public void testMustUseReturnValueFullEnabledFromLibrary() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueFullEnabledFromLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueHalfEnabled.kt")
+    public void testMustUseReturnValueHalfEnabled() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueHalfEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueHalfEnabledFromLibrary.kt")
+    public void testMustUseReturnValueHalfEnabledFromLibrary() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/mustUseReturnValue/mustUseReturnValueHalfEnabledFromLibrary.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Redeclaration {
+    @Test
+    public void testAllFilesPresentInRedeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaJavaKotlin.kt")
+    public void testClassRedeclarationJavaJavaKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaJavaKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaKotlin.kt")
+    public void testClassRedeclarationJavaKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaKotlinKotlin.kt")
+    public void testClassRedeclarationJavaKotlinKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaKotlinKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlin.kt")
+    public void testClassRedeclarationKotlinKotlinKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationKotlinKotlinKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclaration.kt")
+    public void testFunctionRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/functionRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("multiModuleClassRedeclaration.kt")
+    public void testMultiModuleClassRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/multiModuleClassRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyRedeclaration.kt")
+    public void testPropertyRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/propertyRedeclaration.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")
   public class Suppression {
@@ -365,6 +451,22 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     @TestMetadata("globalWarningSuppression.kt")
     public void testGlobalWarningSuppression() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/globalWarningSuppression.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Wasm {
+    @Test
+    public void testAllFilesPresentInWasm() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("Cloneable.kt")
+    public void testCloneable() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm/Cloneable.kt");
     }
   }
 

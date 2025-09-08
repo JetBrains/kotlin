@@ -16,3 +16,6 @@ class Derived2 : Derived() {
         return super.<!ABSTRACT_SUPER_CALL!>check<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

@@ -8,3 +8,5 @@ fun foo(x: List<String>) =
         addAll(flatMap { listOf(2) })
         addAll(flatMap { x })
     }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral */

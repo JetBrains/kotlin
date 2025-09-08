@@ -30,3 +30,6 @@ public class C extends B {}
 fun box(): String {
     return C().f
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+propertyDeclaration, stringLiteral */

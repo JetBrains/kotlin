@@ -13,3 +13,6 @@ interface B {
 fun <T> test(x: T) where T : B, T : A {
     x.foo().checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, lambdaLiteral, nullableType, typeConstraint, typeParameter, typeWithExtension */

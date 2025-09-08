@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.*
 
 internal object EmptyIntersectionTypeChecker {
-    fun computeEmptyIntersectionEmptiness(
-        context: TypeSystemInferenceExtensionContext,
-        types: Collection<KotlinTypeMarker>
-    ): EmptyIntersectionTypeInfo? = with(context) {
+    context(c: TypeSystemInferenceExtensionContext)
+    fun computeEmptyIntersectionEmptiness(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? {
         if (types.isEmpty()) return null
 
         @Suppress("NAME_SHADOWING")
@@ -52,16 +50,15 @@ internal object EmptyIntersectionTypeChecker {
         return possibleEmptyIntersectionTypeInfo
     }
 
-    private fun TypeSystemInferenceExtensionContext.computeByHavingCommonSubtype(
-        first: KotlinTypeMarker, second: KotlinTypeMarker
-    ): EmptyIntersectionTypeInfo? {
+    context(c: TypeSystemInferenceExtensionContext)
+    private fun computeByHavingCommonSubtype(first: KotlinTypeMarker, second: KotlinTypeMarker): EmptyIntersectionTypeInfo? {
         fun extractIntersectionComponentsIfNeeded(type: KotlinTypeMarker) =
             if (type.typeConstructor() is IntersectionTypeConstructorMarker) {
                 type.typeConstructor().supertypes().toList()
             } else listOf(type)
 
         val expandedTypes = extractIntersectionComponentsIfNeeded(first) + extractIntersectionComponentsIfNeeded(second)
-        val typeCheckerState by lazy { newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true) }
+        val typeCheckerState by lazy { c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true) }
         var possibleEmptyIntersectionKind: EmptyIntersectionTypeInfo? = null
 
         for (i in expandedTypes.indices) {
@@ -78,7 +75,7 @@ internal object EmptyIntersectionTypeChecker {
                 when {
                     !mayCauseEmptyIntersection(secondType) -> {
                     }
-                    areEqualTypeConstructors(firstTypeConstructor, secondTypeConstructor) -> {
+                    c.areEqualTypeConstructors(firstTypeConstructor, secondTypeConstructor) -> {
                     }
                     firstType.lowerBoundIfFlexible().isSubtypeOfIgnoringArguments(typeCheckerState, secondTypeConstructor) ||
                             secondType.lowerBoundIfFlexible().isSubtypeOfIgnoringArguments(typeCheckerState, firstTypeConstructor) -> {
@@ -108,7 +105,8 @@ internal object EmptyIntersectionTypeChecker {
         typeCheckerState, this, otherConstructorMarker
     ).isNotEmpty()
 
-    private fun TypeSystemInferenceExtensionContext.mayCauseEmptyIntersection(type: KotlinTypeMarker): Boolean {
+    context(context: TypeSystemInferenceExtensionContext)
+    private fun mayCauseEmptyIntersection(type: KotlinTypeMarker): Boolean {
         if (type.lowerBoundIfFlexible().isStubType() || type.isError()) {
             return false
         }

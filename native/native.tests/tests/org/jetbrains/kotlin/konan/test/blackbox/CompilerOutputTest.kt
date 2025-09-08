@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.cli.AbstractCliTest
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFrameworkCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
@@ -295,47 +292,55 @@ class FirCompilerOutputTest : CompilerOutputTestBase() {
 
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
-        doTestPreReleaseKotlin(
-            rootDir = rootDir,
-            libraryOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature")
-        ) { compilerOutput ->
-            compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
-        }
+        val poisonedLibrary = compileLibrary(
+            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            source = rootDir.resolve("poisonedLibrary"),
+            freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
+        ).assertSuccess().resultingArtifact
+
+        val library = compileLibrary(
+            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            source = rootDir.resolve("library"),
+        ).assertSuccess().resultingArtifact
+
+        val compilationResult = compileLibrary(
+            testRunSettings,
+            source = rootDir.resolve("source.kt"),
+            dependencies = listOf(poisonedLibrary, library)
+        ).toOutput()
+
+        KotlinTestUtils.assertEqualsToFile(
+            rootDir.resolve("output.fir.txt"),
+            compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        )
     }
-}
 
-internal fun TestCompilationResult<*>.toOutput(): String {
-    check(this is TestCompilationResult.ImmediateResult<*>) { this }
-    val loggedData = this.loggedData
-    check(loggedData is LoggedData.CompilationToolCall) { loggedData::class }
-    return normalizeOutput(loggedData.toolOutput, loggedData.exitCode)
-}
+    @Test
+    fun testReleaseCompilerWithoutUsageOfPreReleaseFeature() {
+        val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerWithoutUsageOfPreReleaseFeature")
 
-private fun normalizeOutput(output: String, exitCode: ExitCode): String {
-    val dir = "native/native.tests/testData/compilerOutput/"
-    return AbstractCliTest.getNormalizedCompilerOutput(
-        output,
-        exitCode,
-        dir,
-        dir
-    )
-}
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
-internal fun AbstractNativeSimpleTest.compileLibrary(
-    settings: Settings,
-    source: File,
-    freeCompilerArgs: List<String> = emptyList(),
-    dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
-    packed: Boolean = true,
-): TestCompilationResult<out TestCompilationArtifact.KLIB> {
-    val testCompilerArgs = if (packed) TestCompilerArgs(freeCompilerArgs) else TestCompilerArgs(freeCompilerArgs + "-nopack")
-    val testCase = generateTestCaseWithSingleModule(source, testCompilerArgs)
-    val compilation = LibraryCompilation(
-        settings = settings,
-        freeCompilerArgs = testCase.freeCompilerArgs,
-        sourceModules = testCase.modules,
-        dependencies = dependencies.map { it.asLibraryDependency() },
-        expectedArtifact = getLibraryArtifact(testCase, buildDir, packed)
-    )
-    return compilation.result
+        val poisonedLibrary = compileLibrary(
+            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            source = rootDir.resolve("poisonedLibrary"),
+            freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
+        ).assertSuccess().resultingArtifact
+
+        val library = compileLibrary(
+            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            source = rootDir.resolve("library"),
+        ).assertSuccess().resultingArtifact
+
+        val compilationResult = compileLibrary(
+            testRunSettings,
+            source = rootDir.resolve("source.kt"),
+            dependencies = listOf(poisonedLibrary, library)
+        ).toOutput()
+
+        KotlinTestUtils.assertEqualsToFile(
+            rootDir.resolve("output.fir.txt"),
+            compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        )
+    }
 }

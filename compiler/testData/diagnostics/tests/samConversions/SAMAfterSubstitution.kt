@@ -17,3 +17,5 @@ fun test(j: J<Runnable>, r: Runnable) {
     j.foo({}, r)
     j.foo({}, {})
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, lambdaLiteral, samConversion */

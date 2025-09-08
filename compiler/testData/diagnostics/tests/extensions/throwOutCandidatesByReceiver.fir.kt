@@ -20,8 +20,8 @@ fun Int.foo() {}
 fun test3(s: String?) {
     "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
     s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
-    "".foo(<!TOO_MANY_ARGUMENTS!>1<!>)
-    s.foo(<!TOO_MANY_ARGUMENTS!>"a"<!>)
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>(1)
+    s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>("a")
 }
 
 interface A
@@ -41,7 +41,7 @@ fun test5() {
 fun <R: Any> R?.sure() : R = this!!
 
 fun <T> test6(l: List<T>?) {
-    l.<!INAPPLICABLE_CANDIDATE!>sure<!><<!UPPER_BOUND_VIOLATED!>T<!>>()
+    l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>sure<!><T>()
 }
 
 
@@ -54,3 +54,6 @@ fun test7(l: List<String?>) {
 fun test8(l: List<Any>?) {
     l.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>b<!>()
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, interfaceDeclaration, nullableType, stringLiteral, thisExpression, typeConstraint, typeParameter */

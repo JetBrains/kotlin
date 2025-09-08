@@ -3,3 +3,4 @@ text: {
         it.length
     }
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

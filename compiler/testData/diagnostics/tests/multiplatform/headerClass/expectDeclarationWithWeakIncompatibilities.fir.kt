@@ -27,3 +27,6 @@ fun <!ACTUAL_MISSING!>foo2<!>(): Int = 0
 actual class <!CLASSIFIER_REDECLARATION, EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>Foo3<!>
 
 class <!ACTUAL_MISSING, CLASSIFIER_REDECLARATION!>Foo3<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+propertyDeclaration, stringLiteral */

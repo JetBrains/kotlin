@@ -56,3 +56,5 @@ fun test3() {
     inst.a()
     inst.B()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

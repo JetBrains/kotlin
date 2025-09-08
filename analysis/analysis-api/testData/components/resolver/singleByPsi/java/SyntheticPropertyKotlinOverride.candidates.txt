@@ -1,0 +1,267 @@
+<caret_1>:
+  KtNameReferenceExpression(268,277): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_2>:
+  KtNameReferenceExpression(295,304): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Write:
+          value = 1
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_3>:
+  KtNameReferenceExpression(325,334): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_4>:
+  KtNameReferenceExpression(356,365): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_5>:
+  KtNameReferenceExpression(386,395): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Write:
+          value = --
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_6>:
+  KtNameReferenceExpression(400,409): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: KotlinClass
+              visibility: PUBLIC
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_7>:
+  KtNameReferenceExpression(507,516): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaSmartCastedReceiverValue:
+            original = KaExplicitReceiverValue:
+              expression = javaClass
+              isSafeNavigation = false
+              type = JavaClass
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_8>:
+  KtNameReferenceExpression(536,545): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaSmartCastedReceiverValue:
+            original = KaExplicitReceiverValue:
+              expression = javaClass
+              isSafeNavigation = false
+              type = JavaClass
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Write:
+          value = 1
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_9>:
+  KtNameReferenceExpression(568,577): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_10>:
+  KtNameReferenceExpression(601,610): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+      isInBestCandidates = true
+
+<caret_11>:
+  KtNameReferenceExpression(633,642): 'something'
+    KaApplicableCallCandidateInfo:
+      candidate = KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass
+            isSafeNavigation = false
+            type = KotlinClass
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = something
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = var something: kotlin.Int
+            contextParameters = []
+            callableId = /KotlinClass.something
+        simpleAccess = Write:
+          value = --
+        typeArgumentsMapping = {}
+      isInBestCandidates = true

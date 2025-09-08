@@ -21,3 +21,6 @@ class C3 : I {
 class C4 : I {
     context(String, Float) override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+override */

@@ -8,3 +8,6 @@ fun test() : Int {
     }
     return 1
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration */

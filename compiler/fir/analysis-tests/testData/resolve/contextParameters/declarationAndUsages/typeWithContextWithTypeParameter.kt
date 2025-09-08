@@ -13,3 +13,6 @@ fun usage() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, getter, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, typeParameter, typeWithContext */

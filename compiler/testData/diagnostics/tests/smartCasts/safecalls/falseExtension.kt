@@ -6,3 +6,6 @@ fun calc(x: List<String>?): Int {
     // Here we should have smart cast because of x!!, despite of KT-7204 fixed
     return <!DEBUG_INFO_SMARTCAST!>x<!>.size
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, nullableType, smartcast,
+stringLiteral */

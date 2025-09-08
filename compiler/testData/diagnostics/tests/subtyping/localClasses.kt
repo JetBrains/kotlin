@@ -17,3 +17,6 @@ fun test() {
     var x = foo(1)
     x = <!TYPE_MISMATCH!>foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, localClass,
+localProperty, propertyDeclaration */

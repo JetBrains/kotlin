@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
+import org.jetbrains.sir.printer.SirPrinter
 
 abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -36,12 +36,13 @@ abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
     }
 }
 
-private fun SirDeclaration.print(into: SirModule): String = SirAsSwiftSourcesPrinter.print(
-    module = into.also {
+private fun SirDeclaration.print(into: SirModule): String = SirPrinter(
+    stableDeclarationsOrder = true,
+    renderDocComments = false,
+).print(
+    into.also {
         val parent = parent as? SirMutableDeclarationContainer
             ?: error("top level declaration can contain only module or extension to package as a parent")
         parent.addChild { this }
-    },
-    stableDeclarationsOrder = true,
-    renderDocComments = false,
-)
+    }
+).swiftSource.joinToString(separator = "\n")

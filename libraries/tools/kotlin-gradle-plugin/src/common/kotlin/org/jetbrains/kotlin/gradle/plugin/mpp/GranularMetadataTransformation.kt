@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.resolveCompilationClasspathForConsumer
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordinates
@@ -102,15 +103,14 @@ internal sealed class MetadataDependencyResolution(
 internal class GranularMetadataTransformation(
     val params: Params,
     val parentSourceSetVisibilityProvider: ParentSourceSetVisibilityProvider,
-    val kotlinToolingDiagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
 ) {
     private val logger = Logging.getLogger("GranularMetadataTransformation[${params.sourceSetName}]")
 
-    class Params(
+    class Params private constructor(
         val build: CurrentBuildIdentifier,
         val sourceSetName: String,
         val resolvedMetadataConfiguration: LazyResolvedConfiguration,
-        val sourceSetVisibilityProvider: SourceSetVisibilityProvider,
+        val dependingPlatformCompilations: List<PlatformCompilationData>,
         val projectStructureMetadataExtractorFactory: IKotlinProjectStructureMetadataExtractorFactory,
         val projectData: Map<String, ProjectData>,
         val platformCompilationSourceSets: Set<String>,
@@ -128,7 +128,7 @@ internal class GranularMetadataTransformation(
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
-            sourceSetVisibilityProvider = SourceSetVisibilityProvider(project),
+            dependingPlatformCompilations = project.allPlatformCompilationData.filter { kotlinSourceSet.name in it.allSourceSets },
             projectStructureMetadataExtractorFactory =
                 if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) project.kotlinProjectStructureMetadataExtractorFactory
                 else project.kotlinMppDependencyProjectStructureMetadataExtractorFactoryDeprecated,
@@ -345,9 +345,9 @@ internal class GranularMetadataTransformation(
 
         val isResolvedToProject = moduleId in params.build
 
-        val sourceSetVisibility = params.sourceSetVisibilityProvider.getVisibleSourceSets(
-            params.sourceSetName,
+        val sourceSetVisibility = SourceSetVisibilityProvider().getVisibleSourceSets(
             dependency,
+            params.dependingPlatformCompilations,
             projectStructureMetadata,
             isResolvedToProject,
             resolveWithLenientPSMResolutionScheme = params.kmpResolutionStrategy == KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
@@ -601,3 +601,26 @@ private val AttributeContainer.containsCompositeMetadataJarAttributes: Boolean
         val platformType = keySet().find { it.name == KotlinPlatformType.attribute.name } ?: return false
         return getAttribute(platformType).toString() == KotlinPlatformType.common.name
     }
+
+private val Project.allPlatformCompilationData: List<PlatformCompilationData> by projectStoredProperty {
+    collectAllPlatformCompilationData()
+}
+
+private fun Project.collectAllPlatformCompilationData(): List<PlatformCompilationData> {
+    val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyList()
+    return multiplatformExtension
+        .targets
+        .filter { it.platformType != KotlinPlatformType.common }
+        .flatMap { target -> target.compilations.map { it.toPlatformCompilationData() } }
+}
+
+private fun KotlinCompilation<*>.toPlatformCompilationData() = PlatformCompilationData(
+    allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
+    resolvedDependenciesConfiguration = LazyResolvedConfiguration(internal.configurations.compileDependencyConfiguration),
+    hostSpecificMetadataConfiguration = internal
+        .configurations
+        .hostSpecificMetadataConfiguration
+        ?.let(::LazyResolvedConfiguration),
+    compilationName = disambiguatedName,
+    targetName = target.targetName,
+)

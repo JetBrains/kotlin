@@ -8,3 +8,5 @@ public interface XYZ<X extends Y, Y extends Z, Z extends Y> {
 // FILE: main.kt
 
 fun main(xyz: XYZ<*, *, *>) = xyz.foo()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, starProjection */

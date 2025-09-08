@@ -12,4 +12,4 @@ import org.jetbrains.kotlin.config.LanguageFeature
  */
 @Target(AnnotationTarget.FIELD)
 @Repeatable
-annotation class Disables(val feature: LanguageFeature)
+annotation class Disables(val feature: LanguageFeature, val ifValueIs: String = "")

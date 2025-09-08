@@ -21,7 +21,7 @@ object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerK
     override fun check(typeRef: FirResolvedTypeRef) {
         val source = typeRef.source
         if (source?.kind is KtFakeSourceElementKind) return
-        val classSymbol = typeRef.coneType.toRegularClassSymbol(context.session) ?: return
+        val classSymbol = typeRef.coneType.toRegularClassSymbol() ?: return
         if (!classSymbol.isOptionalAnnotationClass(context.session)) return
 
         if (!context.session.moduleData.isCommon) {

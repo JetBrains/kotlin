@@ -17,3 +17,5 @@ public class Foo {
 package b
 
 import a.Foo.bar
+
+/* GENERATED_FIR_TAGS:  */

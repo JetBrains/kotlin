@@ -3,7 +3,6 @@ KaUsualClassType:
     abbreviation: null
     annotations: []
     classId: expansion/ListAlias
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: ListAlias
@@ -14,7 +13,6 @@ KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/SetAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: SetAlias
@@ -25,7 +23,6 @@ KaUsualClassType:
                         abbreviation: null
                         annotations: []
                         classId: expansion/StringAlias
-                        nullability: NON_NULLABLE
                         qualifiers: [
                           KaResolvedClassTypeQualifier:
                             name: StringAlias
@@ -34,9 +31,11 @@ KaUsualClassType:
                         ]
                         symbol: KaTypeAliasSymbol(expansion/StringAlias)
                         typeArguments: []
+                        isMarkedNullable: false
+                        isNullable: false
+                        hasFlexibleNullability: false
                       annotations: []
                       classId: kotlin/String
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: String
@@ -45,6 +44,9 @@ KaUsualClassType:
                       ]
                       symbol: KaNamedClassSymbol(kotlin/String)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                   ]
               ]
               symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -54,7 +56,6 @@ KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/StringAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: StringAlias
@@ -63,9 +64,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/StringAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/String
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: String
@@ -74,10 +77,15 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/collections/Set
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Set
@@ -88,7 +96,6 @@ KaUsualClassType:
                       abbreviation: null
                       annotations: []
                       classId: expansion/StringAlias
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: StringAlias
@@ -97,9 +104,11 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(expansion/StringAlias)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     annotations: []
                     classId: kotlin/String
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: String
@@ -108,6 +117,9 @@ KaUsualClassType:
                     ]
                     symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                 ]
             ]
             symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -117,7 +129,6 @@ KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/StringAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: StringAlias
@@ -126,9 +137,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: String
@@ -137,7 +150,13 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
     ]
     symbol: KaTypeAliasSymbol(expansion/ListAlias)
@@ -147,7 +166,6 @@ KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: expansion/SetAlias
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: SetAlias
@@ -158,7 +176,6 @@ KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/StringAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: StringAlias
@@ -167,9 +184,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/StringAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/String
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: String
@@ -178,6 +197,9 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
           ]
           symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -187,7 +209,6 @@ KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: expansion/StringAlias
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: StringAlias
@@ -196,9 +217,11 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/String
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -207,10 +230,15 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         annotations: []
         classId: kotlin/collections/Set
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: Set
@@ -221,7 +249,6 @@ KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/StringAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: StringAlias
@@ -230,9 +257,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: String
@@ -241,6 +270,9 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -250,7 +282,6 @@ KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/StringAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: StringAlias
@@ -259,9 +290,11 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/StringAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/String
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: String
@@ -270,11 +303,19 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
     ]
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   annotations: []
   classId: kotlin/collections/List
-  nullability: NON_NULLABLE
   qualifiers: [
     KaResolvedClassTypeQualifier:
       name: List
@@ -285,7 +326,6 @@ KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: expansion/SetAlias
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: SetAlias
@@ -296,7 +336,6 @@ KaUsualClassType:
                       abbreviation: null
                       annotations: []
                       classId: expansion/StringAlias
-                      nullability: NON_NULLABLE
                       qualifiers: [
                         KaResolvedClassTypeQualifier:
                           name: StringAlias
@@ -305,9 +344,11 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(expansion/StringAlias)
                       typeArguments: []
+                      isMarkedNullable: false
+                      isNullable: false
+                      hasFlexibleNullability: false
                     annotations: []
                     classId: kotlin/String
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: String
@@ -316,6 +357,9 @@ KaUsualClassType:
                     ]
                     symbol: KaNamedClassSymbol(kotlin/String)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                 ]
             ]
             symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -325,7 +369,6 @@ KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/StringAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: StringAlias
@@ -334,9 +377,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: String
@@ -345,10 +390,15 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           annotations: []
           classId: kotlin/collections/Set
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Set
@@ -359,7 +409,6 @@ KaUsualClassType:
                     abbreviation: null
                     annotations: []
                     classId: expansion/StringAlias
-                    nullability: NON_NULLABLE
                     qualifiers: [
                       KaResolvedClassTypeQualifier:
                         name: StringAlias
@@ -368,9 +417,11 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(expansion/StringAlias)
                     typeArguments: []
+                    isMarkedNullable: false
+                    isNullable: false
+                    hasFlexibleNullability: false
                   annotations: []
                   classId: kotlin/String
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: String
@@ -379,6 +430,9 @@ KaUsualClassType:
                   ]
                   symbol: KaNamedClassSymbol(kotlin/String)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
               ]
           ]
           symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -388,7 +442,6 @@ KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: expansion/StringAlias
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: StringAlias
@@ -397,9 +450,11 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/String
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -408,7 +463,13 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
   ]
   symbol: KaNamedClassSymbol(kotlin/collections/List)
@@ -418,7 +479,6 @@ KaUsualClassType:
         abbreviation: null
         annotations: []
         classId: expansion/SetAlias
-        nullability: NON_NULLABLE
         qualifiers: [
           KaResolvedClassTypeQualifier:
             name: SetAlias
@@ -429,7 +489,6 @@ KaUsualClassType:
                   abbreviation: null
                   annotations: []
                   classId: expansion/StringAlias
-                  nullability: NON_NULLABLE
                   qualifiers: [
                     KaResolvedClassTypeQualifier:
                       name: StringAlias
@@ -438,9 +497,11 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(expansion/StringAlias)
                   typeArguments: []
+                  isMarkedNullable: false
+                  isNullable: false
+                  hasFlexibleNullability: false
                 annotations: []
                 classId: kotlin/String
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: String
@@ -449,6 +510,9 @@ KaUsualClassType:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/String)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         symbol: KaTypeAliasSymbol(expansion/SetAlias)
@@ -458,7 +522,6 @@ KaUsualClassType:
               abbreviation: null
               annotations: []
               classId: expansion/StringAlias
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: StringAlias
@@ -467,9 +530,11 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(expansion/StringAlias)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
             annotations: []
             classId: kotlin/String
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: String
@@ -478,10 +543,15 @@ KaUsualClassType:
             ]
             symbol: KaNamedClassSymbol(kotlin/String)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       annotations: []
       classId: kotlin/collections/Set
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Set
@@ -492,7 +562,6 @@ KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: expansion/StringAlias
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: StringAlias
@@ -501,9 +570,11 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               annotations: []
               classId: kotlin/String
-              nullability: NON_NULLABLE
               qualifiers: [
                 KaResolvedClassTypeQualifier:
                   name: String
@@ -512,6 +583,9 @@ KaUsualClassType:
               ]
               symbol: KaNamedClassSymbol(kotlin/String)
               typeArguments: []
+              isMarkedNullable: false
+              isNullable: false
+              hasFlexibleNullability: false
           ]
       ]
       symbol: KaNamedClassSymbol(kotlin/collections/Set)
@@ -521,7 +595,6 @@ KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: expansion/StringAlias
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: StringAlias
@@ -530,9 +603,11 @@ KaUsualClassType:
             ]
             symbol: KaTypeAliasSymbol(expansion/StringAlias)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           annotations: []
           classId: kotlin/String
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: String
@@ -541,8 +616,17 @@ KaUsualClassType:
           ]
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
 
 Rendered type:
 expansion.ListAlias<expansion.SetAlias<expansion.StringAlias>>

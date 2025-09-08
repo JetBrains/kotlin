@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.powerassert.PowerAssertPluginNames.PLUGIN_ID
 
 class PowerAssertCommandLineProcessor : CommandLineProcessor {
-    override val pluginId: String = "org.jetbrains.kotlin.powerassert"
+    override val pluginId: String get() = PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> = listOf(
         CliOption(

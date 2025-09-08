@@ -13,3 +13,6 @@ fun foo(x: String?) {
 
     r.minus(1)
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

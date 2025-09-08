@@ -26,3 +26,7 @@ fun <T : Derived> test(t: T): String {
 }
 
 fun box(): String = test(Derived())
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaCallableReference, javaFunction, javaProperty, javaType, localProperty, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

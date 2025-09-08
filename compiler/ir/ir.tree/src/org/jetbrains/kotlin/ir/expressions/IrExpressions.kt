@@ -17,12 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
 
-val IrFunctionReference.isWithReflection: Boolean
-    get() = reflectionTarget != null
-
-val IrFunctionReference.isAdapterWithReflection: Boolean
-    get() = reflectionTarget != null && reflectionTarget != symbol
-
 var IrDynamicOperatorExpression.left: IrExpression
     get() = receiver
     set(value) {

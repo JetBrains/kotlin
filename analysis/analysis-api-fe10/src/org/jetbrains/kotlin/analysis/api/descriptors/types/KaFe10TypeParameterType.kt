@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -29,7 +28,12 @@ internal class KaFe10TypeParameterType(
     override val name: Name
         get() = withValidityAssertion { parameter.name }
 
-    override val nullability: KaTypeNullability
+    @Deprecated(
+        "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",
+        replaceWith = ReplaceWith("this.isMarkedNullable")
+    )
+    @Suppress("Deprecation")
+    override val nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
     override val symbol: KaTypeParameterSymbol

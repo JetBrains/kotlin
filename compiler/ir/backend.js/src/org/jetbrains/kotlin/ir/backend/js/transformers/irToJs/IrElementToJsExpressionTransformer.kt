@@ -74,10 +74,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Byte -> JsIntLiteral((expression.value as Byte).toInt())
             is IrConstKind.Short -> JsIntLiteral((expression.value as Short).toInt())
             is IrConstKind.Int -> JsIntLiteral(expression.value as Int)
-            is IrConstKind.Long -> compilationException(
-                "Long const should have been lowered at this point",
-                expression
-            )
+            is IrConstKind.Long -> JsBigIntLiteral(expression.value as Long)
             is IrConstKind.Char -> compilationException(
                 "Char const should have been lowered at this point",
                 expression
@@ -198,6 +195,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
+        context.staticContext.intrinsics[expression.symbol]?.let {
+            return it(expression, context)
+        }
         val function = expression.symbol.owner
         val arguments = translateNonDispatchCallArguments(expression, context, this)
         val klass = function.parentAsClass

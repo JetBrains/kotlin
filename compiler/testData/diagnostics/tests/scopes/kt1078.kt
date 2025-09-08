@@ -16,3 +16,6 @@ class B() {
 }
 
 fun foo() = B()
+
+/* GENERATED_FIR_TAGS: classDeclaration, doWhileLoop, functionDeclaration, localProperty, primaryConstructor,
+propertyDeclaration */

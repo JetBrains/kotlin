@@ -15,3 +15,6 @@ fun testNotInPlace(list: List<Boolean>) =
     try {
         list.notInPlaceFilter { it }
     } finally {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+thisExpression, tryExpression, typeParameter */

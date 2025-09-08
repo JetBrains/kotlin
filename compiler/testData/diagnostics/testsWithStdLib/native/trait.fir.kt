@@ -10,3 +10,5 @@ interface Tr {
         <!EXTERNAL_DECLARATION_CANNOT_HAVE_BODY!>external<!> fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, external, functionDeclaration, interfaceDeclaration, objectDeclaration */

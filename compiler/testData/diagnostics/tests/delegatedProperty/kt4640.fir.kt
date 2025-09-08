@@ -10,3 +10,6 @@ class ValueWrapper()
 }
 
 val foo <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> ValueWrapper()
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+primaryConstructor, propertyDeclaration, propertyDelegate, starProjection */

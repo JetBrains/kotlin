@@ -25,3 +25,5 @@ enum class E {
         <!NESTED_CLASS_DEPRECATED!>class D<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, inner, localClass, nestedClass */

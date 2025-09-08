@@ -11,3 +11,6 @@ fun test1() {
         <!NO_THIS!>this<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, thisExpression,
+typeWithExtension */

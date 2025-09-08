@@ -6,3 +6,6 @@ class My(val x: Int) {
 
     fun foo() = if (x >= 0) x else if (y >= 0) y else null
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, primaryConstructor, propertyDeclaration */

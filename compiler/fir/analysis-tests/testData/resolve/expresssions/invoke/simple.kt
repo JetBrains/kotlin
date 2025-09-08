@@ -6,3 +6,6 @@ class Simple {
 fun test(s: Simple) {
     val result = s()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, operator, propertyDeclaration,
+stringLiteral */

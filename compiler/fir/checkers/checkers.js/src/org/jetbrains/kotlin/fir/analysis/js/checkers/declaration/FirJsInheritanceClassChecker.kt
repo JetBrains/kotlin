@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isOverridingExternalWithOptionalParams
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
@@ -53,7 +54,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         if (isEffectivelyExternal && declaration.classKind != ClassKind.ANNOTATION_CLASS) {
             val superTypes = declaration.superConeTypes
                 .filterNot { it.isAnyOrNullableAny || it.isThrowableOrNullableThrowable || it.isEnum }
-                .mapNotNull { it.toSymbol(session)?.fullyExpandedClass(session) }
+                .mapNotNull { it.toSymbol()?.fullyExpandedClass() }
 
             if (superTypes.any { !it.isEffectivelyExternal(session) }) {
                 reporter.reportOn(declaration.source, FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE)
@@ -61,7 +62,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         }
 
         if (!isEffectivelyExternal) {
-            val fakeOverriddenMethod = declaration.findFakeMethodOverridingExternalWithOptionalParams(context)
+            val fakeOverriddenMethod = declaration.findFakeMethodOverridingExternalWithOptionalParams()
 
             if (fakeOverriddenMethod != null) {
                 reporter.reportOn(
@@ -72,7 +73,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         }
 
         if (
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowImplementingFunctionInterface) &&
+            !LanguageFeature.JsAllowImplementingFunctionInterface.isEnabled() &&
             declaration.superConeTypes.any {
                 it.isBuiltinFunctionalTypeOrSubtype(session) && !it.isSuspendFunctionTypeOrSubtype(session)
             }
@@ -89,8 +90,9 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         return with(session.typeContext) { isTypeOrSubtypeOf { it.isSuspendOrKSuspendFunctionType(session) } }
     }
 
-    private fun FirClass.findFakeMethodOverridingExternalWithOptionalParams(context: CheckerContext): FirNamedFunctionSymbol? {
-        val scope = symbol.unsubstitutedScope(context)
+    context(context: CheckerContext)
+    private fun FirClass.findFakeMethodOverridingExternalWithOptionalParams(): FirNamedFunctionSymbol? {
+        val scope = symbol.unsubstitutedScope()
 
         val members = scope.collectAllFunctions()
             .filterIsInstance<FirIntersectionOverrideFunctionSymbol>()
@@ -100,7 +102,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
             }
 
         return members.firstOrNull {
-            it.isOverridingExternalWithOptionalParams(context)
+            it.isOverridingExternalWithOptionalParams()
         }
     }
 }

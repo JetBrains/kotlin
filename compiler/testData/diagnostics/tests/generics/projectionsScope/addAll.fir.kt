@@ -30,3 +30,6 @@ fun foo(x: MC<out Open>) {
     x.addAllInv(<!ARGUMENT_TYPE_MISMATCH!>mc<Open>()<!>)
     x.addAll(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, out, outProjection, typeParameter */

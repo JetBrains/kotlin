@@ -42,3 +42,6 @@ data class InternalInline internal constructor(val value: Int) {
         copy()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, inline, integerLiteral, primaryConstructor,
+propertyDeclaration */

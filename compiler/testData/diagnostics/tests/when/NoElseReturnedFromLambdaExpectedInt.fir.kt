@@ -21,3 +21,6 @@ fun foo(x: Int) {
 fun r(f: () -> Int) {
     f()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+whenExpression, whenWithSubject */

@@ -10,3 +10,5 @@ fun fn(f: () -> Unit) {}
 fun test() {
     fn(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType */

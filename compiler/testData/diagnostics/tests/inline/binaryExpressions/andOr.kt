@@ -17,3 +17,6 @@ inline fun Function1<Int, Unit>.inlineExt() {
     this && this
     this || this
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, integerLiteral, noinline, thisExpression, typeWithExtension */

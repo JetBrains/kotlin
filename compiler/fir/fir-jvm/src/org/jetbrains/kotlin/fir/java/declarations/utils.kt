@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -37,6 +38,10 @@ internal inline fun applyStatusTransformerExtensions(
     } as FirDeclarationStatusImpl
 
     if (newStatus === originalStatus) return originalStatus
+    require(newStatus.visibility == originalStatus.visibility || declaration !is FirClassLikeDeclaration) {
+        "Attempt to change visibility of a class-like: ${(declaration as? FirClassLikeDeclaration)?.symbol?.classId}, " +
+                "original visibility: ${originalStatus.visibility}, new visibility: ${newStatus.visibility}"
+    }
     return newStatus.resolved(
         newStatus.visibility,
         newStatus.modality ?: originalStatus.modality,

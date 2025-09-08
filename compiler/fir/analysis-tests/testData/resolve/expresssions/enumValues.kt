@@ -17,3 +17,6 @@ fun foo() {
     val first = MyEnum.valueOf("FIRST")
     val last = MyEnum.valueOf("LAST")
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, forLoop, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, stringLiteral */

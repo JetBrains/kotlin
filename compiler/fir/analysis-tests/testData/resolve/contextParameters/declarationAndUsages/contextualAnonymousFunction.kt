@@ -15,3 +15,6 @@ fun foo() {
     val t2 = @Ann context(a: A) fun () { a }
     runWithA(context(a: String) fun () { a })
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, functionDeclaration, functionalType,
+localProperty, propertyDeclaration, typeWithContext */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.createSubstitutorFromTypeArguments
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -48,7 +48,7 @@ internal class KaFirCompletionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
         explicitReceiver: KtExpression?
-    ): KaCompletionExtensionCandidateChecker = withValidityAssertion {
+    ): KaCompletionExtensionCandidateChecker = withPsiValidityAssertion(originalFile, nameExpression, explicitReceiver) {
         KaLazyCompletionExtensionCandidateChecker(analysisSession.token) {
             KaFirCompletionExtensionCandidateChecker(analysisSession, nameExpression, explicitReceiver, originalFile)
         }
@@ -121,13 +121,12 @@ private class KaFirCompletionExtensionCandidateChecker(
     }
 
     private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiverValue<*>> {
-        val sessionHolder = run {
-            val firSession = firFakeFile.llFirSession
-            val scopeSession = resolutionFacade.getScopeSessionFor(firSession)
-            SessionHolderImpl(firSession, scopeSession)
-        }
-
-        val elementContext = ContextCollector.process(firFakeFile, sessionHolder, nameExpression, bodyElement = null)
+        val elementContext = ContextCollector.process(
+            resolutionFacade = resolutionFacade,
+            file = firFakeFile,
+            targetElement = nameExpression,
+            preferBodyContext = false
+        )
 
         val towerDataContext = elementContext?.towerDataContext
             ?: errorWithAttachment("Cannot find enclosing declaration for ${nameExpression::class}") {

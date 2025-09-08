@@ -79,3 +79,6 @@ fun concurrentHashMapTest() {
 
     val b8: Int? = x.get("")
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+nullableType, propertyDeclaration, stringLiteral */

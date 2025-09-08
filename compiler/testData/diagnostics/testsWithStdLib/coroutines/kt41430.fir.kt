@@ -26,3 +26,5 @@ fun test_4(list: List<Set<A>>) {
         list.flatMapTo(mutableSetOf()) { it }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral */

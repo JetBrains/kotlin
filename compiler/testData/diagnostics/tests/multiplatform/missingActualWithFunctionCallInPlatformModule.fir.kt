@@ -17,3 +17,5 @@ fun test1() = B().foo()
 fun test2() = with(B()) {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, lambdaLiteral, primaryConstructor */

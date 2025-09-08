@@ -25,3 +25,7 @@ fun test2(a: (Int) -> Unit) {
 fun test3(a: (Int, String) -> Unit) {
     test3(<!TYPE_MISMATCH!>fun <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>)<!> {}<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=bar]
+FILE[kind=Script[packageFqName=bar]]
   FILE_ANNOTATION_LIST
     ANNOTATION
       ANNOTATION_TARGET[useSiteTarget=FILE]

@@ -14,3 +14,7 @@ fun foo() {
 
 class Some
 class Other
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, classDeclaration, classReference,
+collectionLiteral, functionDeclaration, integerLiteral, localClass, outProjection, primaryConstructor,
+propertyDeclaration, starProjection, vararg */

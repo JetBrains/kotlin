@@ -4,3 +4,5 @@
 fun outer() {
     <!WRONG_MODIFIER_TARGET!>companion<!> typealias TestLocal = Any
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

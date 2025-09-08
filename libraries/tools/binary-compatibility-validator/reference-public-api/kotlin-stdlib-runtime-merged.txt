@@ -3007,6 +3007,8 @@ public abstract interface class kotlin/contracts/ConditionalEffect : kotlin/cont
 
 public abstract interface class kotlin/contracts/ContractBuilder {
 	public abstract fun callsInPlace (Lkotlin/Function;Lkotlin/contracts/InvocationKind;)Lkotlin/contracts/CallsInPlace;
+	public abstract fun holdsIn (ZLkotlin/Function;)Lkotlin/contracts/HoldsIn;
+	public abstract fun implies (ZLkotlin/contracts/ReturnsNotNull;)V
 	public abstract fun returns ()Lkotlin/contracts/Returns;
 	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
 	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
@@ -3020,6 +3022,12 @@ public abstract interface class kotlin/contracts/Effect {
 }
 
 public abstract interface annotation class kotlin/contracts/ExperimentalContracts : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/contracts/ExperimentalExtendedContracts : java/lang/annotation/Annotation {
+}
+
+public abstract interface class kotlin/contracts/HoldsIn : kotlin/contracts/Effect {
 }
 
 public final class kotlin/contracts/InvocationKind : java/lang/Enum {
@@ -3190,6 +3198,24 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public abstract interface annotation class kotlin/coroutines/jvm/internal/DebugMetadata : java/lang/annotation/Annotation {
+	public abstract fun c ()Ljava/lang/String;
+	public abstract fun f ()Ljava/lang/String;
+	public abstract fun i ()[I
+	public abstract fun l ()[I
+	public abstract fun m ()Ljava/lang/String;
+	public abstract fun n ()[Ljava/lang/String;
+	public abstract fun nl ()[I
+	public abstract fun s ()[Ljava/lang/String;
+	public abstract fun v ()I
+}
+
+public final class kotlin/coroutines/jvm/internal/DebugMetadataKt {
+	public static final fun getNextLineNumber (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)I
+	public static final fun getSpilledVariableFieldMapping (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)[Ljava/lang/String;
+	public static final fun getStackTraceElement (Lkotlin/coroutines/jvm/internal/BaseContinuationImpl;)Ljava/lang/StackTraceElement;
+}
+
 public final class kotlin/coroutines/jvm/internal/GeneratedCodeMarkers {
 	public static final fun checkCOROUTINE_SUSPENDED ()V
 	public static final fun checkContinuation ()V
@@ -3250,7 +3276,7 @@ public final class kotlin/io/ByteStreamsKt {
 	public static synthetic fun copyTo$default (Ljava/io/InputStream;Ljava/io/OutputStream;IILjava/lang/Object;)J
 	public static final fun iterator (Ljava/io/BufferedInputStream;)Lkotlin/collections/ByteIterator;
 	public static final fun readBytes (Ljava/io/InputStream;)[B
-	public static final fun readBytes (Ljava/io/InputStream;I)[B
+	public static final synthetic fun readBytes (Ljava/io/InputStream;I)[B
 	public static synthetic fun readBytes$default (Ljava/io/InputStream;IILjava/lang/Object;)[B
 }
 
@@ -6474,6 +6500,9 @@ public final class kotlin/uuid/Uuid$Companion {
 	public final fun parse (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun parseHex (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun parseHexDash (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHexDashOrNull (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseHexOrNull (Ljava/lang/String;)Lkotlin/uuid/Uuid;
+	public final fun parseOrNull (Ljava/lang/String;)Lkotlin/uuid/Uuid;
 	public final fun random ()Lkotlin/uuid/Uuid;
 }
 

@@ -11,13 +11,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -29,24 +33,35 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
     name = "JvmLocalDeclarations",
     prerequisite = [FunctionReferenceLowering::class, SharedVariablesLowering::class]
 )
-internal class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalDeclarationsLowering(
+internal class JvmLocalDeclarationsLowering(override val context: JvmBackendContext) : LocalDeclarationsLowering(
     context,
-    NameUtils::sanitizeAsJavaIdentifier,
+    nameSanitizer = NameUtils::sanitizeAsJavaIdentifier,
     JvmVisibilityPolicy,
-    compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
     forceFieldsForInlineCaptures = true,
-    remapTypesInExtractedLocalDeclarations = false,
-    allConstructorsWithCapturedConstructorCreated = context.allConstructorsWithCapturedConstructorCreated,
+    remapCapturedTypesInExtractedLocalDeclarations = false,
+    closureBuilders = context.evaluatorData?.localDeclarationsData?.closureBuilders ?: mutableMapOf(),
+    transformedDeclarations = context.evaluatorData?.localDeclarationsData?.transformedDeclarations ?: mutableMapOf(),
+    newParameterToCaptured = context.evaluatorData?.localDeclarationsData?.newParameterToCaptured ?: mutableMapOf(),
+    newParameterToOld = context.evaluatorData?.localDeclarationsData?.newParameterToOld ?: mutableMapOf(),
+    oldParameterToNew = context.evaluatorData?.localDeclarationsData?.oldParameterToNew ?: mutableMapOf(),
 ) {
-    override fun postLocalDeclarationLoweringCallback(
-        localFunctions: Map<IrFunction, LocalFunctionContext>,
-        newParameterToOld: Map<IrValueParameter, IrValueParameter>,
-        newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
-    ) {
-        val data = (context as JvmBackendContext).evaluatorData?.localDeclarationsLoweringData ?: return
-        for ((localFunction, localContext) in localFunctions) {
-            data[localFunction] = JvmBackendContext.LocalFunctionData(localContext, newParameterToOld, newParameterToCaptured)
+
+    override fun getReplacementSymbolForCaptured(container: IrDeclaration, symbol: IrValueSymbol): IrValueSymbol {
+        if (context.evaluatorData?.evaluatorGeneratedFunction == container && !symbol.owner.parentDeclarationsWithSelf.contains(container)) {
+            val newParameter = (container as IrFunction).addValueParameter {
+                type = symbol.owner.type
+                name = symbol.owner.name
+            }
+            context.state.newFragmentCaptureParameters.add(
+                Triple(
+                    symbol.owner.name.asString(),
+                    symbol.owner.type.toIrBasedKotlinType(),
+                    symbol.owner.toIrBasedDescriptor()
+                )
+            )
+            return newParameter.symbol
         }
+        return symbol
     }
 
     override fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
@@ -62,7 +77,7 @@ internal val IrClass.isGeneratedLambdaClass: Boolean
             origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
 internal object JvmVisibilityPolicy : VisibilityPolicy {
-    // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
+    // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalDeclarationPopupLowering`,
     // else it won't detect the class as local.
     override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
         if (declaration.isGeneratedLambdaClass) {

@@ -8,3 +8,6 @@ fun I<<!UPPER_BOUND_VIOLATED!>String<!>>.foo() {}
 
 context(I<<!UPPER_BOUND_VIOLATED!>String<!>>)
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, typeConstraint, typeParameter */

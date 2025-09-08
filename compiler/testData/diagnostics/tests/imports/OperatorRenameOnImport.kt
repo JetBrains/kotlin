@@ -16,3 +16,6 @@ import a.<!OPERATOR_RENAMED_ON_IMPORT!>plus<!> as minus
 
 fun test(a1: A, a2: A) =
         a1 - a2
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, operator,
+thisExpression */

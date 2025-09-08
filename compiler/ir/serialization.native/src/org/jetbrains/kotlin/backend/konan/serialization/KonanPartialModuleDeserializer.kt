@@ -31,17 +31,14 @@ class KonanPartialModuleDeserializer(
     kotlinIrLinker: KotlinIrLinker,
     moduleDescriptor: ModuleDescriptor,
     override val klib: KotlinLibrary,
-    private val stubGenerator: DeclarationStubGenerator,
     strategyResolver: (String) -> DeserializationStrategy,
     private val cacheDeserializationStrategy: CacheDeserializationStrategy,
-    containsErrorCode: Boolean = false,
 ) : BasicIrModuleDeserializer(
-    kotlinIrLinker,
-    moduleDescriptor,
-    klib,
-    { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
-    klib.versions.abiVersion ?: KotlinAbiVersion.Companion.CURRENT,
-    containsErrorCode
+    linker = kotlinIrLinker,
+    moduleDescriptor = moduleDescriptor,
+    klib = klib,
+    strategyResolver = { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
+    libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
 ) {
     private val descriptorSignatures = mutableMapOf<DeclarationDescriptor, IdSignature>()
 
@@ -83,7 +80,6 @@ class KonanPartialModuleDeserializer(
 
         val idSig = declaration.getSignature()
             ?: (declaration.parent as? IrDeclaration)?.getSignature()
-            ?: (declaration.attributeOwnerId as? IrDeclaration)?.getSignature()
             ?: error("Can't find signature of ${declaration.render()}")
         val topLevelIdSig = idSig.topLevelSignature()
         return topLevelIdSig.fileSignature()?.fileName
@@ -98,33 +94,8 @@ class KonanPartialModuleDeserializer(
         DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY
     )
 
-    private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
-
-    // Need to notify the deserializing machinery that some symbols have already been created by stub generator
-    // (like type parameters and receiver parameters) and there's no need to create new symbols for them.
-    fun referenceIrSymbol(symbolDeserializer: IrSymbolDeserializer, sigIndex: Int, symbol: IrSymbol) {
-        val idSig = symbolDeserializer.deserializeIdSignature(sigIndex)
-        symbolDeserializer.referenceLocalIrSymbol(symbol, idSig)
-        if (idSig.isPubliclyVisible) {
-            deserializedSymbols[idSig]?.let {
-                require(it == symbol) { "Two different symbols for the same signature ${idSig.render()}" }
-            }
-            // Sometimes the linker would want to create a new symbol, so save actual symbol here
-            // and use it in [contains] and [tryDeserializeSymbol].
-            deserializedSymbols[idSig] = symbol
-        }
-    }
-
     override fun contains(idSig: IdSignature): Boolean =
-        super.contains(idSig) || deserializedSymbols.containsKey(idSig) ||
+        super.contains(idSig) ||
                 cacheDeserializationStrategy != CacheDeserializationStrategy.WholeModule
                 && idSig.isPubliclyVisible && descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
-
-    override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        super.tryDeserializeIrSymbol(idSig, symbolKind)?.let { return it }
-        deserializedSymbols[idSig]?.let { return it }
-        val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
-        descriptorSignatures[descriptor] = idSig
-        return (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
-    }
 }

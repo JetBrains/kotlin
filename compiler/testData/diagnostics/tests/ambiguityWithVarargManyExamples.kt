@@ -35,3 +35,6 @@ fun main() {
     duh(<!NON_VARARG_SPREAD_ERROR!>*<!>intArrayOf(1, 2))
     duh(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, vararg */

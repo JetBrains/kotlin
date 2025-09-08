@@ -114,3 +114,6 @@ fun test() {
         return@l Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, propertyDeclaration, stringLiteral, typeAliasDeclaration */

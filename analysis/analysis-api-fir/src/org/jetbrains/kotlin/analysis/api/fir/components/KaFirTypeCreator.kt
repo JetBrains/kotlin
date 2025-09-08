@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.toLookupTag
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirTypeCreator(
@@ -41,7 +38,7 @@ internal class KaFirTypeCreator(
         val lookupTag = when (builder) {
             is KaBaseClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType()
+                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKaType()
                 classSymbol.toLookupTag()
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
@@ -54,10 +51,10 @@ internal class KaFirTypeCreator(
         val coneType = typeContext.createSimpleType(
             lookupTag,
             builder.arguments.map { it.coneTypeProjection },
-            builder.nullability.isNullable
+            builder.isMarkedNullable
         ) as ConeClassLikeType
 
-        return coneType.asKtType()
+        return coneType.asKaType()
     }
 
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
@@ -65,7 +62,8 @@ internal class KaFirTypeCreator(
             val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)
             val symbol = builder.symbol
             val coneType = symbol.firSymbol.toConeType()
-            return coneType.asKtType() as KaTypeParameterType
+                .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
+            return coneType.asKaType() as KaTypeParameterType
         }
     }
 }

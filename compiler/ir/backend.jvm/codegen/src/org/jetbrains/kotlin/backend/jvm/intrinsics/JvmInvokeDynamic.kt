@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getStringConstArgument
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -61,6 +62,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         when (element) {
             is IrRawFunctionReference ->
                 generateMethodHandle(element, codegen)
+            is IrClassReference ->
+                generateClassReference(element, codegen)
             is IrCall ->
                 evalBootstrapArgumentIntrinsicCall(element, codegen)
                     ?: throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
@@ -109,6 +112,9 @@ object JvmInvokeDynamic : IntrinsicMethod() {
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle =
         codegen.methodSignatureMapper.mapToMethodHandle(irRawFunctionReference.symbol.owner)
+
+    private fun generateClassReference(classRef: IrClassReference, codegen: ExpressionCodegen) =
+        codegen.typeMapper.mapType(classRef.classType, TypeMappingMode.INVOKE_DYNAMIC_BOOTSTRAP_ARGUMENT)
 
     private fun evalOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
         val irRawFunRef = irCall.arguments[0] as? IrRawFunctionReference

@@ -28,10 +28,27 @@ internal fun ToolingDiagnostic.renderReportedDiagnostic(
     val effectiveSeverity = renderingOptions.effectiveSeverity(severity) ?: return null
     val message by lazy { render(renderingOptions, effectiveSeverity = effectiveSeverity) }
 
+    if (renderingOptions.displayDiagnosticsInIdeBuildLog) {
+        /**
+         * IDE parses out the message by \n but also displays \r multiline messages.
+         */
+        val hideTrailingLineFromGeneralLog = "\r "
+        fun makeIdeDisplayMultilineMessage(message: String) = message.replace("\n", "\r") + hideTrailingLineFromGeneralLog
+        when (effectiveSeverity) {
+            WARNING -> logger.warn("warning: ${makeIdeDisplayMultilineMessage(message)}\n")
+            STRONG_WARNING, ERROR -> logger.error("error: ${makeIdeDisplayMultilineMessage(message)}\n")
+            FATAL -> {}
+        }
+    }
+
+    /**
+     * When IDE parses out the diagnostic with "warning/error:" prefix, it doesn't display it in the general build log. Always emit a
+     * duplicate even in IDE to display the diagnostic in the general log also.
+     */
     when (effectiveSeverity) {
         WARNING -> logger.warn("w: ${message}\n")
-        ERROR -> logger.error("e: ${message}\n")
-        else -> {}
+        STRONG_WARNING, ERROR -> logger.error("e: ${message}\n")
+        FATAL -> {}
     }
 
     return if (effectiveSeverity == FATAL)

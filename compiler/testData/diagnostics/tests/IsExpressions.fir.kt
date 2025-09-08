@@ -3,7 +3,7 @@
 
 fun test() {
    if (<!USELESS_IS_CHECK!>1 is Int<!>) {
-     if (<!USELESS_IS_CHECK!>1 is Boolean<!>) {
+     if (<!IMPOSSIBLE_IS_CHECK_ERROR!>1 is Boolean<!>) {
 
      }
    }
@@ -25,3 +25,6 @@ fun foo(): Any = ""
 class A {
     static A create() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, ifExpression, integerLiteral, isExpression,
+javaFunction, javaType, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

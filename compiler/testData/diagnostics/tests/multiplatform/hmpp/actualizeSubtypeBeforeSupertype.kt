@@ -19,3 +19,5 @@ actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class C<!> : B() {
 actual open class B {
     open fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, primaryConstructor */

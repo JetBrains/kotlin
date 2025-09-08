@@ -21,3 +21,5 @@ fun main() {
     b.consumeElement("testing")
 }
 
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, propertyDeclaration,
+starProjection, stringLiteral */

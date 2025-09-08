@@ -76,13 +76,13 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         val options = ToolingDiagnosticRenderingOptions.forProject(project)
         if (diagnostic.isSuppressed(options)) return
 
+        rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
+            previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
+        }
+
         if (isTransparent) {
             problemsReporter.reportProblemDiagnostic(diagnostic, options)
             return
-        }
-
-        rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
-            previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
         }
 
         if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {

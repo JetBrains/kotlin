@@ -12,3 +12,6 @@ open class Some {
             get() = "Omega"
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration, companionObject,
+data, getter, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

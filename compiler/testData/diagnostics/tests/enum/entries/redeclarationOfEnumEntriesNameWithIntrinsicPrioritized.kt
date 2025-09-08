@@ -11,3 +11,5 @@ enum class E {
         E.entries.ordinal
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

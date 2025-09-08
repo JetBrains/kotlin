@@ -53,7 +53,7 @@ class CInteropPackagesTest : AbstractNativeSimpleTest() {
                         generatedFilesByExtension[extension],
                         "Test source ${testSource.absolutePath} must contain only one directive `// ${TestDirectives.FILE}: <SOMEFILE.$extension>`"
                     )
-                    generatedFilesByExtension[extension] = output_file!!
+                    generatedFilesByExtension[extension] = output_file
                 } else {
                     output_file?.appendText("$line\n")
                 }
@@ -71,7 +71,6 @@ class CInteropPackagesTest : AbstractNativeSimpleTest() {
             ktFile.appendText("fun main() { box() }")
 
             val library = cinteropToLibrary(
-                targets = targets,
                 defFile = defFile,
                 outputDir = buildDir,
                 freeCompilerArgs = TestCompilerArgs.EMPTY

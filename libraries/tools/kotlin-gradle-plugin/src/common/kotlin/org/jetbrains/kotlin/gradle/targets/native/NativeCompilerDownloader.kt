@@ -230,8 +230,7 @@ class NativeCompilerDownloader(
         project.providers.of(NativeCompilerDownloaderClassPathChecker::class.java) {
             it.parameters.classPath.setFrom(
                 project.objects.nativeCompilerClasspath(
-                    project.nativeProperties.actualNativeHomeDirectory,
-                    project.nativeProperties.shouldUseEmbeddableCompilerJar,
+                    project.nativeProperties.actualNativeHomeDirectory
                 )
             )
         }.get()
@@ -293,7 +292,7 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
             ClassLoadersCachingBuildService.registerIfAbsent(project),
             PlatformLibrariesGenerator.registerRequiredServiceIfAbsent(project),
             project.useXcodeMessageStyle,
-            project.objects.nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory, nativeProperties.shouldUseEmbeddableCompilerJar),
+            project.objects.nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory),
             project.listProperty { nativeProperties.jvmArgs.get() },
             nativeProperties.actualNativeHomeDirectory,
             project.provider { nativeProperties.konanDataDir.orNull?.absolutePath },

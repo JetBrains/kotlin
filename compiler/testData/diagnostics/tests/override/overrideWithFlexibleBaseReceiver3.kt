@@ -22,3 +22,6 @@ public interface Foo<T> extends Base<T> {
     override val E?.prop1: String
         get() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, interfaceDeclaration, javaType, nullableType, override,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeParameter */

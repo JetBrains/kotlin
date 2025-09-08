@@ -12,3 +12,5 @@ class B() {
         A().<!INVISIBLE_MEMBER!>a<!> = "Hello"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, primaryConstructor, propertyDeclaration, stringLiteral */

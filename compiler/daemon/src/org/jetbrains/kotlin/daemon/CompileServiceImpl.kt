@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.PerformanceManager.DumpFormat
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
@@ -95,6 +96,7 @@ abstract class CompileServiceImplBase(
     val compilerId: CompilerId,
     val port: Int,
     val timer: Timer,
+    val onShutdown: () -> Unit,
 ) : CompileService {
     protected val log by lazy { Logger.getLogger("compiler") }
 
@@ -273,6 +275,9 @@ abstract class CompileServiceImplBase(
             System.err.println("Exception in timer thread: " + e.message)
             e.printStackTrace(System.err)
             log.log(Level.SEVERE, "Exception in timer thread", e)
+            if (e is LinkageError) {
+                onShutdown()
+            }
         }
     }
 
@@ -380,7 +385,7 @@ abstract class CompileServiceImplBase(
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
-                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(isJson = false)
+                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
                     compilationResults?.also {
                         (it as CompilationResults).add(
                             CompilationResultCategory.BUILD_REPORT_LINES.code,
@@ -597,7 +602,7 @@ abstract class CompileServiceImplBase(
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"))
+        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"), includeJavaSources = false)
 
         val workingDir = incrementalCompilationOptions.workingDir
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
@@ -637,11 +642,11 @@ abstract class CompileServiceImplBase(
         reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): ExitCode {
         reporter.startMeasureGc()
-        val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
+        val allKotlinJvmExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).toSet()
 
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinExtensions)
+        val allSourceFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinJvmExtensions, includeJavaSources = true)
 
         val workingDir = incrementalCompilationOptions.workingDir
 
@@ -656,7 +661,7 @@ abstract class CompileServiceImplBase(
             IncrementalFirJvmCompilerRunner(
                 workingDir,
                 reporter,
-                kotlinSourceFilesExtensions = allKotlinExtensions,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
                 outputDirs = incrementalCompilationOptions.outputFiles,
                 classpathChanges = incrementalCompilationOptions.classpathChanges,
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
@@ -669,7 +674,7 @@ abstract class CompileServiceImplBase(
                 reporter,
                 outputDirs = incrementalCompilationOptions.outputFiles,
                 classpathChanges = incrementalCompilationOptions.classpathChanges,
-                kotlinSourceFilesExtensions = allKotlinExtensions,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
@@ -677,7 +682,7 @@ abstract class CompileServiceImplBase(
         }
         return try {
             compiler.compile(
-                allKotlinFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),
+                allSourceFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),
                 fileLocations = if (rootProjectDir != null && buildDir != null) {
                     FileLocations(rootProjectDir, buildDir)
                 } else null
@@ -706,8 +711,8 @@ class CompileServiceImpl(
     val daemonJVMOptions: DaemonJVMOptions,
     port: Int,
     timer: Timer,
-    val onShutdown: () -> Unit,
-) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer) {
+    onShutdown: () -> Unit,
+) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer, onShutdown) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,

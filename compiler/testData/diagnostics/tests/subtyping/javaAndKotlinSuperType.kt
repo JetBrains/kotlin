@@ -41,3 +41,5 @@ fun test2(w: W) {
     eatAString(w)
     eatAStringN(<!TYPE_MISMATCH!>w<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType */

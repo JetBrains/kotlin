@@ -46,3 +46,6 @@ fun nested(map: List<MutableMap<String, String>>, l2: MyList<MyMap<String, Strin
     l2.set(1, MyMap())
     l2[0]["b"]
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classDeclaration, functionDeclaration, integerLiteral,
+nullableType, operator, stringLiteral, typeParameter */

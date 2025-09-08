@@ -16,3 +16,6 @@ fun main() {
         wrapper <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>greaterEq<!> number
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

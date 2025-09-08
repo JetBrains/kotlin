@@ -14,3 +14,6 @@ abstract class A : Base(), AutoCloseable {
 abstract class B : Base(), Other {
     override fun toString() = super.toString()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression,
+typeAliasDeclaration */

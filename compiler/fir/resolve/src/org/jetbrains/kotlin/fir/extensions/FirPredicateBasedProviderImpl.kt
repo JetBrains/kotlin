@@ -11,12 +11,12 @@ import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -36,7 +36,10 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         val declarations = annotations.flatMapTo(mutableSetOf()) {
             cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
         }
-        return declarations.filter { matches(predicate, it) }.map { it.symbol }
+        return declarations
+            .filter { matches(predicate, it) }
+            .map { it.symbol }
+            .onEach { session.lookupTracker?.recordDirtyDeclaration(it) }
     }
 
     override fun fileHasPluginAnnotations(file: FirFile): Boolean {

@@ -16,3 +16,6 @@ fun main() {
     test<String>("").length
     test<String?>(null).length // `.length` should be allowed because return type of "test" should be inferred to `F & Any`
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, dnnType, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral, typeParameter */

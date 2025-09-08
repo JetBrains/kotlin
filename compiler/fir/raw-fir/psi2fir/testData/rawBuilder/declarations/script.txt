@@ -1,7 +1,7 @@
 FILE: script.kts
     SCRIPT: <script-script.kts>
 
-        public final? [ContainingScriptKey=FirScriptSymbol <script-script.kts>] class Builder : R|kotlin/Any| {
+        public final? [ContainingScriptKey=FirScriptSymbol <script-script.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -29,15 +29,15 @@ FILE: script.kts
 
         }
 
-        public? final? fun build(action: ( Builder.() -> Unit )): <implicit> {
+        public? final? [ScriptTopLevelDeclaration=true] fun build(action: ( Builder.() -> Unit )): <implicit> {
             ^build Builder#().apply#(action#)
         }
 
-        public? final? fun build2(action: ( Builder.() -> Unit )): Builder {
+        public? final? [ScriptTopLevelDeclaration=true] fun build2(action: ( Builder.() -> Unit )): Builder {
             ^build2 Builder#().apply#(action#)
         }
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 version# = String(123)
                 local final? [ContainingScriptKey=FirScriptSymbol <script-script.kts>] class A : R|kotlin/Any| {
@@ -55,25 +55,24 @@ FILE: script.kts
             )
         }
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             +=(version#, IntegerLiteral(123))
         }
 
-        public? final? val builder: <implicit> = build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public? final? [ScriptTopLevelDeclaration=true] val builder: <implicit> = build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             version# = String(321)
         }
         )
             public? get(): <implicit>
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             println#()
         }
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             builder#.execute#()
         }
-

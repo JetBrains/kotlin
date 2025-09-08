@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.fir.references.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
+import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class FirBackingFieldReferenceImpl(
     override val source: KtSourceElement?,
+    override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     override val resolvedSymbol: FirBackingFieldSymbol,
 ) : FirBackingFieldReference() {
     override val name: Name
@@ -28,5 +30,9 @@ internal class FirBackingFieldReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBackingFieldReferenceImpl {
         return this
+    }
+
+    override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
+        resolvedSymbolOrigin = newResolvedSymbolOrigin
     }
 }

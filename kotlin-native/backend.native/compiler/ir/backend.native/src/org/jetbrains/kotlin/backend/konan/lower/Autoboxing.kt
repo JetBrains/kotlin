@@ -56,6 +56,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         context.irBuiltIns
 ) {
     private val insertSafeCasts = context.config.genericSafeCasts
+    private val anyClass = context.irBuiltIns.anyClass.owner
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
@@ -147,6 +148,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             is IrGetField -> this.symbol.owner.type
             is IrCall -> when (this.symbol) {
                 symbols.reinterpret -> this.typeArguments[1]!!
+                symbols.createUninitializedInstance -> this.typeArguments[0]!!
                 else -> this.type
             }
             is IrTypeOperatorCall -> when (this.operator) {
@@ -187,7 +189,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             }
 
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
-            this.isNothing() || this.symbol.isSubtypeOfClass(expectedClass.symbol)
+            this.isNothing() || expectedClass == anyClass /* A workaround for plugins emitting classes with empty superTypes */
+                    || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
         val conversion = context.getTypeConversion(actualType, expectedType)
@@ -233,12 +236,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             irBuilders.peek()!!.at(this)
                     .irCall(conversion).apply { this.arguments[parameter.indexInParameters] = argument }
         }
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        expression.transformChildrenVoid()
-        assert(expression.getArgumentsWithIr().isEmpty())
-        return expression
     }
 
     override fun visitCall(expression: IrCall): IrExpression {

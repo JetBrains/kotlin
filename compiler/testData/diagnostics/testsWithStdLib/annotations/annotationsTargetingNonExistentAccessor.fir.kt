@@ -113,3 +113,10 @@ class WithSource {
     private val x1 = ""
         @SourceAnn get
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, annotationUseSiteTargetFieldDelegate,
+annotationUseSiteTargetParam, annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetReceiver, annotationUseSiteTargetSetterParameter,
+assignment, classDeclaration, companionObject, const, funWithExtensionReceiver, functionDeclaration, getter, in,
+integerLiteral, nestedClass, nullableType, objectDeclaration, operator, outProjection, primaryConstructor,
+propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral, typeParameter, vararg */

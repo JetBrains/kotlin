@@ -14,3 +14,5 @@ fun test(f: () -> Unit) {
     foo(f)
 }
 
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+samConversion, suspend */

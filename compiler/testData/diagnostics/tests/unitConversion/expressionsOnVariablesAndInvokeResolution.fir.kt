@@ -10,3 +10,5 @@ operator fun Foo.invoke(f: () -> Unit) {
 fun test(g: () -> Int) {
     Foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, objectDeclaration, operator */

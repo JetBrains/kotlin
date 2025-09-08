@@ -24,9 +24,9 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final? data class TwoValues : R|kotlin/Any|
             Properties:
-                FirPropertySymbol public final val one: <implicit>
+                FirRegularPropertySymbol public final val one: <implicit>
                     public get(): <implicit>
-                FirPropertySymbol public final val two: <implicit>
+                FirRegularPropertySymbol public final val two: <implicit>
                     public get(): <implicit>
     Element 10
         Scope: FirLocalScope

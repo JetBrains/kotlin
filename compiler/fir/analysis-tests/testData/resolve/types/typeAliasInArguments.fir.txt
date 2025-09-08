@@ -3,5 +3,5 @@ FILE: main.kt
     public final typealias ImmutableSet<E> = R|MySet<E>|
     private final typealias ImmutableMultimap<K, V> = R|{ImmutableMap<K, ImmutableSet<V>>=} MyMap<K, ImmutableSet<V>>|
     private final fun <K, V> R|{ImmutableMultimap<K, V>=} MyMap<K, ImmutableSet<V>>|.put(key: R|K|, value: R|V|, oldSet: R|{ImmutableSet<V>=} MySet<V>|): R|{ImmutableMultimap<K, V>=} MyMap<K, ImmutableSet<V>>| {
-        ^put this@R|/put|.R|SubstitutionOverride</MyMap.put: R|ft<MyMap<K!, ft<ImmutableSet<V>, ImmutableSet<V>?>>, MyMap<K!, ft<ImmutableSet<V>, ImmutableSet<V>?>>?>|>|(R|<local>/key|, R|<local>/oldSet|.R|SubstitutionOverride</MySet.add: R|ft<MySet<V!>, MySet<V!>?>|>|(R|<local>/value|))
+        ^put this@R|/put|.R|SubstitutionOverride</MyMap.put: R|MyMap<K!, ImmutableSet<V>!>!|>|(R|<local>/key|, R|<local>/oldSet|.R|SubstitutionOverride</MySet.add: R|MySet<V!>!|>|(R|<local>/value|))
     }

@@ -14,3 +14,5 @@ class C : Base(), I
 fun f(list: List<Int>) {
     C().f(list)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, typeConstraint, typeParameter */

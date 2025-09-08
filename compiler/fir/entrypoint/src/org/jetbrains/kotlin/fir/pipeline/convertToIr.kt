@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BackendException
+import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -38,11 +40,18 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
+import org.jetbrains.kotlin.ir.validation.validateIr
+import org.jetbrains.kotlin.ir.validation.withBasicChecks
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
@@ -80,6 +89,7 @@ fun FirResult.convertToIrAndActualize(
     typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
+    commonMemberStorage: Fir2IrCommonMemberStorage = Fir2IrCommonMemberStorage(),
     irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
     val pipeline = Fir2IrPipeline(
@@ -93,6 +103,7 @@ fun FirResult.convertToIrAndActualize(
         typeSystemContextProvider,
         specialAnnotationsProvider,
         extraActualDeclarationExtractorsInitializer,
+        commonMemberStorage,
         irModuleFragmentPostCompute
     )
     return pipeline.convertToIrAndActualize()
@@ -109,6 +120,7 @@ private class Fir2IrPipeline(
     val typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     val extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
+    val commonMemberStorage: Fir2IrCommonMemberStorage,
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
 ) {
     private class Fir2IrConversionResult(
@@ -116,6 +128,7 @@ private class Fir2IrPipeline(
         val dependentIrFragments: List<IrModuleFragmentImpl>,
         val componentsStoragePerSourceSession: Map<FirSession, Fir2IrComponentsStorage>,
         val commonMemberStorage: Fir2IrCommonMemberStorage,
+        val generatedDataValueClassSyntheticFunctions: Map<IrClass, DataValueClassGeneratedMembersInfo>,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val irTypeSystemContext: IrTypeSystemContext,
@@ -132,8 +145,6 @@ private class Fir2IrPipeline(
     }
 
     private fun runFir2IrConversion(): Fir2IrConversionResult {
-        val commonMemberStorage = Fir2IrCommonMemberStorage()
-
         val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
         for (firOutput in outputs) {
             val session = firOutput.session
@@ -145,6 +156,13 @@ private class Fir2IrPipeline(
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
 
         val componentsStorages = mutableMapOf<FirSession, Fir2IrComponentsStorage>()
+
+        /**
+         * Contains information about synthetic methods generated for data and value classes
+         * It will be used to generate bodies of those methods after fir2ir conversion is over
+         */
+        val generatedDataValueClassSyntheticFunctions = mutableMapOf<IrClass, DataValueClassGeneratedMembersInfo>()
+
         val fragments = outputs.map { output ->
             val componentsStorage = Fir2IrComponentsStorage(
                 output.session,
@@ -154,6 +172,7 @@ private class Fir2IrPipeline(
                 fir2IrConfiguration,
                 visibilityConverter,
                 commonMemberStorage,
+                generatedDataValueClassSyntheticFunctions,
                 irMangler,
                 kotlinBuiltIns,
                 specialAnnotationsProvider,
@@ -183,6 +202,7 @@ private class Fir2IrPipeline(
             dependentIrFragments,
             componentsStorages,
             commonMemberStorage,
+            generatedDataValueClassSyntheticFunctions,
             irBuiltIns,
             symbolTable,
             irTypeSystemContext,
@@ -266,12 +286,13 @@ private class Fir2IrPipeline(
                     fir2IrConfiguration.languageVersionSettings
                 ),
                 irTypeSystemContext,
+                fir2IrConfiguration.languageVersionSettings,
                 fir2IrConfiguration.expectActualTracker,
                 mainIrFragment,
                 dependentIrFragments,
                 extraActualDeclarationExtractorsInitializer(componentsStorage),
                 missingActualProvider = LenientModeMissingActualDeclarationProvider.initializeIfNeeded(componentsStorage),
-                IrCommonToPlatformDependencyActualizerMapContributor.create(
+                actualizerMapContributor = IrCommonToPlatformDependencyActualizerMapContributor.create(
                     outputs.last().session,
                     componentsStoragePerSourceSession,
                 ),
@@ -282,10 +303,7 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.generateSyntheticBodiesOfDataValueMembers() {
         Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltIns)
-            .generateBodiesForClassesWithSyntheticDataClassMembers(
-                commonMemberStorage.generatedDataValueClassSyntheticFunctions,
-                symbolTable
-            )
+            .generateBodiesForClassesWithSyntheticDataClassMembers(generatedDataValueClassSyntheticFunctions, symbolTable)
     }
 
     private fun Fir2IrConversionResult.createFakeOverrideBuilder(
@@ -299,7 +317,6 @@ private class Fir2IrPipeline(
         return IrFakeOverrideBuilder(
             irTypeSystemContext,
             Fir2IrFakeOverrideStrategy(
-                Fir2IrConverter.friendModulesMap(session),
                 isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
                 isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
                 delegatedMembersGenerationStrategy,
@@ -338,11 +355,7 @@ private class Fir2IrPipeline(
                 mainIrFragment,
                 irBuiltIns,
                 phaseName = "",
-                IrValidatorConfig(
-                    checkTreeConsistency = false,
-                    checkFunctionBody = false,
-                    checkUnboundSymbols = true,
-                )
+                IrValidatorConfig(checkUnboundSymbols = true)
             )
         }
     }
@@ -472,19 +485,23 @@ private fun IrPluginContext.runMandatoryIrValidation(
             module,
             irBuiltIns,
             phaseName = "",
-            IrValidatorConfig(
-                // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
-                // so we disable them not to cause too much breakage.
-                checkTreeConsistency = false,
+            // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
+            // so we disable them not to cause too much breakage.
+            IrValidatorConfig(checkTreeConsistency = false)
+                .withBasicChecks()
                 // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
-                checkCrossFileFieldUsage = true,
-                // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
-                //  non-private visibilities for fields.
-                checkAllKotlinFieldsArePrivate = !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-            )
+                .withCheckers(IrCrossFileFieldUsageChecker)
+                .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
+                    // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
+                    //  non-private visibilities for fields.
+                    withCheckers(IrFieldVisibilityChecker)
+                }
         )
     }
 }
+
+class IrGenerationExtensionException(cause: Throwable, val extensionClass: Class<out IrGenerationExtension>) :
+    RuntimeException(cause.message, cause)
 
 fun IrPluginContext.applyIrGenerationExtensions(
     fir2IrConfiguration: Fir2IrConfiguration,
@@ -493,7 +510,12 @@ fun IrPluginContext.applyIrGenerationExtensions(
 ) {
     runMandatoryIrValidation(null, irModuleFragment, fir2IrConfiguration)
     for (extension in irGenerationExtensions) {
-        extension.generate(irModuleFragment, this)
-        runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
+        try {
+            extension.generate(irModuleFragment, this)
+            runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
+        } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
+            throw IrGenerationExtensionException(e, extension::class.java)
+        }
     }
 }

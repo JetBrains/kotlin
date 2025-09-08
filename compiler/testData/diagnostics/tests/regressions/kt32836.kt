@@ -17,3 +17,6 @@ fun parseMyData(json: String): MyType =
 fun main() {
     parseMyData("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, inline, localProperty, nullableType,
+propertyDeclaration, reified, stringLiteral, tryExpression, typeParameter */

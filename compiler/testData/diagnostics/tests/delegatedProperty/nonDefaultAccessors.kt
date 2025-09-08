@@ -12,3 +12,6 @@ class A {
     operator fun getValue(a: Any?, p: Any?) = ""
     operator fun setValue(a: Any?, p: Any?, v: Any?) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, nullableType, operator, propertyDeclaration,
+propertyDelegate, setter, stringLiteral, thisExpression */

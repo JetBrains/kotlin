@@ -25,3 +25,6 @@ fun test() {
     produceSuspend(<!TYPE_MISMATCH!>fun () = <!TYPE_MISMATCH!>fun () {}<!><!>)
     produceSuspend { <!TYPE_MISMATCH, TYPE_MISMATCH!>(fun() {}).<!TYPE_MISMATCH!>takeMe()<!><!> }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, suspend, thisExpression, typeParameter */

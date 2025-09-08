@@ -19,3 +19,6 @@ fun main() {
 }
 
 fun use(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, infix, integerLiteral,
+lambdaLiteral, nullableType */

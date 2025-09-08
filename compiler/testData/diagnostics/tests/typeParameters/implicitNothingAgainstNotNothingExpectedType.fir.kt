@@ -103,3 +103,7 @@ fun test() {
 
 fun foo1(x: String?) {}
 fun String?.foo2() {}
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+tryExpression, typeParameter, whenExpression, whenWithSubject */

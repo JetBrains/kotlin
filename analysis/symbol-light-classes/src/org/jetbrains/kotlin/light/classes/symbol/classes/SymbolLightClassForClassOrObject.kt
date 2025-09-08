@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -31,26 +33,30 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiers
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
+internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
+    val isValueClass: Boolean
+
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
+        isValueClass = classSymbol.isInline
     }
 
     @OptIn(KaImplementationDetail::class)
@@ -62,35 +68,39 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
+        isValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
     ) {
         require(classOrObject !is KtClass || !classOrObject.isInterface() && !classOrObject.isAnnotation())
     }
 
-    protected constructor(
+    private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         ktModule: KaModule,
         manager: PsiManager,
+        isValueClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
-    )
+    ) {
+        this.isValueClass = isValueClass
+    }
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer)
+                annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
+                annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
             ),
         )
     }
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
-    override fun getExtendsList(): PsiReferenceList? = _extendsList
-    override fun getImplementsList(): PsiReferenceList? = _implementsList
+    override fun getExtendsList(): PsiReferenceList = _extendsList
+    override fun getImplementsList(): PsiReferenceList = _implementsList
 
     private val _extendsList by lazyPub {
         withClassSymbol { classSymbol ->
@@ -135,6 +145,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             addMethodsFromCompanionIfNeeded(result, classSymbol)
 
             addMethodsFromDataClass(result, classSymbol)
+            generateMethodsFromAny(classSymbol, result)
+
             addDelegatesToInterfaceMethods(result, classSymbol)
 
             result
@@ -158,7 +170,6 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             .filterIsInstance<KaNamedFunctionSymbol>()
 
         createMethods(this@SymbolLightClassForClassOrObject, componentAndCopyFunctions, result)
-        generateMethodsFromAny(classSymbol, result)
     }
 
     private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<PsiMethod>) {
@@ -171,10 +182,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             lightMemberOrigin,
             METHOD_INDEX_BASE,
             isTopLevel = false,
+            suppressValueClass = true,
         )
     }
 
-    protected fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
+    private fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
+        if (!classSymbol.isData && !classSymbol.isInline) return
+
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.
         val generatedFunctionsFromAny = classSymbol.memberScope
@@ -190,7 +204,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
     }
 
-    protected fun KaSession.addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+    private fun KaSession.addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
             val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
@@ -201,6 +215,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                 lightMemberOrigin = lightMemberOrigin,
                 methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
                 isTopLevel = false,
+                suppressValueClass = true,
             )
         }
 
@@ -233,12 +248,11 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
     }
 
-    private fun KaSession.addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+    private fun addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (classKind() != KaClassKind.OBJECT || isLocal) return
 
         result.add(
             SymbolLightFieldForObject(
-                ktAnalysisSession = this,
                 objectSymbol = classSymbol,
                 containingClass = this@SymbolLightClassForClassOrObject,
                 name = JvmAbi.INSTANCE_FIELD,
@@ -268,9 +282,14 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     override fun isAnnotationType(): Boolean = false
     override fun classKind(): KaClassKind = withClassSymbol { it.classKind }
     override fun isRecord(): Boolean {
-        return _modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
+        return modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
     }
 
-    override fun copy(): SymbolLightClassForClassOrObject =
-        SymbolLightClassForClassOrObject(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
+        classOrObjectDeclaration = classOrObjectDeclaration,
+        classSymbolPointer = classSymbolPointer,
+        ktModule = ktModule,
+        manager = manager,
+        isValueClass = isValueClass,
+    )
 }

@@ -34,3 +34,5 @@ public class Foo2Java extends Base {
 public class Foo3Java {
     public void foo(int paramNameChanged) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, override, typeAliasDeclaration */

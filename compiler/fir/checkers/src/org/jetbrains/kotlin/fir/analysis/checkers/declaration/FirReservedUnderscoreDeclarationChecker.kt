@@ -23,37 +23,34 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppC
             declaration is FirProperty && declaration.isCatchParameter != true ||
             declaration is FirTypeAlias
         ) {
-            reportIfUnderscore(declaration, context, reporter)
+            reportIfUnderscore(declaration)
         } else if (declaration is FirTypeParameter) {
-            reportIfUnderscore(declaration, context, reporter)
+            reportIfUnderscore(declaration)
             declaration.bounds.forEach {
-                checkTypeRefForUnderscore(it, context, reporter)
+                checkTypeRefForUnderscore(it)
             }
         } else if (declaration is FirFunction) {
             if (declaration is FirSimpleFunction) {
-                reportIfUnderscore(declaration, context, reporter)
+                reportIfUnderscore(declaration)
             }
 
             val isSingleUnderscoreAllowed = declaration is FirAnonymousFunction || declaration is FirPropertyAccessor
             for (parameter in declaration.valueParameters) {
                 reportIfUnderscore(
                     parameter,
-                    context,
-                    reporter,
                     isSingleUnderscoreAllowed = isSingleUnderscoreAllowed
                 )
             }
         } else if (declaration is FirFile) {
             for (import in declaration.imports) {
-                checkUnderscoreDiagnostics(import.aliasSource, context, reporter, isExpression = false)
+                checkUnderscoreDiagnostics(import.aliasSource, isExpression = false)
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportIfUnderscore(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         isSingleUnderscoreAllowed: Boolean = false
     ) {
         val declarationSource = declaration.source
@@ -66,18 +63,17 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker(MppC
                 if (rawName?.isUnderscore == true && !(isSingleUnderscoreAllowed && rawName == "_")) {
                     reporter.reportOn(
                         declarationSource,
-                        FirErrors.UNDERSCORE_IS_RESERVED,
-                        context
+                        FirErrors.UNDERSCORE_IS_RESERVED
                     )
                 }
             }
         }
 
         when (declaration) {
-            is FirValueParameter -> checkTypeRefForUnderscore(declaration.returnTypeRef, context, reporter)
+            is FirValueParameter -> checkTypeRefForUnderscore(declaration.returnTypeRef)
             is FirFunction -> {
-                checkTypeRefForUnderscore(declaration.returnTypeRef, context, reporter)
-                checkTypeRefForUnderscore(declaration.receiverParameter?.typeRef, context, reporter)
+                checkTypeRefForUnderscore(declaration.returnTypeRef)
+                checkTypeRefForUnderscore(declaration.receiverParameter?.typeRef)
             }
             else -> {}
         }

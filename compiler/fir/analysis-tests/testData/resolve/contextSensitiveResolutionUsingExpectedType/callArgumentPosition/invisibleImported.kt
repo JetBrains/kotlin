@@ -22,3 +22,5 @@ fun main() {
     foo(Y)
     foo(Z)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, getter, propertyDeclaration, stringLiteral */

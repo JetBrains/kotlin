@@ -9,3 +9,6 @@ fun foo(arg: Int?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, whileLoop */

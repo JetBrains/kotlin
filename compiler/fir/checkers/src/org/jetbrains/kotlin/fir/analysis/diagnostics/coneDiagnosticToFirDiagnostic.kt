@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
+import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -143,7 +144,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
                     session
                 )
             } else {
-                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
+                FirErrors.NONE_APPLICABLE.createOn(
+                    source,
+                    candidatesWithDiagnosticMessages(source, session),
+                    session
+                )
             }
         }
 
@@ -154,7 +159,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
             unstableSmartcast.mapUnstableSmartCast(session)
         }
 
-        else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
+        else -> FirErrors.NONE_APPLICABLE.createOn(
+            source,
+            candidatesWithDiagnosticMessages(source, session),
+            session
+        )
     }
 
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
@@ -186,6 +195,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
 
     is ConeSimpleDiagnostic -> when {
         (source?.kind as? KtFakeSourceElementKind)?.shouldIgnoreSimpleDiagnostic == true -> null
+        // Special handling of KT-75831 case
+        valueParameter?.name == SpecialNames.NO_NAME_PROVIDED && kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation -> null
         else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source, session)
     }
 
@@ -232,12 +243,21 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds, session)
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source, session)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source, session)
-    is ConeNoInferTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false, session)
     is ConeTypeMismatch -> FirErrors.TYPE_MISMATCH.createOn(source, lowerType, upperType, false, session)
     is ConeDynamicUnsupported -> FirErrors.UNSUPPORTED.createOn(source, FirDynamicUnsupportedChecker.MESSAGE, session)
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+}
+
+private fun ConeAmbiguityError.candidatesWithDiagnosticMessages(
+    source: KtSourceElement?,
+    session: FirSession,
+): List<Pair<FirBasedSymbol<*>, List<String>>> {
+    return candidatesWithErrors.map {
+        it.key.symbol to it.value?.toFirDiagnostics(session, source, callOrAssignmentSource = null, valueParameter = null)
+            ?.map(KtDiagnostic::renderMessage).orEmpty()
+    }
 }
 
 private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
@@ -255,7 +275,7 @@ private val KtFakeSourceElementKind.shouldIgnoreSimpleDiagnostic: Boolean
 
 fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?, session: FirSession): KtDiagnostic? =
     when (val symbol = this) {
-        is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId, session)
+        is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId?.classId, session)
         is FirClassLikeSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(
             source,
             symbol,
@@ -301,8 +321,8 @@ private fun mapInapplicableNullableReceiver(
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
         // TODO, KT-59809: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
-        val operationSource = if (source?.elementType == KtNodeTypes.BINARY_EXPRESSION) {
-            source?.getChild(KtNodeTypes.OPERATION_REFERENCE)
+        val operationSource = if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            source.getChild(KtNodeTypes.OPERATION_REFERENCE)
         } else {
             source
         }
@@ -458,11 +478,14 @@ private fun mapInapplicableCandidateError(
                 rootCause.function.symbol,
                 session
             )
-            is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
-                qualifiedAccessSource ?: source,
-                rootCause.valueParameter.symbol,
-                session
-            )
+            is NoValueForParameter -> {
+                val symbol = rootCause.valueParameter.symbol
+                FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
+                    qualifiedAccessSource ?: source,
+                    symbol.resolvedReturnType.valueParameterName(session) ?: symbol.name,
+                    session
+                )
+            }
 
             is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
                 rootCause.argument.source ?: source,
@@ -490,7 +513,7 @@ private fun mapInapplicableCandidateError(
             )
             is InfixCallOfNonInfixFunction -> FirErrors.INFIX_MODIFIER_REQUIRED.createOn(source, rootCause.function, session)
             is OperatorCallOfNonOperatorFunction ->
-                FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString(), session)
+                FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, session)
 
             is OperatorCallOfConstructor -> FirErrors.OPERATOR_CALL_ON_CONSTRUCTOR.createOn(
                 source,
@@ -500,6 +523,15 @@ private fun mapInapplicableCandidateError(
             is UnstableSmartCast -> rootCause.mapUnstableSmartCast(session)
 
             is DslScopeViolation -> FirErrors.DSL_SCOPE_VIOLATION.createOn(source, rootCause.calleeSymbol, session)
+            is ReceiverShadowedByContextParameter -> {
+                FirErrors.RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER.createOn(
+                    source,
+                    rootCause.calleeSymbol,
+                    rootCause.isDispatchOfMemberExtension,
+                    rootCause.compatibleContextParameters,
+                    session
+                )
+            }
             is InferenceError -> {
                 rootCause.constraintError.toDiagnostic(
                     source,
@@ -701,6 +733,7 @@ private fun FirAnonymousFunction.containsErrorType(): Boolean =
             valueParameters.any { it.returnTypeRef is FirErrorTypeRef } ||
             contextParameters.any { it.returnTypeRef is FirErrorTypeRef }
 
+@OptIn(K2Only::class)
 private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
@@ -714,7 +747,7 @@ private fun ConstraintSystemError.toDiagnostic(
             val (argument, reportOn) =
                 when (position) {
                     is ConeArgumentConstraintPosition -> position.argument to null
-                    is ConeLambdaArgumentConstraintPosition -> position.lambda to null
+                    is ConeLambdaArgumentConstraintPosition -> position.lambda to position.anonymousFunctionReturnExpression?.source
                     is ConeReceiverConstraintPosition -> position.argument to (position.argument.source.takeIf { it?.kind == KtRealSourceElementKind }
                         ?: position.source)
                     // ConeExpectedTypeConstraintPosition is processed below,
@@ -923,6 +956,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.SuperNotAvailable -> FirErrors.SUPER_NOT_AVAILABLE
         DiagnosticKind.AnnotationInWhereClause -> FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
         DiagnosticKind.MultipleAnnotationWithAllTarget -> FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
+        DiagnosticKind.UnderscoreWithoutRenamingInDestructuring -> FirErrors.NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR

@@ -5,18 +5,38 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.internal.throwIrLinkageError
+import kotlin.internal.throwUnsupportedOperationException
 import kotlin.reflect.KProperty
 
+@UsedFromCompilerGeneratedCode
+internal fun throwLinkageErrorInCallableName(function: dynamic, linkageError: String) {
+    defineProp(
+        function,
+        name = "callableName",
+        getter = { throwIrLinkageError(linkageError) },
+        setter = VOID,
+        enumerable = true,
+    )
+}
+
+@UsedFromCompilerGeneratedCode
 internal fun getPropertyCallableRef(
-    name: String,
+    name: String?,
     paramCount: Int,
     superType: dynamic,
     getter: dynamic,
-    setter: dynamic
+    setter: dynamic,
+    linkageError: String?,
 ): KProperty<*> {
     getter.get = getter
     getter.set = setter
-    getter.callableName = name
+    if (linkageError != null) {
+        throwLinkageErrorInCallableName(getter, linkageError)
+    } else {
+        getter.callableName = name
+    }
     return getPropertyRefClass(
         getter,
         getKPropMetadata(paramCount, setter),
@@ -24,9 +44,11 @@ internal fun getPropertyCallableRef(
     ).unsafeCast<KProperty<*>>()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getLocalDelegateReference(name: String, superType: dynamic, mutable: Boolean): KProperty<*> {
-    val lambda = { throw UnsupportedOperationException("Not supported for local property reference.") }
-    return getPropertyCallableRef(name, 0, superType, lambda, if (mutable) lambda else null)
+    // getPropertyCallableRef will mutate the lambda, so it's important that the lambda is not transformed into a global function.
+    val lambda = @JsNoLifting { throwUnsupportedOperationException("Not supported for local property reference.") }
+    return getPropertyCallableRef(name, 0, superType, lambda, if (mutable) lambda else null, VOID)
 }
 
 private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, imask: BitMask): dynamic {
@@ -54,4 +76,3 @@ private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array
     arrayOf<dynamic>(metadataObject(), metadataObject()), // 1
     arrayOf<dynamic>(metadataObject(), metadataObject())  // 2
 )
-

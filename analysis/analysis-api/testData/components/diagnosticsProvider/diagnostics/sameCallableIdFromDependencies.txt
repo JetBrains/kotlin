@@ -1,1 +1,14 @@
-Diagnostics from file:
+Diagnostics from util11.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from util12.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from util21.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from util22.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from usage.kt:
+  <NO DIAGNOSTICS>

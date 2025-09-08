@@ -36,8 +36,23 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol KotlinAppendable
 @required
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (id<KotlinAppendable>)appendValue:(unichar)value __attribute__((swift_name("append(value:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (id<KotlinAppendable>)appendValue_:(id _Nullable)value __attribute__((swift_name("append(value_:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (id<KotlinAppendable>)appendValue:(id _Nullable)value startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("append(value:startIndex:endIndex:)")));
 @end
 
@@ -48,18 +63,73 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithContent:(id)content __attribute__((swift_name("init(content:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithCapacity:(int32_t)capacity __attribute__((swift_name("init(capacity:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)initWithContent_:(NSString *)content __attribute__((swift_name("init(content_:)"))) __attribute__((objc_designated_initializer));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue__:(id _Nullable)value __attribute__((swift_name("append(value__:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue___:(BOOL)value __attribute__((swift_name("append(value___:)")));
 - (KotlinStringBuilder *)appendValue____:(int8_t)value __attribute__((swift_name("append(value____:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue:(unichar)value __attribute__((swift_name("append(value:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue_____:(KotlinCharArray *)value __attribute__((swift_name("append(value_____:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue_:(id _Nullable)value __attribute__((swift_name("append(value_:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue______:(double)value __attribute__((swift_name("append(value______:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue_______:(float)value __attribute__((swift_name("append(value_______:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue________:(int32_t)value __attribute__((swift_name("append(value________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue_________:(int64_t)value __attribute__((swift_name("append(value_________:)")));
 - (KotlinStringBuilder *)appendValue__________:(int16_t)value __attribute__((swift_name("append(value__________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue___________:(NSString * _Nullable)value __attribute__((swift_name("append(value___________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue:(id _Nullable)value startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("append(value:startIndex:endIndex:)")));
 
 /**
@@ -100,17 +170,67 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.4")
 */
 - (int32_t)indexOfString:(NSString *)string startIndex:(int32_t)startIndex __attribute__((swift_name("indexOf(string:startIndex:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value:(id _Nullable)value __attribute__((swift_name("insert(index:value:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value_:(BOOL)value __attribute__((swift_name("insert(index:value_:)")));
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value__:(int8_t)value __attribute__((swift_name("insert(index:value__:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value___:(unichar)value __attribute__((swift_name("insert(index:value___:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value____:(KotlinCharArray *)value __attribute__((swift_name("insert(index:value____:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value_____:(id _Nullable)value __attribute__((swift_name("insert(index:value_____:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value______:(double)value __attribute__((swift_name("insert(index:value______:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value_______:(float)value __attribute__((swift_name("insert(index:value_______:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value________:(int32_t)value __attribute__((swift_name("insert(index:value________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value_________:(int64_t)value __attribute__((swift_name("insert(index:value_________:)")));
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value__________:(int16_t)value __attribute__((swift_name("insert(index:value__________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value___________:(NSString * _Nullable)value __attribute__((swift_name("insert(index:value___________:)")));
 
 /**
@@ -136,6 +256,11 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.SinceKotlin(version="1.4")
 */
 - (int32_t)lastIndexOfString:(NSString *)string startIndex:(int32_t)startIndex __attribute__((swift_name("lastIndexOf(string:startIndex:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)reverse __attribute__((swift_name("reverse()")));
 - (void)setIndex:(int32_t)index value:(unichar)value __attribute__((swift_name("set(index:value:)")));
 - (void)setLengthNewLength:(int32_t)newLength __attribute__((swift_name("setLength(newLength:)")));

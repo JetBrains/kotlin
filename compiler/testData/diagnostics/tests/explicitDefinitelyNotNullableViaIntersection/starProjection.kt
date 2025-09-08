@@ -7,3 +7,6 @@ interface Convert<T> {
 }
 
 fun Convert<*>.cnv(value: String): Result<Any> = <!TYPE_MISMATCH!>convert(value)<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nullableType, out, starProjection, typeParameter */

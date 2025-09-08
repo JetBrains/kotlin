@@ -10,3 +10,6 @@ fun main(fooImpl: FooImpl, bar: Bar) {
     val a = foo(fooImpl)
     val b = <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!ARGUMENT_TYPE_MISMATCH!>bar<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, propertyDeclaration,
+typeConstraint, typeParameter */

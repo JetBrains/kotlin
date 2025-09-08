@@ -14,3 +14,6 @@ fun test(x1: String?): String {
     x = x1 ?: JavaClass.X
     return x
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, flexibleType, functionDeclaration, javaProperty, localProperty,
+nullableType, propertyDeclaration, smartcast */

@@ -14,3 +14,6 @@ fun baz() {
     bar<Int>()
     val x: Array<Int?> = arrayOfNulls(5)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, integerLiteral, localProperty, nullableType, propertyDeclaration,
+reified, typeParameter */

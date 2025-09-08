@@ -44,3 +44,6 @@ fun main() {
     bar()
     val x = bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localFunction, localProperty, nestedClass,
+propertyDeclaration, stringLiteral */

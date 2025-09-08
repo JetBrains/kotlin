@@ -2,8 +2,6 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-// KT-66106: uncaught exception: Wrong box result 'undefined'; Expected "OK"
-// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 
 import kotlin.test.*
@@ -11,11 +9,11 @@ import kotlin.test.*
 val sb = StringBuilder()
 
 fun box(): String {
-    main(arrayOf("OK"))
+    mainFun(arrayOf("OK"))
     return sb.toString()
 }
 
-fun main(args : Array<String>) {
+fun mainFun(args : Array<String>) {
     run {
         sb.append(args[0])
     }

@@ -24,7 +24,7 @@ fun A(
 @Composable
 fun A(arrangement: Vertical?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A):Test.kt")
+  sourceInformation(%composer, "C(A)N(arrangement):Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110

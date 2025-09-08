@@ -1,3 +1,4 @@
 expression: LABEL
 text: @let
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

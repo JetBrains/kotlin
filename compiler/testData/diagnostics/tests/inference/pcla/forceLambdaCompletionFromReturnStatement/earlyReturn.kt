@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 class Container<A> {
     fun consume(arg: A) {}
 }
@@ -16,3 +15,6 @@ fun main(b: Boolean) {
         container.consume({ arg: String -> })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, nullableType,
+typeParameter */

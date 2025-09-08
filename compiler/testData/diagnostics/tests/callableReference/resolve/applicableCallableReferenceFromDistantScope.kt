@@ -14,3 +14,6 @@ object Scope {
         val s: String = bar(::foo)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, typeParameter */

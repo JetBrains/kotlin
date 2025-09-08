@@ -13,3 +13,5 @@ typealias MyNothing = Nothing
 
 <!ACTUAL_TYPE_ALIAS_TO_NOTHING!>actual typealias E01 = Nothing<!>
 <!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias E02 = MyNothing<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, typeAliasDeclaration */

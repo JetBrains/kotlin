@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.backend.common.overrides
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.ImplementAsErrorThrowingStubs
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -29,19 +31,19 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FakeOverrideGlobalDeclarationTable(
     mangler: KotlinMangler.IrMangler
-) : GlobalDeclarationTable(mangler, reuseExistingSignaturesForSymbols = false) {
+) : GlobalDeclarationTable(mangler) {
     fun clear() = table.clear()
 }
 
@@ -80,12 +82,8 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
-    friendModules: Map<String, Collection<String>>,
-    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy,
-) : FakeOverrideBuilderStrategy(
-    friendModules = friendModules,
-    unimplementedOverridesStrategy = unimplementedOverridesStrategy
-) {
+    private val friendModules: Map<String, Collection<String>>,
+) : FakeOverrideBuilderStrategy() {
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)
@@ -96,6 +94,54 @@ private class IrLinkerFakeOverrideBuilderStrategy(
         symbolTable.declareSimpleFunction(signature, { symbol }) {
             assert(it === symbol)
             function.acquireSymbol(it)
+        }
+    }
+
+    private fun IrClass.isEligibleForPartialLinkage() = !isExternal && !partialLinkageSupport.shouldBeSkipped(this)
+
+    private val IrClass.delegatesToNothing: Boolean
+        get() = declarations.any { it is IrField && it.origin == IrDeclarationOrigin.DELEGATE && it.type.isNothing() }
+
+
+    override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
+        if (!clazz.isEligibleForPartialLinkage()) return
+        val nonAbstractOverrides = fakeOverride.collectRealOverrides { it.modality == Modality.ABSTRACT }
+
+        val problem = when {
+            nonAbstractOverrides.isEmpty() -> {
+                runIf(!clazz.delegatesToNothing && clazz.modality != Modality.ABSTRACT && clazz.modality != Modality.SEALED) {
+                    PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER
+                }
+            }
+            nonAbstractOverrides.size > 1 -> {
+                /**
+                 * The function returns if fake override has unique implementation in super classes to be chosen on call
+                 *
+                 * If there is a **real** super-class function in the list, it must be unique.
+                 * In that case it is preferred over functions coming from the default implementation in interfaces.
+                 *
+                 * If there is no such function, but there are several interface functions - it is an incompatible change.
+                 *
+                 * This is done to mimic jvm behaviour.
+                 */
+
+                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface }) {
+                    PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
+                }
+            }
+            else -> null
+        } ?: return
+
+        fun IrOverridableDeclaration<*>.mark() {
+            if (isFakeOverride) {
+                origin = problem
+                isFakeOverride = false
+            }
+        }
+        fakeOverride.mark()
+        if (fakeOverride is IrProperty) {
+            fakeOverride.getter?.mark()
+            fakeOverride.setter?.mark()
         }
     }
 
@@ -241,6 +287,13 @@ private class IrLinkerFakeOverrideBuilderStrategy(
             getter = property.getter?.let { buildFunctionWithDisambiguatedSignature(it) }
             setter = property.setter?.let { buildFunctionWithDisambiguatedSignature(it) }
         }
+
+    // TODO(KT-62534) use ModuleDescriptor.shouldSeeInternalsOf when it's fixed and get rid of friendModules
+    override fun shouldSeeInternals(thisModule: ModuleDescriptor, memberModule: ModuleDescriptor): Boolean {
+        val fromModuleName = thisModule.name.asStringStripSpecialMarkers()
+        val toModuleName = memberModule.name.asStringStripSpecialMarkers()
+        return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
+    }
 }
 
 class IrLinkerFakeOverrideProvider(
@@ -262,11 +315,7 @@ class IrLinkerFakeOverrideProvider(
             typeSystem.irBuiltIns,
             partialLinkageSupport,
             fakeOverrideDeclarationTable,
-            friendModules,
-            if (partialLinkageSupport.isEnabled)
-                ImplementAsErrorThrowingStubs(partialLinkageSupport)
-            else
-                ProcessAsFakeOverrides
+            friendModules
         ),
         externalOverridabilityConditions
     )

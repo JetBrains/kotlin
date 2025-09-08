@@ -176,3 +176,6 @@ fun test_9() {
         b.length // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, continue, equalityExpression, forLoop,
+functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

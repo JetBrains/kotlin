@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.previousOffset
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 class SuspendState(type: IrType) {
     val entryBlock: IrContainerExpression = JsIrBuilder.buildComposite(type)
@@ -184,10 +185,13 @@ class StateMachineBuilder(
         return lastExpression.type.isNothing()
     }
 
-    private fun maybeDoDispatch(target: SuspendState) {
+    private fun maybeDoDispatch(target: SuspendState): Boolean {
         if (!isBlockEnded()) {
             doDispatch(target)
+            return true
         }
+
+        return false
     }
 
     private fun doDispatch(target: SuspendState, andContinue: Boolean = true) = doDispatchImpl(target, currentBlock, andContinue)
@@ -429,6 +433,7 @@ class StateMachineBuilder(
             branches = expression.branches
         }
 
+        var exitStateDispatched = false
         for (branch in branches) {
             if (!isElseBranch(branch)) {
                 branch.condition.acceptVoid(this)
@@ -444,23 +449,24 @@ class StateMachineBuilder(
                 currentBlock = branchBlock
                 branch.result.acceptVoid(this)
 
-                if (!isBlockEnded()) {
-                    doDispatch(exitState)
-                }
+                maybeDoDispatch(exitState).ifTrue { exitStateDispatched = true }
 
                 currentState = dispatchState
                 currentBlock = elseBlock
             } else {
                 branch.result.acceptVoid(this)
-                if (!isBlockEnded()) {
-                    doDispatch(exitState)
-                }
+
+                maybeDoDispatch(exitState).ifTrue { exitStateDispatched = true }
+
                 break
             }
         }
 
-        maybeDoDispatch(exitState)
-        updateState(exitState)
+        maybeDoDispatch(exitState).ifTrue { exitStateDispatched = true }
+
+        if (exitStateDispatched) {
+            updateState(exitState)
+        }
 
         if (varSymbol != null) {
             addStatement(JsIrBuilder.buildGetValue(varSymbol))

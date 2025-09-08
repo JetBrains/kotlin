@@ -18,28 +18,32 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface: Boolean) : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+abstract class FirWebCommonExternalChecker(
+    private val allowCompanionInInterface: Boolean
+) : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean
 
-    abstract fun reportExternalEnum(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    abstract fun reportExternalEnum(declaration: FirDeclaration)
 
-    abstract fun additionalCheck(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    abstract fun additionalCheck(declaration: FirDeclaration)
 
-    abstract fun isDefinedExternallyCallableId(callableId: CallableId): Boolean
+    abstract fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean
 
     abstract fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean
 
@@ -70,7 +74,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             }
 
             if (declaration.isEnumClass) {
-                reportExternalEnum(declaration, context, reporter)
+                reportExternalEnum(declaration)
             }
         }
 
@@ -114,24 +118,25 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
 
         if (
             declaration is FirCallableDeclaration &&
-            declaration.isNonAbstractMemberIfInterface(context.session) &&
+            declaration.isNonAbstractMemberIfInterface() &&
             !declaration.isNullableProperty()
         ) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE)
         }
 
-        declaration.checkBody(context, reporter)
-        declaration.checkDelegation(context, reporter)
-        declaration.checkAnonymousInitializer(context, reporter)
+        declaration.checkBody()
+        declaration.checkDelegation()
+        declaration.checkAnonymousInitializer()
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsExternalPropertyParameters)) {
-            declaration.checkConstructorPropertyParam(context, reporter)
+        if (!LanguageFeature.JsExternalPropertyParameters.isEnabled()) {
+            declaration.checkConstructorPropertyParam()
         }
 
-        additionalCheck(declaration, context, reporter)
+        additionalCheck(declaration)
     }
 
-    private fun FirDeclaration.checkBody(context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirDeclaration.checkBody() {
         if (this is FirDefaultPropertyAccessor) return
 
         val body = when (this) {
@@ -158,21 +163,22 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
                 || initializer != null && !initializer.isDefinedExternallyExpression()
 
         if (isWrong && body != null) {
-            reporter.reportOn(body.source, FirWebCommonErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(body.source, FirWebCommonErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION)
         } else if (isWrong && initializer != null) {
-            reporter.reportOn(initializer.source, FirWebCommonErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(initializer.source, FirWebCommonErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION)
         }
 
         if (this is FirFunction) {
             for (defaultValue in valueParameters.mapNotNull { it.defaultValue }) {
                 if (!defaultValue.isDefinedExternallyExpression()) {
-                    reporter.reportOn(defaultValue.source, FirWebCommonErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER, context)
+                    reporter.reportOn(defaultValue.source, FirWebCommonErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER)
                 }
             }
         }
     }
 
-    private fun FirDeclaration.checkDelegation(context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirDeclaration.checkDelegation() {
         if (this !is FirMemberDeclaration || !isNativeOrEffectivelyExternal(symbol, context.session)) return
 
         if (this is FirClass) {
@@ -180,14 +186,14 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
                 val constructorCall = it.resolvedDelegatedConstructorCall
 
                 if (constructorCall?.source?.kind is KtRealSourceElementKind) {
-                    reporter.reportOn(constructorCall.source, FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, context)
+                    reporter.reportOn(constructorCall.source, FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL)
                 }
             }
 
             for ((superType, delegate) in collectSupertypesWithDelegates()) {
                 when {
                     delegate != null -> {
-                        reporter.reportOn(superType.source, FirWebCommonErrors.EXTERNAL_DELEGATION, context)
+                        reporter.reportOn(superType.source, FirWebCommonErrors.EXTERNAL_DELEGATION)
                     }
                 }
             }
@@ -195,28 +201,30 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             val delegationCall = delegatedConstructor
 
             if (delegationCall?.source?.kind is KtRealSourceElementKind) {
-                reporter.reportOn(delegationCall.source, FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, context)
+                reporter.reportOn(delegationCall.source, FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL)
             }
         } else if (this is FirProperty) {
             delegate?.let {
-                reporter.reportOn(it.source, FirWebCommonErrors.EXTERNAL_DELEGATION, context)
+                reporter.reportOn(it.source, FirWebCommonErrors.EXTERNAL_DELEGATION)
             }
         }
     }
 
-    private fun FirDeclaration.checkAnonymousInitializer(context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirDeclaration.checkAnonymousInitializer() {
         if (this !is FirClass) return
 
         for (anonymousInitializer in anonymousInitializers) {
-            reporter.reportOn(anonymousInitializer.source, FirWebCommonErrors.EXTERNAL_ANONYMOUS_INITIALIZER, context)
+            reporter.reportOn(anonymousInitializer.source, FirWebCommonErrors.EXTERNAL_ANONYMOUS_INITIALIZER)
         }
     }
 
-    private fun FirDeclaration.checkConstructorPropertyParam(context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirDeclaration.checkConstructorPropertyParam() {
         if (this !is FirProperty || source?.kind != KtFakeSourceElementKind.PropertyFromParameter) return
         val containingClass = getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         if (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS) return
-        reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, context)
+        reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER)
     }
 
     private fun FirDeclaration.isDirectlyExternal(session: FirSession): Boolean {
@@ -235,7 +243,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
         return isNativeOrEffectivelyExternal(containingDeclaration, session)
     }
 
-    private fun FirDeclaration.isNonAbstractMemberIfInterface(session: FirSession): Boolean {
+    private fun FirDeclaration.isNonAbstractMemberIfInterface(): Boolean {
         if (this is FirBackingField) return false
         return this is FirCallableDeclaration
                 && modality != Modality.ABSTRACT

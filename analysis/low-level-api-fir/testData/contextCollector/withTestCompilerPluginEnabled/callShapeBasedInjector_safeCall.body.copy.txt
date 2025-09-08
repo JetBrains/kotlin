@@ -18,7 +18,7 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>?|
+                FirLocalPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>?|
     Element 8
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
@@ -27,7 +27,7 @@ Smart Casts:
     FirValueParameterSymbol df: R|DataFrame<*>?|
     Types:
         kotlin.Any
-    FirPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>?|
+    FirLocalPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>?|
     Types:
         kotlin.Any
 

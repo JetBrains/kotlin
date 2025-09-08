@@ -21,3 +21,6 @@ fun main() {
 
     b.s.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

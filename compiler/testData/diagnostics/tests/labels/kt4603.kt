@@ -12,3 +12,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localClass, localProperty,
+primaryConstructor, propertyDeclaration, thisExpression, typeWithExtension */

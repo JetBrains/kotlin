@@ -25,3 +25,7 @@ fun whileWithNoCondition(x: Int?) {
     }
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, classDeclaration, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, incrementDecrementExpression, infix, localProperty,
+nullableType, propertyDeclaration, smartcast, typeParameter, typeWithExtension, whileLoop */

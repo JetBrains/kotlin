@@ -18,6 +18,65 @@ public abstract @interface Anno {
 
 
 /**
+ * public abstract interface Base : kotlin/Any {
+ *
+ *   // signature: inherited()V
+ *   public open fun inherited(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Base {
+
+    /**
+     * Inherited doc comment.
+     */
+    public abstract void inherited();
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        /**
+         * Inherited doc comment.
+         */
+        public static void inherited(@org.jetbrains.annotations.NotNull()
+        Base $this) {
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final class Derived : Base {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Derived implements Base {
+
+    public Derived() {
+        super();
+    }
+
+    @java.lang.Override()
+    public void inherited() {
+    }
+}
+
+////////////////////
+
+
+/**
  * public final enum class EnumError : kotlin/Enum<EnumError> {
  *
  *   // signature: <init>(Ljava/lang/String;I)V

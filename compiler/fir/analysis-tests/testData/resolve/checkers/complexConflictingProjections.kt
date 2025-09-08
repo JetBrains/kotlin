@@ -12,3 +12,6 @@ class Quux<T> {
         x.f = null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, inProjection, localProperty,
+nullableType, out, outProjection, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

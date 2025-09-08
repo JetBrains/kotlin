@@ -33,3 +33,7 @@ fun usage(a: IntersectionContextWithExtension, b: IntersectionContextWithValue) 
         "".b
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, lambdaLiteral, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver,
+stringLiteral */

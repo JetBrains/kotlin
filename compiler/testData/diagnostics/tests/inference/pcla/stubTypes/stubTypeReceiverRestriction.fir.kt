@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -NoBuilderInferenceWithoutAnnotationRestriction
 // WITH_STDLIB
 // SKIP_TXT
 
@@ -71,3 +72,8 @@ fun test6() {
         use(::extension)
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, integerLiteral, lambdaLiteral, localFunction, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, starProjection, thisExpression,
+typeParameter, typeWithExtension */

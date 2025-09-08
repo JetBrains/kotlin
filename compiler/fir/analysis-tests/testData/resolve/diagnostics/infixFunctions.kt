@@ -23,3 +23,6 @@ class C {
 
     <!INAPPLICABLE_INFIX_MODIFIER!>infix<!> fun baz(x: Int, y: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral,
+propertyDeclaration, typeAliasDeclaration */

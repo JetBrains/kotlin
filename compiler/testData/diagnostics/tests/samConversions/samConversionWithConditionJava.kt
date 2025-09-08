@@ -27,3 +27,6 @@ fun main(flag: Boolean) {
 
     Tickers.consumeTicker(Selectors.select({ s -> s + s }, null))
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, javaType,
+lambdaLiteral, nullableType, samConversion */

@@ -77,7 +77,7 @@ public final class C<@A(s = "class-type-param") T#0 /* T */> : kotlin/Any {
   @field:A(s = "field")
   public final var q: kotlin/Int
     @A(s = "getter")
-    public final /* non-default */ get
+    public final get
     @A(s = "setter")
     public final /* non-default */ set(@A(s = "setparam-1") @A(s = "setparam-2") value: kotlin/Int)
 

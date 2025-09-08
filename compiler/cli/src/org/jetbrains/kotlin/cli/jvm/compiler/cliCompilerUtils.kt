@@ -11,13 +11,15 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -66,7 +68,7 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
 
-fun writeOutput(
+private fun writeOutput(
     configuration: CompilerConfiguration,
     outputFiles: OutputFileCollection,
     mainClassFqName: FqName?
@@ -87,14 +89,19 @@ fun writeOutput(
             outputFiles,
             messageCollector
         )
+        val sourceFiles = outputFiles.asList().flatMap { it.sourceFiles }.distinct()
+        configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
+            sourceFiles,
+            jarPath
+        )
         if (reportOutputFiles) {
-            val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
+            val message = OutputMessageUtil.formatOutputMessage(sourceFiles, jarPath)
             messageCollector.report(CompilerMessageSeverity.OUTPUT, message)
         }
         return
     }
 
-    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles)
+    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles, configuration.fileMappingTracker)
 }
 
 private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =
@@ -190,9 +197,24 @@ fun createLibraryListForJvm(
     configuration: CompilerConfiguration,
     friendPaths: List<String>
 ): DependencyListForCliModule {
+    val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
     val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
-        dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
-        dependencies(configuration.jvmModularRoots.map { it.absolutePath })
+        dependencies(
+            contentRoots.mapNotNull {
+                when (it) {
+                    is JvmClasspathRoot -> it.file.path
+                    is VirtualJvmClasspathRoot if !it.isFriend -> it.file.toNioPath().toString()
+                    else -> null
+                }
+            }
+        )
+        friendDependencies(contentRoots
+                               .filterIsInstance<VirtualJvmClasspathRoot>()
+                               .filter { it.isFriend }
+                               .map { it.file.toNioPath().toString() })
+
+        dependencies(configuration.jvmModularRoots.map { it.path })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
         friendDependencies(friendPaths)
     }

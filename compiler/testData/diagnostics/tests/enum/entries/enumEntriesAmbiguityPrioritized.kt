@@ -8,3 +8,5 @@ enum class Ambiguous {
 }
 
 val e = Ambiguous.entries.ordinal
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, propertyDeclaration */

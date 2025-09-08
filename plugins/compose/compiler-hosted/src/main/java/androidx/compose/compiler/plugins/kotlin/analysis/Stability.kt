@@ -410,12 +410,6 @@ class StabilityInferencer(
                 )
             }
 
-            type is IrTypeAbbreviation -> {
-                val aliased = type.typeAlias.owner.expandedType
-                // TODO(lmr): figure out how type.arguments plays in here
-                stabilityOf(aliased, substitutions, currentlyAnalyzing)
-            }
-
             else -> error("Unexpected IrType: $type")
         }
     }

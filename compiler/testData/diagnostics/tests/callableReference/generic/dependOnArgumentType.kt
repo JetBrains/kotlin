@@ -29,3 +29,6 @@ fun <R> test2(x: R) {
 
     complex(x, ::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, nullableType,
+typeParameter */

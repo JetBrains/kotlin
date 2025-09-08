@@ -43,6 +43,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("annotatedReturnType.kt")
+  public void testAnnotatedReturnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotatedReturnType.kt");
+  }
+
+  @Test
   @TestMetadata("annotationBinaryRetention.kt")
   public void testAnnotationBinaryRetention() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/annotationBinaryRetention.kt");
@@ -259,6 +265,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("HiddenDeprecatedInClassWithJavaLangDeprecated.kt")
+  public void testHiddenDeprecatedInClassWithJavaLangDeprecated() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/HiddenDeprecatedInClassWithJavaLangDeprecated.kt");
+  }
+
+  @Test
   @TestMetadata("InheritingInterfaceDefaultImpls.kt")
   public void testInheritingInterfaceDefaultImpls() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InheritingInterfaceDefaultImpls.kt");
@@ -358,6 +370,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
   @TestMetadata("OnlySecondaryConstructors.kt")
   public void testOnlySecondaryConstructors() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/OnlySecondaryConstructors.kt");
+  }
+
+  @Test
+  @TestMetadata("privateInterfaceCallable.kt")
+  public void testPrivateInterfaceCallable() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/privateInterfaceCallable.kt");
   }
 
   @Test

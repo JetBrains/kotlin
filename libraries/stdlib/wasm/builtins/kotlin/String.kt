@@ -34,8 +34,10 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     /**
      * Returns the character of this string at the specified [index].
      *
-     * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * In Kotlin/Wasm, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
+     * will be raised if the [index] is out of bounds of this string,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With `-Xwasm-enable-array-range-checks` flag, [IndexOutOfBoundsException] will be thrown.
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {
@@ -61,7 +63,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         leftIfInSum = null
     }
 
-    internal inline val chars: WasmCharArray get() {
+    internal val chars: WasmCharArray get() {
         if (leftIfInSum != null) {
             foldChars()
         }
@@ -69,13 +71,20 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
-        val actualStartIndex = startIndex.coerceAtLeast(0)
-        val actualEndIndex = endIndex.coerceAtMost(this.length)
-        val newLength = actualEndIndex - actualStartIndex
-        if (newLength <= 0) return ""
+        checkStringBounds(startIndex, endIndex, length)
+        val newLength = endIndex - startIndex
         val newChars = WasmCharArray(newLength)
-        copyWasmArray(chars, newChars, actualStartIndex, 0, newLength)
+        copyWasmArray(chars, newChars, startIndex, 0, newLength)
         return newChars.createString()
+    }
+
+    private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
+        if (startIndex < 0 || endIndex > length) {
+            throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, length: $length")
+        }
+        if (startIndex > endIndex) {
+            throw IndexOutOfBoundsException("startIndex: $startIndex > endIndex: $endIndex")
+        }
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -144,18 +153,5 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun WasmCharArray.createString(): String =
+internal fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
-
-internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int): String {
-    val cached = stringPool[poolId]
-    if (cached !== null) {
-        return cached
-    }
-
-    val chars = array_new_data0<WasmCharArray>(startAddress, length)
-    val newString = String(null, length, chars)
-    stringPool[poolId] = newString
-    return newString
-}

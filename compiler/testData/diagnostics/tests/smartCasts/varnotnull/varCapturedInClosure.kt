@@ -18,3 +18,6 @@ public fun foo() {
         System.out.println(<!SMARTCAST_IMPOSSIBLE!>s<!>.length)   // Here smartcast is not possible due to a closure predecessor
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, ifExpression, integerLiteral,
+javaFunction, javaProperty, localFunction, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

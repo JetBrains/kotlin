@@ -17,3 +17,6 @@ class Outer<OuterParam> {
 fun main() {
     val c: OuterParam = Outer.Nested().foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nestedClass,
+nullableType, propertyDeclaration, typeParameter */

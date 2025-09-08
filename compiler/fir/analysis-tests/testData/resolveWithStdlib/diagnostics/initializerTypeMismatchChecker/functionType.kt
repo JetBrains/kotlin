@@ -38,3 +38,7 @@ class V {
         const val b: String = "1"
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, const, functionDeclaration, functionalType,
+getter, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral */

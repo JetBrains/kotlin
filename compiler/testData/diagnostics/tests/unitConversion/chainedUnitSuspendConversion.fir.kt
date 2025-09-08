@@ -13,3 +13,5 @@ fun test(g: () -> Double, s: SubInt) {
     foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
     foo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, stringLiteral, suspend */

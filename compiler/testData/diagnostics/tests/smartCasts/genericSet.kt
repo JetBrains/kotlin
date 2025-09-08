@@ -6,3 +6,6 @@ inline fun <reified T> change(w: Wrapper<T>, x: Any?) {
         w.x = <!DEBUG_INFO_SMARTCAST!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, inline, isExpression,
+nullableType, primaryConstructor, propertyDeclaration, reified, smartcast, typeParameter */

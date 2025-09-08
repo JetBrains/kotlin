@@ -10,3 +10,5 @@ fun f6(): KClass<Array<Int?>> = Array<Int?>::class
 fun f7() = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<List<String>>::class<!>
 fun f8() = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<List<String>?>::class<!>
 fun f9() = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<List<*>?>::class<!>
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, inline, nullableType, reified, starProjection, typeParameter */

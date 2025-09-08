@@ -33,3 +33,7 @@ fun testExtensionPropertyInWhenSubject() {
         "" -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, isExpression,
+localProperty, propertyDeclaration, propertyWithExtensionReceiver, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

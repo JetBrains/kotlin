@@ -17,3 +17,5 @@ actual open class Foo
 class Bar : Foo()
 
 actual fun getFoo(): Foo = Bar()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, typeConstraint, typeParameter */

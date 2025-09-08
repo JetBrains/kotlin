@@ -35,3 +35,5 @@ actual open class ExpectBase {
 actual class Baz : ExpectBase() {
     actual override fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

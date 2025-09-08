@@ -12,20 +12,12 @@ buildscript {
         project.logger.info("${project.name}<<<[$key] = $value>>>")
         extra[key] = value
     }
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
-
-    extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-    }
 }
 
 plugins {
     `kotlin-dsl`
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
-    //kotlin("multiplatform")
 }
 
 repositories {
@@ -51,6 +43,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
                 "kotlin.ExperimentalStdlibApi",
         )
     )
+    compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+    compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
 }
 
 

@@ -36,3 +36,6 @@ fun testPlatformBad(base: Base) {
         Base.B -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, equalityExpression, expect, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

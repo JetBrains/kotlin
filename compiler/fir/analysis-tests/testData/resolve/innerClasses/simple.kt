@@ -35,3 +35,6 @@ fun test() {
     val n = Owner.Nested()
     n.baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration,
+thisExpression */

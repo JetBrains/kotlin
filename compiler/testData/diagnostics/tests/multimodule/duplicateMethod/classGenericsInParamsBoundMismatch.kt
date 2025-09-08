@@ -38,3 +38,6 @@ fun test(b: B<Tr>?) {
         b?.foo(null)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast, typeConstraint, typeParameter */

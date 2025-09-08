@@ -50,3 +50,7 @@ fun testTypeParams3(a: SealedGeneric<*>, b: SealedGeneric<*>) {
     a <!UNCHECKED_CAST!>as SGOption1<String><!>
     if (b is <!CANNOT_CHECK_FOR_ERASED!>SGOption1<String><!>) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, ifExpression, inProjection, integerLiteral,
+intersectionType, isExpression, nestedClass, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+sealed, smartcast, starProjection, stringLiteral, typeParameter, whenExpression, whenWithSubject */

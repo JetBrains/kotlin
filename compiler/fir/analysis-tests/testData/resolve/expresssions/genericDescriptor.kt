@@ -40,3 +40,7 @@ fun otherTest(call: Call<*>, resolvedCall: ResolvedCall<*>) {
     call.resultingDescriptor.name
     resolvedCall.resultingDescriptor.name
 }
+
+/* GENERATED_FIR_TAGS: capturedType, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, interfaceDeclaration, javaProperty, javaType, localProperty, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, safeCall, smartcast, starProjection, stringLiteral, typeConstraint, typeParameter */

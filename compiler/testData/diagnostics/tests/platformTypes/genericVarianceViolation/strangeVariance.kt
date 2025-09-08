@@ -17,3 +17,5 @@ fun main(a: A, ml: MutableList<String>, l: List<String>) {
     a.bar(<!TYPE_MISMATCH!>ml<!>)
     a.bar(<!TYPE_MISMATCH!>l<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

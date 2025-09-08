@@ -42,7 +42,7 @@ FILE: selectDuringTyping.kt
         }
         )
     }
-FILE: __GENERATED DECLARATIONS__.kt
+FILE: org/jetbrains/kotlinx/dataframe/__GENERATED__CALLABLES__.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|kotlin/collections/List<kotlin/Int>|

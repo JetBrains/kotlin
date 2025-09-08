@@ -14,3 +14,6 @@ fun test(): Array<Int> {
 fun foo(a: Array<String> = <!UNSUPPORTED!>[""]<!>) {}
 
 class A(val a: Array<Int> = <!UNSUPPORTED!>[]<!>)
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, collectionLiteral, functionDeclaration, integerLiteral,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

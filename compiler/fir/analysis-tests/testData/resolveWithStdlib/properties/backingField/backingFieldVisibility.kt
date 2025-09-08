@@ -6,7 +6,7 @@ class A {
         private field = 1
 
     val b: Number
-        internal field = 2
+        <!WRONG_MODIFIER_TARGET!>internal<!> field = 2
 
     val c: Number
         <!WRONG_MODIFIER_TARGET!>protected<!> field = 3
@@ -28,3 +28,6 @@ fun test() {
     val cA = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
     val dA = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

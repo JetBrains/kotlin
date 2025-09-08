@@ -8,3 +8,6 @@ fun foo() {
     }
     s.bar()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, functionDeclaration, localProperty,
+propertyDeclaration */

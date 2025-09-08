@@ -12,20 +12,6 @@ buildscript {
     }
 }
 
-subprojects { project ->
-    project.plugins.withId('com.android.application') {
-        boolean enableVariantFilter = properties.containsKey("enableVariantFilter")
-        if (enableVariantFilter) {
-            logger.quiet("enableVariantFilter")
-            android {
-                variantFilter { variant ->
-                    variant.ignore = variant.buildType.name != 'debug'
-                }
-            }
-        }
-    }
-}
-
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

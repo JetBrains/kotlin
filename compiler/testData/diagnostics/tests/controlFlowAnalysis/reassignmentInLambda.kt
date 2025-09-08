@@ -8,3 +8,6 @@ private fun createStubFunction(expression: String?): String? {
     } ?: return null
     return tmp
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

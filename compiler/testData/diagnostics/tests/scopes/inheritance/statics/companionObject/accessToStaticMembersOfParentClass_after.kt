@@ -46,3 +46,5 @@ class B : A() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, javaType, nestedClass,
+objectDeclaration */

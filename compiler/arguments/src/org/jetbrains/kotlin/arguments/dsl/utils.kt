@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl
 
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentBuilder
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
@@ -41,14 +39,3 @@ val IntType.Companion.defaultOne: IntType
     get() = IntType(
         defaultValue = 1.asReleaseDependent(),
     )
-
-/**
- * This is a stub method for lifecycle.
- * All usages should be eventually removed and replaced with proper lifecycle.
- */
-internal fun KotlinCompilerArgumentBuilder.stubLifecycle() {
-    lifecycle(
-        introducedVersion = KotlinReleaseVersion.v1_4_0,
-        stabilizedVersion = KotlinReleaseVersion.v1_4_0,
-    )
-}

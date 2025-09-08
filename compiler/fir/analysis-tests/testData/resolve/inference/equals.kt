@@ -6,3 +6,5 @@ fun main() {
     if ("" == materialize()) return // FE1.0: OK, type argument inferred to Any?
     if (<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>() == "") return // FE1.0: Error, uninferred type argument for `T`
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType, stringLiteral, typeParameter */

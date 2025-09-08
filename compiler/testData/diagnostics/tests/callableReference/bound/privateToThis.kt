@@ -31,3 +31,7 @@ class Foo<out T>(name: T) {
     <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(t: <!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>)<!>
     private fun func2(): T = <!UNRESOLVED_REFERENCE!>t<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration,
+functionDeclarationWithContext, lambdaLiteral, localProperty, nullableType, out, primaryConstructor, propertyDeclaration,
+thisExpression, typeParameter */

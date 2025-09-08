@@ -23,3 +23,6 @@ val test2: Int = C<Int>().second(p1)
 
 val test3: Int = C<Int>().first2(p2)
 val test4: String = C<Int>().second2(p2)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,39 +21,53 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-class StubBasedAnnotationDeserializer(
-    private val session: FirSession,
-) {
+internal class StubBasedAnnotationDeserializer(private val session: FirSession) {
     companion object {
         fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
-            val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
-                ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
-                ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
+            val userType = ktAnnotation.calleeExpression?.typeReference?.typeElement
+            requireWithAttachment(
+                userType is KtUserType,
+                { "${KtTypeElement::class.simpleName} should be ${KtUserType::class.simpleName}" },
+            ) {
+                withPsiEntry("annotationEntry", ktAnnotation)
+            }
+
             return userType.classId()
+        }
+
+        val RECEIVER_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == AnnotationUseSiteTarget.RECEIVER
+        }
+
+        val TYPE_ANNOTATIONS_FILTER: (AnnotationUseSiteTarget?) -> Boolean = {
+            it == null
         }
     }
 
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
     ): List<FirAnnotation> {
         val annotations = ktAnnotated.annotationEntries
-        if (annotations.isEmpty()) return emptyList()
-        return annotations.map { deserializeAnnotation(it) }
+        if (annotations.isEmpty()) {
+            return emptyList()
+        }
+
+        return annotations.mapNotNull { deserializeAnnotation(it, useSiteTargetFilter = useSiteTargetFilter) }
     }
 
     fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
         // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
         if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
-        val propertyStub = (property.stub ?: loadStubByElement(property)) as? KotlinPropertyStubImpl ?: return null
+        val propertyStub: KotlinPropertyStubImpl = property.compiledStub
         val constantValue = propertyStub.constantInitializer ?: return null
         val resultValue = when {
             !isUnsigned -> constantValue
@@ -68,13 +82,22 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun deserializeAnnotation(
-        ktAnnotation: KtAnnotationEntry
-    ): FirAnnotation {
+        ktAnnotation: KtAnnotationEntry,
+        useSiteTargetFilter: ((AnnotationUseSiteTarget?) -> Boolean)? = null,
+    ): FirAnnotation? {
+        val useSiteTarget = ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+        if (useSiteTargetFilter?.invoke(useSiteTarget) == false) {
+            return null
+        }
+
+        val annotationStub: KotlinAnnotationEntryStubImpl = ktAnnotation.compiledStub
+        val valueArguments = annotationStub.valueArguments
+
         return deserializeAnnotation(
             ktAnnotation,
             getAnnotationClassId(ktAnnotation),
-            ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
-            ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
+            valueArguments,
+            useSiteTarget,
         )
     }
 

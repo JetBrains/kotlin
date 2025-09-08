@@ -29,3 +29,6 @@ package test
 
 actual class Sealed2() : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Sealed<!>(2)
 actual class SealedImpl2() : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedIface<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, sealed */

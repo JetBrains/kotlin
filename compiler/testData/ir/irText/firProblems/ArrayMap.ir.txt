@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
               then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ArrayMapImpl.Entry'
                 CONST Boolean type=kotlin.Boolean value=false
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> [val]
-            TYPE_OP type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=CAST typeOperand=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
+            TYPE_OP type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=IMPLICIT_CAST typeOperand=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
               GET_VAR 'other: kotlin.Any? declared in <root>.ArrayMapImpl.Entry.equals' type=kotlin.Any? origin=null
           WHEN type=kotlin.Unit origin=null
             BRANCH

@@ -9,3 +9,6 @@ val foo: Foo = run {
         <!DEBUG_INFO_SMARTCAST!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

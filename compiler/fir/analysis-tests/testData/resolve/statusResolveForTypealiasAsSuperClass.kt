@@ -12,3 +12,5 @@ interface B {
 fun test(c: A) {
     c.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, typeAliasDeclaration */

@@ -106,3 +106,8 @@ fun test() {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, contractCallsEffect, contractConditionalEffect, contracts,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, getter, inline, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localFunction, localProperty, nullableType, operator, override, propertyDeclaration,
+secondaryConstructor, setter, suspend */

@@ -13,3 +13,6 @@ class Foo<T>(x: (T) -> T, y: Inv<Any>)
 fun bar() {
     Foo<Any>({}, Inv())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+primaryConstructor, typeParameter */

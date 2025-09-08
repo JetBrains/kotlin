@@ -25,3 +25,6 @@ import kotlin.annotation.Target;
 public interface J extends Target {
     Collection<String> foo();
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, javaType,
+outProjection, override, primaryConstructor, propertyDeclaration, vararg */

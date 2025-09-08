@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 
 class RootInliningContext(
     state: GenerationState,
@@ -15,10 +16,11 @@ class RootInliningContext(
     override val callSiteInfo: InlineCallSiteInfo,
     val inlineMethodReifier: ReifiedTypeInliner<*>,
     typeParameterMappings: TypeParameterMappings<*>,
-    inlineScopesGenerator: InlineScopesGenerator?
+    inlineScopesGenerator: InlineScopesGenerator?,
+    typeMapper: KotlinTypeMapperBase,
 ) : InliningContext(
     null, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings),
-    null, false, inlineScopesGenerator
+    null, false, inlineScopesGenerator, typeMapper,
 )
 
 class RegeneratedClassContext(
@@ -30,7 +32,7 @@ class RegeneratedClassContext(
     override val callSiteInfo: InlineCallSiteInfo,
     override val transformationInfo: TransformationInfo
 ) : InliningContext(
-    parent, state, nameGenerator, typeRemapper, lambdaInfo, true, null
+    parent, state, nameGenerator, typeRemapper, lambdaInfo, true, null, parent.typeMapper,
 ) {
     val continuationBuilders: MutableMap<String, ClassBuilder> = hashMapOf()
 }
@@ -42,7 +44,8 @@ open class InliningContext(
     val typeRemapper: TypeRemapper,
     val lambdaInfo: LambdaInfo?,
     val classRegeneration: Boolean,
-    val inlineScopesGenerator: InlineScopesGenerator?
+    val inlineScopesGenerator: InlineScopesGenerator?,
+    val typeMapper: KotlinTypeMapperBase,
 ) {
     val isInliningLambda
         get() = lambdaInfo != null
@@ -115,7 +118,7 @@ open class InliningContext(
                 //root inline lambda
                 isInliningLambda && !this.isInliningLambda
             ),
-            lambdaInfo, classRegeneration, inlineScopesGenerator
+            lambdaInfo, classRegeneration, inlineScopesGenerator, typeMapper,
         )
     }
 

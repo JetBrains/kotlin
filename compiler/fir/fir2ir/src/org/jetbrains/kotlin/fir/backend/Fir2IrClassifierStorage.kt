@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.containingReplSymbolAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -205,10 +208,29 @@ class Fir2IrClassifierStorage(
      */
     fun getIrClass(firClass: FirClass): IrClass {
         getCachedIrClass(firClass)?.let { return it }
-        if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
-            return createAndCacheLocalIrClassOnTheFly(firClass)
+        return when (firClass) {
+            is FirAnonymousObject -> createAndCacheLocalIrClassOnTheFly(firClass)
+            is FirRegularClass -> if (firClass.visibility != Visibilities.Local || firClass.isNonLocalInReplContext()) {
+                createFir2IrLazyClass(firClass)
+            } else {
+                createAndCacheLocalIrClassOnTheFly(firClass)
+            }
         }
-        return createFir2IrLazyClass(firClass)
+    }
+
+    /**
+     * Temporary hack introduced to compensate the fact that classes inside REPL snippets have local visibility
+     *
+     * @return true iff receiver is a top-level class in REPL snippet, or is an offspring (with any depth-level)
+     * of such a top-level class. Such classes normally shouldn't have local visibility
+     */
+    private fun FirRegularClass.isNonLocalInReplContext(): Boolean {
+        var klass: FirRegularClass? = this
+        do {
+            if (klass?.containingReplSymbolAttr != null) return true
+            klass = (klass?.getContainingClassSymbol() as? FirRegularClassSymbol)?.fir
+        } while (klass != null)
+        return false
     }
 
     /**
@@ -239,7 +261,7 @@ class Fir2IrClassifierStorage(
     }
 
     private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
-        val firClassSymbol = lookupTag.toClassSymbol(session) ?: return null
+        val firClassSymbol = lookupTag.toClassSymbol() ?: return null
         return getIrClass(firClassSymbol.fir)
     }
 

@@ -26,3 +26,5 @@ val bar: HashMap<String, String>? = null      // Case 5
 
 // Similar behavior to test() above
 val baz = foo() is HashMap<*, *>              // Case 6
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, isExpression, nullableType, propertyDeclaration, stringLiteral */

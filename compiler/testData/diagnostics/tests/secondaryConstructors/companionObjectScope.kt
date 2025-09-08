@@ -17,3 +17,6 @@ class A {
     constructor(x: Int)
     constructor() : this(foo() + prop + B.bar() + B.prop <!NONE_APPLICABLE!>+<!> C)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, propertyDeclaration, secondaryConstructor */

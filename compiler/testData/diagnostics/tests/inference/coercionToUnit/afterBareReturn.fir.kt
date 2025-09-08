@@ -40,3 +40,6 @@ fun main() {
     expectUnit(test3())
     expectUnit(test4())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

@@ -17,7 +17,6 @@ CONSTRUCTOR:
     abbreviation: null
     annotations: []
     classId: IntPredicate
-    nullability: NON_NULLABLE
     qualifiers: [
       KaResolvedClassTypeQualifier:
         name: IntPredicate
@@ -26,6 +25,9 @@ CONSTRUCTOR:
     ]
     symbol: KaNamedClassSymbol(IntPredicate)
     typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -58,13 +60,11 @@ CONSTRUCTOR:
         hasReceiver: false
         isReflectType: false
         isSuspend: false
-        nullability: NON_NULLABLE
         parameterTypes: [
           KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -73,6 +73,9 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
         parameters: [
           KaBaseFunctionValueParameter [name: null, type: kotlin/Int]
@@ -86,7 +89,6 @@ CONSTRUCTOR:
                 abbreviation: null
                 annotations: []
                 classId: kotlin/Int
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Int
@@ -95,11 +97,13 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Int)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
               KaUsualClassType:
                 abbreviation: null
                 annotations: []
                 classId: kotlin/Boolean
-                nullability: NON_NULLABLE
                 qualifiers: [
                   KaResolvedClassTypeQualifier:
                     name: Boolean
@@ -108,6 +112,9 @@ CONSTRUCTOR:
                 ]
                 symbol: KaNamedClassSymbol(kotlin/Boolean)
                 typeArguments: []
+                isMarkedNullable: false
+                isNullable: false
+                hasFlexibleNullability: false
             ]
         ]
         receiverType: null
@@ -115,7 +122,6 @@ CONSTRUCTOR:
           abbreviation: null
           annotations: []
           classId: kotlin/Boolean
-          nullability: NON_NULLABLE
           qualifiers: [
             KaResolvedClassTypeQualifier:
               name: Boolean
@@ -124,13 +130,15 @@ CONSTRUCTOR:
           ]
           symbol: KaNamedClassSymbol(kotlin/Boolean)
           typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
         symbol: KaNamedClassSymbol(kotlin/Function1)
         typeArguments: [
           KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: kotlin/Int
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Int
@@ -139,11 +147,13 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Int)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
           KaUsualClassType:
             abbreviation: null
             annotations: []
             classId: kotlin/Boolean
-            nullability: NON_NULLABLE
             qualifiers: [
               KaResolvedClassTypeQualifier:
                 name: Boolean
@@ -152,7 +162,13 @@ CONSTRUCTOR:
             ]
             symbol: KaNamedClassSymbol(kotlin/Boolean)
             typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
         ]
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: null
@@ -188,7 +204,6 @@ CLASS:
       abbreviation: null
       annotations: []
       classId: kotlin/Any
-      nullability: NON_NULLABLE
       qualifiers: [
         KaResolvedClassTypeQualifier:
           name: Any
@@ -197,6 +212,9 @@ CLASS:
       ]
       symbol: KaNamedClassSymbol(kotlin/Any)
       typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
   ]
   typeParameters: []
   visibility: PUBLIC

@@ -17,3 +17,6 @@ class Zar constructor(
     <!EXPOSED_PARAMETER_TYPE!>@param:Suppress("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR")
     val foo: Foo<!>,
 )
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetParam, annotationUseSiteTargetProperty, classDeclaration, enumDeclaration,
+enumEntry, primaryConstructor, propertyDeclaration, stringLiteral */

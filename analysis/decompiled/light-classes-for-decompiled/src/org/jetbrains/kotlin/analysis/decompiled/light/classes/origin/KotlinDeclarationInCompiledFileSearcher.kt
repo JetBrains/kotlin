@@ -276,9 +276,21 @@ class KotlinDeclarationInCompiledFileSearcher {
         }
     }
 
-    private fun PsiType.isTheSame(psiType: PsiType): Boolean =
+    private fun PsiType.isTheSame(psiType: PsiType): Boolean {
         //currently functional types are unresolved and thus type comparison doesn't work
-        canonicalText.takeWhile { it != '<' } == psiType.canonicalText
+        if (canonicalText.takeWhile { it != '<' } == psiType.canonicalText) {
+            return true
+        }
+        val thisIsPrimitive = this is PsiPrimitiveType
+        val otherIsPrimitive = psiType is PsiPrimitiveType
+        // E.g., kotlin.Int -> int v.s. java.lang.Integer from stub
+        if (thisIsPrimitive != otherIsPrimitive) {
+            val t1 = PsiPrimitiveType.getOptionallyUnboxedType(this)
+            val t2 = PsiPrimitiveType.getOptionallyUnboxedType(psiType)
+            return t1 == t2
+        }
+        return false
+    }
 
     companion object {
         fun getInstance(): KotlinDeclarationInCompiledFileSearcher =

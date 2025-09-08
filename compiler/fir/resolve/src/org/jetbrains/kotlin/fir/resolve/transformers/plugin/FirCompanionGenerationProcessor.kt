@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
@@ -22,10 +21,13 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirCompanionGenerationProcessor(
     session: FirSession,
@@ -80,11 +82,22 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
 
         return when (generatedCompanion) {
             null -> null
+
             is FirRegularClassSymbol -> when {
-                regularClass.companionObjectSymbol != null -> error("Plugin generated companion object for class $regularClass, but it is already present in class")
+                regularClass.companionObjectSymbol != null -> errorWithAttachment("Plugin generated duplicated companion object: ${generatedCompanion.origin::class.simpleName}") {
+                    withEntry("origin", generatedCompanion.origin.toString())
+                    withFirSymbolEntry("generatedCompanion", generatedCompanion)
+                    withFirEntry("regularClass", regularClass)
+                }
+
                 else -> generatedCompanion
             }
-            else -> error("Plugin generated non regular class as companion object")
+
+            else -> errorWithAttachment("Plugin generated non regular class as companion object: ${generatedCompanion.origin::class.simpleName}") {
+                withEntry("origin", generatedCompanion.origin.toString())
+                withFirSymbolEntry("generatedCompanion", generatedCompanion)
+                withFirEntry("regularClass", regularClass)
+            }
         }
     }
 }

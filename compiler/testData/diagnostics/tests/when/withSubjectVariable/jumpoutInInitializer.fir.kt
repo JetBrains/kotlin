@@ -42,3 +42,7 @@ fun testJumpOutInIf(x: Int?) {
 
     x.inc() // Actually, safe, but it's OK if it's error
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject, whileLoop */

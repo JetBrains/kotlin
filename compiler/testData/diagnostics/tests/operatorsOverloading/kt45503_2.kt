@@ -15,3 +15,6 @@ class C {
 fun foo() {
     C()[A(mutableListOf(1))] += 2
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, operator, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

@@ -312,3 +312,7 @@ fun test() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+safeCall, smartcast, stringLiteral, typeParameter, typeWithExtension */

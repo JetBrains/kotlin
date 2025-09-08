@@ -37,3 +37,6 @@ fun test(e: JetExpression) {
 }
 
 fun <T> javaClass(): Class<T> = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, flexibleType, functionDeclaration, javaFunction, javaType,
+nullableType, typeParameter */

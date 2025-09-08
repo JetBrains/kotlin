@@ -23,3 +23,6 @@ fun usage2() {
     <!NO_CONTEXT_ARGUMENT!>test<!>()
     <!NO_CONTEXT_ARGUMENT!>property<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, lambdaLiteral,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

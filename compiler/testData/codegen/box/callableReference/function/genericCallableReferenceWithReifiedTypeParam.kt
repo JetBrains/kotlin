@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 
 import kotlin.test.assertEquals
@@ -50,7 +51,7 @@ fun testFunctionWithExtensionAndArgs() {
     assertEquals(callable2(3, 4), "OK2" to 7)
 
     val callable3 = callable1::funWithExtensionAndArgs
-    val (cb, s) = callable3(5, 6)
+    val [cb, s] = callable3(5, 6)
     assertEquals(s, 11)
     assertEquals(cb("OK3", 7, 8), "OK3" to 15)
 
@@ -68,7 +69,7 @@ fun testFunctionWithExtensionAndVararg() {
     assertEquals(callable2(arrayOf(4, 5, 6).toIntArray()), "OK2" to 15)
 
     val callable3 = callable1::funWithExtensionAndVarargs
-    val (cb, s) = callable3(arrayOf(7, 8).toIntArray())
+    val [cb, s] = callable3(arrayOf(7, 8).toIntArray())
     assertEquals(s, 15)
     assertEquals(cb("OK3", arrayOf(9, 10).toIntArray()), "OK3" to 19)
 

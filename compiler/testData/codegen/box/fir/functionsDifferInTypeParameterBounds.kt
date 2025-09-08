@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 // ISSUE: KT-63846
-// IGNORE_BACKEND_K2: WASM
 // DUMP_IR
 
 interface A

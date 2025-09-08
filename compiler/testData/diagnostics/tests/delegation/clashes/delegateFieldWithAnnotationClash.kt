@@ -15,3 +15,6 @@ class MyClass: @Anno(constant) Base by bar() {
     @Target(AnnotationTarget.TYPE)
     annotation class Anno(val string: String)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, const, functionDeclaration,
+inheritanceDelegation, integerLiteral, interfaceDeclaration, nestedClass, primaryConstructor, propertyDeclaration */

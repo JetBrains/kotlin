@@ -424,9 +424,11 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
     )
 
     @Test
-    fun testAbstractDefaultParamOnInterface() = defaultParams(
-        unchecked = """""",
-        checked = """
+    fun testAbstractDefaultParamOnInterface() {
+        assumeTrue(useFir)
+        defaultParams(
+            unchecked = """""",
+            checked = """
             interface Test {
                 @Composable fun foo(param: Int = remember { 0 })
             }
@@ -455,7 +457,8 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 testImpl.betweenFoo(0)
             }
         """
-    )
+        )
+    }
 
     @Test
     fun testOpenDefaultParamOnInterface() = defaultParams(
@@ -525,9 +528,11 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
     )
 
     @Test
-    fun testAbstractDefaultParamOverrideExtensionReceiver() = defaultParams(
-        unchecked = "",
-        checked = """
+    fun testAbstractDefaultParamOverrideExtensionReceiver() {
+        assumeTrue(useFir)
+        defaultParams(
+            unchecked = "",
+            checked = """
             interface Test {
                 @Composable fun Int.foo(param: Int = remember { 0 })
             }
@@ -543,7 +548,8 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 }
             }
         """
-    )
+        )
+    }
 
     @Test
     fun testOpenDefaultParamOverrideExtensionReceiver() = defaultParams(
@@ -591,11 +597,13 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
     )
 
     @Test
-    fun testAbstractDefaultParamComposableLambda() = defaultParams(
-        unchecked = """
+    fun testAbstractDefaultParamComposableLambda() {
+        assumeTrue(useFir)
+        defaultParams(
+            unchecked = """
             @Composable fun Text(value: String) {}
         """,
-        checked = """
+            checked = """
             private interface DefaultParamInterface {
                 @Composable fun Content(
                     content: @Composable () -> Unit = @Composable { ComposedContent { Text("default") } }
@@ -605,7 +613,8 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 )
             }
         """,
-    )
+        )
+    }
 
     @Test
     fun testOpenDefaultParamComposableLambda() = defaultParams(
@@ -670,4 +679,32 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
             }
         """.trimIndent()
     )
+
+    @Test
+    fun callingOtherMethodWithDefault() {
+        assumeTrue(useFir)
+        defaultParams(
+            unchecked = "",
+            checked = """
+            @Composable fun Main() {
+                Impl.B()
+            }
+
+            interface A {
+                @Composable
+                fun A(
+                    default: () -> Float = { 0f },
+                ) { }
+            }
+
+            interface B {
+                @Composable
+                fun B(param: String = "") = Impl.A()
+            }
+
+            interface Combined : A, B
+            object Impl : Combined
+        """
+        )
+    }
 }

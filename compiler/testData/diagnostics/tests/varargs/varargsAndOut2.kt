@@ -9,3 +9,5 @@ fun test2(a: Array<String>, b: Array<out String>) {
     bar(*b)
     bar("", *a, *b, "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, outProjection, stringLiteral, vararg */

@@ -23,3 +23,7 @@ fun test(parent: Some) {
     if (a !is B) return
     val view = a.takeIf { true }?.foo()
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, javaProperty, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast */

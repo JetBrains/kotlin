@@ -596,8 +596,8 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    fun `test - extensions mangling`() {
-        doTest(headersTestDataDir.resolve("extensionsMangling"))
+    fun `test - super class extensions mangling`() {
+        doTest(headersTestDataDir.resolve("superClassExtensionsMangling"))
     }
 
     @Test
@@ -612,6 +612,76 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @TodoAnalysisApi
     fun `test - mangle throws annotation`() {
         doTest(headersTestDataDir.resolve("mangleThrowsAnnotation"))
+    }
+
+    @Test
+    fun `test - functions annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("functionsAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - classifiers annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("classifiersAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - properties annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("propertiesAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - function parameters annotated with @ObjCName`() {
+        doTest(headersTestDataDir.resolve("functionParametersAnnotatedWithObjCName"))
+    }
+
+    @Test
+    fun `test - frameworkName is not added when class @ObjCName is the same kotlin name exact == true`() {
+        doTest(headersTestDataDir.resolve("frameworkNameWithObjCNameAndExact"), Configuration(frameworkName = "Shared"))
+    }
+
+    @Test
+    fun `test - extension of primitive type`() {
+        doTest(headersTestDataDir.resolve("extensionOfPrimitiveType"))
+    }
+
+    @Test
+    fun `test - receiver annotated with ObjCName`() {
+        doTest(headersTestDataDir.resolve("objCNameWithReceiver"))
+    }
+
+    @Test
+    fun `test - block with explicit parameter names`() {
+        doTest(headersTestDataDir.resolve("blockWithExplicitParameterNames"))
+    }
+
+    @Test
+    fun `test - block with no parameter names`() {
+        doTest(headersTestDataDir.resolve("blockWithNoParameterNames"), Configuration(objcExportBlockExplicitParameterNames = false))
+    }
+
+    @Test
+    fun `test - release keyword as method name`() {
+        doTest(headersTestDataDir.resolve("releaseKeywordAsMethodName"))
+    }
+
+    @Test
+    fun `test - Any methods override`() {
+        doTest(headersTestDataDir.resolve("anyMethodsOverride"))
+    }
+
+    @Test
+    fun `test - property getter without colon`() {
+        doTest(headersTestDataDir.resolve("propertyGetter"))
+    }
+
+    @Test
+    fun `test - private companion`() {
+        doTest(headersTestDataDir.resolve("privateCompanion"))
+    }
+
+    @Test
+    fun `test - extensions mangling`() {
+        doTest(headersTestDataDir.resolve("extensionsMangling"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

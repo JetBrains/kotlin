@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 // SKIP_TXT
 // DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_LAMBDA_EXPRESSION -UNCHECKED_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE -OPT_IN_USAGE_ERROR -UNUSED_EXPRESSION
@@ -195,3 +194,8 @@ fun poll86(): Flow<String> {
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration,
+functionalType, ifExpression, in, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty,
+nullableType, out, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, suspend, tryExpression,
+typeParameter, typeWithExtension, vararg, whenExpression, whenWithSubject */

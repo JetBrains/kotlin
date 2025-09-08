@@ -27,3 +27,6 @@ fun test_3(x: Any) {
         x.foo = null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, ifExpression, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, starProjection, typeParameter */

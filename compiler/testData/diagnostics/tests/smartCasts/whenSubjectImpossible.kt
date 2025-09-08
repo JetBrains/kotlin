@@ -10,3 +10,6 @@ fun foo(my: My) {
     my.x!!
     when (my.x) { }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, getter, integerLiteral, nullableType,
+propertyDeclaration, whenExpression, whenWithSubject */

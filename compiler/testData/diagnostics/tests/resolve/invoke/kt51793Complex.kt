@@ -29,3 +29,7 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+integerLiteral, interfaceDeclaration, lambdaLiteral, operator, propertyDeclaration, propertyWithExtensionReceiver,
+stringLiteral, typeWithExtension */

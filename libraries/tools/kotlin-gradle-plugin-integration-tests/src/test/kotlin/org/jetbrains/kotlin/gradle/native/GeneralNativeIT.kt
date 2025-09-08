@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.internals.KOTLIN_NATIVE_IGNORE_DISABLED_TARGE
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -786,7 +787,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS])
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testIgnoreDisabledNativeTargets(gradleVersion: GradleVersion) {
-        nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
+        nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion, buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()) {
             build {
                 assertHasDiagnostic(KotlinToolingDiagnostics.DisabledKotlinNativeTargets)
             }
@@ -1034,6 +1035,31 @@ class GeneralNativeIT : KGPBaseTest() {
                         "Arguments were not logged by Task $task"
                     )
                 }
+            }
+        }
+    }
+
+    @DisplayName("KT-72705: native compile task should not use project's version as an input property")
+    @TestMetadata("emptyKts")
+    @OsCondition(enabledOnCI = [OS.MAC])
+    @GradleTest
+    fun testKotlinNativeCompileTaskDontUseProjectVersionAsAnInput(gradleVersion: GradleVersion) {
+        nativeProject("emptyKts", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            build("compileKotlinIosArm64") {
+                assertTasksExecuted(":compileKotlinIosArm64")
+            }
+
+            gradleProperties.appendText("\nversion = \"1.0.0-ABSOLUTELYNEWVERSION\"")
+            build("compileKotlinIosArm64") {
+                assertTasksUpToDate(":compileKotlinIosArm64")
             }
         }
     }

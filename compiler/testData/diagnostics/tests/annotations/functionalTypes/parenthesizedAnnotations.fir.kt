@@ -45,3 +45,6 @@ fun foo11() {
 fun foo12() {
     val x: @Foo() @Foo () () -> Unit = {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, asExpression, functionDeclaration, functionalType, ifExpression,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration */

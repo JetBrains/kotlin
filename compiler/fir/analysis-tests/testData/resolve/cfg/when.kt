@@ -17,3 +17,7 @@ fun test_2(x: Any?) {
         <!USELESS_IS_CHECK!>x is A<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, intersectionType, isExpression, localProperty, multiplicativeExpression, nullableType,
+propertyDeclaration, smartcast, whenExpression */

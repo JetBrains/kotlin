@@ -29,7 +29,7 @@ Tower Data Context:
     Element 10
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval d: R|D|
+                FirLocalPropertySymbol lval d: R|D|
 Smart Casts:
     FirValueParameterSymbol a: R|T|
     Types:
@@ -37,9 +37,9 @@ Smart Casts:
         kotlin.Any
 
 FILE: [ResolvedTo(IMPORTS)] nestedContextParameterAfter.kt
-    public final? [ResolvedTo(TYPES)] interface BaseA : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] interface BaseA : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(TYPES)] interface Another : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] interface Another : R|kotlin/Any| {
     }
     public final? [ResolvedTo(TYPES)] class A : R|BaseA|, R|Another| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {

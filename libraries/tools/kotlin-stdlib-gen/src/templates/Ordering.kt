@@ -293,7 +293,7 @@ object Ordering : TemplateGroupBase() {
             Returns a list of all elements sorted descending according to their natural sort order.
             """
         }
-        if (f != ArraysOfPrimitives) {
+        if (f != ArraysOfPrimitives && f != ArraysOfUnsigned) {
             appendStableSortNote()
         }
         returns("List<T>")
@@ -424,6 +424,8 @@ object Ordering : TemplateGroupBase() {
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
+        
+        sample("samples.collections.Collections.Sorting.sortBy")
 
         body { """if (size > 1) sortWith(compareBy(selector))""" }
     }
@@ -477,6 +479,8 @@ object Ordering : TemplateGroupBase() {
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
+        
+        sample("samples.collections.Collections.Sorting.sortByDescending")
 
         body {
             """if (size > 1) sortWith(compareByDescending(selector))""" }

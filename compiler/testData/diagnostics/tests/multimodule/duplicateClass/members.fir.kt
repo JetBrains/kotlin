@@ -38,3 +38,5 @@ fun test(a: A) {
 
     M2().a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration */

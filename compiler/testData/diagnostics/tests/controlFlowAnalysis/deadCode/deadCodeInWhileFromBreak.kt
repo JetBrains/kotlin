@@ -54,3 +54,6 @@ fun test(arr: Array<Int>) {
         break <!UNREACHABLE_CODE, USELESS_ELVIS!>?: null<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, break, comparisonExpression, disjunctionExpression, elvisExpression,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, whileLoop */

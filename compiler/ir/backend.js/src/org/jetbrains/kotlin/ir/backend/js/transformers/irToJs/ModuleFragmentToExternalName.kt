@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsFileName
 import org.jetbrains.kotlin.ir.backend.js.utils.nameWithoutExtension
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -43,7 +43,7 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
     }
 
     private fun IrModuleFragment.getJsOutputName(): String {
-        return jsOutputNamesMapping[this] ?: sanitizeName(safeName)
+        return jsOutputNamesMapping[this] ?: makeValidES5Identifier(safeName)
     }
 
     private fun getFileStableName(fileName: String, packageFqn: String): String {

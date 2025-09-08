@@ -20,3 +20,6 @@ class Constrain<A, B : A, C : B>
 class Bind<A, B : A, C : B>(val constrain: Constrain<A, B, C>?) {
     fun upcast(c: C): A = c
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, integerLiteral, localProperty,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

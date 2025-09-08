@@ -10,7 +10,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.toHexString
 import java.io.File
@@ -44,16 +43,13 @@ abstract class WasmNpmTooling internal constructor() {
 
             val isInstallationDirPresent = installationDir.isPresent
 
-            val cleanableStore = CleanableStore[defaultInstallationDir.get().asFile.absolutePath]
-
             val nodeDir: File = if (isInstallationDirPresent) {
                 installationDir.getFile()
             } else {
-                cleanableStore[hashVersion].use()
+                defaultInstallationDir.map { it.dir(hashVersion) }.getFile()
             }
 
             NpmToolingEnv(
-                cleanableStore = cleanableStore,
                 version = hashVersion,
                 dir = nodeDir,
                 explicitDir = isInstallationDirPresent,

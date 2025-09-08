@@ -17,12 +17,17 @@ import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
@@ -121,14 +126,12 @@ internal object CompilerArgumentMetrics : FusMetrics {
 }
 
 internal object NativeArgumentMetrics : FusMetrics {
-    fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
-        val arguments = K2NativeCompilerArguments()
-        parseCommandLineArguments(compilerArguments, arguments)
 
-        arguments.binaryOptions
-            ?.filter { it.startsWith("gc=") }
-            ?.map { it.substring("gc=".length) }
-            ?.mapNotNull {
+    private fun getGcTypeMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
+        return arguments.binaryOptions
+            ?.firstOrNull { it.startsWith("gc=") }
+            ?.substring("gc=".length)
+            ?.let {
                 //Values are connected to [org.jetbrains.kotlin.backend.konan.GC], but the class can't be access from here
                 when (it) {
                     "noop" -> BooleanMetrics.ENABLED_NOOP_GC
@@ -137,18 +140,40 @@ internal object NativeArgumentMetrics : FusMetrics {
                     "cms" -> BooleanMetrics.ENABLED_CMS_GC
                     else -> null
                 }
-            }?.forEach { metricsConsumer.report(it, true) }
+            }
+    }
+
+    private fun getSwiftExportMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
+        return if (arguments.binaryOptions?.contains("swiftExport=true") == true) {
+            BooleanMetrics.ENABLED_SWIFT_EXPORT
+        } else {
+            null
+        }
+    }
+
+    fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
+        val arguments = K2NativeCompilerArguments()
+        parseCommandLineArguments(compilerArguments, arguments)
+        getGcTypeMetrics(arguments)?.let { metricsConsumer.report(it, true) }
+        getSwiftExportMetrics(arguments)?.let { metricsConsumer.report(it, true) }
     }
 }
 
 internal object NativeCompilerOptionMetrics : FusMetrics {
-    fun collectMetrics(compilerOptions: KotlinNativeCompilerOptions, metricsConsumer: StatisticsValuesConsumer) {
+    fun collectMetrics(
+        compilerOptions: KotlinNativeCompilerOptions,
+        separateKmpCompilationEnabled: Boolean,
+        metricsConsumer: StatisticsValuesConsumer,
+    ) {
         metricsConsumer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
         compilerOptions.apiVersion.orNull?.also { v ->
             metricsConsumer.report(StringMetrics.KOTLIN_API_VERSION, v.version)
         }
         compilerOptions.languageVersion.orNull?.also { v ->
             metricsConsumer.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+        }
+        if (separateKmpCompilationEnabled) {
+            metricsConsumer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
         }
     }
 }
@@ -195,7 +220,8 @@ internal object BuildFinishMetrics : FusMetrics {
 
     private fun reportGlobalMetrics(logger: Logger, metricConsumer: StatisticsValuesConsumer) {
         runMetricMethodSafely(logger, "reportGlobalMetrics") {
-            System.getProperty("os.name")?.also { metricConsumer.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
+            System.getProperty("os.name")?.also { metricConsumer.report(StringMetrics.OS_TYPE, it) }
+            System.getProperty("os.version")?.also { metricConsumer.report(StringMetrics.OS_VERSION, it) }
             metricConsumer.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
             metricConsumer.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
             metricConsumer.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
@@ -229,6 +255,8 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
     internal fun collectMetrics(
         name: String,
         compilerOptions: KotlinCommonCompilerOptions,
+        separateKmpCompilationEnabled: Boolean,
+        firRunnerEnabled: Boolean, // jvm only as of 2.2.20
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -242,6 +270,12 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
             metricsContainer.report(BooleanMetrics.TESTS_EXECUTED, true)
         else
             metricsContainer.report(BooleanMetrics.COMPILATION_STARTED, true)
+        if (separateKmpCompilationEnabled) {
+            metricsContainer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
+        }
+        if (firRunnerEnabled) {
+            metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
+        }
     }
 }
 
@@ -332,6 +366,23 @@ internal object KotlinStdlibConfigurationMetrics : FusMetrics {
     internal fun collectMetrics(project: Project, requestedStdlibVersion: String) {
         project.addConfigurationMetrics {
             it.put(StringMetrics.KOTLIN_STDLIB_VERSION, requestedStdlibVersion)
+        }
+    }
+}
+
+internal object KotlinCrossCompilationMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project, compilation: KotlinNativeCompilation) {
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        val isSupportedHost = HostManager().isEnabled(compilation.target.konanTarget)
+
+        if (isSupportedHost || !crossCompilationEnabled) return
+
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+            if (compilation.cinterops.isNotEmpty()) {
+                project.addConfigurationMetrics {
+                    it.put(BooleanMetrics.KOTLIN_CROSS_COMPILATION_NOT_SUPPORTED, true)
+                }
+            }
         }
     }
 }

@@ -11,3 +11,6 @@ fun test(): String {
     val result by "OK"
     return result
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, localProperty, nullableType, operator,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral, thisExpression */

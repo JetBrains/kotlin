@@ -5,3 +5,5 @@ fun bar(x: Int?): Int {
     // Should be unreachable
     return 2 + 2
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast */

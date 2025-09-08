@@ -39,3 +39,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, starProjection, typeParameter, whenExpression */

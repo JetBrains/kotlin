@@ -19,3 +19,6 @@ fun <D> test(b: Boolean) {
 
     c?.foo()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression, javaFunction,
+localProperty, nullableType, propertyDeclaration, safeCall, typeConstraint, typeParameter */

@@ -5,11 +5,14 @@ plugins {
     kotlin("multiplatform")
 }
 
+val dependencyMode = providers.gradleProperty("dependencyMode")
+val enableAdditionalTarget = providers.gradleProperty("p2.enableAdditionalTarget")
+
 kotlin {
     linuxX64()
     linuxArm64()
 
-    if (properties.containsKey("p2.enableAdditionalTarget")) {
+    if (enableAdditionalTarget.getOrNull() != null) {
         mingwX64()
     }
 
@@ -20,7 +23,7 @@ kotlin {
     }
 
     sourceSets.commonMain.get().dependencies {
-        when (project.properties["dependencyMode"]?.toString()) {
+        when (dependencyMode.getOrNull()?.toString()) {
             null -> {
                 logger.warn("dependencyMode = null -> Using 'project'")
                 implementation(project(":p1"))

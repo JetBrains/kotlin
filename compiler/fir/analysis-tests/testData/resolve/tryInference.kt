@@ -16,3 +16,6 @@ fun test() {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, localProperty, nullableType, propertyDeclaration,
+tryExpression, typeParameter */

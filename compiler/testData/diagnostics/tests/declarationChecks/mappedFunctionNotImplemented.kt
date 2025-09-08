@@ -12,3 +12,5 @@ public class MyCharSequence implements CharSequence {
 
 // FILE: CharSeq.kt
 class KtCharSeq : MyCharSequence() // false-positive 'get' not implemented
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

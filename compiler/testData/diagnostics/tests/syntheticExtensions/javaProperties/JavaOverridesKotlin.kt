@@ -30,3 +30,6 @@ public class JavaClass extends KotlinClass implements JavaInterface {
 public class JavaInterface {
     int getSomething2();
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+javaFunction, javaProperty, javaType */

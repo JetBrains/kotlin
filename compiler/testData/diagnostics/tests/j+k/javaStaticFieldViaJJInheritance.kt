@@ -14,3 +14,5 @@ public interface MyInterfaceEx extends MyInterface {
 fun main() {
     MyInterfaceEx.MY_STATIC_FIELD
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty */

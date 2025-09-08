@@ -142,13 +142,31 @@ public expect class Regex {
     /**
      * Splits the [input] CharSequence to a list of strings around matches of this regular expression.
      *
+     * The last element of the resulting list corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting list will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting list will end with an empty string.
+     *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
+     *
+     * @sample samples.text.Regexps.split
      */
     public fun split(input: CharSequence, limit: Int = 0): List<String>
 
     /**
      * Splits the [input] CharSequence to a sequence of strings around matches of this regular expression.
+     *
+     * The last element of the resulting sequence corresponds to an [input] subsequence starting right
+     * after the last match (or at the beginning of [input] char sequence if there were no matches)
+     * and ending at the end of [input]. That implies that if [input] does not contain subsequences
+     * matching [this] regular expression, the resulting sequence will contain a single element
+     * corresponding to the whole [input] sequence.
+     * It also implies that for char sequences ending with a [this] regular expression match,
+     * the resulting sequence will end with an empty string.
      *
      * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
      * Zero by default means no limit is set.
@@ -294,6 +312,7 @@ public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("2.0")
+@IgnorableReturnValue
 public expect fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,
@@ -457,8 +476,6 @@ public expect fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
  * @param startIndex the start index (inclusive).
  * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
  *  in a case-insensitive manner; by default, comparison is case-sensitive.
- *
- * @throws IndexOutOfBoundsException if [startIndex] is negative or exceeds the length of the string.
  *
  * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
  * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
@@ -664,6 +681,7 @@ public expect fun Int.toString(radix: Int): String
 public expect fun Long.toString(radix: Int): String
 
 @PublishedApi
+@IgnorableReturnValue
 internal expect fun checkRadix(radix: Int): Int
 
 internal expect fun digitOf(char: Char, radix: Int): Int

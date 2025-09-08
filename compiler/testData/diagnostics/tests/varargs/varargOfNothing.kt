@@ -15,3 +15,5 @@ fun outer() {
 
     fun <T : Nothing?> testVarargOfT(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> v: T) {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction, nullableType, typeConstraint, typeParameter, vararg */

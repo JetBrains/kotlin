@@ -94,6 +94,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("anonymousFunction.kt")
+  public void testAnonymousFunction() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/anonymousFunction.kt");
+  }
+
+  @Test
   @TestMetadata("argument.kt")
   public void testArgument() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/argument.kt");
@@ -850,6 +856,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("exceptionInLambda.kt")
+  public void testExceptionInLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/exceptionInLambda.kt");
+  }
+
+  @Test
   @TestMetadata("expressionBodyLambdaReturningInt.kt")
   public void testExpressionBodyLambdaReturningInt() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/expressionBodyLambdaReturningInt.kt");
@@ -988,6 +1000,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("ifAsExpression.kt")
+  public void testIfAsExpression() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifAsExpression.kt");
+  }
+
+  @Test
   @TestMetadata("ifBranches_unused.kt")
   public void testIfBranches_unused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifBranches_unused.kt");
@@ -1027,6 +1045,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   @TestMetadata("implicitNullBlockMultiStatements.kt")
   public void testImplicitNullBlockMultiStatements() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/implicitNullBlockMultiStatements.kt");
+  }
+
+  @Test
+  @TestMetadata("import.kt")
+  public void testImport() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/import.kt");
   }
 
   @Test
@@ -1147,6 +1171,18 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   @TestMetadata("labelledThisLabel.kt")
   public void testLabelledThisLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledThisLabel.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaReturningBinaryExpression.kt")
+  public void testLambdaReturningBinaryExpression() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaReturningBinaryExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaReturningLambda.kt")
+  public void testLambdaReturningLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaReturningLambda.kt");
   }
 
   @Test
@@ -1534,9 +1570,21 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("returnInLambda.kt")
+  public void testReturnInLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/returnInLambda.kt");
+  }
+
+  @Test
   @TestMetadata("returnType.kt")
   public void testReturnType() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/returnType.kt");
+  }
+
+  @Test
+  @TestMetadata("returnValueInLambda.kt")
+  public void testReturnValueInLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/returnValueInLambda.kt");
   }
 
   @Test
@@ -1615,6 +1663,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   @TestMetadata("throw.kt")
   public void testThrow() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/throw.kt");
+  }
+
+  @Test
+  @TestMetadata("throwInLambda.kt")
+  public void testThrowInLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/throwInLambda.kt");
   }
 
   @Test
@@ -1930,6 +1984,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("variableInLambda.kt")
+  public void testVariableInLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/variableInLambda.kt");
+  }
+
+  @Test
   @TestMetadata("when.kt")
   public void testWhen() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/when.kt");
@@ -2053,5 +2113,11 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   @TestMetadata("whileLoopConditionRHS.kt")
   public void testWhileLoopConditionRHS() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopConditionRHS.kt");
+  }
+
+  @Test
+  @TestMetadata("whileLoopInLambda.kt")
+  public void testWhileLoopInLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/whileLoopInLambda.kt");
   }
 }

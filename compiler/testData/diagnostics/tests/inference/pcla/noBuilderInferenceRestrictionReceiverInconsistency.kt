@@ -14,3 +14,6 @@ var B.foo: Boolean
 private fun A.bar(b: B) {
     b.foo = true
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+propertyDeclaration, propertyWithExtensionReceiver, setter */

@@ -76,3 +76,6 @@ class ProtectedChild: OpenClass() {
         y.a
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, nestedClass,
+propertyDeclaration, stringLiteral */

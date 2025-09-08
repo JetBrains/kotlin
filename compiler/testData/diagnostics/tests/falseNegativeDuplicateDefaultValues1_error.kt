@@ -15,3 +15,6 @@ open class Keker<P> {
 class Implementation<P>() : Keker<P>(), SomeRandomOverride<P> {
     override fun child(props: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+override, primaryConstructor, typeParameter */

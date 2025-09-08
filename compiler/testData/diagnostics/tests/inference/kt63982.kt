@@ -18,3 +18,7 @@ fun test(child: PsiElement) {
         val callStub = if (child is StubBasedPsiElement<*>) child.stub else null
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+typeConstraint, typeParameter */

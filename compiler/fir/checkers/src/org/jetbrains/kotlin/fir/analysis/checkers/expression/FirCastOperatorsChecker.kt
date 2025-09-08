@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.firPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
@@ -22,33 +23,53 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         val arguments = expression.argumentList.arguments
         require(arguments.size == 1) { "Type operator call with non-1 arguments" }
 
-        val l = arguments[0].toArgumentInfo(context)
+        val l = arguments[0].toArgumentInfo()
         val r = expression.conversionTypeRef.coneType
-            .fullyExpandedType(context.session)
-            .finalApproximationOrSelf(context)
+            .fullyExpandedType()
+            .finalApproximationOrSelf()
             .toTypeInfo(context.session)
 
         if (expression.operation in FirOperation.TYPES && r.directType is ConeDynamicType) {
             reporter.reportOn(expression.conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED)
         }
 
-        val applicability = when (expression.operation) {
-            FirOperation.IS, FirOperation.NOT_IS -> checkIsApplicability(l.smartCastTypeInfo, r, expression)
-            FirOperation.AS, FirOperation.SAFE_AS -> checkAsApplicability(l.smartCastTypeInfo, r, expression)
+        val checkApplicability: (TypeInfo) -> Applicability = when (expression.operation) {
+            FirOperation.IS, FirOperation.NOT_IS -> { typeInfo -> checkIsApplicability(typeInfo, r, expression) }
+            FirOperation.AS, FirOperation.SAFE_AS -> { typeInfo -> checkAsApplicability(typeInfo, r, expression) }
             else -> error("Invalid operator of FirTypeOperatorCall")
         }
 
-        val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf(context)
+        val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf()
 
-        // No need to check original types separately from smartcast types, because we only report warnings
-        if (applicability != Applicability.APPLICABLE) {
-            reporter.reportInapplicabilityDiagnostic(expression, applicability, l, r.type, rUserType, context)
+        when (val it = checkApplicability(l.originalTypeInfo)) {
+            Applicability.APPLICABLE -> {}
+            // CAST_ERASED may not be the case if we factor in the smartcast data.
+            Applicability.CAST_ERASED if l.argument is FirSmartCastExpression -> {}
+            // An upcast may be useful for "canceling" a smartcast.
+            Applicability.USELESS_CAST if l.argument is FirSmartCastExpression -> {}
+            else -> return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType)
+        }
+
+        if (l.argument !is FirSmartCastExpression) {
+            return
+        }
+
+        when (val it = checkApplicability(l.smartCastTypeInfo)) {
+            Applicability.APPLICABLE -> {}
+            else -> return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType, forceWarning = true)
         }
     }
 
     context(context: CheckerContext)
     private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall): Applicability = checkCastErased(l, r)
-        .orIfApplicable { checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_IS_CHECK, Applicability.USELESS_IS_CHECK) }
+        .orIfApplicable {
+            checkAnyApplicability(
+                l, r, expression,
+                Applicability.IMPOSSIBLE_IS_CHECK,
+                Applicability.USELESS_IS_CHECK,
+                isForIsApplicability = true,
+            )
+        }
 
     context(context: CheckerContext)
     private fun checkAsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall): Applicability {
@@ -65,16 +86,20 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             // For `as`-casts, `CAST_ERASED` is an error and is more important, whereas
             // for `is`-checks, usually, diagnostics for useless checks are more useful.
-            else -> checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_CAST, Applicability.USELESS_CAST)
-                .orIfApplicable { checkCastErased(l, r) }
+            else -> checkAnyApplicability(
+                l, r, expression,
+                Applicability.IMPOSSIBLE_CAST,
+                Applicability.USELESS_CAST,
+                isForIsApplicability = false,
+            ).orIfApplicable { checkCastErased(l, r) }
         }
     }
 
     context(context: CheckerContext)
     private fun checkCastErased(l: TypeInfo, r: TypeInfo): Applicability = when {
         !(context.isContractBody
-                && context.languageVersionSettings.supportsFeature(LanguageFeature.AllowCheckForErasedTypesInContracts)
-                ) && isCastErased(l.directType, r.directType, context) -> {
+                && LanguageFeature.AllowCheckForErasedTypesInContracts.isEnabled()
+                ) && isCastErased(l.directType, r.directType) -> {
             Applicability.CAST_ERASED
         }
         else -> Applicability.APPLICABLE
@@ -86,13 +111,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         expression: FirTypeOperatorCall,
         impossible: Applicability,
         useless: Applicability,
+        isForIsApplicability: Boolean,
     ): Applicability {
         val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
         return when {
-            isRefinementUseless(context, l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
-            shouldReportAsPerRules1(l, r, context) -> when {
-                oneIsNotNull -> impossible
+            isRefinementUseless(l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
+            shouldReportAsPerRules1(l, r) -> when {
+                isForIsApplicability || oneIsNotNull -> impossible
                 else -> useless
             }
             else -> Applicability.APPLICABLE
@@ -125,40 +151,45 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     }
 
 
+    context(context: CheckerContext)
     private fun DiagnosticReporter.reportInapplicabilityDiagnostic(
         expression: FirTypeOperatorCall,
         applicability: Applicability,
         l: ArgumentInfo,
         r: ConeKotlinType,
         rUserType: ConeKotlinType,
-        context: CheckerContext,
+        forceWarning: Boolean = false,
     ) {
         when (applicability) {
-            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r, context)?.let {
-                reportOn(expression.source, it, context)
+            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r)?.let {
+                reportOn(expression.source, it)
             }
-            Applicability.USELESS_CAST -> getUselessCastDiagnostic(context)?.let {
-                reportOn(expression.source, it, context)
+            Applicability.USELESS_CAST -> getUselessCastDiagnostic()?.let {
+                reportOn(expression.source, it)
             }
-            Applicability.IMPOSSIBLE_IS_CHECK -> reportOn(
-                expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS, context,
-            )
+            Applicability.IMPOSSIBLE_IS_CHECK -> when {
+                forceWarning -> reportOn(expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS)
+                else -> reportOn(expression.source, FirErrors.IMPOSSIBLE_IS_CHECK, expression.operation != FirOperation.IS)
+            }
             Applicability.USELESS_IS_CHECK -> when {
-                !isLastBranchOfExhaustiveWhen(l, r, context) -> reportOn(
-                    expression.source, FirErrors.USELESS_IS_CHECK, expression.operation == FirOperation.IS, context,
+                !isLastBranchOfExhaustiveWhen(l, r) -> reportOn(
+                    expression.source,
+                    FirErrors.USELESS_IS_CHECK,
+                    expression.operation == FirOperation.IS
                 )
             }
             Applicability.CAST_ERASED -> when {
                 expression.operation == FirOperation.AS || expression.operation == FirOperation.SAFE_AS -> {
-                    reportOn(expression.source, FirErrors.UNCHECKED_CAST, l.userType, rUserType, context)
+                    reportOn(expression.source, FirErrors.UNCHECKED_CAST, l.userType, rUserType)
                 }
-                else -> reportOn(expression.conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, rUserType, context)
+                else -> reportOn(expression.conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, rUserType)
             }
             else -> error("Shouldn't be here")
         }
     }
 
-    private fun isLastBranchOfExhaustiveWhen(l: ArgumentInfo, r: ConeKotlinType, context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun isLastBranchOfExhaustiveWhen(l: ArgumentInfo, r: ConeKotlinType): Boolean {
         if (context.containingElements.size < 2) {
             return false
         }
@@ -173,14 +204,16 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
                 && (whenExpression.branches.size > 1 || l.smartCastTypeInfo.type.equalTypes(r, context.session))
     }
 
-    private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType, context: CheckerContext) = when {
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2) -> null
+    context(context: CheckerContext)
+    private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType) = when {
+        !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleCast(context.session, l.type, rType) -> null
         else -> FirErrors.CAST_NEVER_SUCCEEDS
     }
 
-    private fun getUselessCastDiagnostic(context: CheckerContext) = when {
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2) -> null
+    context(context: CheckerContext)
+    private fun getUselessCastDiagnostic() = when {
+        !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         else -> FirErrors.USELESS_CAST
     }
 }

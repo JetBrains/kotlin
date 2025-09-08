@@ -77,7 +77,7 @@ class CodeConformanceTest : TestCase() {
             listOf(
                 "build",
                 "compiler/ir/serialization.js/build/fullRuntime",
-                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
+                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "dependencies",
                 "dependencies/android-sdk/build",
                 "dependencies/protobuf/protobuf-relocated/build",
@@ -101,7 +101,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
                 "libraries/stdlib/js-ir/build/",
-                "libraries/stdlib/js-ir/runtime/longjs.kt",
+                "libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "libraries/stdlib/js-ir-minimal-for-test/.gradle",
                 "libraries/stdlib/js-ir-minimal-for-test/build",
                 "libraries/stdlib/js-v1/.gradle",
@@ -123,7 +123,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
-                "libraries/tools/kotlin-gradle-plugin-model/build",
                 "libraries/tools/kotlin-gradle-statistics/build",
                 "libraries/tools/kotlin-lombok/build",
                 "libraries/tools/kotlin-maven-plugin-test/target",
@@ -143,12 +142,13 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
                 "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
                 "repo/gradle-build-conventions/generators/build/generated-sources",
-                "repo/gradle-build-conventions/compiler-tests-convention/build/generated-sources",
+                "repo/gradle-build-conventions/project-tests-convention/build/generated-sources",
                 "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
                 "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
                 "repo/gradle-build-conventions/binaryen-configuration/build/generated-sources",
                 "repo/gradle-build-conventions/d8-configuration/build/generated-sources",
                 "repo/gradle-build-conventions/nodejs-configuration/build/generated-sources",
+                "repo/gradle-build-conventions/gradle-plugins-common/build/generated-sources",
                 "repo/gradle-build-conventions/gradle-plugins-documentation/build/generated-sources",
                 "wasm/wasm.debug.browsers/node_modules",
                 "wasm/wasm.debug.browsers/.gradle",
@@ -174,6 +174,7 @@ class CodeConformanceTest : TestCase() {
             "compiler/build-tools/kotlin-build-statistics/src",
             "compiler/build-tools/kotlin-build-tools-api/src",
             "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
             "compiler/build-tools/kotlin-build-tools-jdk-utils/src",
             "compiler/daemon/daemon-client/src",
             "compiler/daemon/daemon-common/src",
@@ -251,7 +252,10 @@ class CodeConformanceTest : TestCase() {
             FileTestCase(
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
-                        "Please consider changing the package in these files:\n%s"
+                        "Please consider changing the package in these files:\n%s",
+                allowedFiles = listOf(
+                    "plugins/compose/group-mapping/"
+                )
             ) { _, source ->
                 " org.objectweb.asm" in source
             },
@@ -281,7 +285,7 @@ class CodeConformanceTest : TestCase() {
         val failureStr = buildString {
             for (test in tests) {
                 val (allowed, notAllowed) = (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).partition {
-                    test.allowedMatcher.matchExact(it)
+                    test.allowedMatcher.matchWithContains(it)
                 }
 
                 if (notAllowed.isNotEmpty()) {
@@ -290,7 +294,7 @@ class CodeConformanceTest : TestCase() {
                     appendLine()
                 }
 
-                val unmatched = test.allowedMatcher.unmatchedExact(allowed)
+                val unmatched = test.allowedMatcher.unmatched(allowed)
                 if (unmatched.isNotEmpty()) {
                     val testMessage = test.message.format(unmatched.size, "NONE")
                     append(
@@ -356,8 +360,10 @@ class CodeConformanceTest : TestCase() {
             return relativePaths.any { relativePath.startsWith(it) }
         }
 
-        fun unmatchedExact(files: List<File>): Set<String> {
-            return paths - files.map { it.invariantRelativePath() }.toSet()
+        fun unmatched(files: List<File>): Set<String> {
+            val filePaths = files.map { it.invariantRelativePath() }.toSet()
+            val relativePaths = paths.filter { p -> filePaths.any { it.startsWith(p) } }.toSet()
+            return paths - filePaths - relativePaths
         }
     }
 

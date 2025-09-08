@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -14,8 +15,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory4
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.PermissivenessWithMigration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.relationWithMigration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,7 +26,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromSealedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -38,20 +44,22 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
     override fun check(declaration: FirDeclaration) {
         when (declaration) {
             is FirAnonymousFunction -> return
-            is FirTypeAlias -> checkTypeAlias(declaration, reporter, context)
-            is FirProperty -> checkProperty(declaration, reporter, context)
-            is FirFunction -> checkFunction(declaration, reporter, context)
-            is FirRegularClass -> checkClass(declaration, reporter, context)
+            is FirTypeAlias -> checkTypeAlias(declaration)
+            is FirProperty -> checkProperty(declaration)
+            is FirFunction -> checkFunction(declaration)
+            is FirRegularClass -> checkClass(declaration)
             else -> {}
         }
     }
 
-    private fun checkClass(declaration: FirRegularClass, reporter: DiagnosticReporter, context: CheckerContext) {
-        checkSupertypes(declaration, reporter, context)
-        checkParameterBounds(declaration, declaration.effectiveVisibility, reporter, context)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkClass(declaration: FirRegularClass) {
+        checkSupertypes(declaration)
+        checkParameterBounds(declaration, declaration.effectiveVisibility)
     }
 
-    private fun checkSupertypes(declaration: FirRegularClass, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkSupertypes(declaration: FirRegularClass) {
         val classVisibility = declaration.effectiveVisibility
 
         if (classVisibility == EffectiveVisibility.Local) return
@@ -60,36 +68,30 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         for (supertypeRef in supertypes) {
             if (supertypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
             val supertype = supertypeRef.coneType
-            val classSymbol = supertype.toRegularClassSymbol(context.session) ?: continue
+            val classSymbol = supertype.toRegularClassSymbol() ?: continue
             val superIsInterface = classSymbol.classKind == ClassKind.INTERFACE
             if (superIsInterface != isInterface) {
                 continue
             }
-            val (restricting, restrictingVisibility, relation) = supertype.findVisibilityExposure(context, classVisibility) ?: continue
-            reporter.reportOn(
-                supertypeRef.source ?: declaration.source,
-                if (isInterface) FirErrors.EXPOSED_SUPER_INTERFACE else FirErrors.EXPOSED_SUPER_CLASS,
-                classVisibility,
-                restricting,
-                relation,
-                restrictingVisibility,
-                context
-            )
+            supertype.findVisibilityExposure(classVisibility)
+                ?.report(
+                    if (isInterface) FirErrors.EXPOSED_SUPER_INTERFACE else FirErrors.EXPOSED_SUPER_CLASS,
+                    supertypeRef.source ?: declaration.source,
+                )
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkParameterBounds(
         declaration: FirTypeParameterRefsOwner,
         visibility: EffectiveVisibility,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         if (visibility == EffectiveVisibility.Local || declaration is FirConstructor) return
 
         fun getDiagnosticByFeature(
             feature: LanguageFeature
         ): KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> {
-            val reportProperError = context.languageVersionSettings.supportsFeature(feature)
+            val reportProperError = feature.isEnabled()
             return when {
                 reportProperError || declaration is FirRegularClass -> FirErrors.EXPOSED_TYPE_PARAMETER_BOUND
                 else -> FirErrors.EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING
@@ -100,7 +102,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val diagnosticForInternalBounds = getDiagnosticByFeature(LanguageFeature.ReportExposedTypeForInternalTypeParameterBounds)
 
         fun FirResolvedTypeRef.findVisibilityExposure(ignoreInternalExposure: Boolean): SymbolWithRelation? =
-            coneType.findVisibilityExposure(context, visibility, ignoreInternalExposure)
+            coneType.findVisibilityExposure(visibility, ignoreInternalExposure)
 
         for (parameter in declaration.typeParameters) {
             for (bound in parameter.symbol.resolvedBounds) {
@@ -110,39 +112,25 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
                         ?: bound.findVisibilityExposure(ignoreInternalExposure = false)?.to(diagnosticForInternalBounds)
                         ?: continue
 
-                val (restricting, restrictingVisibility, relation) = symbolWithRelation
-                reporter.reportOn(
-                    bound.source,
-                    diagnostic,
-                    visibility,
-                    restricting,
-                    relation,
-                    restrictingVisibility,
-                    context
-                )
+                symbolWithRelation.report(diagnostic, bound.source)
             }
         }
     }
 
-    private fun checkTypeAlias(declaration: FirTypeAlias, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkTypeAlias(declaration: FirTypeAlias) {
         val expandedType = declaration.expandedConeType
         val typeAliasVisibility = declaration.effectiveVisibility
 
         if (typeAliasVisibility == EffectiveVisibility.Local) return
-        checkParameterBounds(declaration, typeAliasVisibility, reporter, context)
-        val (restricting, restrictingVisibility, relation) = expandedType?.findVisibilityExposure(context, typeAliasVisibility) ?: return
-        reporter.reportOn(
-            declaration.source,
-            FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE,
-            typeAliasVisibility,
-            restricting,
-            relation,
-            restrictingVisibility,
-            context
-        )
+        checkParameterBounds(declaration, typeAliasVisibility)
+
+        expandedType?.findVisibilityExposure(typeAliasVisibility)
+            ?.report(FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE, declaration.source)
     }
 
-    private fun checkFunction(declaration: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkFunction(declaration: FirFunction) {
         if (declaration.source?.kind is KtFakeSourceElementKind) {
             return
         }
@@ -157,91 +145,63 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         if (declaration !is FirPropertyAccessor) {
             if (isNonLocal && declaration !is FirConstructor) {
                 declaration.returnTypeRef.coneType
-                    .findVisibilityExposure(context, functionVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                        reporter.reportOn(
-                            declaration.source,
-                            FirErrors.EXPOSED_FUNCTION_RETURN_TYPE,
-                            functionVisibility,
-                            restricting,
-                            relation,
-                            restrictingVisibility,
-                            context
-                        )
-                    }
+                    .findVisibilityExposure(functionVisibility)
+                    ?.report(FirErrors.EXPOSED_FUNCTION_RETURN_TYPE, declaration.source)
             }
 
             for (valueParameter in declaration.valueParameters) {
-                valueParameter.checkExposure(functionVisibility, reporter, context)
+                valueParameter.checkExposure(functionVisibility)
             }
             for (valueParameter in declaration.contextParameters) {
-                valueParameter.checkExposure(functionVisibility, reporter, context)
+                valueParameter.checkExposure(functionVisibility)
             }
         }
 
         if (isNonLocal) {
-            checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration as? FirCallableDeclaration, reporter, context)
+            checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration as? FirCallableDeclaration)
         }
 
-        checkParameterBounds(declaration, functionVisibility, reporter, context)
+        checkParameterBounds(declaration, functionVisibility)
     }
 
-    private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkProperty(declaration: FirProperty) {
         if (declaration.fromPrimaryConstructor == true) return
         if (declaration.isLocal) return
         if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration) return
         val propertyVisibility = declaration.effectiveVisibility
 
-        if (propertyVisibility == EffectiveVisibility.Local || declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+        if (propertyVisibility == EffectiveVisibility.Local
+            || declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
+            // TODO: the following check should be dropped on fixing KT-79107
+            || (declaration.isScriptTopLevelDeclaration == true &&
+                    context.session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true)
+        ) {
             return
         }
+
         declaration.returnTypeRef.coneType
-            .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.EXPOSED_PROPERTY_TYPE,
-                    propertyVisibility,
-                    restricting,
-                    relation,
-                    restrictingVisibility,
-                    context
-                )
-            }
-        checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration, reporter, context)
-        checkParameterBounds(declaration, propertyVisibility, reporter, context)
+            .findVisibilityExposure(propertyVisibility)
+            ?.report(FirErrors.EXPOSED_PROPERTY_TYPE, declaration.source)
+
+        checkMemberReceiver(declaration.receiverParameter?.typeRef, declaration)
+        checkParameterBounds(declaration, propertyVisibility)
         for (parameter in declaration.contextParameters) {
-            parameter.checkExposure(propertyVisibility, reporter, context)
+            parameter.checkExposure(propertyVisibility)
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun FirValueParameter.checkExposure(
         declarationVisibility: EffectiveVisibility,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         if (declarationVisibility != EffectiveVisibility.Local) {
             returnTypeRef.coneType
-                .findVisibilityExposure(context, declarationVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                    if (valueParameterKind == FirValueParameterKind.LegacyContextReceiver) {
-                        reporter.reportOn(
-                            source,
-                            FirErrors.EXPOSED_RECEIVER_TYPE,
-                            declarationVisibility,
-                            restricting,
-                            relation,
-                            restrictingVisibility,
-                            context
-                        )
-                    } else {
-                        reporter.reportOn(
-                            source,
-                            FirErrors.EXPOSED_PARAMETER_TYPE,
-                            declarationVisibility,
-                            restricting,
-                            relation,
-                            restrictingVisibility,
-                            context
-                        )
-                    }
+                .findVisibilityExposure(declarationVisibility)?.let {
+                    it.report(
+                        if (valueParameterKind == FirValueParameterKind.LegacyContextReceiver) FirErrors.EXPOSED_RECEIVER_TYPE else FirErrors.EXPOSED_PARAMETER_TYPE,
+                        source,
+                    )
                     return
                 }
         }
@@ -251,47 +211,27 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val propertyVisibility = property.effectiveVisibility
 
         if (propertyVisibility == EffectiveVisibility.Local) return
-        property.returnTypeRef.coneType
-            .findVisibilityExposure(context, propertyVisibility)?.let { (restricting, restrictingVisibility, relation) ->
-                reporter.reportOn(
-                    source,
-                    FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR,
-                    propertyVisibility,
-                    restricting,
-                    relation,
-                    restrictingVisibility,
-                    context
-                )
-            }
+        property.returnTypeRef.coneType.findVisibilityExposure(propertyVisibility)
+            ?.report(FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR, source)
     }
 
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkMemberReceiver(
         typeRef: FirTypeRef?,
         memberDeclaration: FirCallableDeclaration?,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         if (typeRef == null || memberDeclaration == null) return
         val receiverParameterType = typeRef.coneType
         val memberVisibility = memberDeclaration.effectiveVisibility
 
         if (memberVisibility == EffectiveVisibility.Local) return
-        val (restricting, restrictingVisibility, relation) = receiverParameterType.findVisibilityExposure(context, memberVisibility)
-            ?: return
-        reporter.reportOn(
-            typeRef.source,
-            FirErrors.EXPOSED_RECEIVER_TYPE,
-            memberVisibility,
-            restricting,
-            relation,
-            restrictingVisibility,
-            context
-        )
+        receiverParameterType.findVisibilityExposure(memberVisibility)
+            ?.report(FirErrors.EXPOSED_RECEIVER_TYPE, typeRef.source)
     }
 
+    context(context: CheckerContext)
     private fun ConeKotlinType.findVisibilityExposure(
-        context: CheckerContext,
         base: EffectiveVisibility,
         ignoreInternalExposure: Boolean = false,
         visitedTypes: MutableSet<ConeKotlinType> = mutableSetOf(),
@@ -304,7 +244,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
             else -> return null
         }
 
-        val classSymbol = type.fullyExpandedType(context.session).lookupTag.toSymbol(context.session) ?: return null
+        val classSymbol = type.fullyExpandedType().lookupTag.toSymbol() ?: return null
 
         val effectiveVisibility = when (classSymbol) {
             is FirRegularClassSymbol -> classSymbol.effectiveVisibility
@@ -317,12 +257,19 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
 
         if (effectiveVisibility != null) {
-            when (effectiveVisibility.relation(base, context.session.typeContext)) {
-                EffectiveVisibility.Permissiveness.LESS,
-                EffectiveVisibility.Permissiveness.UNKNOWN,
-                    -> return symbolWithRelation(classSymbol, effectiveVisibility, fromTypeArgument = visitedTypes.size > 1)
-                EffectiveVisibility.Permissiveness.SAME,
-                EffectiveVisibility.Permissiveness.MORE,
+            when (val permissiveness = effectiveVisibility.relationWithMigration(base)) {
+                PermissivenessWithMigration.LESS,
+                PermissivenessWithMigration.UNKNOWN,
+                PermissivenessWithMigration.UNKNOW_WITH_MIGRATION,
+                    -> return symbolWithRelation(
+                    symbol = classSymbol,
+                    symbolVisibility = effectiveVisibility,
+                    baseVisibility = base,
+                    fromTypeArgument = visitedTypes.size > 1,
+                    isMigration = permissiveness == PermissivenessWithMigration.UNKNOW_WITH_MIGRATION,
+                )
+                PermissivenessWithMigration.SAME,
+                PermissivenessWithMigration.MORE,
                     -> {
                 }
             }
@@ -330,14 +277,14 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
 
         for ((index, it) in type.typeArguments.withIndex()) {
             when (it) {
-                is ConeClassLikeType -> it.findVisibilityExposure(context, base, ignoreInternalExposure, visitedTypes)
+                is ConeClassLikeType -> it.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
                     ?.let { return it }
-                is ConeKotlinTypeProjection -> it.type.findVisibilityExposure(context, base, ignoreInternalExposure, visitedTypes)
+                is ConeKotlinTypeProjection -> it.type.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
                     ?.let { return it }
-                is ConeStarProjection -> type.toRegularClassSymbol(context.session)
+                is ConeStarProjection -> type.toRegularClassSymbol()
                     ?.typeParameterSymbols?.getOrNull(index)
                     ?.resolvedBounds?.firstNotNullOfOrNull {
-                        it.coneType.findVisibilityExposure(context, base, ignoreInternalExposure, visitedTypes)
+                        it.coneType.findVisibilityExposure(base, ignoreInternalExposure, visitedTypes)
                     }
                     ?.let { return it }
             }
@@ -348,10 +295,12 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
 
     private fun symbolWithRelation(
         symbol: FirClassLikeSymbol<*>,
-        effectiveVisibility: EffectiveVisibility,
+        symbolVisibility: EffectiveVisibility,
+        baseVisibility: EffectiveVisibility,
         fromTypeArgument: Boolean,
+        isMigration: Boolean,
     ): SymbolWithRelation {
-        val visibility = effectiveVisibility.toVisibility()
+        val visibility = symbolVisibility.toVisibility()
         var lowestVisibility = symbol.visibility
         var lowestRepresentative = symbol
         var currentSymbol: FirClassLikeSymbol<*>? = symbol.getContainingClassSymbol()
@@ -367,13 +316,36 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
         val defaultRelation = if (fromTypeArgument) RelationToType.ARGUMENT else RelationToType.CONSTRUCTOR
         return SymbolWithRelation(
-            lowestRepresentative, effectiveVisibility,
-            if (lowestRepresentative !== symbol) defaultRelation.containerRelation() else defaultRelation
+            lowestRepresentative,
+            symbolVisibility,
+            if (lowestRepresentative !== symbol) defaultRelation.containerRelation() else defaultRelation,
+            isMigration,
+            baseVisibility,
         )
     }
 
     private data class SymbolWithRelation(
-        val symbol: FirClassLikeSymbol<*>, val visibility: EffectiveVisibility, val relation: RelationToType
-    )
+        val symbol: FirClassLikeSymbol<*>,
+        val symbolVisibility: EffectiveVisibility,
+        val relation: RelationToType,
+        val isMigration: Boolean,
+        val baseVisibility: EffectiveVisibility,
+    ) {
+        context(c: CheckerContext, reporter: DiagnosticReporter)
+        fun report(
+            factory: KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility>,
+            source: KtSourceElement?,
+        ) {
+            reporter.reportOn(
+                source,
+                if (isMigration) FirErrors.EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING else factory,
+                baseVisibility,
+                symbol,
+                relation,
+                symbolVisibility,
+                factory.defaultPositioningStrategy,
+            )
+        }
+    }
 }
 

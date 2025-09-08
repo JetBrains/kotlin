@@ -15,3 +15,6 @@ fun bar(x: Out2<Out2<String>>) {
     // NB: The resulting constraint on Vv has the typeDepth (4) more than any of the input type (2)
     val q: Any = foo(x) { it -> it.get1().get1().get2().get2().length }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, localProperty,
+nullableType, out, propertyDeclaration, typeConstraint, typeParameter */

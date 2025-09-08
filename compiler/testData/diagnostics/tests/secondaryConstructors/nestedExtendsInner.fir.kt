@@ -6,3 +6,5 @@ class A {
         <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass, secondaryConstructor */

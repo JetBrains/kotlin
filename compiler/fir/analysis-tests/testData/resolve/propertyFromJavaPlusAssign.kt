@@ -21,3 +21,6 @@ public class B {
 fun test(b: B) {
     b.text += ""
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, javaProperty, javaType,
+localProperty, propertyDeclaration, stringLiteral */

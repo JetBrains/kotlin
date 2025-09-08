@@ -24,3 +24,6 @@ fun StubBasedPsiElement<*>.foo(): String? {
 
     return <!TYPE_MISMATCH!>foo2().<!TYPE_MISMATCH!>bar("")<!><!>
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, javaType, nullableType, starProjection, stringLiteral */

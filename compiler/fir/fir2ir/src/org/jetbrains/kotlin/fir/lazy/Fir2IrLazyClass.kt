@@ -132,14 +132,14 @@ class Fir2IrLazyClass(
 
     override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
         if (fir.isSealed) {
-            fir.getIrSymbolsForSealedSubclasses(c)
+            fir.getIrSymbolsForSealedSubclasses()
         } else {
             emptyList()
         }
     }
 
     override var thisReceiver: IrValueParameter? by lazyVar(lock) {
-        setThisReceiver(c, fir.typeParameters)
+        setThisReceiver(fir.typeParameters)
         thisReceiver
     }
 
@@ -152,7 +152,7 @@ class Fir2IrLazyClass(
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-        val scope = fir.unsubstitutedScope(c)
+        val scope = fir.unsubstitutedScope()
         val lookupTag = fir.symbol.toLookupTag()
         scope.processDeclaredConstructors {
             val constructor = it.fir

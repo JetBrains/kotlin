@@ -21,23 +21,26 @@ object FirArrayOfNothingQualifierChecker : FirQualifiedAccessExpressionChecker(M
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val resolvedType = expression.resolvedType
-        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source, context, reporter)
+        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAndTypeArguments(
         type: ConeKotlinType,
         source: KtSourceElement?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        val fullyExpandedType = type.fullyExpandedType(context.session)
+        val fullyExpandedType = type.fullyExpandedType()
         val arrayOfNothingKind = fullyExpandedType.unsupportedArrayOfNothingKind(context.languageVersionSettings)
         if (arrayOfNothingKind != null) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "Expression cannot have a type of '${arrayOfNothingKind.representation}'.", context)
+            reporter.reportOn(
+                source,
+                FirErrors.UNSUPPORTED,
+                "Expression cannot have a type of '${arrayOfNothingKind.representation}'."
+            )
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
-                checkTypeAndTypeArguments(typeArgType, source, context, reporter)
+                checkTypeAndTypeArguments(typeArgType, source)
             }
         }
     }

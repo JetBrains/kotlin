@@ -110,7 +110,7 @@ KaKotlinPropertySymbol:
       isVararg: false
       location: LOCAL
       modality: FINAL
-      name: delegatedProp
+      name: <set-?>
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -145,7 +145,7 @@ KaKotlinPropertySymbol:
         isVararg: false
         location: LOCAL
         modality: FINAL
-        name: delegatedProp
+        name: <set-?>
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:

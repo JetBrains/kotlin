@@ -2,13 +2,13 @@
   <testsuite name="my.pack.name.WasmTest" tests="3" skipped="1" failures="2" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
     <testcase name="test1[wasmJs, d8]" classname="my.pack.name.WasmTest" time="...">
-      <failure message="..." type="AssertionError">...</failure>
+      <failure message="..." type="kotlin.AssertionError">...</failure>
     </testcase>
     <testcase name="test2[wasmJs, d8]" classname="my.pack.name.WasmTest" time="...">
       <skipped />
     </testcase>
     <testcase name="test3[wasmJs, d8]" classname="my.pack.name.WasmTest" time="...">
-      <failure message="..." type="AssertionError">...</failure>
+      <failure message="..." type="kotlin.AssertionError">...</failure>
     </testcase>
     <system-out />
     <system-err />

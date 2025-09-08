@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -19,6 +20,14 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.util.component1
 import org.jetbrains.kotlin.util.component2
+
+@RequiresOptIn(
+    "When a SessionHolder is available as implicit value, " +
+            "passing the session explicitly is only required when it's different from the SessionHolder's session. " +
+            "The annotated overload has an unused context parameter just to differentiate between callsites that have " +
+            "a SessionHolder implicit value in scope and those that don't."
+)
+annotation class ExplicitlyPassedSession
 
 /**
  * Compute the recursive type-alias expansion in the given type.
@@ -50,6 +59,17 @@ fun ConeClassLikeType.fullyExpandedType(
     return fullyExpandedTypeNoCache(useSiteSession, expandedConeType)
 }
 
+context(sessionHolder: SessionHolder)
+fun ConeClassLikeType.fullyExpandedType(): ConeClassLikeType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@ExplicitlyPassedSession
+context(_: SessionHolder)
+fun ConeClassLikeType.fullyExpandedType(useSiteSession: FirSession): ConeClassLikeType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
 fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
     lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
     return expandedConeType
@@ -73,6 +93,17 @@ fun ConeKotlinType.fullyExpandedType(
     else -> this
 }
 
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.fullyExpandedType(): ConeKotlinType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@ExplicitlyPassedSession
+context(_: SessionHolder)
+fun ConeKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeKotlinType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
 /**
  * @see fullyExpandedType (the first function in the file)
  */
@@ -84,6 +115,17 @@ fun ConeSimpleKotlinType.fullyExpandedType(
         is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
         else -> this
     }
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeSimpleKotlinType.fullyExpandedType(): ConeSimpleKotlinType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@ExplicitlyPassedSession
+context(_: SessionHolder)
+fun ConeSimpleKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeSimpleKotlinType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
 /**
@@ -98,6 +140,17 @@ fun ConeRigidType.fullyExpandedType(
         // Expanding DNN type makes no sense, as its original type cannot be class-like type
         is ConeDefinitelyNotNullType -> this
     }
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeRigidType.fullyExpandedType(): ConeRigidType {
+    return fullyExpandedType(sessionHolder.session, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
+}
+
+@Deprecated("Use overload without parameter.", replaceWith = ReplaceWith("fullyExpandedType()"))
+context(_: SessionHolder)
+fun ConeRigidType.fullyExpandedType(useSiteSession: FirSession): ConeRigidType {
+    return fullyExpandedType(useSiteSession, expandedConeType = FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 }
 
 private fun ConeClassLikeType.fullyExpandedTypeNoCache(

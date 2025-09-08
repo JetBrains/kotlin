@@ -29,3 +29,6 @@ fun bad6() {
     crossInlineArg (<!JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS_ERROR!>@JvmSerializableLambda<!> fun () {})
     noInlineArg (@JvmSerializableLambda fun () {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, callableReference, crossinline, functionDeclaration,
+functionalType, inline, integerLiteral, lambdaLiteral, noinline, propertyDeclaration */

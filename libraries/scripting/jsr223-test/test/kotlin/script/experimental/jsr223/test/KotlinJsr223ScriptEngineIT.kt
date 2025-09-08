@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.jsr223.test
 
+import com.intellij.openapi.util.io.toCanonicalPath
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -13,14 +14,21 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.nio.file.Files.createTempDirectory
 import java.nio.file.Files.createTempFile
 import javax.script.*
+import kotlin.io.path.writeLines
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
-import kotlin.test.*
 
 // duplicating it here to avoid dependency on the implementation - it may interfere with tests
 private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader"
@@ -86,8 +94,7 @@ class KotlinJsr223ScriptEngineIT {
         assertEquals(5, res2)
     }
 
-    @Test
-    @Ignore // Probably not possible to make it sensible on CI and with parallel run, so leaving it here for manual testing only
+    // @Test // Probably not possible to make it sensible on CI and with parallel run, so leaving it here for manual testing only
     fun testMemory() {
         val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
         var prevMem = memoryMXBean.getHeapMemoryUsage().getUsed()
@@ -189,7 +196,7 @@ obj
 """)
         assertNotNull(res0)
         val invocator = engine as? Invocable
-        assertNotNull(invocator)
+        requireNotNull(invocator)
         val res1 = invocator.invokeFunction("fn", 6)
         assertEquals(8, res1)
         assertThrows(NoSuchMethodException::class.java) {
@@ -446,9 +453,16 @@ obj
         val runtime = File(jdk17, "bin" + File.separator + javaExe)
 
         val tempDir = createTempDirectory(KotlinJsr223ScriptEngineIT::class.simpleName!!)
+
+        fun prepareArgFile(vararg args: String): String {
+            val file = tempDir.resolve("arguments.args")
+            file.writeLines(args.map { it.replace("\\", "\\\\") })
+            return "@${file.toCanonicalPath()}"
+        }
+
         try {
             val outJar = createTempFile(tempDir, "inlining17", ".jar").toFile()
-            val compileCp = System.getProperty("testCompilationClasspath")!!.split(File.pathSeparator).map(::File)
+            val compileCp = File(System.getProperty("testCompilationClasspath")!!).readText().split(File.pathSeparator).map(::File)
             assertTrue(
                 compileCp.any { it.name.startsWith("kotlin-stdlib") },
                 "Expecting \"testCompilationClasspath\" property to contain stdlib jar:\n$compileCp"
@@ -457,25 +471,32 @@ obj
             runAndCheckResults(
                 listOf(
                     runtime.absolutePath,
-                    "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
-                    K2JVMCompiler::class.java.name,
-                    K2JVMCompilerArguments::noStdlib.cliArgument,
-                    K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
-                    K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
-                    K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
+                    prepareArgFile(
+                        "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
+                        K2JVMCompiler::class.java.name,
+                        K2JVMCompilerArguments::noStdlib.cliArgument,
+                        K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
+                        K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
+                        K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
+                    ),
                     "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
                 ),
                 additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
             )
 
-            val runtimeCp = System.getProperty("testJsr223RuntimeClasspath")!!.split(File.pathSeparator).map(::File) + outJar
+            val runtimeCp = File(System.getProperty("testJsr223RuntimeClasspath")!!).readText().split(File.pathSeparator).map(::File) + outJar
             assertTrue(
                 runtimeCp.any { it.name.startsWith("kotlin-scripting-jsr223") },
                 "Expecting \"testJsr223RuntimeClasspath\" property to contain JSR223 jar:\n$runtimeCp"
             )
 
             runAndCheckResults(
-                listOf(runtime.absolutePath, "-cp", runtimeCp.joinToString(File.pathSeparator) { it.path }, "TestJsr223InliningKt"),
+                listOf(
+                    runtime.absolutePath,
+                    "-cp",
+                    prepareArgFile(runtimeCp.joinToString(File.pathSeparator) { it.path }),
+                    "TestJsr223InliningKt"
+                ),
                 listOf("OK")
             )
         } finally {

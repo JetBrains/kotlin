@@ -88,7 +88,6 @@ val kmpIosX64MetadataVariantAttributes = mapOf(
 )
 
 val kmpJsVariantAttributes = mutableMapOf(
-    "artifactType" to "org.jetbrains.kotlin.klib",
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
     "org.gradle.usage" to "kotlin-api",
@@ -97,7 +96,6 @@ val kmpJsVariantAttributes = mutableMapOf(
     "org.jetbrains.kotlin.platform.type" to "js",
 )
 val kmpWasmJsVariantAttributes = mutableMapOf(
-    "artifactType" to "org.jetbrains.kotlin.klib",
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
     "org.gradle.usage" to "kotlin-api",
@@ -107,7 +105,6 @@ val kmpWasmJsVariantAttributes = mutableMapOf(
 )
 
 val kmpIosArm64VariantAttributes = mapOf(
-    "artifactType" to "org.jetbrains.kotlin.klib",
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
     "org.gradle.usage" to "kotlin-api",
@@ -116,7 +113,6 @@ val kmpIosArm64VariantAttributes = mapOf(
     "org.jetbrains.kotlin.platform.type" to "native",
 )
 val kmpIosX64VariantAttributes = mapOf(
-    "artifactType" to "org.jetbrains.kotlin.klib",
     "org.gradle.category" to "library",
     "org.gradle.jvm.environment" to "non-jvm",
     "org.gradle.usage" to "kotlin-api",
@@ -132,7 +128,7 @@ val libraryElementsJar = mapOf(
 val packed = mapOf(
     "org.jetbrains.kotlin.klib.packaging" to "packed",
 )
-// In most publications we override artifactType as "org.jetbrains.kotlin.klib" at variant-level
+
 val klibArtifact = mapOf(
     "artifactType" to "klib",
 )

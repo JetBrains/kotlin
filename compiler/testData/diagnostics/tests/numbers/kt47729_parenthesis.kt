@@ -19,3 +19,5 @@ fun test() {
     Foo infixOperator 1 + 1
     Foo infixOperator (1 + 1)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, infix, integerLiteral, objectDeclaration, propertyDeclaration */

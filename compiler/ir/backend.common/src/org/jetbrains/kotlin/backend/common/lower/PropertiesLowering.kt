@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -47,7 +49,7 @@ class PropertiesLowering : DeclarationTransformer {
     }
 }
 
-class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), BodyLoweringPass {
+class LocalDelegatedPropertiesLowering(private val context: CommonBackendContext) : IrElementTransformerVoid(), BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.accept(this, null)
@@ -56,16 +58,14 @@ class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), BodyLowerin
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
         declaration.transformChildrenVoid(this)
 
-        val initializer = declaration.delegate.initializer!!
-        declaration.delegate.initializer = IrBlockImpl(
-            initializer.startOffset, initializer.endOffset, initializer.type, null,
-            listOfNotNull(
-                declaration.getter,
-                declaration.setter,
-                initializer
-            )
-        )
-
-        return declaration.delegate
+        return IrCompositeImpl(
+            startOffset = declaration.startOffset,
+            endOffset = declaration.endOffset,
+            type = context.irBuiltIns.unitType,
+        ).apply {
+            statements.add(declaration.getter)
+            statements.addIfNotNull(declaration.setter)
+            statements.addIfNotNull(declaration.delegate)
+        }
     }
 }

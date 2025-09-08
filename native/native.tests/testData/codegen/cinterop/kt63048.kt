@@ -1,8 +1,12 @@
 // TARGET_BACKEND: NATIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop_kt63048
 // FILE: kt63048.def
 language = Objective-C
 headers = kt63048.h
+
+# Workaround for https://youtrack.jetbrains.com/issue/KT-80470.
+linkerOpts = -all_load
 
 // FILE: kt63048.h
 #import "Foundation/NSString.h"

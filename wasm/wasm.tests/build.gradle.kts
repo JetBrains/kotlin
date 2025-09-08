@@ -11,6 +11,8 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 node {
@@ -102,12 +104,12 @@ val wasmEdge by configurations.creating {
 }
 
 dependencies {
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":js:js.tests"))
-    testApi(intellijCore())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(intellijCore())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
@@ -131,6 +133,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.setupWasmStdlib(target: String) {
@@ -181,11 +184,11 @@ val installTsDependencies by task<NpmTask> {
     val packageLockFile = testDataDir.resolve("package-lock.json")
     val nodeModules = testDataDir.resolve("node_modules")
     inputs.file(testDataDir.resolve("package.json"))
-    outputs.file(packageLockFile)
+    inputs.file(packageLockFile)
     outputs.upToDateWhen { nodeModules.exists() }
 
     workingDir.set(testDataDir)
-    args.set(listOf("install"))
+    npmCommand.set(listOf("ci"))
 }
 
 val generateTypeScriptTests by parallel(
@@ -262,53 +265,47 @@ fun Test.setupWasmEdge() {
 
 testsJar {}
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
-    dependsOn(":compiler:generateTestData")
-}
-
-fun Project.wasmProjectTest(
-    taskName: String,
-    body: Test.() -> Unit = {}
-): TaskProvider<Test> {
-    return projectTest(
-        taskName = taskName,
-        parallel = true,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        workingDir = rootDir
-        with(d8KotlinBuild) {
-            setupV8()
-        }
-        with(nodeJsKotlinBuild) {
-            setupNodeJs()
-        }
-        with(binaryenKotlinBuild) {
-            setupBinaryen()
-        }
-        setupSpiderMonkey()
-        setupWasmEdge()
-        useJUnitPlatform()
-        setupWasmStdlib("js")
-        setupWasmStdlib("wasi")
-        setupGradlePropertiesForwarding()
-        systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
-        body()
+projectTests {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
+        dependsOn(":compiler:generateTestData")
     }
-}
 
-// Test everything
-wasmProjectTest("test")
+    fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
+        testTask(
+            taskName = taskName,
+            jUnitMode = JUnitMode.JUnit5,
+            skipInLocalBuild = skipInLocalBuild,
+        ) {
+            workingDir = rootDir
+            with(d8KotlinBuild) {
+                setupV8()
+            }
+            with(nodeJsKotlinBuild) {
+                setupNodeJs()
+            }
+            with(binaryenKotlinBuild) {
+                setupBinaryen()
+            }
+            setupSpiderMonkey()
+            setupWasmEdge()
+            useJUnitPlatform()
+            setupWasmStdlib("js")
+            setupWasmStdlib("wasi")
+            setupGradlePropertiesForwarding()
+            systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
+            body()
+        }
+    }
 
-wasmProjectTest("testFir") {
-    dependsOn(generateTypeScriptTests)
-    include("**/Fir*.class")
-}
+    // Test everything
+    wasmProjectTest("test")
 
-wasmProjectTest("testK1") {
-    dependsOn(generateTypeScriptTests)
-    include("**/K1*.class")
-}
+    wasmProjectTest("testFir", skipInLocalBuild = true) {
+        dependsOn(generateTypeScriptTests)
+        include("**/Fir*.class")
+    }
 
-wasmProjectTest("diagnosticTest") {
-    include("**/Diagnostics*.class")
+    wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
+        include("**/Diagnostics*.class")
+    }
 }

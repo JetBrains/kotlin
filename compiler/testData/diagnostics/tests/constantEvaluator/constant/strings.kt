@@ -38,3 +38,6 @@ enum class MyEnum {
 
 // val prop11: 6
 <!DEBUG_INFO_CONSTANT_VALUE("6")!>val prop11 = "kotlin".length<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, classReference, enumDeclaration, enumEntry, integerLiteral,
+propertyDeclaration, stringLiteral */

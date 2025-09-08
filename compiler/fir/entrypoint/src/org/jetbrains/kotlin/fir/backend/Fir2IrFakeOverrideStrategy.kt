@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.implicitCastTo
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -43,12 +43,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class Fir2IrFakeOverrideStrategy(
-    friendModules: Map<String, List<String>>,
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
-    delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-) : FakeOverrideBuilderStrategy.BindToPrivateSymbols(friendModules, delegatedMemberGenerationStrategy) {
+    private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
+) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
+
+    override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
+        delegatedMemberGenerationStrategy.convertFakeOverrideToDelegateIfNeeded(fakeOverride, clazz)
+    }
 
     override fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         if (member is Fir2IrLazyPropertyForPureField && member.backingField?.isStatic == true) return null
@@ -61,6 +64,13 @@ class Fir2IrFakeOverrideStrategy(
         if (property.getter == null) {
             fieldOnlyProperties.add(property)
         }
+    }
+
+    override fun shouldSeeInternals(
+        thisModule: ModuleDescriptor,
+        memberModule: ModuleDescriptor,
+    ): Boolean {
+        return thisModule.shouldSeeInternalsOf(memberModule)
     }
 
     fun clearFakeOverrideFields() {
@@ -80,7 +90,7 @@ private data class DelegatedMemberInfo(
 
 /**
  * Generation of delegated members happens in three stages:
- * 1. During f/o generation [postProcessGeneratedFakeOverride] is called. This method updates the declaration header if needed
+ * 1. During f/o generation [convertFakeOverrideToDelegateIfNeeded] is called. This method updates the declaration header if needed
  *     (offsets, origin, dispatch receiver parameter and so on) and stores information for body generation
  * 2. After all f/o are built [generateDelegatedBodies] should be called to generate bodies for all delegated members.
  *     Body generation relies on the fact that all f/o are already created, because it may refer to types of functions, which are
@@ -98,7 +108,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
     private val fir2IrExtensions: Fir2IrExtensions,
     delegatedClassesInfo: Map<IrClassSymbol, Map<IrClassSymbol, IrFieldSymbol>>,
     classActualizationInfo: ClassActualizationInfo?
-) : IrUnimplementedOverridesStrategy {
+) {
     private val delegatedInfos: MutableList<DelegatedMemberInfo> = mutableListOf()
 
     /**
@@ -119,14 +129,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         }
     }
 
-    override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> computeCustomization(
-        overridableMember: T,
-        parent: IrClass,
-    ): IrUnimplementedOverridesStrategy.Customization {
-        return IrUnimplementedOverridesStrategy.Customization.NO
-    }
-
-    override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> postProcessGeneratedFakeOverride(overridableMember: T, parent: IrClass) {
+    fun convertFakeOverrideToDelegateIfNeeded(overridableMember: IrOverridableDeclaration<*>, parent: IrClass) {
         val delegateInfo = delegatedClassesInfo[parent.symbol] ?: return
 
         val overridden = overridableMember.allOverridden()
@@ -390,7 +393,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         val irCastOrCall = if (
             delegateTargetFunction.returnType.let { it.hasAnnotation(FlexibleNullability) || it.hasAnnotation(EnhancedNullability) } &&
-            !delegatedFunction.returnType.isMarkedNullable()
+            !delegatedFunction.returnType.canBeNull()
         ) {
             Fir2IrImplicitCastInserter.implicitNotNullCast(irCall)
         } else {

@@ -10,3 +10,5 @@ suspend inline fun test4(crossinline s : () -> String = { "OK" }) {}
 suspend inline fun test5(noinline s : suspend () -> String = { "OK" }) {}
 suspend inline fun test6(noinline s : () -> String = { "OK" }) {}
 
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, noinline, stringLiteral,
+suspend */

@@ -19,3 +19,6 @@ fun foo(p: Box<Res>) {
     // Error in K1, OK in K2
     p.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, interfaceDeclaration, nullableType, operator, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

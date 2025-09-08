@@ -16,12 +16,20 @@ import kotlin.contracts.contract
 import kotlin.internal.*
 
 
-/** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
+/**
+ * Returns a [BufferedReader] wrapping this [Reader], or this [Reader] itself if it is already buffered.
+ *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader =
     if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
-/** Returns a buffered writer wrapping this Writer, or this Writer itself if it is already buffered. */
+/**
+ * Returns a [BufferedWriter] wrapping this [Writer], or this [Writer] itself if it is already buffered.
+ *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =
     if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
@@ -109,7 +117,7 @@ private class LinesSequence(private val reader: BufferedReader) : Sequence<Strin
  */
 public fun Reader.readText(): String {
     val buffer = StringWriter()
-    copyTo(buffer)
+    val _ = copyTo(buffer)
     return buffer.toString()
 }
 
@@ -122,6 +130,7 @@ public fun Reader.readText(): String {
  * @param bufferSize size of character buffer to use in process.
  * @return number of characters copied.
  */
+@IgnorableReturnValue
 public fun Reader.copyTo(out: Writer, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var charsCopied: Long = 0
     val buffer = CharArray(bufferSize)
@@ -153,4 +162,3 @@ public inline fun URL.readText(charset: Charset = Charsets.UTF_8): String = read
  * @return a byte array with this URL entire content.
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
-

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 
@@ -33,10 +34,10 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessExpressionChecker(MppChec
             reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL)
         } else if (declarationSymbol is FirIntersectionCallableSymbol) {
             val symbolFromBaseClass = declarationSymbol.intersections.firstOrNull {
-                it.containingClassLookupTag()?.toSymbol(context.session)?.classKind != ClassKind.INTERFACE
+                it.containingClassLookupTag()?.toSymbol()?.classKind != ClassKind.INTERFACE
             }
             if (symbolFromBaseClass?.isAbstract == true) {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride)) {
+                if (LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride.isEnabled()) {
                     reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL)
                 } else {
                     reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL_WARNING)

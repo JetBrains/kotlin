@@ -48,3 +48,5 @@ package a
 public fun invalidFun0() {}
 
 public val invalidProp0 = 1
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, propertyDeclaration */

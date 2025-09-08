@@ -8,6 +8,7 @@ package org.jetbrains.abi.tools.test.api
 import java.io.*
 import org.gradle.testkit.runner.GradleRunner
 import org.intellij.lang.annotations.Language
+import java.net.URI
 
 public val API_DIR: String = "api"
 
@@ -39,7 +40,7 @@ internal fun BaseKotlinGradleTest.test(
     val runner = GradleRunner.create()
         .withProjectDir(rootProjectDir)
         .withArguments(baseKotlinScope.runner.arguments)
-        .withGradleVersion(gradleVersion)
+        .withGradleDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion}-bin.zip"))
 
     if (koverEnabled) {
         // In debug mode, tests will be running inside the same JVM.

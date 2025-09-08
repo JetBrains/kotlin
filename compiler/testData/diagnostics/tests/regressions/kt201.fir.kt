@@ -7,3 +7,7 @@ fun foo() {
   val i : Int? = 1
   i.npe() // error!
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, thisExpression, typeConstraint,
+typeParameter */

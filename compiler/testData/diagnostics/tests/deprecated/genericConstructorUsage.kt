@@ -7,3 +7,6 @@ open class C<T>() {
 }
 
 class D : <!DEPRECATION!>C<String><!>(1)
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, secondaryConstructor,
+stringLiteral, typeParameter */

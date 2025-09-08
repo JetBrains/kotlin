@@ -52,3 +52,6 @@ fun myDummyRun(block: () -> Unit) {
 fun test_8() {
     myDummyRun { "test_8" }
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, functionDeclaration, functionalType, inline, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral */

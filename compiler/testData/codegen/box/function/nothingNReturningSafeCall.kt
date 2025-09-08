@@ -1,11 +1,3 @@
-/*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-// WITH_STDLIB
-
-import kotlin.test.*
-
 fun Any.nothing(): Nothing {
     while (true) {}
 }
@@ -25,9 +17,11 @@ fun testLambda1() {
     block(null)
 }
 
+fun foo(s: String) {}
+
 fun testLambda2() {
     val block: (Any?) -> Nothing? = {
-        print("") // more than one statement inside of the body
+        foo("") // more than one statement inside of the body
         it?.nothing()
     }
     block(null)

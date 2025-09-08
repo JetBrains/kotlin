@@ -19,3 +19,6 @@ val <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>E : A<!WRONG_NUMBER_OF_TYPE_ARGUMEN
 // See KT-8200
 interface X
 public class EnumAttribute<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T : X<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><T><!><!>>(val klass: Class<T>) where T : Enum<T>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, typeConstraint, typeParameter */

@@ -14,3 +14,5 @@ fun testSynchronized(p1: java.time.LocalDate) {
 fun testIdentity(p1: java.time.LocalDate, p2: Any) {
     p1 === p2
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, lambdaLiteral */

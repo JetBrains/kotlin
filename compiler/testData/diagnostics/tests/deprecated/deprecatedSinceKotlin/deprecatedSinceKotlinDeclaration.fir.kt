@@ -51,3 +51,5 @@ fun fooEqual() {}
 class Foo
 
 val foo: <!DEPRECATION_ERROR!>Foo<!> = <!DEPRECATION_ERROR!>Foo<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, stringLiteral */

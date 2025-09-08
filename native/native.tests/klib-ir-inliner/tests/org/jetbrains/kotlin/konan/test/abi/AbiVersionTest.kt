@@ -27,10 +27,10 @@ class AbiVersionTest {
     }
 
     @Test
-    fun `Each ABI version since 2_1 is reflected in KlibAbiCompatibilityLevel`() {
-        fun KotlinAbiVersion.next() = if (this == ABI_VERSION_2_1) KotlinAbiVersion(2, 2, 0) else KotlinAbiVersion(major, minor + 1, patch)
+    fun `Each ABI version since 2_2 is reflected in KlibAbiCompatibilityLevel`() {
+        fun KotlinAbiVersion.next() = if (this == ABI_VERSION_2_2) KotlinAbiVersion(2, 3, 0) else KotlinAbiVersion(major, minor + 1, patch)
 
-        val coveredAbiVersions: List<KotlinAbiVersion> = generateSequence(ABI_VERSION_2_1) { it.next() }
+        val coveredAbiVersions: List<KotlinAbiVersion> = generateSequence(ABI_VERSION_2_2) { it.next() }
             .takeWhileInclusive { it != KotlinAbiVersion.CURRENT }
             .toList()
 
@@ -57,10 +57,6 @@ class AbiVersionTest {
     }
 
     companion object {
-        /**
-         * The 2.1 ABI version was serialized in the old notation: 1.201.0.
-         * All subsequent 2.x versions are serialized as 2.x.0.
-         */
-        private val ABI_VERSION_2_1 = KotlinAbiVersion(1, 201, 0)
+        private val ABI_VERSION_2_2 = KotlinAbiVersion(2, 2, 0)
     }
 }

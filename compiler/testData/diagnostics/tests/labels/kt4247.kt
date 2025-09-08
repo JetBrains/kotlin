@@ -11,3 +11,5 @@ fun foo(bar1: (String.() -> Int) -> Int) {
         this@bar1.length
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, thisExpression, typeWithExtension */

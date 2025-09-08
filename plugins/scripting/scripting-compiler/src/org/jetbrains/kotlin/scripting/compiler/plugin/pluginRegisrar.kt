@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
@@ -94,9 +95,10 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
 class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
     companion object {
         fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
-            val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                // TODO: add jdk path and other params if needed
-            }
+            val hostConfiguration = (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
+                ?: ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                    // TODO: add jdk path and other params if needed
+                }
             FirExtensionRegistrarAdapter.registerExtension(FirScriptingCompilerExtensionRegistrar(hostConfiguration, compilerConfiguration))
             FirExtensionRegistrarAdapter.registerExtension(FirScriptingSamWithReceiverExtensionRegistrar())
         }
@@ -105,6 +107,8 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         registerComponents(this, configuration)
     }
+
+    override val pluginId: String get() = KOTLIN_SCRIPTING_PLUGIN_ID
 
     override val supportsK2: Boolean
         get() = true

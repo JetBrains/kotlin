@@ -15,3 +15,7 @@ interface Delegate<V> {
 fun main() {
     val x: String by mat()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, operator, out, propertyDeclaration, propertyDelegate, typeConstraint,
+typeParameter */

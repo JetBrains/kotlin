@@ -13,3 +13,6 @@ fun main() {
     foo(A()::baz)
     foo2(A::baz)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+nullableType, typeParameter */

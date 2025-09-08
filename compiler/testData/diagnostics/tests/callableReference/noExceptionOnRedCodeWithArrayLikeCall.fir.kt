@@ -11,3 +11,6 @@ fun foo(intDTO: DTO?, p: <!UNRESOLVED_REFERENCE!>KProperty1<!><*, Int>) {
         intDTO.q
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, operator, propertyDeclaration, smartcast */

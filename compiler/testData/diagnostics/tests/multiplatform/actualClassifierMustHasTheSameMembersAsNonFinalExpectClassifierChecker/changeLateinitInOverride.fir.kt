@@ -20,3 +20,5 @@ actual open class Foo : Base() {
     override var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_LATEINIT_MODIFIER!>red2<!>: String = ""
     override lateinit var green: String
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, lateinit, override, propertyDeclaration, stringLiteral */

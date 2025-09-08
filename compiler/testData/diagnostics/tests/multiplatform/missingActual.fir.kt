@@ -18,3 +18,5 @@ fun box(): String {
     test()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor, stringLiteral */

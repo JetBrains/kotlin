@@ -41,3 +41,6 @@ fun test(b: B<out Number>) {
         <!NAME_SHADOWING!>b<!> -> b checkType { _<B<out Number>>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, outProjection, typeParameter, typeWithExtension */

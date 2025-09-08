@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightRecordMethod
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -271,7 +272,7 @@ fun PsiMethod.syntheticAccessors(withoutOverrideCheck: Boolean = false): Collect
     }
 }
 
-val PsiMethod.canHaveSyntheticAccessors: Boolean get() = probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
+val PsiMethod.canHaveSyntheticAccessors: Boolean get() = this is LightRecordMethod || probablyCanHaveSyntheticAccessors && (canBeGetter || canBeSetter)
 
 val PsiMethod.canHaveSyntheticGetter: Boolean get() = probablyCanHaveSyntheticAccessors && canBeGetter
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlinx.jspo.compiler.backend.JsPlainObjectsLoweringExtensi
 import org.jetbrains.kotlinx.jspo.compiler.fir.JsPlainObjectsExtensionRegistrar
 
 class JsPlainObjectsComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = "org.jetbrains.kotlinx.jspo"
     override val supportsK2: Boolean get() = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {

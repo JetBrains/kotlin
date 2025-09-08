@@ -25,3 +25,5 @@ expect class Foo
 // MODULE: main()()(intermediate2)
 actual fun foo() {}
 actual class Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

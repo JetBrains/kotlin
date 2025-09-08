@@ -14,3 +14,6 @@ fun main() {
         myRun { f }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+typeConstraint, typeParameter */

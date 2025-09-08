@@ -14,3 +14,6 @@ fun foo(
         prop()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, suspend,
+typeParameter, typeWithExtension */

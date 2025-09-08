@@ -15,3 +15,6 @@ fun test_2(b: B) {
         b.x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, primaryConstructor,
+propertyDeclaration, smartcast */

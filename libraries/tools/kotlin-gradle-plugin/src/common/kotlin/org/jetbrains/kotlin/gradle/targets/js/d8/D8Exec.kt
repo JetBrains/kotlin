@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 @ExperimentalWasmDsl
 @DisableCachingByDefault
-@Deprecated(level = DeprecationLevel.HIDDEN, message = "For compatibility only")
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "For kotlinx-benchmarks compatibility only. Scheduled for removal in Kotlin 2.4.")
 abstract class D8Exec() : AbstractExecTask<D8Exec>(D8Exec::class.java) {
 
     init {

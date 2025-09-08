@@ -11,3 +11,5 @@ actual class Foo
 // MODULE: main()()(common, intermediate)
 actual fun foo() {}
 actual class Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

@@ -6,13 +6,6 @@ plugins {
     id("generated-sources")
 }
 
-repositories {
-    maven {
-        name = "IntellijDependencies"
-        url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
-    }
-}
-
 kotlin {
     jvm()
 
@@ -36,12 +29,12 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation(project(":compiler:psi"))
+                implementation(project(":compiler:psi:psi-api"))
                 implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
                 implementation(intellijCore())
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
-                implementation(project(":compiler:test-infrastructure-utils"))
+                implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
                 implementation(project(":compiler:cli"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)

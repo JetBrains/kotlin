@@ -22,3 +22,6 @@ class Sample<K, V>
 
 fun takeSample(g: Sample<Int, String>) {}
 fun <T, S> createSample(i: T, a: (T) -> S): Sample<T, S> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

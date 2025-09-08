@@ -69,9 +69,6 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val delegateFieldSymbol: FirDelegateFieldSymbol?
         get() = null
 
-    override val isLocal: Boolean
-        get() = false
-
     override val receiverParameter: FirReceiverParameter?
         get() = getter.receiverParameter
 

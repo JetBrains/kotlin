@@ -10,3 +10,6 @@ fun foo() {
 
     1.suspend(fun () {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral */

@@ -6,3 +6,6 @@ abstract class B {
     fun test(current: A): A? =
         if (current === this) current else null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, intersectionType,
+nullableType, smartcast, thisExpression */

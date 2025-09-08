@@ -24,3 +24,5 @@ fun test(s: Any) {
     requireIsTrue(s is String)
     s.length
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression, smartcast */

@@ -23,3 +23,6 @@ class Example {
     private val point4 = Point()
     private var nullPoint: Point? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+lateinit, nullableType, propertyDeclaration, secondaryConstructor */

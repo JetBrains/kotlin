@@ -14,3 +14,5 @@ fun foo() {
     // TODO: uncomment when KT-9597 is fixed
     // C().f(object : A<*, *> {})
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

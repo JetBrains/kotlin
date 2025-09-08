@@ -29,3 +29,5 @@ val x8 = (-123_456_789_321).floorDiv(1_000_000)
 
 // val x9: 79
 val x9 = (-123_456_789_321).mod(100)
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, propertyDeclaration */

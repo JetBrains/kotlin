@@ -3,7 +3,6 @@
 // WITH_REFLECT
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
-// WASM_ALLOW_FQNAME_IN_KCLASS
 
 package test
 

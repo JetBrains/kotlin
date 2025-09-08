@@ -61,7 +61,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       when {
         other !is Entry<T> -> return false
       }
-      val tmp_0: Entry<T> = other as Entry<T>
+      val tmp_0: Entry<T> = other /*as Entry<T> */
       when {
         EQEQ(arg0 = <this>.#key, arg1 = tmp_0.#key).not() -> return false
       }
@@ -336,4 +336,3 @@ fun ArrayMap<*>.isEmpty(): Boolean {
 fun ArrayMap<*>.isNotEmpty(): Boolean {
   return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0).not()
 }
-

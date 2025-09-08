@@ -3,39 +3,11 @@ public final class BackingFields /* one.BackingFields*/ {
 
   private final int withBackingFieldPropertyWithDummyGetter;
 
-  private final int withBackingFieldPropertyWithLocalDeclaration;
-
-  private final int withBackingFieldPropertyWithNestedLocalDeclaration;
-
-  private final int withoutBackingFieldPropertyWithLocalDeclaration;
-
-  private final int withoutBackingFieldPropertyWithNestedLocalDeclaration;
-
-  private final int withoutBackingFieldPropertyWithNestedLocalDeclarationAsExpressionBody;
-
-  private final int withoutBackingFieldPropertyWithOuterLocalDeclaration;
-
   private int withBackingFieldVariableWithDummyGetter;
 
   private int withBackingFieldVariableWithDummyGetterAndSetter;
 
   private int withBackingFieldVariableWithDummySetter;
-
-  private int withoutBackingFieldVariableWithLocalDeclarationInsideGetter;
-
-  private int withoutBackingFieldVariableWithLocalDeclarationInsideSetter;
-
-  private int withoutBackingFieldVariableWithNestedLocalDeclarationInsideGetter;
-
-  private int withoutBackingFieldVariableWithNestedLocalDeclarationInsideGetterAsExpressionBody;
-
-  private int withoutBackingFieldVariableWithNestedLocalDeclarationInsideSetter;
-
-  private int withoutBackingFieldVariableWithNestedLocalDeclarationInsideSetterAsExpressionBody;
-
-  private int withoutBackingFieldVariableWithOuterLocalDeclarationInsideGetter;
-
-  private int withoutBackingFieldVariableWithOuterLocalDeclarationInsideSetter;
 
   public  BackingFields();//  .ctor()
 

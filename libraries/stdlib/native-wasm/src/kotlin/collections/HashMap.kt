@@ -112,6 +112,7 @@ public actual class HashMap<K, V> private constructor(
         return valuesArray!![index]
     }
 
+    @IgnorableReturnValue
     override actual fun put(key: K, value: V): V? {
         checkIsMutable()
         val index = addKey(key)
@@ -131,6 +132,7 @@ public actual class HashMap<K, V> private constructor(
         putAllEntries(from.entries)
     }
 
+    @IgnorableReturnValue
     override actual fun remove(key: K): V? {
         checkIsMutable()
         val index = findKey(key)
@@ -377,6 +379,7 @@ public actual class HashMap<K, V> private constructor(
         }
     }
 
+    @IgnorableReturnValue
     internal fun removeKey(key: K): Boolean {
         checkIsMutable()
         val index = findKey(key)
@@ -485,6 +488,7 @@ public actual class HashMap<K, V> private constructor(
         return true
     }
 
+    @IgnorableReturnValue
     private fun putEntry(entry: Map.Entry<K, V>): Boolean {
         val index = addKey(entry.key)
         val valuesArray = allocateValuesArray()
@@ -500,6 +504,7 @@ public actual class HashMap<K, V> private constructor(
         return false
     }
 
+    @IgnorableReturnValue
     private fun putAllEntries(from: Collection<Map.Entry<K, V>>): Boolean {
         if (from.isEmpty()) return false
         ensureExtraCapacity(from.size)
@@ -512,6 +517,7 @@ public actual class HashMap<K, V> private constructor(
         return updated
     }
 
+    @IgnorableReturnValue
     internal fun removeEntry(entry: Map.Entry<K, V>): Boolean {
         checkIsMutable()
         val index = findKey(entry.key)
@@ -521,6 +527,7 @@ public actual class HashMap<K, V> private constructor(
         return true
     }
 
+    @IgnorableReturnValue
     internal fun removeValue(element: V): Boolean {
         checkIsMutable()
         val index = findValue(element)

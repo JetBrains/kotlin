@@ -13,3 +13,6 @@ fun <A> main(tp: A, any: Any) {
     <!TYPE_PARAMETER_AS_REIFIED!>tp<!>()
     any()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, inline, nullableType, operator,
+reified, thisExpression, typeParameter */

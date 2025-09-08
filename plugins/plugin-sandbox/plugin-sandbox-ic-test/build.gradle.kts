@@ -1,20 +1,21 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
-    testApi(project(":plugins:plugin-sandbox"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(project(":plugins:plugin-sandbox"))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     testRuntimeOnly(commonDependency("org.lz4:lz4-java"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
@@ -26,21 +27,22 @@ dependencies {
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-    }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "main" { none() }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    dependsOn(":plugins:plugin-sandbox:jar")
-    dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        dependsOn(":plugins:plugin-sandbox:jar")
+        dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
+    }
+
+    testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")
+
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

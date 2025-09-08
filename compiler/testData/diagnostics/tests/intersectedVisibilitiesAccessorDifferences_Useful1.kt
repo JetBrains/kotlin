@@ -22,3 +22,6 @@ fun main() {
         override val x: String = "42"
     }.foo("1")
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter,
+interfaceDeclaration, nullableType, override, propertyDeclaration, stringLiteral, typeParameter */

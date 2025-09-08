@@ -33,3 +33,6 @@ fun test(b: B?) {
         b<!UNNECESSARY_SAFE_CALL!>?.<!>foo(1, "")
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression,
+nullableType, override, safeCall, smartcast, stringLiteral */

@@ -24,3 +24,5 @@ fun main() {
     println(JavaEnum.entries)
     println(JavaEnumI.entries)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType */

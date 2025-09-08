@@ -12,3 +12,6 @@ fun test(a : A): String? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, nullableType,
+primaryConstructor, propertyDeclaration */

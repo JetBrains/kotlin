@@ -36,3 +36,6 @@ open class Foo(i: Int) {}
 
 fun todo(): Nothing = throw Exception()
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
+localFunction, localProperty, primaryConstructor, propertyDeclaration */

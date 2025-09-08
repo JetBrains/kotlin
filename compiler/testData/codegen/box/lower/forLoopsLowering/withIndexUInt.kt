@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs
 import kotlin.test.*
@@ -7,7 +8,7 @@ import kotlin.test.*
 // CHECK-LABEL: epilogue:
 fun testUIntForWithIndex(): Int {
     var s = 0
-    for ((index, elem) in (1u..5u).withIndex()) {
+    for ([index, elem] in (1u..5u).withIndex()) {
         s = s * 10 + index * elem.toInt()
     }
     return s

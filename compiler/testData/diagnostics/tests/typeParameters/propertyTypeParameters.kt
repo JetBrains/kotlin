@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -REDUNDANT_PROJECTION -CONFLICTING_PROJECTION
 
 interface G
@@ -44,3 +43,7 @@ val <X: D<*>> X.z2: Int
 
 val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>Y<!>> D<*>.z3: Int
     get() = 4
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, inProjection, integerLiteral, interfaceDeclaration, nullableType,
+outProjection, propertyDeclaration, propertyWithExtensionReceiver, starProjection, stringLiteral, typeConstraint,
+typeParameter */

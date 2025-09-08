@@ -50,3 +50,6 @@ interface I3 : I1, I2
 class C1 : I1 {
     context(_: Int) override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+override */

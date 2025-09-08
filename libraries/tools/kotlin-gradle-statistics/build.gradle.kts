@@ -7,6 +7,7 @@ plugins {
     `java-library`
     id("org.jetbrains.kotlin.jvm")
     id("jps-compatible")
+    id("project-tests-convention")
     `maven-publish`
 }
 
@@ -22,8 +23,10 @@ dependencies {
     testImplementation(libs.junit4)
 }
 
-projectTest {
-    workingDir = rootDir
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 publishing {

@@ -22,3 +22,6 @@ open class B : A() {
 
     fun bar1() = super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, functionDeclaration, integerLiteral,
+override, superExpression */

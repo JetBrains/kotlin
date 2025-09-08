@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class LLSandboxBackBoxTestGenerated extends AbstractLLSandboxBackBoxTest {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugin-sandbox/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
   }
 
   @Test
@@ -72,6 +72,12 @@ public class LLSandboxBackBoxTestGenerated extends AbstractLLSandboxBackBoxTest 
   }
 
   @Test
+  @TestMetadata("functionCallInserterForIcTesting.kt")
+  public void testFunctionCallInserterForIcTesting() {
+    runTest("plugins/plugin-sandbox/testData/box/functionCallInserterForIcTesting.kt");
+  }
+
+  @Test
   @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
   public void testGeneratedClassWithMembersAndNestedClasses() {
     runTest("plugins/plugin-sandbox/testData/box/generatedClassWithMembersAndNestedClasses.kt");
@@ -105,6 +111,12 @@ public class LLSandboxBackBoxTestGenerated extends AbstractLLSandboxBackBoxTest 
   @TestMetadata("metaAnnotationFromLibrary.kt")
   public void testMetaAnnotationFromLibrary() {
     runTest("plugins/plugin-sandbox/testData/box/metaAnnotationFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("missingOverride.kt")
+  public void testMissingOverride() {
+    runTest("plugins/plugin-sandbox/testData/box/missingOverride.kt");
   }
 
   @Test

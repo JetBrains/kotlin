@@ -40,3 +40,5 @@ actual fun expectValueParamActualContext(a: context(A)() -> Unit): context(A) ()
 
 actual fun expectExtensionActualContext(a: context(A) () -> Unit): context(A)() -> Unit = a
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionalType, typeWithContext,
+typeWithExtension */

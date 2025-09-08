@@ -26,3 +26,7 @@ fun usage(){
         <!DSL_SCOPE_VIOLATION!>property<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, classDeclaration, functionDeclaration,
+functionDeclarationWithContext, functionalType, getter, lambdaLiteral, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral, typeWithContext */

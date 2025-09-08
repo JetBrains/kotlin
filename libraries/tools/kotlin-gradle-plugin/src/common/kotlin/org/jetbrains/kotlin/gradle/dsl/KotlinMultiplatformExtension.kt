@@ -11,6 +11,7 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.syncCommonMultiplatformOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -27,11 +30,13 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import javax.inject.Inject
 
 internal fun ExtensionContainer.KotlinMultiplatformExtension(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ): KotlinMultiplatformExtension {
     val targetsContainer = objectFactory.newInstance<DefaultKotlinTargetsContainer>()
     val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets)
@@ -43,7 +48,6 @@ internal fun ExtensionContainer.KotlinMultiplatformExtension(
     )
 }
 
-@Suppress("DEPRECATION_ERROR")
 @KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
 @Inject
@@ -64,7 +68,7 @@ internal constructor(
 
     @InternalKotlinGradlePluginApi
     constructor(
-        project: Project
+        project: Project,
     ) : this(
         project = project,
         targetsContainer = project.objects.newInstance<KotlinTargetsContainer>(),
@@ -76,7 +80,7 @@ internal constructor(
     override fun js(
         name: String,
         compiler: KotlinJsCompilerType,
-        configure: KotlinJsTargetDsl.() -> Unit
+        configure: KotlinJsTargetDsl.() -> Unit,
     ): KotlinJsTargetDsl {
         @Suppress("UNCHECKED_CAST")
         return presetFunctions.configureOrCreate(
@@ -109,6 +113,27 @@ internal constructor(
             presetFunctions.presets.getByName("wasmWasi") as KotlinWasmTargetPreset,
             configure
         )
+
+    fun dependencies(configure: Action<KotlinDependencies>) = dependencies { configure.execute(this) }
+
+    fun dependencies(configure: KotlinDependencies.() -> Unit) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.KMP_TOP_LEVEL_DEPENDENCIES_BLOCK, true)
+        }
+        when (val dependencies = dependencies) {
+            KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion -> {
+                project.reportDiagnostic(
+                    KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion(
+                        currentGradleVersion = GradleVersion.current(),
+                        minimumSupportedGradleVersion = MinSupportedGradleVersionWithDependencyCollectors,
+                    )
+                )
+            }
+            is KotlinTopLevelDependenciesBlock.Dependencies -> {
+                dependencies.block.configure()
+            }
+        }
+    }
 
     @Deprecated(
         "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",
@@ -162,32 +187,28 @@ internal constructor(
      * }
      * ```
      *
-     * Will create the following SourceSets:
-     * `[iosMain, iosTest, appleMain, appleTest, linuxMain, linuxTest, nativeMain, nativeTest]
+     * Will create the following shared [SourceSet][KotlinSourceSet]s:
      *
+     * - `iosMain`, `iosTest`
+     * - `appleMain`, `appleTest`
+     * - `linuxMain`, `linuxTest`
+     * - `nativeMain`, `nativeTest`
      *
      * Hierarchy:
-     * ```
-     *                                                                     common
-     *                                                                        |
-     *                                                      +-----------------+-------------------+
-     *                                                      |                                     |
-     *
-     *                                                    native                                 ...
-     *
-     *                                                     |
-     *                                                     |
-     *                                                     |
-     *         +----------------------+--------------------+-----------------------+
-     *         |                      |                    |                       |
-     *
-     *       apple                  linux                mingw              androidNative
-     *
-     *         |
-     *  +-----------+------------+------------+
-     *  |           |            |            |
-     *
-     * macos       ios         tvos        watchos
+     * ```text
+     *                                    common
+     *                                      │
+     *                         ┌────────────┴──────────────┐
+     *                         │                           │
+     *                       native                       ...
+     *                         │
+     *             ┌───────┬───┴───┬───────────┐
+     *             │       │       │           │
+     *           apple   linux   mingw   androidNative
+     *             │
+     *   ┌──────┬──┴──┬────────┐
+     *   │      │     │        │
+     * macos   ios   tvos   watchos
      * ```
      *
      * @see KotlinHierarchyTemplate.extend
@@ -221,7 +242,8 @@ internal constructor(
     }
 
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: DeprecatedKotlinTargetHierarchyDsl get() = DeprecatedKotlinTargetHierarchyDsl(this)
+    val targetHierarchy: @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl
+        get() = @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl(this)
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
@@ -328,7 +350,7 @@ internal fun KotlinMultiplatformExtension.supportedAppleTargets() = targets
     .matching { it.konanTarget.family.isAppleFamily }
 
 private abstract class DefaultKotlinTargetsContainer @Inject constructor(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ) : KotlinTargetsContainer {
     override val targets: NamedDomainObjectCollection<KotlinTarget> =
         objectFactory.domainObjectContainer(KotlinTarget::class.java)

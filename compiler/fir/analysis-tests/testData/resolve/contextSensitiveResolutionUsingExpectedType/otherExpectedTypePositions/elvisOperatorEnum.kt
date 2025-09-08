@@ -26,3 +26,6 @@ fun testElvis() {
     receive<MyEnum>(enumProp <!USELESS_ELVIS!>?: <!ARGUMENT_TYPE_MISMATCH!>stringProp<!><!>)
     receive<MyEnum>(enumProp <!USELESS_ELVIS!>?: <!UNRESOLVED_REFERENCE!>getOption<!>()<!>)
 }
+
+/* GENERATED_FIR_TAGS: companionObject, elvisExpression, enumDeclaration, enumEntry, functionDeclaration,
+intersectionType, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

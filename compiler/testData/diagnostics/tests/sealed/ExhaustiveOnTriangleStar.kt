@@ -24,3 +24,6 @@ fun test3(a: A): Any {
         is D -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, sealed, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

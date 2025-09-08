@@ -30,8 +30,8 @@ fun testUnsafeTypeCast2(i: SealedClass) {
     i as SealedInheritor1
     i.prop1.hashCode()
 
-    i as <!UNRESOLVED_REFERENCE!>SealedInheritor2<!>
-    i.<!UNRESOLVED_REFERENCE!>prop2<!>.dec()
+    i <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
+    i.prop2.dec()
 
     i as <!UNRESOLVED_REFERENCE!>SealedInheritor1<!>
     i.prop1.hashCode()
@@ -40,8 +40,8 @@ fun testUnsafeTypeCast2(i: SealedClass) {
 fun testUnsafeTypeCast(i: SealedClass) {
     (i as SealedInheritor1).prop1.hashCode()
 
-    i as <!UNRESOLVED_REFERENCE!>SealedInheritor2<!>
-    i.<!UNRESOLVED_REFERENCE!>prop2<!>.dec()
+    i <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
+    i.prop2.dec()
 
     var v = i as <!UNRESOLVED_REFERENCE!>SealedInheritor1<!>
     v.<!UNRESOLVED_REFERENCE!>prop1<!>.hashCode()
@@ -76,3 +76,7 @@ fun testSafeTypeCast(i: SealedClass) {
     consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)
     consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, inner, integerLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, safeCall, sealed,
+smartcast, stringLiteral, typeParameter */

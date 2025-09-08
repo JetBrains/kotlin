@@ -4,10 +4,14 @@
 
 fun test() {
     data class Pair<F, S>(val first: F, val second: S)
-    val (x, y) =
+    val (first, second) =
             Pair(1,
                  if (1 == 1)
                      Pair<String, String>::first
                  else
                      Pair<String, String>::second)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, destructuringDeclaration, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, localClass, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter */

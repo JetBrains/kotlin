@@ -51,5 +51,5 @@ fun test(){
     Test3(Base1Impl<String>()).foo("a")
 }
 
-
-
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, nullableType, override, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

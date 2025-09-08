@@ -12,15 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTyp
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -56,13 +55,15 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
         if (parameter.returnTypeRef.source?.kind is KtRealSourceElementKind) return
 
         val missingTypes = mutableSetOf<ConeClassLikeType>()
-        considerType(parameter.returnTypeRef.coneType, missingTypes, context)
+        considerType(parameter.returnTypeRef.coneType, missingTypes)
         reportMissingTypes(
-            parameter.source, missingTypes, context, reporter,
+            parameter.source, missingTypes,
             missingTypeOrigin = MissingTypeOrigin.LambdaParameter(
                 parameter.name.takeIf { !it.isSpecial } ?: Name.identifier("_")
             )
         )
+
+        FirImplicitReturnTypeAnnotationMissingDependencyChecker.check(parameter.returnTypeRef, parameter.returnTypeRef.source)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

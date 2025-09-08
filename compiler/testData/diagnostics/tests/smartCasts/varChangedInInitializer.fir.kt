@@ -6,3 +6,6 @@ class My {
         y.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast */

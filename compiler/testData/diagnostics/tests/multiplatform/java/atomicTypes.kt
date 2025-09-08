@@ -24,3 +24,6 @@ public class Bar {
 
 //FILE: test.kt
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = Bar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration, javaType,
+typeAliasDeclaration */

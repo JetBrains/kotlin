@@ -20,3 +20,6 @@ class Derived : Base<Int>() {
     val test1: CT = Cell(42)
     val test2: Base<Int>.CT = Cell(42)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, interfaceDeclaration, nullableType, override,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

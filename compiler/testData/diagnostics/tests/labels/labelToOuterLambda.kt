@@ -33,3 +33,6 @@ fun main() {
 }
 
 fun String.hello() = this
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+lateinit, localProperty, propertyDeclaration, stringLiteral, thisExpression, typeWithExtension */

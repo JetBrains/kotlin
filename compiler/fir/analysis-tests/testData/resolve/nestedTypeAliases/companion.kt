@@ -44,3 +44,6 @@ class Class {
 
         val negative = <!NO_COMPANION_OBJECT!>NestedTA<!>}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration, stringLiteral, typeAliasDeclaration */

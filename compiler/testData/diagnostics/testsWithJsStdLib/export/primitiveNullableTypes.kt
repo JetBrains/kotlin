@@ -1,5 +1,4 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport kotlin.ExperimentalUnsignedTypes
-// FIR_IDENTICAL
 
 @JsExport
 fun any(): Any? = null

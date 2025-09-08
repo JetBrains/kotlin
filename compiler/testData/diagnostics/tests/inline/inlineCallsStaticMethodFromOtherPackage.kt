@@ -24,3 +24,5 @@ package anotherPackage
 import Test2
 
 fun box() = Test2().test()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inline, javaFunction */

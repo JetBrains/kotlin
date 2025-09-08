@@ -102,3 +102,6 @@ fun k2(flag: Boolean) {
     }
     n.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

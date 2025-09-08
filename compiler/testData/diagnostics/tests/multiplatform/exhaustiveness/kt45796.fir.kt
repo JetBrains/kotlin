@@ -29,3 +29,6 @@ fun whenForSealed(s: SealedClass): Int {
         is SealedClass.Nested -> 8
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, isExpression, nestedClass,
+primaryConstructor, sealed, smartcast, whenExpression, whenWithSubject */

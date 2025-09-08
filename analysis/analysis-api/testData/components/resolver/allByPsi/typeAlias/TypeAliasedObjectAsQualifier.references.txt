@@ -1,0 +1,47 @@
+KtNameReferenceExpression(8,12): 'test'
+  KtSimpleNameReference:
+    package test
+
+KtNameReferenceExpression(73,76): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(105,113): 'MyObject'
+  KtSimpleNameReference:
+    (in test) object MyObject
+
+KtNameReferenceExpression(133,140): 'MyAlias'
+  KtSimpleNameReference:
+    (in test) typealias MyAlias = test.MyObject
+
+KtCallExpression(141,151): 'function()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(141,149): 'function'
+  KtSimpleNameReference:
+    (in test.MyObject) fun function()
+
+KtNameReferenceExpression(156,163): 'MyAlias'
+  KtSimpleNameReference:
+    (in test) typealias MyAlias = test.MyObject
+
+KtNameReferenceExpression(164,172): 'property'
+  KtSimpleNameReference:
+    (in test.MyObject) val property: kotlin.Int
+
+KtNameReferenceExpression(178,185): 'MyAlias'
+  KtSimpleNameReference:
+    (in test) typealias MyAlias = test.MyObject
+
+KtNameReferenceExpression(187,195): 'function'
+  KtSimpleNameReference:
+    (in test.MyObject) fun function()
+
+KtNameReferenceExpression(200,207): 'MyAlias'
+  KtSimpleNameReference:
+    (in test) typealias MyAlias = test.MyObject
+
+KtNameReferenceExpression(209,217): 'property'
+  KtSimpleNameReference:
+    (in test.MyObject) val property: kotlin.Int

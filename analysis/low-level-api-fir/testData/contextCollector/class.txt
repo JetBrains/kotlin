@@ -1,0 +1,57 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] class.kt
+    public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|foo/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val bar: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|foo/MyClass.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] constructor(): R|foo/MyClass.NestedClass.Nested| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] constructor(): R|foo/MyClass.NestedObject| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? inner [ResolvedTo(RAW_FIR)] class InnerClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] foo/MyClass.constructor(): R|foo/MyClass.InnerClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+    }

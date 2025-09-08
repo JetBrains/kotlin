@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 interface IrType
 
@@ -26,7 +27,7 @@ class DeepCopyIrTreeWithSymbols(private val typeRemapper: TypeRemapper) {
         }
 
         typeRemapper.withinScope(this) {
-            for ((thisTypeParameter, otherTypeParameter) in this.typeParameters.zip(other.typeParameters)) {
+            for ([thisTypeParameter, otherTypeParameter] in this.typeParameters.zip(other.typeParameters)) {
                 otherTypeParameter.superTypes.mapTo(thisTypeParameter.superTypes) {
                     typeRemapper.remapType(it)
                 }
@@ -41,3 +42,7 @@ inline fun <T> TypeRemapper.withinScope(irTypeParametersContainer: IrTypeParamet
     leaveScope()
     return result
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, thisExpression, typeParameter */

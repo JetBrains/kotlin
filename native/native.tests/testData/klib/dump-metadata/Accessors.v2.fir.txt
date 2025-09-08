@@ -30,16 +30,16 @@ library {
       public final var annotatedAccessors: kotlin/Int
         // signature: custom.pkg/Foo.annotatedAccessors.<get-annotatedAccessors>|<get-annotatedAccessors>(){}[0]
         @custom/pkg/A
-        public final /* non-default */ get
+        public final get
         // signature: custom.pkg/Foo.annotatedAccessors.<set-annotatedAccessors>|<set-annotatedAccessors>(kotlin.Int){}[0]
         @custom/pkg/A
-        public final /* non-default */ set(value: kotlin/Int)
+        public final set
 
       // signature: custom.pkg/Foo.annotatedGetter|{}annotatedGetter[0]
       public final val annotatedGetter: kotlin/Int /* = ... */
         // signature: custom.pkg/Foo.annotatedGetter.<get-annotatedGetter>|<get-annotatedGetter>(){}[0]
         @custom/pkg/A
-        public final /* non-default */ get
+        public final get
 
       // signature: custom.pkg/Foo.annotatedSetter|{}annotatedSetter[0]
       public final var annotatedSetter: kotlin/Int
@@ -47,7 +47,7 @@ library {
         public final get
         // signature: custom.pkg/Foo.annotatedSetter.<set-annotatedSetter>|<set-annotatedSetter>(kotlin.Int){}[0]
         @custom/pkg/A
-        public final /* non-default */ set(value: kotlin/Int)
+        public final set
 
       // signature: custom.pkg/Foo.privateSetter|{}privateSetter[0]
       public final var privateSetter: kotlin/Int

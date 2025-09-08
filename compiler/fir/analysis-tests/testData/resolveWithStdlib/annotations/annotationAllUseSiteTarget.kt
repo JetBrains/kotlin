@@ -205,3 +205,7 @@ class My(
         @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default get() = field
         @<!INAPPLICABLE_ALL_TARGET!>all<!>:Default set(@<!INAPPLICABLE_ALL_TARGET!>all<!>:Default param) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetAll, anonymousObjectExpression, classDeclaration,
+functionDeclaration, getter, integerLiteral, javaType, lambdaLiteral, localProperty, primaryConstructor,
+propertyDeclaration, propertyDelegate, secondaryConstructor, setter */

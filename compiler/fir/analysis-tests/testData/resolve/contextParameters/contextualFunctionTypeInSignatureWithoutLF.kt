@@ -11,3 +11,6 @@ fun bar() {
     <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>foo3()<!>
     <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>foo4<<!UNSUPPORTED_FEATURE!>context(String)<!> () -> Unit>()<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, typeConstraint,
+typeParameter, typeWithContext */

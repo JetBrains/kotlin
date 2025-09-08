@@ -69,3 +69,7 @@ fun test6() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, functionDeclaration, functionDeclarationWithContext,
+functionalType, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral, thisExpression,
+typeParameter, typeWithContext, typeWithExtension */

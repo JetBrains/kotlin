@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -22,24 +23,24 @@ import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.powerassert.diagram.ExplainVariable
 import org.jetbrains.kotlin.powerassert.diagram.SourceFile
 import org.jetbrains.kotlin.powerassert.diagram.irExplain
 import org.jetbrains.kotlin.psi.KtFile
@@ -64,54 +65,60 @@ class KotlinScriptExpressionExplainTransformer(
         val mapClass = mapType.getClass()!!
         val mapPut = mapClass.functions.single { it.name.asString() == "put" }
 
-        for (statement in declaration.statements) {
-            val initializerToExplain = (statement as? IrProperty)?.backingField?.initializer
-            if (initializerToExplain != null) {
+        val builder = DeclarationIrBuilder(context, declaration.symbol, declaration.startOffset, declaration.endOffset)
 
-                fun IrBuilderWithScope.makeExplainMapPutCall(
-                    resVar: IrVariable,
-                    resExpression: IrExpression,
-                ): IrFunctionAccessExpression = irCall(mapPut).apply {
-                    arguments[0] = irGet(explanationsProp)
-                    arguments[1] = irString("${statement.name.asString()}(${resExpression.startOffset}, ${resExpression.endOffset})")
-                    arguments[2] = irGet(resVar)
+        fun IrBuilderWithScope.makeExplainMapPutCall(
+            resVar: IrVariable,
+            resExpression: IrExpression,
+            statementName: String
+        ): IrFunctionAccessExpression = irCall(mapPut).apply {
+            arguments[0] = irGet(explanationsProp)
+            arguments[1] = irString("$statementName(${resExpression.startOffset}, ${resExpression.endOffset})")
+            arguments[2] = irGet(resVar)
+        }
+
+        fun explainWithFallBack(expression: IrExpression, parent: IrDeclarationParent, statementName: String): IrExpression =
+            builder.irExplain(expression, sourceFile) { variables ->
+                variables.forEach { explainVar ->
+                    +builder.makeExplainMapPutCall(explainVar.variable, explainVar.variable.initializer!!, statementName)
                 }
+            }.let { explainedExpression ->
+                if (explainedExpression == expression) {
+                    builder.irComposite(expression) {
+                        val resVar =
+                            buildVariable(
+                                parent, startOffset, endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                                Name.special("<res>"), expression.type
+                            ).also { it.initializer = expression }
+                        +resVar
+                        +builder.makeExplainMapPutCall(resVar, expression, statementName)
+                        +builder.irGet(resVar)
+                    }
+                } else explainedExpression
+            }
 
-                val builder =
-                    DeclarationIrBuilder(context, statement.backingField!!.symbol, declaration.startOffset, declaration.endOffset)
-
-                statement.backingField!!.initializer = context.irFactory.createExpressionBody(
-                    initializerToExplain.startOffset, initializerToExplain.endOffset,
-                    IrCompositeImpl(
-                        initializerToExplain.startOffset, initializerToExplain.endOffset, initializerToExplain.expression.type
-                    ).also { block ->
-                        val explainVars = mutableListOf<ExplainVariable>()
-                        val resExpression = builder.irExplain(initializerToExplain.expression, sourceFile) { variables ->
-                            explainVars.addAll(variables)
-                        }
-                        if (explainVars.isNotEmpty()) {
-                            explainVars.forEachIndexed { index, explainVar ->
-                                block.statements.add(explainVar.variable)
-                                block.statements.add(builder.makeExplainMapPutCall(explainVar.variable, explainVar.variable.initializer!!))
-                            }
-                            block.statements.add(builder.irGet(explainVars.last().variable))
-                        } else {
-                            val resVar =
-                                IrVariableImpl(
-                                    initializerToExplain.startOffset, initializerToExplain.endOffset, statement.origin,
-                                    IrVariableSymbolImpl(),
-                                    Name.special("<res>"), resExpression.type,
-                                    isVar = false, isConst = false, isLateinit = false
-                                ).also {
-                                    it.parent = statement.backingField!!
-                                    it.initializer = resExpression
-                                }
-                            block.statements.add(resVar)
-                            block.statements.add(builder.makeExplainMapPutCall(resVar, resExpression))
-                            block.statements.add(builder.irGet(resVar))
+        declaration.statements.replaceAll { statement ->
+            when (statement) {
+                is IrProperty -> {
+                    statement.backingField?.let { field ->
+                        field.initializer?.let { initializer ->
+                            field.initializer = context.irFactory.createExpressionBody(
+                                explainWithFallBack(initializer.expression, field, statement.name.asString())
+                            )
                         }
                     }
-                )
+                    statement
+                }
+                is IrVariable -> {
+                    statement.initializer?.let { initializer ->
+                        statement.initializer = explainWithFallBack(initializer, declaration, statement.name.asString())
+                    }
+                    statement
+                }
+                is IrExpression -> {
+                    explainWithFallBack(statement, declaration, "")
+                }
+                else -> statement
             }
         }
         return super.visitScriptNew(declaration)

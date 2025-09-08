@@ -18,3 +18,5 @@ fun test1(a: Int) {
 fun test2(a: Int) {
     bar(a, throw Exception())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, safeCall, typeParameter */

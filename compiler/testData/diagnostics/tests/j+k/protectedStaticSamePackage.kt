@@ -20,3 +20,5 @@ fun test() {
     JavaClass.field
     JavaClass.method()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty */

@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/CommonCompilerArguments.kt
@@ -27,11 +26,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.LANGUAGE_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
@@ -43,11 +37,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.API_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
@@ -70,10 +59,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-progressive",
         deprecatedName = "-Xprogressive",
@@ -109,10 +94,6 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-opt-in",
         deprecatedName = "-Xopt-in",
@@ -220,6 +201,21 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         }
 
     @Argument(
+        value = "-Xcompiler-plugin-order",
+        valueDescription = "<pluginId1>><pluginId2>",
+        description = """Specify an execution order constraint for compiler plugins.
+Order constraint can be specified using the 'pluginId' of compiler plugins.
+The first specified plugin will be executed before the second plugin.
+Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var pluginOrderConstraints: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xmulti-platform",
         description = "Enable language support for multiplatform projects.",
     )
@@ -287,9 +283,23 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         }
 
     @Argument(
+        value = "-Xdetailed-perf",
+        description = """Enable more detailed performance statistics (Experimental).
+For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.""",
+    )
+    var detailedPerf: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdump-perf",
         valueDescription = "<path>",
-        description = "Dump detailed performance statistics to the specified file.",
+        description = """Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
+Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
+Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.""",
     )
     var dumpPerf: String? = null
         set(value) {
@@ -470,18 +480,10 @@ They should be a subset of sources passed as free arguments.""",
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
-    @GradleDeprecatedOption(
-        message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        removeAfter = LanguageVersion.KOTLIN_2_2,
-        level = DeprecationLevel.HIDDEN
-    )
     @Argument(
         value = "-Xuse-k2",
         description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
+        isObsolete = true,
     )
     var useK2: Boolean = false
         set(value) {
@@ -489,6 +491,7 @@ They should be a subset of sources passed as free arguments.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production.",
@@ -676,6 +679,28 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
+        value = "-Xdata-flow-based-exhaustiveness",
+        description = "Enable `when` exhaustiveness improvements that rely on data-flow analysis.",
+    )
+    @Enables(LanguageFeature.DataFlowBasedExhaustiveness)
+    var dataFlowBasedExhaustiveness: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xexplicit-backing-fields",
+        description = "Enable experimental language support for explicit backing fields.",
+    )
+    @Enables(LanguageFeature.ExplicitBackingFields)
+    var explicitBackingFields: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdirect-java-actualization",
         description = "Enable experimental direct Java actualization support.",
     )
@@ -778,8 +803,24 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 """,
+        delimiter = Argument.Delimiters.none,
     )
     var fragmentDependencies: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xfragment-friend-dependency",
+        valueDescription = "<fragment name>:<path>",
+        description = """Declare common klib friend dependencies for the specific fragment.
+This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var fragmentFriendDependencies: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value
@@ -871,6 +912,11 @@ The argument should be used only if the new compilation scheme is enabled with -
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
 default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""",
     )
+    @Disables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only")
+    @Enables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only-warn")
+    @Disables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "first-only")
+    @Disables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "first-only-warn")
+    @Enables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "param-property")
     var annotationDefaultTarget: String? = null
         set(value) {
             checkFrozen()
@@ -903,6 +949,86 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         description = "Lenient compiler mode. When actuals are missing, placeholder declarations are generated.",
     )
     var lenientMode: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xallow-reified-type-in-catch",
+        description = "Allow 'catch' parameters to have reified types.",
+    )
+    @Enables(LanguageFeature.AllowReifiedTypeInCatchClause)
+    var allowReifiedTypeInCatch: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xallow-contracts-on-more-functions",
+        description = "Allow contracts on some operators and accessors, and allow checks for erased types.",
+    )
+    @Enables(LanguageFeature.AllowCheckForErasedTypesInContracts)
+    @Enables(LanguageFeature.AllowContractsOnSomeOperators)
+    @Enables(LanguageFeature.AllowContractsOnPropertyAccessors)
+    var allowContractsOnMoreFunctions: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xallow-condition-implies-returns-contracts",
+        description = "Allow contracts that specify a limited conditional returns postcondition.",
+    )
+    @Enables(LanguageFeature.ConditionImpliesReturnsContracts)
+    var allowConditionImpliesReturnsContracts: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xallow-holdsin-contract",
+        description = "Allow contracts that specify a condition that holds true inside a lambda argument.",
+    )
+    @Enables(LanguageFeature.HoldsInContracts)
+    var allowHoldsinContract: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xname-based-destructuring",
+        valueDescription = "only-syntax|name-mismatch|complete",
+        description = """Enables the following destructuring features:
+-Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
+-Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
+-Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;""",
+    )
+    @Enables(LanguageFeature.NameBasedDestructuring, "only-syntax")
+    @Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch")
+    @Enables(LanguageFeature.NameBasedDestructuring, "complete")
+    @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch")
+    @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete")
+    @Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete")
+    var nameBasedDestructuring: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-XXLanguage",
+        valueDescription = "[+-]LanguageFeatureName",
+        description = """Enables/disables specified language feature.
+Warning: this flag is not intended for production use. If you want to configure the language behaviour use the
+-language-version or corresponding experimental feature flags.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var manuallyConfiguredFeatures: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value

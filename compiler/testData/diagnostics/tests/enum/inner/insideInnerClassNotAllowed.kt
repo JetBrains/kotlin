@@ -7,3 +7,5 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, inner, nestedClass */

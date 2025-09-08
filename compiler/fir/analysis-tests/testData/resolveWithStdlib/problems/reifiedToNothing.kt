@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
-// FIXATION_LOGS
+// DUMP_INFERENCE_LOGS: MERMAID, MARKDOWN, FIXATION
 
 inline fun <reified P : Any> parse(text: String): P = TODO()
 
@@ -20,3 +20,6 @@ fun parse(token: String, flag: Boolean): Result? {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, reified, tryExpression, typeConstraint, typeParameter */

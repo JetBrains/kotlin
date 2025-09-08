@@ -10,3 +10,5 @@ fun test(name: String?) {
         name?.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, safeCall, tryExpression */

@@ -11,3 +11,6 @@ abstract class StringEntities : Entities<String> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+typeParameter */

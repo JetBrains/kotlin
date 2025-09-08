@@ -12,3 +12,6 @@ fun main() {
 }
 
 fun takeString(link: String) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression, localClass,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast */

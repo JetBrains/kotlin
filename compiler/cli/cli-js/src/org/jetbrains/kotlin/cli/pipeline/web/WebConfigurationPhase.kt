@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmConfigurationUpdater
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
@@ -59,7 +60,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
     ) {
         val (arguments, services, rootDisposable, _, _) = input
         setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-        initializeCommonConfiguration(configuration, arguments)
+        initializeCommonConfiguration(configuration, arguments, rootDisposable)
         configuration.jsIncrementalCompilationEnabled = incrementalCompilationIsEnabledForJs(arguments)
 
         val messageCollector = configuration.messageCollector
@@ -84,9 +85,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         arguments.main?.let { configuration.callMainMode = it }
         configuration.dce = arguments.irDce
 
-        val zipAccessor = DisposableZipFileSystemAccessor(64)
-        Disposer.register(rootDisposable, zipAccessor)
-        configuration.zipFileSystemAccessor = zipAccessor
         configuration.perModuleOutputName = arguments.irPerModuleOutputName
         configuration.icCacheDirectory = arguments.cacheDirectory
         configuration.icCacheReadOnly = arguments.icCacheReadonly
@@ -117,13 +115,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         services: Services,
     ) {
         val messageCollector = configuration.messageCollector
-        @Suppress("DEPRECATION")
-        if (arguments.typedArrays) {
-            messageCollector.report(
-                WARNING,
-                "The '-Xtyped-arrays' command line option does nothing and will be removed in Kotlin 2.3"
-            )
-        }
 
         if (arguments.generateDwarf) {
             configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
@@ -176,6 +167,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.incrementalNextRoundChecker = services[IncrementalNextRoundChecker::class.java]
         configuration.lookupTracker = services[LookupTracker::class.java]
         configuration.expectActualTracker = services[ExpectActualTracker::class.java]
+        configuration.fileMappingTracker = services[ICFileMappingTracker::class.java]
 
         val sourceMapEmbedContentString = arguments.sourceMapEmbedSources
         var sourceMapContentEmbedding: SourceMapSourceEmbedding? = if (sourceMapEmbedContentString != null) {
@@ -227,8 +219,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         )
     }
 
-    internal fun initializeCommonConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
-        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = false)
+    internal fun initializeCommonConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments, rootDisposable: Disposable) {
+        configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = false, rootDisposable = rootDisposable)
 
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)

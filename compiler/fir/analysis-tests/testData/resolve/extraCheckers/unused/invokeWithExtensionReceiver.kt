@@ -8,3 +8,6 @@ fun foo() {
 
     usedReceiver.<!UNINITIALIZED_VARIABLE!>ext<!>(10)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral, typeWithExtension */

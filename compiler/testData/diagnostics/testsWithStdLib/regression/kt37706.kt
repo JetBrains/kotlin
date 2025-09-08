@@ -6,3 +6,6 @@ fun test(): Int {
     val set = sets[50] ?: emptySet()
     return set.size
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral, localProperty,
+multiplicativeExpression, nullableType, propertyDeclaration, rangeExpression */

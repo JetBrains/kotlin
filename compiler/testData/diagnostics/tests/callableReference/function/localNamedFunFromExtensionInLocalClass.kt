@@ -23,3 +23,7 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localClass, localFunction, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

@@ -15,3 +15,6 @@ fun foo() {
 }
 
 fun process(x: Predicate<String>) {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

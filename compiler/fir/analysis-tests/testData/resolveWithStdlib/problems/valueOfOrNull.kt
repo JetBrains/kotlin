@@ -18,3 +18,7 @@ inline fun <reified E : Enum<E>> valueOfOrNull(value: String): E? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, enumDeclaration, enumEntry, equalityExpression, forLoop, functionDeclaration,
+ifExpression, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified, safeCall, smartcast,
+typeConstraint, typeParameter */

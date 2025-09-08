@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -57,11 +59,9 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConeNoInferSubtyping
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -426,8 +426,7 @@ class FirCallCompletionResultsWriterTransformer(
      *
      * See K1 counterpart at [org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall.getSubstitutorWithoutFlexibleTypes].
      *
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      *
      * @return `null` for all other cases where [finalSubstitutor] should be used
      */
@@ -866,7 +865,7 @@ class FirCallCompletionResultsWriterTransformer(
                         buildTypeProjectionWithVariance {
                             source = sourceForTypeArgument
                             this.typeRef =
-                                if (typeRef.coneType.fullyExpandedType(session) is ConeErrorType) typeRef else typeRef.withReplacedConeType(
+                                if (typeRef.coneType.fullyExpandedType() is ConeErrorType) typeRef else typeRef.withReplacedConeType(
                                     type
                                 )
                             variance = argument.variance
@@ -906,8 +905,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     /**
      * @see ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      */
     private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(
         argument: FirTypeProjection?,
@@ -919,10 +917,7 @@ class FirCallCompletionResultsWriterTransformer(
         return withAttributes(
             attributes.add(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-                    argument.typeRef.coneType.fullyExpandedType(
-                        session
-                    ),
-                    LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
+                    argument.typeRef.coneType.fullyExpandedType(),
                 )
             )
         )
@@ -1125,18 +1120,8 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
-        val initialType = block.resolvedType
-        var resultType = finallySubstituteOrNull(initialType) ?: block.resolvedType
-        (resultType as? ConeIntegerLiteralType)?.let {
-            resultType =
-                it.getApproximatedType(data?.getExpectedType(block)?.fullyExpandedType(session))
-        }
-        block.replaceConeTypeOrNull(resultType)
-        session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, context.file.source)
         transformElement(block, data)
-        if ((block.resultType as? ConeErrorType)?.diagnostic is ConePostponedInferenceDiagnostic) {
-            // If a lambda was the last expression of the block, it's type may not have been resolved yet.
-            // It should be now, so rewrite the result type for the block.
+        if (!block.isUnitCoerced) {
             block.writeResultType(session)
         }
         return block
@@ -1270,7 +1255,7 @@ class FirCallCompletionResultsWriterTransformer(
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
         arrayLiteral.resultType =
-            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType(session)?.isPrimitiveArray == true)
+            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
         return arrayLiteral
     }
 
@@ -1288,17 +1273,6 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
         candidate.system.errors.any { it is InferredEmptyIntersection }
 
-    private fun FirNamedReferenceWithCandidate.noInferTypeMismatchIfAny(): ConeNoInferTypeMismatch? {
-        for (error in candidate.system.errors) {
-            if (error !is ConeNoInferSubtyping) continue
-            val lowerType = finalSubstitutor.substituteOrSelf(error.lowerType as ConeKotlinType)
-            val upperType = finalSubstitutor.substituteOrSelf(error.upperType as ConeKotlinType)
-            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, lowerType, upperType)) continue
-            return ConeNoInferTypeMismatch(lowerType, upperType)
-        }
-        return null
-    }
-
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
             this is FirErrorReferenceWithCandidate -> this.diagnostic
@@ -1315,14 +1289,18 @@ class FirCallCompletionResultsWriterTransformer(
             // NB: these additional errors might not lead to marking candidate unsuccessful because it may be a warning in FE 1.0
             // We consider those warnings as errors in FIR
             hasAdditionalResolutionErrors() -> ConeConstraintSystemHasContradiction(candidate)
-            else -> noInferTypeMismatchIfAny()
+            else -> null
         }
+        val isPropertyWithExplicitField = (candidateSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true
 
         return when (errorDiagnostic) {
-            null -> buildResolvedNamedReference {
-                source = this@toResolvedReference.source
-                name = this@toResolvedReference.name
-                resolvedSymbol = this@toResolvedReference.candidateSymbol
+            null -> when {
+                isPropertyWithExplicitField -> buildExplicitBackingFieldReference(source, name, candidate)
+                else -> buildResolvedNamedReference {
+                    source = this@toResolvedReference.source
+                    name = this@toResolvedReference.name
+                    resolvedSymbol = this@toResolvedReference.candidateSymbol
+                }
             }
 
             else -> toErrorReference(errorDiagnostic)

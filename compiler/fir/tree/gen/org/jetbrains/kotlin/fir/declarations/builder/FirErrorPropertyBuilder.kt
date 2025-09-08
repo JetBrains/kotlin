@@ -44,7 +44,6 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
     override var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
-    var isLocal: Boolean = false
     var bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorPropertySymbol
@@ -65,7 +64,6 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
             backingField,
             annotations.toMutableOrEmpty(),
             delegateFieldSymbol,
-            isLocal,
             bodyResolveState,
             diagnostic,
             symbol,

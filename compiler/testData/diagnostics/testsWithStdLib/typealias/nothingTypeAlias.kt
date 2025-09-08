@@ -21,3 +21,7 @@ interface RowData<T : Comparable<T>>
 typealias ReadonlyArray<T> = Array<out T>
 
 private val ALL_COLUMNS: ReadonlyArray<Column<RowData<*>, *>> = arrayOf(column(id = ""), column())
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, outProjection, propertyDeclaration,
+starProjection, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

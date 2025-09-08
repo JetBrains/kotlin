@@ -22,3 +22,5 @@ import b.F
 fun f() {
     F().<!INVISIBLE_MEMBER!>m<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaProperty, javaType */

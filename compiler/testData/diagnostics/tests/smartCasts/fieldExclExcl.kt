@@ -12,3 +12,6 @@ fun foo() {
         y!!.x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast */

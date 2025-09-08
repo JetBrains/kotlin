@@ -1,1 +1,2 @@
 Diagnostics from file:
+  <NO DIAGNOSTICS>

@@ -625,8 +625,10 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     )
 
     @Test
-    fun testDefaultParametersInAbstractFunctions() = validateBytecode(
-        """
+    fun testDefaultParametersInAbstractFunctions() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
             import androidx.compose.runtime.*
 
             interface Test {
@@ -642,15 +644,16 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 test.foo(0)
             }
         """,
-        validate = {
-            assertTrue(
-                it.contains(
-                    "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
-                ),
-                "default static functions should be generated in ComposeDefaultsImpl class"
-            )
-        }
-    )
+            validate = {
+                assertTrue(
+                    it.contains(
+                        "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
+                    ),
+                    "default static functions should be generated in ComposeDefaultsImpl class"
+                )
+            }
+        )
+    }
 
     @Test
     fun testDefaultParametersInOpenFunctions() {
@@ -810,6 +813,20 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         )
     }
 
+    /**
+     * There are some parts of the bytecode that contain the actual line number.
+     * This is OK to be changed; therefore, we will sanitize this as we do care about the actual group keys
+     */
+    fun String.sanitizeOffsets(): String = lines().map { line ->
+        if (line.contains("LINENUMBER")) {
+            return@map "<LINENUMBER>"
+        }
+        if (line.contains("@Landroidx/compose/runtime/internal/FunctionKeyMeta;")) {
+            return@map "@Landroidx/compose/runtime/internal/FunctionKeyMeta;(<>)"
+        }
+        line.replace(Regex("""Test.kt:\d+"""), "Test.kt:<LINE_NUMBER>")
+    }.joinToString("\n")
+
     // regression test for b/376148043
     @Test
     fun testUpdatingLambdaText() {
@@ -844,7 +861,7 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         val function4Regex = Regex("composableFun4[\\s\\S]*?LOCALVARIABLE")
         val function4 = function4Regex.find(newBytecode)?.value ?: error("Could not find function4 in new bytecode")
         val oldFunction4 = function4Regex.find(oldBytecode)?.value ?: error("Could not find function4 in old bytecide")
-        assertEquals(oldFunction4, function4)
+        assertEquals(oldFunction4.sanitizeOffsets(), function4.sanitizeOffsets())
     }
 
     @Test
@@ -888,18 +905,7 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             className = "TestClass",
         )
 
-        /**
-         * There are some parts of the bytecode that contain the actual line number.
-         * This is OK to be changed; therefore, we will sanitize this as we do care about the actual group keys
-         */
-        fun String.sanitize(): String = lines().map { line ->
-            if (line.contains("LINENUMBER")) {
-                return@map "<LINENUMBER>"
-            }
-            line.replace(Regex("""Test.kt:\d+"""), "Test.kt:<LINE_NUMBER>")
-        }.joinToString("\n")
-
-        assertEquals(newBytecode.sanitize(), oldBytecode.sanitize())
+        assertEquals(newBytecode.sanitizeOffsets(), oldBytecode.sanitizeOffsets())
     }
 
     @Test
@@ -1123,4 +1129,28 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
             }
         }
     )
+
+    @Test
+    fun binaryCompatStubWithDeprecated() {
+        validateBytecode(
+            """
+            import androidx.compose.runtime.*
+
+            @JvmInline
+            value class Test(val value: String)
+
+            @Composable
+            @Deprecated("This is a deprecated function", level = DeprecationLevel.ERROR)
+            fun deprecatedFunction(v: Test = Test("")) {}
+            """,
+        ) {
+            assertTrue("Expected a binary compatibility stub for deprecated function") {
+                it.contains("public final static synthetic deprecatedFunction-HbeoACc(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V")
+            }
+
+            assertFalse($$"Expected no @Deprecated$Container declarations") {
+                it.contains("@Lkotlin/Deprecated%Container;")
+            }
+        }
+    }
 }

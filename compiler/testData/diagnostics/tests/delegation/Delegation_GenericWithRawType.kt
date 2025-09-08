@@ -61,3 +61,6 @@ interface KI {
 class C: JI by JC()
 
 class C2: KI by JKC()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, javaFunction,
+javaType, nullableType, typeParameter */

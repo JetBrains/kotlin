@@ -12,3 +12,6 @@ abstract class Base {
         <!DEBUG_INFO_LEAKING_THIS!>y<!> = temp
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, integerLiteral, localProperty, propertyDeclaration,
+secondaryConstructor, thisExpression */

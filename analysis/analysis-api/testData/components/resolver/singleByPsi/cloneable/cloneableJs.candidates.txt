@@ -1,0 +1,2 @@
+KtNameReferenceExpression(65,74): 'Cloneable'
+  NO_CANDIDATES

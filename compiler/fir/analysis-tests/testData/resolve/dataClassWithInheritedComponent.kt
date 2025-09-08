@@ -6,3 +6,6 @@ interface Foo {
 }
 
 <!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class Bar(val bar: String): Foo
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration, operator,
+primaryConstructor, propertyDeclaration */

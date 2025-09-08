@@ -13,3 +13,6 @@ fun main() {
     { y = 1 }
     Test.foo(y)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, smartcast, typeConstraint, typeParameter */

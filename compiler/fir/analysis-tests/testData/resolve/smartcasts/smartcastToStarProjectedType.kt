@@ -34,3 +34,7 @@ data class NodePropertyDescriptor<TNode : Node, TProperty : Any, TPropertyVal : 
 class NodePropertyRef<T, U, V>
 
 open class Node
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,
+isExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast, starProjection, typeConstraint,
+typeParameter */

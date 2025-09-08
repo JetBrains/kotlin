@@ -25,3 +25,7 @@ class A(val isLocked: Boolean) {
 
     var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+lambdaLiteral, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, propertyDelegate,
+setter, starProjection, stringLiteral, typeParameter */

@@ -33,7 +33,7 @@ class JavaAnnotationSyntheticPropertiesScope(
 ) : FirDelegatingTypeScope(delegateScope) {
     private val classId: ClassId = owner.classId
     private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
-    private val syntheticPropertiesCache = mutableMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
+    private val syntheticPropertiesCache = hashMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name in names) return

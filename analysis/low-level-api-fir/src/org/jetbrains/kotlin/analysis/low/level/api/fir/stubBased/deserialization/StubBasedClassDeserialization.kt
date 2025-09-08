@@ -1,18 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.openapi.util.Key
-import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.stubs.Stub
-import com.intellij.psi.stubs.StubTreeLoader
-import com.intellij.psi.util.PsiUtilCore
+import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -29,9 +25,9 @@ import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -51,7 +47,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.lang.ref.WeakReference
 
 internal val KtModifierListOwner.visibility: Visibility
     get() = with(modifierList) {
@@ -65,40 +60,39 @@ internal val KtModifierListOwner.visibility: Visibility
     }
 
 internal val KtDeclaration.modality: Modality
-    get() {
-        return when {
-            hasModifier(KtTokens.SEALED_KEYWORD) -> Modality.SEALED
-            hasModifier(KtTokens.ABSTRACT_KEYWORD) || this is KtClass && isInterface() -> Modality.ABSTRACT
-            hasModifier(KtTokens.OPEN_KEYWORD) -> Modality.OPEN
-            else -> Modality.FINAL
+    get() = when {
+        hasModifier(KtTokens.SEALED_KEYWORD) -> Modality.SEALED
+        hasModifier(KtTokens.ABSTRACT_KEYWORD) || this is KtClass && isInterface() -> Modality.ABSTRACT
+        hasModifier(KtTokens.OPEN_KEYWORD) -> Modality.OPEN
+        else -> Modality.FINAL
+    }
+
+/**
+ * Gets or calculates stub for [this] element and casts it to [S].
+ *
+ * [S] has to be a real stub implementation class. For instance, for [KtNamedFunction] it has to be [org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl].
+ *
+ * @return compiled stub
+ */
+internal inline val <T, reified S> T.compiledStub: S where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
+    get() = (this.greenStub ?: calculateStub()) as S
+
+private fun <S, T> T.calculateStub(): Stub where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
+    val ktFile = containingKtFile
+    requireWithAttachment(ktFile.isCompiled, { "Expected compiled file" }) {
+        withPsiEntry("ktFile", ktFile)
+    }
+
+    // `let` is used to hold the stub tree reference on the stack
+    return ktFile.calcStubTree().let {
+        val stub = greenStub
+        requireWithAttachment(stub != null, { "Stub should be not null" }) {
+            withPsiEntry("file", containingFile)
+            withPsiEntry("element", this@calculateStub)
         }
-    }
 
-private val STUBS_KEY = Key.create<WeakReference<List<Stub>?>>("STUBS")
-internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiElementBase<*>, T : KtElement {
-    ktElement.greenStub?.let {
-        @Suppress("UNCHECKED_CAST")
-        return it as S
+        stub
     }
-    val ktFile = ktElement.containingKtFile
-    require(ktFile.isCompiled) {
-        "Expected compiled file $ktFile"
-    }
-    val virtualFile = PsiUtilCore.getVirtualFile(ktFile) ?: return null
-    var stubList = ktFile.getUserData(STUBS_KEY)?.get()
-    if (stubList == null) {
-        val stubTree = ClsClassFinder.allowMultifileClassPart {
-            StubTreeLoader.getInstance().readOrBuild(ktElement.project, virtualFile, null)
-        }
-
-        stubList = stubTree?.plainList ?: emptyList()
-        ktFile.putUserDataIfAbsent(STUBS_KEY, WeakReference(stubList))
-    }
-
-    val nodeList = (ktFile.node as FileElement).stubbedSpine.spineNodes
-    if (stubList.size != nodeList.size) return null
-    @Suppress("UNCHECKED_CAST")
-    return stubList[nodeList.indexOf(ktElement.node)] as S
 }
 
 internal fun deserializeClassToSymbol(
@@ -111,7 +105,7 @@ internal fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
-    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
+    deserializeNestedClassLikeDeclaration: (ClassId, KtClassLikeDeclaration, StubBasedFirDeserializationContext) -> FirClassLikeSymbol<*>?,
     initialOrigin: FirDeclarationOrigin,
 ) {
     val kind = when (classOrObject) {
@@ -210,17 +204,22 @@ internal fun deserializeClassToSymbol(
                     )
                 )
                 is KtEnumEntry -> addDeclaration(memberDeserializer.loadEnumEntry(declaration, symbol, classId))
-                is KtClassOrObject -> {
-                    val name = declaration.name ?: errorWithAttachment("Class doesn't have name $declaration") {
-                        withPsiEntry("class", declaration)
-                    }
+                is KtClassOrObject,
+                is KtTypeAlias
+                    -> {
+                    val name = declaration.name
+                        ?: errorWithAttachment("${if (declaration is KtClassOrObject) "Class" else "Typealias"} doesn't have name") {
+                            withPsiEntry(if (declaration is KtClassOrObject) "Class" else "Typealias", declaration)
+                        }
 
                     val nestedClassId = classId.createNestedClassId(Name.identifier(name))
-                    // Add declaration to the context to avoid redundant provider access to the class map
-                    deserializeNestedClass(nestedClassId, context.withClassLikeDeclaration(declaration))?.fir?.let(this::addDeclaration)
+                    // Add declaration to the context to avoid redundant provider access to the class/typealias map
+                    deserializeNestedClassLikeDeclaration(
+                        nestedClassId,
+                        declaration,
+                        context.withClassLikeDeclaration(declaration),
+                    )?.fir?.let(this::addDeclaration)
                 }
-
-                is KtTypeAlias -> addDeclaration(memberDeserializer.loadTypeAlias(declaration, FirTypeAliasSymbol(classId), scopeProvider))
             }
         }
 
@@ -259,14 +258,19 @@ internal fun deserializeClassToSymbol(
 
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
     }.apply {
-        if (classOrObject is KtClass && isInlineOrValue) {
-            val stub = classOrObject.stub as? KotlinClassStubImpl ?: loadStubByElement(classOrObject)
-            valueClassRepresentation = stub?.deserializeValueClassRepresentation(this)
+        if (classOrObject is KtClass) {
+            val classStub: KotlinClassStubImpl = classOrObject.compiledStub
+            if (isInlineOrValue) {
+                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
+            }
+
+            val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
+            if (clsStubCompiledToJvmDefaultImplementation) {
+                symbol.fir.isNewPlaceForBodyGeneration = true
+            }
         }
 
-        replaceAnnotations(
-            context.annotationDeserializer.loadAnnotations(classOrObject)
-        )
+        replaceAnnotations(context.annotationDeserializer.loadAnnotations(classOrObject))
 
         sourceElement = containerSource
 

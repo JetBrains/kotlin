@@ -39,3 +39,5 @@ class F : C(), T {
 class G : C(), T {
     public override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

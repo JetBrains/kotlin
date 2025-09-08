@@ -2,6 +2,8 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 fun fn0() {}
 fun fn1(x: Any) {}
 
@@ -27,6 +29,7 @@ inline fun <reified T> reifiedAsFailsWithCCE(x: Any, operation: String) {
     throw AssertionError("$operation: should fail with CCE, no exception thrown")
 }
 
+// FILE: main.kt
 fun box(): String {
     val f0 = ::fn0 as Any
     val f1 = ::fn1 as Any

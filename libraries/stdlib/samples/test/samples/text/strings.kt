@@ -576,6 +576,44 @@ class Strings {
     }
 
     @Sample
+    fun splitToSequenceWithStringDelimiters() {
+        fun Sequence<String>.toPrettyString() = joinToString(", ", "[", "]")
+
+        val multiCharDelimiter = "apple--banana--cherry".splitToSequence("--").toPrettyString()
+        assertPrints(multiCharDelimiter, "[apple, banana, cherry]")
+
+        val multipleSplit = "apple->banana;;cherry:::orange".splitToSequence("->", ";;", ":::").toPrettyString()
+        assertPrints(multipleSplit, "[apple, banana, cherry, orange]")
+
+        val longerDelimiterFirst = "apple<-banana<--cherry".splitToSequence("<--", "<-").toPrettyString()
+        assertPrints(longerDelimiterFirst, "[apple, banana, cherry]")
+
+        val shorterDelimiterFirst = "apple<-banana<--cherry".splitToSequence("<-", "<--").toPrettyString()
+        assertPrints(shorterDelimiterFirst, "[apple, banana, -cherry]")
+
+        val limitSplit = "a->b->c->d->e".splitToSequence("->", limit = 3).toPrettyString()
+        assertPrints(limitSplit, "[a, b, c->d->e]")
+
+        val emptyInputResult = "".splitToSequence("sep").toList()
+        assertTrue(emptyInputResult == listOf(""))
+
+        val emptyDelimiterSplit = "abc".splitToSequence("").toPrettyString()
+        assertPrints(emptyDelimiterSplit, "[, a, b, c, ]")
+
+        val mixedCase = "abcXYZdef".splitToSequence("xyz").toPrettyString()
+        assertPrints(mixedCase, "[abcXYZdef]")  // No match with case sensitivity
+
+        val mixedCaseIgnored = "abcXYZdef".splitToSequence("xyz", ignoreCase = true).toPrettyString()
+        assertPrints(mixedCaseIgnored, "[abc, def]")  // Matches with case insensitivity
+
+        val emptyResults = "##a##b##c##".splitToSequence("##").toPrettyString()
+        assertPrints(emptyResults, "[, a, b, c, ]")
+
+        val consecutiveSeparators = "a--b------c".splitToSequence("--").toPrettyString()
+        assertPrints(consecutiveSeparators, "[a, b, , , c]")
+    }
+
+    @Sample
     fun splitWithCharDelimiters() {
         val commaSplit = "apple,banana,cherry".split(',')
         assertPrints(commaSplit, "[apple, banana, cherry]")
@@ -599,6 +637,35 @@ class Strings {
         assertPrints(emptyResults, "[, a, b, c, ]")
 
         val consecutiveSeparators = "a,,b,,,c".split(',')
+        assertPrints(consecutiveSeparators, "[a, , b, , , c]")
+    }
+
+    @Sample
+    fun splitToSequenceWithCharDelimiters() {
+        fun Sequence<String>.toPrettyString() = joinToString(", ", "[", "]")
+
+        val commaSplit = "apple,banana,cherry".splitToSequence(',').toPrettyString()
+        assertPrints(commaSplit, "[apple, banana, cherry]")
+
+        val charSplit = "apple,banana;cherry".splitToSequence(',', ';').toPrettyString()
+        assertPrints(charSplit, "[apple, banana, cherry]")
+
+        val limitSplit = "a,b,c,d,e".splitToSequence(',', limit = 3).toPrettyString()
+        assertPrints(limitSplit, "[a, b, c,d,e]")
+
+        val emptyInputResult = "".splitToSequence('|').toList()
+        assertTrue(emptyInputResult == listOf(""))
+
+        val mixedCase = "abcXdef".splitToSequence('x').toPrettyString()
+        assertPrints(mixedCase, "[abcXdef]")  // No match with case sensitivity
+
+        val mixedCaseIgnored = "abcXdef".splitToSequence('x', ignoreCase = true).toPrettyString()
+        assertPrints(mixedCaseIgnored, "[abc, def]")  // Matches with case insensitivity
+
+        val emptyResults = ",a,b,c,".splitToSequence(',').toPrettyString()
+        assertPrints(emptyResults, "[, a, b, c, ]")
+
+        val consecutiveSeparators = "a,,b,,,c".splitToSequence(',').toPrettyString()
         assertPrints(consecutiveSeparators, "[a, , b, , , c]")
     }
 
@@ -823,5 +890,32 @@ class Strings {
         assertEquals("Kotlin 2", "Kotlin " + 2)
         // list is converted to a String first and then concatenated with the "Numbers: " string
         assertEquals("Numbers: [1, 2, 3]", "Numbers: " + listOf(1, 2, 3))
+    }
+
+    @Sample
+    fun replaceRangeString() {
+        val text = "Hello, world!"
+
+        // Replacing the range that corresponds to the "world" substring with "Kotlin"
+        assertPrints(text.replaceRange(startIndex = 7, endIndex = 12, replacement = "Kotlin"), "Hello, Kotlin!")
+
+        // Also possible to replace using a Range
+        assertPrints(text.replaceRange(7..11, replacement = "Kotlin"), "Hello, Kotlin!")
+
+        // Empty replacement effectively removes the range
+        assertPrints(text.replaceRange(7..11, ""), "Hello, !")
+
+        // Replacing at the end of the string: endIndex is exclusive
+        assertPrints(text.replaceRange(0, 5, "Hey"), "Hey, world!")
+
+        // But for the overload accepting the range, range's end is inclusive (thus the comma is also replaced)
+        assertPrints(text.replaceRange(0..5, "Hey"), "Hey world!")
+
+        // Throws if startIndex is greater than endIndex
+        assertFails { text.replaceRange(startIndex = 7, endIndex = 4, replacement = "Kotlin") }
+        // Throws if startIndex or endIndex is out of the string indices range
+        assertFails { text.replaceRange(startIndex = 7, endIndex = 20, replacement = "Kotlin") }
+        // For ranges, the end is inclusive, so it has to be lower than the length of a char sequence
+        assertFails { text.replaceRange(7..text.length, replacement = "Kotlin") }
     }
 }

@@ -23,7 +23,7 @@ external open class B {
 external fun bar(): Unit
 
 // MODULE: m2(m1)
-// MODULE_KIND: AMD
+// JS_MODULE_KIND: AMD
 // TODO: it's hard to test @JsNonModule on file from an external module
 // FILE: c.kt
 package bar

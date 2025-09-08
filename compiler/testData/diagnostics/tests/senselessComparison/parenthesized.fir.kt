@@ -22,3 +22,5 @@ fun testNotEqualsFlipped(x: Int) {
     if (<!SENSELESS_COMPARISON!>(null) != x<!>) {}
     if (<!SENSELESS_COMPARISON!>foo@ null != x<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression */

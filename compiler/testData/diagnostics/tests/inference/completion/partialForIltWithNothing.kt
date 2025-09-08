@@ -42,3 +42,5 @@ fun test(boolean: Boolean) {
         return
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration */

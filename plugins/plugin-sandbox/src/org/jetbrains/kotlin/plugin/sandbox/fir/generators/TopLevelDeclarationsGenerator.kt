@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -20,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
+import org.jetbrains.kotlin.plugin.sandbox.fir.SANDBOX_ANNOTATIONS_PACKAGE
 
 /*
  * Generates `dummyClassName(value: ClassName): String` function for each class annotated with @DummyFunction
@@ -28,7 +32,8 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
 @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PREDICATE = LookupPredicate.create { annotated("DummyFunction".fqn()) }
+        private val DUMMY_FUNCTION_CLASS_ID = ClassId(SANDBOX_ANNOTATIONS_PACKAGE, Name.identifier("DummyFunction"))
+        private val PREDICATE = LookupPredicate.create { annotated(DUMMY_FUNCTION_CLASS_ID.asSingleFqName()) }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider
@@ -39,7 +44,16 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         if (context != null) return emptyList()
         val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
-        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.stringType.coneType) {
+        val containingFileName = matchedClassSymbol.getAnnotationByClassId(DUMMY_FUNCTION_CLASS_ID, session)?.let {
+            val argument = (it as? FirAnnotationCall)?.arguments?.firstOrNull() as? FirLiteralExpression ?: return@let null
+            argument.value as? String
+        }
+        val function = createTopLevelFunction(
+            Key,
+            callableId,
+            session.builtinTypes.stringType.coneType,
+            containingFileName = containingFileName,
+        ) {
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())
         }
         return listOf(function.symbol)

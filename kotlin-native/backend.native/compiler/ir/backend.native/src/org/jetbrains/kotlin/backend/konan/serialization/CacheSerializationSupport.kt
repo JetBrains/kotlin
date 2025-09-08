@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.library.impl.IrArrayReader
@@ -32,10 +32,12 @@ import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.IrStringWriter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import java.io.Reader
+import java.io.Writer
+import java.util.Properties
 import kotlin.collections.set
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoParameter
 
 private const val INVALID_INDEX = -1
 
@@ -56,25 +58,15 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
             "Local inline functions are not supported: ${irFunction.render()}"
         }
 
-        val typeParameterSigs = mutableListOf<Int>()
-        val outerReceiverSigs = mutableListOf<Int>()
         val protoFunction = if (outerClasses.isEmpty()) {
             val irProperty = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
             if (irProperty == null)
                 protoDeclaration.irFunction
             else protoDeclaration.irProperty.findAccessor(irProperty, irFunction)
         } else {
-            val firstNotInnerClassIndex = outerClasses.indexOfLast { !it.isInner }
             var protoClass = protoDeclaration.irClass
             outerClasses.indices.forEach { classIndex ->
-                if (classIndex >= firstNotInnerClassIndex /* owner's type parameters are always accessible */) {
-                    (0 until protoClass.typeParameterCount).mapTo(typeParameterSigs) {
-                        BinarySymbolData.decode(protoClass.getTypeParameter(it).base.symbol).signatureId
-                    }
-                }
                 if (classIndex < outerClasses.size - 1) {
-                    if (classIndex >= firstNotInnerClassIndex)
-                        outerReceiverSigs.add(BinarySymbolData.decode(protoClass.thisReceiver.base.symbol).signatureId)
                     protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
                 }
             }
@@ -82,35 +74,16 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
         }
 
         val functionSignature = BinarySymbolData.decode(protoFunction.base.base.symbol).signatureId
-        (0 until protoFunction.base.typeParameterCount).mapTo(typeParameterSigs) {
-            BinarySymbolData.decode(protoFunction.base.getTypeParameter(it).base.symbol).signatureId
-        }
 
-        fun serializeValueParameter(parameter: ProtoParameter): Int =
-                BinarySymbolData.decode(parameter.base.symbol).signatureId
-
-        val dispatchReceiverSig = if (protoFunction.base.hasDispatchReceiver()) {
-            serializeValueParameter(protoFunction.base.extensionReceiver)
-        } else INVALID_INDEX
-        val contextParameterSigs = protoFunction.base.contextParameterList.map { param ->
-            serializeValueParameter(param)
-        }
-        val extensionReceiverSig = if (protoFunction.base.hasExtensionReceiver()) {
-            serializeValueParameter(protoFunction.base.extensionReceiver)
-        } else INVALID_INDEX
-        val regularParameterSigs = protoFunction.base.regularParameterList.map { param ->
-            serializeValueParameter(param)
-        }
         val defaultValues = protoFunction.base.regularParameterList.map { param ->
             if (param.hasDefaultValue()) param.defaultValue else INVALID_INDEX
         }
 
         return SerializedInlineFunctionReference(
                 SerializedFileReference(fileDeserializationState.file),
-                functionSignature, protoFunction.base.body, irFunction.startOffset, irFunction.endOffset,
-                extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
-                contextParameterSigs.toIntArray(), regularParameterSigs.toIntArray(),
-                typeParameterSigs.toIntArray(), defaultValues.toIntArray()
+                functionSignature, protoFunction.base.body,
+                irFunction.startOffset, irFunction.endOffset,
+                defaultValues.toIntArray()
         )
     }
 }
@@ -146,46 +119,8 @@ internal class InlineFunctionDeserializer(
         val fileDeserializationState = with(deserializer) { inlineFunctionReference.file.deserializationState }
         val declarationDeserializer = fileDeserializationState.declarationDeserializer
 
-        if (packageFragment is IrExternalPackageFragment) {
-            val symbolDeserializer = declarationDeserializer.symbolDeserializer
-            linker.inlineFunctionFilesTracker.add(packageFragment, fileDeserializationState.file)
-            val outerClasses = (function.parent as? IrClass)?.getOuterClasses(takeOnlyInner = true) ?: emptyList()
-            require((outerClasses.getOrNull(0)?.firstNonClassParent ?: function.parent) is IrPackageFragment) {
-                "Local inline functions are not supported: ${function.render()}"
-            }
-
-            var endToEndTypeParameterIndex = 0
-            outerClasses.forEach { outerClass ->
-                outerClass.typeParameters.forEach { parameter ->
-                    val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
-                    deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-                }
-            }
-            function.typeParameters.forEach { parameter ->
-                val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-            }
-
-            var contextParamIndex = 0
-            var regularParamIndex = 0
-            function.parameters.forEach { parameter ->
-                val sigIndex = when (parameter.kind) {
-                    IrParameterKind.DispatchReceiver -> inlineFunctionReference.dispatchReceiverSig
-                    IrParameterKind.Context -> inlineFunctionReference.contextParameterSigs[contextParamIndex++]
-                    IrParameterKind.ExtensionReceiver -> inlineFunctionReference.extensionReceiverSig
-                    IrParameterKind.Regular -> inlineFunctionReference.regularParameterSigs[regularParamIndex++]
-                }
-                if (parameter.kind != IrParameterKind.Regular) {
-                    require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to ${parameter.kind} parameter for ${function.render()}" }
-                }
-
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-            }
-
-            for (index in 0 until outerClasses.size - 1) {
-                val sigIndex = inlineFunctionReference.outerReceiverSigs[index]
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, outerClasses[index].thisReceiver!!.symbol)
-            }
+        check(packageFragment !is IrExternalPackageFragment) {
+            "No external package fragment is expected: ${function.render()}"
         }
 
         with(declarationDeserializer) {
@@ -249,16 +184,9 @@ internal fun buildSerializedClassFields(
     val outerClasses = irClass.getOuterClasses(takeOnlyInner = false)
     require(outerClasses.first().parent is IrFile) { "Local classes are not supported: ${irClass.render()}" }
 
-    val typeParameterSigs = mutableListOf<Int>()
     var protoClass = protoDeclaration.irClass
     val protoClasses = mutableListOf(protoClass)
-    val firstNotInnerClassIndex = outerClasses.indexOfLast { !it.isInner }
     for (classIndex in outerClasses.indices) {
-        if (classIndex >= firstNotInnerClassIndex /* owner's type parameters are always accessible */) {
-            (0 until protoClass.typeParameterCount).mapTo(typeParameterSigs) {
-                BinarySymbolData.decode(protoClass.getTypeParameter(it).base.symbol).signatureId
-            }
-        }
         if (classIndex < outerClasses.size - 1) {
             protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
             protoClasses += protoClass
@@ -290,7 +218,6 @@ internal fun buildSerializedClassFields(
     return SerializedClassFields(
             SerializedFileReference(fileDeserializationState.file),
             signature,
-            typeParameterSigs.toIntArray(),
             outerThisIndex,
             Array(fields.size) {
                 val field = fields[it]
@@ -307,13 +234,9 @@ internal fun buildSerializedClassFields(
                             field.alignment
                     )
                 } else {
-                    val protoField = protoFieldsMap[field.name] ?: error("No proto for ${field.name}")
-                    val nameAndType = BinaryNameAndType.decode(protoField.nameType)
                     var flags = 0
                     if (field.isConst)
                         flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
-                    val classifier = field.type.classifierOrNull
-                            ?: error("Fields of type ${field.type.render()} are not supported")
                     val primitiveBinaryType = field.type.computePrimitiveBinaryTypeOrNull()
 
                     SerializedClassFieldInfo(
@@ -338,26 +261,9 @@ internal class ClassFieldsDeserializer(
                 ?: error("No signature for ${irClass.render()}")
         val serializedClassFields = classesFields[signature]
                 ?: error("No class fields for ${irClass.render()}, sig = ${signature.render()}")
-        val fileDeserializationState = with(deserializer) { serializedClassFields.file.deserializationState }
-        val declarationDeserializer = fileDeserializationState.declarationDeserializer
-        val symbolDeserializer = declarationDeserializer.symbolDeserializer
 
-        if (irClass.getPackageFragment() is IrExternalPackageFragment) {
-            val outerClasses = irClass.getOuterClasses(takeOnlyInner = true)
-            require(outerClasses.first().firstNonClassParent is IrExternalPackageFragment) {
-                "Local classes are not supported: ${irClass.render()}"
-            }
-
-            var endToEndTypeParameterIndex = 0
-            outerClasses.forEach { outerClass ->
-                outerClass.typeParameters.forEach { parameter ->
-                    val sigIndex = serializedClassFields.typeParameterSigs[endToEndTypeParameterIndex++]
-                    deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-                }
-            }
-            require(endToEndTypeParameterIndex == serializedClassFields.typeParameterSigs.size) {
-                "Not all type parameters have been referenced"
-            }
+        check(irClass.getPackageFragment() !is IrExternalPackageFragment) {
+            "Unexpected external package fragment: ${irClass.render()}"
         }
 
         fun getByClassId(classId: ClassId): IrClassSymbol {
@@ -422,18 +328,8 @@ private fun IrClass.getOuterClasses(takeOnlyInner: Boolean): List<IrClass> {
     return outerClasses
 }
 
-private val IrClass.firstNonClassParent: IrDeclarationParent
-    get() {
-        var parent = parent
-        while (parent is IrClass) parent = parent.parent
-        return parent
-    }
-
 class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
-                                        val startOffset: Int, val endOffset: Int,
-                                        val extensionReceiverSig: Int, val dispatchReceiverSig: Int, val outerReceiverSigs: IntArray,
-                                        val contextParameterSigs: IntArray, val regularParameterSigs: IntArray, val typeParameterSigs: IntArray,
-                                        val defaultValues: IntArray)
+                                        val startOffset: Int, val endOffset: Int, val defaultValues: IntArray)
 
 internal object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
@@ -443,10 +339,7 @@ internal object InlineFunctionBodyReferenceSerializer {
                 +it.file.path
             }
         }
-        val size = stringTable.sizeBytes + bodies.sumOf {
-            Int.SIZE_BYTES * (13 + it.outerReceiverSigs.size + it.contextParameterSigs.size + it.regularParameterSigs.size +
-                    it.typeParameterSigs.size + it.defaultValues.size)
-        }
+        val size = stringTable.sizeBytes + bodies.sumOf { Int.SIZE_BYTES * (7 + it.defaultValues.size) }
         val stream = ByteArrayStream(ByteArray(size))
         stringTable.serialize(stream)
         bodies.forEach {
@@ -456,12 +349,6 @@ internal object InlineFunctionBodyReferenceSerializer {
             stream.writeInt(it.body)
             stream.writeInt(it.startOffset)
             stream.writeInt(it.endOffset)
-            stream.writeInt(it.extensionReceiverSig)
-            stream.writeInt(it.dispatchReceiverSig)
-            stream.writeIntArray(it.outerReceiverSigs)
-            stream.writeIntArray(it.contextParameterSigs)
-            stream.writeIntArray(it.regularParameterSigs)
-            stream.writeIntArray(it.typeParameterSigs)
             stream.writeIntArray(it.defaultValues)
         }
         return stream.buf
@@ -477,17 +364,9 @@ internal object InlineFunctionBodyReferenceSerializer {
             val body = stream.readInt()
             val startOffset = stream.readInt()
             val endOffset = stream.readInt()
-            val extensionReceiverSig = stream.readInt()
-            val dispatchReceiverSig = stream.readInt()
-            val outerReceiverSigs = stream.readIntArray()
-            val contextParameterSigs = stream.readIntArray()
-            val regularParameterSigs = stream.readIntArray()
-            val typeParameterSigs = stream.readIntArray()
             val defaultValues = stream.readIntArray()
             result.add(SerializedInlineFunctionReference(
-                    SerializedFileReference(fileFqName, filePath), functionSignature, body, startOffset, endOffset,
-                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, contextParameterSigs, regularParameterSigs,
-                    typeParameterSigs, defaultValues)
+                    SerializedFileReference(fileFqName, filePath), functionSignature, body, startOffset, endOffset, defaultValues)
             )
         }
     }
@@ -500,7 +379,7 @@ class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags:
     }
 }
 
-class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature, val typeParameterSigs: IntArray,
+class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature,
                             val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
 
 internal object ClassFieldsSerializer {
@@ -536,14 +415,13 @@ internal object ClassFieldsSerializer {
                 it.fields.forEach { +it.name }
             }
         }
-        val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (6 + it.typeParameterSigs.size + it.fields.size * 4) }
+        val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (5 + it.fields.size * 4) }
         val stream = ByteArrayStream(ByteArray(size))
         stringTable.serialize(stream)
         classFields.forEach {
             stream.writeInt(stringTable.indices[it.file.fqName]!!)
             stream.writeInt(stringTable.indices[it.file.path]!!)
             stream.writeInt(protoIdSignatureMap[it.classSignature]!!)
-            stream.writeIntArray(it.typeParameterSigs)
             stream.writeInt(it.outerThisIndex)
             stream.writeInt(it.fields.size)
             it.fields.forEach { field ->
@@ -562,7 +440,6 @@ internal object ClassFieldsSerializer {
         val signatureStrings = IrArrayReader(reader.tableItemBytes(1))
         val libFile: IrLibraryFile = object: IrLibraryFile() {
             override fun declaration(index: Int) = error("Declarations are not needed for IdSignature deserialization")
-            override fun inlineDeclaration(index: Int) = error("Inline declarations are not needed for IdSignature deserialization")
             override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")
             override fun expressionBody(index: Int) = error("Expression bodies are not needed for IdSignature deserialization")
             override fun statementBody(index: Int) = error("Statement bodies are not needed for IdSignature deserialization")
@@ -585,7 +462,6 @@ internal object ClassFieldsSerializer {
             val fileFqName = stringTable[stream.readInt()]
             val filePath = stringTable[stream.readInt()]
             val signatureIndex = stream.readInt()
-            val typeParameterSigs = stream.readIntArray()
             val outerThisIndex = stream.readInt()
             val fieldsCount = stream.readInt()
             val fields = Array(fieldsCount) {
@@ -603,7 +479,7 @@ internal object ClassFieldsSerializer {
             val idSignatureDeserializer = IdSignatureDeserializer(libFile, fileSignature, interner)
             val classSignature = idSignatureDeserializer.deserializeIdSignature(signatureIndex)
             result.add(SerializedClassFields(
-                    SerializedFileReference(fileFqName, filePath), classSignature, typeParameterSigs, outerThisIndex, fields)
+                    SerializedFileReference(fileFqName, filePath), classSignature, outerThisIndex, fields)
             )
         }
     }
@@ -636,6 +512,46 @@ internal object EagerInitializedPropertySerializer {
             val fileFqName = stringTable[stream.readInt()]
             val filePath = stringTable[stream.readInt()]
             result.add(SerializedEagerInitializedFile(SerializedFileReference(fileFqName, filePath)))
+        }
+    }
+}
+
+class CacheMetadata(
+        val hash: FingerprintHash,
+        val host: KonanTarget,
+        val target: KonanTarget,
+        val compilerFingerprint: String,
+        val runtimeFingerprint: String?, // only present in caches using the runtime (i.e. for stdlib)
+        val fullCompilerConfiguration: String,
+)
+
+object CacheMetadataSerializer {
+    fun serialize(writer: Writer, metadata: CacheMetadata) {
+        // Serializing as `Properties` prepends current date. This makes the resulting artifact
+        // depend on more than just the inputs, breaking reproducibility.
+        listOfNotNull(
+                "hash" to metadata.hash.toString(),
+                "host" to metadata.host.toString(),
+                "target" to metadata.target.toString(),
+                "compilerFingerprint" to metadata.compilerFingerprint,
+                metadata.runtimeFingerprint?.let { "runtimeFingerprint" to it },
+                "fullCompilerConfiguration" to metadata.fullCompilerConfiguration,
+        ).forEach { (key, value) ->
+            writer.appendLine("$key=$value")
+        }
+    }
+
+    fun deserialize(reader: Reader): CacheMetadata {
+        return Properties().run {
+            load(reader)
+            CacheMetadata(
+                    hash = FingerprintHash.fromString(this["hash"] as String)!!,
+                    host = KonanTarget.predefinedTargets[this["host"] as String]!!,
+                    target = KonanTarget.predefinedTargets[this["target"] as String]!!,
+                    compilerFingerprint = this["compilerFingerprint"] as String,
+                    runtimeFingerprint = this["runtimeFingerprint"] as String?,
+                    fullCompilerConfiguration = this["fullCompilerConfiguration"] as String,
+            )
         }
     }
 }

@@ -12,3 +12,6 @@ fun test(foo: String) {
         val g: String = foo // locals win
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration */

@@ -53,12 +53,14 @@ open class RenderIrElementVisitor(
         }
     }
 
-    fun renderFileEntry(fileEntry: IrFileEntry): String {
-        val fullPath = fileEntry.name
-        val renderedPath = if (options.printFilePath) fullPath else File(fullPath).name
+    fun renderFilePath(fileEntry: IrFileEntry): String {
+        val fileName = if (options.printFilePath) fileEntry.name else File(fileEntry.name).name
+        return options.filePathRenderer(fileEntry, fileName)
+    }
 
+    fun renderFileEntry(fileEntry: IrFileEntry): String {
         // TODO: use offsets in IR deserialization tests, KT-73171
-        return "FILE_ENTRY path:$renderedPath"
+        return "FILE_ENTRY path:${renderFilePath(fileEntry)}"
     }
 
     fun renderType(type: IrType) = type.renderTypeWithRenderer(this@RenderIrElementVisitor, options)
@@ -293,7 +295,7 @@ open class RenderIrElementVisitor(
         return declaration.runTrimEnd {
             "FILE " +
                     "fqName:${packageFqName} " +
-                    "fileName:${options.filePathRenderer(declaration, fileName)} " +
+                    "fileName:${renderFilePath(declaration.fileEntry)} " +
                     renderLineStartOffsets(options)
         }
     }
@@ -689,7 +691,7 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
 
 private fun IrFile.renderLineStartOffsets(options: DumpIrTreeOptions): String =
     if (options.printSourceOffsets)
-        "lineStartOffsets: ${(fileEntry as? AbstractIrFileEntry)?.getLineStartOffsetsForSerialization()?.toList().orEmpty()}"
+        "lineStartOffsets: ${(fileEntry as? AbstractIrFileEntry)?.getLineStartOffsetsForSerialization().orEmpty()}"
     else ""
 
 private fun IrElement.renderOffsets(options: DumpIrTreeOptions): String =
@@ -959,29 +961,7 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
             } else if (isMarkedNullable()) {
                 append('?')
             }
-            if (options.printTypeAbbreviations)
-                abbreviation?.let {
-                    append(it.renderTypeAbbreviation(renderer, options))
-                }
         }
-    }
-
-private fun IrTypeAbbreviation.renderTypeAbbreviation(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
-    buildString {
-        append("{ ")
-        append(renderTypeAnnotations(annotations, renderer, options))
-        append(typeAlias.renderTypeAliasFqn(options))
-        if (arguments.isNotEmpty()) {
-            append(
-                arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                    it.renderTypeArgument(renderer, options)
-                }
-            )
-        }
-        if (hasQuestionMark) {
-            append('?')
-        }
-        append(" }")
     }
 
 private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =

@@ -21,6 +21,7 @@ import Color
 import Wrapper
 
 fun box(): String {
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     "bla" is Wrapper
     Color(Wrapper(0)).copy()
     return "OK"

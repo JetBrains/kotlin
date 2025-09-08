@@ -75,4 +75,7 @@ class SimpleConstraintSystemImpl(
 
     override val context: TypeSystemInferenceExtensionContext
         get() = system
+
+    override val constraintSystemMarker: ConstraintSystemMarker
+        get() = system
 }

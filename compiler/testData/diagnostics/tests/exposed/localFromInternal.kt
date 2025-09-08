@@ -7,3 +7,5 @@ class My {
             // Local from internal: Ok
             object: ThreadLocal() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, nestedClass, propertyDeclaration */

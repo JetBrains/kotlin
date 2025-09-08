@@ -446,7 +446,7 @@ internal abstract class IrExpectActualMatchingContext(
         }
 
         private fun substituteOrNull(type: IrType): IrType? {
-            if (type !is IrSimpleTypeImpl) return null
+            if (type !is IrSimpleType) return null
             val newClassifier = (type.classifier.owner as? IrClass)?.let { expectToActualClassMap[it.classIdOrFail] }
             val newArguments = ArrayList<IrTypeArgument>(type.arguments.size)
             var argumentsChanged = false
@@ -466,8 +466,7 @@ internal abstract class IrExpectActualMatchingContext(
                 classifier = newClassifier ?: type.classifier,
                 type.nullability,
                 newArguments,
-                type.annotations,
-                type.abbreviation
+                type.annotations
             )
         }
 
@@ -513,7 +512,11 @@ internal abstract class IrExpectActualMatchingContext(
         get() = this is IrPropertySymbol && owner.isPropertyForJavaField()
 
     override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
-        get() = this is IrPropertySymbol && callableId == abstractMutableListModCountCallableId
+        get() = this is IrPropertySymbol && canBeActualizedByJavaField()
+
+    private fun IrPropertySymbol.canBeActualizedByJavaField(): Boolean {
+        return callableId == abstractMutableListModCountCallableId || owner.overriddenSymbols.any { it.canBeActualizedByJavaField() }
+    }
 
     override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,

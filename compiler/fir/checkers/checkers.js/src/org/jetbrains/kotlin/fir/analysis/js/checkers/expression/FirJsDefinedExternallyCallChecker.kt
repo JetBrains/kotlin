@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isPredefinedObject
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.toReference
-import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
@@ -31,7 +30,7 @@ object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker(MppCheckerK
 
         val container = context.closestNonLocal ?: return
 
-        if (!container.isNativeObject(context) && !container.isPredefinedObject(context)) {
+        if (!container.isNativeObject() && !container.isPredefinedObject()) {
             reporter.reportOn(expression.source, FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION)
         }
     }

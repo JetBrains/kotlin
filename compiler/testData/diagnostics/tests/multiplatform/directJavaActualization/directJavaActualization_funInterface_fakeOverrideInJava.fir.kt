@@ -19,3 +19,5 @@
 public interface Base {
     void bar();
 }
+
+/* GENERATED_FIR_TAGS: expect, funInterface, functionDeclaration, interfaceDeclaration */

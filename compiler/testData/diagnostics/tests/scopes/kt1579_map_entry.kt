@@ -19,3 +19,5 @@ fun bar(b : Entry<String, String>) = b
 package c
 
 fun fff(b: Map.Entry<String, String>) = b
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

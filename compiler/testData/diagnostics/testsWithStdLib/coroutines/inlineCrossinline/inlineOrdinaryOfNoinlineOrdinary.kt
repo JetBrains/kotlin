@@ -31,3 +31,7 @@ fun box() {
         <!ILLEGAL_SUSPEND_FUNCTION_CALL!>calculate<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, companionObject, functionDeclaration,
+functionalType, inline, lambdaLiteral, localProperty, noinline, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, safeCall, stringLiteral, suspend, thisExpression, typeParameter */

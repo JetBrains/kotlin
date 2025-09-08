@@ -25,7 +25,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.longFromInt)
         }
 
         for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
@@ -43,7 +43,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, intrinsics.jsToShort)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.longFromInt)
         }
 
         irBuiltIns.shortType.let {
@@ -52,7 +52,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.longFromInt)
         }
 
 
@@ -63,6 +63,16 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_INT, intrinsics.jsNumberToInt)
             add(it, ConversionNames.TO_SHORT, intrinsics.jsNumberToShort)
             add(it, ConversionNames.TO_LONG, intrinsics.jsNumberToLong)
+        }
+
+        irBuiltIns.longType.let {
+            add(it, ConversionNames.TO_BYTE, intrinsics.longToByte)
+            add(it, ConversionNames.TO_CHAR, intrinsics.longToChar)
+            add(it, ConversionNames.TO_DOUBLE, intrinsics.longToNumber)
+            add(it, ConversionNames.TO_FLOAT, intrinsics.longToNumber)
+            add(it, ConversionNames.TO_INT, intrinsics.longToInt)
+            add(it, ConversionNames.TO_SHORT, intrinsics.longToShort)
+            add(it, ConversionNames.TO_LONG, ::useDispatchReceiver)
         }
 
         for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType)) {

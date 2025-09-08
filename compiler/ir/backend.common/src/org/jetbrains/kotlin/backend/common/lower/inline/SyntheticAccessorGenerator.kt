@@ -53,6 +53,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         protected const val SETTER_VALUE_PARAMETER_NAME = "<set-?>"
 
         const val PROPERTY_MARKER = "p"
+        const val CONSTRUCTOR_MARKER_PARAMETER_NAME = "constructor_marker"
 
         private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(copyByDefault = false)
         private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(copyByDefault = false)
@@ -139,6 +140,15 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     protected abstract fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
     ): IrFunction
+
+    protected fun createDelegatingConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
+        IrDelegatingConstructorCallImpl.fromSymbolOwner(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType,
+            targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
+        ).also {
+            copyAllParamsToArgs(it, accessor)
+        }
 
     protected abstract fun accessorModality(parent: IrDeclarationParent): Modality
 
@@ -426,9 +436,9 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
-            oldExpression.receiverAndArgs() + createAccessorMarkerArgument()
+            oldExpression.arguments + createAccessorMarkerArgument()
         } else {
-            oldExpression.receiverAndArgs()
+            oldExpression.arguments
         }
         newExpression.arguments.assignFrom(newExpressionArguments)
         return newExpression
@@ -465,8 +475,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         )
     }
 
-    fun createAccessorMarkerArgument() =
-        IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.symbols.defaultConstructorMarker.defaultType.makeNullable())
+    abstract fun createAccessorMarkerArgument(): IrConst
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the field _read_ expression [oldExpression].

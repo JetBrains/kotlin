@@ -34,7 +34,16 @@ val library = lib("llvmext")
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
     val cxxflags = mutableListOf(
-        "--std=c++17",
+        // Using the same flags as the release llvm build.
+        // But only keep -Wall diagnostics.
+        "-Wall",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-fno-exceptions",
+        "-funwind-tables",
+        "-fno-rtti",
+        "-Werror", // fail on any warning, or we won't ever catch them
         "-I${llvmDir}/include",
         "-Isrc/main/include"
     )
@@ -43,7 +52,10 @@ native {
             cxxflags.addAll(listOf("-DKONAN_LINUX=1"))
         }
         MINGW -> {
-            cxxflags += "-DKONAN_WINDOWS=1"
+            cxxflags += listOf(
+                "-DKONAN_WINDOWS=1",
+                "-Wno-unused-command-line-argument",
+            )
         }
         OSX -> {
             cxxflags += "-DKONAN_MACOS=1"

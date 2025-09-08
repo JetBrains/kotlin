@@ -10,3 +10,6 @@ class Foo {
 
     fun foo() = x() // should resolve to invoke
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, operator,
+propertyDeclaration, thisExpression */

@@ -24,11 +24,6 @@ open class FirResolvedDeclarationStatusImpl(
             modality = Modality.FINAL,
             effectiveVisibility = EffectiveVisibility.Public
         )
-        val DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION: FirResolvedDeclarationStatus = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public
-        ).apply { isSuspend = true }
     }
 
     internal constructor(

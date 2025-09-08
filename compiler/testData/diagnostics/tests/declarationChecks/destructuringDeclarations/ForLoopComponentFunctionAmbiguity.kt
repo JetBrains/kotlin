@@ -1,7 +1,9 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 class A {
-    <!CONFLICTING_OVERLOADS!>operator fun component1()<!> = 1
-    <!CONFLICTING_OVERLOADS!>operator fun component1()<!> = 1
+    operator <!CONFLICTING_OVERLOADS!>fun component1()<!> = 1
+    operator <!CONFLICTING_OVERLOADS!>fun component1()<!> = 1
     operator fun component2() = 1
 }
 
@@ -10,7 +12,10 @@ class C {
 }
 
 fun test() {
-    for ((x, y) in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
+    for ([x, y] in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, forLoop, functionDeclaration, integerLiteral, localProperty,
+operator, propertyDeclaration */

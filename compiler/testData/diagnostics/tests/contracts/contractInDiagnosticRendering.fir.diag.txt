@@ -1,3 +1,9 @@
 /contractInDiagnosticRendering.kt:(437,440): error: None of the following candidates is applicable:
-fun foo(s: String, f: () -> Unit): Unit
-fun foo(i: Int, f: () -> Unit): Unit
+
+fun foo(s: String, f: () -> Unit): Unit:
+  Argument type mismatch: actual type is 'Any', but 'String' was expected.
+
+fun foo(i: Int, f: () -> Unit): Unit:
+  Argument type mismatch: actual type is 'Any', but 'Int' was expected.
+
+

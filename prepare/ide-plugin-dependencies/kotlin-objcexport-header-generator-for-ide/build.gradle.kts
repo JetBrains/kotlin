@@ -5,8 +5,9 @@ plugins {
 publishJarsForIde(
     listOf(
       ":compiler:ir.serialization.native",
-      ":native:analysis-api-klib-reader",
+      ":libraries:tools:analysis-api-based-klib-reader",
       ":native:base",
+      ":native:binary-options",
       ":native:objcexport-header-generator",
       ":native:objcexport-header-generator-analysis-api",
       ":native:objcexport-header-generator-k1",

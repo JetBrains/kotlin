@@ -41,3 +41,6 @@ actual val explicitTargetMatchesWithoutTarget: String
 actual var onSetter: String
     get() = ""
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>set<!>(_) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetPropertyGetter, expect, getter,
+propertyDeclaration, setter, stringLiteral */

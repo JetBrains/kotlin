@@ -38,3 +38,6 @@ class Foo<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, enumDeclaration,
+functionDeclaration, inner, localClass, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

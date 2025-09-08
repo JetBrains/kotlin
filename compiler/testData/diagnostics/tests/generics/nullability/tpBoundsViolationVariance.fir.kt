@@ -65,3 +65,6 @@ class A<F> {
         fooOut2(Out<W>())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+nestedClass, nullableType, out, typeConstraint, typeParameter, typeWithExtension */

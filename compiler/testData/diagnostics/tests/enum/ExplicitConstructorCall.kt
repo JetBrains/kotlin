@@ -10,3 +10,6 @@ enum class A(val c: Int) {
         return <!ENUM_CLASS_CONSTRUCTOR_CALL!>A(10)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
-import org.jetbrains.kotlin.backend.konan.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -46,6 +46,8 @@ interface ObjCExportLazy {
         fun isIncluded(moduleInfo: ModuleInfo): Boolean
         fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
+        val objcExportBlockExplicitParameterNames: Boolean
+            get() = false
 
         val disableSwiftMemberNameMangling: Boolean
             get() = false
@@ -114,11 +116,9 @@ class ObjCExportLazyImpl(
         mapper,
         namer,
         problemCollector,
-        configuration.objcGenerics
+        configuration.objcGenerics,
+        configuration.objcExportBlockExplicitParameterNames
     )
-
-    private val isValid: Boolean
-        get() = codeAnalyzer.moduleDescriptor.isValid
 
     override fun generateBase() = translator.generateBaseDeclarations()
 

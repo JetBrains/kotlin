@@ -93,7 +93,8 @@ def construct_cmake_flags(
         projects: List[str] = None,
         runtimes: List[str] = None,
         targets: List[str] = None,
-        distribution_components: List[str] = None
+        distribution_components: List[str] = None,
+        enable_assertions: bool = False
 ) -> List[str]:
     building_bootstrap = bootstrap_llvm_path is None
 
@@ -102,7 +103,7 @@ def construct_cmake_flags(
 
     cmake_args = [
         '-DCMAKE_BUILD_TYPE=Release',
-        '-DLLVM_ENABLE_ASSERTIONS=OFF',
+        f'-DLLVM_ENABLE_ASSERTIONS={"ON" if enable_assertions else "OFF"}',
         '-DLLVM_ENABLE_TERMINFO=OFF',
         '-DLLVM_INCLUDE_GO_TESTS=OFF',
         '-DLLVM_ENABLE_Z3_SOLVER=OFF',
@@ -244,9 +245,9 @@ def force_create_directory(parent, name) -> Path:
 
 
 def llvm_build_commands(
-        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake
+        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake, enable_assertions
 ) -> List[List[str]]:
-    cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components)
+    cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components, enable_assertions)
 
     debug_cmake_flag = ["--debug-trycompile"] if debug_cmake else []
     cmake_command = [cmake, "-G", "Ninja"] + debug_cmake_flag + cmake_flags + [os.path.join(llvm_src, "llvm")]
@@ -310,6 +311,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help="(macOS only) Override path to macOS SDK")
     parser.add_argument("--debug-cmake", action='store_true',
                         help="Add --debug-trycompile flag to cmake to save temporary CMakeError.log")
+    parser.add_argument("--enable-assertions", action='store_true',
+                        help="Enable LLVM assertions in the build")
     # Misc.
     parser.add_argument("--save-temporary-files", action='store_true',
                         help="Should intermediate build results be saved?")
@@ -367,6 +370,7 @@ def build_distribution(args):
             runtimes=runtimes,
             distribution_components=args.distribution_components,
             debug_cmake=args.debug_cmake,
+            enable_assertions=args.enable_assertions,
         )
 
         os.chdir(build_dir)

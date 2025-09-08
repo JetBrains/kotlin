@@ -16,3 +16,5 @@ fun cloneable(c: Cloneable) = J(<!TYPE_MISMATCH!>c<!>)
 fun serializable(s: Serializable) = J(<!TYPE_MISMATCH!>s<!>)
 
 fun <T> both(t: T) where T : Cloneable, T : Serializable = J(t)
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, typeConstraint, typeParameter */

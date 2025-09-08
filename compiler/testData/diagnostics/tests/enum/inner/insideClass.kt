@@ -5,3 +5,5 @@ class A {
         ENTRY
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, nestedClass */

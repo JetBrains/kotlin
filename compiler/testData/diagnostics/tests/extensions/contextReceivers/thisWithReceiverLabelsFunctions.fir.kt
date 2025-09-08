@@ -29,3 +29,6 @@ context(A<Int>, A<String>, B) fun C.f() {
     this@f.c
     this.c
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+nullableType, primaryConstructor, propertyDeclaration, thisExpression, typeParameter */

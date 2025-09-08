@@ -67,7 +67,10 @@ internal constructor(
     abstract val validationStrategy: Property<KotlinIrJsGeneratedTSValidationStrategy>
 
     private val generatedDts
-        get() = inputDir.asFileTree.matching { it.include("*.d.ts") }.files
+        get() = inputDir.asFileTree.matching {
+            it.include("*.d.ts")
+            it.include("*.d.mts")
+        }.files
 
     @TaskAction
     fun run() {

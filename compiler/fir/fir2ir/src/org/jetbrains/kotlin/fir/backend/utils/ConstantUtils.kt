@@ -92,8 +92,8 @@ private fun ConstantValueKind.toIrConstKind(): IrConstKind = when (this) {
  *
  * So to properly handle this situation, it's required to create a new [CallAndReferenceGenerator] which will store the proper visitor.
  */
+context(components: Fir2IrComponents)
 fun FirExpression.asCompileTimeIrInitializerForAnnotationParameter(
-    components: Fir2IrComponents,
     expectedTypeForAnnotationArgument: ConeKotlinType? = null,
 ): IrExpressionBody {
     val componentsWithReplacedCallGenerator = object : Fir2IrComponents by components {

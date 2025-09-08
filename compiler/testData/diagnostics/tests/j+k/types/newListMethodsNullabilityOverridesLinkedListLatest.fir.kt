@@ -38,3 +38,5 @@ abstract class A4 : LinkedList<String>() {
     override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeFirst()
     override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeLast()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, superExpression, typeParameter */

@@ -57,3 +57,6 @@ class B<T> {
         T()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, init, inner, nestedClass, nullableType, objectDeclaration,
+typeParameter */

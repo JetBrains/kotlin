@@ -28,3 +28,5 @@ open class B : A() {
         throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override, stringLiteral, superExpression */

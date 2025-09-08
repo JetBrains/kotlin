@@ -11,3 +11,6 @@ fun test(lock: Any) {
 
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration */

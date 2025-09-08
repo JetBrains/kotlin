@@ -25,7 +25,7 @@ class SampleApt : AbstractProcessor() {
         for (element in roundEnv.getElementsAnnotatedWith(Anno::class.java)) {
             val generatedSimpleName = element.simpleName.toString().capitalize()
             val file = File(baseDir, "$generatedSimpleName.kt")
-            file.writeText("package generated\nclass $generatedSimpleName")
+            file.writeText("package generated\n@apt.Anno\nclass $generatedSimpleName")
         }
 
         return true

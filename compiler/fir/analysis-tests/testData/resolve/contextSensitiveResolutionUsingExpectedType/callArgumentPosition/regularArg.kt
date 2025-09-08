@@ -51,3 +51,6 @@ fun test0() {
     receiveMyClass(<!UNRESOLVED_REFERENCE!>func<!>())
     receiveMyClass(<!UNRESOLVED_REFERENCE!>superFunc<!>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, lambdaLiteral, nestedClass,
+objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral */

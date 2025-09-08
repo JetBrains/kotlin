@@ -22,3 +22,6 @@ fun foo() {
         0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, ifExpression, integerLiteral,
+localProperty, propertyDeclaration, tryExpression */

@@ -11,3 +11,5 @@ val w: Int get(): Int = 1
 interface Some {
     val bar: Int get() = 1
 }
+
+/* GENERATED_FIR_TAGS: getter, integerLiteral, interfaceDeclaration, propertyDeclaration */

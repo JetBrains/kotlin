@@ -29,3 +29,6 @@ expect fun kclassArg()
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("onType; onType; Annotation `@Ann2(s = \"\")` is missing on actual declaration")!>actual<!> fun onType(): Any? = null
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("kclassArg; kclassArg; Annotation `@Ann3(kclass = String::class)` is missing on actual declaration")!>actual<!> fun kclassArg() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, expect, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

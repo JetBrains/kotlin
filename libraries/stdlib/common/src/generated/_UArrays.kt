@@ -23,7 +23,9 @@ import kotlin.ranges.reversed
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -36,7 +38,9 @@ public inline operator fun UIntArray.component1(): UInt {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -49,7 +53,9 @@ public inline operator fun ULongArray.component1(): ULong {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -62,7 +68,9 @@ public inline operator fun UByteArray.component1(): UByte {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -75,7 +83,9 @@ public inline operator fun UShortArray.component1(): UShort {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -88,7 +98,9 @@ public inline operator fun UIntArray.component2(): UInt {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -101,7 +113,9 @@ public inline operator fun ULongArray.component2(): ULong {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -114,7 +128,9 @@ public inline operator fun UByteArray.component2(): UByte {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -127,7 +143,9 @@ public inline operator fun UShortArray.component2(): UShort {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -140,7 +158,9 @@ public inline operator fun UIntArray.component3(): UInt {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -153,7 +173,9 @@ public inline operator fun ULongArray.component3(): ULong {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -166,7 +188,9 @@ public inline operator fun UByteArray.component3(): UByte {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -179,7 +203,9 @@ public inline operator fun UShortArray.component3(): UShort {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -192,7 +218,9 @@ public inline operator fun UIntArray.component4(): UInt {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -205,7 +233,9 @@ public inline operator fun ULongArray.component4(): ULong {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -218,7 +248,9 @@ public inline operator fun UByteArray.component4(): UByte {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -231,7 +263,9 @@ public inline operator fun UShortArray.component4(): UShort {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -244,7 +278,9 @@ public inline operator fun UIntArray.component5(): UInt {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -257,7 +293,9 @@ public inline operator fun ULongArray.component5(): ULong {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -270,7 +308,9 @@ public inline operator fun UByteArray.component5(): UByte {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where
+ * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1987,6 +2027,7 @@ public inline fun UShortArray.filterIndexed(predicate: (index: Int, UShort) -> B
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UInt>> UIntArray.filterIndexedTo(destination: C, predicate: (index: Int, UInt) -> Boolean): C {
@@ -2004,6 +2045,7 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterIndexedTo(des
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in ULong>> ULongArray.filterIndexedTo(destination: C, predicate: (index: Int, ULong) -> Boolean): C {
@@ -2021,6 +2063,7 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterIndexedTo(d
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UByte>> UByteArray.filterIndexedTo(destination: C, predicate: (index: Int, UByte) -> Boolean): C {
@@ -2038,6 +2081,7 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterIndexedTo(d
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UShort>> UShortArray.filterIndexedTo(destination: C, predicate: (index: Int, UShort) -> Boolean): C {
@@ -2101,6 +2145,7 @@ public inline fun UShortArray.filterNot(predicate: (UShort) -> Boolean): List<US
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UInt>> UIntArray.filterNotTo(destination: C, predicate: (UInt) -> Boolean): C {
@@ -2114,6 +2159,7 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterNotTo(destina
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in ULong>> ULongArray.filterNotTo(destination: C, predicate: (ULong) -> Boolean): C {
@@ -2127,6 +2173,7 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterNotTo(desti
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UByte>> UByteArray.filterNotTo(destination: C, predicate: (UByte) -> Boolean): C {
@@ -2140,6 +2187,7 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterNotTo(desti
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UShort>> UShortArray.filterNotTo(destination: C, predicate: (UShort) -> Boolean): C {
@@ -2153,6 +2201,7 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterNotTo(des
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UInt>> UIntArray.filterTo(destination: C, predicate: (UInt) -> Boolean): C {
@@ -2166,6 +2215,7 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterTo(destinatio
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in ULong>> ULongArray.filterTo(destination: C, predicate: (ULong) -> Boolean): C {
@@ -2179,6 +2229,7 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterTo(destinat
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UByte>> UByteArray.filterTo(destination: C, predicate: (UByte) -> Boolean): C {
@@ -2192,6 +2243,7 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterTo(destinat
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UShort>> UShortArray.filterTo(destination: C, predicate: (UShort) -> Boolean): C {
@@ -3149,8 +3201,6 @@ public fun UShortArray.sortedArrayDescending(): UShortArray {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3160,8 +3210,6 @@ public fun UIntArray.sortedDescending(): List<UInt> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3171,8 +3219,6 @@ public fun ULongArray.sortedDescending(): List<ULong> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3182,8 +3228,6 @@ public fun UByteArray.sortedDescending(): List<UByte> {
 
 /**
  * Returns a list of all elements sorted descending according to their natural sort order.
- * 
- * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3476,6 +3520,7 @@ public fun UShortArray?.contentToString(): String {
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.copyInto(destination: UIntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): UIntArray {
@@ -3500,6 +3545,7 @@ public inline fun UIntArray.copyInto(destination: UIntArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.copyInto(destination: ULongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ULongArray {
@@ -3524,6 +3570,7 @@ public inline fun ULongArray.copyInto(destination: ULongArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.copyInto(destination: UByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): UByteArray {
@@ -3548,6 +3595,7 @@ public inline fun UByteArray.copyInto(destination: UByteArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.copyInto(destination: UShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): UShortArray {
@@ -3657,6 +3705,118 @@ public inline fun UByteArray.copyOf(newSize: Int): UByteArray {
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.copyOf(newSize: Int): UShortArray {
     return UShortArray(storage.copyOf(newSize))
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfUIntArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.copyOf(newSize: Int, init: (Int) -> UInt): UIntArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfULongArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.copyOf(newSize: Int, init: (Int) -> ULong): ULongArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfUByteArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.copyOf(newSize: Int, init: (Int) -> UByte): UByteArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with values calculated by calling the specified [init] function.
+ * 
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array,
+ * the extra elements in the copy array are filled with values calculated by calling the specified [init] function.
+ * 
+ * The function [init] is called sequentially for each array element in range starting from the index corresponding to the source
+ * array size until [newSize].
+ * It should return the value for an array element given its index.
+ * 
+ * @sample samples.collections.Arrays.CopyOfOperations.copyOfUShortArrayWithInitializer
+ */
+@SinceKotlin("2.2")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.copyOf(newSize: Int, init: (Int) -> UShort): UShortArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    val oldSize = size
+    val copy = copyOf(newSize)
+    for (idx in oldSize until newSize) {
+        copy[idx] = init(idx)
+    }
+    return copy
 }
 
 /**
@@ -4400,6 +4560,7 @@ public inline fun <V> UShortArray.associateWith(valueSelector: (UShort) -> V): M
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UInt, in V>> UIntArray.associateWithTo(destination: M, valueSelector: (UInt) -> V): M {
@@ -4418,6 +4579,7 @@ public inline fun <V, M : MutableMap<in UInt, in V>> UIntArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in ULong, in V>> ULongArray.associateWithTo(destination: M, valueSelector: (ULong) -> V): M {
@@ -4436,6 +4598,7 @@ public inline fun <V, M : MutableMap<in ULong, in V>> ULongArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UByte, in V>> UByteArray.associateWithTo(destination: M, valueSelector: (UByte) -> V): M {
@@ -4454,6 +4617,7 @@ public inline fun <V, M : MutableMap<in UByte, in V>> UByteArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UShort, in V>> UShortArray.associateWithTo(destination: M, valueSelector: (UShort) -> V): M {
@@ -4578,6 +4742,7 @@ public inline fun <R> UShortArray.flatMapIndexed(transform: (index: Int, UShort)
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapIndexedTo(destination: C, transform: (index: Int, UInt) -> Iterable<R>): C {
@@ -4596,6 +4761,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapIndexedTo(de
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapIndexedTo(destination: C, transform: (index: Int, ULong) -> Iterable<R>): C {
@@ -4614,6 +4780,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapIndexedTo(d
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapIndexedTo(destination: C, transform: (index: Int, UByte) -> Iterable<R>): C {
@@ -4632,6 +4799,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapIndexedTo(d
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapIndexedTo(destination: C, transform: (index: Int, UShort) -> Iterable<R>): C {
@@ -4647,6 +4815,7 @@ public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapIndexedTo(
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapTo(destination: C, transform: (UInt) -> Iterable<R>): C {
@@ -4661,6 +4830,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapTo(destinati
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapTo(destination: C, transform: (ULong) -> Iterable<R>): C {
@@ -4675,6 +4845,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapTo(destinat
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapTo(destination: C, transform: (UByte) -> Iterable<R>): C {
@@ -4689,6 +4860,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapTo(destinat
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapTo(destination: C, transform: (UShort) -> Iterable<R>): C {
@@ -4832,6 +5004,7 @@ public inline fun <K, V> UShortArray.groupBy(keySelector: (UShort) -> K, valueTr
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<UInt>>> UIntArray.groupByTo(destination: M, keySelector: (UInt) -> K): M {
@@ -4852,6 +5025,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<UInt>>> UIntArray.groupBy
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<ULong>>> ULongArray.groupByTo(destination: M, keySelector: (ULong) -> K): M {
@@ -4872,6 +5046,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<ULong>>> ULongArray.group
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<UByte>>> UByteArray.groupByTo(destination: M, keySelector: (UByte) -> K): M {
@@ -4892,6 +5067,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<UByte>>> UByteArray.group
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<UShort>>> UShortArray.groupByTo(destination: M, keySelector: (UShort) -> K): M {
@@ -4913,6 +5089,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<UShort>>> UShortArray.gro
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UIntArray.groupByTo(destination: M, keySelector: (UInt) -> K, valueTransform: (UInt) -> V): M {
@@ -4934,6 +5111,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UIntArray.groupBy
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ULongArray.groupByTo(destination: M, keySelector: (ULong) -> K, valueTransform: (ULong) -> V): M {
@@ -4955,6 +5133,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ULongArray.groupB
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UByteArray.groupByTo(destination: M, keySelector: (UByte) -> K, valueTransform: (UByte) -> V): M {
@@ -4976,6 +5155,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UByteArray.groupB
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UShortArray.groupByTo(destination: M, keySelector: (UShort) -> K, valueTransform: (UShort) -> V): M {
@@ -5098,6 +5278,7 @@ public inline fun <R> UShortArray.mapIndexed(transform: (index: Int, UShort) -> 
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.mapIndexedTo(destination: C, transform: (index: Int, UInt) -> R): C {
@@ -5114,6 +5295,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.mapIndexedTo(destin
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.mapIndexedTo(destination: C, transform: (index: Int, ULong) -> R): C {
@@ -5130,6 +5312,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.mapIndexedTo(desti
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.mapIndexedTo(destination: C, transform: (index: Int, UByte) -> R): C {
@@ -5146,6 +5329,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.mapIndexedTo(desti
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.mapIndexedTo(destination: C, transform: (index: Int, UShort) -> R): C {
@@ -5160,6 +5344,7 @@ public inline fun <R, C : MutableCollection<in R>> UShortArray.mapIndexedTo(dest
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.mapTo(destination: C, transform: (UInt) -> R): C {
@@ -5173,6 +5358,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.mapTo(destination: 
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.mapTo(destination: C, transform: (ULong) -> R): C {
@@ -5186,6 +5372,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.mapTo(destination:
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.mapTo(destination: C, transform: (UByte) -> R): C {
@@ -5199,6 +5386,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.mapTo(destination:
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.mapTo(destination: C, transform: (UShort) -> R): C {

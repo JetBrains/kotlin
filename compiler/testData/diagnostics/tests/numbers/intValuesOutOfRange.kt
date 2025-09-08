@@ -15,3 +15,5 @@ fun main() {
     foo(<!INT_LITERAL_OUT_OF_RANGE!>11111111111111177777777777777<!>)
     bar(<!INT_LITERAL_OUT_OF_RANGE, TYPE_MISMATCH!>11111111111111177777777777777<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

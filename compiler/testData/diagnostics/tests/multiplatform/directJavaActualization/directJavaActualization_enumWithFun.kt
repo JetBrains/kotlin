@@ -22,3 +22,5 @@ public enum Foo {
     @kotlin.annotations.jvm.KotlinActual
     public void getEntry(){}
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, expect, functionDeclaration */

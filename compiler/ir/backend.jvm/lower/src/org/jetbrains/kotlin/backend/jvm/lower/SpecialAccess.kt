@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.originalForReflectiveCall
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
@@ -248,7 +249,7 @@ internal class SpecialAccessLowering(
         method: IrExpression,
         receiver: IrExpression,
         arguments: List<IrExpression>
-    ): IrExpression =
+    ): IrCall =
         irCall(reflectSymbols.javaLangReflectMethodInvoke).apply {
             this.arguments[0] = method
             this.arguments[1] = receiver
@@ -282,6 +283,7 @@ internal class SpecialAccessLowering(
      */
 
     private fun generateReflectiveMethodInvocation(
+        originalCall: IrCall,
         declaringClass: IrType,
         signature: JvmMethodSignature,
         receiver: IrExpression?, // null => static method on `declaringClass`
@@ -310,9 +312,13 @@ internal class SpecialAccessLowering(
                 )
             +methodSetAccessible(irGet(methodVar))
             +coerceResult(
-                methodInvoke(irGet(methodVar), receiver ?: irNull(), arguments.map { coerceToUnboxed(it) }),
+                methodInvoke(
+                    irGet(methodVar),
+                    receiver ?: irNull(),
+                    arguments.map { coerceToUnboxed(it) })
+                    .also { it.originalForReflectiveCall = originalCall },
                 returnType
-            )
+            ).also { it.originalForReflectiveCall = originalCall }
         }
     }
 
@@ -334,6 +340,7 @@ internal class SpecialAccessLowering(
         }
 
         return generateReflectiveMethodInvocation(
+            call,
             getDeclaredClassType(call),
             context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(targetFunction),
             call.dispatchReceiver,
@@ -346,6 +353,7 @@ internal class SpecialAccessLowering(
     private fun generateReflectiveStaticCall(call: IrCall): IrExpression {
         assert(call.dispatchReceiver == null) { "Assumed-to-be static call with a dispatch receiver" }
         return generateReflectiveMethodInvocation(
+            call,
             call.symbol.owner.parentAsClass.defaultType,
             context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner),
             null, // static call
@@ -499,6 +507,7 @@ internal class SpecialAccessLowering(
 
         if (isPresentInBytecode(realGetter)) {
             return generateReflectiveMethodInvocation(
+                call,
                 realGetter.parentAsClass.defaultType,
                 context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realGetter),
                 call.dispatchReceiver,
@@ -523,6 +532,7 @@ internal class SpecialAccessLowering(
 
         if (isPresentInBytecode(realSetter)) {
             return generateReflectiveMethodInvocation(
+                call,
                 realSetter.parentAsClass.defaultType,
                 context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(realSetter),
                 call.dispatchReceiver,

@@ -20,3 +20,6 @@ fun test(c: <!DEPRECATION_ERROR!>C<!>) {
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FIELD)
 annotation class Foo
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, classDeclaration, functionDeclaration,
+integerLiteral, propertyDeclaration, stringLiteral */

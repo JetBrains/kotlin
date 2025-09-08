@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
@@ -210,3 +209,8 @@ fun testFunctionLiterals() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, classDeclaration, comparisonExpression,
+disjunctionExpression, equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, localClass, localFunction, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral, whenExpression, whenWithSubject */

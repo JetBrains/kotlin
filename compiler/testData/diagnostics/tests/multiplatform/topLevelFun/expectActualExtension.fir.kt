@@ -27,3 +27,5 @@ actual fun test3(x: String.() -> Unit){}
 actual fun (String.() -> Unit).test5(){}
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun ((String) -> Unit).test6(){}
+
+/* GENERATED_FIR_TAGS: actual, expect, funWithExtensionReceiver, functionDeclaration, functionalType, typeWithExtension */

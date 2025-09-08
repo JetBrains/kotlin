@@ -84,3 +84,7 @@ fun test6() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, equalityExpression, forLoop, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression, safeCall, smartcast,
+stringLiteral, tryExpression, whenExpression, whenWithSubject, whileLoop */

@@ -2,6 +2,8 @@
 
 /* FILE package=<root> fileName=a.kt */
 
+/* TARGET declaration */ private fun o(): String
+/* TARGET declaration */ private fun k(): String
 internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     oo: String
         /* ACCESSOR use-site */ access$o$tAKt()
@@ -13,8 +15,6 @@ internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
     /* TARGET use-site */ o()
 /* ACCESSOR declaration */ internal fun access$k$tAKt(): String
     /* TARGET use-site */ k()
-/* TARGET declaration */ private fun o(): String
-/* TARGET declaration */ private fun k(): String
 
 
 /* MODULE name=<main> */

@@ -22,7 +22,8 @@ function box(): string {
     assert(processOptionalInterface({ required: 4, notRequired: null }) == "4unknown")
     assert(processOptionalInterface({ required: 4, notRequired: 5 }) == "45")
 
-    assert(WithTheCompanion.companionFunction() == "FUNCTION")
+    assert(WithTheCompanion.companionStaticFunction() == "STATIC FUNCTION")
+    assert(WithTheCompanion.Companion.companionFunction() == "FUNCTION")
 
     const instance = new ImplementorOfInterfaceWithDefaultArguments()
     assert(instance.foo() === 0);

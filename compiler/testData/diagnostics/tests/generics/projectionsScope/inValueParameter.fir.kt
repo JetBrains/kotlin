@@ -7,3 +7,5 @@ interface B<E> {
 fun foo(x: B<in CharSequence>, y: A<CharSequence>) {
     x.foo(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inProjection, interfaceDeclaration, nullableType, typeParameter */
