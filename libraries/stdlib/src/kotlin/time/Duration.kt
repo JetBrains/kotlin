@@ -1327,16 +1327,15 @@ internal object FractionalParser {
 
     private inline fun String.parseDigits(startIndex: Int, maxDigits: Int, callback: (endIndex: Int) -> Unit): Int {
         var index = startIndex
+        val endIndex = minOf(index + maxDigits, length)
         var result = 0
-        var count = 0
-        while (index < length && count < maxDigits) {
+        while (index < endIndex) {
             val ch = this[index]
             if (ch !in '0'..'9') break
             result = result.multiplyBy10() + (ch - '0')
-            count++
             index++
         }
-        repeat(maxDigits - count) {
+        repeat(maxDigits - (index - startIndex)) {
             result = result.multiplyBy10()
         }
         callback(index)
