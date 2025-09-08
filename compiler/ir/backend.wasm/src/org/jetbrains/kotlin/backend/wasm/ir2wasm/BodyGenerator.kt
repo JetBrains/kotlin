@@ -1200,24 +1200,33 @@ class BodyGenerator(
                 generateInstanceFieldAccess(field, location)
             }
 
-            wasmSymbols.returnArgumentIfItIsKotlinAny -> {
-                body.buildBlock("returnIfAny", WasmAnyRef.maybeShared(useSharedObjects)) { innerLabel ->
-                    body.buildGetLocal(functionContext.referenceLocal(0), location)
-                    body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
+            wasmSymbols.returnArgumentIfItIsKotlinAny, wasmSymbols.returnShareableArgumentIfItIsKotlinAny -> {
+                // in "-Xwasm-use-shared-objects" mode non-shared externref cannot represent Kotlin objects
+                if (!useSharedObjects || function.symbol == wasmSymbols.returnShareableArgumentIfItIsKotlinAny) {
+                    body.buildBlock("returnIfAny", WasmAnyRef.maybeShared(useSharedObjects)) { innerLabel ->
+                        body.buildGetLocal(functionContext.referenceLocal(0), location)
+                        body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
 
-                    body.buildBrOnCastInstr(
-                        WasmOp.BR_ON_CAST_FAIL,
-                        innerLabel,
-                        fromIsNullable = true,
-                        toIsNullable = true,
-                        from = WasmHeapType.Simple.Any.maybeShared(useSharedObjects),
-                        to = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)),
-                        location,
-                    )
+                        body.buildBrOnCastInstr(
+                            WasmOp.BR_ON_CAST_FAIL,
+                            innerLabel,
+                            fromIsNullable = true,
+                            toIsNullable = true,
+                            from = WasmHeapType.Simple.Any.maybeShared(useSharedObjects),
+                            to = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)),
+                            location,
+                        )
 
-                    body.buildInstr(WasmOp.RETURN, location)
+                        body.buildInstr(WasmOp.RETURN, location)
+                    }
+                    body.buildDrop(location)
                 }
-                body.buildDrop(location)
+            }
+
+            wasmSymbols.wrapShareable -> {
+                if (useSharedObjects) {
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.wrapShareableSharedImpl), location)
+                }
             }
 
             wasmSymbols.wasmArrayCopy -> {
@@ -1392,12 +1401,13 @@ class BodyGenerator(
         // NOTHING -> TYPE -> TRUE
         if (actualType.isNothing()) return
 
+        val expectedClass = expectedType.getClass()
+
         // NOTHING? -> TYPE? -> (NOTHING?)NULL
         if (actualType.isNullableNothing() && expectedType.isNullable()) {
-            val expectedClass = expectedType.getClass()
             if (expectedClass?.isExternal == true) {
                 body.buildDrop(location)
-                val baseWasmType = if (useSharedObjects && expectedClass.name.identifier == "JsReference")
+                val baseWasmType = if (useSharedObjects && expectedClass.isJsShareable(wasmSymbols))
                     WasmHeapType.SharedSimple.NO_EXTERN
                 else
                     WasmHeapType.Simple.NoExtern
@@ -1409,8 +1419,8 @@ class BodyGenerator(
         // Type? -> Nothing? -> ref.cast null (none/noextern)
         if (actualType.isNullable() && expectedType.isNullableNothing()) {
             val type =
-                if (expectedType.getClass()?.isExternal == true)
-                    WasmHeapType.Simple.NoExtern.maybeShared(useSharedObjects && expectedType.getClass()?.name?.identifier == "JsReference")
+                if (expectedClass?.isExternal == true)
+                    WasmHeapType.Simple.NoExtern.maybeShared(useSharedObjects && expectedClass.isJsShareable(wasmSymbols))
                 else
                     WasmHeapType.Simple.None.maybeShared(useSharedObjects)
 
