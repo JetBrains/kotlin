@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKnownClassDeclarationSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.hasPsi
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -131,4 +133,9 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
         getCachedSymbolByClassId(classId)
             ?.takeIf { it.hasPsi(declaration) }
             ?: ambiguityCache.getValueIfComputed(declaration)
+
+    @OptIn(FirCacheInternals::class)
+    @LLStatisticsOnlyApi
+    internal val cachedValues: List<V>
+        get() = mainCache.cachedValues + ambiguityCache.cachedValues
 }
