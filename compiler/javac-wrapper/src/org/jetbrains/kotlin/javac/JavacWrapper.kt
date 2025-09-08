@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
 import java.io.File
+import java.net.URI
 import javax.lang.model.element.Element
 import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileManager
@@ -287,11 +288,29 @@ class JavacWrapper(
     fun toVirtualFile(javaFileObject: JavaFileObject): VirtualFile? =
         javaFileObject.toUri().let { uri ->
             if (uri.scheme == "jar") {
-                jarFileSystem.findFileByPath(uri.schemeSpecificPart.substring("file:".length))
+                jarFileSystem.findFileByPath(uri.extractJarPath())
             } else {
                 localFileSystem.findFileByPath(File(uri.schemeSpecificPart).absolutePath)
             }
         }
+
+    fun URI.extractJarPath(): String {
+        require(scheme == "jar")
+
+        val parts = schemeSpecificPart.split("!/", limit = 2)
+
+        check(parts.size == 2) {
+            "Invalid jar URI format - missing '!/' separator: $schemeSpecificPart"
+        }
+
+        val jarPath = parts[0].substring("file:".length)
+
+        // Using absolutePath to ensure we use the correct separators
+        val absoluteJarPath = File(jarPath).absolutePath
+        val internalPath = parts[1]
+
+        return "$absoluteJarPath!/$internalPath"
+    }
 
     fun hasKotlinPackage(fqName: FqName) =
         if (kotlinClassifiersCache.hasPackage(fqName)) {
