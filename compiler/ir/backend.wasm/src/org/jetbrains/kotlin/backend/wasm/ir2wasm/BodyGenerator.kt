@@ -587,11 +587,7 @@ class BodyGenerator(
         if (receiver != null) {
             generateExpression(receiver)
             generateExpression(expression.value)
-            if (useSharedObjects && field.hasManagedExternrefAnnotation()) {
-                body.buildConstI32(1, location)
-                body.buildInstr(WasmOp.TABLE_GROW, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
-                // TODO maybe process errors (grows failed) by checking return value (-1 means error)
-            }
+            handleManageExternRefFieldStore(field, location)
             body.buildStructSet(
                 struct = wasmFileCodegenContext.referenceGcType(field.parentAsClass.symbol),
                 fieldId = getStructFieldRef(field),
@@ -658,7 +654,11 @@ class BodyGenerator(
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
-            expression.arguments.forEach { generateExpression(it!!) }
+            (expression.arguments zip klass.fields.filterNot { it.isStatic }.asIterable()).forEach {
+                generateExpression(it.first!!)
+                val field = it.second
+                handleManageExternRefFieldStore(field, location)
+            }
 
             body.buildStructNew(wasmGcType, location)
             body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
@@ -667,6 +667,17 @@ class BodyGenerator(
 
         body.buildRefNull(WasmHeapType.Simple.None, location) // this = null
         generateCall(expression)
+    }
+
+    private fun handleManageExternRefFieldStore(
+        field: IrField,
+        location: SourceLocation,
+    ) {
+        if (useSharedObjects && field.hasManagedExternrefAnnotation()) {
+            body.buildConstI32(1, location)
+            body.buildInstr(WasmOp.TABLE_GROW, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
+            // TODO maybe process errors (grows failed) by checking return value (-1 means error)
+        }
     }
 
     private fun generateAnyParameters(klassSymbol: IrClassSymbol, location: SourceLocation) {
