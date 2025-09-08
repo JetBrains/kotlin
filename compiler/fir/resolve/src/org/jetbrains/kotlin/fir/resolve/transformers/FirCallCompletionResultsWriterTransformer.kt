@@ -16,15 +16,12 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -361,26 +358,36 @@ class FirCallCompletionResultsWriterTransformer(
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteralCall, data: ExpectedArgumentType?): FirStatement {
+        if (arrayLiteral.isResolved) return arrayLiteral
+        val expectedArrayType = data?.getExpectedType(arrayLiteral)
+        val expectedArrayElementType = expectedArrayType?.arrayElementType()
+        arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType(data.argumentReplacements))
+        val arrayElementType =
+            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
+                typeApproximator.approximateToSuperType(
+                    it,
+                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
+                )
+                    ?: it
+            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
+        arrayLiteral.resultType =
+            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
+        return arrayLiteral
+    }
+
     override fun transformCollectionLiteralCall(
         collectionLiteralCall: FirCollectionLiteralCall,
         data: ExpectedArgumentType?
     ): FirStatement {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)) {
+            return transformArrayLiteralInAnnotation(collectionLiteralCall, data)
+        }
+
         data?.argumentReplacements?.get(collectionLiteralCall)?.let { replacement ->
             return replacement.transform(this, data)
         }
-        val diagnostic = ConeUnsupportedCollectionLiteralType
 
-        val errorCalleeReference: FirNamedReference = when (val calleeReference = collectionLiteralCall.calleeReference) {
-            is FirErrorNamedReference -> calleeReference
-            else -> buildErrorNamedReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                this.diagnostic = diagnostic
-            }
-        }
-        collectionLiteralCall.replaceCalleeReference(errorCalleeReference)
-        collectionLiteralCall.replaceConeTypeOrNull(ConeErrorType(diagnostic))
-        collectionLiteralCall.transformArgumentList(null)
         return collectionLiteralCall
     }
 
@@ -1265,24 +1272,6 @@ class FirCallCompletionResultsWriterTransformer(
             return integerLiteralOperatorCall
         }
         return integerLiteralOperatorCall.transformSingle(integerOperatorApproximator, expectedType)
-    }
-
-    override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
-        if (arrayLiteral.isResolved) return arrayLiteral
-        val expectedArrayType = data?.getExpectedType(arrayLiteral)
-        val expectedArrayElementType = expectedArrayType?.arrayElementType()
-        arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType(data.argumentReplacements))
-        val arrayElementType =
-            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
-                typeApproximator.approximateToSuperType(
-                    it,
-                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
-                )
-                    ?: it
-            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
-        arrayLiteral.resultType =
-            arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
-        return arrayLiteral
     }
 
     override fun transformVarargArgumentsExpression(

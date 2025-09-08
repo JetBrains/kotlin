@@ -91,7 +91,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
 
                 override fun visitEnd() {
-                    visitExpression(name, buildArrayLiteral {
+                    visitExpression(name, buildCollectionLiteralCall {
                         @OptIn(UnresolvedExpressionTypeAccess::class)
                         // For the array literal type, we use Array<Any> as an approximation; later FIR2IR will calculate more precise type
                         // See KT-62598

@@ -178,7 +178,7 @@ private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Nam
 
 fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
     val argument = findArgumentByName(name) ?: return null
-    val arrayLiteral = argument.evaluateAs<FirArrayLiteral>(session) ?: return null
+    val arrayLiteral = argument.evaluateAs<FirCollectionLiteralCall>(session) ?: return null
     return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression)?.value as? String }
 }
 
@@ -228,7 +228,7 @@ fun FirExpression.unwrapVarargValue(): List<FirExpression> {
             is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
             else -> arguments
         }
-        is FirArrayLiteral -> arguments
+        is FirCollectionLiteralCall -> arguments
         else -> listOf(this)
     }
 }

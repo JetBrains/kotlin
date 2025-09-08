@@ -116,8 +116,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(arrayLiteral)
-
         impl(collectionLiteralCall)
 
         impl(callableReferenceAccess)
@@ -740,7 +738,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirVarargArgumentsExpressionImpl",
             "FirSafeCallExpressionImpl",
             "FirCheckedSafeCallSubjectImpl",
-            "FirArrayLiteralImpl",
+            "FirCollectionLiteralCallImpl",
             "FirIntegerLiteralOperatorCallImpl",
             "FirReceiverParameterImpl",
             "FirClassReferenceExpressionImpl",

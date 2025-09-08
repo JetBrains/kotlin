@@ -10,8 +10,6 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -19,13 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.collectionLiteralCall]
  */
-abstract class FirCollectionLiteralCall : FirArrayLiteral(), FirResolvable {
+abstract class FirCollectionLiteralCall : FirExpression(), FirCall {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
-    abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitCollectionLiteralCall(this, data)
@@ -40,11 +37,5 @@ abstract class FirCollectionLiteralCall : FirArrayLiteral(), FirResolvable {
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)
-
-    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCollectionLiteralCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCollectionLiteralCall
 }
