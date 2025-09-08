@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -21,36 +19,8 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 
-/**
- * Will propagate "original"/"platform" cinterops to intermediate source sets
- * and 'shared native' compilations if necessary.
- *
- * cinterops will be forwarded when a source set/ compilation has just a single platform
- * dependee
- *
- * e.g.
- *
- * ```
- * kotlin {
- *      sourceSets {
- *          val nativeMain by sourceSets.creating
- *          val linuxX64Main by sourceSets.getting
- *          linuxX64Main.dependsOn(nativeMain)
- *      }
- * }
- * ```
- *
- * In this example 'nativeMain' has only a single native
- * target and a single native source set depending on it.
- * All cinterops defined on linuxX64's main compilation shall be propagated
- * to the 'nativeMain' source set (and its 'shared native' compilation) if it exists.
- */
 internal fun Project.setupCInteropPropagatedDependencies() {
     val kotlin = this.multiplatformExtensionOrNull ?: return
-
-    kotlin.forAllSharedNativeCompilations { compilation ->
-        compilation.compileDependencyFiles += getPropagatedCInteropDependenciesOrEmpty(compilation)
-    }
 
     kotlin.forAllDefaultKotlinSourceSets { sourceSet ->
         addIntransitiveMetadataDependencyIfPossible(
@@ -88,12 +58,6 @@ internal fun Project.getPlatformCinteropDependenciesOrEmpty(
             .filter(compilationFilter)
             .map { relevantCompilation -> getAllCInteropOutputFiles(relevantCompilation) }
     }
-}
-
-private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: KotlinSharedNativeCompilation) = filesProvider files@{
-    val compilations = compilation.getImplicitlyDependingNativeCompilations()
-    val platformCompilation = compilations.singleOrNull() ?: return@files emptySet<File>()
-    getAllCInteropOutputFiles(platformCompilation)
 }
 
 private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
