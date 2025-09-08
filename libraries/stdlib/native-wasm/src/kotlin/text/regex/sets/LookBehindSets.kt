@@ -48,8 +48,13 @@ internal abstract class LookBehindSetBase(children: List<AbstractSet>, fSet: FSe
         children[it].computeMatchLengthInChars(fSet)
     }
 
-    protected fun matchPrefix(childIndex: Int, startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        val child = children[childIndex]
+    protected fun matchPrefix(
+        childIndex: Int,
+        child: AbstractSet,
+        startIndex: Int,
+        testString: CharSequence,
+        matchResult: MatchResultImpl
+    ): Int {
         val prefixLength = prefixLengths[childIndex]
         return when {
             // the prefix length is unknown, so lets fallback to a generic matching
@@ -69,8 +74,8 @@ internal class PositiveLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
-        for (idx in children.indices) {
-            if (matchPrefix(idx, startIndex, testString, matchResult) >= 0) {
+        forEachChildrenIndexed { idx, child ->
+            if (matchPrefix(idx, child, startIndex, testString, matchResult) >= 0) {
                 matchResult.setConsumed(groupIndex, -1)
                 return next.matches(startIndex, testString, matchResult)
             }
@@ -97,8 +102,8 @@ internal class NegativeLookBehindSet(children: List<AbstractSet>, fSet: FSet) : 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         matchResult.setConsumed(groupIndex, startIndex)
-        for (idx in children.indices) {
-            if (matchPrefix(idx, startIndex,testString, matchResult) >= 0) {
+        forEachChildrenIndexed { idx, child ->
+            if (matchPrefix(idx, child, startIndex, testString, matchResult) >= 0) {
                 return -1
             }
         }

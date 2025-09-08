@@ -34,8 +34,8 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
         val start = matchResult.getConsumed(groupIndex)
         matchResult.setConsumed(groupIndex, startIndex)
 
-        children.forEach {
-            val shift = it.matches(startIndex, testString, matchResult)
+        forEachChildrenIndexed { _, child ->
+            val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 return shift
             }
