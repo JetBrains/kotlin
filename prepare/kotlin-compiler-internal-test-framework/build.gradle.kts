@@ -2,7 +2,7 @@ plugins {
     java
 }
 
-val testModules = listOf(
+val testFixturesModules = listOf(
     ":compiler:test-infrastructure",
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-compiler-utils",
@@ -17,24 +17,25 @@ val mainModules = listOf(
 )
 
 dependencies {
-    mainModules.forEach {
-        embedded(project(it)) { isTransitive = false }
-    }
-    testModules.forEach {
-        embedded(testFixtures(project(it))) {
-            if (this is ModuleDependency) isTransitive = false
+    fun List<String>.registerDependencies(notation: (String) -> Dependency) {
+        this.forEach {
+            embedded(notation(it)) {
+                if (this is ModuleDependency) isTransitive = false
+            }
         }
     }
+
+    mainModules.registerDependencies { project(it) }
+    testFixturesModules.registerDependencies { testFixtures(project(it)) }
 }
 
 publish()
 runtimeJar()
 sourcesJar {
     from {
-        mainModules.map { project(it).mainSourceSet.allSource } + testModules.map { project(it).testSourceSet.allSource }
+        mainModules.map { project(it).mainSourceSet.allSource } +
+                testFixturesModules.map { project(it).testFixturesSourceSet.allSource }
     }
-
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
 }
 
 javadocJar()

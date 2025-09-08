@@ -46,11 +46,17 @@ val Project.sourceSets: SourceSetContainer
 val Project.mainSourceSet: SourceSet
     get() = javaPluginExtension().mainSourceSet
 
+val Project.testFixturesSourceSet: SourceSet
+    get() = javaPluginExtension().testFixturesSourceSet
+
 val Project.testSourceSet: SourceSet
     get() = javaPluginExtension().testSourceSet
 
 val JavaPluginExtension.mainSourceSet: SourceSet
     get() = sourceSets.getByName("main")
+
+val JavaPluginExtension.testFixturesSourceSet: SourceSet
+    get() = sourceSets.getByName("testFixtures")
 
 val JavaPluginExtension.testSourceSet: SourceSet
     get() = sourceSets.getByName("test")
