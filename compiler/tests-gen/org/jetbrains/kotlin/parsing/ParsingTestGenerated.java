@@ -386,6 +386,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/EnumEntryCommaPublicMember.kt");
     }
 
+    @TestMetadata("enumEntryContent.kt")
+    public void testEnumEntryContent() {
+      runTest("compiler/testData/psi/enumEntryContent.kt");
+    }
+
     @TestMetadata("EnumEntrySemicolonInlineMember.kt")
     public void testEnumEntrySemicolonInlineMember() {
       runTest("compiler/testData/psi/EnumEntrySemicolonInlineMember.kt");

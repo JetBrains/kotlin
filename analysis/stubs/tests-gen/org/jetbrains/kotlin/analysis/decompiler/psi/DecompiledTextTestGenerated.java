@@ -451,6 +451,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
   }
 
   @Test
+  @TestMetadata("enumEntryContent.kt")
+  public void testEnumEntryContent() {
+    runTest("compiler/testData/psi/enumEntryContent.kt");
+  }
+
+  @Test
   @TestMetadata("EnumEntrySemicolonInlineMember.kt")
   public void testEnumEntrySemicolonInlineMember() {
     runTest("compiler/testData/psi/EnumEntrySemicolonInlineMember.kt");
