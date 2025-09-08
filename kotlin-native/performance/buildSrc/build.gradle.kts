@@ -43,8 +43,13 @@ tasks.withType<KotlinJvmCompile>().configureEach {
                 "kotlin.ExperimentalStdlibApi",
         )
     )
-    compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
-    compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9)
+
+    // kotlin-dsl Gradle plugin, applied above, sets these versions to 1.8.
+    // This project is compiled with the bootstrap compiler which doesn't support 1.8 anymore.
+    // As a workaround, set the versions to 2.3 explicitly:
+    compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3)
+    compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3)
+    // An alternative would be to update to Gradle 9.
 }
 
 
