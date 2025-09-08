@@ -1014,10 +1014,11 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 /**
  * Parses a duration string in either ISO-8601 or default format.
+ *
  * @param value the string to parse
- * @param strictIso if true, only accepts an ISO-8601 format; if false, accepts both ISO and default formats
- * @param throwException if true, throws IllegalArgumentException on parse error; if false, returns [Duration.INVALID]
- * @return parsed Duration or [Duration.INVALID] on error when throwException is false
+ * @param strictIso if `true`, only accepts an ISO-8601 format; if `false`, accepts both ISO and default formats
+ * @param throwException if `true`, throws [IllegalArgumentException] on parse error; if `false`, returns [Duration.INVALID]
+ * @return parsed [Duration] or [Duration.INVALID] on error when throwException is `false`
  */
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
     if (value.isEmpty()) return handleError(throwException, "The string is empty")
@@ -1044,10 +1045,11 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
 }
 
 /**
- * Parses ISO-8601 duration format (e.g., "PT1H30M45S").
+ * Parses ISO-8601 duration format (e.g., `"PT1H30M45S"`).
+ *
  * @param value the full input string
- * @param startIndex index after 'P' prefix
- * @param throwException if true, throws on error; if false, returns [Duration.INVALID]
+ * @param startIndex index after `'P'` prefix
+ * @param throwException if `true`, throws an exception on error, otherwise returns [Duration.INVALID]
  * @return parsed Duration or [Duration.INVALID] on error
  */
 private fun parseIsoStringFormat(
@@ -1063,6 +1065,13 @@ private fun parseIsoStringFormat(
     var isTimeComponent = false
     var prevUnit: DurationUnit? = null
 
+    /*
+     * ISO format consists of multiple repeated parts, all having the following format:
+     * <sign><long value>[.<fraction>]<unit>.
+     *
+     * On every iteration, we consequently consume a chunk of the input string matching this format.
+     * If there are any unexpected chars or other inconsistencies, an error will be reported.
+     */
     while (index < value.length) {
         val ch = value[index]
         if (ch == 'T') {
@@ -1075,6 +1084,7 @@ private fun parseIsoStringFormat(
         var sign = -1
         val longValue = LongParser.iso.parse(value, index) { longEndIndex, localSign, _ ->
             index = longEndIndex
+            // A numerical value should not be empty, and it has to be followed by a unit (i.e., it cannot terminate a string)
             if (index == value.length || index == longStartIndex + if (ch == '-' || ch == '+') 1 else 0) return handleError(throwException)
             sign = localSign
         }
@@ -1082,6 +1092,8 @@ private fun parseIsoStringFormat(
         if (value[index] == '.') {
             index++
             val fractionValue = FractionalParser.parse(value, index) { fractionEndIndex ->
+                // A fraction has to be non-empty, it has to be followed by a unit, and the only unit supporting
+                // fractional parts is *S*econds.
                 if (fractionEndIndex == index || fractionEndIndex == value.length || value[fractionEndIndex] != 'S') {
                     return handleError(throwException)
                 }
@@ -1111,14 +1123,14 @@ private fun parseIsoStringFormat(
 }
 
 /**
- * Parses default duration format (e.g., "1h 30m", "45s", "500ms").
- * Note: While "Infinity" is part of the default format specification, this function
+ * Parses default duration format (e.g., `"1h 30m"`, `"45s"`, `"500ms"`).
+ * Note: While `"Infinity"` is a part of the default format specification, this function
  * does not handle it - infinite values are handled separately before calling this method.
  * @param value the input string
  * @param startIndex starting position for parsing
  * @param hasSign whether the duration had a leading sign
- * @param throwException if true, throws on error; if false, returns [Duration.INVALID]
- * @return parsed Duration or [Duration.INVALID] on error
+ * @param throwException if `true`, throws an exception on error, otherwise returns [Duration.INVALID]
+ * @return parsed [Duration] or [Duration.INVALID] on error
  */
 private fun parseDefaultStringFormat(
     value: String,
@@ -1150,6 +1162,7 @@ private fun parseDefaultStringFormat(
 
         val longStartIndex = index
         val longValue = LongParser.default.parse(value, index) { longEndIndex, _, hasOverflow ->
+            // A numeric value has to be non-empty, and it has to be followed by a unit (i.e., it cannot be the last in string)
             if (longEndIndex == longStartIndex || longEndIndex == length || hasOverflow) return handleError(throwException)
             index = longEndIndex
         }
@@ -1160,6 +1173,7 @@ private fun parseDefaultStringFormat(
             fractionStartIndex = index
             index++
             FractionalParser.parse(value, index) { fractionEndIndex ->
+                // Fraction has to be non-empty, and it cannot terminate a string
                 if (fractionEndIndex == index || fractionEndIndex == length) return handleError(throwException)
                 index = fractionEndIndex
             }
@@ -1223,11 +1237,11 @@ private fun parseDefaultStringFormat(
  * parsing for formats that require it (e.g., ISO 8601).
  *
  * @property overflowLimit The maximum value that can be parsed without overflow
- * @property withSign Whether to parse the optional '+' or '-' sign at the beginning
- * @property overflowThreshold Pre-calculated threshold (overflowLimit / 10) for early overflow detection
- * @property lastDigitMax Maximum allowed last digit (overflowLimit % 10) when at the overflow threshold
+ * @property withSign Whether to parse the optional `'+'` or `'-'` sign at the beginning
+ * @property overflowThreshold Pre-calculated threshold (`overflowLimit / 10`) for early overflow detection
+ * @property lastDigitMax Maximum allowed last digit (`overflowLimit % 10`) when at the overflow threshold
  */
-private class LongParser private constructor(private val overflowLimit: Long, private val withSign: Boolean) {
+internal class LongParser private constructor(private val overflowLimit: Long, private val withSign: Boolean) {
 
     private val overflowThreshold = overflowLimit / 10
     private val lastDigitMax = overflowLimit % 10
@@ -1238,7 +1252,7 @@ private class LongParser private constructor(private val overflowLimit: Long, pr
      * @param value The string to parse
      * @param startIndex The index to start parsing from
      * @param callback Invoked with (endIndex, sign, hasOverflow) when parsing completes
-     * @return The parsed value, clamped to overflowLimit if overflow occurred
+     * @return The parsed value, clamped to [overflowLimit] if overflow occurred
      */
     inline fun parse(value: String, startIndex: Int, callback: (endIndex: Int, sign: Int, hasOverflow: Boolean) -> Unit): Long {
         var sign = 1
@@ -1281,9 +1295,9 @@ private class LongParser private constructor(private val overflowLimit: Long, pr
  *
  * This object efficiently parses up to 15 decimal digits from a string,
  * converting them to nanoseconds. It handles the fractional component
- * that appears after a decimal point in duration strings (e.g., the ".5" in "1.5s").
+ * that appears after a decimal point in duration strings (e.g., the `".5"` in `"1.5s"`).
  *
- * The parser splits the 15-digit precision into two parts for efficiency:
+ * The parser splits the 15-digit precision into two parts for efficiency (on JS):
  * - High precision: first 9 digits
  * - Low precision: remaining 6 digits
  */
@@ -1327,9 +1341,11 @@ private object FractionalParser {
 
 /**
  * Adds two Long values representing milliseconds without overflow.
+ *
  * Handles infinite values and ensures the result stays within the valid range.
+ *
  * @param other the value in milliseconds to add
- * @return the sum in milliseconds clamped to [-MAX_MILLIS, MAX_MILLIS] range, or INVALID_RAW_VALUE for invalid operations
+ * @return the sum in milliseconds clamped to `[-MAX_MILLIS, MAX_MILLIS]` range, or [Duration.INVALID_RAW_VALUE] for invalid operations
  */
 private fun Long.addMillisWithoutOverflow(other: Long): Long = when {
     isInfinite() -> if (other.isFinite() || sameSign(this, other)) this else Duration.INVALID_RAW_VALUE
@@ -1346,22 +1362,25 @@ private inline fun Long.isInfinite(): Boolean = this == MAX_MILLIS || this == -M
 
 /**
  * Checks if this Long value represents a finite duration.
- * @return true if this value is not infinite (not equal to MAX_MILLIS or -MAX_MILLIS), false otherwise
+ *
+ * @return true if this value is not infinite (not equal to `MAX_MILLIS` or `-MAX_MILLIS`), false otherwise
  */
 @kotlin.internal.InlineOnly
 private inline fun Long.isFinite(): Boolean = !isInfinite()
 
 /**
  * Checks if two Long values have the same sign.
+ *
  * @param a the first value
  * @param b the second value
- * @return true if both values have the same sign (both positive or both negative), false otherwise
+ * @return `true` if both values have the same sign (both positive or both negative), `false` otherwise
  */
 @kotlin.internal.InlineOnly
 private inline fun sameSign(a: Long, b: Long): Boolean = a xor b >= 0L
 
 /**
  * Fallback for parsing fractions with more than 15 digits using Double parsing.
+ *
  * @param startIndex start of the fraction substring (including decimal point)
  * @param endIndex end of the fraction substring
  * @param unit the duration unit of the whole part before the fraction
@@ -1372,17 +1391,19 @@ private fun String.parseFractionFallback(startIndex: Int, endIndex: Int, unit: D
 
 /**
  * Converts fraction digits (scaled to 15 decimal places) to nanoseconds for the given unit.
+ *
  * @param unit the duration unit of the whole part before the fraction
  * @return nanoseconds representing the fractional part
  */
 private fun Long.fractionDigitsToNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
 
 /**
- * Handles parsing errors based on the throwException flag.
- * @param throwException if true, throws IllegalArgumentException; if false, returns [Duration.INVALID]
+ * Handles parsing errors based on the [throwException] flag.
+ *
+ * @param throwException if true, throws [IllegalArgumentException]; if false, returns [Duration.INVALID]
  * @param message optional error message for the exception
- * @return [Duration.INVALID] (only when [throwException] is false)
- * @throws IllegalArgumentException when [throwException] is true
+ * @return [Duration.INVALID] (only when [throwException] is `false`)
+ * @throws IllegalArgumentException when [throwException] is `true`
  */
 @kotlin.internal.InlineOnly
 private inline fun handleError(throwException: Boolean, message: String = ""): Duration {
@@ -1391,14 +1412,16 @@ private inline fun handleError(throwException: Boolean, message: String = ""): D
 }
 
 /**
- * Executes the given block if this Duration is INVALID, otherwise returns this Duration.
- * @param block lambda to execute if Duration is INVALID
- * @return this Duration if valid, or the result of the block if INVALID
+ * Executes the given block if [this] is [Duration.INVALID], otherwise returns this Duration.
+ *
+ * @param block lambda to execute if Duration is [Duration.INVALID]
+ * @return [this] if valid, or the result of the block if [Duration.INVALID]
  */
 private inline fun Duration.onInvalid(block: () -> Duration?): Duration? = if (this == Duration.INVALID) block() else this
 
 /**
  * Skips characters in this string starting from the given index while they match the predicate.
+ *
  * @param startIndex the index to start skipping from
  * @param predicate condition to test each character
  * @return the index of the first character that doesn't match the predicate, or string length
@@ -1436,7 +1459,9 @@ private fun String.defaultDurationUnitByShortNameOrNull(start: Int): DurationUni
 
 /**
  * Parses a duration unit from its ISO 8601 short name at the given position.
- * Recognizes: D (days), H (hours), M (minutes), S (seconds).
+ *
+ * Recognizes: `D` (days), `H` (hours), `M` (minutes), `S` (seconds).
+ *
  * @param start the index in the string where the unit name starts
  * @return the corresponding [DurationUnit] or null if no valid unit is found
  */
@@ -1513,6 +1538,9 @@ private val DurationUnit.length: Int
 @kotlin.internal.InlineOnly
 private inline fun Long.multiplyBy10(): Long = (this shl 3) + (this shl 1)
 
+/**
+ * Read [Long.multiplyBy10] KDoc for details.
+ */
 @kotlin.internal.InlineOnly
 private inline fun Int.multiplyBy10(): Int = (this shl 3) + (this shl 1)
 
