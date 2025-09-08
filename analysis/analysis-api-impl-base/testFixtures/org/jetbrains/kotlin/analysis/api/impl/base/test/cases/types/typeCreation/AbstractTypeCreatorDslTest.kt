@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.plugin.sandbox.fir.types.PluginFunctionalNames
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -138,131 +137,6 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
 
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
-        }
-
-        inner class FunctionType {
-            fun testBasicFunWithIntReturnType(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    returnType = type
-                }
-            }
-
-            fun testBasicFunWithIntReturnTypeAndReceiver(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    returnType = type
-                    receiverType = type
-                }
-            }
-
-            fun testBasicNullableFunWithUserReturnType(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    returnType = type
-                    isMarkedNullable = true
-                }
-            }
-
-            fun testWithDefaultValues(): KaType {
-                return session.typeCreator.functionType()
-            }
-
-            fun testReflectWithDefaultValues(): KaType {
-                return session.typeCreator.functionType {
-                    isReflectType = true
-                }
-            }
-
-            fun testSuspendWithDefaultValues(): KaType {
-                return session.typeCreator.functionType {
-                    isSuspend = true
-                }
-            }
-
-            fun testReflectAndSuspendWithDefaultValues(): KaType {
-                return session.typeCreator.functionType {
-                    isReflectType = true
-                    isSuspend = true
-                }
-            }
-
-            fun testFourIntValueParameters(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    valueParameter(Name.identifier("first"), type)
-                    valueParameter(Name.identifier("second")) {
-                        type
-                    }
-                    valueParameter {
-                        functionValueParameter(Name.identifier("third")) {
-                            type
-                        }
-                    }
-                    valueParameter(functionValueParameter(Name.identifier("fourth"), type))
-                }
-            }
-
-            fun testWithSingleContextParameter(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    contextParameter {
-                        type
-                    }
-                }
-            }
-
-            fun testReflectWithSingleContextParameter(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    contextParameter {
-                        type
-                    }
-
-                    isReflectType = true
-                }
-            }
-
-            fun testWithContextParameterReceiverAndValueParameter(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    contextParameter(type)
-                    receiverType = type
-                    valueParameter(Name.identifier("myParameter"), type)
-                }
-            }
-
-            fun testWithPluginAnnotation(): KaType {
-                val annotationClassId = PluginFunctionalNames.MY_INLINEABLE_ANNOTATION_CLASS_ID
-                return session.typeCreator.functionType {
-                    annotation(annotationClassId)
-                }
-            }
-
-            fun testReflectWithStringReceiver(): KaType {
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    receiverType = type
-                    isReflectType = true
-                }
-            }
-
-            fun testWithAnnotation(): KaType {
-                val annotationClassId = ClassId.fromString("MyAnno")
-                return session.typeCreator.functionType {
-                    annotation { annotationClassId }
-                }
-            }
-
-            fun testWithAnnotationReceiverAndContextParameter(): KaType {
-                val annotationClassId = ClassId.fromString("MyAnno")
-                val type = getTypeByCaret("type")
-                return session.typeCreator.functionType {
-                    receiverType = type
-                    contextParameter { type }
-                    annotation(annotationClassId)
-                }
-            }
         }
     }
 }
