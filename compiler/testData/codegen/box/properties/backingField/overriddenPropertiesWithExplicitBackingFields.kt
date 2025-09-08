@@ -7,6 +7,7 @@
 open class A {
     @Suppress("VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD", "NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
     open var it: Number
+        @Suppress("WRONG_MODIFIER_TARGET")
         private field = 3
         @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
         set(value) {

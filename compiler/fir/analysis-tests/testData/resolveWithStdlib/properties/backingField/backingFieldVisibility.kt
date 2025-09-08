@@ -3,7 +3,7 @@
 
 class A {
     val a: Number
-        private field = 1
+        <!WRONG_MODIFIER_TARGET!>private<!> field = 1
 
     val b: Number
         <!WRONG_MODIFIER_TARGET!>internal<!> field = 2

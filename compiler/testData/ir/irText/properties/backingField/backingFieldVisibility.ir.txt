@@ -3,6 +3,8 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
     PROPERTY name:a visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        annotations:
+          Suppress(names = ["WRONG_MODIFIER_TARGET"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL returnType:kotlin.Number

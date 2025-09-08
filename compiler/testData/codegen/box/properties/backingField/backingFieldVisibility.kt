@@ -6,6 +6,7 @@
 
 class A {
     val a: Number
+        @Suppress("WRONG_MODIFIER_TARGET")
         private field = 1
 
     val b: Number
