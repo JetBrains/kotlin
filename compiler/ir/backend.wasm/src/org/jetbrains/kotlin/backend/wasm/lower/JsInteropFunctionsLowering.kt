@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl
 val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl
@@ -378,7 +380,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             )
         } else { //nullable reference should not be checked
             val nullableValueAdapter = valueAdapter?.let(::NullOrAdapter)
-            val undefinedToNullAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+            val undefinedToNullAdapter = FunctionBasedAdapter(notNullType.getJsCheckIsNullOrUndefinedAdapterFunction().owner)
             nullableValueAdapter
                 ?.let { CombineAdapter(it, undefinedToNullAdapter) }
                 ?: undefinedToNullAdapter
@@ -404,9 +406,15 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         // js value should convert undefined into null and the null-checked
         return CombineAdapter(
             outerAdapter = nullCheckedValueAdapter,
-            innerAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+            innerAdapter = FunctionBasedAdapter(notNullType.getJsCheckIsNullOrUndefinedAdapterFunction().owner)
         )
     }
+
+    private fun IrType.getJsCheckIsNullOrUndefinedAdapterFunction() =
+        if (getClass()?.isJsShareable(symbols) ?: false)
+            adapters.jsCheckIsNullOrUndefinedShareableAdapter
+        else
+            adapters.jsCheckIsNullOrUndefinedAdapter
 
     private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
         if (isReturn && this == builtIns.unitType)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -68,13 +69,18 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             irBuiltins.eqeqSymbol,
             irBuiltins.eqeqeqSymbol -> {
                 fun callRefIsNull(expr: IrExpression): IrCall {
+                    val exprClass = expr.type.erasedUpperBound
                     if (
                         !context.isWasmJsTarget &&
-                        expr.type.erasedUpperBound.isExternal
+                        exprClass.isExternal
                     ) {
                         error("Unexpected external refs in wasi mode")
                     }
-                    val refIsNull = if (expr.type.erasedUpperBound.isExternal) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
+                    val refIsNull = when {
+                        exprClass.isJsShareable(symbols) -> symbols.jsRelatedSymbols.jsShareableAnyIsNull
+                        exprClass.isExternal -> symbols.jsRelatedSymbols.externRefIsNull
+                        else -> symbols.refIsNull
+                    }
                     return builder.irCall(refIsNull).apply { arguments[0] = expr }
                 }
 

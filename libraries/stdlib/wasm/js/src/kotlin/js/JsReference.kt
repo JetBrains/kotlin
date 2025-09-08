@@ -7,7 +7,16 @@ package kotlin.js
 
 import kotlin.wasm.internal.WasmOp
 import kotlin.wasm.internal.implementedAsIntrinsic
-import kotlin.wasm.internal.returnArgumentIfItIsKotlinAny
+import kotlin.wasm.internal.returnShareableArgumentIfItIsKotlinAny
+
+/**
+ * A JavaScript value that can be shared between threads in "-Xwasm-use-shared-objects" mode.
+ *
+ * Currently, only JsReference can be shareable, but eventually user-defined JS types may be supported as well,
+ * with respective changes in `KotlinJsBox` and `externRefToAny`.
+ */
+@ExperimentalWasmJsInterop
+public sealed external interface JsShareableAny : JsAny
 
 /**
  * JavaScript value that can serve as a reference for any Kotlin value.
@@ -17,7 +26,7 @@ import kotlin.wasm.internal.returnArgumentIfItIsKotlinAny
  */
 @Suppress("WRONG_JS_INTEROP_TYPE")  // Exception to the rule
 @ExperimentalWasmJsInterop
-public actual sealed external interface JsReference<out T : Any> : JsAny
+public actual sealed external interface JsReference<out T : Any> : JsShareableAny
 
 @WasmOp(WasmOp.EXTERN_EXTERNALIZE)
 @ExperimentalWasmJsInterop
@@ -27,6 +36,6 @@ public actual fun <T : Any> T.toJsReference(): JsReference<T> =
 /** Retrieve original Kotlin value from JsReference */
 @ExperimentalWasmJsInterop
 public actual fun <T : Any> JsReference<T>.get(): T {
-    returnArgumentIfItIsKotlinAny()
+    returnShareableArgumentIfItIsKotlinAny()
     throw ClassCastException("JsReference doesn't contain a Kotlin type")
 }
