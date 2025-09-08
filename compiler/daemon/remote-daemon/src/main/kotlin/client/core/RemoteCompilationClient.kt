@@ -16,6 +16,7 @@ import common.RemoteCompilationService
 import common.computeSha256
 import common.createTarArchive
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -38,6 +39,7 @@ import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
 
@@ -91,7 +93,7 @@ class RemoteCompilationClient(
         val dependencyFiles = CompilerUtils.getDependencyFiles(parsedArgs)
         val compilerPluginFiles = CompilerUtils.getXPluginFiles(parsedArgs)
 
-        val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
+        val fileChunks = ConcurrentHashMap<String, MutableList<FileChunk>>()
 
         val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
         val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
@@ -113,7 +115,7 @@ class RemoteCompilationClient(
                     when (it) {
                         is FileTransferReply -> {
                             if (!it.isPresent) {
-                                launch {
+                                launch(Dispatchers.IO) {
                                     val file = File(it.filePath)
                                     if (Files.isDirectory(file.toPath())) {
                                         Files.createDirectories(CLIENT_TMP_DIR.resolve(file.parent))
@@ -135,7 +137,7 @@ class RemoteCompilationClient(
                             }
                         }
                         is FileChunk -> {
-                            launch {
+                            launch(Dispatchers.IO) {
                                 val moduleName = CompilerUtils.getModuleName(parsedArgs)
                                 fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
@@ -172,35 +174,34 @@ class RemoteCompilationClient(
                 )
 
                 // then we will ask the server if a source file is present in the server cache
-                sourceFiles.forEach {
-                    requestChannel.send(
-                        FileTransferRequest(
-                            it.path,
-                            computeSha256(it),
-                            ArtifactType.SOURCE
-                        )
-                    )
+                val sourceRequests = sourceFiles.map { file ->
+                    async(Dispatchers.IO) {
+                        FileTransferRequest(file.path, computeSha256(file), ArtifactType.SOURCE)
+                    }
+                }
+                val dependencyRequests = dependencyFiles.map { file ->
+                    async(Dispatchers.IO) {
+                        FileTransferRequest(file.path, computeSha256(file), ArtifactType.DEPENDENCY)
+                    }
+                }
+                val pluginRequests = compilerPluginFiles.map { file ->
+                    async(Dispatchers.IO) {
+                        FileTransferRequest(file.path, computeSha256(file), ArtifactType.COMPILER_PLUGIN)
+                    }
                 }
 
-                dependencyFiles.forEach {
-                    requestChannel.send(
-                        FileTransferRequest(
-                            it.path,
-                            computeSha256(it),
-                            ArtifactType.DEPENDENCY
-                        )
-                    )
+                launch {
+                    sourceRequests.forEach { request ->
+                        launch { requestChannel.send(request.await()) }
+                    }
+                    dependencyRequests.forEach { request ->
+                        launch { requestChannel.send(request.await()) }
+                    }
+                    pluginRequests.forEach { request ->
+                        launch { requestChannel.send(request.await()) }
+                    }
                 }
 
-                compilerPluginFiles.forEach {
-                    requestChannel.send(
-                        FileTransferRequest(
-                            it.path,
-                            computeSha256(it),
-                            ArtifactType.COMPILER_PLUGIN
-                        )
-                    )
-                }
             }
             responseJob.join()
         }
