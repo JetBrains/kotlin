@@ -1081,7 +1081,7 @@ private fun parseIsoStringFormat(
         }
 
         val longStartIndex = index
-        var sign = -1
+        val sign: Int
         val longValue = LongParser.iso.parse(value, index) { longEndIndex, localSign, _ ->
             index = longEndIndex
             // A numerical value should not be empty, and it has to be followed by a unit (i.e., it cannot terminate a string)
@@ -1259,6 +1259,7 @@ internal class LongParser private constructor(private val overflowLimit: Long, p
      * @return The parsed value, clamped to [overflowLimit] if overflow occurred
      */
     inline fun parse(value: String, startIndex: Int, callback: (endIndex: Int, sign: Int, hasOverflow: Boolean) -> Unit): Long {
+        contract { callsInPlace(callback, InvocationKind.EXACTLY_ONCE) }
         var sign = 1
         var index = startIndex
         if (withSign) {
