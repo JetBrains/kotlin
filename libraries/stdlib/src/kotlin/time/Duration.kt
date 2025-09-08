@@ -1011,7 +1011,6 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
 
-
 /**
  * Parses a duration string in either ISO-8601 or default format.
  *
@@ -1552,8 +1551,6 @@ private inline fun Long.multiplyBy10(): Long = (this shl 3) + (this shl 1)
 private inline fun Int.multiplyBy10(): Int = (this shl 3) + (this shl 1)
 
 
-
-
 // The ranges are chosen so that they are:
 // - symmetric relative to zero: this greatly simplifies operations with sign, e.g. unaryMinus and minus.
 // - non-overlapping, but adjacent: the first value that doesn't fit in nanos range, can be exactly represented in millis.
@@ -1561,10 +1558,13 @@ private inline fun Int.multiplyBy10(): Int = (this shl 3) + (this shl 1)
 internal const val NANOS_IN_MILLIS = 1_000_000
 internal const val MICROS_IN_MILLIS = 1_000L
 internal const val NANOS_IN_MICROS = 1_000L
+
 // maximum number duration can store in nanosecond range
 internal const val MAX_NANOS = Long.MAX_VALUE / 2 / NANOS_IN_MILLIS * NANOS_IN_MILLIS - 1 // ends in ..._999_999
+
 // maximum number duration can store in millisecond range, also encodes an infinite value
 internal const val MAX_MILLIS = Long.MAX_VALUE / 2
+
 // MAX_NANOS expressed in milliseconds
 private const val MAX_NANOS_IN_MILLIS = MAX_NANOS / NANOS_IN_MILLIS
 
