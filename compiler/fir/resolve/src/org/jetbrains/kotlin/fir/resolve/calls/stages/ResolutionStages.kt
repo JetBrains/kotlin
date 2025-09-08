@@ -321,7 +321,7 @@ object CheckContextArguments : ResolutionStage() {
         val newArgumentPrefix = mutableListOf<ConeResolutionAtom>()
         repeat(count) { index ->
             val newValue =
-                resultingContextArguments?.get(index) ?: ConeResolutionAtom.createRawAtom(
+                resultingContextArguments?.get(index)?.copyImplicitValueExpression() ?: ConeResolutionAtom.createRawAtom(
                     buildErrorExpression(
                         source = callInfo.callSite.source,
                         // `mapContextArgumentsOrNull` should report a diagnostic to the sink
@@ -340,6 +340,21 @@ object CheckContextArguments : ResolutionStage() {
 
         @OptIn(Candidate.UpdatingCandidateInvariants::class)
         replaceArgumentPrefix(newArgumentPrefix)
+    }
+
+    /**
+     * In `invoke` convention calls, context arguments become normal arguments.
+     *
+     * Unlike context arguments, normal argument **expressions** must be unique because we will build a
+     * `Map<FirExpression, FirValueParameter>` later, and if argument expressions are reused, the map will have too few entries.
+     * However, expressions for accessing implicit values like context parameters and implicit receivers are created
+     * per implicit value, and therefore, we can get duplicates if one value matches multiple context parameters.
+     *
+     * The solution is to build copies of the expressions here.
+     */
+    private fun ConeResolutionAtom.copyImplicitValueExpression(): ConeResolutionAtom {
+        if (this !is ConeSimpleLeafResolutionAtom) return this
+        return ConeResolutionAtom.createRawAtom(expression.copyImplicitValueExpression())
     }
 }
 

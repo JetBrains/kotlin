@@ -380,6 +380,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         builder(smartCastExpression) {
+            withCopy()
+        }
+
+        builder(inaccessibleReceiverExpression) {
+            withCopy()
         }
 
         builder(tryExpression) {

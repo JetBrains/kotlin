@@ -1,6 +1,5 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-77541
 
 interface Scope {
@@ -21,5 +20,16 @@ fun box(): String {
     context(l) {
         testContextAnonymousFun()
     }
-    return if (l.x == 5) "OK" else "NOT OK: ${l.x}"
+    with(l) {
+        testContextAnonymousFun()
+    }
+
+    val x: Any = l
+    with(x) {
+        if (this is Local) {
+            testContextAnonymousFun()
+        }
+    }
+
+    return if (l.x == 15) "OK" else "NOT OK: ${l.x}"
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirInaccessibleReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -45,4 +46,17 @@ inline fun buildInaccessibleReceiverExpression(init: FirInaccessibleReceiverExpr
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirInaccessibleReceiverExpressionBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
+inline fun buildInaccessibleReceiverExpressionCopy(original: FirInaccessibleReceiverExpression, init: FirInaccessibleReceiverExpressionBuilder.() -> Unit): FirInaccessibleReceiverExpression {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirInaccessibleReceiverExpressionBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.calleeReference = original.calleeReference
+    return copyBuilder.apply(init).build()
 }
