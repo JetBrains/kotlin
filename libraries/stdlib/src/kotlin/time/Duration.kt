@@ -1359,7 +1359,10 @@ private fun Long.addMillisWithoutOverflow(other: Long): Long = when {
 
 /**
  * Checks if this Long value represents an infinite duration.
- * @return true if this value equals MAX_MILLIS or -MAX_MILLIS, false otherwise
+ *
+ * This corresponds to the internal representation of [Duration.INFINITE] and [Duration.NEG_INFINITE].
+ *
+ * @return true if this value equals [MAX_MILLIS] or -[MAX_MILLIS], false otherwise
  */
 @kotlin.internal.InlineOnly
 private inline fun Long.isInfinite(): Boolean = this == MAX_MILLIS || this == -MAX_MILLIS
