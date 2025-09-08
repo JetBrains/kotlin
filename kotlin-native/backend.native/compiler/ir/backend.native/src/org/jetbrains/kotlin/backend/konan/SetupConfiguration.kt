@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.TARGET_PLATFORM
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(KonanConfigKeys) {
     val commonSources = arguments.commonSources?.toSet().orEmpty().map { it.absoluteNormalizedFile() }
@@ -342,8 +345,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
     putIfNotNull(KONAN_DATA_DIR, arguments.konanDataDir)
 
-    if (arguments.manifestNativeTargets != null)
-        putIfNotNull(MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(arguments.manifestNativeTargets!!))
+    val manifestNativeTargets = arguments.manifestNativeTargets?.let { parseManifestNativeTargets(it) }
+    putIfNotNull(MANIFEST_NATIVE_TARGETS, manifestNativeTargets)
+    put(TARGET_PLATFORM, NativePlatforms.nativePlatformByTargets(manifestNativeTargets.orEmpty()))
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
     putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
