@@ -286,6 +286,7 @@ private class TerminateException(file: File) : FileSystemException(file) {}
  * @param overwrite `true` if it is allowed to overwrite existing destination files and directories.
  * @return `false` if the copying was terminated, `true` otherwise.
  */
+@IgnorableReturnValue
 public fun File.copyRecursively(
     target: File,
     overwrite: Boolean = false,
@@ -345,6 +346,7 @@ public fun File.copyRecursively(
  *
  * @return `true` if the file or directory is successfully deleted, `false` otherwise.
  */
+@IgnorableReturnValue
 public fun File.deleteRecursively(): Boolean = walkBottomUp().fold(true, { res, it -> (it.delete() || !it.exists()) && res })
 
 /**
