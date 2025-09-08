@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
-    KtClassElementType CLASS = new KtClassElementType("CLASS");
+    KtClassElementType CLASS = KtClassElementType.INSTANCE;
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
     KtPropertyAccessorElementType PROPERTY_ACCESSOR = new KtPropertyAccessorElementType("PROPERTY_ACCESSOR");

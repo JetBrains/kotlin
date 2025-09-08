@@ -2056,8 +2056,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationUseSiteTargetElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtBlockStringTemplateEntryElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
