@@ -8,7 +8,7 @@ KaUsualClassType:
       name: Array
       symbol: KaNamedClassSymbol(kotlin/Array)
       typeArguments: [
-        KaUsualClassType:
+        in KaUsualClassType:
           abbreviation: null
           annotations: []
           classId: kotlin/String
@@ -27,7 +27,7 @@ KaUsualClassType:
   ]
   symbol: KaNamedClassSymbol(kotlin/Array)
   typeArguments: [
-    KaUsualClassType:
+    in KaUsualClassType:
       abbreviation: null
       annotations: []
       classId: kotlin/String
@@ -48,4 +48,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-kotlin.Array<kotlin.String>
+kotlin.Array<in kotlin.String>

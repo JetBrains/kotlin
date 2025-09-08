@@ -7,13 +7,17 @@ KaUsualClassType:
     KaResolvedClassTypeQualifier:
       name: Array
       symbol: KaNamedClassSymbol(kotlin/Array)
-      typeArguments: []
+      typeArguments: [
+        *
+      ]
   ]
   symbol: KaNamedClassSymbol(kotlin/Array)
-  typeArguments: []
+  typeArguments: [
+    *
+  ]
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 
 Rendered type:
-kotlin.Array
+kotlin.Array<*>

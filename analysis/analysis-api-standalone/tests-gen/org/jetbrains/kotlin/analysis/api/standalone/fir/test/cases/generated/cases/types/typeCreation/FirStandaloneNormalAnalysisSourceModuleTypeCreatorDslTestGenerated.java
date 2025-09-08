@@ -114,5 +114,17 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     public void testUserTypeWithAnnotations() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/userTypeWithAnnotations.kt");
     }
+
+    @Test
+    @TestMetadata("withAnnotationRequiringArguments.kt")
+    public void testWithAnnotationRequiringArguments() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/withAnnotationRequiringArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("withGenericAnnotation.kt")
+    public void testWithGenericAnnotation() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/withGenericAnnotation.kt");
+    }
   }
 }
