@@ -764,13 +764,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ?: emptySet()
             stableTypeMatchers.addAll(testingMatchers)
 
-            val jvmLambdaScheme = configuration.get(JVMConfigurationKeys.LAMBDAS)
-                ?: if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)) {
-                    JvmClosureGenerationScheme.INDY
-                } else {
-                    JvmClosureGenerationScheme.CLASS
-                }
-
             return ComposeIrGenerationExtension(
                 liveLiteralsEnabled = liveLiteralsEnabled,
                 liveLiteralsV2Enabled = liveLiteralsV2Enabled,
@@ -786,7 +779,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 featureFlags = featureFlags,
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
                 messageCollector = configuration.messageCollector,
-                indyJvmLambdasEnabled = jvmLambdaScheme == JvmClosureGenerationScheme.INDY,
                 targetRuntimeVersion = targetRuntimeVersion,
             )
         }

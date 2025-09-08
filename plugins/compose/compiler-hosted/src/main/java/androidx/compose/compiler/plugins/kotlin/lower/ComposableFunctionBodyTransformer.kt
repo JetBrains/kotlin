@@ -384,8 +384,7 @@ class ComposableFunctionBodyTransformer(
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
-    private val indyEnabled: Boolean,
-    private val targetRuntimeVersion: ComposeRuntimeVersion?,
+    targetRuntimeVersion: ComposeRuntimeVersion?,
     featureFlags: FeatureFlags,
 ) :
     AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -586,8 +585,9 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
-    private val emitParameterNames
-        get() = indyEnabled &&
+    private val emitParameterNames =
+        context.languageVersionSettings.languageVersion.usesK2 &&
+                context.platform.isJvm() &&
                 targetRuntimeVersion.supportsFeature(ComposeRuntimeFeature.SourceInfoParameterNames) {
                     context.referenceClass(ComposeClassIds.SourceInformation) != null
                 }
@@ -4079,7 +4079,7 @@ class ComposableFunctionBodyTransformer(
             }
 
             private fun parameterInformation(): String =
-                if (!transformer.emitParameterNames ) {
+                if (!transformer.emitParameterNames) {
                     function.parameterInformation()
                 } else {
                     // D8 removes all parameter information when processing invokedynamic.
