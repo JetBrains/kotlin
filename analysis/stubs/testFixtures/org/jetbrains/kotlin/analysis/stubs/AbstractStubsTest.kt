@@ -10,13 +10,9 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.UnsyncByteArrayOutputStream
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -106,24 +102,8 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
     abstract fun computeStub(file: KtFile): PsiFileStub<*>?
 }
 
-abstract class AbstractCompiledStubsTest : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = CompiledStubsTestConfigurator()
-
-    override fun computeStub(file: KtFile): PsiFileStub<*>? = ClsClassFinder.allowMultifileClassPart {
-        StubTreeLoader.getInstance()
-            .build(/* project = */ null, /* vFile = */ file.virtualFile, /* psiFile = */ null)
-            ?.root
-            ?.let { it as PsiFileStub<*> }
-    }
-}
-
-private open class CompiledStubsTestConfigurator : AnalysisApiFirBinaryTestConfigurator() {
-    override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
-    override val testPrefixes: List<String> get() = listOf("compiled")
-}
-
 abstract class AbstractDecompiledStubsTest : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = object : CompiledStubsTestConfigurator() {
+    override val configurator: AnalysisApiTestConfigurator = object : AbstractCompiledStubsTest.CompiledStubsTestConfigurator() {
         override val testPrefixes: List<String> get() = listOf("decompiled") + super.testPrefixes
     }
 
