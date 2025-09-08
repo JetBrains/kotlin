@@ -81,16 +81,8 @@ class RemoteCompilationClient(
     }
 
     init {
-        CLIENT_COMPILED_DIR.toFile().mkdirs()
-        CLIENT_TMP_DIR.toFile().mkdirs()
-
-        // TODO: this is just a convenient for testing and debugging
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
-                CLIENT_COMPILED_DIR.deleteRecursively()
-                CLIENT_TMP_DIR.deleteRecursively()
-            },
-        )
+        Files.createDirectories(CLIENT_COMPILED_DIR)
+        Files.createDirectories(CLIENT_TMP_DIR)
     }
 
     suspend fun compile(projectName: String, compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
@@ -99,11 +91,10 @@ class RemoteCompilationClient(
         val dependencyFiles = CompilerUtils.getDependencyFiles(parsedArgs)
         val compilerPluginFiles = CompilerUtils.getXPluginFiles(parsedArgs)
 
-
         val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
-        val requestChannel = Channel<CompileRequest>(capacity = Channel.Factory.UNLIMITED)
-        val responseChannel = Channel<CompileResponse>(capacity = Channel.Factory.UNLIMITED)
+        val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
+        val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
         var compilationResult: CompilationResult? = null
 
         val fileChunkStrategy = FixedSizeChunkingStrategy()

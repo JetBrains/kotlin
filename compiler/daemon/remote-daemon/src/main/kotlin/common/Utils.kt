@@ -22,11 +22,11 @@ fun calculateCompilationInputHash(
     val importantCompilerArgs = args.copyOf()
     importantCompilerArgs.destination = null
     importantCompilerArgs.classpath = null
-    importantCompilerArgs.pluginConfigurations = null
+    importantCompilerArgs.pluginClasspaths = null
     importantCompilerArgs.freeArgs = importantCompilerArgs.freeArgs.filter { !it.startsWith("/") }
 
     val digest = MessageDigest.getInstance("SHA-256")
-    val files = CompilerUtils.getSourceFiles(args) + CompilerUtils.getDependencyFiles(args)
+    val files = CompilerUtils.getSourceFiles(args) + CompilerUtils.getDependencyFiles(args) + CompilerUtils.getXPluginFiles(args)
     files.sortedBy { it.path }.forEach { file ->
         digest.update(computeSha256(file).toByteArray(Charsets.UTF_8))// TODO: double check this approach
     }

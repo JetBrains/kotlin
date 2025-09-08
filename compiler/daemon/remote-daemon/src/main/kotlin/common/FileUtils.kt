@@ -53,7 +53,6 @@ fun computeSha256(file: File): String {
     // will be hashed differently and that's and issue
     val digest = MessageDigest.getInstance("SHA-256")
     if (file.isDirectory) {
-        digest.update(file.name.toByteArray(Charsets.UTF_8))
         file.walkTopDown()
             .filter { it.isFile }
             .sortedBy { it.relativeTo(file).path }
