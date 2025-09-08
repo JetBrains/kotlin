@@ -59,7 +59,7 @@ interface KotlinTypeAliasStub : KotlinClassifierStub<KtTypeAlias>, KotlinStubWit
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub<T>, KotlinStubWithFqName<T> {
-    val isLocal: Boolean
+    val isLocal: Boolean get() = classId == null
     val superNames: List<String>
     val isTopLevel: Boolean
 }

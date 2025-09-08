@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 object Utils {
-    fun wrapStrings(names: List<String>): Array<StringRef> {
-        return Array(names.size) { i -> StringRef.fromString(names[i])!! }
-    }
+    fun wrapStrings(names: List<String>): Array<StringRef> = if (names.isEmpty())
+        StringRef.EMPTY_ARRAY
+    else
+        Array(names.size) { i -> StringRef.fromString(names[i])!! }
 }
 
 

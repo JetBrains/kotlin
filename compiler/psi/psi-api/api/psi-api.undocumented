@@ -2059,7 +2059,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType:constructor(St
 org.jetbrains.kotlin.psi.stubs.elements.KtBlockStringTemplateEntryElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType:constructor(String)
-org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType:getStubType(boolean)
 org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
@@ -2258,6 +2257,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.PARAMETER_REFERENCE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.RETURNS
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.deserialize(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
+org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFacade(FqName, FqName)

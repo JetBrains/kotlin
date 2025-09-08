@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
@@ -22,13 +23,11 @@ import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun createClassStub(
     parent: StubElement<out PsiElement>,
@@ -132,31 +131,32 @@ private class ClassClsStubBuilder(
         val superTypeRefs = supertypeIds.filterNot {
             //TODO: filtering function types should go away
             isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
-        }.map { it.shortClassName.ref() }.toTypedArray()
-        val classId = classId.takeUnless { it.isLocal }
+        }.map { it.shortClassName.ref() }.ifNotEmpty { toTypedArray() } ?: StringRef.EMPTY_ARRAY
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {
                 KotlinObjectStubImpl(
                     parentStub, shortName, fqName,
                     classId = classId,
                     superTypeRefs,
-                    isTopLevel = !this.classId.isNestedClass,
+                    isTopLevel = !classId.isNestedClass,
                     isLocal = false,
                     isObjectLiteral = false,
                 )
             }
+
+            ProtoBuf.Class.Kind.ENUM_ENTRY -> error("Enum entries have to be created as members via '${::createEnumEntryStubs.name}'")
+
             else -> {
                 KotlinClassStubImpl(
-                    parentStub,
-                    fqName.ref(),
+                    parent = parentStub,
+                    qualifiedName = fqName.ref(),
                     classId = classId,
-                    shortName,
-                    superTypeRefs,
+                    name = shortName,
+                    superNameRefs = superTypeRefs,
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
-                    isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                     isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                     isLocal = false,
-                    isTopLevel = !this.classId.isNestedClass,
+                    isTopLevel = !classId.isNestedClass,
                     valueClassRepresentation = valueClassRepresentation(),
                 )
             }
@@ -214,18 +214,11 @@ private class ClassClsStubBuilder(
         classProto.enumEntryList.forEach { entry ->
             val name = c.nameResolver.getName(entry.name)
             val annotations = c.components.annotationLoader.loadEnumEntryAnnotations(thisAsProtoContainer, entry)
-            val enumEntryStub = KotlinClassStubImpl(
+            val enumEntryStub = KotlinEnumEntryStubImpl(
                 classBody,
                 qualifiedName = c.containerFqName.child(name).ref(),
-                classId = null, // enum entry do not have class id
                 name = name.ref(),
-                superNameRefs = arrayOf(),
-                isInterface = false,
-                isEnumEntry = true,
-                isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
                 isLocal = false,
-                isTopLevel = false,
-                valueClassRepresentation = null,
             )
 
             if (annotations.isNotEmpty()) {

@@ -9,50 +9,59 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
-class KotlinClassStubImpl(
+class KotlinEnumEntryStubImpl(
     parent: StubElement<*>?,
     private val qualifiedName: StringRef?,
-    override val classId: ClassId?,
     private val name: StringRef?,
-    private val superNameRefs: Array<StringRef>,
-    override val isInterface: Boolean,
-    override val isClsStubCompiledToJvmDefaultImplementation: Boolean,
     override val isLocal: Boolean,
-    override val isTopLevel: Boolean,
-    val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
-    elementType = KtStubElementTypes.CLASS,
+    elementType = KtStubElementTypes.ENUM_ENTRY,
 ), KotlinClassStub {
+    override val isClsStubCompiledToJvmDefaultImplementation: Boolean
+        get() = false
+
     override val isEnumEntry: Boolean
+        get() = true
+
+    override val isInterface: Boolean
+        get() = false
+
+    override val classId: ClassId?
+        get() = null
+
+    override val isTopLevel: Boolean
         get() = false
 
     override val fqName: FqName?
         get() = qualifiedName?.string?.let(::FqName)
 
-    override fun getName(): String? = StringRef.toString(name)
+    override fun getName(): String? = name?.string
 
     override val superNames: List<String>
-        get() = superNameRefs.map(StringRef::toString)
+        get() {
+            if (findChildStubByType(KtStubElementTypes.INITIALIZER_LIST) == null) {
+                return emptyList()
+            }
+
+            val enumClassStub = parentStub?.parentStub as? KotlinClassStub ?: error("Enum entry should have enum class parent")
+            // Invalid code might have an enum class without a name
+            val enumClassName = enumClassStub.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
+            return listOf(enumClassName)
+        }
 
     @KtImplementationDetail
-    override fun copyInto(newParent: StubElement<*>?): KotlinClassStubImpl = KotlinClassStubImpl(
+    override fun copyInto(newParent: StubElement<*>?): KotlinEnumEntryStubImpl = KotlinEnumEntryStubImpl(
         parent = newParent,
         qualifiedName = qualifiedName,
-        classId = classId,
         name = name,
-        superNameRefs = superNameRefs,
-        isInterface = isInterface,
-        isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
         isLocal = isLocal,
-        isTopLevel = isTopLevel,
-        valueClassRepresentation = valueClassRepresentation,
     )
 }

@@ -62,7 +62,7 @@ internal object KtStubBasedElementTypes {
         provider.propertyType
 
     @JvmField
-    val ENUM_ENTRY: KtStubElementType<out KotlinClassStub, KtClass> =
+    val ENUM_ENTRY: KtStubElementType<out KotlinClassStub, KtEnumEntry> =
         provider.enumEntryType
 
     @JvmField

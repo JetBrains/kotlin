@@ -61,7 +61,7 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty> =
         KtStubElementTypes.PROPERTY
 
-    override val enumEntryType: KtStubElementType<out KotlinClassStub, KtClass> =
+    override val enumEntryType: KtStubElementType<out KotlinClassStub, KtEnumEntry> =
         KtStubElementTypes.ENUM_ENTRY
 
     override val primaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor> =

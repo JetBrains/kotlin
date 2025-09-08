@@ -41,7 +41,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.FUNCTION)
 
     val enumEntries: List<KtEnumEntry>
-        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ENUM_ENTRY).filterIsInstance<KtEnumEntry>()
+        get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ENUM_ENTRY)
 
     val allCompanionObjects: List<KtObjectDeclaration>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }

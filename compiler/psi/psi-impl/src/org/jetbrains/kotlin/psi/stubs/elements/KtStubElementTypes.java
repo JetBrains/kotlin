@@ -15,7 +15,7 @@ public interface KtStubElementTypes {
     KtBackingFieldElementType BACKING_FIELD = new KtBackingFieldElementType("BACKING_FIELD");
     KtTypeAliasElementType TYPEALIAS = new KtTypeAliasElementType("TYPEALIAS");
 
-    KtClassElementType ENUM_ENTRY = new KtClassElementType("ENUM_ENTRY");
+    KtEnumEntryElementType ENUM_ENTRY = KtEnumEntryElementType.INSTANCE;
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
     KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
             new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
