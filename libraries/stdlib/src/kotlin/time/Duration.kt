@@ -1211,7 +1211,7 @@ private fun parseDefaultStringFormat(
             }
         }
 
-        index += unit.length
+        index += unit.shortNameLength
 
         if (hasFractionalPart) {
             if (index < length) {
@@ -1220,7 +1220,7 @@ private fun parseDefaultStringFormat(
 
             // Since totalNanos is at most 1_998_999, and the added value is at most 10^15, their sum will never overflow.
             totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
-                value.parseFractionFallback(fractionStartIndex, index - unit.length, unit)
+                value.parseFractionFallback(fractionStartIndex, index - unit.shortNameLength, unit)
             else
                 fractionValue.fractionDigitsToNanos(unit)
         }
@@ -1519,7 +1519,7 @@ private val DurationUnit.fallbackFractionMultiplier: Long
  * The length of this unit's short name in characters.
  * Returns 2 for two-character units (ms, us, ns) and 1 for single-character units (d, h, m, s).
  */
-private val DurationUnit.length: Int
+private val DurationUnit.shortNameLength: Int
     get() = when (this) {
         DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
         else -> 1
