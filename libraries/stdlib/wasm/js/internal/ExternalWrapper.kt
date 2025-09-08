@@ -166,7 +166,10 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     //     return
     // }
     // If ref is an instance of kotlin class -- return it casted to Any
-    returnArgumentIfItIsKotlinAny()
+
+    // FIXME hack to check how many other problems with externs we have
+    //  Here we have a problem because ref is non-shared and thus cannot represent Any
+//    returnArgumentIfItIsKotlinAny()
 
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
@@ -175,11 +178,14 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
 }
 
 
-internal fun anyToExternRef(x: Any): ExternalInterfaceType {
+internal fun anyToExternRef(x: Any): ExternalInterfaceType? {
     return if (x is JsExternalBox)
         x.ref
     else
-        x.asWasmExternRef()
+        // FIXME hack to check how many other problems with externs we have
+        //  Here we have a problem because x.ref is non-shared but Any is shared.
+        null
+        // x.asWasmExternRef()
 }
 
 internal fun stringLength(x: ExternalInterfaceType): Int =
