@@ -1,5 +1,5 @@
 language = Objective-C
-package = platform.UIUtilities
+package = platform.UIKit
 
 modules = UIUtilities
 compilerOpts = -framework UIUtilities
