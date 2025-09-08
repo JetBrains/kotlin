@@ -231,10 +231,10 @@ class DurationParserTest {
         assertEquals(123456789000000L, result)
 
         // Test 10 digits (crosses boundary)
-        result = FractionalParser.parse("1234567890", 0) { endIndex ->
+        result = FractionalParser.parse("1234567891", 0) { endIndex ->
             assertEquals(10, endIndex)
         }
-        assertEquals(123456789000000L, result)
+        assertEquals(123456789100000L, result)
     }
 
     @Test
