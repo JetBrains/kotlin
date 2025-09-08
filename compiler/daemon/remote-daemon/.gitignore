@@ -1,4 +1,2 @@
-src/main/kotlin/client/compiled/*
-src/main/kotlin/server/cache
-src/main/kotlin/server/outputs
-src/main/kotlin/server/workspace
+storage/
+client-storage/
