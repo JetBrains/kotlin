@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.caches.getOrPutWithNullableValue
 import org.jetbrains.kotlin.analysis.api.platform.caches.nullValueToNull
 import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCacheInternals
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import java.util.concurrent.ConcurrentHashMap
@@ -101,4 +102,8 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
     }
 
     override fun getValueIfComputed(key: K): V? = cache.getIfPresent(key)?.nullValueToNull()
+
+    @FirCacheInternals
+    override val cachedValues: Collection<V>
+        get() = cache.asMap().values.mapNotNull { it.nullValueToNull() }
 }
