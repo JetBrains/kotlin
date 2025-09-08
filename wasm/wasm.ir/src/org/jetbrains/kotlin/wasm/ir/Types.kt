@@ -28,6 +28,7 @@ object WasmAnyRef : WasmType("anyref", -0x12)
 object WasmEqRef : WasmType("eqref", -0x13)
 object WasmRefNullrefType : WasmType("nullref", -0x0F) // Shorthand for (ref null none)
 object WasmRefNullExternrefType : WasmType("nullexternref", -0x0E) // Shorthand for (ref null noextern)
+object WasmRefNullSharedExternrefType : WasmType("nullexternref", -0x0E) // Shorthand for (ref null (shared noextern))
 
 object WasmExnRefType : WasmType("exnref", -0x17) // Shorthand for (ref null exn)
 object WasmNullExnRefType : WasmType("nullexnref", -0x0c) // Shorthand for (ref null noexn)
@@ -51,12 +52,14 @@ sealed class WasmHeapType {
     sealed class Simple(val name: String, val code: Byte) : WasmHeapType() {
         object Func : Simple("func", -0x10)
         object Extern : Simple("extern", -0x11)
+        object SharedExtern : Simple("extern", -0x11) // TODO change to non-simple Shared(HeapType)
         object Any : Simple("any", -0x12)
         object Eq : Simple("eq", -0x13)
         object Struct : Simple("struct", -0x15)
         object None : Simple("none", -0x0F)
         object NoFunc : Simple("nofunc", -0x0D)
         object NoExtern : Simple("noextern", -0x0E)
+        object SharedNoExtern : Simple("noextern", -0x0E)
 
         override fun toString(): String {
             return "Simple:$name(${code.toString(16)})"
@@ -75,11 +78,12 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmRefNullType -> heapType
         is WasmRefNullrefType -> WasmHeapType.Simple.None
         is WasmRefNullExternrefType -> WasmHeapType.Simple.NoExtern
+        is WasmRefNullSharedExternrefType -> WasmHeapType.Simple.SharedNoExtern
         is WasmEqRef -> WasmHeapType.Simple.Eq
         is WasmAnyRef -> WasmHeapType.Simple.Any
         is WasmFuncRef -> WasmHeapType.Simple.Func
         is WasmExternRef -> WasmHeapType.Simple.Extern
-        is WasmSharedExternRef -> WasmHeapType.Simple.Extern // TODO add shared extern
+        is WasmSharedExternRef -> WasmHeapType.Simple.SharedExtern
         else -> error("Unknown heap type for type $this")
     }
 
@@ -88,6 +92,8 @@ fun WasmHeapType.Simple.isShareable() = when (this) {
     WasmHeapType.Simple.Eq -> true
     WasmHeapType.Simple.Struct -> true
     WasmHeapType.Simple.None -> true
+    WasmHeapType.Simple.SharedExtern -> true
+    WasmHeapType.Simple.SharedNoExtern -> true
     // while extern are potentially shareable, most of JS objects are actually non-shared
     WasmHeapType.Simple.Extern -> false
     WasmHeapType.Simple.NoExtern -> false
@@ -101,6 +107,7 @@ fun WasmType.isShareableRefType() = when (this) {
     is WasmStructRef -> true
     is WasmRefNullrefType -> true
     is WasmSharedExternRef -> true
+    is WasmRefNullSharedExternrefType -> true
     is WasmExternRef -> false
     is WasmRefNullExternrefType -> false
     else -> false

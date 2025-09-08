@@ -47,7 +47,7 @@ class BodyGenerator(
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
     private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
-    private val useIndirectVirtualCalls = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
+    private val useSharedObjects = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
     fun WasmExpressionBuilder.buildGetUnit() {
         buildGetGlobal(
@@ -532,7 +532,7 @@ class BodyGenerator(
     }
 
     override fun visitConst(expression: IrConst): Unit =
-        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation())
+        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation(), useSharedObjects)
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
@@ -546,7 +546,7 @@ class BodyGenerator(
                 // Doing nothing.
             } else {
                 generateInstanceFieldAccess(field, location)
-                if (useIndirectVirtualCalls && field.hasManagedExternrefAnnotation()) {
+                if (useSharedObjects && field.hasManagedExternrefAnnotation()) {
                     body.buildInstr(WasmOp.TABLE_GET, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
                 }
             }
@@ -587,7 +587,7 @@ class BodyGenerator(
         if (receiver != null) {
             generateExpression(receiver)
             generateExpression(expression.value)
-            if (useIndirectVirtualCalls && field.hasManagedExternrefAnnotation()) {
+            if (useSharedObjects && field.hasManagedExternrefAnnotation()) {
                 body.buildConstI32(1, location)
                 body.buildInstr(WasmOp.TABLE_GROW, location, WasmImmediate.TableIdx(EXTERNREF_TABLE))
                 // TODO maybe process errors (grows failed) by checking return value (-1 means error)
@@ -733,7 +733,7 @@ class BodyGenerator(
     private fun WasmExpressionBuilder.buildInstrCallRefOrIndirect(
         functionTypeReference: WasmSymbol<WasmFunctionType>,
         location: SourceLocation
-    ) = if (useIndirectVirtualCalls) {
+    ) = if (useSharedObjects) {
         buildInstr(
             WasmOp.CALL_INDIRECT,
             location,
@@ -747,7 +747,7 @@ class BodyGenerator(
     private fun WasmExpressionBuilder.buildInstrCallRefWithCastOrIndirect(
         functionTypeReference: WasmSymbol<WasmFunctionType>,
         location: SourceLocation
-    ) = if (useIndirectVirtualCalls) {
+    ) = if (useSharedObjects) {
         buildInstr(
             WasmOp.CALL_INDIRECT,
             location,
@@ -1355,9 +1355,14 @@ class BodyGenerator(
 
         // NOTHING? -> TYPE? -> (NOTHING?)NULL
         if (actualType.isNullableNothing() && expectedType.isNullable()) {
-            if (expectedType.getClass()?.isExternal == true) {
+            val expectedClass = expectedType.getClass()
+            if (expectedClass?.isExternal == true) {
                 body.buildDrop(location)
-                body.buildRefNull(WasmHeapType.Simple.NoExtern, location)
+                val baseWasmType = if (useSharedObjects && expectedClass.name.identifier == "JsReference")
+                    WasmHeapType.Simple.SharedNoExtern
+                else
+                    WasmHeapType.Simple.NoExtern
+                body.buildRefNull(baseWasmType, location)
             }
             return
         }
@@ -1366,7 +1371,7 @@ class BodyGenerator(
         if (actualType.isNullable() && expectedType.isNullableNothing()) {
             val type =
                 if (expectedType.getClass()?.isExternal == true)
-                    WasmHeapType.Simple.NoExtern
+                    WasmHeapType.Simple.NoExtern // fixme support shared
                 else
                     WasmHeapType.Simple.None
 

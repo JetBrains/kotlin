@@ -47,7 +47,7 @@ class DeclarationGenerator(
     private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
     private val unitPrimaryConstructor: IrConstructor? by lazy { backendContext.irBuiltIns.unitClass.owner.primaryConstructor }
 
-    private val useIndirectVirtualCalls = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
+    private val useSharedObjects = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
@@ -225,7 +225,7 @@ class DeclarationGenerator(
         // currently WasmGC do not support shared fun refs, so in case of "shared" objects vtable shall store indices into Wasm shared table
         // instead of func refs
         fun vtableFieldType(method: VirtualMethodMetadata): WasmType =
-            if (useIndirectVirtualCalls) {
+            if (useSharedObjects) {
                 WasmI32
             } else {
                 WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceFunctionType(method.function.symbol)))
@@ -349,7 +349,7 @@ class DeclarationGenerator(
             }
             buildStructNew(vTableTypeReference, location)
         }
-        val global = if (useIndirectVirtualCalls) {
+        val global = if (useSharedObjects) {
             // the right initializer for this mode shall set indices of table functions instead of func refs.
             // But these indices are not known until the module link phase, so we defer the "materialization"
             // of the init until that time and use the ref-based (incorrect for "shared" structs) initializer
@@ -461,7 +461,7 @@ class DeclarationGenerator(
         }
 
         val rttiGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.rttiType))
-        val rttiGlobal = if (useIndirectVirtualCalls) {
+        val rttiGlobal = if (useSharedObjects) {
             addTableFunctionsForFuncRefsOf(initRttiGlobal)
             DeferredWasmGlobal("${klass.fqNameWhenAvailable}_rtti", rttiGcType, false, initTemplate = initRttiGlobal)
         } else {
@@ -497,7 +497,7 @@ class DeclarationGenerator(
         }
 
         val iTablesArrRefGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType))
-        val wasmClassIFaceGlobal = if (useIndirectVirtualCalls) {
+        val wasmClassIFaceGlobal = if (useSharedObjects) {
             addTableFunctionsForFuncRefsOf(initITableGlobal)
             DeferredWasmGlobal("<classITable>", iTablesArrRefGcType, false, initTemplate = initITableGlobal)
         } else {
@@ -614,7 +614,8 @@ class DeclarationGenerator(
                 wasmExpressionGenerator,
                 wasmFileCodegenContext,
                 backendContext,
-                initValue.getSourceLocation(declaration.symbol, sourceFile)
+                initValue.getSourceLocation(declaration.symbol, sourceFile),
+                useSharedObjects
             )
         } else {
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
@@ -642,8 +643,10 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefType -> g.buildRefNull(type.heapType, location)
             is WasmRefNullrefType -> g.buildRefNull(WasmHeapType.Simple.None, location)
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
+            is WasmRefNullSharedExternrefType -> g.buildRefNull(WasmHeapType.Simple.SharedNoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
-            is WasmExternRef, WasmSharedExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location) // TODO add shared extern?
+            is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            is WasmSharedExternRef -> g.buildRefNull(WasmHeapType.Simple.SharedExtern, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }
@@ -666,12 +669,18 @@ fun generateConstExpression(
     body: WasmExpressionBuilder,
     context: WasmFileCodegenContext,
     backendContext: WasmBackendContext,
-    location: SourceLocation
+    location: SourceLocation,
+    useSharedObjects: Boolean,
 ) =
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound.isExternal
-            val bottomType = if (isExternal) WasmRefNullExternrefType else WasmRefNullrefType
+            val bottomType = if (isExternal) {
+                if (useSharedObjects && expression.type.getClass()?.name?.identifier == "JsReference")
+                    WasmRefNullSharedExternrefType
+                else
+                    WasmRefNullExternrefType
+            } else WasmRefNullrefType
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (expression.value as Boolean) 1 else 0, location)
