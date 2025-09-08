@@ -91,77 +91,6 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
 
-    private fun loadModule(moduleElement: Element): ModuleData {
-        val outputDir = moduleElement.getAttribute("outputDir").value
-        val moduleName = moduleElement.getAttribute("name").value
-        val moduleNameQualifier = outputDir.substringAfterLast("/")
-        val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
-        val classpath = mutableListOf<String>()
-        val sources = mutableListOf<String>()
-        val friendDirs = mutableListOf<String>()
-        val optInAnnotations = mutableListOf<String>()
-        val timestamp = moduleElement.getAttribute("timestamp")?.longValue ?: 0
-        val jdkHome = moduleElement.getAttribute("jdkHome")?.value
-        var modularJdkRoot: String? = null
-        var isCommon = false
-
-        for (item in moduleElement.children) {
-            when (item.name) {
-                "classpath" -> {
-                    val path = item.getAttribute("path").value
-                    if (path != outputDir) {
-                        classpath += path
-                    }
-                }
-                "friendDir" -> {
-                    val path = item.getAttribute("path").value
-                    friendDirs += path
-                }
-                "javaSourceRoots" -> {
-                    javaSourceRoots +=
-                        JavaSourceRootData(
-                            item.getAttribute("path").value,
-                            item.getAttribute("packagePrefix")?.value,
-                        )
-                }
-                "sources" -> sources += item.getAttribute("path").value
-                "commonSources" -> isCommon = true
-                "modularJdkRoot" -> modularJdkRoot = item.getAttribute("path").value
-                "useOptIn" -> optInAnnotations += item.getAttribute("annotation").value
-            }
-        }
-
-        return ModuleData(
-            moduleName,
-            timestamp,
-            outputDir,
-            moduleNameQualifier,
-            classpath,
-            sources,
-            javaSourceRoots,
-            friendDirs,
-            optInAnnotations,
-            modularJdkRoot,
-            jdkHome,
-            isCommon,
-        )
-    }
-
-    private fun loadModuleDumpFile(file: File): List<ModuleData> {
-        val rootElement = JDOMUtil.load(file)
-        val modules = rootElement.getChildren("module")
-        val arguments = rootElement.getChild("compilerArguments")?.let { loadCompilerArguments(it) }
-        return modules.map { node -> loadModule(node).also { it.arguments = arguments } }
-    }
-
-    private fun loadCompilerArguments(argumentsRoot: Element): CommonCompilerArguments? {
-        val element = argumentsRoot.children.singleOrNull() ?: return null
-        return when (element.name) {
-            "K2JVMCompilerArguments" -> K2JVMCompilerArguments().also { XmlSerializer.deserializeInto(it, element) }
-            else -> null
-        }
-    }
-
     protected abstract fun beforePass(pass: Int)
     protected abstract fun afterPass(pass: Int)
     protected open fun afterAllPasses() {}
@@ -249,3 +178,75 @@ fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
         else -> null
     }
 }
+
+internal fun loadModuleDumpFile(file: File): List<ModuleData> {
+    val rootElement = JDOMUtil.load(file)
+    val modules = rootElement.getChildren("module")
+    val arguments = rootElement.getChild("compilerArguments")?.let { loadCompilerArguments(it) }
+    return modules.map { node -> loadModule(node).also { it.arguments = arguments } }
+}
+
+private fun loadModule(moduleElement: Element): ModuleData {
+    val outputDir = moduleElement.getAttribute("outputDir").value
+    val moduleName = moduleElement.getAttribute("name").value
+    val moduleNameQualifier = outputDir.substringAfterLast("/")
+    val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
+    val classpath = mutableListOf<String>()
+    val sources = mutableListOf<String>()
+    val friendDirs = mutableListOf<String>()
+    val optInAnnotations = mutableListOf<String>()
+    val timestamp = moduleElement.getAttribute("timestamp")?.longValue ?: 0
+    val jdkHome = moduleElement.getAttribute("jdkHome")?.value
+    var modularJdkRoot: String? = null
+    var isCommon = false
+
+    for (item in moduleElement.children) {
+        when (item.name) {
+            "classpath" -> {
+                val path = item.getAttribute("path").value
+                if (path != outputDir) {
+                    classpath += path
+                }
+            }
+            "friendDir" -> {
+                val path = item.getAttribute("path").value
+                friendDirs += path
+            }
+            "javaSourceRoots" -> {
+                javaSourceRoots +=
+                    JavaSourceRootData(
+                        item.getAttribute("path").value,
+                        item.getAttribute("packagePrefix")?.value,
+                    )
+            }
+            "sources" -> sources += item.getAttribute("path").value
+            "commonSources" -> isCommon = true
+            "modularJdkRoot" -> modularJdkRoot = item.getAttribute("path").value
+            "useOptIn" -> optInAnnotations += item.getAttribute("annotation").value
+        }
+    }
+
+    return ModuleData(
+        moduleName,
+        timestamp,
+        outputDir,
+        moduleNameQualifier,
+        classpath,
+        sources,
+        javaSourceRoots,
+        friendDirs,
+        optInAnnotations,
+        modularJdkRoot,
+        jdkHome,
+        isCommon,
+    )
+}
+
+private fun loadCompilerArguments(argumentsRoot: Element): CommonCompilerArguments? {
+    val element = argumentsRoot.children.singleOrNull() ?: return null
+    return when (element.name) {
+        "K2JVMCompilerArguments" -> K2JVMCompilerArguments().also { XmlSerializer.deserializeInto(it, element) }
+        else -> null
+    }
+}
+
