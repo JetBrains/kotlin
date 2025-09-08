@@ -646,6 +646,7 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralLatin1, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralJsString, ::serializeWasmFunction)
         serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralType, ::serializeWasmFunctionType)
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralJsStringType, ::serializeWasmFunctionType)
         serializeWasmSymbolReadOnly(wasmStringsElements.stringPoolSize, ::serializeInt)
         serializeNullable(wasmStringsElements.stringPoolFieldInitializer, ::serializeIdSignature)
     }
