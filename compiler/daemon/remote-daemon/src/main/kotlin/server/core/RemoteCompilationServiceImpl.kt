@@ -75,7 +75,8 @@ class RemoteCompilationServiceImpl(
             val dependencyFiles = ConcurrentHashMap<Path, File>()
             val compilerPluginFiles = ConcurrentHashMap<Path, File>()
 
-            val fileLockMap = ConcurrentHashMap<Path, Mutex>()
+            val workspaceFileLockMap = ConcurrentHashMap<Path, Mutex>()
+            val cacheFileLockMap = ConcurrentHashMap<Path, Mutex>()
 
             val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
@@ -116,7 +117,7 @@ class RemoteCompilationServiceImpl(
                                                 clientFilePath = it.filePath,
                                                 userId,
                                                 compilationMetadata.projectName,
-                                                fileLockMap
+                                                workspaceFileLockMap
                                             )
                                             fileAvailable(Paths.get(it.filePath).toAbsolutePath().normalize(), projectFile, it.artifactType)
                                             FileTransferReply(
@@ -146,13 +147,18 @@ class RemoteCompilationServiceImpl(
                                         val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
                                         val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
                                         val cachedFile =
-                                            cacheHandler.cacheFile(reconstructedFile, it.artifactType, deleteOriginalFile = true)
+                                            cacheHandler.cacheFile(
+                                                reconstructedFile,
+                                                it.artifactType,
+                                                deleteOriginalFile = true,
+                                                cacheFileLockMap
+                                            )
                                         val projectFile = workspaceManager.copyFileToProject(
                                             cachedFile.absolutePath,
                                             it.filePath,
                                             userId,
                                             compilationMetadata.projectName,
-                                            fileLockMap
+                                            workspaceFileLockMap
                                         )
                                         debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactType}, clientPath=${it.filePath}")
                                         fileAvailable(Paths.get(it.filePath).toAbsolutePath().normalize(), projectFile, it.artifactType)
@@ -192,7 +198,13 @@ class RemoteCompilationServiceImpl(
                         compilationMetadata,
                         this@channelFlow::trySend// TODO: double check trySend
                     )
-                    cacheHandler.cacheFile(outputDir, ArtifactType.RESULT, deleteOriginalFile = false, remoteCompilerArguments)
+                    cacheHandler.cacheFile(
+                        outputDir,
+                        ArtifactType.RESULT,
+                        deleteOriginalFile = false,
+                        cacheFileLockMap,
+                        remoteCompilerArguments
+                    )
                     outputDir to compilationResult
                 }
                 send(compilationResult)
