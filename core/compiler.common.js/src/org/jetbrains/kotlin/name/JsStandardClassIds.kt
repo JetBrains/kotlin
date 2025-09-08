@@ -74,6 +74,9 @@ object JsStandardClassIds {
         val JsExportIgnore = JsExport.createNestedClassId(Name.identifier("Ignore"))
 
         @JvmField
+        val JsExportDefault = JsExport.createNestedClassId(Name.identifier("Default"))
+
+        @JvmField
         val JsFun = "JsFun".id()
 
         @JvmField
