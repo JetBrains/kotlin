@@ -296,6 +296,12 @@ public class FirIdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extends
     }
 
     @Test
+    @TestMetadata("capturedNullableTypeOutProjection.kt")
+    public void testCapturedNullableTypeOutProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/capturedNullableTypeOutProjection.kt");
+    }
+
+    @Test
     @TestMetadata("capturedTypeIntOut.kt")
     public void testCapturedTypeIntOut() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/definitelyNotNullType/capturedTypeIntOut.kt");
