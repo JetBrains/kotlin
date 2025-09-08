@@ -45,7 +45,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
                 if (isInNanos()) {
                     if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
                 } else {
-                    if (value !in -MAX_MILLIS..MAX_MILLIS) throw AssertionError("$value ms is out of milliseconds range")
+                    if (!value.isFinite() && !value.isInfinite()) throw AssertionError("$value ms is out of milliseconds range")
                     if (value in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) throw AssertionError("$value ms is denormalized")
                 }
             }
@@ -1373,7 +1373,7 @@ private inline fun Long.isInfinite(): Boolean = this == MAX_MILLIS || this == -M
  * @return true if this value is not infinite (not equal to `[MAX_MILLIS]` or `-[MAX_MILLIS]`), false otherwise
  */
 @kotlin.internal.InlineOnly
-private inline fun Long.isFinite(): Boolean = !isInfinite()
+private inline fun Long.isFinite(): Boolean = -MAX_MILLIS < this && this < MAX_MILLIS
 
 /**
  * Checks if two Long values have the same sign.
