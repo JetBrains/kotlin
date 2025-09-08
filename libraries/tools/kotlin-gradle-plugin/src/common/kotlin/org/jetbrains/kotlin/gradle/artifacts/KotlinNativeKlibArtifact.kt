@@ -51,10 +51,13 @@ internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
     classifier: String? = null,
     klibProducingTask: TaskProvider<out ProducesKlib>,
 ): TaskProvider<Zip> {
-    return maybeCreateKlibPackingTask(
+    val taskProvider = maybeCreateKlibPackingTask(
         classifier,
         klibProducingTask.map { it.klibDirectory.get() },
     )
+    // Ensure the packing task runs after the producer of the klib directory
+    taskProvider.configure { it.dependsOn(klibProducingTask) }
+    return taskProvider
 }
 
 internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
