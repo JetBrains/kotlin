@@ -14,4 +14,10 @@ internal class LLFirSourcesSession @PrivateSessionConstructor constructor(
     ktModule: KaSourceModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
-) : LLFirResolvableModuleSession(ktModule, builtinTypes)
+    computeDependencies: () -> List<LLFirSession>,
+) : LLFirResolvableModuleSession(ktModule, builtinTypes) {
+    /**
+     * Dependencies are lazy to support cyclic dependencies between modules.
+     */
+    val dependencies: List<LLFirSession> by lazy(LazyThreadSafetyMode.PUBLICATION, computeDependencies)
+}
