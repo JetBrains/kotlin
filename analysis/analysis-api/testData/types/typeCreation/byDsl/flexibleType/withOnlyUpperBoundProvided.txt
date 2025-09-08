@@ -1,0 +1,40 @@
+KaType
+KaFlexibleType:
+  abbreviation: null
+  annotations: []
+  lowerBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: kotlin/Nothing
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: Nothing
+        symbol: KaNamedClassSymbol(kotlin/Nothing)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(kotlin/Nothing)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  upperBound: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: A
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: A
+        symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(A)
+    typeArguments: []
+    isMarkedNullable: false
+    isNullable: false
+    hasFlexibleNullability: false
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+(kotlin.Nothing..A)

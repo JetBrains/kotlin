@@ -324,9 +324,21 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
     }
 
     @Test
-    @TestMetadata("flexibleTypeWithReplaceUpperBound.kt")
-    public void testFlexibleTypeWithReplaceUpperBound() {
-      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/flexibleTypeWithReplaceUpperBound.kt");
+    @TestMetadata("equalBounds.kt")
+    public void testEqualBounds() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/equalBounds.kt");
+    }
+
+    @Test
+    @TestMetadata("flexibleTypeWithReplacedUpperBound.kt")
+    public void testFlexibleTypeWithReplacedUpperBound() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/flexibleTypeWithReplacedUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("incompatibleBounds.kt")
+    public void testIncompatibleBounds() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/incompatibleBounds.kt");
     }
 
     @Test
@@ -357,6 +369,24 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
     @TestMetadata("withAnnotations.kt")
     public void testWithAnnotations() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/withAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("withDefaultValues.kt")
+    public void testWithDefaultValues() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/withDefaultValues.kt");
+    }
+
+    @Test
+    @TestMetadata("withOnlyLowerBoundProvided.kt")
+    public void testWithOnlyLowerBoundProvided() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/withOnlyLowerBoundProvided.kt");
+    }
+
+    @Test
+    @TestMetadata("withOnlyUpperBoundProvided.kt")
+    public void testWithOnlyUpperBoundProvided() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/flexibleType/withOnlyUpperBoundProvided.kt");
     }
   }
 
