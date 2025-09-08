@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportDefault
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.backend.js.utils.typeScriptInnerClassReference
 import org.jetbrains.kotlin.ir.declarations.*
@@ -50,7 +51,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             modules.asSequence()
                 .flatMap { it.files }
                 .flatMap { it.declarations }
-                .filter { it.isJsExport() }
+                .filter { it.isJsExport() || it.isJsExportDefault() }
                 .forEach {
                     declarationsToExport.add(it)
                     addLast(it)

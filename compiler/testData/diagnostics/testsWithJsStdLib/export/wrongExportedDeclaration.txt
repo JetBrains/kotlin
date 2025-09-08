@@ -40,12 +40,18 @@ package foo {
         public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 
-    @kotlin.js.JsExport public final inline value class D {
+    @kotlin.js.JsExport.Default public final inline value class D {
         public constructor D(/*0*/ d: kotlin.Int)
         public final val d: kotlin.Int
         public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsExport.Default public external interface DefaultExternalInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
     @kotlin.js.JsExport public final external class ExternalClass {

@@ -51,11 +51,14 @@ inline class <!WRONG_EXPORTED_DECLARATION("value class")!>B(val b: Int)<!>
 @JsExport
 <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class <!WRONG_EXPORTED_DECLARATION("value class")!>C(val c: Int)<!>
 
-@JsExport
+@JsExport.Default
 <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class <!WRONG_EXPORTED_DECLARATION("value class")!>D(val d: Int)<!>
 
 @JsExport
 external interface ExternalInterface
+
+@JsExport.Default
+external interface DefaultExternalInterface
 
 @JsExport
 external enum class <!ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING, WRONG_EXPORTED_DECLARATION("external enum class")!>ExternalEnum<!> {

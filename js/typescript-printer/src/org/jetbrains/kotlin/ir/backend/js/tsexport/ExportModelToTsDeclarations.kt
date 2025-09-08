@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val NonNullable = "NonNullable"
 private const val declare = "declare "
-private const val declareExported = "export $declare"
+private const val default = "default "
+private const val export = "export "
 
 private const val getInstance = "getInstance"
 
@@ -41,9 +42,16 @@ public fun List<TypeScriptFragment>.toTypeScript(name: String, moduleKind: Modul
 // TODO: Support module kinds other than plain
 public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     private val isEsModules = moduleKind == ModuleKind.ES
-    private val intrinsicsPrefix = if (moduleKind == ModuleKind.PLAIN) "" else "declare "
-    private val topLevelPrefix = if (moduleKind == ModuleKind.PLAIN) "" else declareExported
+    private val intrinsicsPrefix = if (moduleKind == ModuleKind.PLAIN) "" else declare
     private val indent: String = if (moduleKind == ModuleKind.PLAIN) "    " else ""
+    private val defaultExportPrefix = if (moduleKind == ModuleKind.PLAIN) "" else "$export$default"
+
+    private val ExportedDeclaration.topLevelPrefix: String
+        get() = when {
+            moduleKind == ModuleKind.PLAIN -> ""
+            isDefaultExport -> declare
+            else -> "$export$declare"
+        }
 
     public fun generateTypeScript(name: String, declarations: List<TypeScriptFragment>): String {
         val internalNamespace = """
@@ -66,9 +74,15 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         return TypeScriptFragment(declarations.toTypeScript())
     }
 
+    private val ExportedDeclaration.isDefaultExport: Boolean
+        get() = attributes.contains(ExportedAttribute.DefaultExport)
+
     private fun List<ExportedDeclaration>.toTypeScript(): String {
         return joinToString("\n") {
-            it.toTypeScript(indent = indent, prefix = topLevelPrefix)
+            it.toTypeScript(
+                indent = indent,
+                prefix = it.topLevelPrefix
+            )
         }
     }
 
@@ -92,9 +106,18 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             .run { if (isNotEmpty()) plus("\n") else this }
     }
 
+    private fun ExportedDeclaration.generateDefaultExportIfNeed(name: String, indent: String): String {
+        return if (moduleKind == ModuleKind.ES && isDefaultExport) {
+            "\n$indent$defaultExportPrefix$name;"
+        } else {
+            ""
+        }
+    }
+
     private fun ExportedAttribute.toTypeScript(indent: String): String {
         return when (this) {
             is ExportedAttribute.DeprecatedAttribute -> indent + tsDeprecated(message)
+            is ExportedAttribute.DefaultExport -> ""
         }
     }
 
@@ -144,7 +167,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                     } else {
                         val getter = "get(): $typeToTypeScript;"
                         val setter = runIf(mutable) { " set(value: $typeToTypeScript): void;" }
-                        "${prefix}const $name: { $getter${setter.orEmpty()} };"
+                        "${prefix}const $name: { $getter${setter.orEmpty()} };${generateDefaultExportIfNeed(name, indent)}"
                     }
                 }
 
@@ -187,7 +210,12 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         return if (!isMember && containsUnresolvedChar) {
             ""
         } else {
-            "$prefix$visibility$keyword$escapedName$renderedTypeParameters($renderedParameters): $renderedReturnType;"
+            "$prefix$visibility$keyword$escapedName$renderedTypeParameters($renderedParameters): $renderedReturnType;${
+                generateDefaultExportIfNeed(
+                    name,
+                    indent
+                )
+            }"
         }
     }
 
@@ -272,7 +300,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val objectClass = (extraClassWithGetInstanceMethod ?: classContainingType).generateTypeScriptString(indent, prefix)
         val objectMetadata = ExportedNamespace(name, listOf(generateMetadataNamespace(metadataMembers))).toTypeScript(indent, prefix)
 
-        return "$objectClass\n$objectMetadata"
+        return "$objectClass\n$objectMetadata${generateDefaultExportIfNeed(name, indent)}"
     }
 
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
@@ -338,7 +366,12 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val realNestedDeclarations = metadataNamespace + namespaceMembers + nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
 
         val klassExport =
-            "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
+            "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}${
+                generateDefaultExportIfNeed(
+                    name,
+                    indent
+                )
+            }"
 
         val staticsExport =
             if (realNestedDeclarations.isNotEmpty()) "\n" + ExportedNamespace(name, realNestedDeclarations).toTypeScript(indent, prefix) else ""

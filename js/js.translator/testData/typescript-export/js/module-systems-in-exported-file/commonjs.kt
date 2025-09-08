@@ -34,5 +34,7 @@ fun asyncList(): Promise<List<Int>> =
 fun arrayOfLists(): Array<List<Int>> =
     arrayOf(listOf(1, 2))
 
-
 fun acceptArrayOfPairs(array: Array<Pair<String, String>>) {}
+
+@JsExport.Default
+fun justSomeDefaultExport() = "OK"

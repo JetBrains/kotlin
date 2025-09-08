@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
 
 public sealed class ExportedDeclaration {
-    public val attributes: MutableList<ExportedAttribute> = mutableListOf()
+    public val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
 }
 
 public sealed class ExportedAttribute {
     public class DeprecatedAttribute(public val message: String) : ExportedAttribute()
+    public object DefaultExport : ExportedAttribute()
 }
 
 public data class ExportedModule(
