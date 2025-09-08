@@ -40,7 +40,7 @@ public value class Duration private constructor(private val rawValue: Long) : Co
     private val storageUnit get() = if (isInNanos()) DurationUnit.NANOSECONDS else DurationUnit.MILLISECONDS
 
     public companion object {
-        internal fun makeFromRawValue(rawValue: Long): Duration = Duration(rawValue).apply {
+        internal fun fromRawValue(rawValue: Long): Duration = Duration(rawValue).apply {
             if (durationAssertionsEnabled) {
                 if (isInNanos()) {
                     if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
@@ -1578,9 +1578,9 @@ private const val FRACTION_LIMIT = 15
 private fun nanosToMillis(nanos: Long): Long = nanos / NANOS_IN_MILLIS
 private fun millisToNanos(millis: Long): Long = millis * NANOS_IN_MILLIS
 
-private fun durationOfNanos(normalNanos: Long) = Duration.makeFromRawValue(normalNanos shl 1)
-private fun durationOfMillis(normalMillis: Long) = Duration.makeFromRawValue((normalMillis shl 1) + 1)
-private fun durationOf(normalValue: Long, unitDiscriminator: Int) = Duration.makeFromRawValue((normalValue shl 1) + unitDiscriminator)
+private fun durationOfNanos(normalNanos: Long) = Duration.fromRawValue(normalNanos shl 1)
+private fun durationOfMillis(normalMillis: Long) = Duration.fromRawValue((normalMillis shl 1) + 1)
+private fun durationOf(normalValue: Long, unitDiscriminator: Int) = Duration.fromRawValue((normalValue shl 1) + unitDiscriminator)
 private fun durationOfNanosNormalized(nanos: Long) =
     if (nanos in -MAX_NANOS..MAX_NANOS) {
         durationOfNanos(nanos)
