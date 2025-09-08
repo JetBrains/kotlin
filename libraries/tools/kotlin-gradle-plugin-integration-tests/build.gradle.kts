@@ -75,7 +75,10 @@ dependencies {
     testImplementation(project(":kotlin-util-klib"))
 
     testImplementation(project(":native:kotlin-native-utils"))
-    testImplementation(project(":native:kotlin-klib-commonizer-api"))
+
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        testImplementation(project(":native:kotlin-klib-commonizer-api"))
+    }
 
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
