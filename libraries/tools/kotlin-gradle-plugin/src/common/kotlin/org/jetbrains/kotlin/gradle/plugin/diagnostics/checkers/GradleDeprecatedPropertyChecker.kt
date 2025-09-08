@@ -44,6 +44,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             details = "History based incremental compilation approach for JVM platform is removed." +
                     " Kotlin Gradle plugin is now using a more efficient approach based on ABI snapshots."
         ),
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
+            details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
+        ),
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
