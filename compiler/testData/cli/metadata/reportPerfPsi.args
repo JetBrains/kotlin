@@ -3,3 +3,4 @@ $TESTDATA_DIR$/../reportPerf.kt
 $TEMP_DIR$
 -Xuse-fir-lt=false
 -Xreport-perf=true
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

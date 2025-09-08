@@ -3,3 +3,4 @@ $TESTDATA_DIR$/optionalExpectationUsage.kt
 $TEMP_DIR$
 -cp
 $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

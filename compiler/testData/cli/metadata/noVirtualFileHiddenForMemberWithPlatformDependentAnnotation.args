@@ -1,3 +1,4 @@
 $TESTDATA_DIR$/noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.kt
 -d
 $TEMP_DIR$
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native

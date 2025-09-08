@@ -2,3 +2,4 @@ $TESTDATA_DIR$/../syntaxError.kt
 -d
 $TEMP_DIR$
 -Xuse-fir-lt=false
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
