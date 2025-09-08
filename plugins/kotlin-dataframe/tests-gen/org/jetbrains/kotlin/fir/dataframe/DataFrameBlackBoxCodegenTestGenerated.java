@@ -85,6 +85,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnName_invalidSymbol1.kt")
+  public void testColumnName_invalidSymbol1() {
+    runTest("plugins/kotlin-dataframe/testData/box/columnName_invalidSymbol1.kt");
+  }
+
+  @Test
   @TestMetadata("columnName_modifyColumn.kt")
   public void testColumnName_modifyColumn() {
     runTest("plugins/kotlin-dataframe/testData/box/columnName_modifyColumn.kt");
