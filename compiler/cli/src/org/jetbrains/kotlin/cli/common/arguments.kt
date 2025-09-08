@@ -34,7 +34,7 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
 
     // Important! Uncomment the reading from the environment below only for non-public builds, the environment reading should not be part of any public release.
-    val modelDumpDirString = arguments.dumpArgumentsDir // ?: System.getenv("KOTLIN_DUMP_MODEL")
+    val modelDumpDirString = arguments.dumpArgumentsDir ?: System.getenv("KOTLIN_DUMP_MODEL")
     val modelDumpDir = modelDumpDirString?.takeIf { it.isNotEmpty() && File(it).let { it.isDirectory && it.canWrite() } }
 
     putIfNotNull(CommonConfigurationKeys.DUMP_MODEL, modelDumpDir)
