@@ -273,7 +273,7 @@ public interface KaLibrarySourceModule : KaModule {
 }
 
 /**
- * A module which stands in for the *unknown* dependencies of a [KaLibraryModule] and [KaLibrarySourceModule].
+ * A module which stands in for the *unknown* dependencies of a [KaLibraryModule], [KaLibrarySourceModule], or a [KaScriptDependencyModule].
  *
  * Files in library (source) modules can be resolved with the Analysis API. From such a resolvable point of view, the Analysis API needs to
  * find symbols which are defined in the library's dependencies. However, the dependencies with which a library was originally compiled are
@@ -295,12 +295,12 @@ public interface KaLibrarySourceModule : KaModule {
 @KaPlatformInterface
 public interface KaLibraryFallbackDependenciesModule : KaModule {
     /**
-     * The [KaLibraryModule] which relies on these fallback dependencies.
+     * The [KaModule] which relies on these fallback dependencies (either a [KaLibraryModule] or a [KaScriptDependencyModule]).
      *
      * Both the [dependentLibrary] and its [KaLibrarySourceModule] may depend on this same fallback dependencies module. There is no
      * separate fallback dependencies module for the library source module.
      */
-    public val dependentLibrary: KaLibraryModule
+    public val dependentLibrary: KaModule
 }
 
 /**
