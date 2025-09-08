@@ -693,6 +693,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         LanguageFeature.PreciseSimplificationToFlexibleLowerConstraint
     )
 
+    override fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.RevertSimplificationOfFlexibleUpperConstraintWithDnnLowerBound
+    )
+
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)
         return this.convertToNonRawVersion()
