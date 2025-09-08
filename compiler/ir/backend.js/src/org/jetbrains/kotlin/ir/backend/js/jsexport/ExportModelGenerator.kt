@@ -43,7 +43,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             else -> irError("Can't export declaration") {
                 withIrEntry("candidate", candidate)
             }
+        }?.withAttributesFor(candidate)
+    }
+
+    private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
+        if (declaration.isJsExportDefault()) {
+            attributes.add(ExportedAttribute.DefaultExport)
         }
+
+        return this
     }
 
     private fun exportClass(candidate: IrClass): ExportedDeclaration? {
@@ -423,12 +431,12 @@ private fun shouldDeclarationBeExported(
         }
     }
 
-    if (declaration.isJsExport())
+    if (declaration.isUnconditionallyExported())
         return true
 
     return when (val parent = declaration.parent) {
         is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
-        is IrAnnotationContainer -> parent.isJsExport()
+        is IrAnnotationContainer -> parent.isUnconditionallyExported()
         else -> false
     }
 }

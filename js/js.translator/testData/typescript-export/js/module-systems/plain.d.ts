@@ -15,5 +15,6 @@ declare namespace JS_TESTS {
             }
         }
         function box(): string;
+        function justSomeDefaultExport(): string;
     }
 }

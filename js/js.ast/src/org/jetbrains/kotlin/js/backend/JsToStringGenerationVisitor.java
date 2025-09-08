@@ -1400,7 +1400,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         if (subject instanceof JsExport.Subject.All) {
             p.print("*");
-        } else if (subject instanceof JsExport.Subject.Elements) {
+        } else if (subject instanceof JsExport.Subject.Default) {
+            p.print("default");
+            space();
+            visitNameRef(((JsExport.Subject.Default) subject).getName());
+        }
+        else if (subject instanceof JsExport.Subject.Elements) {
             blockOpen();
             List<JsExport.Element> elements = ((JsExport.Subject.Elements) subject).getElements();
             for (JsExport.Element element : elements) {

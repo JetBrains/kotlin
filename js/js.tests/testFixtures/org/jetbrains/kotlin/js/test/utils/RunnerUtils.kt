@@ -9,6 +9,8 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -114,11 +116,11 @@ fun getAdditionalMainFiles(
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
     val additionalFiles = mutableListOf<File>()
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.js")
+    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main$REGULAR_EXTENSION")
         .takeIf { it.exists() }
         ?.let { additionalFiles += it }
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.mjs")
+    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main$ESM_EXTENSION")
         .takeIf { it.exists() }
         ?.let {
             File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode), it.name).apply {
@@ -274,6 +276,7 @@ fun extractTestPackage(testServices: TestServices, ignoreEsModules: Boolean = tr
 
 fun extractEntryModulePath(
     mode: TranslationMode,
+    jsFilePaths: List<String>,
     testServices: TestServices,
 ): String? =
     if (getBoxFunction(testServices) == null) {
@@ -285,7 +288,7 @@ fun extractEntryModulePath(
                     ?.let {
                         JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode).absolutePath +
                                 File.separator + getNameFor(it, testServices)
-                    }
+                    } ?: jsFilePaths.find { it.endsWith("__main$ESM_EXTENSION") }
             }
 
     } else {
