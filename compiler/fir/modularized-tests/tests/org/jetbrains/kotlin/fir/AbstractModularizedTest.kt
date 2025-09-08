@@ -58,6 +58,7 @@ private val ROOT_PATH_PREFIX: String = System.getProperty("fir.bench.prefix", "/
 private val OUTPUT_DIR_REGEX_FILTER: String = System.getProperty("fir.bench.filter", ".*")
 private val MODULE_NAME_FILTER: String? = System.getProperty("fir.bench.filter.name")
 private val MODULE_NAME_REGEX_OUT: String? = System.getProperty("fir.bench.filter.out.name")
+private val CONTAINS_SOURCES_REGEX_FILTER: String? = System.getProperty("fir.bench.filter.contains.sources")
 internal val ENABLE_SLOW_ASSERTIONS: Boolean = System.getProperty("fir.bench.enable.slow.assertions") == "true"
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
@@ -178,6 +179,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
         val moduleName = MODULE_NAME_FILTER
         val moduleNameRegexOutFilter = MODULE_NAME_REGEX_OUT?.toRegex()
+        val containsSourcesFilter = CONTAINS_SOURCES_REGEX_FILTER?.toRegex()
         val files = root.listFiles() ?: emptyArray()
         val modules = files.filter {
             it.extension == "xml" && (moduleNameRegexOutFilter == null || !it.name.matches(moduleNameRegexOutFilter))
@@ -188,6 +190,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             .also { additionalMessages += "Discovered ${it.size} modules" }
             .filter { it.rawOutputDir.matches(filterRegex) }
             .also { additionalMessages += "Filtered by regex to ${it.size} modules" }
+            .let { modules ->
+                if (containsSourcesFilter != null) {
+                    modules.filter { module ->
+                        module.rawSources.any { s -> containsSourcesFilter.containsMatchIn(s) }
+                    }.also { additionalMessages += "Filtered by source paths to ${it.size} modules" }
+                } else modules
+            }
             .filter { (moduleName == null) || it.name == moduleName }
             .also { additionalMessages += "Filtered by module name to ${it.size} modules" }
             .filter { !it.isCommon }
