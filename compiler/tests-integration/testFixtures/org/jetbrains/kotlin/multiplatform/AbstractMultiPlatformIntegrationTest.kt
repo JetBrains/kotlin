@@ -44,7 +44,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
         val result = buildString {
             appendLine("-- Common --")
-            appendLine(KotlinMetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon))
+            appendLine(KotlinMetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon, "-Xtarget-platform=JVM,JS,WASM_JS,WASM_WASI,Native"))
 
             if (jvmSrc != null) {
                 appendLine()
