@@ -46,7 +46,9 @@ class KotlinCoreApplicationEnvironment private constructor(
 
     init {
         registerApplicationService(JavaFileCodeStyleFacadeFactory::class.java, DummyJavaFileCodeStyleFacadeFactory())
-        registerApplicationService(JavaModuleGraphHelper::class.java, DumbJavaModuleGraphHelper())
+        if (application.getService(JavaModuleGraphHelper::class.java) == null) {
+            registerApplicationService(JavaModuleGraphHelper::class.java, DumbJavaModuleGraphHelper())
+        }
         registerFileType(JavaClassFileType.INSTANCE, "sig")
     }
 
