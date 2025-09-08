@@ -133,7 +133,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val dependencyProvider = LLDependenciesSymbolProvider(this) {
                 buildList {
-                    addMerged(session, collectDependencySymbolProviders(module))
+                    addMerged(session, computeDependencySymbolProviders(module))
                     add(builtinsSession.symbolProvider)
                 }
             }
@@ -234,7 +234,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val dependencyProvider = LLDependenciesSymbolProvider(this) {
                 buildList {
-                    addMerged(session, collectDependencySymbolProviders(module))
+                    addMerged(session, computeDependencySymbolProviders(module))
                     add(builtinsSession.symbolProvider)
                 }
             }
@@ -278,7 +278,10 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val session = LLFirSourcesSession(module, components, builtinsSession.builtinTypes)
+        val session = LLFirSourcesSession(module, components, builtinsSession.builtinTypes) {
+            computeDependencySessions(module)
+        }
+
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -308,7 +311,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val dependencyProvider = LLDependenciesSymbolProvider(this) {
                 buildList {
-                    addMerged(session, collectDependencySymbolProviders(module))
+                    addMerged(session, computeDependencySymbolProviders(session.dependencies))
                     add(builtinsSession.symbolProvider)
                 }
             }
@@ -405,7 +408,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
                     // The library (source) module will usually have a `KaLibraryFallbackDependenciesModule`, which will be added here, but
                     // this also works when the library (source) module has precise dependencies.
-                    addMerged(session, collectDependencySymbolProviders(binaryModule))
+                    addMerged(session, computeDependencySymbolProviders(binaryModule))
 
                     if (binaryModule is KaLibraryModule) {
                         KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(binaryModule)?.let { anchorModule ->
@@ -552,16 +555,18 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                             // Exclude dependencies of the context module as they are submitted below
                             val ownDependencies = allDependencies - contextDependencies
                             if (ownDependencies.isNotEmpty()) {
-                                addMerged(session, computeFlattenedDependencySymbolProviders(module, ownDependencies))
+                                val dependencySessions = computeDependencySessionsFromDependencyModules(ownDependencies, module)
+                                addMerged(session, computeDependencySymbolProviders(dependencySessions))
                             }
                             // Share symbol providers (and their caches) with the context session
-                            addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
+                            addMerged(session, computeDependencySymbolProviders(listOf(contextSession)))
                         } else {
                             // Dependencies are original, so we need a separate set of providers
-                            addMerged(session, computeFlattenedDependencySymbolProviders(module, allDependencies))
+                            val dependencySessions = computeDependencySessionsFromDependencyModules(allDependencies, module)
+                            addMerged(session, computeDependencySymbolProviders(dependencySessions))
                         }
                     } else {
-                        addMerged(session, computeFlattenedDependencySymbolProviders(listOf(contextSession)))
+                        addMerged(session, computeDependencySymbolProviders(listOf(contextSession)))
                     }
 
                     when (contextSession.ktModule) {
@@ -631,9 +636,9 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         }
     }
 
-    private fun collectDependencySymbolProviders(module: KaModule): List<FirSymbolProvider> {
+    private fun computeDependencySessions(module: KaModule): List<LLFirSession> {
         val dependencyModules = computeAggregatedModuleDependencies(module)
-        return computeFlattenedDependencySymbolProviders(module, dependencyModules)
+        return computeDependencySessionsFromDependencyModules(dependencyModules, module)
     }
 
     private fun computeAggregatedModuleDependencies(module: KaModule): Set<KaModule> {
@@ -648,7 +653,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         }
     }
 
-    private fun computeFlattenedDependencySymbolProviders(module: KaModule, dependencyModules: Set<KaModule>): List<FirSymbolProvider> {
+    private fun computeDependencySessionsFromDependencyModules(dependencyModules: Set<KaModule>, module: KaModule): List<LLFirSession> {
         val sessionCache = LLFirSessionCache.getInstance(project)
 
         fun getOrCreateSessionForDependency(dependency: KaModule): LLFirSession? = when (dependency) {
@@ -679,11 +684,13 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         val orderedDependencyModules = KmpModuleSorter.order(dependencyModules.toList())
 
-        val dependencySessions = orderedDependencyModules.mapNotNull(::getOrCreateSessionForDependency)
-        return computeFlattenedDependencySymbolProviders(dependencySessions)
+        return orderedDependencyModules.mapNotNull(::getOrCreateSessionForDependency)
     }
 
-    private fun computeFlattenedDependencySymbolProviders(dependencySessions: List<LLFirSession>): List<FirSymbolProvider> =
+    private fun computeDependencySymbolProviders(module: KaModule): List<FirSymbolProvider> =
+        computeDependencySymbolProviders(computeDependencySessions(module))
+
+    private fun computeDependencySymbolProviders(dependencySessions: List<LLFirSession>): List<FirSymbolProvider> =
         buildList {
             dependencySessions.forEach { session ->
                 when (val dependencyProvider = session.symbolProvider) {
