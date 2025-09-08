@@ -1,7 +1,7 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndAnnotationsKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]
+  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -23,7 +23,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     CLASS_BODY
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
@@ -79,7 +79,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndA
                         REFERENCE_EXPRESSION[referencedName=Unresolved]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
-    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Foo, superNames=[]]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=Foo, superNames=[]]
       CLASS_BODY
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]

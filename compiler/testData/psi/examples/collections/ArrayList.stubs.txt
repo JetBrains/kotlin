@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/ArrayList, fqName=ArrayList, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ArrayList, superNames=[IMutableList]]
+  CLASS[classId=/ArrayList, fqName=ArrayList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ArrayList, superNames=[IMutableList]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     SUPER_TYPE_LIST

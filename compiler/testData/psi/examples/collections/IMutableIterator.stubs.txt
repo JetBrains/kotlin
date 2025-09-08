@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/IMutableIterator, fqName=IMutableIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IMutableIterator, superNames=[IIterator]]
+  CLASS[classId=/IMutableIterator, fqName=IMutableIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IMutableIterator, superNames=[IIterator]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

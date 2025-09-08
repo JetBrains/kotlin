@@ -5,9 +5,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WhenWithSubjectVariable_ERRK
     VALUE_PARAMETER_LIST
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
-    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
       CLASS_BODY
-    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=true, isTopLevel=false, name=I, superNames=[]]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=true, isTopLevel=false, name=I, superNames=[]]
       CLASS_BODY
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY

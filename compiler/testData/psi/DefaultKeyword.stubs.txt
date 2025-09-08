@@ -1,12 +1,12 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=DefaultKeywordKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
@@ -14,12 +14,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DefaultKeywordKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/B.A, fqName=B.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/B.A, fqName=B.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[]]
         MODIFIER_LIST[companion]
@@ -36,51 +36,51 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DefaultKeywordKt]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
-      CLASS[classId=/A.C, fqName=A.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      CLASS[classId=/A.C, fqName=A.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         CLASS_BODY
           OBJECT_DECLARATION[classId=/A.C.C, fqName=A.C.C, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=C, superNames=[]]
             MODIFIER_LIST[companion]
             CLASS_BODY
               OBJECT_DECLARATION[classId=/A.C.C.Companion, fqName=A.C.C.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                 MODIFIER_LIST[companion]
-  CLASS[classId=/D, fqName=D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+  CLASS[classId=/D, fqName=D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=D.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=D.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=D.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=D.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
       OBJECT_DECLARATION[classId=/D.Companion, fqName=D.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
-      CLASS[classId=/A.companion, fqName=A.companion, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=companion, superNames=[]]
+      CLASS[classId=/A.companion, fqName=A.companion, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=companion, superNames=[]]
       OBJECT_DECLARATION[classId=/A.<no name provided>, fqName=A.<no name provided>, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public final companion]
-  CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
+  CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
     MODIFIER_LIST[companion]
     CLASS_BODY
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
     REFERENCE_EXPRESSION[referencedName=companion]
   OBJECT_DECLARATION[classId=/<no name provided>, fqName=<no name provided>, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
-  CLASS[classId=/I, fqName=I, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=I, superNames=[]]
+  CLASS[classId=/I, fqName=I, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=I, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=I.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=I.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=I.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=I.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
       OBJECT_DECLARATION[classId=/I.Companion, fqName=I.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
-  CLASS[classId=/I, fqName=I, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=I, superNames=[]]
+  CLASS[classId=/I, fqName=I, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=I, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=I.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=I.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=I.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=I.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
       OBJECT_DECLARATION[classId=/I.Companion, fqName=I.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY

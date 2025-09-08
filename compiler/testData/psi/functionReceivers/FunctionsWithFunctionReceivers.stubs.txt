@@ -205,4 +205,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithFunctionReceive
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
-  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]

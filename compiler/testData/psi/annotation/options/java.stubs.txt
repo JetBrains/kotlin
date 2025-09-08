@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=java]
           REFERENCE_EXPRESSION[referencedName=lang]
         REFERENCE_EXPRESSION[referencedName=annotation]
-  CLASS[classId=/my, fqName=my, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=my, superNames=[]]
+  CLASS[classId=/my, fqName=my, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=my, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE
@@ -25,7 +25,7 @@ FILE[kind=File[packageFqName=<root>]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=RetentionPolicy]
               REFERENCE_EXPRESSION[referencedName=CLASS]
-  CLASS[classId=/my1, fqName=my1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=my1, superNames=[]]
+  CLASS[classId=/my1, fqName=my1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=my1, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE

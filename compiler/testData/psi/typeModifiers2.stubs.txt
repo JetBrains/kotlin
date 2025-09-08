@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/TypeModifiers, fqName=TypeModifiers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeModifiers, superNames=[]]
+  CLASS[classId=/TypeModifiers, fqName=TypeModifiers, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeModifiers, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=TypeModifiers.function, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=function]

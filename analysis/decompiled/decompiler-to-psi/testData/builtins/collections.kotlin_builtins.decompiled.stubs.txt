@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
       REFERENCE_EXPRESSION[referencedName=kotlin]
       REFERENCE_EXPRESSION[referencedName=collections]
   IMPORT_LIST
-  CLASS[classId=kotlin/collections/Collection, fqName=kotlin.collections.Collection, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Collection, superNames=[Iterable]]
+  CLASS[classId=kotlin/collections/Collection, fqName=kotlin.collections.Collection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Collection, superNames=[Iterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
@@ -87,7 +87,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-  CLASS[classId=kotlin/collections/Iterable, fqName=kotlin.collections.Iterable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterable, superNames=[]]
+  CLASS[classId=kotlin/collections/Iterable, fqName=kotlin.collections.Iterable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterable, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -108,7 +108,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-  CLASS[classId=kotlin/collections/Iterator, fqName=kotlin.collections.Iterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterator, superNames=[]]
+  CLASS[classId=kotlin/collections/Iterator, fqName=kotlin.collections.Iterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterator, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -128,7 +128,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
-  CLASS[classId=kotlin/collections/List, fqName=kotlin.collections.List, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=List, superNames=[Collection]]
+  CLASS[classId=kotlin/collections/List, fqName=kotlin.collections.List, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=List, superNames=[Collection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
@@ -310,7 +310,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-  CLASS[classId=kotlin/collections/ListIterator, fqName=kotlin.collections.ListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=ListIterator, superNames=[Iterator]]
+  CLASS[classId=kotlin/collections/ListIterator, fqName=kotlin.collections.ListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=ListIterator, superNames=[Iterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -374,7 +374,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=kotlin/collections/Map, fqName=kotlin.collections.Map, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Map, superNames=[]]
+  CLASS[classId=kotlin/collections/Map, fqName=kotlin.collections.Map, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Map, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
@@ -518,7 +518,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
-      CLASS[classId=kotlin/collections/Map.Entry, fqName=kotlin.collections.Map.Entry, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=Entry, superNames=[]]
+      CLASS[classId=kotlin/collections/Map.Entry, fqName=kotlin.collections.Map.Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=Entry, superNames=[]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=K]
@@ -536,7 +536,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
-  CLASS[classId=kotlin/collections/MutableCollection, fqName=kotlin.collections.MutableCollection, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableCollection, superNames=[Collection, MutableIterable]]
+  CLASS[classId=kotlin/collections/MutableCollection, fqName=kotlin.collections.MutableCollection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableCollection, superNames=[Collection, MutableIterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
@@ -713,7 +713,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-  CLASS[classId=kotlin/collections/MutableIterable, fqName=kotlin.collections.MutableIterable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterable, superNames=[Iterable]]
+  CLASS[classId=kotlin/collections/MutableIterable, fqName=kotlin.collections.MutableIterable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterable, superNames=[Iterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -748,7 +748,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-  CLASS[classId=kotlin/collections/MutableIterator, fqName=kotlin.collections.MutableIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterator, superNames=[Iterator]]
+  CLASS[classId=kotlin/collections/MutableIterator, fqName=kotlin.collections.MutableIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterator, superNames=[Iterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -776,7 +776,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-  CLASS[classId=kotlin/collections/MutableList, fqName=kotlin.collections.MutableList, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableList, superNames=[List, MutableCollection]]
+  CLASS[classId=kotlin/collections/MutableList, fqName=kotlin.collections.MutableList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableList, superNames=[List, MutableCollection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
@@ -1095,7 +1095,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
-  CLASS[classId=kotlin/collections/MutableListIterator, fqName=kotlin.collections.MutableListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableListIterator, superNames=[ListIterator, MutableIterator]]
+  CLASS[classId=kotlin/collections/MutableListIterator, fqName=kotlin.collections.MutableListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableListIterator, superNames=[ListIterator, MutableIterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -1173,7 +1173,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-  CLASS[classId=kotlin/collections/MutableMap, fqName=kotlin.collections.MutableMap, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableMap, superNames=[Map]]
+  CLASS[classId=kotlin/collections/MutableMap, fqName=kotlin.collections.MutableMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableMap, superNames=[Map]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
@@ -1360,7 +1360,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      CLASS[classId=kotlin/collections/MutableMap.MutableEntry, fqName=kotlin.collections.MutableMap.MutableEntry, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=MutableEntry, superNames=[Entry]]
+      CLASS[classId=kotlin/collections/MutableMap.MutableEntry, fqName=kotlin.collections.MutableMap.MutableEntry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=MutableEntry, superNames=[Entry]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=K]
@@ -1403,7 +1403,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=V]
-  CLASS[classId=kotlin/collections/MutableSet, fqName=kotlin.collections.MutableSet, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableSet, superNames=[Set, MutableCollection]]
+  CLASS[classId=kotlin/collections/MutableSet, fqName=kotlin.collections.MutableSet, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableSet, superNames=[Set, MutableCollection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
@@ -1580,7 +1580,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-  CLASS[classId=kotlin/collections/Set, fqName=kotlin.collections.Set, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Set, superNames=[Collection]]
+  CLASS[classId=kotlin/collections/Set, fqName=kotlin.collections.Set, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Set, superNames=[Collection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]

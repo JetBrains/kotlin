@@ -3,7 +3,7 @@ Ann.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
+    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
           CONSTRUCTOR_CALLEE
@@ -66,7 +66,7 @@ Outer.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
+    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=E]
@@ -75,7 +75,7 @@ Outer.class:
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        CLASS[classId=test/Outer.Inner, fqName=test.Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+        CLASS[classId=test/Outer.Inner, fqName=test.Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
           MODIFIER_LIST[public final inner]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=G]
@@ -136,7 +136,7 @@ SomeClass.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
-    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]
+    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SomeClass]
         MODIFIER_LIST[public]
@@ -149,7 +149,7 @@ TypeAliases.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
+    CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeAliases]
         MODIFIER_LIST[public]
@@ -269,13 +269,13 @@ TypeAliases.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
+        CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OrderB]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
+        CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OrderA]
             MODIFIER_LIST[public]

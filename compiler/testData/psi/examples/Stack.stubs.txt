@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Stack, fqName=Stack, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Stack, superNames=[IPushPop]]
+  CLASS[classId=/Stack, fqName=Stack, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Stack, superNames=[IPushPop]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     SUPER_TYPE_LIST

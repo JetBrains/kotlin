@@ -2,7 +2,7 @@ MyClass.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyClass, fqName=MyClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyClass, superNames=[]]
+    CLASS[classId=/MyClass, fqName=MyClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyClass, superNames=[]]
       MODIFIER_LIST[open]
 
 
@@ -10,7 +10,7 @@ MyOtherClass.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyOtherClass, fqName=MyOtherClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyOtherClass, superNames=[]]
+    CLASS[classId=/MyOtherClass, fqName=MyOtherClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyOtherClass, superNames=[]]
       MODIFIER_LIST[open]
 
 
@@ -18,14 +18,14 @@ SomeType.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/SomeType, fqName=SomeType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SomeType, superNames=[]]
+    CLASS[classId=/SomeType, fqName=SomeType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=SomeType, superNames=[]]
 
 
 SuperType.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/SuperType, fqName=SuperType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SuperType, superNames=[]]
+    CLASS[classId=/SuperType, fqName=SuperType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=SuperType, superNames=[]]
 
 
 main.kt:

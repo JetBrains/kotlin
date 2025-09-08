@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/SuspendLambda, fqName=test.SuspendLambda, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SuspendLambda, superNames=[]]
+  CLASS[classId=test/SuspendLambda, fqName=test.SuspendLambda, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SuspendLambda, superNames=[]]
     CLASS_BODY
       FUN[fqName=test.SuspendLambda.createCoroutine1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine1]
         TYPE_PARAMETER_LIST
@@ -258,9 +258,9 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-  CLASS[classId=test/P, fqName=test.P, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=P, superNames=[]]
-  CLASS[classId=test/RS, fqName=test.RS, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]
-  CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=test/P, fqName=test.P, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=P, superNames=[]]
+  CLASS[classId=test/RS, fqName=test.RS, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]
+  CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -276,7 +276,7 @@ FILE[kind=File[packageFqName=test]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=VALUE_PARAMETER]
-  CLASS[classId=test/Continuation, fqName=test.Continuation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Continuation, superNames=[]]
+  CLASS[classId=test/Continuation, fqName=test.Continuation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Continuation, superNames=[]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     CLASS_BODY

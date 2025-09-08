@@ -88,8 +88,8 @@ FILE[kind=Facade[packageFqName=foo.TopLevelMembers, facadeFqName=foo.TopLevelMem
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=E]
-  CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
-  CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
+  CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -101,7 +101,7 @@ FILE[kind=Facade[packageFqName=foo.TopLevelMembers, facadeFqName=foo.TopLevelMem
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=FIELD]
-  CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+  CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=Main]
     MODIFIER_LIST[public]
     TYPE_REFERENCE

@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=foo]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=foo]
   IMPORT_LIST
-  CLASS[classId=foo/Runnable, fqName=foo.Runnable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Runnable, superNames=[foo, bar, bar]]
+  CLASS[classId=foo/Runnable, fqName=foo.Runnable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Runnable, superNames=[foo, bar, bar]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=a]
       TYPE_PARAMETER[fqName=null, name=a]

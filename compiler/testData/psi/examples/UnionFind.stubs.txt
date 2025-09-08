@@ -1,7 +1,7 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/UnionFind, fqName=UnionFind, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnionFind, superNames=[]]
+  CLASS[classId=/UnionFind, fqName=UnionFind, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnionFind, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=UnionFind.data, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=data]
         MODIFIER_LIST[private]

@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/NestedClasses, fqName=test.NestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NestedClasses, superNames=[]]
+  CLASS[classId=test/NestedClasses, fqName=test.NestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=NestedClasses, superNames=[]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=TOuter]
     CLASS_BODY
@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=test/NestedClasses.Nested, fqName=test.NestedClasses.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+      CLASS[classId=test/NestedClasses.Nested, fqName=test.NestedClasses.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[private]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=TN]
@@ -24,7 +24,7 @@ FILE[kind=File[packageFqName=test]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
           PROPERTY[fqName=test.NestedClasses.Nested.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
-          CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
+          CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NN, superNames=[]]
             MODIFIER_LIST[public]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TNN]
@@ -36,7 +36,7 @@ FILE[kind=File[packageFqName=test]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TNN]
               PROPERTY[fqName=test.NestedClasses.Nested.NN.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
-          CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
+          CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NI, superNames=[]]
             MODIFIER_LIST[inner]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TNI]
@@ -54,7 +54,7 @@ FILE[kind=File[packageFqName=test]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TNI]
-      CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+      CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[public inner]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=TI]
@@ -68,7 +68,7 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TI]
-          CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
+          CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
             MODIFIER_LIST[private inner]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TII]

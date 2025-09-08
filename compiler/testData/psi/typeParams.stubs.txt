@@ -8,7 +8,7 @@ FILE[kind=File[packageFqName=test]]
           REFERENCE_EXPRESSION[referencedName=java]
           REFERENCE_EXPRESSION[referencedName=io]
         REFERENCE_EXPRESSION[referencedName=Serializable]
-  CLASS[classId=test/TypeParams, fqName=test.TypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeParams, superNames=[]]
+  CLASS[classId=test/TypeParams, fqName=test.TypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeParams, superNames=[]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T1]
         MODIFIER_LIST[in]

@@ -2,9 +2,9 @@ FILE[kind=File[packageFqName=a]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
-  CLASS[classId=a/InheritingClasses, fqName=a.InheritingClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
+  CLASS[classId=a/InheritingClasses, fqName=a.InheritingClasses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
     CLASS_BODY
-      CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
+      CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
         MODIFIER_LIST[abstract]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
           VALUE_PARAMETER_LIST
@@ -35,7 +35,7 @@ FILE[kind=File[packageFqName=a]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
+      CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
         MODIFIER_LIST[open]
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY
@@ -54,13 +54,13 @@ FILE[kind=File[packageFqName=a]]
             MODIFIER_LIST[override]
           PROPERTY[fqName=a.InheritingClasses.B.ap, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[override]
-      CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.C.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
+      CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
         SUPER_TYPE_LIST
@@ -74,8 +74,8 @@ FILE[kind=File[packageFqName=a]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
-      CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
+      CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
+      CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
@@ -99,25 +99,25 @@ FILE[kind=File[packageFqName=a]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=E]
-      CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
+      CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
         CLASS_BODY
-          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
-          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
-          CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
-          CLASS[classId=a/InheritingClasses.InheritAny.ExplicitAny, fqName=a.InheritingClasses.InheritAny.ExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ExplicitAny, superNames=[Any]]
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.ExplicitAny, fqName=a.InheritingClasses.InheritAny.ExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ExplicitAny, superNames=[Any]]
             SUPER_TYPE_LIST
               SUPER_TYPE_CALL_ENTRY
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Any]
-          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
+          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
             SUPER_TYPE_LIST
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
-          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
+          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
             SUPER_TYPE_LIST
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
@@ -127,7 +127,7 @@ FILE[kind=File[packageFqName=a]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=SomeTrait2]
-          CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
+          CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
             SUPER_TYPE_LIST
               SUPER_TYPE_CALL_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -138,7 +138,7 @@ FILE[kind=File[packageFqName=a]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
-          CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
+          CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
             SUPER_TYPE_LIST
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
@@ -153,7 +153,7 @@ FILE[kind=File[packageFqName=a]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
-      CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
+      CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
         MODIFIER_LIST[abstract]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

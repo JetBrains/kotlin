@@ -2,7 +2,7 @@ AnonymousReturnWithGenericType.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/AnonymousReturnWithGenericType, fqName=AnonymousReturnWithGenericType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnonymousReturnWithGenericType, superNames=[]]
+    CLASS[classId=/AnonymousReturnWithGenericType, fqName=AnonymousReturnWithGenericType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnonymousReturnWithGenericType, superNames=[]]
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
@@ -52,7 +52,7 @@ Foo.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]

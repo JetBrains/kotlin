@@ -15,7 +15,7 @@ FILE[kind=Facade[packageFqName=boo, facadeFqName=boo.InWrongPlaceKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=boo]
   IMPORT_LIST
-  CLASS[classId=boo/A, fqName=boo.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=boo/A, fqName=boo.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
         ANNOTATION_TARGET[useSiteTarget=FIELD]
@@ -23,7 +23,7 @@ FILE[kind=Facade[packageFqName=boo, facadeFqName=boo.InWrongPlaceKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Deprecated]
-  CLASS[classId=boo/I, fqName=boo.I, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=I, superNames=[]]
+  CLASS[classId=boo/I, fqName=boo.I, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=I, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
         ANNOTATION_TARGET[useSiteTarget=FIELD]

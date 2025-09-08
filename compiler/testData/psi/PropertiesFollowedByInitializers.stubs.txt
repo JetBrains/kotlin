@@ -1,7 +1,7 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitializersKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -89,13 +89,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       FUN[fqName=Foo.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
+  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=PublicVar.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=foo]
         MODIFIER_LIST[public]
-  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
+  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -105,13 +105,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
+  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=PublicVar.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=foo]
         MODIFIER_LIST[public]
-  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
+  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -119,7 +119,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesFollowedByInitiali
         MODIFIER_LIST[public]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
+  CLASS[classId=/PublicVar, fqName=PublicVar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublicVar, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicVar]
       VALUE_PARAMETER_LIST
     CLASS_BODY

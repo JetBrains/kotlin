@@ -5,7 +5,7 @@ A.class:
         REFERENCE_EXPRESSION[referencedName=foo]
         REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
     IMPORT_LIST
-    CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
+    CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
           CONSTRUCTOR_CALLEE
@@ -36,7 +36,7 @@ D.class:
         REFERENCE_EXPRESSION[referencedName=foo]
         REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
     IMPORT_LIST
-    CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+    CLASS[classId=foo/TopLevelMembers/D, fqName=foo.TopLevelMembers.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=D]
         MODIFIER_LIST[public]
@@ -51,7 +51,7 @@ Nothing.class:
         REFERENCE_EXPRESSION[referencedName=foo]
         REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
     IMPORT_LIST
-    CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
+    CLASS[classId=foo/TopLevelMembers/Nothing, fqName=foo.TopLevelMembers.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nothing]
         MODIFIER_LIST[public]

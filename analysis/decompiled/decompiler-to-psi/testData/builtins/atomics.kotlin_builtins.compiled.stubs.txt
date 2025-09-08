@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
         REFERENCE_EXPRESSION[referencedName=concurrent]
       REFERENCE_EXPRESSION[referencedName=atomics]
   IMPORT_LIST
-  CLASS[classId=kotlin/concurrent/atomics/AtomicArray, fqName=kotlin.concurrent.atomics.AtomicArray, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicArray, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicArray, fqName=kotlin.concurrent.atomics.AtomicArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicArray, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE
@@ -146,7 +146,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=kotlin/concurrent/atomics/AtomicBoolean, fqName=kotlin.concurrent.atomics.AtomicBoolean, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicBoolean, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicBoolean, fqName=kotlin.concurrent.atomics.AtomicBoolean, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicBoolean, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE
@@ -260,7 +260,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=kotlin/concurrent/atomics/AtomicInt, fqName=kotlin.concurrent.atomics.AtomicInt, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicInt, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicInt, fqName=kotlin.concurrent.atomics.AtomicInt, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicInt, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE
@@ -402,7 +402,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=kotlin/concurrent/atomics/AtomicIntArray, fqName=kotlin.concurrent.atomics.AtomicIntArray, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicIntArray, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicIntArray, fqName=kotlin.concurrent.atomics.AtomicIntArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicIntArray, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE
@@ -602,7 +602,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=kotlin/concurrent/atomics/AtomicLong, fqName=kotlin.concurrent.atomics.AtomicLong, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicLong, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicLong, fqName=kotlin.concurrent.atomics.AtomicLong, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicLong, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE
@@ -744,7 +744,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=kotlin/concurrent/atomics/AtomicLongArray, fqName=kotlin.concurrent.atomics.AtomicLongArray, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicLongArray, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicLongArray, fqName=kotlin.concurrent.atomics.AtomicLongArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicLongArray, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE
@@ -944,7 +944,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=kotlin/concurrent/atomics/AtomicReference, fqName=kotlin.concurrent.atomics.AtomicReference, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicReference, superNames=[]]
+  CLASS[classId=kotlin/concurrent/atomics/AtomicReference, fqName=kotlin.concurrent.atomics.AtomicReference, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicReference, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE

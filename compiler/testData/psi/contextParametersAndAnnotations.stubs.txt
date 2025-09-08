@@ -1,7 +1,7 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotationsKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+  CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
     MODIFIER_LIST[annotation]
   FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     MODIFIER_LIST[]

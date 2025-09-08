@@ -129,7 +129,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=FunctionAlias]
-  CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
+  CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
     CLASS_BODY
       FUN[fqName=test.TypeAliasExpansion.entryToString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
         VALUE_PARAMETER_LIST

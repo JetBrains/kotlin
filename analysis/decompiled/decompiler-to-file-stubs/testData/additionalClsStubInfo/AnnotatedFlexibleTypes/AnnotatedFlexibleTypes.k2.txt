@@ -2,7 +2,7 @@ KotlinStub$FILE[kind=File[packageFqName=test]]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=test/AnnotatedFlexibleTypes, fqName=test.AnnotatedFlexibleTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedFlexibleTypes, superNames=[]]
+KotlinStub$CLASS[classId=test/AnnotatedFlexibleTypes, fqName=test.AnnotatedFlexibleTypes, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedFlexibleTypes, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final]
   KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotatedFlexibleTypes]
     KotlinStub$MODIFIER_LIST[public]

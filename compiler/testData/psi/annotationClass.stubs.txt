@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=test.a]]
       REFERENCE_EXPRESSION[referencedName=test]
       REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
-  CLASS[classId=test/a/AnnotationClass, fqName=test.a.AnnotationClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationClass, superNames=[]]
+  CLASS[classId=test/a/AnnotationClass, fqName=test.a.AnnotationClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationClass, superNames=[]]
     MODIFIER_LIST[public annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotationClass]
       VALUE_PARAMETER_LIST

@@ -1,7 +1,7 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/IAdder, fqName=IAdder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IAdder, superNames=[]]
+  CLASS[classId=/IAdder, fqName=IAdder, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IAdder, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -16,12 +16,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-  CLASS[classId=/ICloseable, fqName=ICloseable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ICloseable, superNames=[]]
+  CLASS[classId=/ICloseable, fqName=ICloseable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ICloseable, superNames=[]]
     MODIFIER_LIST[open]
     CLASS_BODY
       FUN[fqName=ICloseable.close, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=close]
         VALUE_PARAMETER_LIST
-  CLASS[classId=/JavaCloseableWrapper, fqName=JavaCloseableWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaCloseableWrapper, superNames=[ICloseable]]
+  CLASS[classId=/JavaCloseableWrapper, fqName=JavaCloseableWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaCloseableWrapper, superNames=[ICloseable]]
     MODIFIER_LIST[abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=JavaCloseableWrapper]
       VALUE_PARAMETER_LIST
@@ -61,7 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
-  CLASS[classId=/FileInput, fqName=FileInput, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FileInput, superNames=[IIterator, JavaCloseableWrapper]]
+  CLASS[classId=/FileInput, fqName=FileInput, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=FileInput, superNames=[IIterator, JavaCloseableWrapper]]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -96,7 +96,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
         MODIFIER_LIST[override]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
-  CLASS[classId=/FileOutput, fqName=FileOutput, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FileOutput, superNames=[IAdder, JavaCloseableWrapper]]
+  CLASS[classId=/FileOutput, fqName=FileOutput, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=FileOutput, superNames=[IAdder, JavaCloseableWrapper]]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE

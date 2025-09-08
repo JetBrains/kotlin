@@ -3,13 +3,13 @@ AnnotationValues.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
+    CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotationValues]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
               CONSTRUCTOR_CALLEE
@@ -22,7 +22,7 @@ AnnotationValues.class:
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
               CONSTRUCTOR_CALLEE
@@ -35,7 +35,7 @@ AnnotationValues.class:
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
               CONSTRUCTOR_CALLEE
@@ -48,7 +48,7 @@ AnnotationValues.class:
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
               CONSTRUCTOR_CALLEE
@@ -61,7 +61,7 @@ AnnotationValues.class:
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
               CONSTRUCTOR_CALLEE
@@ -74,7 +74,7 @@ AnnotationValues.class:
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
               CONSTRUCTOR_CALLEE
@@ -89,7 +89,7 @@ AnnotationValues.class:
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
+        CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
               CONSTRUCTOR_CALLEE
@@ -124,7 +124,7 @@ Arrays.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Arrays, fqName=test.Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[Annotation]]
+    CLASS[classId=test/Arrays, fqName=test.Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Arrays]
         MODIFIER_LIST[public]
@@ -222,7 +222,7 @@ ClassLiteral.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/ClassLiteral, fqName=test.ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[Annotation]]
+    CLASS[classId=test/ClassLiteral, fqName=test.ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassLiteral]
         MODIFIER_LIST[public]
@@ -284,7 +284,7 @@ E.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
+    CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
       MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=E]
         MODIFIER_LIST[private]
@@ -304,8 +304,8 @@ E.class:
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=E]
       CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
-        ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
 
 
 EnumLiteral.class:
@@ -313,7 +313,7 @@ EnumLiteral.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/EnumLiteral, fqName=test.EnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=EnumLiteral, superNames=[Annotation]]
+    CLASS[classId=test/EnumLiteral, fqName=test.EnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=EnumLiteral, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=EnumLiteral]
         MODIFIER_LIST[public]
@@ -372,7 +372,7 @@ Nested.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Nested, fqName=test.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[Annotation]]
+    CLASS[classId=test/Nested, fqName=test.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
         MODIFIER_LIST[public]
@@ -418,7 +418,7 @@ Outer.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[Annotation]]
+    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Outer]
         MODIFIER_LIST[public]
@@ -464,7 +464,7 @@ Simple.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[Annotation]]
+    CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Simple]
         MODIFIER_LIST[public]
@@ -588,7 +588,7 @@ StringLiteral.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/StringLiteral, fqName=test.StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[Annotation]]
+    CLASS[classId=test/StringLiteral, fqName=test.StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=StringLiteral]
         MODIFIER_LIST[public]
@@ -647,7 +647,7 @@ VarArg.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/VarArg, fqName=test.VarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[Annotation]]
+    CLASS[classId=test/VarArg, fqName=test.VarArg, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarArg]
         MODIFIER_LIST[public]

@@ -2,9 +2,9 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/FunInterfaceDeclaration, fqName=test.FunInterfaceDeclaration, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FunInterfaceDeclaration, superNames=[]]
+  CLASS[classId=test/FunInterfaceDeclaration, fqName=test.FunInterfaceDeclaration, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=FunInterfaceDeclaration, superNames=[]]
     CLASS_BODY
-      CLASS[classId=test/FunInterfaceDeclaration.KRunnable, fqName=test.FunInterfaceDeclaration.KRunnable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=KRunnable, superNames=[]]
+      CLASS[classId=test/FunInterfaceDeclaration.KRunnable, fqName=test.FunInterfaceDeclaration.KRunnable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=KRunnable, superNames=[]]
         MODIFIER_LIST[fun]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
             CONSTRUCTOR_CALLEE
@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=test]]
         CLASS_BODY
           FUN[fqName=test.FunInterfaceDeclaration.KRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
             VALUE_PARAMETER_LIST
-      CLASS[classId=test/FunInterfaceDeclaration.GenericKRunnable, fqName=test.FunInterfaceDeclaration.GenericKRunnable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=GenericKRunnable, superNames=[]]
+      CLASS[classId=test/FunInterfaceDeclaration.GenericKRunnable, fqName=test.FunInterfaceDeclaration.GenericKRunnable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=GenericKRunnable, superNames=[]]
         MODIFIER_LIST[fun]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
             CONSTRUCTOR_CALLEE

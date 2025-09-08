@@ -2,11 +2,11 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/AnnoA, fqName=test.AnnoA, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoA, superNames=[]]
+  CLASS[classId=test/AnnoA, fqName=test.AnnoA, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoA, superNames=[]]
     MODIFIER_LIST[annotation]
-  CLASS[classId=test/AnnoB, fqName=test.AnnoB, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoB, superNames=[]]
+  CLASS[classId=test/AnnoB, fqName=test.AnnoB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoB, superNames=[]]
     MODIFIER_LIST[annotation]
-  CLASS[classId=test/AnnotatedParameterInEnumConstructor, fqName=test.AnnotatedParameterInEnumConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[]]
+  CLASS[classId=test/AnnotatedParameterInEnumConstructor, fqName=test.AnnotatedParameterInEnumConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[]]
     MODIFIER_LIST[enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotatedParameterInEnumConstructor]
       VALUE_PARAMETER_LIST
@@ -31,7 +31,7 @@ FILE[kind=File[packageFqName=test]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=test.AnnotatedParameterInEnumConstructor.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[AnnotatedParameterInEnumConstructor]]
+      ENUM_ENTRY[classId=null, fqName=test.AnnotatedParameterInEnumConstructor.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[AnnotatedParameterInEnumConstructor]]
         INITIALIZER_LIST
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE

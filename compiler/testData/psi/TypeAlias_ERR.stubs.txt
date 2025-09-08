@@ -44,7 +44,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeAlias_ERRKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=bar]
-  CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
+  CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=null, superNames=[]]
   TYPEALIAS[classId=/foo, fqName=foo, isTopLevel=true, name=foo]
     TYPE_REFERENCE
       USER_TYPE

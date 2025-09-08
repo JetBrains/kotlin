@@ -2,7 +2,7 @@ MyAnnotation.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[]]
+    CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[]]
       MODIFIER_LIST[annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           CONSTRUCTOR_CALLEE
@@ -24,7 +24,7 @@ ParameterizedInterface.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/ParameterizedInterface, fqName=ParameterizedInterface, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=ParameterizedInterface, superNames=[]]
+    CLASS[classId=/ParameterizedInterface, fqName=ParameterizedInterface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=ParameterizedInterface, superNames=[]]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
 

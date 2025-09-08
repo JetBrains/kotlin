@@ -1,7 +1,7 @@
 KotlinStub$FILE[kind=File[packageFqName=<root>]]
 KotlinStub$PACKAGE_DIRECTIVE
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleDnnType, superNames=[]]
+KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleDnnType, superNames=[]]
   KotlinStub$MODIFIER_LIST[public abstract]
   KotlinStub$TYPE_PARAMETER_LIST
     KotlinStub$TYPE_PARAMETER[fqName=null, name=T]

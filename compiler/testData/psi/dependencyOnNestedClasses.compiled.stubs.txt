@@ -3,7 +3,7 @@ D.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
-    CLASS[classId=dependency/D, fqName=dependency.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+    CLASS[classId=dependency/D, fqName=dependency.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=D]
         MODIFIER_LIST[public]
@@ -12,31 +12,31 @@ D.class:
         OBJECT_DECLARATION[classId=dependency/D.Companion, fqName=dependency.D.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[public companion]
           CLASS_BODY
-            CLASS[classId=dependency/D.Companion.NestedInClassObject, fqName=dependency.D.Companion.NestedInClassObject, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedInClassObject, superNames=[]]
+            CLASS[classId=dependency/D.Companion.NestedInClassObject, fqName=dependency.D.Companion.NestedInClassObject, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedInClassObject, superNames=[]]
               MODIFIER_LIST[public final]
               PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedInClassObject]
                 MODIFIER_LIST[public]
                 VALUE_PARAMETER_LIST
               CLASS_BODY
-        CLASS[classId=dependency/D.Inner, fqName=dependency.D.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+        CLASS[classId=dependency/D.Inner, fqName=dependency.D.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
           MODIFIER_LIST[public final inner]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-            CLASS[classId=dependency/D.Inner.Inner, fqName=dependency.D.Inner.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+            CLASS[classId=dependency/D.Inner.Inner, fqName=dependency.D.Inner.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
               MODIFIER_LIST[public final inner]
               PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner]
                 MODIFIER_LIST[public]
                 VALUE_PARAMETER_LIST
               CLASS_BODY
-        CLASS[classId=dependency/D.Nested, fqName=dependency.D.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+        CLASS[classId=dependency/D.Nested, fqName=dependency.D.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
           MODIFIER_LIST[public open]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
-            CLASS[classId=dependency/D.Nested.Nested, fqName=dependency.D.Nested.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+            CLASS[classId=dependency/D.Nested.Nested, fqName=dependency.D.Nested.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
               MODIFIER_LIST[public final]
               PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
                 MODIFIER_LIST[public]
@@ -49,7 +49,7 @@ DependencyOnNestedClasses.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
+    CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DependencyOnNestedClasses]
         MODIFIER_LIST[public]

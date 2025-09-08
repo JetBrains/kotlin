@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LocalDeclarationsKt]]
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
-    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=foof, superNames=[]]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=foof, superNames=[]]
       MODIFIER_LIST[abstract]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE
@@ -11,7 +11,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LocalDeclarationsKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=a]
       CLASS_BODY
-    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=foof, superNames=[]]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=foof, superNames=[]]
       MODIFIER_LIST[abstract]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE

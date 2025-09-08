@@ -5,7 +5,7 @@ Annotation Class.class:
         REFERENCE_EXPRESSION[referencedName=one two]
         REFERENCE_EXPRESSION[referencedName=three four]
     IMPORT_LIST
-    CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[Annotation]]
+    CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
           CONSTRUCTOR_CALLEE
@@ -36,7 +36,7 @@ Enum Class.class:
         REFERENCE_EXPRESSION[referencedName=one two]
         REFERENCE_EXPRESSION[referencedName=three four]
     IMPORT_LIST
-    CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum Class, superNames=[Enum]]
+    CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum Class, superNames=[Enum]]
       MODIFIER_LIST[public final enum]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
           CONSTRUCTOR_CALLEE
@@ -67,7 +67,7 @@ Enum Class.class:
                         REFERENCE_EXPRESSION[referencedName=three four]
                       REFERENCE_EXPRESSION[referencedName=Enum Class]
       CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
               CONSTRUCTOR_CALLEE
@@ -112,7 +112,7 @@ Top Level Class.class:
         REFERENCE_EXPRESSION[referencedName=one two]
         REFERENCE_EXPRESSION[referencedName=three four]
     IMPORT_LIST
-    CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Top Level Class, superNames=[]]
+    CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Top Level Class, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
           CONSTRUCTOR_CALLEE
@@ -271,7 +271,7 @@ Top Level Interface.class:
         REFERENCE_EXPRESSION[referencedName=one two]
         REFERENCE_EXPRESSION[referencedName=three four]
     IMPORT_LIST
-    CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Top Level Interface, superNames=[]]
+    CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Top Level Interface, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
 
@@ -295,6 +295,6 @@ Top Level Object.class:
                 REFERENCE_EXPRESSION[referencedName=three four]
               REFERENCE_EXPRESSION[referencedName=Top Level Interface]
       CLASS_BODY
-        CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=Member Level Interface, superNames=[]]
+        CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=Member Level Interface, superNames=[]]
           MODIFIER_LIST[public]
           CLASS_BODY

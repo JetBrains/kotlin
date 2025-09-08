@@ -6,7 +6,7 @@ Negative.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=Simple]
-    CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[]]
+    CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           CONSTRUCTOR_CALLEE
@@ -25,7 +25,7 @@ Negative2.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=Simple]
-    CLASS[classId=/Negative2, fqName=Negative2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative2, superNames=[]]
+    CLASS[classId=/Negative2, fqName=Negative2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative2, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           CONSTRUCTOR_CALLEE
@@ -44,7 +44,7 @@ Positive.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=Simple]
-    CLASS[classId=/Positive, fqName=Positive, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Positive, superNames=[]]
+    CLASS[classId=/Positive, fqName=Positive, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Positive, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           CONSTRUCTOR_CALLEE
@@ -63,7 +63,7 @@ Qualified.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=Simple]
-    CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
+    CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           CONSTRUCTOR_CALLEE
@@ -86,7 +86,7 @@ Simple.kt:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
+    CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Simple]
         VALUE_PARAMETER_LIST
@@ -112,7 +112,7 @@ Sum.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=Simple]
-    CLASS[classId=/Sum, fqName=Sum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sum, superNames=[]]
+    CLASS[classId=/Sum, fqName=Sum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sum, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           CONSTRUCTOR_CALLEE

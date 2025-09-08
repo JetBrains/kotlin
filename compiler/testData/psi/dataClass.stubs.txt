@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=a.b.c]]
         REFERENCE_EXPRESSION[referencedName=b]
       REFERENCE_EXPRESSION[referencedName=c]
   IMPORT_LIST
-  CLASS[classId=a/b/c/DataClass, fqName=a.b.c.DataClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DataClass, superNames=[]]
+  CLASS[classId=a/b/c/DataClass, fqName=a.b.c.DataClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DataClass, superNames=[]]
     MODIFIER_LIST[public data]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DataClass]
       VALUE_PARAMETER_LIST

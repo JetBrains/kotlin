@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
         REFERENCE_EXPRESSION[referencedName=bar]
       REFERENCE_EXPRESSION[referencedName=goo]
   IMPORT_LIST
-  CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
+  CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
     MODIFIER_LIST[public protected private internal open abstract override enum annotation out in]
       ANNOTATION
       ANNOTATION

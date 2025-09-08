@@ -4014,7 +4014,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassOrObje
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinClassStub : org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub {
 	public abstract fun isClsStubCompiledToJvmDefaultImplementation ()Z
-	public abstract fun isEnumEntry ()Z
 	public abstract fun isInterface ()Z
 }
 

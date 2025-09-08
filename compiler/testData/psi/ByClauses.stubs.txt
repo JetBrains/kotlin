@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -22,7 +22,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -32,7 +32,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -42,7 +42,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -62,7 +62,7 @@ FILE[kind=File[packageFqName=<root>]]
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[b]]
     SUPER_TYPE_LIST
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE

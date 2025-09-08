@@ -2,7 +2,7 @@ KotlinStub$FILE[kind=File[packageFqName=test]]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST
-KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMultiFieldValueClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=NestedMultiFieldValueClass, superNames=[]]
+KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMultiFieldValueClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=NestedMultiFieldValueClass, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final value]
     KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
       valueArguments: ()

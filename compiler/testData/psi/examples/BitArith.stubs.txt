@@ -74,7 +74,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/INumber, fqName=INumber, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=INumber, superNames=[IComparable]]
+  CLASS[classId=/INumber, fqName=INumber, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=INumber, superNames=[IComparable]]
     MODIFIER_LIST[open]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY

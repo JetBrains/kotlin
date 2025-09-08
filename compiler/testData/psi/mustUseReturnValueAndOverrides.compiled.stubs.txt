@@ -2,7 +2,7 @@ Base1.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Base1, fqName=Base1, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Base1, superNames=[]]
+    CLASS[classId=/Base1, fqName=Base1, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Base1, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
         FUN[fqName=Base1.unspecified, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=unspecified]
@@ -19,7 +19,7 @@ Base2.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Base2, fqName=Base2, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Base2, superNames=[]]
+    CLASS[classId=/Base2, fqName=Base2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Base2, superNames=[]]
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
           CONSTRUCTOR_CALLEE
@@ -58,7 +58,7 @@ Impl1.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Impl1, fqName=Impl1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl1, superNames=[Base1]]
+    CLASS[classId=/Impl1, fqName=Impl1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl1, superNames=[Base1]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Impl1]
         MODIFIER_LIST[public]
@@ -83,7 +83,7 @@ Impl2.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Impl2, fqName=Impl2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl2, superNames=[Base2]]
+    CLASS[classId=/Impl2, fqName=Impl2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl2, superNames=[Base2]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Impl2]
         MODIFIER_LIST[public]
@@ -116,7 +116,7 @@ Impl3.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Impl3, fqName=Impl3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl3, superNames=[Base2]]
+    CLASS[classId=/Impl3, fqName=Impl3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl3, superNames=[Base2]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
           CONSTRUCTOR_CALLEE

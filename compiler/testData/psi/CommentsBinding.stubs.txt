@@ -18,12 +18,12 @@ FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=c]
         REFERENCE_EXPRESSION[referencedName=d]
-  CLASS[classId=foo/bar/A, fqName=foo.bar.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=foo/bar/A, fqName=foo.bar.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
-  CLASS[classId=foo/bar/B, fqName=foo.bar.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+  CLASS[classId=foo/bar/B, fqName=foo.bar.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
-  CLASS[classId=foo/bar/C, fqName=foo.bar.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
-  CLASS[classId=foo/bar/D, fqName=foo.bar.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
+  CLASS[classId=foo/bar/C, fqName=foo.bar.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=foo/bar/D, fqName=foo.bar.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=foo.bar.D.v1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v1]
       PROPERTY[fqName=foo.bar.D.v2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v2]
@@ -43,7 +43,7 @@ FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
                 REFERENCE_EXPRESSION[referencedName=String]
         FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun]
           VALUE_PARAMETER_LIST
-        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]
           CLASS_BODY
       OBJECT_DECLARATION[classId=foo/bar/D.Companion, fqName=foo.bar.D.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
@@ -52,13 +52,13 @@ FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
   FUN[fqName=foo.bar.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
-  CLASS[classId=foo/bar/E, fqName=foo.bar.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
+  CLASS[classId=foo/bar/E, fqName=foo.bar.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=foo.bar.E.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=foo.bar.E.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=foo.bar.E.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=foo.bar.E.X, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=X, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=foo.bar.E.X, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=X, superNames=[]]
         CLASS_BODY
           FUN[fqName=foo.bar.E.X.toString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
             MODIFIER_LIST[override]

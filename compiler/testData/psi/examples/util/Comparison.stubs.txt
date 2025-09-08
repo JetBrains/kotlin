@@ -38,12 +38,12 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/ComparisonResult, fqName=ComparisonResult, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ComparisonResult, superNames=[]]
+  CLASS[classId=/ComparisonResult, fqName=ComparisonResult, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ComparisonResult, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=ComparisonResult.LS, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=LS, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=ComparisonResult.EQ, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=EQ, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=ComparisonResult.GR, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=GR, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=ComparisonResult.LS, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=LS, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=ComparisonResult.EQ, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=EQ, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=ComparisonResult.GR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=GR, superNames=[]]
   FUN[fqName=asMatchableComparison, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=asMatchableComparison]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

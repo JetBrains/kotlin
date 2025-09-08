@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Color, fqName=Color, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Color, superNames=[Enum]]
+  CLASS[classId=/Color, fqName=Color, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Color, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Color]
       MODIFIER_LIST[private]
@@ -37,9 +37,9 @@ FILE[kind=File[packageFqName=<root>]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Color]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=Color.RED, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=RED, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=Color.GREEN, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=GREEN, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=Color.BLUE, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=BLUE, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=Color.RED, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=RED, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=Color.GREEN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=GREEN, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=Color.BLUE, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=BLUE, superNames=[]]
       PROPERTY[fqName=Color.r, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=r]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE

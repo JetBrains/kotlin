@@ -28,9 +28,6 @@ class KotlinEnumEntryStubImpl(
     override val isClsStubCompiledToJvmDefaultImplementation: Boolean
         get() = false
 
-    override val isEnumEntry: Boolean
-        get() = true
-
     override val isInterface: Boolean
         get() = false
 

@@ -31,7 +31,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SyntaxErrorKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
     CLASS_BODY

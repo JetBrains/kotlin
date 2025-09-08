@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
       REFERENCE_EXPRESSION[referencedName=one two]
       REFERENCE_EXPRESSION[referencedName=three four]
   IMPORT_LIST
-  CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[]]
+  CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -28,7 +28,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=PROPERTY]
-  CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Top Level Class, superNames=[]]
+  CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Top Level Class, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
         CONSTRUCTOR_CALLEE
@@ -127,7 +127,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Type Parameter]
-  CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Top Level Interface, superNames=[]]
+  CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Top Level Interface, superNames=[]]
   OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -135,9 +135,9 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Top Level Interface]
     CLASS_BODY
-      CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=Member Level Interface, superNames=[]]
+      CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=Member Level Interface, superNames=[]]
         CLASS_BODY
-  CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum Class, superNames=[]]
+  CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum Class, superNames=[]]
     MODIFIER_LIST[enum]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
         CONSTRUCTOR_CALLEE
@@ -145,7 +145,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Annotation Class]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
             CONSTRUCTOR_CALLEE

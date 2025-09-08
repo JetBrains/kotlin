@@ -31,9 +31,6 @@ class KotlinClassStubImpl(
     parent = parent,
     elementType = KtStubElementTypes.CLASS,
 ), KotlinClassStub {
-    override val isEnumEntry: Boolean
-        get() = false
-
     override val fqName: FqName?
         get() = qualifiedName?.string?.let(::FqName)
 

@@ -2,18 +2,18 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/InnerTypes, fqName=test.InnerTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InnerTypes, superNames=[]]
+  CLASS[classId=test/InnerTypes, fqName=test.InnerTypes, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=InnerTypes, superNames=[]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
       TYPE_PARAMETER[fqName=null, name=F]
     CLASS_BODY
-      CLASS[classId=test/InnerTypes.Inner, fqName=test.InnerTypes.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+      CLASS[classId=test/InnerTypes.Inner, fqName=test.InnerTypes.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[inner]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=G]
           TYPE_PARAMETER[fqName=null, name=H]
         CLASS_BODY
-          CLASS[classId=test/InnerTypes.Inner.Inner3, fqName=test.InnerTypes.Inner.Inner3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner3, superNames=[]]
+          CLASS[classId=test/InnerTypes.Inner.Inner3, fqName=test.InnerTypes.Inner.Inner3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner3, superNames=[]]
             MODIFIER_LIST[inner]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=I]
@@ -94,7 +94,7 @@ FILE[kind=File[packageFqName=test]]
                         REFERENCE_EXPRESSION[referencedName=Inner3]
                         TYPE_ARGUMENT_LIST
                           TYPE_PROJECTION[projectionKind=STAR]
-      CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
+      CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
         MODIFIER_LIST[inner]
       FUN[fqName=test.InnerTypes.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST

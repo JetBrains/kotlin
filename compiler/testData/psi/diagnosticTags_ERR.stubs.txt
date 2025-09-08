@@ -8,7 +8,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
-  CLASS[classId=/SAM, fqName=SAM, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SAM, superNames=[]]
+  CLASS[classId=/SAM, fqName=SAM, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=SAM, superNames=[]]
     CLASS_BODY
       FUN[fqName=SAM.run, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
         VALUE_PARAMETER_LIST
@@ -241,7 +241,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
         TYPE_REFERENCE
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   MODIFIER_LIST[suspend]
-  CLASS[classId=/Supertype1, fqName=Supertype1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype1, superNames=[]]
+  CLASS[classId=/Supertype1, fqName=Supertype1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype1, superNames=[]]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -252,13 +252,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
     CLASS_BODY
-  CLASS[classId=/Supertype2, fqName=Supertype2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype2, superNames=[]]
+  CLASS[classId=/Supertype2, fqName=Supertype2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype2, superNames=[]]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
   MODIFIER_LIST[suspend]
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -276,4 +276,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=/RS, fqName=RS, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]
+  CLASS[classId=/RS, fqName=RS, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=RS, superNames=[]]

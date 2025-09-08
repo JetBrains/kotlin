@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=a]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
-  CLASS[classId=a/DefaultImplsInInterface, fqName=a.DefaultImplsInInterface, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=DefaultImplsInInterface, superNames=[]]
+  CLASS[classId=a/DefaultImplsInInterface, fqName=a.DefaultImplsInInterface, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=DefaultImplsInInterface, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=a.DefaultImplsInInterface.isPersistent, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isPersistent]

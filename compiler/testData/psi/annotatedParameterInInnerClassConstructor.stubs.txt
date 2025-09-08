@@ -2,13 +2,13 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/AnnoA, fqName=test.AnnoA, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoA, superNames=[]]
+  CLASS[classId=test/AnnoA, fqName=test.AnnoA, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoA, superNames=[]]
     MODIFIER_LIST[annotation]
-  CLASS[classId=test/AnnoB, fqName=test.AnnoB, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoB, superNames=[]]
+  CLASS[classId=test/AnnoB, fqName=test.AnnoB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoB, superNames=[]]
     MODIFIER_LIST[annotation]
-  CLASS[classId=test/AnnotatedParameterInInnerClassConstructor, fqName=test.AnnotatedParameterInInnerClassConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInInnerClassConstructor, superNames=[]]
+  CLASS[classId=test/AnnotatedParameterInInnerClassConstructor, fqName=test.AnnotatedParameterInInnerClassConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInInnerClassConstructor, superNames=[]]
     CLASS_BODY
-      CLASS[classId=test/AnnotatedParameterInInnerClassConstructor.Inner, fqName=test.AnnotatedParameterInInnerClassConstructor.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+      CLASS[classId=test/AnnotatedParameterInInnerClassConstructor.Inner, fqName=test.AnnotatedParameterInInnerClassConstructor.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[inner]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner]
           VALUE_PARAMETER_LIST
@@ -33,7 +33,7 @@ FILE[kind=File[packageFqName=test]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=String]
         CLASS_BODY
-      CLASS[classId=test/AnnotatedParameterInInnerClassConstructor.InnerGeneric, fqName=test.AnnotatedParameterInInnerClassConstructor.InnerGeneric, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InnerGeneric, superNames=[]]
+      CLASS[classId=test/AnnotatedParameterInInnerClassConstructor.InnerGeneric, fqName=test.AnnotatedParameterInInnerClassConstructor.InnerGeneric, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InnerGeneric, superNames=[]]
         MODIFIER_LIST[inner]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]

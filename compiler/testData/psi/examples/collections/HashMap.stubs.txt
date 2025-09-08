@@ -1,7 +1,7 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/IEquality, fqName=IEquality, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IEquality, superNames=[]]
+  CLASS[classId=/IEquality, fqName=IEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IEquality, superNames=[]]
     MODIFIER_LIST[open]
     CLASS_BODY
       FUN[fqName=IEquality.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
@@ -13,7 +13,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-  CLASS[classId=/IHashable, fqName=IHashable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IHashable, superNames=[IEquality]]
+  CLASS[classId=/IHashable, fqName=IHashable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IHashable, superNames=[IEquality]]
     MODIFIER_LIST[open]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -27,7 +27,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             REFERENCE_EXPRESSION[referencedName=Integer]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
-  CLASS[classId=/IMap, fqName=IMap, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IMap, superNames=[]]
+  CLASS[classId=/IMap, fqName=IMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IMap, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
@@ -73,7 +73,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-  CLASS[classId=/HashableWrapper, fqName=HashableWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=HashableWrapper, superNames=[IHashable]]
+  CLASS[classId=/HashableWrapper, fqName=HashableWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=HashableWrapper, superNames=[IHashable]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=HashableWrapper]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=HashableWrapper.obj, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=obj]
@@ -100,7 +100,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=HashableWrapper]
-  CLASS[classId=/IHashingStrategy, fqName=IHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IHashingStrategy, superNames=[]]
+  CLASS[classId=/IHashingStrategy, fqName=IHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IHashingStrategy, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
@@ -127,7 +127,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Integer]
-  CLASS[classId=/DefaultHashingStrategy, fqName=DefaultHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DefaultHashingStrategy, superNames=[IHashingStrategy]]
+  CLASS[classId=/DefaultHashingStrategy, fqName=DefaultHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DefaultHashingStrategy, superNames=[IHashingStrategy]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
         MODIFIER_LIST[in]
@@ -169,7 +169,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Integer]
-  CLASS[classId=/JavaObjectHashingStrategy, fqName=JavaObjectHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaObjectHashingStrategy, superNames=[IHashingStrategy]]
+  CLASS[classId=/JavaObjectHashingStrategy, fqName=JavaObjectHashingStrategy, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaObjectHashingStrategy, superNames=[IHashingStrategy]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
     SUPER_TYPE_LIST
@@ -207,7 +207,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Integer]
-  CLASS[classId=/HashMap, fqName=HashMap, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=HashMap, superNames=[IMap]]
+  CLASS[classId=/HashMap, fqName=HashMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=HashMap, superNames=[IMap]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
       TYPE_PARAMETER[fqName=null, name=V]
@@ -256,7 +256,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=K]
-  CLASS[classId=/StrategyHashMap, fqName=StrategyHashMap, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StrategyHashMap, superNames=[IMap]]
+  CLASS[classId=/StrategyHashMap, fqName=StrategyHashMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=StrategyHashMap, superNames=[IMap]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]
       TYPE_PARAMETER[fqName=null, name=V]

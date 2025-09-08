@@ -8,7 +8,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
   IMPORT_LIST
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
-  CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[A]]
+  CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[A]]
     MODIFIER_LIST[public protected private internal open abstract override suspend annotation out in]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=abstract]
@@ -354,7 +354,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=t]
-  CLASS[classId=foo/bar/goo/F, fqName=foo.bar.goo.F, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=F, superNames=[]]
+  CLASS[classId=foo/bar/goo/F, fqName=foo.bar.goo.F, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=F, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=F]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=foo.bar.goo.F.foo, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=foo]

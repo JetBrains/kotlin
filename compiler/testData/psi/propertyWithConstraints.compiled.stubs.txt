@@ -33,7 +33,7 @@ I1.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/I1, fqName=I1, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=I1, superNames=[]]
+    CLASS[classId=/I1, fqName=I1, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=I1, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
 
@@ -42,6 +42,6 @@ I2.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/I2, fqName=I2, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=I2, superNames=[]]
+    CLASS[classId=/I2, fqName=I2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=I2, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY

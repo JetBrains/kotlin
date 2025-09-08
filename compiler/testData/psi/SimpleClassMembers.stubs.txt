@@ -1,13 +1,13 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/foo, fqName=foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=foo, superNames=[]]
+  CLASS[classId=/foo, fqName=foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=foo, superNames=[]]
     CLASS_BODY
-      CLASS[classId=/foo.foo, fqName=foo.foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=foo, superNames=[]]
+      CLASS[classId=/foo.foo, fqName=foo.foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=foo, superNames=[]]
         CLASS_BODY
           OBJECT_DECLARATION[classId=/foo.foo.foo, fqName=foo.foo.foo, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
             CLASS_BODY
-          CLASS[classId=/foo.foo.Bar, fqName=foo.foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
+          CLASS[classId=/foo.foo.Bar, fqName=foo.foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
             CLASS_BODY
           FUN[fqName=foo.foo.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
@@ -17,7 +17,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=bar]
-      CLASS[classId=/foo.Bar, fqName=foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
+      CLASS[classId=/foo.Bar, fqName=foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
         CLASS_BODY
           OBJECT_DECLARATION[classId=/foo.Bar.foo, fqName=foo.Bar.foo, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
             CLASS_BODY
@@ -65,7 +65,7 @@ FILE[kind=File[packageFqName=<root>]]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Goo]
-          CLASS[classId=/foo.Bar.Bar, fqName=foo.Bar.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
+          CLASS[classId=/foo.Bar.Bar, fqName=foo.Bar.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
             CLASS_BODY
           FUN[fqName=foo.Bar.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST

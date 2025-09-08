@@ -2,7 +2,7 @@ MyBuilder.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyBuilder, fqName=MyBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyBuilder, superNames=[]]
+    CLASS[classId=/MyBuilder, fqName=MyBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyBuilder, superNames=[]]
       CLASS_BODY
         FUN[fqName=MyBuilder.contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contract]
           VALUE_PARAMETER_LIST

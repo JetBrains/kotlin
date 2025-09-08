@@ -9,7 +9,7 @@ C.class:
           REFERENCE_EXPRESSION[referencedName=c]
         REFERENCE_EXPRESSION[referencedName=topLevelMembersAnnotated]
     IMPORT_LIST
-    CLASS[classId=a/b/c/topLevelMembersAnnotated/C, fqName=a.b.c.topLevelMembersAnnotated.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+    CLASS[classId=a/b/c/topLevelMembersAnnotated/C, fqName=a.b.c.topLevelMembersAnnotated.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
         MODIFIER_LIST[public]
@@ -133,7 +133,7 @@ a.class:
           REFERENCE_EXPRESSION[referencedName=e]
         REFERENCE_EXPRESSION[referencedName=f]
     IMPORT_LIST
-    CLASS[classId=d/e/f/a, fqName=d.e.f.a, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
+    CLASS[classId=d/e/f/a, fqName=d.e.f.a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
         MODIFIER_LIST[public]
@@ -157,7 +157,7 @@ b.class:
           REFERENCE_EXPRESSION[referencedName=e]
         REFERENCE_EXPRESSION[referencedName=f]
     IMPORT_LIST
-    CLASS[classId=d/e/f/b, fqName=d.e.f.b, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[Annotation]]
+    CLASS[classId=d/e/f/b, fqName=d.e.f.b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=b]
         MODIFIER_LIST[public]

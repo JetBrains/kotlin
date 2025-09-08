@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=bar, facadeFqName=bar.FileAnnotationInWrongPlaceK
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=baz]
     VALUE_PARAMETER_LIST
-  CLASS[classId=bar/C, fqName=bar.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=bar/C, fqName=bar.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION
         ANNOTATION_TARGET[useSiteTarget=FILE]
@@ -34,9 +34,9 @@ FILE[kind=Facade[packageFqName=bar, facadeFqName=bar.FileAnnotationInWrongPlaceK
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=baz]
-  CLASS[classId=bar/T, fqName=bar.T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
+  CLASS[classId=bar/T, fqName=bar.T, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
     MODIFIER_LIST[]
-  CLASS[classId=bar/T, fqName=bar.T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
+  CLASS[classId=bar/T, fqName=bar.T, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION
         ANNOTATION_TARGET[useSiteTarget=FILE]

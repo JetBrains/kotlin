@@ -36,6 +36,6 @@ MyElement.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyElement, fqName=MyElement, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MyElement, superNames=[]]
+    CLASS[classId=/MyElement, fqName=MyElement, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=MyElement, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY

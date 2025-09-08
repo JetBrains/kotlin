@@ -11,12 +11,12 @@ TypeAliases.kt:
             REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=annotation]
           REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
-    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
+    CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=E]
         TYPE_PARAMETER[fqName=null, name=F]
       CLASS_BODY
-        CLASS[classId=test/Outer.Inner, fqName=test.Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+        CLASS[classId=test/Outer.Inner, fqName=test.Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
           MODIFIER_LIST[inner]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=G]
@@ -70,7 +70,7 @@ TypeAliases.kt:
                               TYPE_REFERENCE
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=H]
-    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+    CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
       MODIFIER_LIST[annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           CONSTRUCTOR_CALLEE
@@ -82,9 +82,9 @@ TypeAliases.kt:
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
                 REFERENCE_EXPRESSION[referencedName=TYPEALIAS]
-    CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
+    CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliases, superNames=[]]
       CLASS_BODY
-        CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
+        CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
         TYPEALIAS[classId=test/TypeAliases.B, fqName=test.TypeAliases.B, isTopLevel=false, name=B]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=Suppress]
@@ -192,7 +192,7 @@ TypeAliases.kt:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Z]
-        CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
+        CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
     TYPEALIAS[classId=test/Z, fqName=test.Z, isTopLevel=true, name=Z]
       TYPE_REFERENCE
         USER_TYPE
@@ -219,4 +219,4 @@ dependency.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=A]
-    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]
+    CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]

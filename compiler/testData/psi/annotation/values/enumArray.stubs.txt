@@ -2,7 +2,7 @@ Arrays.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Arrays, fqName=Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
+    CLASS[classId=/Arrays, fqName=Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Arrays]
         VALUE_PARAMETER_LIST
@@ -21,11 +21,11 @@ MyEnum.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[]]
+    CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[]]
       MODIFIER_LIST[enum]
       CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=MyEnum.ENTRY1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY1, superNames=[]]
-        ENUM_ENTRY[classId=null, fqName=MyEnum.ENTRY2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY2, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=MyEnum.ENTRY1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=MyEnum.ENTRY2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY2, superNames=[]]
 
 
 WithArrays.kt:
@@ -36,7 +36,7 @@ WithArrays.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=MyEnum]
           REFERENCE_EXPRESSION[referencedName=ENTRY2]
-    CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
+    CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
           CONSTRUCTOR_CALLEE
