@@ -127,6 +127,7 @@ class FirJavaField @FirImplementationDetail constructor(
         returnTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
+        status.accept(visitor, data)
         initializer?.accept(visitor, data)
     }
 
