@@ -101,4 +101,7 @@ private class FirCaffeineCache<K : Any, V, CONTEXT>(
     }
 
     override fun getValueIfComputed(key: K): V? = cache.getIfPresent(key)?.nullValueToNull()
+
+    override val cachedValues: Collection<V>
+        get() = cache.asMap().values.mapNotNull { it.nullValueToNull() }
 }

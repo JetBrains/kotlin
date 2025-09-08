@@ -23,6 +23,11 @@ import kotlin.reflect.KProperty
 abstract class FirCache<in K : Any, out V, in CONTEXT> {
     abstract fun getValue(key: K, context: CONTEXT): V
     abstract fun getValueIfComputed(key: K): V?
+
+    /**
+     * Returns a snapshot of all non-null values in the cache. Changes to the cache do not reflect in the resulting collection.
+     */
+    abstract val cachedValues: Collection<V>
 }
 
 @Suppress("NOTHING_TO_INLINE")

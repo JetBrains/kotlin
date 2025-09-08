@@ -25,4 +25,7 @@ internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
 
     override fun getValueIfComputed(key: K): V? =
         map[key]?.getValueIfComputed()
+
+    override val cachedValues: Collection<V>
+        get() = map.values.mapNotNull { it.getValueIfComputed() }
 }
