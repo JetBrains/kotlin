@@ -248,15 +248,19 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             }
 
             val (exportAnnotations, irrelevantAnnotations) = originalFunc.annotations.partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn)
+                it.isAnnotation(JsAnnotations.jsExportFqn) || it.isAnnotation(JsAnnotations.jsExportDefaultFqn)
             }
 
             annotations = exportAnnotations.compactIfPossible()
 
             addJsName(originalFunc.getJsNameOrKotlinName().identifier)
 
-            if (originalFunc.isTopLevel && !exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport)) {
-                addJsExport()
+            if (originalFunc.isTopLevel) {
+                if (!exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsExport)
+                    && !exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsExportDefault)
+                ) {
+                    addJsExport()
+                }
             }
 
             originalFunc.annotations = irrelevantAnnotations.compactIfPossible()

@@ -20,5 +20,7 @@ class C(val x: Int) {
     fun doubleX() = x * 2
 }
 
-
 fun box(): String = "OK"
+
+@JsExport.Default
+fun justSomeDefaultExport() = "OK"

@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
-sealed class ExportedDeclaration
+sealed class ExportedDeclaration {
+    val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
+}
+
+sealed class ExportedAttribute {
+    object DefaultExport : ExportedAttribute()
+}
 
 data class ExportedModule(
     val name: String,

@@ -2,3 +2,4 @@
 /incrementalOut/
 *.tsbuildinfo
 /typescript-export/**/*.js
+/typescript-export/**/*.mjs

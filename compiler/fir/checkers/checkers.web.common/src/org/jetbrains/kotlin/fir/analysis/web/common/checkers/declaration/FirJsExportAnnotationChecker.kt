@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.name.WebCommonStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJsExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        val jsExport = declaration.getAnnotationByClassId(WebCommonStandardClassIds.Annotations.JsExport, context.session) ?: return
+        val jsExport = declaration.getAnnotationByClassId(StandardClassIds.Annotations.jsExport, context.session)
+            ?: declaration.getAnnotationByClassId(StandardClassIds.Annotations.jsExportDefault, context.session)
+            ?: return
 
         if (declaration !is FirFile && !context.isTopLevel) {
             reporter.reportOn(jsExport.source, FirWebCommonErrors.NESTED_JS_EXPORT)

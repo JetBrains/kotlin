@@ -21,8 +21,12 @@ class JsDtsHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in globalDirectives) return
 
-        val referenceDtsFile = module.files.first().originalFile.withReplacedExtensionOrNull(".kt", ".d.ts")
-            ?: error("Can't find reference .d.ts file")
+        // TODO: fix the issue with difference in name of the file and the generated file
+        val extension = if (JsEnvironmentConfigurationDirectives.ES_MODULES in globalDirectives) "-lib_v5.d.mts" else ".d.ts"
+
+        val referenceDtsFile = module.files.first().originalFile.withReplacedExtensionOrNull(".kt", extension)
+            ?: error("Can't find reference $extension file")
+
         val generatedDtsFile = info.outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
             ?: info.outputFile.withReplacedExtensionOrNull("_v5.mjs", ".d.ts")
             ?: error("Can't find generated .d.ts file")
