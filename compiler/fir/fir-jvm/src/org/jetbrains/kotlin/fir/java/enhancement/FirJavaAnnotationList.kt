@@ -40,7 +40,7 @@ class FirLazyJavaAnnotationList(
 ) : FirJavaAnnotationList {
     private val javaAnnotations: Collection<JavaAnnotation> get() = annotationOwner.annotations
 
-    private val firAnnotations: List<FirAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val lazyFirAnnotations: Lazy<List<FirAnnotation>> = lazy(LazyThreadSafetyMode.PUBLICATION) {
         val fakeSource = annotationOwner.toSourceElement(KtFakeSourceElementKind.Enhancement)
         javaAnnotations.convertAnnotationsToFir(
             ownerModuleData.session,
@@ -48,6 +48,8 @@ class FirLazyJavaAnnotationList(
             annotationOwner.isDeprecatedInJavaDoc,
         )
     }
+
+    private val firAnnotations: List<FirAnnotation> by lazyFirAnnotations
 
     /**
      * [DeprecatedInJavaDocAnnotation] is generated in the case [JavaAnnotationOwner.isDeprecatedInJavaDoc]
@@ -64,6 +66,8 @@ class FirLazyJavaAnnotationList(
     override fun listIterator(): ListIterator<FirAnnotation> = firAnnotations.listIterator()
     override fun listIterator(index: Int): ListIterator<FirAnnotation> = firAnnotations.listIterator(index)
     override fun subList(fromIndex: Int, toIndex: Int): List<FirAnnotation> = firAnnotations.subList(fromIndex, toIndex)
+
+    val isInitialized: Boolean get() = lazyFirAnnotations.isInitialized()
 }
 
 object FirEmptyJavaAnnotationList : FirJavaAnnotationList, AbstractList<FirAnnotation>() {

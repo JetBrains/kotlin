@@ -50,7 +50,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     private val annotationList: FirJavaAnnotationList,
     internal val originalStatus: FirResolvedDeclarationStatusImpl,
     override val classKind: ClassKind,
-    private val declarationList: FirJavaDeclarationList,
+    val declarationList: FirJavaDeclarationList,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
     private val nonEnhancedSuperTypes: List<FirTypeRef>,
