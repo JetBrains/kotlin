@@ -1306,7 +1306,7 @@ internal class LongParser private constructor(private val overflowLimit: Long, p
  * - High precision: first 9 digits
  * - Low precision: remaining 6 digits
  */
-private object FractionalParser {
+internal object FractionalParser {
 
     /**
      * Parses up to 15 decimal digits as a fraction and returns them scaled to 15 decimal places.
