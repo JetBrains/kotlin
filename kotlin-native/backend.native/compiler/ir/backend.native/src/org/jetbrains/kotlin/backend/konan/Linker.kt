@@ -136,7 +136,6 @@ internal class Linker(
         File(executable).delete()
 
         val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
-                caches.dynamic +
                 libraryProvidedLinkerFlags + additionalLinkerArgs
 
         return with(linker) {
@@ -144,7 +143,8 @@ internal class Linker(
                     tempFiles = tempFiles,
                     objectFiles = objectFiles,
                     executable = executable,
-                    libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    dynamicLibraries = caches.dynamic,
                     linkerArgs = linkerArgs,
                     optimize = optimize,
                     debug = debug,

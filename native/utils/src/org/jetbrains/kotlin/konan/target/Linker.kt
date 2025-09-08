@@ -64,7 +64,8 @@ class LinkerArguments(
     val tempFiles: TempFiles,
     val objectFiles: List<ObjectFile>,
     val executable: ExecutableFile,
-    val libraries: List<String>,
+    val staticLibraries: List<String>,
+    val dynamicLibraries: List<String>,
     val linkerArgs: List<String>,
     val optimize: Boolean,
     val debug: Boolean,
@@ -77,15 +78,16 @@ class LinkerArguments(
 @Suppress("unused", "UNUSED_PARAMETER")
 fun LinkerFlags.finalLinkCommands(
     objectFiles: List<ObjectFile>, executable: ExecutableFile,
-    libraries: List<String>, linkerArgs: List<String>,
-    optimize: Boolean, debug: Boolean,
-    kind: LinkerOutputKind, outputDsymBundle: String,
-    mimallocEnabled: Boolean,
+    libraries: List<String>,
+    linkerArgs: List<String>, optimize: Boolean,
+    debug: Boolean, kind: LinkerOutputKind,
+    outputDsymBundle: String, mimallocEnabled: Boolean,
     sanitizer: SanitizerKind? = null,
 ): List<Command> = with(this) {
     LinkerArguments(
         TempFiles(),
-        objectFiles, executable, libraries, linkerArgs, optimize, debug, kind, outputDsymBundle,sanitizer
+        objectFiles, executable, staticLibraries = libraries, dynamicLibraries = emptyList(), linkerArgs, optimize, debug, kind, outputDsymBundle,
+        sanitizer
     ).finalLinkCommands()
 }
 
@@ -141,7 +143,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             "Sanitizers are unsupported"
         }
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
-            return staticGnuArCommands(ar, executable, objectFiles, libraries)
+            return staticGnuArCommands(ar, executable, objectFiles, staticLibraries)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val toolchainSysroot = "${absoluteTargetToolchain}/sysroot"
@@ -170,7 +172,8 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             if (dynamic) +linkerDynamicFlags
             if (dynamic) +"-Wl,-soname,${File(executable).name}"
             +linkerKonanFlags
-            +libraries
+            +staticLibraries
+            +dynamicLibraries
             +linkerArgs
         })
     }
@@ -247,11 +250,18 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     }.toList()
 
     override fun LinkerArguments.finalLinkCommands(): List<Command> {
-        val librariesArgs = if (libraries.isEmpty())
-            libraries
+        val staticLibrariesArgs = if (staticLibraries.isEmpty())
+            staticLibraries
         else tempFiles.create("libraries").let { librariesListFile ->
-            librariesListFile.writeLines(libraries)
+            librariesListFile.writeLines(staticLibraries)
             listOf("-filelist", librariesListFile.absolutePath)
+        }
+
+        val dynamicLibrariesArgs = if (dynamicLibraries.isEmpty())
+            dynamicLibraries
+        else tempFiles.create("dynamic").let { dynamicLibrariesListFile ->
+            dynamicLibrariesListFile.writeLines(dynamicLibraries)
+            listOf("-filelist", dynamicLibrariesListFile.absolutePath)
         }
 
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
@@ -263,7 +273,8 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                 +listOf("-o", executable)
                 +listOf("-arch_only", arch)
                 +objectFiles
-                +librariesArgs
+                +staticLibrariesArgs
+                +dynamicLibrariesArgs
             })
         }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
@@ -286,7 +297,8 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (dynamic) +linkerDynamicFlags
             +linkerKonanFlags
             if (compilerRtLibrary != null) +compilerRtLibrary!!
-            +librariesArgs
+            +staticLibrariesArgs
+            +dynamicLibrariesArgs
             +linkerArgs
             +rpath(dynamic, sanitizer)
             when (sanitizer) {
@@ -394,7 +406,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
             }
-            return staticGnuArCommands(ar, executable, objectFiles, libraries)
+            return staticGnuArCommands(ar, executable, objectFiles, staticLibraries)
         }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
@@ -434,7 +446,8 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                     +provideCompilerRtLibrary("tsan_cxx")!!
                 }
             }
-            +libraries
+            +staticLibraries
+            +dynamicLibraries
             +linkerArgs
             // See explanation about `-u__llvm_profile_runtime` here:
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
@@ -478,7 +491,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             "Sanitizers are unsupported"
         }
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
-            return staticGnuArCommands(ar, executable, objectFiles, libraries)
+            return staticGnuArCommands(ar, executable, objectFiles, staticLibraries)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
 
@@ -495,7 +508,8 @@ class MingwLinker(targetProperties: MingwConfigurables)
             }
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
-            +libraries
+            +staticLibraries
+            +dynamicLibraries
             +linkerArgs
             +linkerKonanFlags.filterNot { it in skipDefaultArguments }
             +additionalArguments
