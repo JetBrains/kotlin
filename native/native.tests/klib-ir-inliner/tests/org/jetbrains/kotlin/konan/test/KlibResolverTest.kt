@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CInteropCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
@@ -54,14 +55,23 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
 class KlibResolverTest : AbstractNativeSimpleTest() {
-    private data class Module(val name: String, val dependencyNames: List<String>) {
-        constructor(name: String, vararg dependencyNames: String) : this(name, dependencyNames.asList())
+    private data class Module(val name: String, val dependencyNames: List<String>, val kind: Kind = Kind.REGULAR) {
+        constructor(name: String, vararg dependencyNames: String, kind: Kind = Kind.REGULAR) : this(
+            name,
+            dependencyNames.asList(),
+            kind
+        )
 
         lateinit var dependencies: List<Module>
         lateinit var sourceFile: File
 
         fun initDependencies(resolveDependency: (String) -> Module) {
             dependencies = dependencyNames.map(resolveDependency)
+        }
+
+        enum class Kind {
+            REGULAR,
+            CINTEROP,
         }
     }
 
@@ -191,6 +201,66 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
                     val warnings = compilationToolCall.toolOutput.lineSequence().filter { "warning: KLIB resolver:" in it }.toList()
+                    assertTrue(warnings.isEmpty())
+                }
+            }
+        }
+    }
+
+    /**
+     * Exactly the same as [testResolvingTransitiveDependenciesRecordedInManifest],
+     * but `c` is a cinterop klib.
+     */
+    @Test
+    @DisplayName("Test cinterop resolving nonexistent transitive Kotlin dependency recorded in `depends` property (KT-80593)")
+    fun testCinteropResolvingTransitiveKotlinDependenciesRecordedInManifest() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b", kind = Module.Kind.CINTEROP)
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "w: KLIB resolver:" in it }.toList()
+                    assertTrue(warnings.isEmpty())
+                }
+            }
+        }
+    }
+
+    /**
+     * Similar to [testCinteropResolvingTransitiveKotlinDependenciesRecordedInManifest],
+     * but all klibs are cinterop klibs.
+     */
+    @Test
+    @DisplayName("Test cinterop resolving nonexistent cinterop transitive dependency recorded in `depends` property")
+    fun testCinteropResolvingTransitiveCinteropDependenciesRecordedInManifest() {
+        val moduleB = Module("b", kind = Module.Kind.CINTEROP)
+        val moduleC = Module("c", "b", kind = Module.Kind.CINTEROP)
+        val modules = createModules(moduleB, moduleC)
+
+        modules.compileModules(produceUnpackedKlibs = true, useLibraryNamesInCliArguments = true) { module, successKlib ->
+            when (module.name) {
+                "b" -> {
+                    // Making cinterop add something to its `depends =` is tricky in these tests:
+                    // for that, we need the same header file accessible to both `a` and `b`.
+                    // Instead of overcomplicating the test engine, let's do a little shortcut:
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
+                        properties[KLIB_PROPERTY_DEPENDS] += " a"
+                    }
+                    // In other words: unlike the previous test, don't compile-and-remove "a" at all,
+                    // but just patch the manifest to mention it as if it existed.
+                }
+                "c" -> {
+                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "w: KLIB resolver:" in it }.toList()
                     assertTrue(warnings.isEmpty())
                 }
             }
@@ -803,20 +873,33 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         generatedSourcesDir.mkdirs()
 
         modules.forEach { module ->
-            module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
-            module.sourceFile.writeText(
-                buildString {
-                    appendLine("package ${module.name}")
-                    appendLine()
-                    appendLine("fun ${module.name}(indent: Int) {")
-                    appendLine("    repeat(indent) { print(\"  \") }")
-                    appendLine("    println(\"${module.name}\")")
-                    module.dependencyNames.forEach { dependencyName ->
-                        appendLine("    $dependencyName.$dependencyName(indent + 1)")
-                    }
-                    appendLine("}")
+            when (module.kind) {
+                Module.Kind.REGULAR -> {
+                    module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
+                    module.sourceFile.writeText(buildString {
+                        appendLine("package ${module.name}")
+                        appendLine()
+                        appendLine("fun ${module.name}(indent: Int) {")
+                        appendLine("    repeat(indent) { print(\"  \") }")
+                        appendLine("    println(\"${module.name}\")")
+                        module.dependencyNames.forEach { dependencyName ->
+                            appendLine("    $dependencyName.$dependencyName(indent + 1)")
+                        }
+                        appendLine("}")
+                    })
                 }
-            )
+                Module.Kind.CINTEROP -> {
+                    module.sourceFile = generatedSourcesDir.resolve(module.name + ".def")
+                    module.sourceFile.writeText(buildString {
+                        appendLine("---")
+                        appendLine("#include <stdio.h>")
+                        appendLine("static void ${module.name}(int indent) {")
+                        appendLine("    for (int i = 0; i < indent; i++) printf(\" \");")
+                        appendLine("    printf(\"%s\\n\", \"${module.name}\");")
+                        appendLine("}")
+                    })
+                }
+            }
         }
 
         return modules.asList()
@@ -845,28 +928,45 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
         runWithCustomWorkingDir(klibFilesDir) {
             forEach { module ->
+                val commonCompilerAndCInteropArgs = buildList {
+                    if (produceUnpackedKlibs) add("-nopack")
+                    module.dependencies.forEach { dependency ->
+                        add("-l")
+                        add(dependency.computeArtifactPath())
+                    }
+                }
                 val testCase = generateTestCaseWithSingleFile(
                     sourceFile = module.sourceFile,
                     moduleName = module.name,
                     TestCompilerArgs(
-                        buildList {
-                            if (produceUnpackedKlibs) add("-nopack")
-                            module.dependencies.forEach { dependency ->
-                                add("-l")
-                                add(dependency.computeArtifactPath())
-                            }
-                            addAll(extraCmdLineParams)
-                        }
+                        commonCompilerAndCInteropArgs + extraCmdLineParams,
+                        cinteropArgs = commonCompilerAndCInteropArgs,
                     )
                 )
 
-                val compilation = LibraryCompilation(
-                    settings = testRunSettings,
-                    freeCompilerArgs = testCase.freeCompilerArgs,
-                    sourceModules = testCase.modules,
-                    dependencies = emptySet(),
-                    expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
-                )
+                val expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
+                val compilation = when (module.kind) {
+                    Module.Kind.REGULAR -> {
+                        LibraryCompilation(
+                            settings = testRunSettings,
+                            freeCompilerArgs = testCase.freeCompilerArgs,
+                            sourceModules = testCase.modules,
+                            dependencies = emptySet(),
+                            expectedArtifact = expectedArtifact
+                        )
+                    }
+                    Module.Kind.CINTEROP -> {
+                        check(extraCmdLineParams.isEmpty()) { "extraCmdLineParams are not allowed for cinterop modules" }
+                        CInteropCompilation(
+                            settings = testRunSettings,
+                            freeCompilerArgs = testCase.freeCompilerArgs,
+                            defFile = module.sourceFile,
+                            sources = emptyList(),
+                            dependencies = emptySet(),
+                            expectedArtifact = expectedArtifact
+                        )
+                    }
+                }
 
                 val success = compilation.result.assertSuccess()
                 transform?.invoke(module, success)

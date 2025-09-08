@@ -484,7 +484,7 @@ private fun getLibraryResolver(
         directLibs = cinteropArguments.library,
         target,
         Distribution(KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
-    ).libraryResolver()
+    ).libraryResolver(resolveManifestDependenciesLenient = true)
 }
 
 private fun resolveDependencies(
