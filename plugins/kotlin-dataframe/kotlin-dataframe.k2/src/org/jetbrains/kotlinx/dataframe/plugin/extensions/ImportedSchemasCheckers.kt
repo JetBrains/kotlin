@@ -16,32 +16,22 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasDiagnostics.GENERATED_FROM_SOURCE_SCHEMA
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ImportedSchemasDiagnostics.INVALID_SUPERTYPE
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
-import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class ImportedSchemasCheckers(
     session: FirSession,
-    dumpSchemas: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val regularClassCheckers: Set<FirRegularClassChecker>
             get() = setOfNotNull(
                 ImportedSchemaCompanionObjectChecker,
-                ImportedSchemaInfoChecker().takeIf { dumpSchemas }
             )
     }
 }
@@ -74,29 +64,7 @@ private object ImportedSchemaCompanionObjectChecker : FirRegularClassChecker(mpp
     }
 }
 
-private class ImportedSchemaInfoChecker() : FirRegularClassChecker(mppKind = MppCheckerKind.Common) {
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirRegularClass) {
-        val topLevelMetadata: Map<Name, ImportedSchemaMetadata> = context.session.importedSchemasService.topLevelMetadata
-        if (declaration.hasAnnotation(Names.DATA_SCHEMA_SOURCE_CLASS_ID, context.session)) {
-            val metadata = topLevelMetadata[declaration.classId.shortClassName]
-            context.sessionContext {
-                val schema: PluginDataFrameSchema = pluginDataFrameSchema(declaration.defaultType())
-                val message = buildString {
-                    appendLine()
-                    if (metadata != null) {
-                        appendLine(metadata.format)
-                    }
-                }
-                reporter.reportOn(declaration.source, GENERATED_FROM_SOURCE_SCHEMA, message + schema.toString())
-            }
-        }
-    }
-}
-
 object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
-    val GENERATED_FROM_SOURCE_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
     val CONFLICTING_COMPANION_OBJECT_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
     val INVALID_SUPERTYPE by error1<KtElement, String>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
 
@@ -104,7 +72,6 @@ object ImportedSchemasDiagnostics : KtDiagnosticsContainer() {
 
     private object ImportedSchemaDiagnosticRenderers : BaseDiagnosticRendererFactory() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DataFrame Imported Schemas") {
-            it.put(GENERATED_FROM_SOURCE_SCHEMA, "{0}", TO_STRING)
             it.put(CONFLICTING_COMPANION_OBJECT_DECLARATION, "{0}", TO_STRING)
             it.put(INVALID_SUPERTYPE, "{0}", TO_STRING)
         }

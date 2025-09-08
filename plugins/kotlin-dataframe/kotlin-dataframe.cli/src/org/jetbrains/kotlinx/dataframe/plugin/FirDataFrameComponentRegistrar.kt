@@ -42,14 +42,18 @@ class FirDataFrameExtensionRegistrar(
         +::TokenGenerator
         +::DataRowSchemaSupertype
         +{ it: FirSession ->
-            ExpressionAnalysisAdditionalChecker(it, isTest, dumpSchemas)
+            ExpressionAnalysisAdditionalChecker(it, isTest)
+        }
+        if (dumpSchemas) {
+            val withImportedSchemasReader = contextReader != null
+            +::DataSchemaInfoCheckers.bind(withImportedSchemasReader)
         }
 
         val predicate = LookupPredicate.BuilderContext.annotated(FqName("org.jetbrains.kotlinx.dataframe.annotations.DataSchemaSource"))
         if (contextReader != null) {
             +::ImportedSchemasGenerator.bind(predicate)
             +::ImportedSchemasCompanionGenerator.bind(predicate)
-            +::ImportedSchemasCheckers.bind(dumpSchemas)
+            +::ImportedSchemasCheckers
             +ImportedSchemasService.getFactory(contextReader)
         }
 
