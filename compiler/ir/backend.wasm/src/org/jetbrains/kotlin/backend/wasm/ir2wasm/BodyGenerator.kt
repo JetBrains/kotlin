@@ -982,17 +982,29 @@ class BodyGenerator(
                 val fieldId =
                     if (function.symbol == wasmSymbols.wasmGetQualifierImpl) rttiQualifierGetterFieldId else rttiSimpleNameGetterFieldId
 
+                val createStringLiteralType: WasmSymbolReadOnly<WasmTypeDeclaration>
+                if (backendContext.isWasmJsTarget) {
+                    val globalId =
+                        if (function.symbol == wasmSymbols.wasmGetQualifierImpl) rttiQualifierGlobalFieldId else rttiSimpleNameGlobalFieldId
+                    body.buildStructGet(wasmFileCodegenContext.rttiType, globalId, location)
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+                    body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
+
+                    createStringLiteralType = wasmFileCodegenContext.wasmStringsElements.createStringLiteralJsStringType
+                } else {
+                    createStringLiteralType = wasmFileCodegenContext.wasmStringsElements.createStringLiteralType
+                }
                 body.buildStructGet(wasmFileCodegenContext.rttiType, fieldId, location)
 
                 body.buildInstr(
                     op = WasmOp.REF_CAST,
                     location = location,
-                    WasmImmediate.HeapType(WasmHeapType.Type(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType))
+                    WasmImmediate.HeapType(WasmHeapType.Type(createStringLiteralType))
                 )
                 body.buildInstr(
                     op = WasmOp.CALL_REF,
                     location = location,
-                    WasmImmediate.TypeIdx(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType),
+                    WasmImmediate.TypeIdx(createStringLiteralType),
                 )
             }
 
@@ -1602,6 +1614,8 @@ class BodyGenerator(
         val rttiSuperClassFieldId = WasmSymbol(1)
         val rttiQualifierGetterFieldId = WasmSymbol(6)
         val rttiSimpleNameGetterFieldId = WasmSymbol(7)
+        val rttiQualifierGlobalFieldId = WasmSymbol(8)
+        val rttiSimpleNameGlobalFieldId = WasmSymbol(9)
         private val exceptionTagId = WasmSymbol(0)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }
