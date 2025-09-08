@@ -13,7 +13,6 @@ import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
@@ -100,14 +99,6 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
     protected open fun renderStub(stub: PsiFileStub<*>?): String = stub?.serializeToString().toString()
 
     abstract fun computeStub(file: KtFile): PsiFileStub<*>?
-}
-
-abstract class AbstractDecompiledStubsTest : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = object : AbstractCompiledStubsTest.CompiledStubsTestConfigurator() {
-        override val testPrefixes: List<String> get() = listOf("decompiled") + super.testPrefixes
-    }
-
-    override fun computeStub(file: KtFile): PsiFileStub<*> = file.calcStubTree().root
 }
 
 private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
