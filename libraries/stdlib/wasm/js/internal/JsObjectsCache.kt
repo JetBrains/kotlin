@@ -8,5 +8,5 @@ package kotlin.wasm.internal
 @OptIn(ExperimentalWasmJsInterop::class)
 internal external fun getCachedJsObject(
     ref: JsAny,
-    ifNotCached: JsAny
+    ifNotCached: JsReference<JsExternalBox>
 ): JsAny?

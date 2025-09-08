@@ -690,9 +690,10 @@ fun generateConstExpression(
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound.isExternal
-            val bottomType = if (isExternal)
-                WasmRefNullExternrefType.maybeShared(useSharedObjects && expression.type.getClass()?.name?.identifier == "JsReference")
-            else
+            val bottomType = if (isExternal) {
+                val isShareable = expression.type.getClass()?.isJsShareable(backendContext.wasmSymbols) == true
+                WasmRefNullExternrefType.maybeShared(useSharedObjects && isShareable)
+            } else
                 WasmRefNullrefType.maybeShared(useSharedObjects)
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }

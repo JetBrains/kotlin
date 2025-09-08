@@ -234,6 +234,9 @@ class WasmSymbols(
     val nullableDoubleIeee754Equals = getInternalWasmFunction("nullableDoubleIeee754Equals")
 
     val returnArgumentIfItIsKotlinAny = getInternalWasmFunction("returnArgumentIfItIsKotlinAny")
+    val returnShareableArgumentIfItIsKotlinAny = getInternalWasmFunction("returnShareableArgumentIfItIsKotlinAny")
+    val wrapShareable = getInternalWasmFunction("wrapShareable")
+    val wrapShareableSharedImpl = getInternalWasmFunction("wrapShareable_sharedImpl")
 
     val startCoroutineUninterceptedOrReturnIntrinsics =
         (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
@@ -274,12 +277,18 @@ class WasmSymbols(
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalWasmFunction("kotlinToJsStringAdapter")
         val kotlinToJsAnyAdapter = getInternalWasmFunction("kotlinToJsAnyAdapter")
+        val kotlinToJsShareableAnyAdapter = getInternalWasmFunction("kotlinToJsShareableAnyAdapter")
         val numberToDoubleAdapter = getInternalWasmFunction("numberToDoubleAdapter")
 
         val jsCheckIsNullOrUndefinedAdapter = getInternalWasmFunction("jsCheckIsNullOrUndefinedAdapter")
+        val jsCheckIsNullOrUndefinedShareableAdapter = getInternalWasmFunction("jsCheckIsNullOrUndefinedShareableAdapter")
 
         val jsToKotlinStringAdapter = getInternalWasmFunction("jsToKotlinStringAdapter")
         val jsToKotlinAnyAdapter = getInternalWasmFunction("jsToKotlinAnyAdapter")
+
+        val jsShareableAnyToJsAnyAdapter = getInternalWasmFunction("jsShareableAnyToJsAnyAdapter")
+        val jsShareableAnyToKotlinAnyAdapter = getInternalWasmFunction("jsShareableAnyToKotlinAnyAdapter")
+        val jsAnyToJsShareableAnyAdapter = getInternalWasmFunction("jsAnyToJsShareableAnyAdapter")
 
         val jsToKotlinByteAdapter = getInternalWasmFunction("jsToKotlinByteAdapter")
         val jsToKotlinShortAdapter = getInternalWasmFunction("jsToKotlinShortAdapter")
@@ -326,6 +335,7 @@ class WasmSymbols(
         val jsCode = getFunction("js", kotlinJsPackageFqName)
 
         val jsReferenceClass by lazy { getIrClass(FqName("kotlin.js.JsReference")) }
+        val jsShareableAnyClass by lazy { getIrClass(FqName("kotlin.js.JsShareableAny")) }
 
         val jsAnyType: IrType by lazy { getIrType("kotlin.js.JsAny") }
         val jsBooleanType: IrType by lazy { getIrType("kotlin.js.JsBoolean") }
@@ -338,6 +348,8 @@ class WasmSymbols(
         val jsArrayPush = getInternalWasmFunction("jsArrayPush")
 
         val externRefIsNull = getInternalWasmFunction("wasm_externref_is_null")
+
+        val jsShareableAnyIsNull = getInternalWasmFunction("jsShareableAnyIsNull")
 
         val jsPromise = getIrClass(FqName("kotlin.js.Promise"))
 

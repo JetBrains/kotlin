@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -43,6 +44,11 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
+    private val kotlinToJsShareableAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsShareableAnyAdapter
+    private val jsShareableAnyToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsShareableAnyToJsAnyAdapter
+    private val jsShareableAnyToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsShareableAnyToKotlinAnyAdapter
+    private val jsAnyToJsShareableAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsAnyToJsShareableAnyAdapter
+    private val useSharedObjects: Boolean = context.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -232,6 +238,23 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val toClass = toType.erasedUpperBound
 
         if (fromClass.isExternal && toClass.isExternal) {
+            if (useSharedObjects) {
+                val fromIsShareable = fromClass.isJsShareable(symbols)
+                val toIsShareable = toClass.isJsShareable(symbols)
+                if (fromIsShareable && !toIsShareable) {
+                    val valuesAsJsAny = builder.irCall(jsShareableAnyToJsAnyAdapter).also {
+                        it.arguments[0] = value
+                    }
+                    // Continue narrowing from JsAny to expected type
+                    return narrowType(context.wasmSymbols.jsRelatedSymbols.jsAnyType, toType, valuesAsJsAny)
+                } else if (!fromIsShareable && toIsShareable) {
+                    val valuesAsJsShareableAny = builder.irCall(jsAnyToJsShareableAnyAdapter).also {
+                        it.arguments[0] = value
+                    }
+                    // Continue narrowing from JsShareableAny to expected type
+                    return narrowType(context.wasmSymbols.jsRelatedSymbols.jsShareableAnyClass.defaultType, toType, valuesAsJsShareableAny)
+                }
+            }
             return value
         }
 
@@ -244,7 +267,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             if (!context.isWasmJsTarget) {
                 TODO("Implement externalize adapter for wasi mode")
             }
-            val narrowingToAny = builder.irCall(jsToKotlinAnyAdapter).also {
+            val toAnyAdapter = if (fromClass.isJsShareable(symbols)) jsShareableAnyToKotlinAnyAdapter else jsToKotlinAnyAdapter
+            val narrowingToAny = builder.irCall( toAnyAdapter).also {
                 it.arguments[0] = value
             }
             // Continue narrowing from Any to expected type
@@ -255,7 +279,8 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             if (!context.isWasmJsTarget) {
                 TODO("Implement internalize adapter for wasi mode")
             }
-            return builder.irCall(kotlinToJsAnyAdapter).also {
+            val toJsAdapter = if (toClass.isJsShareable(symbols)) kotlinToJsShareableAnyAdapter else kotlinToJsAnyAdapter
+            return builder.irCall(toJsAdapter).also {
                 it.arguments[0] = value
             }
         }

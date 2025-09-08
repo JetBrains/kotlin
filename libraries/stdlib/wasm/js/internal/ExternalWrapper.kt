@@ -8,7 +8,6 @@
 
 package kotlin.wasm.internal
 
-import kotlin.wasm.internal.reftypes.anyref
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 
@@ -141,21 +140,10 @@ private fun doubleToExternref(x: Double): JsNumber =
 private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean =
     js("lhs === rhs")
 
-
-@WasmNoOpCast
-@Suppress("unused")
-private fun Any?.asWasmAnyref(): anyref =
-    implementedAsIntrinsic
-
-@WasmOp(WasmOp.EXTERN_INTERNALIZE)
-private fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
-    implementedAsIntrinsic
-
-@WasmOp(WasmOp.EXTERN_EXTERNALIZE)
-private fun Any.asWasmExternRef(): ExternalInterfaceType =
-    implementedAsIntrinsic
-
 internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
+    js("ref == null")
+
+internal fun isNullishShareable(ref: JsShareableAny?): Boolean =
     js("ref == null")
 
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
@@ -165,7 +153,11 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     //     br_on_cast_fail null 0 $kotlin.Any
     //     return
     // }
-    // If ref is an instance of kotlin class -- return it casted to Any
+    // If ref is a wrapped instance of kotlin class -- return it casted to Any
+    if (ref is KotlinJsBox) return unwrapShareable(ref).unsafeCast<JsReference<Any>>().get()
+
+
+    // If ref is an instance of kotlin class (and "shared" mode is off) -- return it casted to Any
     returnArgumentIfItIsKotlinAny()
 
     // If we have Null in notNullRef -- return null
@@ -179,7 +171,7 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
     return if (x is JsExternalBox)
         x.ref
     else
-        x.asWasmExternRef()
+        wrapShareable(x.toJsReference())
 }
 
 internal fun stringLength(x: ExternalInterfaceType): Int =
@@ -225,6 +217,9 @@ internal fun kotlinToJsStringAdapter(x: String?): JsString? {
 internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
     // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
     if (isNullish(x)) null else x
+
+internal fun jsCheckIsNullOrUndefinedShareableAdapter(x: JsShareableAny?): JsShareableAny? =
+    if (isNullishShareable(x)) null else x
 
 // js string to kotlin string import
 // TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
@@ -321,6 +316,9 @@ internal fun numberToDoubleAdapter(x: Number): Double =
 internal fun kotlinToJsAnyAdapter(x: Any?): ExternalInterfaceType? =
     if (x == null) null else anyToExternRef(x)
 
+internal fun kotlinToJsShareableAnyAdapter(x: Any?): JsShareableAny? =
+    x?.toJsReference()
+
 internal fun jsToKotlinAnyAdapter(x: ExternalInterfaceType?): Any? =
     if (x == null) null else externRefToAny(x)
 
@@ -408,6 +406,39 @@ internal fun newJsArray(): ExternalInterfaceType =
 
 internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
     js("array.push(element);")
+}
+
+@ExperimentalWasmJsInterop
+internal external class KotlinJsBox(internal val kotlinObject: JsReference<Any>): JsAny
+
+// generates in-place depending on -Xwasm-use-shared-objects mode: either to call of `wrapShareable_sharedImpl` or no-action
+@ExperimentalWasmJsInterop
+@ExcludedFromCodegen
+internal fun wrapShareable(obj: JsShareableAny): JsAny = implementedAsIntrinsic
+
+@ExperimentalWasmJsInterop
+internal fun wrapShareable_sharedImpl(obj: JsShareableAny): JsAny = js("new KotlinJsBox(obj)")
+
+// no mode-depending generation is required for unwrap, as it is invoked only for actual KotlinJsBox (i.e. only in "shared" mode)
+@ExperimentalWasmJsInterop
+internal fun unwrapShareable(box: KotlinJsBox): JsShareableAny = js("box.kotlinObject")
+
+@ExperimentalWasmJsInterop
+internal fun jsShareableAnyToJsAnyAdapter(obj: JsShareableAny?): JsAny? =
+    if (obj == null) null else wrapShareable(obj)
+
+@ExperimentalWasmJsInterop
+internal fun jsShareableAnyToKotlinAnyAdapter(obj: JsShareableAny?): Any? =
+    if (obj == null) null else obj.unsafeCast<JsReference<Any>>().get()
+
+@ExperimentalWasmJsInterop
+internal fun jsAnyToJsShareableAnyAdapter(obj: JsAny?): JsShareableAny? {
+    if (obj == null)
+        return null
+    else if (obj is KotlinJsBox)
+        return unwrapShareable(obj)
+    else
+        throw ClassCastException("Non-shared references cannot be cast to shared ones")
 }
 
 /**

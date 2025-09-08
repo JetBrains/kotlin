@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.utils.isJsShareable
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.IrType
@@ -101,7 +102,7 @@ class WasmTypeTransformer(
                 return WasmI64
             }
 
-            if (useSharedObjects && klass.name.identifier == "JsReference") {
+            if (useSharedObjects && klass.isJsShareable(symbols)) {
                 return WasmRefNullType(WasmHeapType.SharedSimple.EXTERN)
             }
 

@@ -14,3 +14,7 @@ package kotlin.wasm.internal
 @WasmOp(WasmOp.REF_IS_NULL)
 @OptIn(ExperimentalWasmJsInterop::class)
 internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean
+
+@WasmOp(WasmOp.REF_IS_NULL)
+@OptIn(ExperimentalWasmJsInterop::class)
+internal external fun jsShareableAnyIsNull(a: JsShareableAny?): Boolean
