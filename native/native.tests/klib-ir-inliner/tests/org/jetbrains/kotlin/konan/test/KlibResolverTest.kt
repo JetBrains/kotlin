@@ -82,6 +82,34 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @DisplayName("Test -Xabi-version CLI argument (KT-74467)")
+    fun testABIVersionCLIFlag() {
+        val module = createModules(Module("a"))
+
+        val correctVersions = arrayOf(
+            "0.0.0", "255.255.255",
+            "0.10.200", "10.200.0", "200.0.10",
+            "2.2.0", "2.3.0"
+        )
+        for (version in correctVersions) {
+            module.compileModules(
+                produceUnpackedKlibs = true,
+                useLibraryNamesInCliArguments = false,
+                extraCmdLineParams = listOf(K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+            ) { _, successKlib ->
+                val klib = successKlib.resultingArtifact
+                val manifest = File("${klib.path}/default/manifest")
+                val versionBumped = manifest.readLines()
+                    .find { it.startsWith("abi_version") }
+                    ?.split("=")
+                    ?.get(1)
+                kotlin.test.assertEquals(versionBumped, version)
+            }
+        }
+
+    }
+
+    @Test
     @DisplayName("Test resolving all dependencies recorded in `depends` / `dependency_version` properties (KT-63931)")
     fun testResolvingDependenciesRecordedInManifest() {
         val modules = createModules(
