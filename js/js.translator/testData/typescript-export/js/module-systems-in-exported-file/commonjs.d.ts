@@ -45,4 +45,5 @@ export declare namespace foo {
     function asyncList(): Promise<kotlin.collections.KtList<number>>;
     function arrayOfLists(): Array<kotlin.collections.KtList<number>>;
     function acceptArrayOfPairs(array: Array<kotlin.Pair<string, string>>): void;
+    function justSomeDefaultExport(): string;
 }

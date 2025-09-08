@@ -238,6 +238,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                             JsExport(
                                 when (val type = readByte().toInt()) {
                                     ExportType.ALL -> JsExport.Subject.All
+                                    ExportType.DEFAULT -> JsExport.Subject.Default(nameTable[readInt()].makeRef())
                                     ExportType.ITEMS -> JsExport.Subject.Elements(readList {
                                         JsExport.Element(
                                             nameTable[readInt()].makeRef(),

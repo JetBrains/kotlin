@@ -310,6 +310,10 @@ private class JsIrAstSerializer {
 
                 when (val subject = export.subject) {
                     is JsExport.Subject.All -> writeByte(ExportType.ALL)
+                    is JsExport.Subject.Default -> {
+                        writeByte(ExportType.DEFAULT)
+                        writeInt(internalizeName(subject.name.name!!))
+                    }
                     is JsExport.Subject.Elements -> {
                         writeByte(ExportType.ITEMS)
                         writeCollection(subject.elements) {

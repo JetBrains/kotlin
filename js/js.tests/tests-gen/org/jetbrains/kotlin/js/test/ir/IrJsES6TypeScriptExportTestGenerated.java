@@ -461,6 +461,24 @@ public class IrJsES6TypeScriptExportTestGenerated extends AbstractIrJsES6TypeScr
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/js_export_default")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class Js_export_default {
+    @Test
+    public void testAllFilesPresentInJs_export_default() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/js_export_default"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("js_export_default.kt")
+    public void testJs_export_default() {
+      runTest("js/js.translator/testData/typescript-export/js/js_export_default/js_export_default.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/js-name")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
