@@ -470,6 +470,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
+    @TestMetadata("flexibleTypeAsConjunct.kt")
+    public void testFlexibleTypeAsConjunct() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/flexibleTypeAsConjunct.kt");
+    }
+
+    @Test
     @TestMetadata("singleConjunct.kt")
     public void testSingleConjunct() {
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/singleConjunct.kt");
@@ -494,9 +500,9 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
-    @TestMetadata("withAnnotations.kt")
-    public void testWithAnnotations() {
-      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/withAnnotations.kt");
+    @TestMetadata("withAnnotationsOnConjuncts.kt")
+    public void testWithAnnotationsOnConjuncts() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/intersectionType/withAnnotationsOnConjuncts.kt");
     }
 
     @Test

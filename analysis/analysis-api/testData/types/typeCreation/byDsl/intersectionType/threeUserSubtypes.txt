@@ -1,57 +1,19 @@
 KaType
-KaIntersectionType:
+KaUsualClassType:
   abbreviation: null
   annotations: []
-  conjuncts: [
-    KaUsualClassType:
-      abbreviation: null
-      annotations: []
-      classId: A
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: A
-          symbol: KaNamedClassSymbol(A)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassSymbol(A)
-      typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
-    KaUsualClassType:
-      abbreviation: null
-      annotations: []
-      classId: B
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: B
-          symbol: KaNamedClassSymbol(B)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassSymbol(B)
-      typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
-    KaUsualClassType:
-      abbreviation: null
-      annotations: []
-      classId: C
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: C
-          symbol: KaNamedClassSymbol(C)
-          typeArguments: []
-      ]
+  classId: C
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: C
       symbol: KaNamedClassSymbol(C)
       typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
   ]
+  symbol: KaNamedClassSymbol(C)
+  typeArguments: []
   isMarkedNullable: false
   isNullable: false
   hasFlexibleNullability: false
 
 Rendered type:
-A & B & C
+C
