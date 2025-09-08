@@ -1243,6 +1243,9 @@ private fun parseDefaultStringFormat(
  * overflow detection based on a configurable limit. It supports optional sign
  * parsing for formats that require it (e.g., ISO 8601).
  *
+ * When overflow occurs, the parser returns the maximum allowed value ([overflowLimit])
+ * and reports the overflow condition through the callback parameter.
+ *
  * @property overflowLimit The maximum value that can be parsed without overflow
  * @property withSign Whether to parse the optional `'+'` or `'-'` sign at the beginning
  * @property overflowThreshold Pre-calculated threshold (`overflowLimit / 10`) for early overflow detection
