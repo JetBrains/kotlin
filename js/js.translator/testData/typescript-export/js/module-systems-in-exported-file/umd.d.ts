@@ -14,5 +14,6 @@ export declare namespace foo {
         }
     }
     function box(): string;
+    function justSomeDefaultExport(): string;
 }
 export as namespace JS_TESTS;

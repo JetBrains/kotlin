@@ -21,3 +21,6 @@ class C(val x: Int) {
 
 
 fun box(): String = "OK"
+
+@JsExport.Default
+fun justSomeDefaultExport() = "OK"
