@@ -1168,16 +1168,20 @@ private fun parseDefaultStringFormat(
         }
 
         val hasFractionalPart = value[index] == '.'
-        var fractionStartIndex = -1
-        val fractionValue = if (hasFractionalPart) {
+        val fractionStartIndex: Int
+        val fractionValue: Long
+        if (hasFractionalPart) {
             fractionStartIndex = index
             index++
-            FractionalParser.parse(value, index) { fractionEndIndex ->
+            fractionValue = FractionalParser.parse(value, index) { fractionEndIndex ->
                 // Fraction has to be non-empty, and it cannot terminate a string
                 if (fractionEndIndex == index || fractionEndIndex == length) return handleError(throwException)
                 index = fractionEndIndex
             }
-        } else 0L
+        } else {
+            fractionStartIndex = -1
+            fractionValue = 0L
+        }
 
         val unit = value.defaultDurationUnitByShortNameOrNull(index)
             ?: return handleError(throwException, "Unknown duration unit short name: ${value[index]}")
