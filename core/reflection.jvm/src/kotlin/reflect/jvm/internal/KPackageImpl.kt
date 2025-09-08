@@ -57,7 +57,7 @@ internal class KPackageImpl(
             else null
         }
 
-        val members: Collection<KCallableImpl<*>> by ReflectProperties.lazySoft {
+        val members: Collection<DescriptorKCallable<*>> by ReflectProperties.lazySoft {
             getMembers(scope, DECLARED)
         }
     }

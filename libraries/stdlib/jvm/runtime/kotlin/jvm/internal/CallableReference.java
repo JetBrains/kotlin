@@ -26,7 +26,7 @@ public abstract class CallableReference implements KCallable, Serializable {
     // This field is not volatile intentionally:
     // 1) It's fine if the value is computed multiple times in different threads;
     // 2) An uninitialized value cannot be observed in this field from other thread because only already initialized or safely initialized
-    //    objects are written to it. The latter is guaranteed because both KFunctionImpl and KPropertyImpl have at least one final field.
+    //    objects are written to it. The latter is guaranteed because all implementations have at least one final field.
     private transient KCallable reflected;
 
     @SinceKotlin(version = "1.1")

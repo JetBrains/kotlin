@@ -22,7 +22,7 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
 
-internal open class KProperty2Impl<D, E, out V> : KProperty2<D, E, V>, KPropertyImpl<V> {
+internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, DescriptorKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(
         container, name, signature, CallableReference.NO_RECEIVER
     )
@@ -41,12 +41,12 @@ internal open class KProperty2Impl<D, E, out V> : KProperty2<D, E, V>, KProperty
 
     override fun invoke(receiver1: D, receiver2: E): V = get(receiver1, receiver2)
 
-    class Getter<D, E, out V>(override val property: KProperty2Impl<D, E, V>) : KPropertyImpl.Getter<V>(), KProperty2.Getter<D, E, V> {
+    class Getter<D, E, out V>(override val property: DescriptorKProperty2<D, E, V>) : DescriptorKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
     }
 }
 
-internal class KMutableProperty2Impl<D, E, V> : KProperty2Impl<D, E, V>, KMutableProperty2<D, E, V> {
+internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E, V>, KMutableProperty2<D, E, V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -57,7 +57,7 @@ internal class KMutableProperty2Impl<D, E, V> : KProperty2Impl<D, E, V>, KMutabl
 
     override fun set(receiver1: D, receiver2: E, value: V) = setter.call(receiver1, receiver2, value)
 
-    class Setter<D, E, V>(override val property: KMutableProperty2Impl<D, E, V>) : KPropertyImpl.Setter<V>(),
+    class Setter<D, E, V>(override val property: DescriptorKMutableProperty2<D, E, V>) : DescriptorKProperty.Setter<V>(),
         KMutableProperty2.Setter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E, value: V): Unit = property.set(receiver1, receiver2, value)
     }

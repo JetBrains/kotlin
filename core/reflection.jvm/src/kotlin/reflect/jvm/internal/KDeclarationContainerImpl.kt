@@ -50,9 +50,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getLocalProperty(index: Int): PropertyDescriptor?
 
-    protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
+    protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<DescriptorKCallable<*>> {
         val visitor = object : CreateKCallableVisitor(this) {
-            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*> =
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
                 throw IllegalStateException("No constructors should appear here: $descriptor")
         }
         return scope.getContributedDescriptors().mapNotNull { descriptor ->

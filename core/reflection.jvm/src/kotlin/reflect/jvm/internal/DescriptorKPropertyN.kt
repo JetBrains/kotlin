@@ -20,22 +20,22 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty
 
-internal open class KPropertyNImpl<out V> : KPropertyImpl<V> {
+internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     private val _getter = lazy(PUBLICATION) { Getter(this) }
 
     override val getter: Getter<V> get() = _getter.value
 
-    class Getter<out V>(override val property: KPropertyNImpl<V>) : KPropertyImpl.Getter<V>()
+    class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>()
 }
 
-internal class KMutablePropertyNImpl<V> : KPropertyNImpl<V>, KMutableProperty<V> {
+internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutableProperty<V> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     private val _setter = lazy(PUBLICATION) { Setter(this) }
 
     override val setter: Setter<V> get() = _setter.value
 
-    class Setter<V>(override val property: KMutablePropertyNImpl<V>) : KPropertyImpl.Setter<V>()
+    class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>()
 }
