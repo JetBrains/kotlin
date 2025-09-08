@@ -252,6 +252,16 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
             return backingMap.keys.toSet()
         }
 
+    /**
+     * Returns a snapshot of all values in the cache. Changes to the cache do not reflect in the resulting collection. **Must be called in a
+     * read action.**
+     */
+    val values: Collection<V>
+        get() {
+            processQueue()
+            return backingMap.values.mapNotNull { it.get() }
+        }
+
     override fun toString(): String = "${this::class.simpleName} size:$size"
 
     private fun ReferenceWithCleanup<K, V>.performCleanup(diagnosticInformation: String?) {

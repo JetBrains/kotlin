@@ -10,9 +10,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsOnlyApi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -49,6 +51,10 @@ internal class LLFirJavaSymbolProvider private constructor(
             val parentClass = getParentPsiClassSymbol(psiClass)
             ClassCacheContext(parentClass, JavaClassImpl(psiClass))
         }
+
+    @LLStatisticsOnlyApi
+    internal val cachedDeclarations: Collection<FirDeclaration>
+        get() = psiAwareCache.cachedValues.mapNotNull { it?.fir }
 }
 
 internal val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
