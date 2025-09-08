@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.caffeine)
 
     implementation(libs.opentelemetry.api)
+    implementation(libs.ehcache.sizeof)
 
     api(intellijCore())
 

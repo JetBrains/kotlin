@@ -48,6 +48,7 @@ intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 fastutil = "8.5.13-jb4"
+ehcache-sizeof = "0.4.0"
 # Wasm specific
 wasmedge = "0.14.0"
 vavr = "0.10.4"
@@ -168,6 +169,8 @@ schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-
 schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref="schema-kenerator" }
 
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+
+ehcache-sizeof = { module = "org.ehcache:sizeof", version.ref = "ehcache-sizeof" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
