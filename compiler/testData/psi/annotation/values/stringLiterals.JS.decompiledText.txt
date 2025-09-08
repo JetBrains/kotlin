@@ -1,0 +1,41 @@
+0_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */
+
+  public final annotation class StringLiteral public constructor(s1: kotlin.String, s2: kotlin.String, s3: kotlin.String) : kotlin.Annotation {
+      public final val s1: kotlin.String /* compiled code */
+
+      public final val s2: kotlin.String /* compiled code */
+
+      public final val s3: kotlin.String /* compiled code */
+  }
+
+1_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @StringLiteral public final class WithStringConstant public constructor() {
+  }
+
+2_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @StringLiteral public final class WithStringInterpolationPrefix public constructor() {
+  }
+
+3_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @StringLiteral public final class WithStringLiteral public constructor() {
+  }
+
+4_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @StringLiteral public final class WithStringLiteralConcat public constructor() {
+  }

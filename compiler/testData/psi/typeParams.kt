@@ -1,3 +1,4 @@
+// LIBRARY_PLATFORMS: JVM
 package test
 
 import java.io.Serializable

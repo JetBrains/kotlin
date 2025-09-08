@@ -1,0 +1,41 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package foo.TopLevelMembers
+
+public val immutable: kotlin.Double /* compiled code */
+
+public var mutable: kotlin.Float /* compiled code */
+
+public val kotlin.String.ext: kotlin.String /* compiled code */
+    public final get() { /* compiled code */ }
+
+private val certainlyNothing: kotlin.Nothing /* compiled code */
+
+public val foo.TopLevelMembers.D.Main: foo.TopLevelMembers.D? /* compiled code */
+    public final get() { /* compiled code */ }
+
+@field:foo.TopLevelMembers.A internal val Main: foo.TopLevelMembers.D? /* compiled code */
+
+public fun funWithBlockBody(): kotlin.Unit { /* compiled code */ }
+
+private fun funWithExprBody(): kotlin.Int { /* compiled code */ }
+
+private fun funWithParams(c: kotlin.Int): kotlin.Unit { /* compiled code */ }
+
+public fun kotlin.Int.ext(i: kotlin.Int = COMPILED_CODE): kotlin.Int { /* compiled code */ }
+
+private fun funWithVarargParam(c: kotlin.Int, vararg v: kotlin.Int): kotlin.Unit { /* compiled code */ }
+
+private fun probablyNothing(): foo.TopLevelMembers.Nothing { /* compiled code */ }
+
+private typealias Alias<E> = (E) -> E
+
+public final class Nothing public constructor() {
+}
+
+@kotlin.annotation.Target public final annotation class A public constructor() : kotlin.Annotation {
+}
+
+public final class D public constructor() {
+}

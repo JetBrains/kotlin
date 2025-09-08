@@ -1,6 +1,8 @@
 KtFile: annotatedFlexibleTypes.kt
   PsiComment(EOL_COMMENT)('// WITH_KOTLIN_JVM_ANNOTATIONS')
   PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM')
+  PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// FILE: AnnotatedFlexibleTypes.kt')
   PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE

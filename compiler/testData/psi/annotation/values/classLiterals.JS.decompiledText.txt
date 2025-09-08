@@ -1,0 +1,16 @@
+0_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class ClassLiteral public constructor(c1: kotlin.reflect.KClass<*>, c2: kotlin.reflect.KClass<*>) : kotlin.Annotation {
+      public final val c1: kotlin.reflect.KClass<*> /* compiled code */
+
+      public final val c2: kotlin.reflect.KClass<*> /* compiled code */
+  }
+
+1_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @ClassLiteral public final class WithClassLiteral public constructor() {
+  }

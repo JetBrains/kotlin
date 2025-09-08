@@ -1,0 +1,38 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
+  FUN[fqName=top level, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=top level]
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Unit]
+  OBJECT_DECLARATION[classId=/O, fqName=O, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=O, superNames=[]]
+    MODIFIER_LIST[public]
+    CLASS_BODY
+      FUN[fqName=O.with space, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=with space]
+        MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
+      FUN[fqName=O.without_space, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=without_space]
+        MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]

@@ -1,0 +1,98 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public typealias StringAlias = kotlin.String
+
+public typealias EntryAlias = kotlin.collections.Map.Entry<kotlin.String, kotlin.Int>
+
+public typealias FunctionAlias = (kotlin.String) -> kotlin.Int
+
+public typealias NestedStringAlias = kotlin.String /* from: test.StringAlias */
+
+public typealias NestedFunctionAlias = (kotlin.String) -> kotlin.Int /* from: test.FunctionAlias */
+
+public typealias ParameterizedListAlias<A> = kotlin.collections.List<A>
+
+public typealias NestedListAliasWithTypeArgument = kotlin.collections.List<kotlin.String> /* from: test.ParameterizedListAlias<kotlin.String> */
+
+public typealias NestedListAliasWithAliasTypeArgument = kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */
+
+public typealias NestedListAliasWithNestedAliasTypeArgument = kotlin.collections.List<kotlin.String /* from: test.NestedStringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.NestedStringAlias */> */
+
+public typealias NestedParameterizedListAlias<A> = kotlin.collections.List<kotlin.collections.List<A> /* from: test.ParameterizedListAlias<A> */> /* from: test.ParameterizedListAlias<kotlin.collections.List<A> /* from: test.ParameterizedListAlias<A> */> */
+
+public typealias NullableStringAlias = kotlin.String?
+
+public typealias NestedNullableStringAlias = kotlin.String? /* from: test.NullableStringAlias */
+
+public typealias NullableNestedStringAlias = kotlin.String? /* from: test.StringAlias? */
+
+public typealias NullableFunctionAlias = ((kotlin.String) -> kotlin.Int)?
+
+public typealias NestedNullableFunctionAlias = ((kotlin.String) -> kotlin.Int)? /* from: test.NullableFunctionAlias */
+
+public typealias NullableNestedFunctionAlias = ((kotlin.String) -> kotlin.Int)? /* from: test.FunctionAlias? */
+
+public final class TypeAliasExpansion public constructor() {
+    public final val functionAlias: (kotlin.String) -> kotlin.Int /* from: test.FunctionAlias */ /* compiled code */
+
+    public final val nestedStringAlias: kotlin.String /* from: test.NestedStringAlias */ /* compiled code */
+
+    public final val nestedFunctionAlias: (kotlin.String) -> kotlin.Int /* from: test.NestedFunctionAlias */ /* compiled code */
+
+    public final val parameterizedListAliasWithString: kotlin.collections.List<kotlin.String> /* from: test.ParameterizedListAlias<kotlin.String> */ /* compiled code */
+
+    public final val parameterizedListAliasWithStringAlias: kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */ /* compiled code */
+
+    public final val parameterizedListAliasWithNestedStringAlias: kotlin.collections.List<kotlin.String /* from: test.NestedStringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.NestedStringAlias */> */ /* compiled code */
+
+    public final val parameterizedListAliasWithParameterizedListAliasWithStringAlias: kotlin.collections.List<kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */> /* from: test.ParameterizedListAlias<kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */> */ /* compiled code */
+
+    public final val nestedListAliasWithTypeArgument: kotlin.collections.List<kotlin.String> /* from: test.NestedListAliasWithTypeArgument */ /* compiled code */
+
+    public final val nestedListAliasWithAliasTypeArgument: kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.NestedListAliasWithAliasTypeArgument */ /* compiled code */
+
+    public final val nestedListAliasWithNestedAliasTypeArgument: kotlin.collections.List<kotlin.String /* from: test.NestedStringAlias */> /* from: test.NestedListAliasWithNestedAliasTypeArgument */ /* compiled code */
+
+    public final val nestedParameterizedListAliasWithString: kotlin.collections.List<kotlin.collections.List<kotlin.String> /* from: test.ParameterizedListAlias<kotlin.String> */> /* from: test.NestedParameterizedListAlias<kotlin.String> */ /* compiled code */
+
+    public final val nestedParameterizedListAliasWithStringAlias: kotlin.collections.List<kotlin.collections.List<kotlin.String /* from: test.StringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */> /* from: test.NestedParameterizedListAlias<kotlin.String /* from: test.StringAlias */> */ /* compiled code */
+
+    public final val nestedParameterizedListAliasWithNestedStringAlias: kotlin.collections.List<kotlin.collections.List<kotlin.String /* from: test.NestedStringAlias */> /* from: test.ParameterizedListAlias<kotlin.String /* from: test.NestedStringAlias */> */> /* from: test.NestedParameterizedListAlias<kotlin.String /* from: test.NestedStringAlias */> */ /* compiled code */
+
+    public final val stringAliasNullable: kotlin.String? /* from: test.StringAlias? */ /* compiled code */
+
+    public final val nestedStringAliasNullable: kotlin.String? /* from: test.NestedStringAlias? */ /* compiled code */
+
+    public final val nullableStringAlias: kotlin.String? /* from: test.NullableStringAlias */ /* compiled code */
+
+    public final val nullableStringAliasNullable: kotlin.String? /* from: test.NullableStringAlias? */ /* compiled code */
+
+    public final val nestedNullableStringAlias: kotlin.String? /* from: test.NestedNullableStringAlias */ /* compiled code */
+
+    public final val nestedNullableStringAliasNullable: kotlin.String? /* from: test.NestedNullableStringAlias? */ /* compiled code */
+
+    public final val nullableNestedStringAlias: kotlin.String? /* from: test.NullableNestedStringAlias */ /* compiled code */
+
+    public final val nullableNestedStringAliasNullable: kotlin.String? /* from: test.NullableNestedStringAlias? */ /* compiled code */
+
+    public final val functionAliasNullable: ((kotlin.String) -> kotlin.Int)? /* from: test.FunctionAlias? */ /* compiled code */
+
+    public final val nestedFunctionAliasNullable: ((kotlin.String) -> kotlin.Int)? /* from: test.NestedFunctionAlias? */ /* compiled code */
+
+    public final val nullableFunctionAlias: ((kotlin.String) -> kotlin.Int)? /* from: test.NullableFunctionAlias */ /* compiled code */
+
+    public final val nullableFunctionAliasNullable: ((kotlin.String) -> kotlin.Int)? /* from: test.NullableFunctionAlias? */ /* compiled code */
+
+    public final val nestedNullableFunctionAlias: ((kotlin.String) -> kotlin.Int)? /* from: test.NestedNullableFunctionAlias */ /* compiled code */
+
+    public final val nestedNullableFunctionAliasNullable: ((kotlin.String) -> kotlin.Int)? /* from: test.NestedNullableFunctionAlias? */ /* compiled code */
+
+    public final val nullableNestedFunctionAlias: ((kotlin.String) -> kotlin.Int)? /* from: test.NullableNestedFunctionAlias */ /* compiled code */
+
+    public final val nullableNestedFunctionAliasNullable: ((kotlin.String) -> kotlin.Int)? /* from: test.NullableNestedFunctionAlias? */ /* compiled code */
+
+    public final fun entryToString(entry: kotlin.collections.Map.Entry<kotlin.String, kotlin.Int> /* from: test.EntryAlias */): kotlin.String /* from: test.StringAlias */ { /* compiled code */ }
+}

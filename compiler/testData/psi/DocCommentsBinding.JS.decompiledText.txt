@@ -1,0 +1,15 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public final class A public constructor(p: kotlin.Int) {
+    public final val p: kotlin.Int /* compiled code */
+
+    public final var property: kotlin.Int /* compiled code */
+        public final get() { /* compiled code */ }
+        public final set(value: kotlin.Int) { /* compiled code */ }
+
+    public final fun foo(): kotlin.Unit { /* compiled code */ }
+}
+
+public final class B public constructor() {
+}

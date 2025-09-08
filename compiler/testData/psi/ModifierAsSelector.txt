@@ -3,6 +3,8 @@ KtFile: ModifierAsSelector.kt
     <empty list>
   IMPORT_LIST
     <empty list>
+  PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM')
+  PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// JET-1')
   PsiWhiteSpace('\n\n')
   PROPERTY

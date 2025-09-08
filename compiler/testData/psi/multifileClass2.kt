@@ -1,3 +1,4 @@
+// LIBRARY_PLATFORMS: JVM
 // FILE: MultifileClass.kt
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package test

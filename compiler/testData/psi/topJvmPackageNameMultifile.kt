@@ -1,3 +1,4 @@
+// LIBRARY_PLATFORMS: JVM
 @file:Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE", "INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmName("OtherKt")
 @file:JvmMultifileClass

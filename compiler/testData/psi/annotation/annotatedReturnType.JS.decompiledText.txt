@@ -1,0 +1,23 @@
+0_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public interface MyInterface {
+      @RegularAnno public abstract val property: @TypeAnno kotlin.String
+
+      @RegularAnno public abstract fun function(@RegularAnno argument: @TypeAnno kotlin.Int): @TypeAnno kotlin.Int
+  }
+
+1_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final annotation class RegularAnno public constructor() : kotlin.Annotation {
+  }
+
+2_.knm:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @kotlin.annotation.Target public final annotation class TypeAnno public constructor() : kotlin.Annotation {
+  }
