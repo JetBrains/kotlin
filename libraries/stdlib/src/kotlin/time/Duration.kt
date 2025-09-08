@@ -1224,6 +1224,8 @@ private fun parseDefaultStringFormat(
             }
 
             // Since totalNanos is at most 1_998_999, and the added value is at most 10^15, their sum will never overflow.
+            // We use comparison with MINUTES because for days, hours, and minutes, the nanosecond
+            // is not expressed as a finite, non-repeating decimal, requiring fallback parsing for long fraction part.
             totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
                 value.parseFractionFallback(fractionStartIndex, index - unit.shortNameLength, unit)
             else
