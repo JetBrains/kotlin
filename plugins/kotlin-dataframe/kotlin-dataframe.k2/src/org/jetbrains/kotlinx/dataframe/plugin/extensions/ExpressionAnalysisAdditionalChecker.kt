@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
@@ -88,6 +90,13 @@ private class Checker(
     companion object {
         val CAST_ID = CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("cast"))
         val CHECK = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("Check"))
+        val VALID_CAST_TARGET_PREDICATE = LookupPredicate.create {
+            annotated(
+                Names.DATA_SCHEMA_CLASS_ID.asSingleFqName()
+            ) or annotated(
+                Names.DATA_SCHEMA_SOURCE_CLASS_ID.asSingleFqName()
+            )
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -120,7 +129,7 @@ private class Checker(
         val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
         val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return
         val targetSymbol = targetType.toSymbol(session)
-        if (targetSymbol != null && !targetSymbol.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session)) {
+        if (targetSymbol != null && !session.predicateBasedProvider.matches(VALID_CAST_TARGET_PREDICATE, targetSymbol)) {
             val text = "Annotate ${targetType.renderReadable()} with @DataSchema to use generated properties"
             reporter.reportOn(expression.source, CAST_TARGET_WARNING, text, context)
         }
@@ -169,10 +178,11 @@ internal object DataSchemaDeclarationChecker : FirRegularClassChecker(mppKind = 
         val annotated = declaration.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, context.session) ||
                 declaration.hasAnnotation(Names.DATA_SCHEMA_SOURCE_CLASS_ID, context.session)
         if (annotated && declaration.effectiveVisibility !in ALLOWED_DECLARATION_VISIBILITY) {
+            val visibilityOptions = ALLOWED_DECLARATION_VISIBILITY.joinToString(", ")
             reporter.reportOn(
                 declaration.source,
                 DATA_SCHEMA_DECLARATION_VISIBILITY,
-                "To allow plugin-generated declarations to refer to this declaration, it should be declared as either of ${ALLOWED_DECLARATION_VISIBILITY.joinToString(", ")}"
+                "To allow plugin-generated declarations to refer to this declaration, it must be declared as either of [$visibilityOptions]"
             )
         }
     }

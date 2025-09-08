@@ -82,6 +82,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     }
 
     @Test
+    @TestMetadata("cast.kt")
+    public void testCast() {
+      runTest("plugins/kotlin-dataframe/testData/diagnostics/importedSchema/cast.kt");
+    }
+
+    @Test
     @TestMetadata("conflictingCompanionObject.kt")
     public void testConflictingCompanionObject() {
       runTest("plugins/kotlin-dataframe/testData/diagnostics/importedSchema/conflictingCompanionObject.kt");

@@ -1,0 +1,6 @@
+FILE: cast.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() public abstract interface MySchema : R|kotlin/Any| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion.empty|(Int(1)).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|MySchema|>()
+    }
