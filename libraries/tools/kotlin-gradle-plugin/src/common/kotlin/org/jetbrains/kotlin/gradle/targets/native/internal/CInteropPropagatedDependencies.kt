@@ -99,15 +99,16 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
         .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
 
     if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        // this part of import isn't ready for working with unpackaged klibs: KTIJ-31053
-        return project.filesProvider {
-            cinteropTasks.map { interopTask ->
-                compilation.maybeCreateKlibPackingTask(
-                    interopTask.settings.classifier,
-                    interopTask.klibDirectory,
-                )
-            }
+        // Create packaging tasks for unpackaged klibs and wire proper task dependencies
+        val packTasks = cinteropTasks.map { interopTask ->
+            val interopProvider = tasks.named(interopTask.name, CInteropProcess::class.java)
+            compilation.maybeCreateKlibPackingTask(
+                interopTask.settings.classifier,
+                interopProvider,
+            )
         }
+        return project.filesProvider { packTasks.map { it.get().archiveFile.get().asFile } }
+            .builtBy(*packTasks.toTypedArray())
     }
     return project.filesProvider { cinteropTasks.map { it.klibFile } }
         .builtBy(*cinteropTasks.toTypedArray())
