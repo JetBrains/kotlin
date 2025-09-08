@@ -68,6 +68,9 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
                 implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") {
                     because("workaround for KTIJ-30065, remove after its resolution")
                 }
+                implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3") {
+                    because("workaround for KTIJ-30065, remove after its resolution")
+                }
                 implicitDependencies("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0") {
                     because("workaround for KTIJ-30065, remove after its resolution")
                 }
