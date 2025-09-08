@@ -641,6 +641,25 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         "Stable"
     )
 
+    // This test ensures that the annotations registered in
+    // `androidx.compose.compiler.plugins.kotlin.analysis.KnownStableConstructs.stableMarkers` are treated as if
+    // they were annotated with `@StableMarker`.
+    @Test
+    fun testKnownStableMarkersAreRecognized() = assertStability(
+        packageName =
+            "com.google.errorprone.annotations",
+        externalSrc = """
+            annotation class Immutable
+
+            @Immutable
+            class A
+        """,
+        classDefSrc = """
+            class Foo(val a: A)
+        """,
+        stability = "Stable"
+    )
+
     @Test
     fun testExternalStableTypesFieldsAreStable() = assertStability(
         externalSrc = """
