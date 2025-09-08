@@ -310,8 +310,8 @@ internal fun defaultPrimitiveValue(type: Type): Any? =
     } else null
 
 internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) :
-    DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
-    override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> {
+    DeclarationDescriptorVisitorEmptyBodies<DescriptorKCallable<*>, Unit>() {
+    override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): DescriptorKCallable<*> {
         val receiverCount =
             if (descriptor.contextReceiverParameters.isNotEmpty())
                 -1
@@ -320,24 +320,24 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
 
         when {
             descriptor.isVar -> when (receiverCount) {
-                -1 -> return KMutablePropertyNImpl<Any?>(container, descriptor)
-                0 -> return KMutableProperty0Impl<Any?>(container, descriptor)
-                1 -> return KMutableProperty1Impl<Any?, Any?>(container, descriptor)
-                2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(container, descriptor)
+                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor)
+                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor)
+                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor)
+                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor)
             }
             else -> when (receiverCount) {
-                -1 -> return KPropertyNImpl<Any?>(container, descriptor)
-                0 -> return KProperty0Impl<Any?>(container, descriptor)
-                1 -> return KProperty1Impl<Any?, Any?>(container, descriptor)
-                2 -> return KProperty2Impl<Any?, Any?, Any?>(container, descriptor)
+                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor)
+                0 -> return DescriptorKProperty0<Any?>(container, descriptor)
+                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor)
+                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor)
             }
         }
 
         throw KotlinReflectionInternalError("Unsupported property: $descriptor")
     }
 
-    override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
-        KFunctionImpl(container, descriptor)
+    override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): DescriptorKCallable<*> =
+        DescriptorKFunction(container, descriptor)
 }
 
 internal fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterTypes: Class<*>): Method? =

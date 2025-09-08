@@ -21,7 +21,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
-internal open class KProperty0Impl<out V> : KProperty0<V>, KPropertyImpl<V> {
+internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProperty<V> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
@@ -40,12 +40,12 @@ internal open class KProperty0Impl<out V> : KProperty0<V>, KPropertyImpl<V> {
 
     override fun invoke(): V = get()
 
-    class Getter<out R>(override val property: KProperty0Impl<R>) : KPropertyImpl.Getter<R>(), KProperty0.Getter<R> {
+    class Getter<out R>(override val property: DescriptorKProperty0<R>) : DescriptorKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
     }
 }
 
-internal class KMutableProperty0Impl<V> : KProperty0Impl<V>, KMutableProperty0<V> {
+internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutableProperty0<V> {
     constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
@@ -58,7 +58,7 @@ internal class KMutableProperty0Impl<V> : KProperty0Impl<V>, KMutableProperty0<V
 
     override fun set(value: V) = setter.call(value)
 
-    class Setter<R>(override val property: KMutableProperty0Impl<R>) : KPropertyImpl.Setter<R>(), KMutableProperty0.Setter<R> {
+    class Setter<R>(override val property: DescriptorKMutableProperty0<R>) : DescriptorKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)
     }
 }

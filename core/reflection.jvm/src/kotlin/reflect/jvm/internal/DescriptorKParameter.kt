@@ -24,8 +24,8 @@ import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.ValueClassAwareCaller
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
-internal class KParameterImpl(
-    override val callable: KCallableImpl<*>,
+internal class DescriptorKParameter(
+    override val callable: DescriptorKCallable<*>,
     override val index: Int,
     override val kind: KParameter.Kind,
     computeDescriptor: () -> ParameterDescriptor,

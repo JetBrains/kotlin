@@ -26,7 +26,7 @@ import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray
 
-internal abstract class KCallableImpl<out R> : ReflectKCallable<R>, KTypeParameterOwnerImpl {
+internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R>, KTypeParameterOwnerImpl {
     abstract val descriptor: CallableMemberDescriptor
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
@@ -37,18 +37,18 @@ internal abstract class KCallableImpl<out R> : ReflectKCallable<R>, KTypeParamet
         val result = ArrayList<KParameter>()
         val instanceReceiver = descriptor.instanceReceiverParameter
         if (instanceReceiver != null) {
-            result.add(KParameterImpl(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
         }
 
         val contextParameters = descriptor.computeContextParameters()
         for (i in contextParameters.indices) {
             @OptIn(ExperimentalContextParameters::class)
-            result.add(KParameterImpl(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.CONTEXT) { contextParameters[i] })
         }
 
         val extensionReceiver = descriptor.extensionReceiverParameter
         if (extensionReceiver != null) {
-            result.add(KParameterImpl(this, result.size, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
         }
         result
     }
@@ -64,7 +64,7 @@ internal abstract class KCallableImpl<out R> : ReflectKCallable<R>, KTypeParamet
         }
 
         for (i in descriptor.valueParameters.indices) {
-            result.add(KParameterImpl(this, result.size, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
+            result.add(DescriptorKParameter(this, result.size, KParameter.Kind.VALUE) { descriptor.valueParameters[i] })
         }
 
         // Constructor parameters of Java annotations are not ordered in any way, we order them by name here to be more stable.

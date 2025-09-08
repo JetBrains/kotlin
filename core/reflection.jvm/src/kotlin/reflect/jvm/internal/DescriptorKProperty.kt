@@ -25,13 +25,13 @@ import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.isAccessible
 
-internal abstract class KPropertyImpl<out V> private constructor(
+internal abstract class DescriptorKProperty<out V> private constructor(
     override val container: KDeclarationContainerImpl,
     override val name: String,
     override val signature: String,
     descriptorInitialValue: PropertyDescriptor?,
     override val rawBoundReceiver: Any?,
-) : KCallableImpl<V>(), ReflectKProperty<V> {
+) : DescriptorKCallable<V>(), ReflectKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
         container, name, signature, null, boundReceiver,
     )
@@ -148,8 +148,8 @@ internal abstract class KPropertyImpl<out V> private constructor(
         ReflectionObjectRenderer.renderProperty(this)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-        KCallableImpl<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
-        abstract override val property: KPropertyImpl<PropertyType>
+        DescriptorKCallable<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+        abstract override val property: DescriptorKProperty<PropertyType>
 
         abstract override val descriptor: PropertyAccessorDescriptor
 
@@ -213,10 +213,10 @@ internal abstract class KPropertyImpl<out V> private constructor(
     }
 }
 
-internal val KPropertyImpl.Accessor<*, *>.boundReceiver: Any?
+internal val DescriptorKProperty.Accessor<*, *>.boundReceiver: Any?
     get() = property.boundReceiver
 
-private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): Caller<*> {
+private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): Caller<*> {
     if (KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matches(property.signature)) {
         return ThrowingCaller
     }

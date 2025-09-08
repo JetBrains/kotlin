@@ -38,13 +38,13 @@ import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.PO
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.JAVA
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.KOTLIN
 
-internal class KFunctionImpl private constructor(
+internal class DescriptorKFunction private constructor(
     override val container: KDeclarationContainerImpl,
     name: String,
     override val signature: String,
     descriptorInitialValue: FunctionDescriptor?,
     override val rawBoundReceiver: Any?,
-) : KCallableImpl<Any?>(), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
+) : DescriptorKCallable<Any?>(), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
             : this(container, name, signature, null, boundReceiver)
 
