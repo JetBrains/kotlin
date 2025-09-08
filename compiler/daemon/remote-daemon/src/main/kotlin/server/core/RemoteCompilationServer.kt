@@ -36,13 +36,6 @@ class RemoteCompilationServer(
     }
 
     override fun start(block: Boolean) {
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
-                println("Shutdown hook called, shutting down server")
-                cleanup() // TODO: this is just a convenient for testing and debugging
-                stop()
-            },
-        )
         println("server environment: ${getServerEnv()}")
         serverImpl.start(block)
     }
