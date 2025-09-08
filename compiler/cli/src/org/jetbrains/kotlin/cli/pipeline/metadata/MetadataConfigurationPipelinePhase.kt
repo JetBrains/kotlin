@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.cli.pipeline.metadata
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
@@ -19,9 +19,18 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
+import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 
 object MetadataConfigurationPipelinePhase : AbstractConfigurationPhase<K2MetadataCompilerArguments>(
@@ -35,6 +44,14 @@ object MetadataConfigurationPipelinePhase : AbstractConfigurationPhase<K2Metadat
 }
 
 object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArguments>() {
+    private val platformMap: Map<String, SimplePlatform> = mapOf(
+        "JVM" to JvmPlatforms.UNSPECIFIED_SIMPLE_JVM_PLATFORM,
+        "JS" to JsPlatforms.DefaultSimpleJsPlatform,
+        "WasmJs" to WasmPlatformWithTarget(WasmTarget.JS),
+        "WasmWasi" to WasmPlatformWithTarget(WasmTarget.WASI),
+        "Native" to NativePlatformUnspecifiedTarget,
+    )
+
     override fun fillConfiguration(
         input: ArgumentsPipelineArtifact<K2MetadataCompilerArguments>,
         configuration: CompilerConfiguration,
@@ -75,6 +92,8 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
             targetDescription = moduleName
         }
 
+        configuration.targetPlatform = computeTargetPlatform(arguments.targetPlatform.orEmpty().toList(), collector)
+
         val destination = arguments.destination
         if (destination != null) {
             if (destination.endsWith(".jar")) {
@@ -88,5 +107,22 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         } else {
             collector.report(ERROR, "Specify destination via -d")
         }
+    }
+
+    private fun computeTargetPlatform(platformsFromArg: List<String>, collector: MessageCollector): TargetPlatform {
+        val platforms = buildSet {
+            for (platformArg in platformsFromArg) {
+                val simplePlatform = platformMap[platformArg] ?: run {
+                    collector.report(ERROR, "Unknown target platform: $platformArg. Possible values are: ${platformMap.keys}")
+                    continue
+                }
+                add(simplePlatform)
+            }
+        }
+        if (platforms.isEmpty()) {
+            collector.report(WARNING, "No target platform specified, using default")
+            return CommonPlatforms.defaultCommonPlatform
+        }
+        return TargetPlatform(platforms)
     }
 }

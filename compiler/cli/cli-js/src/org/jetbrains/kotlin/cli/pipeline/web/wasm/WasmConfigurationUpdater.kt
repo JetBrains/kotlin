@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
     override fun fillConfiguration(
@@ -63,5 +66,6 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, wasmTarget)
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
+        configuration.targetPlatform = WasmPlatforms.wasmPlatformByTargets(listOf(configuration.wasmTarget))
     }
 }

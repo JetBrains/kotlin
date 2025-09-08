@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.util.PhaseType
 import java.io.File
@@ -104,6 +105,7 @@ open class IncrementalFirJvmCompilerRunner(
             val configuration = CompilerConfiguration().apply {
 
                 put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
+                this.targetPlatform = JvmPlatforms.defaultJvmPlatform
                 this.messageCollector = collector
 
                 setupCommonArguments(args) { MetadataVersion(*it) }

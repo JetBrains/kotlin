@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.Freezing
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.MemoryModel
 import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(KonanConfigKeys) {
     val commonSources = arguments.commonSources?.toSet().orEmpty().map { it.absoluteNormalizedFile() }
@@ -342,8 +344,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
     putIfNotNull(KONAN_DATA_DIR, arguments.konanDataDir)
 
-    if (arguments.manifestNativeTargets != null)
-        putIfNotNull(MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(arguments.manifestNativeTargets!!))
+    val manifestNativeTargets = arguments.manifestNativeTargets?.let { parseManifestNativeTargets(it) }
+    putIfNotNull(MANIFEST_NATIVE_TARGETS, manifestNativeTargets)
+    this@setupFromArguments.targetPlatform = NativePlatforms.nativePlatformByTargets(manifestNativeTargets.orEmpty())
 
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
     putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)

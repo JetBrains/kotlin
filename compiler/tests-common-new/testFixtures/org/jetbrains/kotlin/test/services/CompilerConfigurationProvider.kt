@@ -183,6 +183,7 @@ fun createCompilerConfiguration(
     val messageCollector = MessageCollectorForCompilerTests(System.err, CompilerTestMessageRenderer(module))
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
+    configuration.targetPlatform = module.targetPlatform(testServices)
 
     for (configurator in configurators) {
         if (compilationStage == configurator.compilationStage) {

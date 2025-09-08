@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 
 object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerArguments>(
@@ -99,6 +100,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         }
         // should be called after configuring jdk home from build file
         configuration.configureJdkClasspathRoots()
+        configuration.targetPlatform = JvmPlatforms.defaultJvmPlatform
     }
 
     private fun CompilerConfiguration.setupIncrementalCompilationServices(arguments: K2JVMCompilerArguments, services: Services) {
