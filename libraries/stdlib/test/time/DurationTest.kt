@@ -896,4 +896,73 @@ class DurationTest {
         }
     }
 
+    @Test
+    fun parseComponentOrdering() {
+        val validDefaultFormat = listOf(
+            "1d 2h 3m 4s 5ms 6us 7ns",
+            "1d 2h 3m 4s",
+            "2h 3m 4s",
+            "3m 4s 5ms",
+            "4s 5ms 6us 7ns",
+            "1d 3m",
+            "1d 4s",
+            "2h 5ms",
+        )
+
+        for (valid in validDefaultFormat) {
+            assertNotNull(Duration.parseOrNull(valid), "Should parse valid ordering: $valid")
+            Duration.parse(valid)  // should not throw
+        }
+
+        val invalidDefaultFormat = listOf(
+            "1m 2h",
+            "1s 2m",
+            "1us 2ms",
+            "1ms 2s",
+            "1ns 2us",
+            "1h 2d",
+            "3m 2h 1d",
+            "1d 3m 2h",
+            "2h 4s 3m",
+            "1d 2h 3m 4s 3m",
+            "5ms 4s 3m 2h 1d",
+            "1ns 1us 1ms 1s 1m 1h 1d",
+        )
+
+        for (invalid in invalidDefaultFormat) {
+            assertNull(Duration.parseOrNull(invalid), "Should not parse invalid ordering: $invalid")
+            assertFailsWith<IllegalArgumentException>("Should throw for invalid ordering: $invalid") {
+                Duration.parse(invalid)
+            }
+        }
+
+        val validIsoFormat = listOf(
+            "P1DT2H3M4S",
+            "PT2H3M4S",
+            "PT3M4S",
+            "P1DT4S",
+            "PT2H4S",
+        )
+
+        for (valid in validIsoFormat) {
+            assertNotNull(Duration.parseIsoStringOrNull(valid), "Should parse valid ISO ordering: $valid")
+            Duration.parseIsoString(valid)  // should not throw
+        }
+
+        val invalidIsoFormat = listOf(
+            "PT1M2H",
+            "PT1S2M",
+            "PT2H1S3M",
+            "P1DT3M2H",
+            "PT1S2M3H",
+            "PT2H3M2H",
+        )
+
+        for (invalid in invalidIsoFormat) {
+            assertNull(Duration.parseIsoStringOrNull(invalid), "Should not parse invalid ISO ordering: $invalid")
+            assertFailsWith<IllegalArgumentException>("Should throw for invalid ISO ordering: $invalid") {
+                Duration.parseIsoString(invalid)
+            }
+        }
+    }
 }
