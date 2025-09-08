@@ -1,4 +1,5 @@
 // WITH_KOTLIN_JVM_ANNOTATIONS
+// LIBRARY_PLATFORMS: JVM
 // FILE: AnnotatedFlexibleTypes.kt
 package test
 

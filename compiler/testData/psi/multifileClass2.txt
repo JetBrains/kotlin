@@ -1,4 +1,6 @@
 KtFile: multifileClass2.kt
+  PsiComment(EOL_COMMENT)('// LIBRARY_PLATFORMS: JVM')
+  PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// FILE: MultifileClass.kt')
   PsiWhiteSpace('\n')
   FILE_ANNOTATION_LIST
