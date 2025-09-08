@@ -133,7 +133,7 @@ public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = DEFAULT_BUFFE
  * **Note**: It is the caller's responsibility to close this stream.
  */
 @Deprecated("Use readBytes() overload without estimatedSize parameter", ReplaceWith("readBytes()"))
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5", hiddenSince = "2.3")
 public fun InputStream.readBytes(estimatedSize: Int = DEFAULT_BUFFER_SIZE): ByteArray {
     val buffer = ByteArrayOutputStream(maxOf(estimatedSize, this.available()))
     val _ = copyTo(buffer)
