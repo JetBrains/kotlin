@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.named
 import java.io.File
 
 /**
@@ -98,8 +99,9 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: Kotlin
 private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
     val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
         .mapNotNull { taskName ->
-            @Suppress("UNCHECKED_CAST")
-            tasks.named(taskName) as? TaskProvider<CInteropProcess>
+            if (taskName in tasks.names) {
+                tasks.named<CInteropProcess>(taskName)
+            } else null
         }
 
     if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
