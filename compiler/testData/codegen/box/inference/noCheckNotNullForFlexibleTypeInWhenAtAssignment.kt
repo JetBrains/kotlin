@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // TARGET_BACKEND: JVM
 // ISSUE: KT-74588
 
@@ -6,7 +5,7 @@
 public class MyJava {
     // Nullable
     public static <T extends String> T findViewById(int id) {
-        return "OK";
+        return null;
     }
 }
 
