@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
@@ -992,15 +991,13 @@ class JavaClassUseSiteMemberScope(
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
             isInterface || origin.isBuiltIns -> false
-            session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib) -> {
-                when (val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)) {
-                    null ->
-                        // No info about the containing file, so we assume it's a non-built-in Kotlin class
-                        true
-                    else ->
-                        !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
-                }
-            }
+            // Generally the condition part above `origin.isBuiltIns` should be enough, but in some environments built-in classes
+            // might be loaded without the correct expected origin, e.g., when building stdlib artifact itself or for J2CL.
+            // See KT-68154 and KT-80524 for details.
+            // Having this branch, we may actually remove `origin.isBuiltIns` above, but leaving it as a fast-path.
+            classId.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME) && JavaToKotlinClassMap.isMappedKotlinClass(classId) ->
+                false
+
             else -> true
         }
 

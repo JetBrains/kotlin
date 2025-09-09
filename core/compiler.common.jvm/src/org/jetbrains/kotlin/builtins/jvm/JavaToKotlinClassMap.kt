@@ -39,6 +39,8 @@ object JavaToKotlinClassMap {
     private val mutableToReadOnlyClassId = HashMap<ClassId, ClassId>()
     private val readOnlyToMutableClassId = HashMap<ClassId, ClassId>()
 
+    private val mappedKotlinClassFqNames = mutableSetOf<FqName>()
+
     // describes mapping for a java class that has separate readOnly and mutable equivalents in Kotlin
     data class PlatformMutabilityMapping(
         val javaClass: ClassId,
@@ -198,9 +200,12 @@ object JavaToKotlinClassMap {
         javaToKotlin[javaClassId.asSingleFqName().toUnsafe()] = kotlinClassId
     }
 
-    private fun addKotlinToJava(kotlinFqNameUnsafe: FqName, javaClassId: ClassId) {
-        kotlinToJava[kotlinFqNameUnsafe.toUnsafe()] = javaClassId
+    private fun addKotlinToJava(kotlinFqName: FqName, javaClassId: ClassId) {
+        mappedKotlinClassFqNames.add(kotlinFqName)
+        kotlinToJava[kotlinFqName.toUnsafe()] = javaClassId
     }
+
+    fun isMappedKotlinClass(kotlinClassId: ClassId): Boolean = mappedKotlinClassFqNames.contains(kotlinClassId.asSingleFqName())
 
     fun isJavaPlatformClass(fqName: FqName): Boolean = mapJavaToKotlin(fqName) != null
 
