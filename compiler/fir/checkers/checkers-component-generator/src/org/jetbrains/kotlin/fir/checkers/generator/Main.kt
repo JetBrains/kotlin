@@ -151,6 +151,7 @@ fun main(args: Array<String>) {
             alias<FirBooleanOperatorExpression>("BooleanOperatorExpressionChecker")
             alias<FirReturnExpression>("ReturnExpressionChecker")
             alias<FirBlock>("BlockChecker")
+            alias<FirReplDeclarationReference>("ReplDeclarationReferenceChecker")
             alias<FirAnnotation>("AnnotationChecker")
             alias<FirAnnotationCall>("AnnotationCallChecker").let {
                 visitAlso<FirErrorAnnotationCall>(it)

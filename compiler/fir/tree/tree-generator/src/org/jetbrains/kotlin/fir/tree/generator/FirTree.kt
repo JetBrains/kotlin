@@ -980,13 +980,19 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(declaration)
         parent(controlFlowGraphOwner)
 
-        +FieldSets.name
-        +declaredSymbol(replSnippetSymbolType)
-
         +field("source", sourceElementType, nullable = false)
-        +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
-        +field("body", block, nullable = false, withTransform = true, withReplace = true)
-        +field("resultTypeRef", typeRef, withReplace = true, withTransform = true)
+        +declaredSymbol(replSnippetSymbolType)
+        +field("snippetClass", regularClass, withTransform = true)
+        +field("evalFunctionName", nameType)
+    }
+
+    val replDeclarationReference: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("symbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
+            isMutable = false
+        }
     }
 
     val packageDirective: Element by element(Other) {

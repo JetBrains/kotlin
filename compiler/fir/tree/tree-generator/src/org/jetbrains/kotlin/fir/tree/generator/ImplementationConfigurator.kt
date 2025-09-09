@@ -70,6 +70,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(visibilitiesImport)
         }
 
+        impl(replDeclarationReference) {
+            defaultEmptyList("annotations", withGetter = true)
+        }
+
         impl(import)
 
         impl(resolvedImport) {

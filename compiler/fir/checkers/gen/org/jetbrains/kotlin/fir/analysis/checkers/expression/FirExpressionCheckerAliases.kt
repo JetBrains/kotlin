@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirReplDeclarationReference
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -61,6 +62,7 @@ typealias FirLoopJumpChecker = FirExpressionChecker<FirLoopJump>
 typealias FirBooleanOperatorExpressionChecker = FirExpressionChecker<FirBooleanOperatorExpression>
 typealias FirReturnExpressionChecker = FirExpressionChecker<FirReturnExpression>
 typealias FirBlockChecker = FirExpressionChecker<FirBlock>
+typealias FirReplDeclarationReferenceChecker = FirExpressionChecker<FirReplDeclarationReference>
 typealias FirAnnotationChecker = FirExpressionChecker<FirAnnotation>
 typealias FirAnnotationCallChecker = FirExpressionChecker<FirAnnotationCall>
 typealias FirCheckNotNullCallChecker = FirExpressionChecker<FirCheckNotNullCall>

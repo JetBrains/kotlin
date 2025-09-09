@@ -87,6 +87,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBlockCheckers.check(block, data)
     }
 
+    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: CheckerContext) {
+        checkers.allReplDeclarationReferenceCheckers.check(replDeclarationReference, data)
+    }
+
     override fun visitAnnotation(annotation: FirAnnotation, data: CheckerContext) {
         checkers.allAnnotationCheckers.check(annotation, data)
     }
