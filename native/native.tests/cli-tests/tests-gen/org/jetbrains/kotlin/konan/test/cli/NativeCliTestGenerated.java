@@ -74,6 +74,11 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     runTest("native/native.tests/cli-tests/testData/cli/reportDetailedPerfPsi1stPhase.args");
   }
 
+  @TestMetadata("reportDetailedPerfPsi1stPhaseWithInlinedFunInKlib.args")
+  public void testReportDetailedPerfPsi1stPhaseWithInlinedFunInKlib() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportDetailedPerfPsi1stPhaseWithInlinedFunInKlib.args");
+  }
+
   @TestMetadata("reportPerf.args")
   public void testReportPerf() {
     runTest("native/native.tests/cli-tests/testData/cli/reportPerf.args");

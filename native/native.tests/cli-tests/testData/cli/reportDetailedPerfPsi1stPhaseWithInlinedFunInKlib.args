@@ -6,4 +6,4 @@ $TEMP_DIR$/reportPerfPsi
 -Xuse-fir-lt=false
 -Xreport-perf=true
 -Xdetailed-perf=true
--Xklib-ir-inliner=disabled
+-Xklib-ir-inliner=intra-module
