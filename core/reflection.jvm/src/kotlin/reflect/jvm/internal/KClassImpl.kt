@@ -50,8 +50,8 @@ import kotlin.metadata.Modality
 import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
+import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
@@ -325,6 +325,27 @@ internal class KClassImpl<T : Any>(
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
     override val members: Collection<KCallable<*>> get() = data.value.allMembers
+
+    private fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<DescriptorKCallable<*>> {
+        val visitor = object : CreateKCallableVisitor(this) {
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
+                throw IllegalStateException("No constructors should appear here: $descriptor")
+        }
+        return scope.getContributedDescriptors().mapNotNull { descriptor ->
+            if (descriptor is CallableMemberDescriptor &&
+                descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
+                belonginess.accept(descriptor)
+            ) descriptor.accept(visitor, Unit) else null
+        }.toList()
+    }
+
+    private enum class MemberBelonginess {
+        DECLARED,
+        INHERITED;
+
+        fun accept(member: CallableMemberDescriptor): Boolean =
+            member.kind.isReal == (this == DECLARED)
+    }
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
