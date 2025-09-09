@@ -308,7 +308,7 @@ class FileTreeWalkTest {
             assertTrue(stack.isEmpty())
             assertEquals(setOf(File("")), dirs)
             for (file in arrayOf("1", "6", "7.txt", "8")) {
-                assertTrue(files.contains(File(file)), file.toString())
+                assertTrue(files.contains(File(file)), file)
             }
 
             //restrict access

@@ -191,6 +191,12 @@ public val CPointer<*>?.rawValue: NativePtr
 public fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
 
 @ExperimentalForeignApi
+// `rawValue` has a ` NativePtr ` type that's a type alias.
+// In the source file, its RHS is `kotlin.native.internal.NativePtr`.
+// However, this file `Types.kt` is being placed into a `build` directory during build,
+// and RHS of `NativePtr` is transformed into a regular `Long` that causes reporting of `REDUNDANT_CALL_OF_CONVERSION_METHOD`.
+// We need to suppress it to get successful bootstrap compilation since the module is compiled with `-Werror`.
+@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 public fun <T : CPointed> CPointer<T>?.toLong(): Long = this.rawValue.toLong()
 
 @ExperimentalForeignApi
