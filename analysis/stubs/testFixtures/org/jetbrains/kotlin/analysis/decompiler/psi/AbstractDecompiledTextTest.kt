@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.psi.PsiErrorElement
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
@@ -49,21 +52,28 @@ abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform)
 
         testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".decompiledText.txt")
 
-        val validator = object : KtTreeVisitorVoid() {
-            override fun visitErrorElement(element: PsiErrorElement) {
-                testServices.assertions.fail {
-                    val parent = element.parent
-                    """
-                        Decompiled file should not contain syntax errors!
-                        Parent class: ${parent::class.simpleName}
-                        Parent text: ${parent.text}
-                    """.trimIndent()
+        for (file in files) {
+            requireIsInstance<KtDecompiledFile>(file)
+            file.validateTree(testServices.assertions)
+        }
+    }
+
+    companion object {
+        fun KtDecompiledFile.validateTree(assertions: Assertions) {
+            val visitor = object : KtTreeVisitorVoid() {
+                override fun visitErrorElement(element: PsiErrorElement) {
+                    assertions.fail {
+                        val parent = element.parent
+                        """
+                            Decompiled file should not contain syntax errors!
+                            Parent class: ${parent::class.simpleName}
+                            Parent text: ${parent.text}
+                        """.trimIndent()
+                    }
                 }
             }
-        }
 
-        for (file in files) {
-            file.accept(validator)
+            accept(visitor)
         }
     }
 }

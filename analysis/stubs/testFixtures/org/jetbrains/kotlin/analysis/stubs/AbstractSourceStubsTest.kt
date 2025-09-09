@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
-import com.intellij.psi.stubs.PsiFileStub
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * This test is supposed to validate the source stubs output
@@ -16,6 +14,5 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class AbstractSourceStubsTest : AbstractStubsTest() {
     override val outputFileExtension: String get() = "stubs.txt"
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
-
-    override fun computeStub(file: KtFile): PsiFileStub<*> = file.calcStubTree().root
+    override val stubsTestEngine: StubsTestEngine get() = SourceStubsTestEngine
 }
