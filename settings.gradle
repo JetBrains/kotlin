@@ -184,8 +184,6 @@ include ":benchmarks",
         ":js:js.translator",
         ":js:js.tests",
         ":js:js.tests:klib-compatibility",
-        ":js:typescript-export-model",
-        ":js:typescript-printer",
         ":native:kotlin-native-utils",
         ":native:frontend.native",
         ":native:kotlin-klib-commonizer",
@@ -575,6 +573,11 @@ include ":native:swift:sir",
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":native:swift:swift-export-embeddable"
 }
+
+// TypeScript Export modules
+include ":js:typescript-export-model",
+        ":js:typescript-printer",
+        ":js:typescript-export-standalone"
 
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
