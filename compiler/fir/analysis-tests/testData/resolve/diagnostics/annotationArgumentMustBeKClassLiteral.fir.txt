@@ -19,5 +19,5 @@ FILE: annotationArgumentMustBeKClassLiteral.kt
     public final fun bar(): R|kotlin/reflect/KClass<Foo>| {
         ^bar <getClass>(Q|Foo|)
     }
-    @R|Ann|(a = <implicitArrayOf>(<getClass>(String()), <getClass>(Boolean(true)), <getClass>(Int(1)))) @R|Ann|(a = <implicitArrayOf>(R|/foo|, R|/bar|())) public final fun test1(): R|kotlin/Unit| {
+    @R|Ann|(a = <collectionLiteralCall>(<getClass>(String()), <getClass>(Boolean(true)), <getClass>(Int(1)))) @R|Ann|(a = <collectionLiteralCall>(R|/foo|, R|/bar|())) public final fun test1(): R|kotlin/Unit| {
     }

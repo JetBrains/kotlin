@@ -26,25 +26,25 @@ FILE: [ResolvedTo(BODY_RESOLVE)] collectionLiterals.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann3] get(): R|kotlin/Array<kotlin/String>|
 
     }
-    @R|Ann1|[Types](arr = <implicitArrayOf>()) @R|Ann2|[Types](arr = <implicitArrayOf>()) @R|Ann3|[Types](arr = <implicitArrayOf>()) public final [ResolvedTo(BODY_RESOLVE)] class Zero : R|kotlin/Any| {
+    @R|Ann1|[Types](arr = <collectionLiteralCall>()) @R|Ann2|[Types](arr = <collectionLiteralCall>()) @R|Ann3|[Types](arr = <collectionLiteralCall>()) public final [ResolvedTo(BODY_RESOLVE)] class Zero : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Zero] constructor(): R|Zero| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|Ann1|[Types](arr = <implicitArrayOf>(Int(1), Int(2))) public final [ResolvedTo(BODY_RESOLVE)] class First : R|kotlin/Any| {
+    @R|Ann1|[Types](arr = <collectionLiteralCall>(Int(1), Int(2))) public final [ResolvedTo(BODY_RESOLVE)] class First : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] constructor(): R|First| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|Ann2|[Types](arr = <implicitArrayOf>(Double(3.14))) public final [ResolvedTo(BODY_RESOLVE)] class Second : R|kotlin/Any| {
+    @R|Ann2|[Types](arr = <collectionLiteralCall>(Double(3.14))) public final [ResolvedTo(BODY_RESOLVE)] class Second : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] constructor(): R|Second| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|Ann3|[Types](arr = <implicitArrayOf>(String(Alpha), String(Omega))) public final [ResolvedTo(BODY_RESOLVE)] class Third : R|kotlin/Any| {
+    @R|Ann3|[Types](arr = <collectionLiteralCall>(String(Alpha), String(Omega))) public final [ResolvedTo(BODY_RESOLVE)] class Third : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Third] constructor(): R|Third| {
             super<R|kotlin/Any|>()
         }
