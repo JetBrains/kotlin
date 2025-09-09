@@ -723,6 +723,46 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(replSnippet)
     }
 
+    final override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: Nothing?) {
+        visitReplDeclarationReference(replDeclarationReference)
+    }
+
+    open fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
+        visitElement(replDeclarationReference)
+    }
+
+    final override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: Nothing?) {
+        visitReplPropertyInitializer(replPropertyInitializer)
+    }
+
+    open fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
+        visitElement(replPropertyInitializer)
+    }
+
+    final override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: Nothing?) {
+        visitReplPropertyDelegate(replPropertyDelegate)
+    }
+
+    open fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
+        visitElement(replPropertyDelegate)
+    }
+
+    final override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: Nothing?) {
+        visitDelayedPropertyInitializer(delayedPropertyInitializer)
+    }
+
+    open fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer) {
+        visitElement(delayedPropertyInitializer)
+    }
+
+    final override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: Nothing?) {
+        visitDelayedPropertyDelegate(delayedPropertyDelegate)
+    }
+
+    open fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate) {
+        visitElement(delayedPropertyDelegate)
+    }
+
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
         visitPackageDirective(packageDirective)
     }
