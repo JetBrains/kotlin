@@ -992,18 +992,16 @@ class JavaClassUseSiteMemberScope(
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
             isInterface || origin.isBuiltIns -> false
-            else -> {
-                if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
-                    true
-                } else {
-                    val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)
-                    if (containingFile == null) {
+            session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib) -> {
+                when (val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)) {
+                    null ->
+                        // No info about the containing file, so we assume it's a non-built-in Kotlin class
                         true
-                    } else {
+                    else ->
                         !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
-                    }
                 }
             }
+            else -> true
         }
 
     private fun ConeClassLikeType.toFir(session: FirSession): FirRegularClass? {
