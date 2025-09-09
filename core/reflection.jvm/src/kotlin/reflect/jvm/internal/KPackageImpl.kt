@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KCallable
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 
 internal class KPackageImpl(
     override val jClass: Class<*>,
@@ -58,7 +58,13 @@ internal class KPackageImpl(
         }
 
         val members: Collection<DescriptorKCallable<*>> by ReflectProperties.lazySoft {
-            getMembers(scope, DECLARED)
+            val visitor = object : CreateKCallableVisitor(this@KPackageImpl) {
+                override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
+                    throw IllegalStateException("No constructors should appear here: $descriptor")
+            }
+            scope.getContributedDescriptors().mapNotNull { descriptor ->
+                if (descriptor is CallableMemberDescriptor) descriptor.accept(visitor, Unit) else null
+            }.toList()
         }
     }
 
