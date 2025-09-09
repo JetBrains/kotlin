@@ -1155,7 +1155,9 @@ class FirCallCompletionResultsWriterTransformer(
         if (!refinedTypeForDataFlow.isUnitOrFlexibleUnit && !currentType.isUnitOrFlexibleUnit &&
             currentType != refinedTypeForDataFlow && AbstractTypeChecker.isSubtypeOf(session.typeContext, refinedTypeForDataFlow, expression.resultType)
         ) {
-            expression.resultType = refinedTypeForDataFlow
+            expression.resultType = currentType.withAttributes(
+                currentType.attributes.add(RefinedTypeForDataFlowTypeAttribute(refinedTypeForDataFlow))
+            )
         }
     }
 
