@@ -137,7 +137,8 @@ sealed class EvaluationMode {
     class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             // FIXME, KT-81071: These functions cannot yet be marked with the annotation because of bootstrapping problems.
-            val isFutureIntrinsicConst =  listOf("kotlin.text.lowercase", "kotlin.text.uppercase").contains(function.symbol.owner.fqName)
+            val isFutureIntrinsicConst = listOf("kotlin.text.lowercase", "kotlin.text.uppercase", "kotlin.Char")
+                .contains(function.symbol.owner.fqName)
             if (isFloatingPointOptimizationDisabled && function.isFloatingPointOperation()) return false
             return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation() || isFutureIntrinsicConst
         }
