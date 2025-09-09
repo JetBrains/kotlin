@@ -71,7 +71,7 @@ abstract class VariableInitializationCheckProcessor {
             }
 
             when (node) {
-                is VariableDeclarationNode -> processVariableDeclaration(node, scope, properties, scopes)
+                is VariableDeclarationExitNode -> processVariableDeclaration(node, scope, properties, scopes)
                 is VariableAssignmentNode -> processVariableAssignment(node, properties, scope, scopes)
                 is QualifiedAccessNode -> processQualifiedAccess(
                     node, node.fir, properties,
@@ -123,7 +123,7 @@ abstract class VariableInitializationCheckProcessor {
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
                 when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.range?.location) {
-                    is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
+                    is VariableDeclarationExitNode -> {} // unreachable - `val`s with initializers do not require hindsight
                     is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
                         assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path, newVisited)
@@ -147,7 +147,7 @@ abstract class VariableInitializationCheckProcessor {
     }
 
     private fun VariableInitializationInfoData.processVariableDeclaration(
-        node: VariableDeclarationNode,
+        node: VariableDeclarationExitNode,
         scope: FirDeclaration?,
         properties: Set<FirVariableSymbol<*>>,
         scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
@@ -368,7 +368,7 @@ private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
     return when (val fir = this.fir) {
         is FirFile -> fir.packageFqName.child(Name.identifier(fir.name))
         is FirScript -> fir.symbol.fqName
-        is FirReplSnippet -> FqName.topLevel(fir.name)
+        is FirReplSnippet -> fir.snippetClass.symbol.classId.asSingleFqName()
         is FirClassLikeDeclaration -> fir.symbol.classId.asSingleFqName()
         is FirTypeParameter -> fir.containingDeclarationSymbol.getDebugFqName().child(fir.name)
         is FirAnonymousInitializer -> fir.containingDeclarationSymbol.getDebugFqName().child(Name.special("<init>"))

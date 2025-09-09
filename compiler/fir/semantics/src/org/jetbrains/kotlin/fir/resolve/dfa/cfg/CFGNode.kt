@@ -911,11 +911,18 @@ class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, le
     }
 }
 
-class VariableDeclarationNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level) {
+class VariableDeclarationEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNodeWithCfgOwner<FirProperty>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitVariableDeclarationNode(this, data)
+        return visitor.visitVariableDeclarationEnterNode(this, data)
     }
 }
+
+class VariableDeclarationExitNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitVariableDeclarationExitNode(this, data)
+    }
+}
+
 class VariableAssignmentNode(owner: ControlFlowGraph, override val fir: FirVariableAssignment, level: Int) : CFGNode<FirVariableAssignment>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitVariableAssignmentNode(this, data)

@@ -158,8 +158,11 @@ fun ControlFlowGraphBuilder.createWhenSubjectExpressionExitNode(fir: FirWhenSubj
 fun ControlFlowGraphBuilder.createElvisExitNode(fir: FirElvisExpression): ElvisExitNode =
     ElvisExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
-    VariableDeclarationNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createVariableDeclarationEnterNode(fir: FirProperty): VariableDeclarationEnterNode =
+    VariableDeclarationEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createVariableDeclarationExitNode(fir: FirProperty): VariableDeclarationExitNode =
+    VariableDeclarationExitNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createLiteralExpressionNode(fir: FirLiteralExpression): LiteralExpressionNode =
     LiteralExpressionNode(currentGraph, fir, levelCounter)
