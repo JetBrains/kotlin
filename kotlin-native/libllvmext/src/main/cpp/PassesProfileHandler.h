@@ -8,6 +8,8 @@
 
 #include <PassesProfile.h>
 #include <llvm/IR/PassInstrumentation.h>
+#include <llvm/ADT/StringMap.h>
+#include <llvm/ADT/StringMapEntry.h>
 #include <llvm/ADT/StringRef.h>
 #include <llvm/Support/CBindingWrapping.h>
 
@@ -21,6 +23,8 @@ DEFINE_SIMPLE_CONVERSION_FUNCTIONS(PassesProfile, LLVMKotlinPassesProfileRef)
 
 class PassesProfileHandler {
 public:
+    struct Event;
+
     explicit PassesProfileHandler(bool enabled);
     ~PassesProfileHandler();
 
@@ -36,15 +40,12 @@ public:
     void registerCallbacks(PassInstrumentationCallbacks &PIC);
 
 private:
-    struct Event;
-    struct PendingEvent;
-
     void runBeforePass(StringRef P);
     void runAfterPass(StringRef P);
 
     bool enabled_ = false;
-    std::vector<Event> events_;
-    std::vector<PendingEvent> pending_events_stack_;
+    StringMap<Event> roots_;
+    std::vector<StringMapEntry<Event>*> pending_events_stack_;
 };
 
 } // namespace llvm

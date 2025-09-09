@@ -14,8 +14,6 @@ typedef struct LLVMKotlinOpaquePasesProfile *LLVMKotlinPassesProfileRef;
 /// The view is a tsv (tab-separated values), the columns stand for:
 /// - name of the pass
 /// - pass wall time duration in nanoseconds
-/// - pass user time duration in nanoseconds
-/// - pass CPU time duration in nanoseconds
 /// The returned string is alive until `LLVMKotlinDisposePassesProfile`.
 const char* LLVMKotlinPassesProfileAsString(LLVMKotlinPassesProfileRef P);
 

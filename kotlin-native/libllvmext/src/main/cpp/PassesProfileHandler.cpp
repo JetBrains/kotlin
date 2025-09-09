@@ -12,27 +12,50 @@
 
 using namespace llvm;
 
+using Clock = std::chrono::system_clock;
+
 struct PassesProfileHandler::Event {
-    std::string Name;
-    std::chrono::nanoseconds Duration;
+    Clock::time_point StartedAt{};
+    std::chrono::nanoseconds Duration{};
+    StringMap<Event> Children;
+
+    Event() = default;
+    Event(const Event&) = default;
+    Event(Event&&) = default;
+    Event& operator=(const Event&) = default;
+    Event& operator=(Event&&) = default;
 };
 
-struct PassesProfileHandler::PendingEvent {
-public:
-    explicit PendingEvent(PendingEvent* Parent, StringRef P) : Name(Parent ? (Parent->Name + "." + P).str() : P), Pass(P), StartedAt(std::chrono::system_clock::now()) {}
+namespace {
 
-    Event finalize(StringRef P) {
-        if (P != Pass) {
-            report_fatal_error(Twine("Mismatched event finalization. Expected pass ") + Pass + "; actual " + P);
-        }
-        return { Name, std::chrono::system_clock::now() - StartedAt };
+using Event = PassesProfileHandler::Event;
+
+void Finalize(StringMapEntry<Event>& Entry, StringRef P) {
+    auto Pass = Entry.getKey();
+    if (P != Pass) {
+        report_fatal_error(Twine("Mismatched event finalization. Expected pass ") + Pass + "; actual " + P);
     }
+    auto& Event = Entry.getValue();
+    Event.Duration += Clock::now() - Event.StartedAt;
+    Event.StartedAt = Clock::time_point();
+}
 
-private:
-    std::string Name;
-    std::string Pass;
-    std::chrono::system_clock::time_point StartedAt;
-};
+void Dump(const StringMapEntry<Event>& Entry, std::ostream& Out, std::vector<const StringMapEntry<Event>*>& Parents) {
+    for (const auto* E: Parents) {
+        Out << std::string_view(E->getKey()) << '.';
+    }
+    const auto& Event = Entry.getValue();
+    Out << std::string_view(Entry.getKey())
+        << "\t" << Event.Duration.count()
+        << "\n";
+    Parents.push_back(&Entry);
+    for (const auto& E: Event.Children) {
+        Dump(E, Out, Parents);
+    }
+    Parents.pop_back();
+}
+
+}
 
 PassesProfileHandler::PassesProfileHandler(bool enabled) : enabled_(enabled) {}
 
@@ -43,21 +66,12 @@ PassesProfile PassesProfileHandler::serialize() const {
         report_fatal_error(Twine("Mismatched event finalization. Pending event stack is not empty ") + Twine(pending_events_stack_.size()));
     }
 
-    // Combine same passes into one entry.
-    StringMap<std::chrono::nanoseconds> events;
-    for (const auto& [name, duration] : events_) {
-        auto [it, inserted] = events.insert(std::make_pair(name, duration));
-        if (!inserted) {
-            it->second += duration;
-        }
+    std::stringstream Out;
+    std::vector<const StringMapEntry<Event>*> Parents;
+    for (const auto& E : roots_) {
+        Dump(E, Out, Parents);
     }
-    std::stringstream out;
-    for (const auto& kvp : events) {
-        out << std::string_view(kvp.first())
-            << "\t" << kvp.second.count()
-            << "\n";
-    }
-    return PassesProfile{out.str()};
+    return PassesProfile{Out.str()};
 }
 
 void PassesProfileHandler::registerCallbacks(PassInstrumentationCallbacks &PIC) {
@@ -81,14 +95,15 @@ void PassesProfileHandler::registerCallbacks(PassInstrumentationCallbacks &PIC) 
 }
 
 void PassesProfileHandler::runBeforePass(StringRef P) {
-    PendingEvent* parent = nullptr;
-    if (!pending_events_stack_.empty())
-        parent = &pending_events_stack_.back();
-    pending_events_stack_.emplace_back(parent, P);
+    auto& Map = pending_events_stack_.empty() ? roots_ : pending_events_stack_.back()->second.Children;
+    auto [It, _] = Map.try_emplace(P);
+    auto& Entry = *It;
+    pending_events_stack_.push_back(&Entry);
+    Entry.getValue().StartedAt = Clock::now();
 }
 
 void PassesProfileHandler::runAfterPass(StringRef P) {
-    events_.emplace_back(pending_events_stack_.back().finalize(P));
+    Finalize(*pending_events_stack_.back(), P);
     pending_events_stack_.pop_back();
 }
 
