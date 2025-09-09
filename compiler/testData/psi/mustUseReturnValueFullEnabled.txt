@@ -178,7 +178,7 @@ KtFile: mustUseReturnValueFullEnabled.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('MustUseReturnValue')
+                PsiElement(IDENTIFIER)('MustUseReturnValues')
     PsiWhiteSpace('\n\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
@@ -254,7 +254,7 @@ KtFile: mustUseReturnValueFullEnabled.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('MustUseReturnValue')
+                PsiElement(IDENTIFIER)('MustUseReturnValues')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')

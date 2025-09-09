@@ -145,7 +145,7 @@ public abstract interface annotation class kotlin/Metadata : java/lang/annotatio
 	public abstract fun xs ()Ljava/lang/String;
 }
 
-public abstract interface annotation class kotlin/MustUseReturnValue : java/lang/annotation/Annotation {
+public abstract interface annotation class kotlin/MustUseReturnValues : java/lang/annotation/Annotation {
 }
 
 public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {

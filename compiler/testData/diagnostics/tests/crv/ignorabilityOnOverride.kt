@@ -8,10 +8,10 @@ interface Base {
     fun baz(): String = ""
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class Derived : Base
 
-@MustUseReturnValue
+@MustUseReturnValues
 class DerivedWithOverride : Base {
     override val a: String
         get() = ""
@@ -22,7 +22,7 @@ class DerivedWithOverride : Base {
     override fun baz() = "Derived"
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 interface BaseWithAnnotation {
     fun foo(): String = ""
     val a : String

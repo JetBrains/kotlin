@@ -17,7 +17,7 @@ class Lib {
 
 fun toplvl(): String = ""
 
-@MustUseReturnValue
+@MustUseReturnValues
 class A {
     fun alreadyApplied(): String = ""
 

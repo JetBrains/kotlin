@@ -84,7 +84,7 @@ class List1: JavaList() {
     override fun notAListMember(): Int = 42
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class List2: JavaList() {
     override fun get(index: Int): String = ""
     // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype
@@ -103,7 +103,7 @@ class List3: UnannotatedList() {
     override fun notAListMember(): Int = 42
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class List4: UnannotatedList() {
     override fun get(index: Int): String = ""
     // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype

@@ -19,12 +19,12 @@ interface I1: Base {
     override fun foo(): String
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 interface I2: Base {
     override fun foo(): String
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 interface I3: Base {
     @IgnorableReturnValue override fun foo(): String
 }
@@ -52,12 +52,12 @@ open class C3: I3 {
     override fun foo(): String = ""
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class C4: I3 {
     override fun foo(): String = "" // Should be a warning on overriding explicit @Ignorable
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class C5: C3() {
     override fun foo(): String = ""
 }

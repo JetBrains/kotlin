@@ -15,7 +15,7 @@ class Unmarked {
 
 fun toplvl(): String = ""
 
-@MustUseReturnValue
+@MustUseReturnValues
 class Marked {
     fun alreadyApplied(): String = ""
 

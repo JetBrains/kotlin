@@ -3,7 +3,7 @@
 
 // FILE: KotlinBase.kt
 
-@MustUseReturnValue
+@MustUseReturnValues
 interface KotlinBase {
     fun x(): String
     @IgnorableReturnValue fun ign(): String

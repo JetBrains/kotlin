@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // LANGUAGE: +WhenGuards
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 fun stringF(): String = ""
 fun intF(): Int = 10

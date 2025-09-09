@@ -11,9 +11,9 @@ public class LibJava1 {
 }
 
 // FILE: LibJava2.java
-import kotlin.MustUseReturnValue;
+import kotlin.MustUseReturnValues;
 
-@MustUseReturnValue
+@MustUseReturnValues
 public class LibJava2 {
     public String method() {
         return "";

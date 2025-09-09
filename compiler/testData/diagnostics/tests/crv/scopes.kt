@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 fun stringF(): String = ""
 fun nsf(): String? = "null"

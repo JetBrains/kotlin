@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
-@MustUseReturnValue // file annotations should be auto-copied to classes?
 class A(val x: String = "x") {
     fun foo(y: String): A {
         y // local, should not report
@@ -30,7 +29,7 @@ class A(val x: String = "x") {
         this@A  // should not report
     }
 
-    @MustUseReturnValue
+    @MustUseReturnValues
     companion object
 }
 

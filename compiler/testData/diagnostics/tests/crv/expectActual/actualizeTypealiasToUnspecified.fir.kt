@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 expect class Foo() {
     fun x(): String

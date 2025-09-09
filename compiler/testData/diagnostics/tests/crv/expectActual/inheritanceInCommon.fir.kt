@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-@MustUseReturnValue
+@MustUseReturnValues
 expect interface A {
     fun foo(): String
     fun bar(): String

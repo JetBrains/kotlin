@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -67,7 +66,7 @@ object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerK
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
-        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
+        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValues
 
     private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
         toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue

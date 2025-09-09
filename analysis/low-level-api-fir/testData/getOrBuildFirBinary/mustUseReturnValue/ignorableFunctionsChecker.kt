@@ -5,7 +5,7 @@ interface X {
     fun x(): String
     @IgnorableReturnValue fun ignorable(): String
 
-    @MustUseReturnValue
+    @MustUseReturnValues
     class Y {
         fun y(): String = ""
         @IgnorableReturnValue fun ignorable(): String = ""
