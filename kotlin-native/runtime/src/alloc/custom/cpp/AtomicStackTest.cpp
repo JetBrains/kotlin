@@ -18,7 +18,10 @@ using namespace kotlin;
 namespace {
 
 struct Element {
-    std::atomic<Element*> next_ = nullptr;
+    Element* next_ = nullptr;
+    auto atomicNext() noexcept {
+        return std_support::atomic_ref{next_};
+    }
 };
 
 } // namespace

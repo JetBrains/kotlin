@@ -131,20 +131,28 @@ public:
     using GCSweepScope = typename SweepTraits::GCSweepScope;
 
     void PrepareForGC() noexcept {
-        unswept_.TransferAllFrom(std::move(used_));
+        unswept_.TransferAllFrom(std::move(newlyAllocated_));
+        // used_ is not accessed by mutators and will be processed directly in Sweep
     }
 
     void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
-        while (auto* page = unswept_.Pop()) {
+        AtomicStack<SingleObjectPage> survived_{};
+        while (auto* page = unswept_.PopNonAtomic()) {
             if (page->SweepAndDestroy<SweepTraits>(sweepHandle, finalizerQueue)) {
-                used_.Push(page);
+                survived_.PushNonAtomic(page);
             }
         }
+        while (auto* page = used_.PopNonAtomic()) {
+            if (page->SweepAndDestroy<SweepTraits>(sweepHandle, finalizerQueue)) {
+                survived_.PushNonAtomic(page);
+            }
+        }
+        used_.TransferAllFrom(std::move(survived_));
     }
 
     SingleObjectPage* NewPage(uint64_t cellCount) noexcept {
         auto* page = SingleObjectPage::Create(cellCount);
-        used_.Push(page);
+        newlyAllocated_.Push(page);
         return page;
     }
 
@@ -162,22 +170,26 @@ private:
     // Testing method
     std::vector<SingleObjectPage*> GetPages() noexcept {
         std::vector<SingleObjectPage*> pages;
+        for (auto* page : newlyAllocated_.GetElements()) pages.push_back(page);
         for (auto* page : used_.GetElements()) pages.push_back(page);
         for (auto* page : unswept_.GetElements()) pages.push_back(page);
         return pages;
     }
 
     void Clear() noexcept {
+        while (auto* page = newlyAllocated_.Pop()) page->Destroy<SweepTraits>();
         while (auto* page = used_.Pop()) page->Destroy<SweepTraits>();
         while (auto* page = unswept_.Pop()) page->Destroy<SweepTraits>();
     }
 
     template <typename F>
     void TraversePages(F process) noexcept(noexcept(process(std::declval<SingleObjectPage*>()))) {
+        newlyAllocated_.TraverseElements(process);
         used_.TraverseElements(process);
         unswept_.TraverseElements(process);
     }
 
+    AtomicStack<SingleObjectPage> newlyAllocated_;
     AtomicStack<SingleObjectPage> used_;
     AtomicStack<SingleObjectPage> unswept_;
 };

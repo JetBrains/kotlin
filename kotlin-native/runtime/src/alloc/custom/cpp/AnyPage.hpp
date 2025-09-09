@@ -13,6 +13,7 @@
 #include "AtomicStack.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
+#include "std_support/Atomic.hpp"
 
 namespace kotlin::alloc {
 
@@ -23,7 +24,10 @@ class alignas(kPageAlignment) AnyPage : Pinned {
 private:
     friend class AtomicStack<Page>;
     // Used for linking pages together in `pages` queue or in `unswept` queue.
-    std::atomic<Page*> next_ = nullptr;
+    Page* next_ = nullptr;
+    auto atomicNext() noexcept {
+        return std_support::atomic_ref{next_};
+    }
 
 protected:
     // Intentionally non-virtual. `AnyPage` should not be used in any context other than base class clause.
