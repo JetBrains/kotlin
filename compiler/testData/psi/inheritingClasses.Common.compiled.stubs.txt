@@ -30,21 +30,21 @@ FILE[kind=File[packageFqName=a]]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.A.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.InheritingClasses.A.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.A.op, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+          PROPERTY[fqName=a.InheritingClasses.A.op, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.A.ap, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+          PROPERTY[fqName=a.InheritingClasses.A.ap, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
               USER_TYPE
@@ -82,14 +82,14 @@ FILE[kind=File[packageFqName=a]]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=A]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.B.op, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+          PROPERTY[fqName=a.InheritingClasses.B.op, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.B.ap, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+          PROPERTY[fqName=a.InheritingClasses.B.ap, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
@@ -112,17 +112,17 @@ FILE[kind=File[packageFqName=a]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+      CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.C.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.InheritingClasses.C.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
+      CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -136,14 +136,14 @@ FILE[kind=File[packageFqName=a]]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.D.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.InheritingClasses.D.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
             MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
+      CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
       CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
@@ -198,10 +198,10 @@ FILE[kind=File[packageFqName=a]]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
             MODIFIER_LIST[public]
             CLASS_BODY
-          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
             MODIFIER_LIST[public]
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]

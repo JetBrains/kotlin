@@ -8,4 +8,9 @@ package org.jetbrains.kotlin.analysis.stubs.jvm
 import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
+/**
+ * Covers .class files
+ *
+ * @see org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
+ */
 abstract class AbstractCompiledJvmStubsTest : AbstractCompiledStubsTest(JvmPlatforms.defaultJvmPlatform)
