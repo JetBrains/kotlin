@@ -45812,6 +45812,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("explicitFieldCallableReference.kt")
+        public void testExplicitFieldCallableReference() {
+          runTest("compiler/testData/codegen/box/properties/backingField/explicitFieldCallableReference.kt");
+        }
+
+        @Test
         @TestMetadata("getterReturnTypeWithBackingField.kt")
         public void testGetterReturnTypeWithBackingField() {
           runTest("compiler/testData/codegen/box/properties/backingField/getterReturnTypeWithBackingField.kt");
