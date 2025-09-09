@@ -992,18 +992,15 @@ class JavaClassUseSiteMemberScope(
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
             isInterface || origin.isBuiltIns -> false
-            else -> {
-                if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
+            session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib) -> {
+                val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)
+                if (containingFile == null) {
                     true
                 } else {
-                    val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)
-                    if (containingFile == null) {
-                        true
-                    } else {
-                        !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
-                    }
+                    !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
                 }
             }
+            else -> true
         }
 
     private fun ConeClassLikeType.toFir(session: FirSession): FirRegularClass? {
