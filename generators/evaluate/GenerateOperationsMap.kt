@@ -73,6 +73,7 @@ fun generate(): String {
     }
 
 
+   unaryOperationsMap.add(Operation("Char", listOf(builtIns.intType), true, "Char(value as Int)"))
     unaryOperationsMap.add(Operation("code", listOf(builtIns.charType), false))
 
     for (type in listOf(builtIns.shortType, builtIns.byteType)) {

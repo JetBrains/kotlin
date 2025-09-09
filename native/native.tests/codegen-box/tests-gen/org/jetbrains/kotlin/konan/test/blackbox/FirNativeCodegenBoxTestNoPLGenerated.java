@@ -37627,6 +37627,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Test
+        @TestMetadata("charPseudoConstructor.kt")
+        public void testCharPseudoConstructor() {
+          runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/charPseudoConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("constTrimIndent.kt")
         public void testConstTrimIndent() {
           runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrimIndent.kt");
