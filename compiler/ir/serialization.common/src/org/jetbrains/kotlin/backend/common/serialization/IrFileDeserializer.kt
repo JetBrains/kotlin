@@ -257,7 +257,7 @@ fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): Ir
     return IrFileImpl(fileEntry, symbol, fqName, module)
 }
 
-internal fun deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry =
+internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry =
     NaiveSourceBasedFileEntryImpl(
         name = fileEntryProto.name,
         lineStartOffsets = fileEntryProto.lineStartOffsetList.toIntArray(),
