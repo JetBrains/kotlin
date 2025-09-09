@@ -16,26 +16,76 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 /**
  * This test is supposed to validate the compiled stubs output.
  *
  * It takes a compiled file as a binary data and creates stubs for it.
  *
- * @see AbstractDecompiledStubsTest
+ * @see org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
  */
 abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) : AbstractStubsTest() {
     override val outputFileExtension: String get() = "compiled.stubs.txt"
     override val configurator: AnalysisApiTestConfigurator = CompiledStubsTestConfigurator(defaultTargetPlatform)
 
-    override fun computeStub(file: KtFile): PsiFileStub<*>? = ClsClassFinder.allowMultifileClassPart {
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + Directives
+
+    private object Directives : SimpleDirectivesContainer() {
+        /** @see additionalValidation */
+        val INCONSISTENT_TREE by stringDirective(
+            "Temporary disables '${AbstractCompiledStubsTest::additionalValidation.name}' until the issue is fixed. YT ticket must be provided"
+        )
+    }
+
+    override fun computeStub(file: KtFile): PsiFileStub<*> = ClsClassFinder.allowMultifileClassPart {
         requireIsInstance<KtDecompiledFile>(file)
 
         // The tree loader is called to build a stub tree for a binary file directly
-        StubTreeLoader.getInstance()
+        val fileStub = StubTreeLoader.getInstance()
             .build(/* project = */ null, /* vFile = */ file.virtualFile, /* psiFile = */ null)
             ?.root
-            ?.let { it as PsiFileStub<*> }
+
+        requireNotNull(fileStub) { "A stub tree is expected to be present for all decompiled files since they are built from it" }
+
+        requireIsInstance<KotlinFileStubImpl>(fileStub)
+
+        fileStub
+    }
+
+    /**
+     * The purpose of this function to validate the consistency between stub and AST trees for [file] which has to be a [decompiled file][KtDecompiledFile].
+     *
+     * Via [PsiFileImpl.calcStubTree][com.intellij.psi.impl.source.PsiFileImpl.calcStubTree] it performs:
+     * 1. The AST-tree computation from the decompiled text
+     * 2. The stub-tree computation from the binary data (effectively the same as [computeStub])
+     * 3. The binding between the AST and stub trees (via [com.intellij.psi.impl.source.FileTrees.reconcilePsi])
+     *
+     * @see Directives.INCONSISTENT_TREE
+     */
+    override fun additionalValidation(testServices: TestServices, file: KtFile, fileStub: PsiFileStub<*>) {
+        requireIsInstance<KtDecompiledFile>(file)
+
+        testServices.moduleStructure.allDirectives.suppressIf(
+            suppressionDirective = Directives.INCONSISTENT_TREE,
+            filter = { true },
+        ) {
+            // This computation might throw an exception in the case of inconsistency between the AST and stub trees
+            val decompiledStub = file.calcStubTree().root
+
+            testServices.assertions.assertEquals(
+                expected = renderStub(fileStub),
+                actual = renderStub(decompiledStub)
+            ) {
+                "The stub tree computed from the decompiled text must be the same as the stub tree computed from the binary data"
+            }
+        }
     }
 
     internal open class CompiledStubsTestConfigurator(

@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
+/**
+ * This test is supposed to validate a decompiler text output
+ *
+ * @see org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
+ */
 abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform) : AbstractAnalysisApiBasedTest() {
     override val configurator: AnalysisApiTestConfigurator = AbstractCompiledStubsTest.CompiledStubsTestConfigurator(defaultTargetPlatform)
 

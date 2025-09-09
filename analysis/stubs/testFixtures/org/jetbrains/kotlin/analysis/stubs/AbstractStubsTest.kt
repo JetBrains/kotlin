@@ -50,12 +50,18 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
 
         testServices.assertions.assertEqualsToTestOutputFile(actual, extension = outputFileExtension)
 
-        for ((_, stub) in filesAndStubs) {
+        for ((file, stub) in filesAndStubs) {
             val fileStub = stub ?: continue
             checkPsiElementTypeConsistency(testServices.assertions, fileStub)
             validateSerializers(testServices.assertions, fileStub)
+            additionalValidation(testServices, file, fileStub)
         }
     }
+
+    /**
+     * The function is called for all [KtFile]s that have stubs.
+     */
+    open fun additionalValidation(testServices: TestServices, file: KtFile, fileStub: PsiFileStub<*>) {}
 
     /**
      * Validates that the stub tree can be serialized and deserialized correctly.
