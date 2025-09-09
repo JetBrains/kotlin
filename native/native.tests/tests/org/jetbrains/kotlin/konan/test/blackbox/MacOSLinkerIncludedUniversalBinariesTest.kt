@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
@@ -99,7 +98,7 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         val frameworkImagePath = ObjCFrameworkCompilation(
             testRunSettings,
             freeCompilerArgs = TestCompilerArgs(
-                testRunSettings.get<PipelineType>().compilerFlags + listOf(
+                listOf(
                     "-Xbinary=bundleId=stub",
                 ) + linkingFlags
             ),

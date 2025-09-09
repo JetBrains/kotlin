@@ -279,7 +279,6 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     gcType: GCType,
     gcScheduler: GCScheduler,
     allocator: Allocator,
-    private val pipelineType: PipelineType,
     cacheMode: CacheMode,
     binaryOptions: ExplicitBinaryOptions,
     freeCompilerArgs: TestCompilerArgs,
@@ -306,7 +305,6 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     allocator = allocator,
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
         applyK2MPPArgs(this)
     }
 
@@ -320,7 +318,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     }
 
     private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
+        if (freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
             sourceModules.mapToSet { "-Xfragments=${it.name}" }
                 .sorted().forEach { add(it) }
             sourceModules.flatMapToSet { module -> module.directDependsOnDependencies.map { "-Xfragment-refines=${module.name}:${it.name}" } }
@@ -348,7 +346,6 @@ class LibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.get(),
     cacheMode = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
@@ -399,7 +396,6 @@ class ObjCFrameworkCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
@@ -445,7 +441,6 @@ class BinaryLibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
@@ -662,7 +657,6 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = cacheMode,
     binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
@@ -961,25 +955,3 @@ class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilatio
         return mapNotNull { dependency -> if (dependency.type is T) dependency.artifact as A else null }
     }
 }
-
-// Calculates PipelineType to be used for compilations involving native backend or C/ObjC export.
-// Second stage of TWO_STAGE_MULTI_MODULE must receive PipelineType.DEFAULT to be unaware of the language version used before, during first stage.
-internal fun Settings.getStageDependentPipelineType(sourceModules: Collection<TestModule>): PipelineType =
-    when (get<TestMode>()) {
-        TestMode.ONE_STAGE_MULTI_MODULE -> get<PipelineType>()
-        TestMode.TWO_STAGE_MULTI_MODULE -> {
-            if (sourceModules.isEmpty())
-                PipelineType.DEFAULT // KT-56182: Don't pass "-language_version" option to pure second compilation stage.
-            else {
-                println(  // KT-66014: TODO change println() to fail{} if all testsuites in KT-66014 would be changed
-                    "WARNING: Wrong testing approach for `mode=TWO_STAGE_MULTI_MODULE`: test explicitly uses one-stage compilation for sources:\n" +
-                            "${sourceModules.map { it.files.map { it.location.name } }}\n" +
-                            "Please re-implement test to split compilation to two stages, when `mode=TWO_STAGE_MULTI_MODULE` is specified.\n" +
-                            "TestCompilationFactory provides some tooling for this."
-                )
-                // Provided source modules must be compiled with proper frontend version,
-                // even if this version would be then wrongly passed to backend or C/ObjC generator
-                get<PipelineType>()
-            }
-        }
-    }

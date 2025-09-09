@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.MutedOption
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.RunnerWithExecutor
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.NoopTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
@@ -278,23 +277,6 @@ sealed class CacheMode {
             checkStateAtExternalCalls: Boolean,
         ) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}${if (checkStateAtExternalCalls) "-check_state_at_external_calls" else ""}-user${if (partialLinkageEnabled) "-pl" else ""}"
     }
-}
-
-enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
-    DEFAULT(
-        MutedOption.DEFAULT,
-        emptyList()
-    ),
-    K1(
-        MutedOption.K1,
-        listOf("-language-version", "1.9")
-    ),
-    K2(
-        MutedOption.K2,
-        listOf("-language-version", if (LanguageVersion.LATEST_STABLE.major < 2) "2.0" else LanguageVersion.LATEST_STABLE.toString())
-    );
-
-    override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
 }
 
 enum class CompilerOutputInterceptor {
