@@ -34,7 +34,7 @@ internal object ReflectionObjectRenderer {
         append(renderType(receiver.type)).append(".")
 
     private fun StringBuilder.appendReceivers(callable: KCallable<*>) {
-        val receivers = (callable as KCallableImpl<*>).receiverParameters.filter {
+        val receivers = (callable as ReflectKCallable<*>).receiverParameters.filter {
             it.kind == KParameter.Kind.INSTANCE || it.kind == KParameter.Kind.EXTENSION_RECEIVER
         }
         receivers.getOrNull(0)?.let { appendReceiverType(it) }
@@ -120,7 +120,7 @@ internal object ReflectionObjectRenderer {
             }
 
             append(" of ")
-            append(renderCallable((parameter as KParameterImpl).callable))
+            append(renderCallable((parameter as ReflectKParameter).callable))
         }
     }
 

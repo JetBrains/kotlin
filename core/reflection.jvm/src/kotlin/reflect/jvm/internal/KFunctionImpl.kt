@@ -31,7 +31,6 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 import kotlin.reflect.jvm.internal.calls.*
 import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
@@ -42,10 +41,10 @@ import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.KOTL
 internal class KFunctionImpl private constructor(
     override val container: KDeclarationContainerImpl,
     name: String,
-    private val signature: String,
+    override val signature: String,
     descriptorInitialValue: FunctionDescriptor?,
-    private val rawBoundReceiver: Any? = CallableReference.NO_RECEIVER
-) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionBase<Any?>, FunctionWithAllInvokes {
+    override val rawBoundReceiver: Any?,
+) : KCallableImpl<Any?>(), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
             : this(container, name, signature, null, boundReceiver)
 
@@ -53,10 +52,9 @@ internal class KFunctionImpl private constructor(
         container,
         descriptor.name.asString(),
         RuntimeTypeMapper.mapSignature(descriptor).asString(),
-        descriptor
+        descriptor,
+        CallableReference.NO_RECEIVER,
     )
-
-    override val isBound: Boolean get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
 
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
@@ -166,7 +164,7 @@ internal class KFunctionImpl private constructor(
         return null
     }
 
-    private val boundReceiver
+    private val boundReceiver: Any?
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
@@ -222,7 +220,7 @@ internal class KFunctionImpl private constructor(
         get() = descriptor.isSuspend
 
     override fun equals(other: Any?): Boolean {
-        val that = other.asKFunctionImpl() ?: return false
+        val that = other.asReflectFunction() ?: return false
         return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
     }
 
