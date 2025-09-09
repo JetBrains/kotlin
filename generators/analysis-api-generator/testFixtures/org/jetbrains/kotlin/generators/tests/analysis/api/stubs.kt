@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.js.AbstractDecompiledJsTextT
 import org.jetbrains.kotlin.analysis.decompiler.psi.jvm.AbstractDecompiledJvmTextTest
 import org.jetbrains.kotlin.analysis.stubs.AbstractSourceStubsTest
 import org.jetbrains.kotlin.analysis.stubs.js.AbstractCompiledJsStubsTest
-import org.jetbrains.kotlin.analysis.stubs.js.AbstractDecompiledJsStubsTest
 import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmStubsTest
-import org.jetbrains.kotlin.analysis.stubs.jvm.AbstractDecompiledJvmStubsTest
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
@@ -26,14 +24,6 @@ internal fun TestGroupSuite.generateStubsTests() {
         }
 
         testClass<AbstractCompiledJsStubsTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-        }
-
-        testClass<AbstractDecompiledJvmStubsTest> {
-            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-        }
-
-        testClass<AbstractDecompiledJsStubsTest> {
             model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
