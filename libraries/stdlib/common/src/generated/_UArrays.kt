@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("UArraysKt")
+@file:Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 @file:kotlin.jvm.JvmPackageName("kotlin.collections.unsigned")
 
 package kotlin.collections

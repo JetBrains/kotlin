@@ -61,7 +61,7 @@ fun generateMap(): String {
 private fun printPreamble(p: Printer) {
     p.println(File("license/COPYRIGHT_HEADER.txt").readText())
     p.println()
-    p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\", \"UNCHECKED_CAST\")")
+    p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\", \"UNCHECKED_CAST\", \"REDUNDANT_CALL_OF_CONVERSION_METHOD\")")
     p.println()
     p.println("package org.jetbrains.kotlin.ir.interpreter.builtins")
     p.println()

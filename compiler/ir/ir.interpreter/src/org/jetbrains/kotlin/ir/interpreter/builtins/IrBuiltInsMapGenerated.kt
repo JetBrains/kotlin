@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "UNCHECKED_CAST")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR", "UNCHECKED_CAST", "REDUNDANT_CALL_OF_CONVERSION_METHOD")
 
 package org.jetbrains.kotlin.ir.interpreter.builtins
 

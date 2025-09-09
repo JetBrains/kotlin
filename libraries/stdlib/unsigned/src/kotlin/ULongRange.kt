@@ -56,6 +56,7 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
  * A progression of values of type `ULong`.
  */
 @SinceKotlin("1.5")
+@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 public open class ULongProgression
 internal constructor(
     start: ULong,

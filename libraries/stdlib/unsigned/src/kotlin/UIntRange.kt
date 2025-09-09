@@ -56,6 +56,7 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
  * A progression of values of type `UInt`.
  */
 @SinceKotlin("1.5")
+@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 public open class UIntProgression
 internal constructor(
     start: UInt,

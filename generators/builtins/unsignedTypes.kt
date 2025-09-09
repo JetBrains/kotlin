@@ -617,6 +617,7 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
  * A progression of values of type `$elementType`.
  */
 @SinceKotlin("1.5")
+@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 public open class ${elementType}Progression
 internal constructor(
     start: $elementType,
