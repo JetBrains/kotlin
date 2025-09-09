@@ -7,6 +7,7 @@ package samples.uuid
 
 import samples.*
 import kotlin.test.*
+import kotlin.time.Instant
 import kotlin.uuid.*
 
 @OptIn(ExperimentalUuidApi::class)
@@ -219,6 +220,24 @@ class Uuids {
         assertPrints(uuid1 < uuid2, "true")
         assertPrints(uuid1 < uuid3, "true")
         assertPrints(uuid2 < uuid3, "true")
+    }
+
+    @Sample
+    fun v7Unordered() {
+        val timestamp = Instant.fromEpochMilliseconds(1757440583000L)
+
+        val uuid1 = Uuid.generateV7Unordered(timestamp)
+        val uuid2 = Uuid.generateV7Unordered(timestamp)
+
+        // Uuids have the same timestamp prefix (01992f9f-2558-, which corresponds to 1757440583000 in hex),
+        // but other bytes are different.
+        assertTrue(uuid1.toHexDashString().startsWith("01992f9f-2558-"))
+        println(uuid1.toHexDashString())
+
+        assertTrue(uuid2.toHexDashString().startsWith("01992f9f-2558-"))
+        println(uuid2.toHexDashString())
+
+        assertNotEquals(uuid1, uuid2)
     }
 
     @Sample
