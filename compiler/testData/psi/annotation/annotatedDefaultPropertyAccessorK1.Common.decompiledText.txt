@@ -1,11 +1,11 @@
-0_.knm:
+Anno.kotlin_metadata:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
   public final annotation class Anno public constructor() : kotlin.Annotation {
   }
 
-1_.knm:
+Foo.kotlin_metadata:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 

@@ -1,22 +1,17 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformDirectives.TARGET_PLATFORM
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.NativePlatformUnspecifiedTarget
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -32,17 +27,7 @@ object TargetPlatformDirectives : SimpleDirectivesContainer() {
 }
 
 enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
-    Common(
-        TargetPlatform(
-            setOf(
-                JdkPlatform(JvmTarget.DEFAULT),
-                JsPlatforms.DefaultSimpleJsPlatform,
-                WasmPlatformWithTarget(WasmTarget.JS),
-                WasmPlatformWithTarget(WasmTarget.WASI),
-                NativePlatformUnspecifiedTarget
-            )
-        )
-    ),
+    Common(CommonPlatforms.defaultCommonPlatform),
 
     JVM(JvmPlatforms.unspecifiedJvmPlatform),
     JVM_1_6(JvmPlatforms.jvm6),

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.decompiler.psi
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 
 /**
- * The file represents a decompiled .kotlin_builtins file
+ * The file represents decompiled .kotlin_builtins/.kotlin_metadata files
  *
  * @see KotlinBuiltInFileType
  */

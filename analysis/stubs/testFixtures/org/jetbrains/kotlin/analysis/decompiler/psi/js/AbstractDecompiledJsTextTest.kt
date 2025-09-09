@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.js
 
 import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
+/**
+ * Covers .knm files
+ *
+ * @see org.jetbrains.kotlin.analysis.stubs.js.AbstractCompiledJsStubsTest
+ */
 abstract class AbstractDecompiledJsTextTest : AbstractDecompiledTextTest(JsPlatforms.defaultJsPlatform)

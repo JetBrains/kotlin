@@ -1,4 +1,4 @@
-0_.knm:
+MyAnnotation.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -17,7 +17,7 @@
       CLASS_BODY
 
 
-1_.knm:
+MyAnnotation2.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -36,7 +36,7 @@
       CLASS_BODY
 
 
-2_.knm:
+MyAnnotation3.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -55,7 +55,7 @@
       CLASS_BODY
 
 
-3_.knm:
+MyAnnotation4.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -74,7 +74,7 @@
       CLASS_BODY
 
 
-4_.knm:
+MyAnnotation5.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -93,7 +93,7 @@
       CLASS_BODY
 
 
-5_.knm:
+MyAnnotation6.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -112,7 +112,7 @@
       CLASS_BODY
 
 
-6_.knm:
+MyAnnotation7.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -149,7 +149,7 @@
       CLASS_BODY
 
 
-7_.knm:
+MyAnnotation8.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -177,7 +177,7 @@
       CLASS_BODY
 
 
-8_.knm:
+Test.kotlin_metadata:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
@@ -206,12 +206,6 @@
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=MyAnnotation4]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation5]
-              ANNOTATION_TARGET[useSiteTarget=FIELD]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=MyAnnotation5]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -235,12 +229,6 @@
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             MODIFIER_LIST[]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
-                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=MyAnnotation7]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation8]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -271,12 +259,6 @@
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             MODIFIER_LIST[]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
-                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=MyAnnotation7]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation8]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -296,12 +278,6 @@
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             MODIFIER_LIST[]
-              ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation7]
-                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
-                CONSTRUCTOR_CALLEE
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=MyAnnotation7]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation8]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE

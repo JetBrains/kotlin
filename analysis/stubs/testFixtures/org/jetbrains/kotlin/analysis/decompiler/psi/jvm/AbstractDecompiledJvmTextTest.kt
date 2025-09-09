@@ -8,4 +8,9 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.jvm
 import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
+/**
+ * Covers .class files
+ *
+ * @see org.jetbrains.kotlin.analysis.stubs.jvm.AbstractCompiledJvmStubsTest
+ */
 abstract class AbstractDecompiledJvmTextTest : AbstractDecompiledTextTest(JvmPlatforms.defaultJvmPlatform)
