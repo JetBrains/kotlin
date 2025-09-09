@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractAdditionalStubInfoKnmTest
-import org.jetbrains.kotlin.analysis.decompiler.konan.AbstractDecompiledKnmStubConsistencyFe10Test
-import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractByDecompiledPsiStubBuilderTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoK2CompilerTest
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractAdditionalStubInfoTest
-import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractClsStubBuilderTest
-import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractPsiStubElementTypeConsistencyTest
 import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 
 internal fun TestGroupSuite.generateDecompiledTests() {
@@ -19,38 +15,12 @@ internal fun TestGroupSuite.generateDecompiledTests() {
         "analysis/decompiled/decompiler-to-file-stubs/tests-gen",
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
-        testClass<AbstractClsStubBuilderTest> {
-            model("clsFileStubBuilder", extension = null, recursive = false)
-        }
-
-        testClass<AbstractPsiStubElementTypeConsistencyTest> {
-            model("clsFileStubBuilder", extension = null, recursive = false)
-        }
-
         testClass<AbstractAdditionalStubInfoTest> {
             model("additionalClsStubInfo", extension = null, recursive = false)
         }
 
         testClass<AbstractAdditionalStubInfoK2CompilerTest> {
             model("additionalClsStubInfo", extension = null, recursive = false)
-        }
-    }
-
-    testGroup(
-        "analysis/decompiled/decompiler-to-psi/tests-gen",
-        "analysis/decompiled/decompiler-to-file-stubs/testData",
-    ) {
-        testClass<AbstractByDecompiledPsiStubBuilderTest> {
-            model("clsFileStubBuilder", extension = null, recursive = false)
-        }
-    }
-
-    testGroup(
-        "analysis/decompiled/decompiler-native/tests-gen",
-        "analysis/decompiled/decompiler-to-file-stubs/testData",
-    ) {
-        testClass<AbstractDecompiledKnmStubConsistencyFe10Test> {
-            model("clsFileStubBuilder", extension = null, recursive = false)
         }
     }
 

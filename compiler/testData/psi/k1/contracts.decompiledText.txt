@@ -1,0 +1,6 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public fun myRequire(x: kotlin.Boolean): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

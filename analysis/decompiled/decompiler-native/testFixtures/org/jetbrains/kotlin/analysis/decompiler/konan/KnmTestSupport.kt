@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.KlibTestUtil
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -21,35 +20,6 @@ interface KnmTestSupport {
     val ignoreDirective: SimpleDirective
     fun createDecompiler(): KotlinKlibMetadataDecompiler
     fun compileCommonMetadata(inputKtFiles: List<Path>, compilationOutputPath: Path, additionalArguments: List<String>): OutputType
-}
-
-object Fe10KnmTestSupport : KnmTestSupport {
-    private object Directives : SimpleDirectivesContainer() {
-        val KNM_FE10_IGNORE by directive(
-            description = "Ignore test for KNM files with FE10 K/N Decompiler",
-            applicability = DirectiveApplicability.Global,
-        )
-    }
-
-    override val ignoreDirective: SimpleDirective
-        get() = Directives.KNM_FE10_IGNORE
-
-    override fun createDecompiler(): KotlinKlibMetadataDecompiler = KotlinKlibMetadataDecompiler()
-
-    override fun compileCommonMetadata(
-        inputKtFiles: List<Path>,
-        compilationOutputPath: Path,
-        additionalArguments: List<String>,
-    ): OutputType {
-        KlibTestUtil.compileCommonSourcesToKlib(
-            inputKtFiles.map(Path::toFile),
-            libraryName = "library",
-            compilationOutputPath.toFile(),
-            additionalArguments,
-        )
-
-        return OutputType.KLIB
-    }
 }
 
 object K2KnmTestSupport : KnmTestSupport {

@@ -1,3 +1,0 @@
-@Repeatable
-annotation class RepeatableAnnotationClass
-
