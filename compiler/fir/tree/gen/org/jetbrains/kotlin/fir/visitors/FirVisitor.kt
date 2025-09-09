@@ -284,6 +284,21 @@ abstract class FirVisitor<out R, in D> {
     open fun visitReplSnippet(replSnippet: FirReplSnippet, data: D): R =
         visitElement(replSnippet, data)
 
+    open fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): R =
+        visitElement(replDeclarationReference, data)
+
+    open fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): R =
+        visitElement(replPropertyInitializer, data)
+
+    open fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): R =
+        visitElement(replPropertyDelegate, data)
+
+    open fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: D): R =
+        visitElement(delayedPropertyInitializer, data)
+
+    open fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: D): R =
+        visitElement(delayedPropertyDelegate, data)
+
     open fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): R =
         visitElement(packageDirective, data)
 

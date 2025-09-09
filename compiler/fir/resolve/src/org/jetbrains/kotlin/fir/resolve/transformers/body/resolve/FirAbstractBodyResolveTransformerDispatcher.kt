@@ -87,6 +87,51 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirDeclarationsResolveTransformer::transformReplSnippet,
     )
 
+    override fun transformReplDeclarationReference(
+        replDeclarationReference: FirReplDeclarationReference,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replDeclarationReference,
+        data,
+        FirExpressionsResolveTransformer::transformReplDeclarationReference,
+    )
+
+    override fun transformReplPropertyInitializer(
+        replPropertyInitializer: FirReplPropertyInitializer,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replPropertyInitializer,
+        data,
+        FirExpressionsResolveTransformer::transformReplPropertyInitializer,
+    )
+
+    override fun transformReplPropertyDelegate(
+        replPropertyDelegate: FirReplPropertyDelegate,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        replPropertyDelegate,
+        data,
+        FirExpressionsResolveTransformer::transformReplPropertyDelegate,
+    )
+
+    override fun transformDelayedPropertyInitializer(
+        delayedPropertyInitializer: FirDelayedPropertyInitializer,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        delayedPropertyInitializer,
+        data,
+        FirExpressionsResolveTransformer::transformDelayedPropertyInitializer,
+    )
+
+    override fun transformDelayedPropertyDelegate(
+        delayedPropertyDelegate: FirDelayedPropertyDelegate,
+        data: ResolutionMode,
+    ): FirStatement = expressionTransformation(
+        delayedPropertyDelegate,
+        data,
+        FirExpressionsResolveTransformer::transformDelayedPropertyDelegate,
+    )
+
     override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
