@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
@@ -76,18 +74,6 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
                 .resolvableMetadataConfiguration
                 .exclude(mapOf("group" to KOTLIN_MODULE_GROUP, "module" to KOTLIN_STDLIB_MODULE_NAME))
         }
-    }
-}
-
-internal val SetupSourceSetCommonizerTargetAssociation = KotlinProjectSetupCoroutine {
-    val multiplatform = multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
-    val sourceSets = multiplatform
-        .awaitSourceSets()
-        .filter { it.isNativeSourceSet.await() }
-        .filterIsInstance<DefaultKotlinSourceSet>()
-    sourceSets.forEach { sourceSet ->
-        // FIXME: Figure out why calling commonizerTarget here causes the commonizer target value to be correct
-        sourceSet.commonizerTarget.await() ?: return@forEach
     }
 }
 
