@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
@@ -67,29 +69,33 @@ internal fun createGradleCompilerRunner(
     buildFinishedListenerService: Provider<BuildFinishedListenerService>,
     buildIdService: Provider<BuildIdService>,
     fusMetricsConsumer: StatisticsValuesConsumer?,
+    diagnosticsReporter: UsesKotlinToolingDiagnostics,
 ): GradleCompilerRunner {
-    return if (runViaBuildToolsApi) {
-        GradleBuildToolsApiCompilerRunner(
-            taskProvider,
-            toolsJar,
-            compilerExecutionSettings,
-            buildMetricsReporter,
-            workerExecutor,
-            cachedClassLoadersService,
-            buildFinishedListenerService,
-            buildIdService,
-            fusMetricsConsumer
-        )
-    } else {
-        GradleCompilerRunnerWithWorkers(
-            taskProvider,
-            toolsJar,
-            compilerExecutionSettings,
-            buildMetricsReporter,
-            workerExecutor,
-            fusMetricsConsumer
-        )
+    if (runViaBuildToolsApi) {
+        if (compilerExecutionSettings.strategy != KotlinCompilerExecutionStrategy.OUT_OF_PROCESS) {
+            return GradleBuildToolsApiCompilerRunner(
+                taskProvider,
+                toolsJar,
+                compilerExecutionSettings,
+                buildMetricsReporter,
+                workerExecutor,
+                cachedClassLoadersService,
+                buildFinishedListenerService,
+                buildIdService,
+                fusMetricsConsumer
+            )
+        } else {
+            diagnosticsReporter.reportDiagnostic(KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi())
+        }
     }
+    return GradleCompilerRunnerWithWorkers(
+        taskProvider,
+        toolsJar,
+        compilerExecutionSettings,
+        buildMetricsReporter,
+        workerExecutor,
+        fusMetricsConsumer
+    )
 }
 
 /*
