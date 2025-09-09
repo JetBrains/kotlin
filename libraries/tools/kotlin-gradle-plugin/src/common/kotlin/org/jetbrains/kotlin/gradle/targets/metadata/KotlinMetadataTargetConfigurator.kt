@@ -222,7 +222,8 @@ class KotlinMetadataTargetConfigurator :
         // Metadata from visible source sets within dependsOn closure
         compilation.compileDependencyFiles += sourceSet.dependsOnClosureCompilePath
 
-        compilation.compileDependencyFiles += sourceSet.retrieveExternalDependencies(transitive = true)
+        val externalDependencies = sourceSet.retrieveExternalDependencies(transitive = true)
+        compilation.compileDependencyFiles += externalDependencies
     }
 }
 
