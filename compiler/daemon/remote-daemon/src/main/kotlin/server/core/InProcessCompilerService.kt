@@ -6,12 +6,16 @@
 package server.core
 
 import common.SERVER_COMPILATION_WORKSPACE_DIR
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
+import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -36,6 +40,11 @@ import org.jetbrains.kotlin.daemon.common.WallAndThreadAndMemoryTotalProfiler
 import org.jetbrains.kotlin.daemon.common.usedMemory
 import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
+import org.jetbrains.kotlin.incremental.IncrementalFirJvmCompilerRunner
+import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
+import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
+import org.jetbrains.kotlin.incremental.extractKotlinSourcesFromFreeCompilerArguments
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.withIncrementalCompilation
 import org.jetbrains.kotlin.incremental.withJsIC
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -49,6 +58,8 @@ import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.collections.plus
+import kotlin.collections.toSet
 
 class InProcessCompilerService(
     var reportPerf: Boolean = false
@@ -180,21 +191,18 @@ class InProcessCompilerService(
 
                 when (targetPlatform) {
                     CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
-                        TODO("we do not support incremental compilation at this moment")
-                        // TODO we do not support incremental compilation at this moment
-
-//                    doCompile(daemonReporter) { _ ->
-//                        execIncrementalCompiler(
-//                            k2PlatformArgs as K2JVMCompilerArguments,
-//                            gradleIncrementalArgs,
-//                            messageCollector,
-//                            getICReporter(
-//                                gradleIncrementalServicesFacade,
-//                                compilationResults!!,
-//                                gradleIncrementalArgs
-//                            )
-//                        )
-//                    }
+                        doCompile(daemonReporter) { _ ->
+                            execIncrementalCompiler(
+                                k2PlatformArgs as K2JVMCompilerArguments,
+                                gradleIncrementalArgs,
+                                messageCollector,
+                                getICReporter(
+                                    gradleIncrementalServicesFacade,
+                                    compilationResults!!,
+                                    gradleIncrementalArgs
+                                )
+                            )
+                        }.get()
                     }
                     CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
                         TODO("we do not support JS right now")
@@ -216,6 +224,64 @@ class InProcessCompilerService(
 
                 }
             }
+        }
+    }
+
+    fun execIncrementalCompiler(
+        k2jvmArgs: K2JVMCompilerArguments,
+        incrementalCompilationOptions: IncrementalCompilationOptions,
+        compilerMessageCollector: MessageCollector,
+        reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    ): ExitCode {
+        reporter.startMeasureGc()
+        val allKotlinJvmExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
+                (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).toSet()
+
+        @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
+        val allSourceFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinJvmExtensions, includeJavaSources = true)
+
+        val workingDir = incrementalCompilationOptions.workingDir
+
+        val rootProjectDir = incrementalCompilationOptions.rootProjectDir
+        val buildDir = incrementalCompilationOptions.buildDir
+
+        val verifiedPreciseJavaTracking = k2jvmArgs.disablePreciseJavaTrackingIfK2(
+            usePreciseJavaTrackingByDefault = incrementalCompilationOptions.icFeatures.usePreciseJavaTracking
+        )
+
+        val compiler = if (incrementalCompilationOptions.useJvmFirRunner) {
+            IncrementalFirJvmCompilerRunner(
+                workingDir,
+                reporter,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
+                outputDirs = incrementalCompilationOptions.outputFiles,
+                classpathChanges = incrementalCompilationOptions.classpathChanges,
+                icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
+            )
+        } else {
+            IncrementalJvmCompilerRunner(
+                workingDir,
+                reporter,
+                outputDirs = incrementalCompilationOptions.outputFiles,
+                classpathChanges = incrementalCompilationOptions.classpathChanges,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
+                icFeatures = incrementalCompilationOptions.icFeatures.copy(
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking
+                ),
+            )
+        }
+        return try {
+            compiler.compile(
+                allSourceFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),
+                fileLocations = if (rootProjectDir != null && buildDir != null) {
+                    FileLocations(rootProjectDir, buildDir)
+                } else null
+            )
+        } finally {
+            reporter.endMeasureGc()
+            reporter.flush()
         }
     }
 
