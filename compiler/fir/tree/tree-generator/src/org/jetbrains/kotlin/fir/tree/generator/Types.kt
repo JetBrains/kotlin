@@ -62,6 +62,10 @@ val standardClassIdsType = type<StandardClassIds>()
 
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
     .withArgs(FirTree.expression)
+val referenceToReplPropertyInitializer = generatedType("", "FirExpressionRef")
+    .withArgs(FirTree.replPropertyInitializer)
+val referenceToReplPropertyDelegate = generatedType("", "FirExpressionRef")
+    .withArgs(FirTree.replPropertyDelegate)
 val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef")
     .withArgs(FirTree.checkedSafeCallSubject)
 
