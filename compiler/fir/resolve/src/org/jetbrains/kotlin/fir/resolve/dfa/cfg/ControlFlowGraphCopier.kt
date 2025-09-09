@@ -429,8 +429,12 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
         return StubNode(get(node.owner), node.level)
     }
 
-    override fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: Unit): CFGNode<*> {
-        return VariableDeclarationNode(get(node.owner), node.fir, node.level)
+    override fun visitVariableDeclarationEnterNode(node: VariableDeclarationEnterNode, data: Unit): CFGNode<*> {
+        return VariableDeclarationEnterNode(get(node.owner), node.fir, node.level)
+    }
+
+    override fun visitVariableDeclarationExitNode(node: VariableDeclarationExitNode, data: Unit): CFGNode<*> {
+        return VariableDeclarationExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Unit): CFGNode<*> {

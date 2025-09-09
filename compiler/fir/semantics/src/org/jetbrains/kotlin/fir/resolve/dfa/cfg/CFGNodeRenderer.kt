@@ -52,8 +52,12 @@ fun CFGNode<*>.render(): String =
                 is CheckNotNullCallNode -> "Check not null: ${CfgRenderer.renderElementAsString(fir)}"
 
                 is LiteralExpressionNode -> "Const: ${fir.render()}"
-                is VariableDeclarationNode ->
-                    "Variable declaration: ${
+                is VariableDeclarationEnterNode ->
+                    "Enter variable declaration: ${
+                        CfgRenderer.renderAsCallableDeclarationString(fir)
+                    }"
+                is VariableDeclarationExitNode ->
+                    "Exit variable declaration: ${
                         CfgRenderer.renderAsCallableDeclarationString(fir)
                     }"
 
