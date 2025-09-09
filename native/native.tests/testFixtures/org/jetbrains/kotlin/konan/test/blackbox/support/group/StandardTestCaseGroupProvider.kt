@@ -221,7 +221,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
 
-        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB) parseLLDBSpec(testDataFile, registeredDirectives, settings) else null
+        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB) parseLLDBSpec(testDataFile) else null
 
         val outputMatcher = lldbSpec?.let {
             OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }

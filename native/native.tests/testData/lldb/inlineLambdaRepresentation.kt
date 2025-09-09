@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// FIR_IDENTICAL
+
 
 inline fun foo(action: () -> Unit) {
     return action()

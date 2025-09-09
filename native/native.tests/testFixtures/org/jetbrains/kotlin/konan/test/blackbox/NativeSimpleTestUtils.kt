@@ -360,9 +360,6 @@ private fun directiveValues(testDataFileContents: String, directive: String) =
 fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFile: File) =
     Assumptions.assumeFalse(InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testDataFile), TestDirectives.MUTED.name))
 
-internal fun AbstractNativeSimpleTest.firIdentical(testDataFile: File) =
-     InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testDataFile), TestDirectives.FIR_IDENTICAL.name)
-
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFile: File) = freeCompilerArgs(FileUtil.loadFile(testDataFile))
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFileContents: String) =
     directiveValues(testDataFileContents, TestDirectives.FREE_COMPILER_ARGS.name)
