@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -990,14 +989,7 @@ class JavaClassUseSiteMemberScope(
             this is FirJavaClass -> superConeTypes.any { type ->
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
-            isInterface || origin.isBuiltIns -> false
-            // Generally the condition part above `origin.isBuiltIns` should be enough, but in some environments built-in classes
-            // might be loaded without the correct expected origin, e.g., when building stdlib artifact itself or for J2CL.
-            // See KT-68154 and KT-80524 for details.
-            // Having this branch, we may actually remove `origin.isBuiltIns` above, but leaving it as a fast-path.
-            classId.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME) && JavaToKotlinClassMap.isMappedKotlinClass(classId) ->
-                false
-
+            isInterface || symbol.isBuiltinClass() -> false
             else -> true
         }
 
