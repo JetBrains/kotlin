@@ -39,4 +39,10 @@ internal val String.fitsLatin1
     get() = this.all { it.code in 0..255 }
 
 internal val String.fitsWasmImportName
-    get() = this.length <= 100000
+    get() = this.length <= 100000 && !this.hasUnpairedSurrogates
+
+internal val String.hasUnpairedSurrogates: Boolean
+    get() = this.withIndex().any { (i, c) ->
+        (c.isLowSurrogate() && (i == 0 || !this[i - 1].isHighSurrogate())) ||
+        (c.isHighSurrogate() && (i == this.lastIndex || !this[i + 1].isLowSurrogate()))
+    }

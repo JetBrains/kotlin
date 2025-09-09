@@ -1010,19 +1010,12 @@ class WasmCompiledModuleFragment(
                 val stringId: Int
                 val storedValues = literalGlobalMap[stringValue]
                 if (storedValues == null) {
-                    val symbol: WasmSymbolReadOnly<String>
-                    if (stringValue.fitsLatin1) {
-                        symbol = WasmSymbol(stringValue)
-                    } else {
-                        val bytes = stringValue.toByteArray(Charsets.UTF_8)
-                        symbol = WasmSymbol(String(bytes))
-                    }
                     literalGlobal = WasmGlobal(
                         name = "global_$literalCounter",
-                        type = WasmRefType(WasmHeapType.Simple.Extern), // createStringFn.type.owner.resultTypes[0], // WasmRefType(WasmHeapType.Simple.Extern),
+                        type = WasmRefType(WasmHeapType.Simple.Extern),
                         isMutable = false,
                         init = emptyList(),
-                        importPair = WasmImportDescriptor("strings", symbol)
+                        importPair = WasmImportDescriptor("strings", WasmSymbol(stringValue))
                     )
                     stringId = literalCounter
                     literalGlobalMap[stringValue] = Pair(literalGlobal, stringId)
