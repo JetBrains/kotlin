@@ -111,7 +111,7 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunct
 )
 
 private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
-    lowering = ::InlineFunctionSerializationPreProcessing,
+    lowering = { InlineFunctionSerializationPreProcessing() },
     name = "InlineFunctionSerializationPreProcessing",
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )

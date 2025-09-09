@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class InlineFunctionSerializationPreProcessing(private val context: LoweringContext) : IrVisitorVoid(), ModuleLoweringPass {
+class InlineFunctionSerializationPreProcessing() : IrVisitorVoid(), ModuleLoweringPass {
     private val preprocessedFunctions = mutableListOf<IrSimpleFunction>()
 
     override fun lower(irModule: IrModuleFragment) {
