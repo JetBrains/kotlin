@@ -78,9 +78,10 @@ private class IrFileValidator(
     private val symbolCheckers: List<IrSymbolChecker> = config.checkers.filterIsInstance<IrSymbolChecker>()
     private val typeCheckers: List<IrTypeChecker> = config.checkers.filterIsInstance<IrTypeChecker>()
 
-    private val checkersPerElement = object : ClassValue<List<IrElementChecker<*>>>() {
-        override fun computeValue(type: Class<*>): List<IrElementChecker<*>> =
-            elementCheckers.filter { it.elementClass.isAssignableFrom(type) }
+    private val checkersPerElementCache = hashMapOf<Class<out IrElement>, List<IrElementChecker<*>>>()
+
+    private fun getCheckersFor(type: Class<out IrElement>) = checkersPerElementCache.computeIfAbsent(type) {
+        elementCheckers.filter { it.elementClass.isAssignableFrom(type) }
     }
 
     override fun visitElement(element: IrElement) {
@@ -91,7 +92,7 @@ private class IrFileValidator(
         }
         block()
 
-        for (checker in checkersPerElement.get(element.javaClass)) {
+        for (checker in getCheckersFor(element.javaClass)) {
             @Suppress("UNCHECKED_CAST")
             (checker as IrElementChecker<IrElement>).check(element, context)
         }
