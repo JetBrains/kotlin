@@ -973,6 +973,32 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Test correct sources path with per-file granularity ('KT-72833')")
+    @GradleTest
+    @TestMetadata("js-per-file")
+    fun testCorrectSourcesPathInPerFile(gradleVersion: GradleVersion) {
+        project("js-per-file", gradleVersion) {
+            build("jsDevelopmentExecutableCompileSync") {
+                val mainSourceMap = projectPath
+                    .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName/org/jetbrains/kotlin/testData/Main.mjs.map")
+
+                assertFileContains(
+                    mainSourceMap,
+                    "\"../../../../../../../../../../../src/jsMain/kotlin/Main.kt\"",
+                    "\"sourcesContent\":[null",
+                )
+
+                val someModuleSourceMap = projectPath
+                    .resolve("build/compileSync/js/main/developmentExecutable/kotlin/$projectName/SomeModule.mjs.map")
+                assertFileContains(
+                    someModuleSourceMap,
+                    "\"../../../../../../../src/jsMain/kotlin/SomeModule.kt\"",
+                    "\"sourcesContent\":[null",
+                )
+            }
+        }
+    }
+
     @DisplayName("path in source maps are remapped for custom outputFile")
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFile(gradleVersion: GradleVersion) {

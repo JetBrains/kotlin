@@ -688,9 +688,11 @@ fun generateSingleWrappedModuleBody(
     val sourceMapBuilderConsumer: SourceLocationConsumer
     if (sourceMapsInfo != null) {
         val sourceMapPrefix = sourceMapsInfo.sourceMapPrefix
+        val outputDir = sourceMapsInfo.outputDir?.resolve(moduleName.substringBeforeLast("/", ""))
+
         sourceMapBuilder = SourceMap3Builder(null, jsCode::getColumn, sourceMapPrefix)
 
-        val pathResolver = SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapPrefix, sourceMapsInfo.outputDir)
+        val pathResolver = SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapPrefix, outputDir)
 
         val sourceMapContentEmbedding =
             sourceMapsInfo.sourceMapContentEmbedding
