@@ -32,7 +32,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-public class KotlinToolchainV1Adapter(
+internal class KotlinToolchainV1Adapter(
     private val compilationService: CompilationService,
 ) : KotlinToolchain {
     override val jvm: JvmPlatformToolchain = object : JvmPlatformToolchain {
@@ -69,7 +69,10 @@ public class KotlinToolchainV1Adapter(
     }
 }
 
-private class JvmClasspathSnapshottingOperationV1Adapter(val compilationService: CompilationService, val classpathEntry: Path) :
+private class JvmClasspathSnapshottingOperationV1Adapter(
+    val compilationService: CompilationService,
+    val classpathEntry: Path,
+) :
     BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
     private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
 
@@ -264,11 +267,14 @@ internal fun List<String>.fixForFirCheck(): List<String> {
 private interface ExecutionPolicyV1Adapter {
     val strategyConfiguration: CompilerExecutionStrategyConfiguration
 
-    class InProcess(override val strategyConfiguration: CompilerExecutionStrategyConfiguration) : ExecutionPolicyV1Adapter,
+    class InProcess(override val strategyConfiguration: CompilerExecutionStrategyConfiguration) :
+        ExecutionPolicyV1Adapter,
         ExecutionPolicy.InProcess
 
     class WithDaemon(private val compilationService: CompilationService) : ExecutionPolicyV1Adapter,
         ExecutionPolicy.WithDaemon {
+
+        private val optionsMap: MutableMap<ExecutionPolicy.WithDaemon.Option<*>, Any?> = mutableMapOf()
 
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
             get() {
