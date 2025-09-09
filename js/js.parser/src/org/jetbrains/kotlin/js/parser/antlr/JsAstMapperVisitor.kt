@@ -525,8 +525,8 @@ class JsAstMapperVisitor(
         return JsPrefixOperation(JsUnaryOperator.INC, expression)
     }
 
-    override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext): JsObjectLiteral {
+        return visit<JsObjectLiteral>(ctx.objectLiteral())
     }
 
     override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNode? {
@@ -680,8 +680,8 @@ class JsAstMapperVisitor(
         }
     }
 
-    override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext): JsExpression {
+        return visit<JsExpression>(ctx.expressionSequence())
     }
 
     override fun visitAdditiveExpression(ctx: JavaScriptParser.AdditiveExpressionContext): JsBinaryOperation {
@@ -742,12 +742,12 @@ class JsAstMapperVisitor(
         }
     }
 
-    override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext): JsLiteral {
+        return visit<JsLiteral>(ctx.literal())
     }
 
-    override fun visitArrayLiteralExpression(ctx: JavaScriptParser.ArrayLiteralExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitArrayLiteralExpression(ctx: JavaScriptParser.ArrayLiteralExpressionContext): JsArrayLiteral {
+        return visit<JsArrayLiteral>(ctx.arrayLiteral())
     }
 
     override fun visitMemberDotExpression(ctx: JavaScriptParser.MemberDotExpressionContext): JsNode? {
@@ -774,8 +774,8 @@ class JsAstMapperVisitor(
         return JsArrayAccess(jsObjectExpr, jsMemberExpr)
     }
 
-    override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext): JsNameRef {
+        return visit<JsNameRef>(ctx.identifier())
     }
 
     override fun visitBitAndExpression(ctx: JavaScriptParser.BitAndExpressionContext): JsBinaryOperation {
@@ -828,7 +828,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitInitializer(ctx: JavaScriptParser.InitializerContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Classes are not supported yet")
     }
 
     override fun visitAssignable(ctx: JavaScriptParser.AssignableContext): JsNode? {
@@ -868,11 +868,25 @@ class JsAstMapperVisitor(
     }
 
     override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext): JsNode? {
-        TODO("Not yet implemented")
+        // JS AST doesn't have specific nodes for arrow function parameters
+        return null
     }
 
-    override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsBlock {
+        ctx.functionBody()?.let { body ->
+            return visit<JsBlock>(body)
+        }
+
+        ctx.singleExpression()?.let { expr ->
+            // TODO[seclerp]
+            //  The current JS function node implementation doesn't support lambda expressions, so we will transform it
+            //  into anonymous function expression. Example: `() => 123` becomes `function () { return 123 }` in generated code.
+            //  This is a temporary approach.
+            val returnNode = JsReturn(visit<JsExpression>(expr))
+            return JsBlock(returnNode)
+        }
+
+        TODO("Invalid arrow function body: ${ctx.text}")
     }
 
     override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext): JsNode? {
@@ -886,7 +900,7 @@ class JsAstMapperVisitor(
         }
 
         ctx.BooleanLiteral()?.let { bool ->
-            return when(bool.text) {
+            return when (bool.text) {
                 "true" -> JsBooleanLiteral(true)
                 "false" -> JsBooleanLiteral(false)
                 else -> TODO("Invalid boolean literal: ${bool.text}")
@@ -953,11 +967,11 @@ class JsAstMapperVisitor(
     }
 
     override fun visitGetter(ctx: JavaScriptParser.GetterContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Property getters are not supported yet")
     }
 
     override fun visitSetter(ctx: JavaScriptParser.SetterContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Property setters are not supported yet")
     }
 
     override fun visitIdentifierName(ctx: JavaScriptParser.IdentifierNameContext): JsNode? {
@@ -975,80 +989,16 @@ class JsAstMapperVisitor(
     }
 
     override fun visitKeyword(ctx: JavaScriptParser.KeywordContext): JsNode? {
-        TODO()
-//        when (ctx?.start?.type) {
-//            JavaScriptParser.Break -> return JsBreak()
-//            JavaScriptParser.Do -> return JsBreak()
-//            JavaScriptParser.Instanceof -> return JsBreak()
-//            JavaScriptParser.Typeof -> return JsBreak()
-//            JavaScriptParser.Case -> return JsBreak()
-//            JavaScriptParser.Else -> return JsBreak()
-//            JavaScriptParser.New -> return JsBreak()
-//            JavaScriptParser.Var -> return JsBreak()
-//            JavaScriptParser.Catch -> return JsBreak()
-//            JavaScriptParser.Finally -> return JsBreak()
-//            JavaScriptParser.Return -> return JsBreak()
-//            JavaScriptParser.Void -> return JsBreak()
-//            JavaScriptParser.Continue -> return JsBreak()
-//            JavaScriptParser.For -> return JsBreak()
-//            JavaScriptParser.Switch -> return JsBreak()
-//            JavaScriptParser.While -> return JsBreak()
-//            JavaScriptParser.Debugger -> return JsBreak()
-//            JavaScriptParser.Function_ -> return JsBreak()
-//            JavaScriptParser.This -> return JsBreak()
-//            JavaScriptParser.With -> return JsBreak()
-//            JavaScriptParser.Default -> return JsBreak()
-//            JavaScriptParser.If -> return JsBreak()
-//            JavaScriptParser.Throw -> return JsBreak()
-//            JavaScriptParser.Delete -> return JsBreak()
-//            JavaScriptParser.In -> return JsBreak()
-//            JavaScriptParser.Try -> return JsBreak()
-//            JavaScriptParser.Class -> return JsBreak()
-//            JavaScriptParser.Enum -> return JsBreak()
-//            JavaScriptParser.Extends -> return JsBreak()
-//            JavaScriptParser.Super -> return JsBreak()
-//            JavaScriptParser.Const -> return JsBreak()
-//            JavaScriptParser.Export -> return JsBreak()
-//            JavaScriptParser.Import -> return JsBreak()
-//            JavaScriptParser.Implements -> return JsBreak()
-//            JavaScriptParser.NonStrictLet -> return visitLet_(ctx.let_())
-//            JavaScriptParser.StrictLet -> return visitLet_(ctx.let_())
-//            JavaScriptParser.Private -> return JsBreak()
-//            JavaScriptParser.Public -> return JsBreak()
-//            JavaScriptParser.Interface -> return JsBreak()
-//            JavaScriptParser.Package -> return JsBreak()
-//            JavaScriptParser.Protected -> return JsBreak()
-//            JavaScriptParser.Static -> return JsBreak()
-//            JavaScriptParser.Yield -> return JsBreak()
-//            JavaScriptParser.YieldStar -> return JsBreak()
-//            JavaScriptParser.Async -> return JsBreak()
-//            JavaScriptParser.Await -> return JsBreak()
-//            JavaScriptParser.From -> return JsBreak()
-//            JavaScriptParser.As -> return JsBreak()
-//            JavaScriptParser.Of -> return JsBreak()
-//            // For complex nodes like 'let'
-//            else -> return visitChildren(ctx)
-//        }
+        // There is no JS node that represents keyword.
+        return null
     }
 
     override fun visitLet_(ctx: JavaScriptParser.Let_Context): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Let assignments are not supported yet")
     }
 
     override fun visitEos(ctx: JavaScriptParser.EosContext): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitChildren(node: RuleNode?): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitTerminal(node: TerminalNode?): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitErrorNode(node: ErrorNode?): JsNode? {
-        TODO("Not yet implemented")
+        return super.visit(ctx)
     }
 
     private fun mapComma(sequence: List<JsExpression>): JsBinaryOperation {
