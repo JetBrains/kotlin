@@ -73,7 +73,6 @@ enum class ClassLevelProperty(val shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     COMPILER_OUTPUT_INTERCEPTOR("compilerOutputInterceptor"),
-    PIPELINE_TYPE("pipelineType"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
     BINARY_LIBRARY_KIND("binaryLibraryKind"),
     C_INTERFACE_MODE("cInterfaceMode"),

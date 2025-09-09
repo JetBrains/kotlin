@@ -115,7 +115,6 @@ private class ExtTestDataFile(
     private val generatedSources = settings.get<GeneratedSources>()
     private val customKlibs = settings.get<CustomKlibs>()
     private val timeouts = settings.get<Timeouts>()
-    private val pipelineType = settings.get<PipelineType>()
     private val testMode = settings.get<TestMode>()
     private val cacheMode = settings.get<CacheMode>()
     private val optimizationMode = settings.get<OptimizationMode>()
@@ -179,18 +178,8 @@ private class ExtTestDataFile(
                      && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
                 && !(optimizationMode != OptimizationMode.OPT && structure.directives[FILECHECK_STAGE.name] == "OptimizeTLSDataLoads")
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
-                     && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
-                && (pipelineType == PipelineType.K2 || !hasK2OnlyLanguageFeature())
-
-    private fun hasK2OnlyLanguageFeature(): Boolean {
-        return testDataFileSettings.languageSettings
-            .any {
-                val (feature, mode) = it.parseLanguageFeature()
-                mode == LanguageFeature.State.ENABLED && (feature.sinceVersion?.usesK2 == true || feature in ClassicUnstableAndK2LanguageFeaturesSkipConfigurator.unscheduledK2OnlyFeatures)
-            }
-    }
 
     private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
         val args = mutableListOf<String>()
@@ -247,7 +236,7 @@ private class ExtTestDataFile(
          * K2 in MPP compilation expects that it receives module structure with exactly one platform leaf module
          * This invariant may be broken during grouping tests, so MPP tests should be run in standalone mode
          */
-        if (pipelineType != PipelineType.K1 && testDataFileSettings.languageSettings.contains("+MultiPlatformProjects")) return true
+        if (testDataFileSettings.languageSettings.contains("+MultiPlatformProjects")) return true
 
         var isStandaloneTest = false
 

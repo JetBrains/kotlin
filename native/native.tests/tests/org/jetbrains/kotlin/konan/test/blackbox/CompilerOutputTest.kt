@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -65,26 +63,20 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         sanitizeCompilerOutput: (String) -> String = { it },
     ) {
         val library = compileLibrary(
-            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            settings = testRunSettings,
             source = rootDir.resolve("library"),
             freeCompilerArgs = libraryOptions,
             dependencies = emptyList()
         ).assertSuccess().resultingArtifact
 
-        val pipelineType: PipelineType = testRunSettings.get()
-
         val compilationResult = compileLibrary(
             testRunSettings,
             source = rootDir.resolve("source.kt"),
-            freeCompilerArgs = additionalOptions + pipelineType.compilerFlags,
+            freeCompilerArgs = additionalOptions,
             dependencies = listOf(library)
         )
 
-        val goldenData = when (pipelineType) {
-            PipelineType.K2 -> rootDir.resolve("output.fir.txt").takeIf { it.exists() } ?: rootDir.resolve("output.txt")
-            PipelineType.K1 -> rootDir.resolve("output.txt")
-            PipelineType.DEFAULT -> rootDir.resolve("output.fir.txt").takeIf { it.exists() && LanguageVersion.LATEST_STABLE.usesK2 } ?: rootDir.resolve("output.txt")
-        }
+        val goldenData = rootDir.resolve("output.txt")
 
         KotlinTestUtils.assertEqualsToFile(goldenData, sanitizeCompilerOutput(compilationResult.toOutput()))
     }
@@ -286,13 +278,13 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
         val poisonedLibrary = compileLibrary(
-            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            settings = testRunSettings,
             source = rootDir.resolve("poisonedLibrary"),
             freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
-            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            settings = testRunSettings,
             source = rootDir.resolve("library"),
         ).assertSuccess().resultingArtifact
 
@@ -315,13 +307,13 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
         val poisonedLibrary = compileLibrary(
-            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            settings = testRunSettings,
             source = rootDir.resolve("poisonedLibrary"),
             freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
-            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
+            settings = testRunSettings,
             source = rootDir.resolve("library"),
         ).assertSuccess().resultingArtifact
 

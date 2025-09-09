@@ -96,15 +96,9 @@ private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<Tar
 
     if (listValues(CodegenTestDirectives.IGNORE_BACKEND).containsNativeOrAny)
         return true
-    when (get<PipelineType>()) {
-        PipelineType.K1 ->
-            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K1).containsNativeOrAny)
-                return true
-        PipelineType.K2 ->
-            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2).containsNativeOrAny)
-                return true
-        else -> {}
-    }
+    if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2).containsNativeOrAny)
+        return true
+
     return false
 }
 

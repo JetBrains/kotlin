@@ -37,9 +37,6 @@ import org.jetbrains.kotlin.compatibility.binary.TestModule as TModule
 abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     // Const evaluation tests muted for FIR because FIR does const propagation.
     private fun isIgnoredTest(filePath: String): Boolean {
-        if (testRunSettings.get<PipelineType>() != PipelineType.K2)
-            return false
-
         val fileName = filePath.substringAfterLast('/')
         return fileName == "addOrRemoveConst.kt" || fileName == "changeConstInitialization.kt"
     }

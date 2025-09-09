@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNN
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -217,12 +215,6 @@ enum class TestRunnerType {
     DEFAULT,
     WORKER,
     NO_EXIT
-}
-
-enum class MutedOption {
-    DEFAULT,
-    K1,
-    K2
 }
 
 internal val CINTEROP_SOURCE_EXTENSIONS = setOf("c", "cpp", "m", "mm")

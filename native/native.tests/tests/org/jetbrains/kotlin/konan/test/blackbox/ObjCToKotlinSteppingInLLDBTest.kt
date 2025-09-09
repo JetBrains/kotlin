@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.LLDB
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
@@ -264,7 +262,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
 
         // 2. Build Kotlin framework
         val freeCompilerArgs = TestCompilerArgs(
-            testRunSettings.get<PipelineType>().compilerFlags + additionalKotlinCompilerArgs + listOf(
+            additionalKotlinCompilerArgs + listOf(
                 "-Xstatic-framework",
                 "-Xbinary=bundleId=stub",
                 "-module-name", kotlinFrameworkName
