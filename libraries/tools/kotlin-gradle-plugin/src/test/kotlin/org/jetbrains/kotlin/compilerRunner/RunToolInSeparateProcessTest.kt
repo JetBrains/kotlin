@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.util.GradleTestCapturingKotlinLogger
+import org.junit.Assume.assumeFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -21,6 +23,7 @@ class RunToolInSeparateProcessTest {
 
     @Test
     fun testWhitespacesInCliArgumentsFile() {
+        assumeFalse(isWindows)
         val logger = GradleTestCapturingKotlinLogger()
         val buildDir = tmp.newFolder()
         val args = listOf("argument 1", "argument 2")
