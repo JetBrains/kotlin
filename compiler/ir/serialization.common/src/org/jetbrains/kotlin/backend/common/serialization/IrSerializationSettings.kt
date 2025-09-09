@@ -33,14 +33,34 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  * @property reuseExistingSignaturesForSymbols Do not recompute signatures (i.e., reuse existing ones) for symbols where a signature
  *   is already known.
  */
-class IrSerializationSettings(
-    configuration: CompilerConfiguration,
-    val languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings,
-    val publicAbiOnly: Boolean = false,
-    val bodiesOnlyForInlines: Boolean = publicAbiOnly,
-    val sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
-    val normalizeAbsolutePaths: Boolean = configuration.klibNormalizeAbsolutePath,
-    val shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
-    val reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization),
-    val abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
-)
+data class IrSerializationSettings(
+    val languageVersionSettings: LanguageVersionSettings,
+    val publicAbiOnly: Boolean,
+    val bodiesOnlyForInlines: Boolean,
+    val sourceBaseDirs: Collection<String>,
+    val normalizeAbsolutePaths: Boolean,
+    val shouldCheckSignaturesOnUniqueness: Boolean,
+    val reuseExistingSignaturesForSymbols: Boolean,
+    val abiCompatibilityLevel: KlibAbiCompatibilityLevel,
+) {
+    constructor(
+        configuration: CompilerConfiguration,
+        languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings,
+        publicAbiOnly: Boolean = false,
+        bodiesOnlyForInlines: Boolean = publicAbiOnly,
+        sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
+        normalizeAbsolutePaths: Boolean = configuration.klibNormalizeAbsolutePath,
+        shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
+        reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization),
+        abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
+    ) : this(
+        languageVersionSettings = languageVersionSettings,
+        publicAbiOnly = publicAbiOnly,
+        bodiesOnlyForInlines = bodiesOnlyForInlines,
+        sourceBaseDirs = sourceBaseDirs,
+        normalizeAbsolutePaths = normalizeAbsolutePaths,
+        shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
+        reuseExistingSignaturesForSymbols = reuseExistingSignaturesForSymbols,
+        abiCompatibilityLevel = abiCompatibilityLevel,
+    )
+}
