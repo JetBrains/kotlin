@@ -32,22 +32,13 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenLocalTestGenerated",
                 annotations = listOf(
-                    *frontendClassic(),
                     provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
                 model()
             }
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
-                annotations = listOf(
-                    provider<UseExtTestCaseGroupProvider>()
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated",
+                suiteTestClassName = "NativeCodegenLocalTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>()
@@ -62,29 +53,6 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(
-                    *frontendClassic(),
-                    provider<UseExtTestCaseGroupProvider>(),
-                    codegenBox(),
-                )
-            ) {
-                model("box", excludeDirs = k2BoxTestDir)
-                model("boxInline")
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenBoxTestNoPLGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                    provider<UseExtTestCaseGroupProvider>(),
-                    *noPartialLinkage(),
-                    codegenBox(),
-                )
-            ) {
-                model("box", excludeDirs = k2BoxTestDir)
-                model("boxInline")
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
-                annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     codegenBox(),
                 )
@@ -93,7 +61,7 @@ fun main() {
                 model("boxInline")
             }
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
+                suiteTestClassName = "NativeCodegenBoxTestNoPLGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     *noPartialLinkage(),
@@ -109,20 +77,6 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "InfrastructureTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                    infrastructure(),
-                    provider<UseStandardTestCaseGroupProvider>()
-                )
-            ) {
-                model("samples")
-                model("samples2")
-            }
-        }
-
-        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
                     infrastructure(),
                     provider<UseStandardTestCaseGroupProvider>()
@@ -146,9 +100,6 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(
                 suiteTestClassName = "CInteropFModulesTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
             ) {
                 model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
@@ -158,9 +109,6 @@ fun main() {
             }
             testClass<AbstractNativeCInteropNoFModulesTest>(
                 suiteTestClassName = "CInteropNoFModulesTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
             ) {
                 model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
@@ -175,18 +123,12 @@ fun main() {
             }
             testClass<AbstractNativeCInteropIncludeCategoriesTest>(
                 suiteTestClassName = "CInteropIncludeCategoriesTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
             ) {
                 model("frameworkIncludeCategories/cases", pattern = "^([^_](.+))$", recursive = false)
             }
 
             testClass<AbstractNativeCInteropExperimentalTest>(
                 suiteTestClassName = "CInteropExperimentalTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
             ) {
                 model("experimental/cases", pattern = "^([^_](.+))$", recursive = false)
             }
@@ -196,14 +138,6 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/ObjCExport") {
             testClass<AbstractNativeObjCExportTest>(
                 suiteTestClassName = "ObjCExportTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                ),
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeObjCExportTest>(
-                suiteTestClassName = "FirObjCExportTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -213,18 +147,6 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/lldb") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LldbTestGenerated",
-                annotations = listOf(
-                    debugger(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                    forceDebugMode(),
-                    forceHostTarget(),
-                    *frontendClassic(),
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirLldbTestGenerated",
                 annotations = listOf(
                     debugger(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -244,17 +166,6 @@ fun main() {
                     litmusktNative(),
                     provider<UseStandardTestCaseGroupProvider>(),
                     forceHostTarget(),
-                    *frontendClassic(),
-                )
-            ) {
-                model("standalone")
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirLitmusKtTestsGenerated",
-                annotations = listOf(
-                    litmusktNative(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                    forceHostTarget(),
                 )
             ) {
                 model("standalone")
@@ -265,14 +176,6 @@ fun main() {
             testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi/cinterop") {
                 testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                     suiteTestClassName = "NativeCInteropLibraryAbiReaderTest",
-                    annotations = listOf(
-                        *frontendClassic(),
-                    )
-                ) {
-                    model()
-                }
-                testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
-                    suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
                 ) {
                     model()
                 }
@@ -286,22 +189,12 @@ fun main() {
                 annotations = listOf(
                     *standalone(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendClassic(),
                 )
             ) {
                 model()
             }
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeStandaloneTestGenerated",
-                annotations = listOf(
-                    *standalone(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeStandaloneTestWithInlinedFunInKlibGenerated",
+                suiteTestClassName = "NativeStandaloneTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(
                     *standalone(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -315,10 +208,6 @@ fun main() {
             "Static" to binaryLibraryKind("STATIC"),
             "Dynamic" to binaryLibraryKind("DYNAMIC"),
         )
-        val frontendFlags = mapOf(
-            "Classic" to frontendClassic(),
-            "Fir" to emptyArray(),
-        )
         // C Export
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CExport") {
             val cinterfaceModes = mapOf(
@@ -326,20 +215,16 @@ fun main() {
                 "InterfaceNone" to cinterfaceMode("NONE")
             )
             binaryLibraryKinds.forEach { binaryKind ->
-                frontendFlags.forEach { frontend ->
-                    cinterfaceModes.forEach { cinterfaceMode ->
-                        val frontendKey = if (frontend.key == "Classic") "" else frontend.key
-                        val suiteTestClassName = "${frontendKey}CExport${binaryKind.key}${cinterfaceMode.key}TestGenerated"
-                        testClass<AbstractNativeCExportTest>(
-                            suiteTestClassName,
-                            annotations = listOf(
-                                binaryKind.value,
-                                cinterfaceMode.value,
-                                *frontend.value
-                            )
-                        ) {
-                            model(cinterfaceMode.key, pattern = "^([^_](.+))$", recursive = false)
-                        }
+                cinterfaceModes.forEach { cinterfaceMode ->
+                    val suiteTestClassName = "CExport${binaryKind.key}${cinterfaceMode.key}TestGenerated"
+                    testClass<AbstractNativeCExportTest>(
+                        suiteTestClassName,
+                        annotations = listOf(
+                            binaryKind.value,
+                            cinterfaceMode.value,
+                        )
+                    ) {
+                        model(cinterfaceMode.key, pattern = "^([^_](.+))$", recursive = false)
                     }
                 }
             }
@@ -356,16 +241,6 @@ fun main() {
                 annotations = listOf(
                     *stress(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendClassic(),
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeStressTestGenerated",
-                annotations = listOf(
-                    *stress(),
-                    provider<UseStandardTestCaseGroupProvider>(),
                 )
             ) {
                 model()
@@ -375,16 +250,6 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/gc") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeGCTestGenerated",
-                annotations = listOf(
-                    *gc(),
-                    provider<UseStandardTestCaseGroupProvider>(),
-                    *frontendClassic(),
-                )
-            ) {
-                model()
-            }
-            testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirNativeGCTestGenerated",
                 annotations = listOf(
                     *gc(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -511,10 +376,6 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
         "propertyValue" to "ONE_STAGE_MULTI_MODULE"
     )
 }
-
-fun frontendClassic() = arrayOf(
-    annotation(ClassicPipeline::class.java)
-)
 
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
