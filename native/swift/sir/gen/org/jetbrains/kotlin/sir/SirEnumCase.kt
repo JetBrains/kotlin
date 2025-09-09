@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.enumCase]
  */
-abstract class SirEnumCase : SirBridged(), SirNamedDeclaration {
+abstract class SirEnumCase : SirBridged(), SirDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
-    abstract override val name: String
     abstract override val bridges: List<SirBridge>
+    abstract val name: String
     override fun toString(): String {
         return this.debugString
     }

@@ -19,8 +19,8 @@ internal val <T: KaCallableSymbol> SirFromKtSymbol<T>.bridgeFqName get() = ktSym
         ?.pathSegments()?.map { it.toString() }
 
 internal val SirCallable.selfType: SirType? get() = when (val parent = this.parent) {
-        is SirNamedDeclaration -> SirNominalType(parent as SirNamedDeclaration)
-        is SirVariable -> (parent.parent as? SirNamedDeclaration)?.let(::SirNominalType)
+        is SirScopeDefiningDeclaration -> SirNominalType(parent)
+        is SirVariable -> (parent.parent as? SirScopeDefiningDeclaration)?.let(::SirNominalType)
         is SirExtension -> parent.extendedType
         else -> null
     }
@@ -30,7 +30,7 @@ internal interface SirBridgedCallable {
     var body: SirFunctionBody?
 }
 
-internal val SirNamedDeclaration.objcClassSymbolName
+internal val SirScopeDefiningDeclaration.objcClassSymbolName
     get() = attributes.firstIsInstanceOrNull<SirAttribute.ObjC>()?.name
         ?: this.mangledNameOrNull
         ?: error("Failed to mangle name for briding $this")

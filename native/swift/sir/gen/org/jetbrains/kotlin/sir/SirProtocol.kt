@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.protocol]
  */
-abstract class SirProtocol : SirBridged(), SirNamedDeclaration, SirMutableDeclarationContainer, SirClassInhertingDeclaration, SirProtocolConformingDeclaration {
+abstract class SirProtocol : SirBridged(), SirScopeDefiningDeclaration, SirMutableDeclarationContainer, SirClassInhertingDeclaration, SirProtocolConformingDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?

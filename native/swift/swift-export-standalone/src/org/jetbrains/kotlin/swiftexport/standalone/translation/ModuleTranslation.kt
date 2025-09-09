@@ -276,7 +276,7 @@ private fun SirMutableDeclarationContainer.removeConflicts(logger: SwiftExportLo
 private val SirDeclaration.priority: Int get() = when (this) {
         is SirVariable -> 10
         is SirFunction -> 20
-        is SirNamedDeclaration -> 30
+        is SirScopeDefiningDeclaration -> 30
         else -> 0
     }.let {
         if (this.origin is SirOrigin.Trampoline)

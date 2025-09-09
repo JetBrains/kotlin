@@ -352,7 +352,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
 
     private fun SirElement.printName() = print(
         when (this@printName) {
-            is SirNamed -> name.swiftIdentifier
+            is SirScopeDefiningElement -> name.swiftIdentifier
             is SirExtension -> extendedType.swiftRender
             else -> error("There is no printable name for SirElement: ${this@printName}")
         }

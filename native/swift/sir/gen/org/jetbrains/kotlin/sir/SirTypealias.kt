@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.typealias]
  */
-abstract class SirTypealias : SirElementBase(), SirNamedDeclaration {
+abstract class SirTypealias : SirElementBase(), SirScopeDefiningDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?

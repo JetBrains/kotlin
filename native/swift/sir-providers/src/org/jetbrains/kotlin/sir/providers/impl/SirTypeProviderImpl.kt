@@ -267,7 +267,7 @@ public class SirTypeProviderImpl(
     }
 
     private fun TypeTranslationCtx.nominalTypeFromClassSymbol(symbol: KaClassLikeSymbol): SirNominalType? = sirSession.withSessions {
-        symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirNamedDeclaration>()?.let(::SirNominalType)
+        symbol.toSir().allDeclarations.firstIsInstanceOrNull<SirScopeDefiningDeclaration>()?.let(::SirNominalType)
     }
 
     private fun SirType.optionalIfNeeded(originalKtType: KaType): SirType = sirSession.withSessions {

@@ -238,7 +238,7 @@ internal class SirObjectAccessorVariableFromKtSymbol(
     override val visibility: SirVisibility get() = SirVisibility.PUBLIC
 
     override val type: SirType by lazyWithSessions {
-        ktSymbol.toSir().primaryDeclaration?.let { it as? SirNamedDeclaration }?.let { SirNominalType(it) }
+        ktSymbol.toSir().primaryDeclaration?.let { it as? SirScopeDefiningDeclaration }?.let { SirNominalType(it) }
             ?: error("Failed to translate object accessor base type $ktSymbol")
     }
 

@@ -384,7 +384,7 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations()
-            .filterIsInstance<SirNamedDeclaration>()
+            .filterIsInstance<SirScopeDefiningDeclaration>()
             .filter { it.visibility == SirVisibility.PUBLIC }
             .map { declaration ->
                 buildTypealias {

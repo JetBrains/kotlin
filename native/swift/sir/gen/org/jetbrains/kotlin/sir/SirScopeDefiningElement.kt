@@ -9,8 +9,10 @@
 package org.jetbrains.kotlin.sir
 
 /**
- * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.named]
+ * This interface describes elements (module or declaration) that have a name, define a scope and can appear as part of a Swift FQ name
+ *
+ * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.scopeDefiningElement]
  */
-sealed interface SirNamed : SirElement {
+sealed interface SirScopeDefiningElement : SirElement {
     val name: String
 }

@@ -20,8 +20,8 @@ class SirEnumCaseBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
-    lateinit var name: String
     val bridges: MutableList<SirBridge> = mutableListOf()
+    lateinit var name: String
 
     fun build(): SirEnumCase {
         return SirEnumCaseImpl(
@@ -29,8 +29,8 @@ class SirEnumCaseBuilder {
             visibility,
             documentation,
             attributes,
-            name,
             bridges,
+            name,
         )
     }
 
@@ -54,7 +54,7 @@ inline fun buildEnumCaseCopy(original: SirEnumCase, init: SirEnumCaseBuilder.() 
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.name = original.name
     copyBuilder.bridges.addAll(original.bridges)
+    copyBuilder.name = original.name
     return copyBuilder.apply(init).build()
 }

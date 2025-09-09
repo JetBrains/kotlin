@@ -45,7 +45,7 @@ public class SirTrampolineDeclarationsProviderImpl(
     }
 
     private fun SirDeclaration.trampolineDeclaration(): SirDeclaration? = when (val declaration = this@trampolineDeclaration) {
-        is SirNamedDeclaration -> {
+        is SirScopeDefiningDeclaration -> {
             buildTypealias {
                 origin = SirOrigin.Trampoline(declaration)
                 visibility = declaration.visibility

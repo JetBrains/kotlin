@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.sir.*
  */
 object Comparators {
     val stableExtensionComparator: Comparator<SirExtension> = compareBy { it.extendedType.swift }
-    val stableNamedComparator: Comparator<SirNamed> = compareBy { it.name }
+    val stableNamedComparator: Comparator<SirScopeDefiningElement> = compareBy { it.name }
     val stableVariableComparator: Comparator<SirVariable> = compareBy { it.name }
     val stableInitComparator: Comparator<SirInit> = compareBy(
         { it.parameters.size },

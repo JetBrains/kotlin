@@ -77,11 +77,11 @@ val SirDeclaration.swiftParentNamePrefix: String?
     get() = this.parent.swiftFqNameOrNull
 
 val SirDeclarationParent.swiftFqNameOrNull: String?
-    get() = (this as? SirNamedDeclaration)?.swiftFqName
-        ?: ((this as? SirNamed)?.name?.swiftSanitizedName)
+    get() = (this as? SirScopeDefiningDeclaration)?.swiftFqName
+        ?: ((this as? SirScopeDefiningElement)?.name?.swiftSanitizedName)
         ?: ((this as? SirExtension)?.extendedType?.swiftName)
 
-val SirNamedDeclaration.swiftFqName: String
+val SirScopeDefiningDeclaration.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName.swiftIdentifier}" } ?: name.swiftSanitizedName.swiftIdentifier
 
 val SirNominalType.isValueType: Boolean
@@ -91,7 +91,6 @@ val SirNominalType.isValueType: Boolean
         is SirProtocol -> false
         is SirClass -> false
         is SirTypealias -> (typeDeclaration.expandedType as? SirNominalType)?.isValueType == true
-        is SirEnumCase -> error("SirEnumCase shouldn't be used to describe types")
     }
 
 val SirFunction.swiftFqName: String
@@ -114,19 +113,19 @@ fun SirDeclaration.conflictsWith(other: SirDeclaration): Boolean = when (this) {
                 && this.errorType == other.errorType
                 && this.parameters == other.parameters
         is SirVariable -> this.name == other.name && this.isInstance == other.isInstance && this.isConfusable
-        is SirNamedDeclaration -> this.name == other.name && this.isInstance.not()
+        is SirScopeDefiningDeclaration -> this.name == other.name && this.isInstance.not()
         else -> false
     }
     is SirVariable -> when (other) {
         is SirFunction -> this.name == other.name && this.isInstance == other.isInstance && other.isConfusable
         is SirVariable -> this.name == other.name && this.isInstance == other.isInstance
-        is SirNamedDeclaration -> this.name == other.name && this.isInstance.not()
+        is SirScopeDefiningDeclaration -> this.name == other.name && this.isInstance.not()
         else -> false
     }
-    is SirNamedDeclaration -> when (other) {
+    is SirScopeDefiningDeclaration -> when (other) {
         is SirFunction -> this.name == other.name && other.isInstance.not()
         is SirVariable -> this.name == other.name && other.isInstance.not()
-        is SirNamedDeclaration -> this.name == other.name
+        is SirScopeDefiningDeclaration -> this.name == other.name
         else -> false
     }
     else -> false

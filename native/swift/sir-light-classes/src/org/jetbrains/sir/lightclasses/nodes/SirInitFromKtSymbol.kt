@@ -123,7 +123,7 @@ internal class SirRegularInitFromKtSymbol(
 
     override val bridges: List<SirBridge> by lazy {
         val producingType: SirType = SirNominalType(
-            parent as? SirNamedDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
+            parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
         )
 
         listOfNotNull(
@@ -173,7 +173,7 @@ internal class SirRegularInitFromKtSymbol(
             val allocDescriptor = bridgeAllocProxy ?: return null
 
             return SirFunctionBody(buildList {
-                (parent as? SirNamedDeclaration)?.let {
+                (parent as? SirScopeDefiningDeclaration)?.let {
                     add("if Self.self != ${it.swiftFqName}.self { fatalError(\"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \") }")
                 }
 

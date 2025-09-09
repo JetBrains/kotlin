@@ -35,7 +35,7 @@ class SirFunctionalType(
 }
 
 open class SirNominalType(
-    val typeDeclaration: SirNamedDeclaration,
+    val typeDeclaration: SirScopeDefiningDeclaration,
     val typeArguments: List<SirType> = emptyList(),
     val parent: SirNominalType? = null,
     override val attributes: List<SirAttribute> = emptyList(),

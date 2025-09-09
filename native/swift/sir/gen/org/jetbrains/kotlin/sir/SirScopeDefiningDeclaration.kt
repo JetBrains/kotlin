@@ -9,9 +9,11 @@
 package org.jetbrains.kotlin.sir
 
 /**
- * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.namedDeclaration]
+ * This interface describes declarations that have a name, define a scope and can appear as part of a Swift FQ name
+ *
+ * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.scopeDefiningDeclaration]
  */
-sealed interface SirNamedDeclaration : SirDeclaration, SirNamed {
+sealed interface SirScopeDefiningDeclaration : SirDeclaration, SirScopeDefiningElement {
     override val origin: SirOrigin
     override val visibility: SirVisibility
     override val documentation: String?
