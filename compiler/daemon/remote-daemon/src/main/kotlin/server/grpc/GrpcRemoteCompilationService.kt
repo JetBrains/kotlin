@@ -10,17 +10,17 @@ import common.RemoteCompilationService
 import common.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import model.toGrpc
-import org.jetbrains.kotlin.server.CompileRequestGrpc
-import org.jetbrains.kotlin.server.CompileResponseGrpc
+import model.toProto
+import org.jetbrains.kotlin.server.CompileRequestProto
+import org.jetbrains.kotlin.server.CompileResponseProto
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
 
 class GrpcRemoteCompilationService(
     val impl: RemoteCompilationService,
 ) : CompileServiceGrpcKt.CompileServiceCoroutineImplBase() {
 
-    override fun compile(requests: Flow<CompileRequestGrpc>): Flow<CompileResponseGrpc> {
-        return impl.compile(requests.map { it.toDomain() }).map { it.toGrpc() }
+    override fun compile(requests: Flow<CompileRequestProto>): Flow<CompileResponseProto> {
+        return impl.compile(requests.map { it.toDomain() }).map { it.toProto() }
     }
 
     override suspend fun cleanup(request: Empty): Empty {

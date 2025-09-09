@@ -6,12 +6,12 @@
 package model
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.server.CompileResponseGrpc
+import org.jetbrains.kotlin.server.CompileResponseProto
 
 @Serializable
 sealed interface CompileResponse
 
-fun CompileResponseGrpc.toDomain(): CompileResponse = when {
+fun CompileResponseProto.toDomain(): CompileResponse = when {
     hasCompilationResult() -> compilationResult.toDomain()
     hasFileTransferReply() -> fileTransferReply.toDomain()
     hasCompiledFileChunk() -> compiledFileChunk.toDomain()
@@ -19,9 +19,9 @@ fun CompileResponseGrpc.toDomain(): CompileResponse = when {
     else -> throw IllegalStateException("Unknown CompileResponseGrpc type") // TODO fix
 }
 
-fun CompileResponse.toGrpc(): CompileResponseGrpc = when (this) {
-    is CompilationResult -> CompileResponseGrpc.newBuilder().setCompilationResult(toGrpc()).build()
-    is FileTransferReply -> CompileResponseGrpc.newBuilder().setFileTransferReply(toGrpc()).build()
-    is FileChunk -> CompileResponseGrpc.newBuilder().setCompiledFileChunk(toGrpc()).build()
-    is CompilerMessage -> CompileResponseGrpc.newBuilder().setCompilerMessage(toGrpc()).build()
+fun CompileResponse.toProto(): CompileResponseProto = when (this) {
+    is CompilationResult -> CompileResponseProto.newBuilder().setCompilationResult(toProto()).build()
+    is FileTransferReply -> CompileResponseProto.newBuilder().setFileTransferReply(toProto()).build()
+    is FileChunk -> CompileResponseProto.newBuilder().setCompiledFileChunk(toProto()).build()
+    is CompilerMessage -> CompileResponseProto.newBuilder().setCompilerMessage(toProto()).build()
 }

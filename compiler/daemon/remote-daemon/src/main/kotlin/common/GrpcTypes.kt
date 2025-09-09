@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
-import org.jetbrains.kotlin.server.CompileRequestGrpc
-import org.jetbrains.kotlin.server.CompilerMessageSeverityGrpc
-import org.jetbrains.kotlin.server.CompilerMessageSourceLocationGrpc
-import org.jetbrains.kotlin.server.CompilerModeGrpc
-import org.jetbrains.kotlin.server.TargetPlatformGrpc
+import org.jetbrains.kotlin.server.CompileRequestProto
+import org.jetbrains.kotlin.server.CompilerMessageSeverityProto
+import org.jetbrains.kotlin.server.CompilerMessageSourceLocationProto
+import org.jetbrains.kotlin.server.CompilerModeProto
+import org.jetbrains.kotlin.server.TargetPlatformProto
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -28,51 +28,51 @@ import org.jetbrains.kotlin.server.TargetPlatformGrpc
  */
 
 
-fun CompileRequestGrpc.toDomain(): CompileRequest = when {
+fun CompileRequestProto.toDomain(): CompileRequest = when {
     hasMetadata() -> metadata.toDomain()
     hasSourceFileChunk() -> sourceFileChunk.toDomain()
     hasFileTransferRequest() -> fileTransferRequest.toDomain()
-    else -> error("Unknown CompileRequestGrpc type") // TODO fix
+    else -> error("Unknown CompileRequestProto type") // TODO fix
 }
 
 
-fun CompilerMode.toGrpc(): CompilerModeGrpc {
+fun CompilerMode.toProto(): CompilerModeProto {
     return when (this) {
-        CompilerMode.INCREMENTAL_COMPILER -> CompilerModeGrpc.INCREMENTAL_COMPILER
-        CompilerMode.NON_INCREMENTAL_COMPILER -> CompilerModeGrpc.NON_INCREMENTAL_COMPILER
-        CompilerMode.JPS_COMPILER -> CompilerModeGrpc.JPS_COMPILER
+        CompilerMode.INCREMENTAL_COMPILER -> CompilerModeProto.INCREMENTAL_COMPILER
+        CompilerMode.NON_INCREMENTAL_COMPILER -> CompilerModeProto.NON_INCREMENTAL_COMPILER
+        CompilerMode.JPS_COMPILER -> CompilerModeProto.JPS_COMPILER
     }
 }
 
-fun CompilerModeGrpc.toDomain(): CompilerMode {
+fun CompilerModeProto.toDomain(): CompilerMode {
     return when (this) {
-        CompilerModeGrpc.INCREMENTAL_COMPILER -> CompilerMode.INCREMENTAL_COMPILER
-        CompilerModeGrpc.NON_INCREMENTAL_COMPILER -> CompilerMode.NON_INCREMENTAL_COMPILER
-        CompilerModeGrpc.JPS_COMPILER -> CompilerMode.JPS_COMPILER
-        CompilerModeGrpc.UNRECOGNIZED -> CompilerMode.NON_INCREMENTAL_COMPILER //TODO check
+        CompilerModeProto.INCREMENTAL_COMPILER -> CompilerMode.INCREMENTAL_COMPILER
+        CompilerModeProto.NON_INCREMENTAL_COMPILER -> CompilerMode.NON_INCREMENTAL_COMPILER
+        CompilerModeProto.JPS_COMPILER -> CompilerMode.JPS_COMPILER
+        CompilerModeProto.UNRECOGNIZED -> CompilerMode.NON_INCREMENTAL_COMPILER //TODO check
     }
 }
 
-fun CompileService.TargetPlatform.toGrpc(): TargetPlatformGrpc {
+fun CompileService.TargetPlatform.toProto(): TargetPlatformProto {
     return when (this) {
-        CompileService.TargetPlatform.JVM -> TargetPlatformGrpc.JVM
-        CompileService.TargetPlatform.JS -> TargetPlatformGrpc.JS
-        CompileService.TargetPlatform.METADATA -> TargetPlatformGrpc.METADATA
+        CompileService.TargetPlatform.JVM -> TargetPlatformProto.JVM
+        CompileService.TargetPlatform.JS -> TargetPlatformProto.JS
+        CompileService.TargetPlatform.METADATA -> TargetPlatformProto.METADATA
     }
 }
 
-fun TargetPlatformGrpc.toDomain(): CompileService.TargetPlatform {
+fun TargetPlatformProto.toDomain(): CompileService.TargetPlatform {
     return when (this) {
-        TargetPlatformGrpc.JVM -> CompileService.TargetPlatform.JVM
-        TargetPlatformGrpc.JS -> CompileService.TargetPlatform.JS
-        TargetPlatformGrpc.METADATA -> CompileService.TargetPlatform.METADATA
-        TargetPlatformGrpc.UNRECOGNIZED -> CompileService.TargetPlatform.JVM // TODO check
+        TargetPlatformProto.JVM -> CompileService.TargetPlatform.JVM
+        TargetPlatformProto.JS -> CompileService.TargetPlatform.JS
+        TargetPlatformProto.METADATA -> CompileService.TargetPlatform.METADATA
+        TargetPlatformProto.UNRECOGNIZED -> CompileService.TargetPlatform.JVM // TODO check
     }
 }
 
 
-fun CompilerMessageSourceLocation.toGrpc(): CompilerMessageSourceLocationGrpc {
-    return CompilerMessageSourceLocationGrpc.newBuilder()
+fun CompilerMessageSourceLocation.toProto(): CompilerMessageSourceLocationProto {
+    return CompilerMessageSourceLocationProto.newBuilder()
         .setPath(this.path)
         .setLine(this.line)
         .setColumn(this.column)
@@ -80,34 +80,34 @@ fun CompilerMessageSourceLocation.toGrpc(): CompilerMessageSourceLocationGrpc {
         .build()
 }
 
-fun CompilerMessageSeverity.toGrpc(): CompilerMessageSeverityGrpc{
+fun CompilerMessageSeverity.toProto(): CompilerMessageSeverityProto{
     return when(this){
-        CompilerMessageSeverity.INFO -> CompilerMessageSeverityGrpc.INFO
-        CompilerMessageSeverity.ERROR -> CompilerMessageSeverityGrpc.ERROR
-        CompilerMessageSeverity.WARNING -> CompilerMessageSeverityGrpc.WARNING
-        CompilerMessageSeverity.LOGGING -> CompilerMessageSeverityGrpc.LOGGING
-        CompilerMessageSeverity.OUTPUT -> CompilerMessageSeverityGrpc.OUTPUT
-        CompilerMessageSeverity.EXCEPTION -> CompilerMessageSeverityGrpc.EXCEPTION
-        CompilerMessageSeverity.STRONG_WARNING -> CompilerMessageSeverityGrpc.STRONG_WARNING
-        CompilerMessageSeverity.FIXED_WARNING -> CompilerMessageSeverityGrpc.FIXED_WARNING
+        CompilerMessageSeverity.INFO -> CompilerMessageSeverityProto.INFO
+        CompilerMessageSeverity.ERROR -> CompilerMessageSeverityProto.ERROR
+        CompilerMessageSeverity.WARNING -> CompilerMessageSeverityProto.WARNING
+        CompilerMessageSeverity.LOGGING -> CompilerMessageSeverityProto.LOGGING
+        CompilerMessageSeverity.OUTPUT -> CompilerMessageSeverityProto.OUTPUT
+        CompilerMessageSeverity.EXCEPTION -> CompilerMessageSeverityProto.EXCEPTION
+        CompilerMessageSeverity.STRONG_WARNING -> CompilerMessageSeverityProto.STRONG_WARNING
+        CompilerMessageSeverity.FIXED_WARNING -> CompilerMessageSeverityProto.FIXED_WARNING
     }
 }
 
-fun CompilerMessageSeverityGrpc.toDomain(): CompilerMessageSeverity {
+fun CompilerMessageSeverityProto.toDomain(): CompilerMessageSeverity {
     return when (this) {
-        CompilerMessageSeverityGrpc.INFO -> CompilerMessageSeverity.INFO
-        CompilerMessageSeverityGrpc.ERROR -> CompilerMessageSeverity.ERROR
-        CompilerMessageSeverityGrpc.WARNING -> CompilerMessageSeverity.WARNING
-        CompilerMessageSeverityGrpc.LOGGING -> CompilerMessageSeverity.LOGGING
-        CompilerMessageSeverityGrpc.OUTPUT -> CompilerMessageSeverity.OUTPUT
-        CompilerMessageSeverityGrpc.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
-        CompilerMessageSeverityGrpc.STRONG_WARNING -> CompilerMessageSeverity.STRONG_WARNING
-        CompilerMessageSeverityGrpc.FIXED_WARNING -> CompilerMessageSeverity.FIXED_WARNING
-        CompilerMessageSeverityGrpc.UNRECOGNIZED -> CompilerMessageSeverity.INFO // TODO double check
+        CompilerMessageSeverityProto.INFO -> CompilerMessageSeverity.INFO
+        CompilerMessageSeverityProto.ERROR -> CompilerMessageSeverity.ERROR
+        CompilerMessageSeverityProto.WARNING -> CompilerMessageSeverity.WARNING
+        CompilerMessageSeverityProto.LOGGING -> CompilerMessageSeverity.LOGGING
+        CompilerMessageSeverityProto.OUTPUT -> CompilerMessageSeverity.OUTPUT
+        CompilerMessageSeverityProto.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
+        CompilerMessageSeverityProto.STRONG_WARNING -> CompilerMessageSeverity.STRONG_WARNING
+        CompilerMessageSeverityProto.FIXED_WARNING -> CompilerMessageSeverity.FIXED_WARNING
+        CompilerMessageSeverityProto.UNRECOGNIZED -> CompilerMessageSeverity.INFO // TODO double check
     }
 }
 
-fun CompilerMessageSourceLocationGrpc.toDomain(): CompilerMessageSourceLocation? {
+fun CompilerMessageSourceLocationProto.toDomain(): CompilerMessageSourceLocation? {
     // TODO: there also exist class CompilerMessageLocationWithRange, investigate the difference
     return CompilerMessageLocation.create(path, line, column, lineContent)
 }

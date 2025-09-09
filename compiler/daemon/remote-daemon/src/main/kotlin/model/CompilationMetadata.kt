@@ -8,7 +8,7 @@ package model
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.server.CompilationMetadataGrpc
+import org.jetbrains.kotlin.server.CompilationMetadataProto
 
 @Serializable
 data class CompilationMetadata(
@@ -21,18 +21,18 @@ data class CompilationMetadata(
     val compilationOptions: CompilationOptions
 ) : CompileRequest
 
-fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
-    return CompilationMetadataGrpc.newBuilder()
+fun CompilationMetadata.toProto(): CompilationMetadataProto {
+    return CompilationMetadataProto.newBuilder()
         .setSourceFilesCount(sourceFilesCount)
         .setDependencyFilesCount(dependencyFilesCount)
         .setCompilerPluginFileCount(compilerPluginFilesCount)
         .addAllCompilerArguments(compilerArguments)
         .setProjectName(projectName)
-        .setCompilationOptions(compilationOptions.toGrpc())
+        .setCompilationOptions(compilationOptions.toProto())
         .build()
 }
 
-fun CompilationMetadataGrpc.toDomain(): CompilationMetadata {
+fun CompilationMetadataProto.toDomain(): CompilationMetadata {
     return CompilationMetadata(
         projectName,
         sourceFilesCount,

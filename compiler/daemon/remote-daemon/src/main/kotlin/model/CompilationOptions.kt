@@ -6,19 +6,19 @@
 package model
 
 import common.toDomain
-import common.toGrpc
+import common.toProto
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.server.CompilationOptionsGrpc
+import org.jetbrains.kotlin.server.CompilationOptionsProto
 
-fun CompilationOptions.toGrpc(): CompilationOptionsGrpc {
-    return CompilationOptionsGrpc.newBuilder()
-        .setCompilerMode(this.compilerMode.toGrpc())
-        .setTargetPlatform(this.targetPlatform.toGrpc())
+fun CompilationOptions.toProto(): CompilationOptionsProto {
+    return CompilationOptionsProto.newBuilder()
+        .setCompilerMode(this.compilerMode.toProto())
+        .setTargetPlatform(this.targetPlatform.toProto())
         .setReportSeverity(this.reportSeverity)
         .build()
 }
 
-fun CompilationOptionsGrpc.toDomain(): CompilationOptions {
+fun CompilationOptionsProto.toDomain(): CompilationOptions {
     return CompilationOptions(
         compilerMode = compilerMode.toDomain(),
         targetPlatform = targetPlatform.toDomain(),
@@ -28,3 +28,4 @@ fun CompilationOptionsGrpc.toDomain(): CompilationOptions {
         kotlinScriptExtensions = kotlinScriptExtensionsList.toTypedArray()
     )
 }
+

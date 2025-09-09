@@ -111,6 +111,9 @@ fun copyDirectoryRecursively(source: Path, target: Path, overwrite: Boolean = fa
 }
 
 fun createTarArchiveStream(sourceDir: File): InputStream {
+    // TODO: peformance improvement
+    // we would like to avoid creating file on disk, instead of that we can just stream it directly to a chunker
+    // I tried to implement it using PipedInputStream and PipedOutputStream, but it didn't worked properly...
     val tempTar = kotlin.io.path.createTempFile("archive-", ".tar").toFile().apply { deleteOnExit() }
     FileOutputStream(tempTar).use { fos ->
         TarArchiveOutputStream(BufferedOutputStream(fos)).use { tarOut ->

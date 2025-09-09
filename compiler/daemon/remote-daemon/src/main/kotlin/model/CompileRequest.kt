@@ -6,13 +6,13 @@
 package model
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.server.CompileRequestGrpc
+import org.jetbrains.kotlin.server.CompileRequestProto
 
 @Serializable
 sealed interface CompileRequest
 
-fun CompileRequest.toGrpc(): CompileRequestGrpc = when (this) {
-    is CompilationMetadata -> CompileRequestGrpc.newBuilder().setMetadata(toGrpc()).build()
-    is FileChunk -> CompileRequestGrpc.newBuilder().setSourceFileChunk(toGrpc()).build()
-    is FileTransferRequest -> CompileRequestGrpc.newBuilder().setFileTransferRequest(toGrpc()).build()
+fun CompileRequest.toProto(): CompileRequestProto = when (this) {
+    is CompilationMetadata -> CompileRequestProto.newBuilder().setMetadata(toProto()).build()
+    is FileChunk -> CompileRequestProto.newBuilder().setSourceFileChunk(toProto()).build()
+    is FileTransferRequest -> CompileRequestProto.newBuilder().setFileTransferRequest(toProto()).build()
 }

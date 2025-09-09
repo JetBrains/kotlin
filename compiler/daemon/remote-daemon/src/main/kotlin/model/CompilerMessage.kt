@@ -6,12 +6,11 @@
 package model
 
 import common.toDomain
-import common.toGrpc
+import common.toProto
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.server.CompileResponseGrpc
-import org.jetbrains.kotlin.server.CompilerMessageGrpc
+import org.jetbrains.kotlin.server.CompilerMessageProto
 
 // TODO: this class is basically copy of MessageCollectorImpl.Message
 @Serializable
@@ -32,21 +31,18 @@ data class CompilerMessage(
     }
 }
 
-fun CompilerMessage.toGrpc(): CompilerMessageGrpc {
-    val compilerMessage = CompilerMessageGrpc.newBuilder()
+fun CompilerMessage.toProto(): CompilerMessageProto {
+    val compilerMessage = CompilerMessageProto.newBuilder()
     compilerMessage.setMessage(message)
-    compilerMessage.setCompilerMessageSeverity(severity.toGrpc())
+    compilerMessage.setCompilerMessageSeverity(severity.toProto())
     location?.let { location ->
-        compilerMessage.setCompilerMessageSourceLocation(location.toGrpc())
+        compilerMessage.setCompilerMessageSourceLocation(location.toProto())
     }
     return compilerMessage.build()
 }
 
-fun CompilerMessageGrpc.toCompileResponse(): CompileResponseGrpc {
-    return CompileResponseGrpc.newBuilder().setCompilerMessage(this).build()
-}
 
-fun CompilerMessageGrpc.toDomain(): CompilerMessage {
+fun CompilerMessageProto.toDomain(): CompilerMessage {
     return CompilerMessage(
         compilerMessageSeverity.toDomain(),
         message,

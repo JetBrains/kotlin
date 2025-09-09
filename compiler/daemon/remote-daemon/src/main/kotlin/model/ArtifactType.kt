@@ -5,7 +5,7 @@
 
 package model
 
-import org.jetbrains.kotlin.server.ArtifactTypeGrpc
+import org.jetbrains.kotlin.server.ArtifactTypeProto
 
 enum class ArtifactType {
     SOURCE,
@@ -14,21 +14,21 @@ enum class ArtifactType {
     RESULT,
 }
 
-fun ArtifactType.toGrpc(): ArtifactTypeGrpc {
+fun ArtifactType.toProto(): ArtifactTypeProto {
     return when (this) {
-        ArtifactType.SOURCE -> ArtifactTypeGrpc.SOURCE
-        ArtifactType.DEPENDENCY -> ArtifactTypeGrpc.DEPENDENCY
-        ArtifactType.COMPILER_PLUGIN -> ArtifactTypeGrpc.COMPILER_PLUGIN
-        ArtifactType.RESULT -> ArtifactTypeGrpc.RESULT
+        ArtifactType.SOURCE -> ArtifactTypeProto.SOURCE
+        ArtifactType.DEPENDENCY -> ArtifactTypeProto.DEPENDENCY
+        ArtifactType.COMPILER_PLUGIN -> ArtifactTypeProto.COMPILER_PLUGIN
+        ArtifactType.RESULT -> ArtifactTypeProto.RESULT
     }
 }
 
-fun ArtifactTypeGrpc.toDomain(): ArtifactType {
+fun ArtifactTypeProto.toDomain(): ArtifactType {
     return when (this) {
-        ArtifactTypeGrpc.SOURCE -> ArtifactType.SOURCE
-        ArtifactTypeGrpc.DEPENDENCY -> ArtifactType.DEPENDENCY
-        ArtifactTypeGrpc.COMPILER_PLUGIN -> ArtifactType.COMPILER_PLUGIN
-        ArtifactTypeGrpc.RESULT -> ArtifactType.RESULT
-        ArtifactTypeGrpc.UNRECOGNIZED -> ArtifactType.SOURCE // TODO double check
+        ArtifactTypeProto.SOURCE -> ArtifactType.SOURCE
+        ArtifactTypeProto.DEPENDENCY -> ArtifactType.DEPENDENCY
+        ArtifactTypeProto.COMPILER_PLUGIN -> ArtifactType.COMPILER_PLUGIN
+        ArtifactTypeProto.RESULT -> ArtifactType.RESULT
+        ArtifactTypeProto.UNRECOGNIZED -> ArtifactType.SOURCE // TODO double check
     }
 }

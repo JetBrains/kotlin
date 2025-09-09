@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 import model.CompileRequest
 import model.CompileResponse
 import model.toDomain
-import model.toGrpc
+import model.toProto
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
@@ -46,7 +46,7 @@ class GrpcRemoteCompilationServiceClient(
         )
 
     override fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse> {
-        return stub.compile(compileRequests.map { it.toGrpc() }).map { it.toDomain() }
+        return stub.compile(compileRequests.map { it.toProto() }).map { it.toDomain() }
     }
 
     override suspend fun cleanup() {
