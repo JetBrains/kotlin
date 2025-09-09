@@ -2802,6 +2802,232 @@ FILE[kind=File[packageFqName=kotlin]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=kotlin/ContextFunctionTypeParams, fqName=kotlin.ContextFunctionTypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextFunctionTypeParams, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ContextFunctionTypeParams]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=count]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.ContextFunctionTypeParams.count, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=count]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=kotlin/Deprecated, fqName=kotlin.Deprecated, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Deprecated, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Deprecated]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=message]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=replaceWith]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=ReplaceWith]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=level]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.Deprecated.message, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=message]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.Deprecated.replaceWith, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=replaceWith]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=ReplaceWith]
+      PROPERTY[fqName=kotlin.Deprecated.level, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=level]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+  CLASS[classId=kotlin/DeprecatedSinceKotlin, fqName=kotlin.DeprecatedSinceKotlin, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DeprecatedSinceKotlin, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DeprecatedSinceKotlin]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=warningSince]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=errorSince]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=hiddenSince]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.DeprecatedSinceKotlin.warningSince, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=warningSince]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.DeprecatedSinceKotlin.errorSince, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=errorSince]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.DeprecatedSinceKotlin.hiddenSince, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=hiddenSince]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/DeprecationLevel, fqName=kotlin.DeprecationLevel, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DeprecationLevel, superNames=[Enum]]
+    MODIFIER_LIST[public final enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DeprecationLevel]
+      MODIFIER_LIST[private MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Enum]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.WARNING, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WARNING, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.ERROR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ERROR, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.HIDDEN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=HIDDEN, superNames=[]]
   CLASS[classId=kotlin/Double, fqName=kotlin.Double, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Double, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Double]
@@ -4110,6 +4336,53 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=DoubleIterator]
+  CLASS[classId=kotlin/DslMarker, fqName=kotlin.DslMarker, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DslMarker, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DslMarker]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
   CLASS[classId=kotlin/Enum, fqName=kotlin.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Comparable]]
     MODIFIER_LIST[public abstract]
     TYPE_PARAMETER_LIST
@@ -4229,6 +4502,136 @@ FILE[kind=File[packageFqName=kotlin]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/ExperimentalStdlibApi, fqName=kotlin.ExperimentalStdlibApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalStdlibApi, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExperimentalStdlibApi]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+  CLASS[classId=kotlin/ExperimentalSubclassOptIn, fqName=kotlin.ExperimentalSubclassOptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalSubclassOptIn, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExperimentalSubclassOptIn]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+  CLASS[classId=kotlin/ExtensionFunctionType, fqName=kotlin.ExtensionFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExtensionFunctionType, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExtensionFunctionType]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
   CLASS[classId=kotlin/Float, fqName=kotlin.Float, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Float, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Float]
@@ -5537,6 +5940,50 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=FloatIterator]
+  CLASS[classId=kotlin/Function, fqName=kotlin.Function, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Function, superNames=[]]
+    MODIFIER_LIST[public]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=R]
+        MODIFIER_LIST[out]
+    CLASS_BODY
+  CLASS[classId=kotlin/IgnorableReturnValue, fqName=kotlin.IgnorableReturnValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IgnorableReturnValue, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IgnorableReturnValue]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
   CLASS[classId=kotlin/Int, fqName=kotlin.Int, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Int, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Int]
@@ -8713,6 +9160,35 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=LongIterator]
+  CLASS[classId=kotlin/MustUseReturnValue, fqName=kotlin.MustUseReturnValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MustUseReturnValue, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MustUseReturnValue]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
   CLASS[classId=kotlin/Nothing, fqName=kotlin.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nothing]
@@ -8795,6 +9271,353 @@ FILE[kind=File[packageFqName=kotlin]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Byte]
+  CLASS[classId=kotlin/OptIn, fqName=kotlin.OptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=OptIn, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OptIn]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=markerClass]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=OUT]
+                  MODIFIER_LIST[out]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Annotation]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.OptIn.markerClass, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=markerClass]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=OUT]
+                MODIFIER_LIST[out]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KClass]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=OUT]
+                        MODIFIER_LIST[out]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Annotation]
+  CLASS[classId=kotlin/ParameterName, fqName=kotlin.ParameterName, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ParameterName, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ParameterName]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=name]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.ParameterName.name, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/PublishedApi, fqName=kotlin.PublishedApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublishedApi, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublishedApi]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+  CLASS[classId=kotlin/ReplaceWith, fqName=kotlin.ReplaceWith, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ReplaceWith, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ReplaceWith]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=expression]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=imports]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.ReplaceWith.expression, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=expression]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.ReplaceWith.imports, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=imports]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=OUT]
+                MODIFIER_LIST[out]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/RequiresOptIn, fqName=kotlin.RequiresOptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=RequiresOptIn, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=RequiresOptIn]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=message]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=level]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
+              REFERENCE_EXPRESSION[referencedName=Level]
+          REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.RequiresOptIn.message, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=message]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+      PROPERTY[fqName=kotlin.RequiresOptIn.level, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=level]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
+            REFERENCE_EXPRESSION[referencedName=Level]
+      CLASS[classId=kotlin/RequiresOptIn.Level, fqName=kotlin.RequiresOptIn.Level, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Level, superNames=[Enum]]
+        MODIFIER_LIST[public final enum]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Level]
+          MODIFIER_LIST[private MustUseReturnValue]
+          VALUE_PARAMETER_LIST
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Enum]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=kotlin]
+                          REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
+                        REFERENCE_EXPRESSION[referencedName=Level]
+        CLASS_BODY
+          ENUM_ENTRY[classId=null, fqName=kotlin.RequiresOptIn.Level.WARNING, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WARNING, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=kotlin.RequiresOptIn.Level.ERROR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ERROR, superNames=[]]
   CLASS[classId=kotlin/Short, fqName=kotlin.Short, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Short, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Short]
@@ -10235,6 +11058,59 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=ShortIterator]
+  CLASS[classId=kotlin/SinceKotlin, fqName=kotlin.SinceKotlin, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SinceKotlin, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SinceKotlin]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=version]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.SinceKotlin.version, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=version]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
   CLASS[classId=kotlin/String, fqName=kotlin.String, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=String, superNames=[Comparable, CharSequence]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=String]
@@ -10411,6 +11287,146 @@ FILE[kind=File[packageFqName=kotlin]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/SubclassOptInRequired, fqName=kotlin.SubclassOptInRequired, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SubclassOptInRequired, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=WasExperimental]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SubclassOptInRequired]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=markerClass]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=OUT]
+                  MODIFIER_LIST[out]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Annotation]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.SubclassOptInRequired.markerClass, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=markerClass]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=OUT]
+                MODIFIER_LIST[out]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KClass]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=OUT]
+                        MODIFIER_LIST[out]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Annotation]
+  CLASS[classId=kotlin/Suppress, fqName=kotlin.Suppress, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Suppress, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Suppress]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=names]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.Suppress.names, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=names]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=OUT]
+                MODIFIER_LIST[out]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
   CLASS[classId=kotlin/Throwable, fqName=kotlin.Throwable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Throwable, superNames=[]]
     MODIFIER_LIST[public open]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Throwable]
@@ -10470,3 +11486,127 @@ FILE[kind=File[packageFqName=kotlin]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Throwable]
+  OBJECT_DECLARATION[classId=kotlin/Unit, fqName=kotlin.Unit, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Unit, superNames=[]]
+    MODIFIER_LIST[public]
+    CLASS_BODY
+      FUN[fqName=kotlin.Unit.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+        MODIFIER_LIST[public open MustUseReturnValue]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+  CLASS[classId=kotlin/UnsafeVariance, fqName=kotlin.UnsafeVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnsafeVariance, superNames=[Annotation]]
+    MODIFIER_LIST[public final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=UnsafeVariance]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+  CLASS[classId=kotlin/WasExperimental, fqName=kotlin.WasExperimental, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WasExperimental, superNames=[Annotation]]
+    MODIFIER_LIST[internal final annotation]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Target]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=annotation]
+              REFERENCE_EXPRESSION[referencedName=Retention]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WasExperimental]
+      MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=markerClass]
+          MODIFIER_LIST[vararg]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=reflect]
+              REFERENCE_EXPRESSION[referencedName=KClass]
+              TYPE_ARGUMENT_LIST
+                TYPE_PROJECTION[projectionKind=OUT]
+                  MODIFIER_LIST[out]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Annotation]
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Annotation]
+    CLASS_BODY
+      PROPERTY[fqName=kotlin.WasExperimental.markerClass, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=markerClass]
+        MODIFIER_LIST[public final MustUseReturnValue]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Array]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=OUT]
+                MODIFIER_LIST[out]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=reflect]
+                    REFERENCE_EXPRESSION[referencedName=KClass]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=OUT]
+                        MODIFIER_LIST[out]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Annotation]

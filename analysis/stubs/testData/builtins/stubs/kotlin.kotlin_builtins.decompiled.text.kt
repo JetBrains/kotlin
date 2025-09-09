@@ -311,6 +311,34 @@ public interface Comparable<in T> {
     public abstract operator fun compareTo(other: T): kotlin.Int
 }
 
+@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ContextFunctionTypeParams public constructor(count: kotlin.Int) : kotlin.Annotation {
+    public final val count: kotlin.Int /* compiled code */
+}
+
+@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented public final annotation class Deprecated public constructor(message: kotlin.String, replaceWith: kotlin.ReplaceWith = COMPILED_CODE, level: kotlin.DeprecationLevel = COMPILED_CODE) : kotlin.Annotation {
+    public final val message: kotlin.String /* compiled code */
+
+    public final val replaceWith: kotlin.ReplaceWith /* compiled code */
+
+    public final val level: kotlin.DeprecationLevel /* compiled code */
+}
+
+@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class DeprecatedSinceKotlin public constructor(warningSince: kotlin.String = COMPILED_CODE, errorSince: kotlin.String = COMPILED_CODE, hiddenSince: kotlin.String = COMPILED_CODE) : kotlin.Annotation {
+    public final val warningSince: kotlin.String /* compiled code */
+
+    public final val errorSince: kotlin.String /* compiled code */
+
+    public final val hiddenSince: kotlin.String /* compiled code */
+}
+
+public final enum class DeprecationLevel private constructor() : kotlin.Enum<kotlin.DeprecationLevel> {
+    WARNING,
+
+    ERROR,
+
+    HIDDEN;
+}
+
 public final class Double private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public companion object {
         public const val MIN_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
@@ -439,6 +467,9 @@ public final class DoubleArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.DoubleIterator { /* compiled code */ }
 }
 
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class DslMarker public constructor() : kotlin.Annotation {
+}
+
 public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.String, ordinal: kotlin.Int) : kotlin.Comparable<E> {
     public companion object {
     }
@@ -456,6 +487,15 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
     public final fun hashCode(): kotlin.Int { /* compiled code */ }
 
     public open fun toString(): kotlin.String { /* compiled code */ }
+}
+
+@kotlin.RequiresOptIn @kotlin.annotation.Retention @kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ExperimentalStdlibApi public constructor() : kotlin.Annotation {
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin @kotlin.RequiresOptIn public final annotation class ExperimentalSubclassOptIn public constructor() : kotlin.Annotation {
+}
+
+@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented public final annotation class ExtensionFunctionType public constructor() : kotlin.Annotation {
 }
 
 public final class Float private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Float> {
@@ -584,6 +624,12 @@ public final class FloatArray public constructor(size: kotlin.Int) {
     public final operator fun set(index: kotlin.Int, value: kotlin.Float): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.FloatIterator { /* compiled code */ }
+}
+
+public interface Function<out R> {
+}
+
+@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class IgnorableReturnValue public constructor() : kotlin.Annotation {
 }
 
 public final class Int private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Int> {
@@ -890,6 +936,9 @@ public final class LongArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.LongIterator { /* compiled code */ }
 }
 
+@kotlin.annotation.Target @kotlin.SinceKotlin public final annotation class MustUseReturnValue public constructor() : kotlin.Annotation {
+}
+
 public final class Nothing private constructor() {
 }
 
@@ -907,6 +956,35 @@ public abstract class Number public constructor() {
     public abstract fun toShort(): kotlin.Short
 
     public abstract fun toByte(): kotlin.Byte
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin public final annotation class OptIn public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
+}
+
+@kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ParameterName public constructor(name: kotlin.String) : kotlin.Annotation {
+    public final val name: kotlin.String /* compiled code */
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class PublishedApi public constructor() : kotlin.Annotation {
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented public final annotation class ReplaceWith public constructor(expression: kotlin.String, vararg imports: kotlin.String) : kotlin.Annotation {
+    public final val expression: kotlin.String /* compiled code */
+
+    public final val imports: kotlin.Array<out kotlin.String> /* compiled code */
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin public final annotation class RequiresOptIn public constructor(message: kotlin.String = COMPILED_CODE, level: kotlin.RequiresOptIn.Level = COMPILED_CODE) : kotlin.Annotation {
+    public final val message: kotlin.String /* compiled code */
+
+    public final val level: kotlin.RequiresOptIn.Level /* compiled code */
+
+    public final enum class Level private constructor() : kotlin.Enum<kotlin.RequiresOptIn.Level> {
+        WARNING,
+
+        ERROR;
+    }
 }
 
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {
@@ -1047,6 +1125,10 @@ public final class ShortArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.ShortIterator { /* compiled code */ }
 }
 
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin public constructor(version: kotlin.String) : kotlin.Annotation {
+    public final val version: kotlin.String /* compiled code */
+}
+
 public final class String public constructor() : kotlin.Comparable<kotlin.String>, kotlin.CharSequence {
     public companion object {
     }
@@ -1066,6 +1148,14 @@ public final class String public constructor() : kotlin.Comparable<kotlin.String
     @kotlin.internal.IntrinsicConstEvaluation public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin @kotlin.WasExperimental public final annotation class SubclassOptInRequired public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention public final annotation class Suppress public constructor(vararg names: kotlin.String) : kotlin.Annotation {
+    public final val names: kotlin.Array<out kotlin.String> /* compiled code */
+}
+
 public open class Throwable public constructor(message: kotlin.String?, cause: kotlin.Throwable?) {
     public constructor(message: kotlin.String?) { /* compiled code */ }
 
@@ -1078,3 +1168,13 @@ public open class Throwable public constructor(message: kotlin.String?, cause: k
     public open val cause: kotlin.Throwable? /* compiled code */
 }
 
+public object Unit {
+    public open fun toString(): kotlin.String { /* compiled code */ }
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.annotation.MustBeDocumented public final annotation class UnsafeVariance public constructor() : kotlin.Annotation {
+}
+
+@kotlin.annotation.Target @kotlin.annotation.Retention internal final annotation class WasExperimental public constructor(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>) : kotlin.Annotation {
+    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> /* compiled code */
+}
