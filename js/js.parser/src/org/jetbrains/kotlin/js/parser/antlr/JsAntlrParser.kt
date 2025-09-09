@@ -41,8 +41,8 @@ object JsAntlrParser {
         startPosition: CodePosition,
         fileName: String
     ): List<JsStatement>? {
-        val parser = initializeParser(fileName, code, 0, startPosition, reporter)
         val accumulatingReporter = AccumulatingReporter()
+        val parser = initializeParser(fileName, code, 0, startPosition, accumulatingReporter)
         val mapper = JsAstMapper(scope, fileName)
         val expr = try {
             val expression = parser.singleExpression()
@@ -61,6 +61,8 @@ object JsAntlrParser {
             val jsExpr = expr?.let { mapper.mapExpression(it) }
             jsExpr?.makeStmt()?.let(::listOf)
         } else {
+            // Re-create parser to reset lexer and stream state back to the initial offset and to pass the real reporter instance
+            val parser = initializeParser(fileName, code, 0, startPosition, reporter)
             val statements = parser.statementList()
             statements.statement().map {
                 mapper.mapStatement(it)
@@ -89,8 +91,9 @@ object JsAntlrParser {
         startPosition: CodePosition,
         errorReporter: ErrorReporter
     ): JavaScriptParser {
-        val inputStream = CharStreams.fromString(code, file)
-        inputStream.seek(offset)
+        val inputStream = CharStreams.fromString(code, file).also {
+            it.seek(offset)
+        }
         val offsetStream = OffsetCharStream(
             inputStream,
             startPosition.line,

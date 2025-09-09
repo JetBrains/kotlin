@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.js.parser.antlr
 import com.google.gwt.dev.js.ScopeContext
 import com.intellij.util.containers.addIfNotNull
 import org.antlr.v4.runtime.ParserRuleContext
-import org.antlr.v4.runtime.tree.ErrorNode
 import org.antlr.v4.runtime.tree.ParseTree
-import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.parser.antlr.JsAstMapper.Companion.createParserException
@@ -22,20 +20,20 @@ class JsAstMapperVisitor(
     private val scopeContext: ScopeContext,
 ) : JavaScriptParserBaseVisitor<JsNode?>() {
     override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext): JsNode? {
-        return visit<JsStatement?>(ctx.statement())
+        return visitNode<JsStatement?>(ctx.statement())
     }
 
     // ENTRY POINT
     override fun visitStatement(ctx: JavaScriptParser.StatementContext): JsStatement? {
-        ctx.functionDeclaration()?.run {
-            return visitFunctionDeclaration(this).makeStmt()
+        ctx.functionDeclaration()?.let {
+            return visitNode<JsFunction>(it).makeStmt()
         }
 
         return super.visitStatement(ctx).expect<JsStatement?>()
     }
 
     override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsBlock {
-        return visit<JsBlock>(ctx.statementList())
+        return visitNode<JsBlock>(ctx.statementList())
     }
 
     override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsBlock {
@@ -107,26 +105,26 @@ class JsAstMapperVisitor(
     }
 
     override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext): JsVars {
-        return visit<JsVars>(ctx.variableDeclarationList())
+        return visitNode<JsVars>(ctx.variableDeclarationList())
     }
 
     override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): JsVars {
         return JsVars().apply {
             ctx.variableDeclaration().forEach {
-                add(visit<JsVars.JsVar>(it))
+                add(visitNode<JsVars.JsVar>(it))
             }
         }
     }
 
     override fun visitSingleVariableDeclaration(ctx: JavaScriptParser.SingleVariableDeclarationContext): JsVars.JsVar {
-        return visit<JsVars.JsVar>(ctx.variableDeclaration())
+        return visitNode<JsVars.JsVar>(ctx.variableDeclaration())
     }
 
     override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext): JsVars.JsVar {
         val originalId = ctx.assignable().identifier()?.text
             ?: TODO("Only identifier parameters are supported yet")
         val id = scopeContext.localNameFor(originalId)
-        val initialization = ctx.singleExpression()?.let { visit<JsExpression>(it) }
+        val initialization = ctx.singleExpression()?.let { visitNode<JsExpression>(it) }
 
         return JsVars.JsVar(id, initialization).applyLocation(fileName, ctx)
     }
@@ -136,11 +134,11 @@ class JsAstMapperVisitor(
     }
 
     override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement? {
-        return visit<JsExpression>(ctx.expressionSequence()).makeStmt()
+        return visitNode<JsExpression>(ctx.expressionSequence()).makeStmt()
     }
 
     override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsIf {
-        val ifCondition = visit<JsExpression>(ctx.expressionSequence())
+        val ifCondition = visitNode<JsExpression>(ctx.expressionSequence())
         // Empty statements are not supported in both 'if' branches, so always expect non-nullable statements.
         val allStatements = visitAll<JsStatement>(ctx.statement())
 
@@ -152,26 +150,26 @@ class JsAstMapperVisitor(
     }
 
     override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext): JsDoWhile {
-        val body = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
-        val condition = visit<JsExpression>(ctx.expressionSequence())
+        val body = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
+        val condition = visitNode<JsExpression>(ctx.expressionSequence())
 
         return JsDoWhile(condition, body)
     }
 
     override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext): JsWhile {
-        val condition = visit<JsExpression>(ctx.expressionSequence())
-        val body = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
+        val condition = visitNode<JsExpression>(ctx.expressionSequence())
+        val body = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
 
         return JsWhile(condition, body)
     }
 
     override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext): JsFor {
-        val initSequence = ctx.expressionSequence(0)?.let { visit<JsExpression>(it) }
-        val initDeclaration = ctx.variableDeclarationList()?.let { visit<JsVars>(it) }
+        val initSequence = ctx.expressionSequence(0)?.let { visitNode<JsExpression>(it) }
+        val initDeclaration = ctx.variableDeclarationList()?.let { visitNode<JsVars>(it) }
 
-        val condition = ctx.expressionSequence(1)?.let { visit<JsExpression>(it) }
-        val increment = ctx.expressionSequence(2)?.let { visit<JsExpression>(it) }
-        val body = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
+        val condition = ctx.expressionSequence(1)?.let { visitNode<JsExpression>(it) }
+        val increment = ctx.expressionSequence(2)?.let { visitNode<JsExpression>(it) }
+        val body = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
 
         return when {
             initSequence != null -> JsFor(initSequence, condition, increment, body)
@@ -181,11 +179,11 @@ class JsAstMapperVisitor(
     }
 
     override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext): JsNode? {
-        val unnamedExpression = ctx.singleExpression()?.let { visit<JsExpression>(it) }
-        val namedDeclaration = ctx.singleVariableDeclaration()?.let { visit<JsVars.JsVar>(it) }
-        val inTargetExpression = ctx.expressionSequence()?.let { visit<JsExpression>(it) }
+        val unnamedExpression = ctx.singleExpression()?.let { visitNode<JsExpression>(it) }
+        val namedDeclaration = ctx.singleVariableDeclaration()?.let { visitNode<JsVars.JsVar>(it) }
+        val inTargetExpression = ctx.expressionSequence()?.let { visitNode<JsExpression>(it) }
 
-        val bodyStatement = visit<JsStatement?>(ctx.statement()) ?: JsEmpty
+        val bodyStatement = visitNode<JsStatement?>(ctx.statement()) ?: JsEmpty
 
         return when {
             unnamedExpression != null -> JsForIn().apply {
@@ -221,7 +219,7 @@ class JsAstMapperVisitor(
     override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext): JsReturn {
         return JsReturn().apply {
             ctx.expressionSequence()?.let {
-                expression = visit<JsExpression>(it)
+                expression = visitNode<JsExpression>(it)
             }
         }
     }
@@ -244,10 +242,10 @@ class JsAstMapperVisitor(
     }
 
     override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext): JsSwitch {
-        val jsSwitchExpr = visit<JsExpression>(ctx.expressionSequence())
+        val jsSwitchExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
         val jsCases = ctx.caseBlock().caseClauses()?.let { visitAll<JsDefault>(it) } ?: emptyList()
-        val jsDefault = ctx.caseBlock().defaultClause()?.let { visit<JsDefault>(it) }
+        val jsDefault = ctx.caseBlock().defaultClause()?.let { visitNode<JsDefault>(it) }
 
         return JsSwitch().apply {
             expression = jsSwitchExpr
@@ -267,8 +265,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitCaseClause(ctx: JavaScriptParser.CaseClauseContext): JsCase {
-        val jsExpression = ctx.expressionSequence()?.let { visit<JsExpression>(it) }
-        val jsStatements = ctx.statementList()?.let { visit<JsStatement?>(it) }
+        val jsExpression = ctx.expressionSequence()?.let { visitNode<JsExpression>(it) }
+        val jsStatements = ctx.statementList()?.let { visitNode<JsStatement?>(it) }
 
         return JsCase().apply {
             caseExpression = jsExpression
@@ -277,7 +275,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitDefaultClause(ctx: JavaScriptParser.DefaultClauseContext): JsDefault {
-        val jsStatements = ctx.statementList()?.let { visit<JsStatement?>(it) }
+        val jsStatements = ctx.statementList()?.let { visitNode<JsStatement?>(it) }
 
         return JsDefault().apply {
             statements.addAll(listOfNotNull(jsStatements))
@@ -288,7 +286,7 @@ class JsAstMapperVisitor(
         val jsLabelIdentifier = ctx.identifier().text
         val jsName = scopeContext.enterLabel(jsLabelIdentifier, jsLabelIdentifier)
         val jsLabel = JsLabel(jsName).apply {
-            statement = visit<JsStatement>(ctx.statement())
+            statement = visitNode<JsStatement>(ctx.statement())
         }
         scopeContext.exitLabel()
 
@@ -296,21 +294,21 @@ class JsAstMapperVisitor(
     }
 
     override fun visitThrowStatement(ctx: JavaScriptParser.ThrowStatementContext): JsNode? {
-        val jsThrowExpr = visit<JsExpression>(ctx.expressionSequence())
+        val jsThrowExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
         return JsThrow(jsThrowExpr)
     }
 
     override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsTry {
         return JsTry().apply {
-            tryBlock = visit<JsBlock>(ctx.block())
+            tryBlock = visitNode<JsBlock>(ctx.block())
 
-            val jsCatchProduction = ctx.catchProduction()?.let { visit<JsCatch>(it) }
+            val jsCatchProduction = ctx.catchProduction()?.let { visitNode<JsCatch>(it) }
             if (jsCatchProduction != null) {
                 catches.add(jsCatchProduction)
             }
 
-            val jsFinallyProduction = ctx.finallyProduction()?.let { visit<JsBlock>(it) }
+            val jsFinallyProduction = ctx.finallyProduction()?.let { visitNode<JsBlock>(it) }
             if (jsFinallyProduction != null) {
                 finallyBlock = jsFinallyProduction
             }
@@ -322,7 +320,7 @@ class JsAstMapperVisitor(
             ?: TODO("Only identifier catch variables are supported yet")
 
         return scopeContext.enterCatch(jsCatchIdentifier).apply {
-            body = visit<JsBlock>(ctx.block())
+            body = visitNode<JsBlock>(ctx.block())
             // TODO: Decide what to do with "catch conditions":
             //   https://lia.disi.unibo.it/materiale/JS/developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...html#Conditional_catch_clauses
             condition = null
@@ -331,7 +329,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext): JsBlock {
-        return visit<JsBlock>(ctx.block())
+        return visitNode<JsBlock>(ctx.block())
     }
 
     override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext): JsDebugger {
@@ -393,7 +391,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsBlock {
-        return visit<JsBlock>(ctx.sourceElements())
+        return visitNode<JsBlock>(ctx.sourceElements())
     }
 
     override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsBlock {
@@ -415,12 +413,12 @@ class JsAstMapperVisitor(
     override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsExpression {
         assert(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
 
-        return visit<JsExpression>(ctx.singleExpression())
+        return visitNode<JsExpression>(ctx.singleExpression())
     }
 
     override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext): JsPropertyInitializer {
-        val jsLabelExpr = visit<JsExpression>(ctx.propertyName())
-        val jsValue = visit<JsExpression>(ctx.singleExpression())
+        val jsLabelExpr = visitNode<JsExpression>(ctx.propertyName())
+        val jsValue = visitNode<JsExpression>(ctx.singleExpression())
 
         return JsPropertyInitializer(jsLabelExpr, jsValue)
     }
@@ -455,7 +453,7 @@ class JsAstMapperVisitor(
         }
 
         ctx.numericLiteral()?.let {
-            return visit<JsNumberLiteral>(it)
+            return visitNode<JsNumberLiteral>(it)
         }
 
         ctx.singleExpression()?.let {
@@ -474,7 +472,7 @@ class JsAstMapperVisitor(
         assert(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
 
         ctx.singleExpression()?.let {
-            return visit<JsExpression>(it)
+            return visitNode<JsExpression>(it)
         }
 
         ctx.identifier()?.let {
@@ -486,15 +484,15 @@ class JsAstMapperVisitor(
 
     override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsExpression {
         if (ctx.singleExpression().size == 1) {
-            return visit<JsExpression>(ctx.singleExpression()[0])
+            return visitNode<JsExpression>(ctx.singleExpression()[0])
         }
 
         val exprs = visitAll<JsExpression>(ctx.singleExpression())
         return mapComma(exprs)
     }
 
-    override fun visitSingleExpression(ctx: JavaScriptParser.SingleExpressionContext?): JsExpression {
-        return super.visit(ctx).expect<JsExpression>()
+    override fun visitSingleExpression(ctx: JavaScriptParser.SingleExpressionContext): JsExpression {
+        return super.visit(ctx.singleExpressionImpl()).expect<JsExpression>()
     }
 
     override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext): JsNode? {
@@ -502,16 +500,16 @@ class JsAstMapperVisitor(
     }
 
     override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext): JsConditional {
-        val conditionExpression = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val thenExpression = visit<JsExpression>(ctx.singleExpressionImpl(1))
-        val elseCondition = visit<JsExpression>(ctx.singleExpressionImpl(2))
+        val conditionExpression = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val thenExpression = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
+        val elseCondition = visitNode<JsExpression>(ctx.singleExpressionImpl(2))
 
         return JsConditional(conditionExpression, thenExpression, elseCondition)
     }
 
     override fun visitLogicalAndExpression(ctx: JavaScriptParser.LogicalAndExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.AND, left, right)
     }
@@ -521,12 +519,12 @@ class JsAstMapperVisitor(
     }
 
     override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.INC, expression)
     }
 
     override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext): JsObjectLiteral {
-        return visit<JsObjectLiteral>(ctx.objectLiteral())
+        return visitNode<JsObjectLiteral>(ctx.objectLiteral())
     }
 
     override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNode? {
@@ -534,15 +532,15 @@ class JsAstMapperVisitor(
     }
 
     override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.INOP, left, right)
     }
 
     override fun visitLogicalOrExpression(ctx: JavaScriptParser.LogicalOrExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.OR, left, right)
     }
@@ -552,12 +550,12 @@ class JsAstMapperVisitor(
     }
 
     override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext): JsNode? {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.NOT, expression)
     }
 
     override fun visitPreDecreaseExpression(ctx: JavaScriptParser.PreDecreaseExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.DEC, expression)
     }
 
@@ -578,41 +576,41 @@ class JsAstMapperVisitor(
     }
 
     override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.NEG, expression)
     }
 
     override fun visitAssignmentExpression(ctx: JavaScriptParser.AssignmentExpressionContext): JsNode? {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.ASG, left, right)
     }
 
     override fun visitPostDecreaseExpression(ctx: JavaScriptParser.PostDecreaseExpressionContext): JsPostfixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPostfixOperation(JsUnaryOperator.DEC, expression)
     }
 
     override fun visitTypeofExpression(ctx: JavaScriptParser.TypeofExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.TYPEOF, expression)
     }
 
     override fun visitInstanceofExpression(ctx: JavaScriptParser.InstanceofExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.INSTANCEOF, left, right)
     }
 
     override fun visitUnaryPlusExpression(ctx: JavaScriptParser.UnaryPlusExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.POS, expression)
     }
 
     override fun visitDeleteExpression(ctx: JavaScriptParser.DeleteExpressionContext): JsExpression {
-        val target = visit<JsExpression>(ctx.singleExpressionImpl())
+        val target = visitNode<JsExpression>(ctx.singleExpressionImpl())
         if (target is JsNameRef || target is JsArrayAccess)
             return JsPrefixOperation(JsUnaryOperator.DELETE, target)
         return JsNullLiteral()
@@ -623,8 +621,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return ctx.run {
             val operator = when {
@@ -640,8 +638,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitBitXOrExpression(ctx: JavaScriptParser.BitXOrExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.BIT_XOR, left, right)
     }
@@ -651,8 +649,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return ctx.run {
             val operator = when {
@@ -666,8 +664,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitBitShiftExpression(ctx: JavaScriptParser.BitShiftExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return ctx.run {
             val operator = when {
@@ -681,12 +679,12 @@ class JsAstMapperVisitor(
     }
 
     override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext): JsExpression {
-        return visit<JsExpression>(ctx.expressionSequence())
+        return visitNode<JsExpression>(ctx.expressionSequence())
     }
 
     override fun visitAdditiveExpression(ctx: JavaScriptParser.AdditiveExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return ctx.run {
             val operator = when {
@@ -699,8 +697,8 @@ class JsAstMapperVisitor(
     }
 
     override fun visitRelationalExpression(ctx: JavaScriptParser.RelationalExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return ctx.run {
             val operator = when {
@@ -715,7 +713,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitPostIncrementExpression(ctx: JavaScriptParser.PostIncrementExpressionContext): JsPostfixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPostfixOperation(JsUnaryOperator.INC, expression)
     }
 
@@ -724,13 +722,13 @@ class JsAstMapperVisitor(
     }
 
     override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.BIT_NOT, expression)
     }
 
     override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNew {
         val jsNewPlainIdentifier = ctx.identifier()?.let { makeRefNode(it.text) }
-        val jsNewSingleExpression = ctx.singleExpressionImpl()?.let { visit<JsExpression>(it) }
+        val jsNewSingleExpression = ctx.singleExpressionImpl()?.let { visitNode<JsExpression>(it) }
         val jsNewExpression = when {
             jsNewPlainIdentifier != null -> jsNewPlainIdentifier
             else -> jsNewSingleExpression
@@ -743,18 +741,18 @@ class JsAstMapperVisitor(
     }
 
     override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext): JsLiteral {
-        return visit<JsLiteral>(ctx.literal())
+        return visitNode<JsLiteral>(ctx.literal())
     }
 
     override fun visitArrayLiteralExpression(ctx: JavaScriptParser.ArrayLiteralExpressionContext): JsArrayLiteral {
-        return visit<JsArrayLiteral>(ctx.arrayLiteral())
+        return visitNode<JsArrayLiteral>(ctx.arrayLiteral())
     }
 
     override fun visitMemberDotExpression(ctx: JavaScriptParser.MemberDotExpressionContext): JsNode? {
         assert(ctx.QuestionMark() == null) { "Optional chain expressions are not supported yet" }
         assert(ctx.Hashtag() == null) { "Private member access expressions are not supported yet" }
 
-        val jsLeft = visit<JsExpression>(ctx.singleExpressionImpl())
+        val jsLeft = visitNode<JsExpression>(ctx.singleExpressionImpl())
         val jsRight = scopeContext.referenceFor(ctx.identifierName().text)
 
         return jsRight.apply {
@@ -768,33 +766,33 @@ class JsAstMapperVisitor(
 
     override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsArrayAccess {
         assert(ctx.QuestionMarkDot() == null) { "Optional chain expressions are not supported yet" }
-        val jsObjectExpr = visit<JsExpression>(ctx.singleExpressionImpl())
-        val jsMemberExpr = visit<JsExpression>(ctx.expressionSequence())
+        val jsObjectExpr = visitNode<JsExpression>(ctx.singleExpressionImpl())
+        val jsMemberExpr = visitNode<JsExpression>(ctx.expressionSequence())
 
         return JsArrayAccess(jsObjectExpr, jsMemberExpr)
     }
 
     override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext): JsNameRef {
-        return visit<JsNameRef>(ctx.identifier())
+        return visitNode<JsNameRef>(ctx.identifier())
     }
 
     override fun visitBitAndExpression(ctx: JavaScriptParser.BitAndExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.BIT_AND, left, right)
     }
 
     override fun visitBitOrExpression(ctx: JavaScriptParser.BitOrExpressionContext): JsBinaryOperation {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return JsBinaryOperation(JsBinaryOperator.BIT_OR, left, right)
     }
 
     override fun visitAssignmentOperatorExpression(ctx: JavaScriptParser.AssignmentOperatorExpressionContext): JsNode? {
-        val left = visit<JsExpression>(ctx.singleExpressionImpl(0))
-        val right = visit<JsExpression>(ctx.singleExpressionImpl(1))
+        val left = visitNode<JsExpression>(ctx.singleExpressionImpl(0))
+        val right = visitNode<JsExpression>(ctx.singleExpressionImpl(1))
 
         return ctx.assignmentOperator().run {
             val jsOperator = when {
@@ -819,7 +817,7 @@ class JsAstMapperVisitor(
     }
 
     override fun visitVoidExpression(ctx: JavaScriptParser.VoidExpressionContext): JsPrefixOperation {
-        val expression = visit<JsExpression>(ctx.singleExpressionImpl())
+        val expression = visitNode<JsExpression>(ctx.singleExpressionImpl())
         return JsPrefixOperation(JsUnaryOperator.VOID, expression)
     }
 
@@ -874,7 +872,7 @@ class JsAstMapperVisitor(
 
     override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsBlock {
         ctx.functionBody()?.let { body ->
-            return visit<JsBlock>(body)
+            return visitNode<JsBlock>(body)
         }
 
         ctx.singleExpression()?.let { expr ->
@@ -882,7 +880,7 @@ class JsAstMapperVisitor(
             //  The current JS function node implementation doesn't support lambda expressions, so we will transform it
             //  into anonymous function expression. Example: `() => 123` becomes `function () { return 123 }` in generated code.
             //  This is a temporary approach.
-            val returnNode = JsReturn(visit<JsExpression>(expr))
+            val returnNode = JsReturn(visitNode<JsExpression>(expr))
             return JsBlock(returnNode)
         }
 
@@ -1049,11 +1047,11 @@ class JsAstMapperVisitor(
                 modifiers.add(JsFunction.Modifier.GENERATOR)
 
             params.forEach {
-                val jsParam = visit<JsParameter>(it)
+                val jsParam = visitNode<JsParameter>(it)
                 parameters.add(jsParam.applyLocation(fileName, it))
             }
 
-            body = visit<JsBlock>(functionBody)
+            body = visitNode<JsBlock>(functionBody)
 
             scopeContext.exitFunction()
         }
@@ -1102,11 +1100,11 @@ class JsAstMapperVisitor(
         return JsIntLiteral(text.removePrefix("0x").toInt(16))
     }
 
-    private inline fun <reified T> visit(node: ParseTree): T =
+    private inline fun <reified T> visitNode(node: ParseTree): T =
         visit(node).expect<T>()
 
     private inline fun <reified T> visitAll(nodes: List<ParseTree>): List<T> =
-        nodes.map { visit(it).expect<T>() }
+        nodes.map { visitNode<T>(it) }
 
     private inline fun <reified T> JsNode?.expect(): T {
         if (this !is T) throw AssertionError("Expected ${T::class}, got ${this?.javaClass}")

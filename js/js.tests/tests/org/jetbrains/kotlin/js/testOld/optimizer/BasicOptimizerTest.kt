@@ -62,7 +62,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
 
     private fun checkOptimizer(unoptimizedCode: String, optimizedCode: String) {
         val parserScope = JsFunctionScope(JsRootScope(JsProgram()), "<js fun>")
-        val unoptimizedAst = JsAntlrParser.parse(unoptimizedCode, errorReporter, parserScope, "<unknown file>")!!
+        val unoptimizedAst = JsAntlrParser.parse(unoptimizedCode, errorReporter, parserScope, "<unknown file>")
 
         updateMetadata(unoptimizedCode, unoptimizedAst)
 
@@ -70,7 +70,7 @@ abstract class BasicOptimizerTest(private var basePath: String) {
             process(statement)
         }
 
-        val optimizedAst = JsAntlrParser.parse(optimizedCode, errorReporter, parserScope, "<unknown file>")!!
+        val optimizedAst = JsAntlrParser.parse(optimizedCode, errorReporter, parserScope, "<unknown file>")
         Assert.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
     }
 
