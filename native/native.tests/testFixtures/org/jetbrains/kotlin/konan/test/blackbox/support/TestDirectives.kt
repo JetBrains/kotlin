@@ -151,11 +151,8 @@ object TestDirectives : SimpleDirectivesContainer() {
         description = "Specify free CInterop tool arguments"
     )
 
-    // TODO "MUTED_WHEN" directive should be supported not only in AbstractNativeSimpleTest, but also in other hierarchies
-    val MUTED_WHEN by enumDirective<MutedOption>(
-        description = """
-        Usage: // MUTED_WHEN: [K1, K2]
-        In native simple tests, specify the pipeline types to mute the test""".trimIndent(),
+    val MUTED by stringDirective(
+        description = "In native simple tests, mute the test",
     )
 
     val FIR_IDENTICAL by directive(

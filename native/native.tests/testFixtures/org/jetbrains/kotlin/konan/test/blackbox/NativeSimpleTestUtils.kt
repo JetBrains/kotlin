@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
@@ -358,12 +357,8 @@ private fun AbstractNativeSimpleTest.getExecutableArtifact() =
 private fun directiveValues(testDataFileContents: String, directive: String) =
     InTextDirectivesUtils.findListWithPrefixes(testDataFileContents, "// $directive: ")
 
-fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFile: File) = muteTestIfNecessary(FileUtil.loadFile(testDataFile))
-internal fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFileContents: String) {
-    val pipelineType = testRunSettings.get<PipelineType>()
-    val mutedWhenValues = directiveValues(testDataFileContents, TestDirectives.MUTED_WHEN.name)
-    Assumptions.assumeFalse(mutedWhenValues.any { it == pipelineType.mutedOption.name })
-}
+fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFile: File) =
+    Assumptions.assumeFalse(InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testDataFile), TestDirectives.MUTED.name))
 
 internal fun AbstractNativeSimpleTest.firIdentical(testDataFile: File) =
      InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testDataFile), TestDirectives.FIR_IDENTICAL.name)
