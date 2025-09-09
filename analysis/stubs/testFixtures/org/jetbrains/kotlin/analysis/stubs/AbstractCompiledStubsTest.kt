@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -95,6 +96,23 @@ abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) 
             get() = KtLibraryBinaryDecompiledTestModuleFactory
 
         override val testPrefixes: List<String>
-            get() = listOf(defaultTargetPlatform.single().platformName) + super.testPrefixes
+            get() {
+                val simplePlatform = defaultTargetPlatform.singleOrNull()
+                val additionalNames = buildList {
+                    if (simplePlatform != null) {
+                        add(simplePlatform.platformName)
+                    } else {
+                        add("Common")
+                    }
+
+                    // All supported platforms except for the JVM might be compiled as .knm files,
+                    // so their output should be the same in most cases
+                    if (simplePlatform !is JvmPlatform) {
+                        add("knm")
+                    }
+                }
+
+                return additionalNames + super.testPrefixes
+            }
     }
 }
