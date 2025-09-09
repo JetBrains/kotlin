@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.Locale
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**
@@ -74,6 +75,7 @@ object KnownStableConstructs {
         // Java types
         BigInteger::class.qualifiedName!! to 0,
         BigDecimal::class.qualifiedName!! to 0,
+        Locale::class.qualifiedName!! to 0,
     )
 
     // TODO: buildList, buildMap, buildSet, etc.
