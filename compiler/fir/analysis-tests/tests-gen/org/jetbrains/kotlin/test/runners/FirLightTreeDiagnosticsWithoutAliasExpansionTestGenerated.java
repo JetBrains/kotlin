@@ -9915,6 +9915,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         }
 
         @Test
+        @TestMetadata("explicitFieldRefersToThePropertyInTheInitializer.kt")
+        public void testExplicitFieldRefersToThePropertyInTheInitializer() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldRefersToThePropertyInTheInitializer.kt");
+        }
+
+        @Test
         @TestMetadata("explicitFieldWithFunctionType.kt")
         public void testExplicitFieldWithFunctionType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldWithFunctionType.kt");
