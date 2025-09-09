@@ -1291,11 +1291,10 @@ class FirCallCompletionResultsWriterTransformer(
             hasAdditionalResolutionErrors() -> ConeConstraintSystemHasContradiction(candidate)
             else -> null
         }
-        val isPropertyWithExplicitField = (candidateSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true
 
         return when (errorDiagnostic) {
             null -> when {
-                isPropertyWithExplicitField -> buildExplicitBackingFieldReference(source, name, candidate)
+                candidate.isExplicitBackingFieldAccess -> buildExplicitBackingFieldReference(source, name, candidate)
                 else -> buildResolvedNamedReference {
                     source = this@toResolvedReference.source
                     name = this@toResolvedReference.name

@@ -883,7 +883,7 @@ class FirCallResolver(
                 resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
             }
         }
-        if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
+        if (candidate.isExplicitBackingFieldAccess) {
             return buildExplicitBackingFieldReference(source, name, candidate)
         }
         /*

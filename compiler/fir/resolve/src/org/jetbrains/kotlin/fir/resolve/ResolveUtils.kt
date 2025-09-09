@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.builder.FirPropertyWithExplicitBackin
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.isVisible
@@ -816,6 +817,10 @@ fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic):
         }
     }
 }
+
+val Candidate.isExplicitBackingFieldAccess: Boolean
+    get() = (symbol as? FirPropertySymbol)?.hasExplicitBackingField == true
+            && callInfo.callKind == CallKind.VariableAccess
 
 fun buildExplicitBackingFieldReference(
     source: KtSourceElement?,
