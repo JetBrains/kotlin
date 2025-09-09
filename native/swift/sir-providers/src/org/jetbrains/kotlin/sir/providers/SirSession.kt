@@ -212,6 +212,7 @@ public sealed interface SirTranslationResult {
         public val bridgedImplementation: SirExtension?,
         public val markerDeclaration: SirProtocol,
         public val existentialExtension: SirExtension,
+        public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
@@ -221,6 +222,7 @@ public sealed interface SirTranslationResult {
                 bridgedImplementation,
                 markerDeclaration,
                 existentialExtension,
+                auxExtension,
                 samConverter,
             )
     }

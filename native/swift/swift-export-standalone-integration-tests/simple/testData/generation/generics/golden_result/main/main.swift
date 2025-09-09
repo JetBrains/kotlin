@@ -262,12 +262,16 @@ extension main.A where Self : KotlinRuntimeSupport._KotlinBridgeable {
         }
     }
 }
+extension main.A {
+}
 extension main.B where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
             return { switch B_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
         }
     }
+}
+extension main.B {
 }
 extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func consume(
@@ -276,7 +280,11 @@ extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridgeable {
         return Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), item.map { it in it.__externalRCRef() } ?? nil)
     }
 }
+extension main.Consumer {
+}
 extension main.ConsumerProducer where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension main.ConsumerProducer {
 }
 extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func process(
@@ -285,10 +293,14 @@ extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridgeable {
         return { switch Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
 }
+extension main.Processor {
+}
 extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
+}
+extension main.Producer {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.Producer where Wrapped : main._Producer {
 }

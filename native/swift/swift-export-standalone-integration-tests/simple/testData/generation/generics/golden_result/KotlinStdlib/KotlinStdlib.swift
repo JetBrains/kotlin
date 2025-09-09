@@ -34,6 +34,8 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : KotlinRuntimeSup
         return kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
 }
+extension ExportedKotlinPackages.kotlin.Comparable {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
 extension ExportedKotlinPackages.kotlin {

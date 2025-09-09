@@ -385,6 +385,8 @@ public func produce_closure() -> Swift.Never {
 }
 extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
+extension main.OUTSIDE_PROTO {
+}
 extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
 }
 extension ExportedKotlinPackages.typealiases.inner {

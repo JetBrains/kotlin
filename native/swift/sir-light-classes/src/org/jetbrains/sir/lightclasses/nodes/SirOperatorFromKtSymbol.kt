@@ -121,13 +121,13 @@ internal class SirSubscriptTrampoline(
     override val origin: SirOrigin get() = SirOrigin.Trampoline(getterFunction)
 
     override val visibility: SirVisibility get() = SirVisibility.PUBLIC
-    override val documentation: String? = getterFunction.documentation
-    override val attributes: List<SirAttribute> = getterFunction.attributes
+    override val documentation: String? get() = getterFunction.documentation
+    override val attributes: List<SirAttribute> get() = getterFunction.attributes
     override val isOverride: Boolean = false
     override val isInstance: Boolean = true
     override val modality: SirModality = SirModality.FINAL
-    override val parameters: List<SirParameter> = getterFunction.parameters
-    override val returnType: SirType = getterFunction.returnType
+    override val parameters: List<SirParameter> get() = getterFunction.parameters
+    override val returnType: SirType get() = getterFunction.returnType
 
     override val getter: SirGetter by lazy {
         buildGetter {

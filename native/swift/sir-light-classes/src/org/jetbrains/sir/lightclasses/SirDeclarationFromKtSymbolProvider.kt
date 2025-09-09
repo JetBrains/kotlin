@@ -31,6 +31,7 @@ public class SirDeclarationFromKtSymbolProvider(
                         bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
                         markerDeclaration = protocol.existentialMarker,
                         existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol),
+                        auxExtension = protocol.auxExtension,
                         samConverter = protocol.samConverter,
                     )
                 } else {

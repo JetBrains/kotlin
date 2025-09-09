@@ -120,6 +120,8 @@ public func utcOffset(
 }
 extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
+extension main.InterfaceWithFactory {
+}
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
 extension ExportedKotlinPackages.test.factory {

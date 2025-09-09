@@ -27,10 +27,14 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Kotl
         this.contains(element: element)
     }
 }
+extension ExportedKotlinPackages.kotlin.collections.Collection {
+}
 extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
+}
+extension ExportedKotlinPackages.kotlin.collections.Iterable {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func hasNext() -> Swift.Bool {
@@ -39,6 +43,8 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
+}
+extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections.List where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var size: Swift.Int32 {
@@ -100,6 +106,8 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : KotlinRunt
         }
     }
 }
+extension ExportedKotlinPackages.kotlin.collections.List {
+}
 extension ExportedKotlinPackages.kotlin.collections.ListIterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_ListIterator_hasNext(self.__externalRCRef())
@@ -119,6 +127,8 @@ extension ExportedKotlinPackages.kotlin.collections.ListIterator where Self : Ko
     public func previousIndex() -> Swift.Int32 {
         return kotlin_collections_ListIterator_previousIndex(self.__externalRCRef())
     }
+}
+extension ExportedKotlinPackages.kotlin.collections.ListIterator {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.List where Wrapped : ExportedKotlinPackages.kotlin.collections._List {
 }

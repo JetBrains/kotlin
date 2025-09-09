@@ -91,7 +91,7 @@ public class SirVisibilityCheckerImpl(
                 .filter { type -> !type.isFunctionType && speciallyBridgedTypes.none { type.isClassType(it) } }
                 .any { hasUnboundTypeParameters(it) }
         ) {
-            return@withSessions SirAvailability.Unavailable("Callables with vararg parameters are not supported yet")
+            return@withSessions SirAvailability.Unavailable("Callables with parameters unbound generic types are not supported yet")
         }
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Declaration is @HiddenFromObjC")

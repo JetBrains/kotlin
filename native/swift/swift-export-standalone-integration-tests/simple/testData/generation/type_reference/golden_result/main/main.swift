@@ -489,6 +489,8 @@ public func setExtensionVarOnNullableRef(
 }
 extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
+extension main.INTERFACE {
+}
 extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE where Wrapped : main._INTERFACE {
 }
 extension ExportedKotlinPackages.namespace.deeper {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
@@ -36,6 +37,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.nodes.SirExistentialProtocolImplementationFromKtSymbol
 import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
 import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
@@ -85,28 +87,12 @@ internal open class SirProtocolFromKtSymbol(
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations()
-            .flatMap { declaration ->
-                when (declaration) {
-                    is SirOperatorAuxiliaryDeclaration -> emptyList() // FIXME: rectify where auxiliary declarations should go.
-                    is SirVariable, is SirFunction -> listOf(declaration)
-                    is SirNamedDeclaration -> listOfNotNull(
-                        (declaration.visibility == SirVisibility.PUBLIC).ifTrue {
-                            buildTypealias {
-                                origin = SirOrigin.Trampoline(declaration)
-                                visibility = SirVisibility.INTERNAL // visibility modifiers are disallowed in protocols
-                                // FIXME: we make here the best effort to restore the original name of a relocated declaration
-                                name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
-                                type = SirNominalType(declaration) // Has to be nominal even for protocol declarations
-                            }.apply {
-                                parent = this@SirProtocolFromKtSymbol
-                            }
-                        },
-                        declaration
-                    )
-                    else -> listOf(declaration)
-                }
-            }
+            .filter { it !is SirOperatorAuxiliaryDeclaration } // FIXME: rectify where auxiliary declarations should go.
             .toMutableList()
+    }
+
+    internal val auxExtension: SirExtension by lazy {
+        SirAuxiliaryProtocolDeclarationsFromKtSymbol(this)
     }
 
     internal val existentialMarker: SirProtocol by lazy {
@@ -357,4 +343,58 @@ internal class SirStubProtocol(
     sirSession
 ) {
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
+}
+
+/**
+ * An extension for miscellaneous supporting declarations for [targetProtocol], like convenience typealiases or default implementations.
+ *
+ * @property targetProtocol Protocol declaration this extension belongs to.
+ */
+internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
+    override val ktSymbol: KaNamedClassSymbol,
+    override val sirSession: SirSession,
+    private val targetProtocol: SirProtocolFromKtSymbol,
+) : SirExtension(), SirFromKtSymbol<KaNamedClassSymbol> {
+    constructor(protocol: SirProtocolFromKtSymbol) : this(
+        protocol.ktSymbol,
+        protocol.sirSession,
+        protocol
+    )
+
+    override var parent: SirDeclarationParent
+        get() = withSessions {
+            ktSymbol.containingModule.sirModule()
+        }
+        set(_) = Unit
+
+    override val origin: SirOrigin get() = SirOrigin.AdditionalDeclaration(KotlinSource(ktSymbol))
+
+    override val visibility: SirVisibility get() = SirVisibility.PUBLIC
+
+    override val documentation: String? get() = null
+
+    override val attributes: List<SirAttribute> = emptyList()
+
+    override val constraints: List<SirTypeConstraint> = emptyList()
+
+    override val protocols: List<SirProtocol> = emptyList()
+
+    override val extendedType: SirType = SirNominalType(targetProtocol)
+
+    override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
+        ktSymbol.combinedDeclaredMemberScope
+            .extractDeclarations()
+            .filterIsInstance<SirNamedDeclaration>()
+            .filter { it.visibility == SirVisibility.PUBLIC }
+            .map { declaration ->
+                buildTypealias {
+                    origin = SirOrigin.Trampoline(declaration)
+                    visibility = SirVisibility.INTERNAL // visibility modifiers are disallowed in protocols
+                    // FIXME: we make here the best effort to restore the original name of a relocated declaration
+                    name = declaration.kaSymbolOrNull<KaDeclarationSymbol>()?.sirDeclarationName() ?: declaration.name
+                    type = SirNominalType(declaration) // Has to be nominal even for protocol declarations
+                }.also { it.parent = this }
+            }
+            .toMutableList()
+    }
 }

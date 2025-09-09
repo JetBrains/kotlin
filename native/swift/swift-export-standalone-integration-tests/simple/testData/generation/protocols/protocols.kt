@@ -177,3 +177,16 @@ class DemoCrossModuleInterfaceUsage: DemoCrossModuleInterface
 
 interface DemoCrossModuleInterface
 
+// MODULE: edge_cases
+// EXPORT_TO_SWIFT
+// FILE: conflicting_inherited_typealiases.kt
+
+package conflictingTypealiases
+
+interface Foo {
+    class Conflict
+}
+
+interface Bar: Foo {
+    class Conflict
+}

@@ -22,6 +22,8 @@ extension ExportedKotlinPackages.kotlin.text.Appendable where Self : KotlinRunti
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32__(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.text.Appendable
     }
 }
+extension ExportedKotlinPackages.kotlin.text.Appendable {
+}
 extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var length: Swift.Int32 {
         get {
@@ -46,6 +48,8 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeS
             _get(index: index)
         }
     }
+}
+extension ExportedKotlinPackages.kotlin.CharSequence {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }

@@ -9,5 +9,7 @@ package protocol _DemoCrossModuleInterface {
 }
 extension public_interface.DemoCrossModuleInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
+extension public_interface.DemoCrossModuleInterface {
+}
 extension KotlinRuntimeSupport._KotlinExistential: public_interface.DemoCrossModuleInterface where Wrapped : public_interface._DemoCrossModuleInterface {
 }
