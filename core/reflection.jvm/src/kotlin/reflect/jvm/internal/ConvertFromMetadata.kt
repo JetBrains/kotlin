@@ -166,7 +166,7 @@ private fun KmTypeProjection.toKTypeProjection(
     else
         KTypeProjection(variance?.toKVariance(), type?.toKType(classLoader, typeParameterTable, computeJavaType))
 
-private fun KmVariance.toKVariance(): KVariance = when (this) {
+internal fun KmVariance.toKVariance(): KVariance = when (this) {
     KmVariance.IN -> KVariance.IN
     KmVariance.OUT -> KVariance.OUT
     KmVariance.INVARIANT -> KVariance.INVARIANT
@@ -178,7 +178,7 @@ private fun KmClassifier.toMutableCollectionKClass(kClassifier: KClassifier): Mu
     return getMutableCollectionKClass(classId.asSingleFqName(), kClassifier as KClass<*>)
 }
 
-private fun KmAnnotation.toAnnotation(classLoader: ClassLoader): Annotation =
+internal fun KmAnnotation.toAnnotation(classLoader: ClassLoader): Annotation =
     createAnnotationInstance(
         classLoader.loadClass(className.toClassId())
             ?: throw KotlinReflectionInternalError("Annotation class not found: $className"),
@@ -223,4 +223,13 @@ private fun KmAnnotationArgument.toAnnotationArgument(
         classLoader.loadClass(className.toClassId())
             ?: throw KotlinReflectionInternalError("Unresolved class: $className")
     is KmAnnotationArgument.LiteralValue<*> -> value
+}
+
+internal fun Visibility.toKVisibility(): KVisibility? = when (this) {
+    Visibility.INTERNAL -> KVisibility.INTERNAL
+    Visibility.PRIVATE -> KVisibility.PRIVATE
+    Visibility.PROTECTED -> KVisibility.PROTECTED
+    Visibility.PUBLIC -> KVisibility.PUBLIC
+    Visibility.PRIVATE_TO_THIS -> KVisibility.PRIVATE
+    Visibility.LOCAL -> null
 }

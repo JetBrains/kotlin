@@ -6,10 +6,12 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.types.asSimpleType
-import java.lang.reflect.Field
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
-import kotlin.reflect.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
 import kotlin.reflect.jvm.internal.types.DescriptorKType
@@ -21,7 +23,7 @@ import java.lang.reflect.Array as ReflectArray
  * This interface and its subinterfaces are used to provide operations supported by all implementations of [KCallable] in kotlin-reflect
  * (K1 descriptor-based, kotlin-metadata-jvm, and Java-based) that are not yet exposed in the public API of [KCallable].
  */
-internal interface ReflectKCallable<out R> : KCallable<R> {
+internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerImpl {
     val container: KDeclarationContainerImpl
 
     val rawBoundReceiver: Any?
@@ -63,12 +65,6 @@ internal interface ReflectKCallable<out R> : KCallable<R> {
 
 internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?> {
     val signature: String
-}
-
-internal interface ReflectKProperty<out V> : ReflectKCallable<V>, KProperty<V> {
-    val signature: String
-
-    val javaField: Field?
 }
 
 internal val ReflectKCallable<*>.isBound: Boolean

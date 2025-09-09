@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.metadata.KmProperty
+import kotlin.metadata.isVar
+import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.internal.calls.toJvmDescriptor
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
@@ -50,13 +53,27 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    abstract fun getLocalProperty(index: Int): PropertyDescriptor?
+    abstract fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor?
+
+    abstract fun getLocalPropertyMetadata(index: Int): KmProperty?
+
+    fun createLocalProperty(index: Int, signature: String): KProperty0<*>? {
+        val kmProperty = getLocalPropertyMetadata(index) ?: return null
+        if (kmProperty.receiverParameterType != null) {
+            throw KotlinReflectionInternalError("Local property ${kmProperty.name} is an extension, which is not yet supported")
+        }
+
+        return if (kmProperty.isVar)
+            KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+        else
+            KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+    }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val match = LOCAL_PROPERTY_SIGNATURE.matchEntire(signature)
         if (match != null) {
             val (number) = match.destructured
-            return getLocalProperty(number.toInt())
+            return getLocalPropertyDescriptor(number.toInt())
                 ?: throw KotlinReflectionInternalError("Local property #$number not found in $jClass")
         }
 
@@ -291,6 +308,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
 
-        internal val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
+        @JvmField
+        val LOCAL_PROPERTY_SIGNATURE = "<v#(\\d+)>".toRegex()
     }
 }
