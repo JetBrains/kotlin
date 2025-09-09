@@ -8,6 +8,7 @@ package model
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.server.CompilationMetadataProto
 
 @Serializable
@@ -28,7 +29,12 @@ fun CompilationMetadata.toProto(): CompilationMetadataProto {
         .setCompilerPluginFileCount(compilerPluginFilesCount)
         .addAllCompilerArguments(compilerArguments)
         .setProjectName(projectName)
-        .setCompilationOptions(compilationOptions.toProto())
+        .apply {
+            when (compilationOptions) {
+                is IncrementalCompilationOptions -> setIncrementalCompilationOptions(compilationOptions.toProto())
+                is CompilationOptions -> setStandardCompilationOptions(compilationOptions.toProto())
+            }
+        }
         .build()
 }
 
@@ -39,7 +45,8 @@ fun CompilationMetadataProto.toDomain(): CompilationMetadata {
         dependencyFilesCount,
         compilerPluginFileCount,
         compilerArgumentsList,
-        compilationOptions.toDomain()
+        if (hasIncrementalCompilationOptions()) incrementalCompilationOptions.toDomain()
+        else standardCompilationOptions.toDomain()
     )
 }
 

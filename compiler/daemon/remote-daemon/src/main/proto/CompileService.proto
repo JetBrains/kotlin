@@ -9,48 +9,51 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service CompileService {
-  rpc Compile (stream CompileRequestGrpc) returns (stream CompileResponseGrpc) {}
+  rpc Compile (stream CompileRequestProto) returns (stream CompileResponseProto) {}
   rpc Cleanup (google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
-message CompileRequestGrpc {
+message CompileRequestProto {
   oneof request_payload {
-    CompilationMetadataGrpc metadata = 1;
-    FileTransferRequestGrpc file_transfer_request = 2;
-    FileChunkGrpc source_file_chunk = 3;
+    CompilationMetadataProto metadata = 1;
+    FileTransferRequestProto file_transfer_request = 2;
+    FileChunkProto source_file_chunk = 3;
   }
 }
 
-message CompileResponseGrpc {
+message CompileResponseProto {
   oneof response_payload{
-    CompilerMessageGrpc compiler_message = 1;
-    FileChunkGrpc compiled_file_chunk = 2;
-    FileTransferReplyGrpc file_transfer_reply = 3;
-    CompilationResultGrpc compilation_result = 5;
+    CompilerMessageProto compiler_message = 1;
+    FileChunkProto compiled_file_chunk = 2;
+    FileTransferReplyProto file_transfer_reply = 3;
+    CompilationResultProto compilation_result = 5;
   }
 }
 
-message CompilationMetadataGrpc{
+message CompilationMetadataProto{
   string project_name = 1;
   int32 source_files_count = 2;
   int32 dependency_files_count = 3;
   int32 compiler_plugin_file_count = 4;
   repeated string compiler_arguments = 5;
-  CompilationOptionsGrpc compilation_options = 6;
+  oneof compilation_options {
+    CompilationOptionsProto standard_compilation_options = 6;
+    IncrementalCompilationOptionsProto incremental_compilation_options = 7;
+  }
 }
 
-message CompilationOptionsGrpc {
-  CompilerModeGrpc compiler_mode = 1;
-  TargetPlatformGrpc target_platform = 2;
+message CompilationOptionsProto {
+  CompilerModeProto compiler_mode = 1;
+  TargetPlatformProto target_platform = 2;
   repeated int32 report_categories = 3;
   int32 report_severity = 4;
   repeated int32 requested_compilation_results = 5; // idk what it is
   repeated string kotlin_script_extensions = 6;
 }
 
-message CompilationResultGrpc{
+message CompilationResultProto{
   uint32 exit_code = 1;
-  CompilationResultSourceGrpc result_source = 2;
+  CompilationResultSourceProto result_source = 2;
   // TODO, here it would be maybe good to send info what chunking of source file do we use so client can process the files accordingly
 //  uint32 file_count = 2;
 }
@@ -59,40 +62,40 @@ message CompilationResultGrpc{
 // TODO: could metadata be somewhere useful in our use case?
 //  google.protobuf.Timestamp modified_at = 3;
 //  google.protobuf.Timestamp created_at = 4;
-message FileChunkGrpc {
+message FileChunkProto {
   string file_path = 1;
-  ArtifactTypeGrpc file_type = 2;
+  ArtifactTypeProto file_type = 2;
   bytes content = 3;
   bool is_directory = 4;
   bool is_last = 5;
 }
 
-message CompilerMessageGrpc{
-  CompilerMessageSeverityGrpc compiler_message_severity = 1;
+message CompilerMessageProto{
+  CompilerMessageSeverityProto compiler_message_severity = 1;
   string message = 2;
-  optional CompilerMessageSourceLocationGrpc compiler_message_source_location = 3;
+  optional CompilerMessageSourceLocationProto compiler_message_source_location = 3;
 }
 
-enum ArtifactTypeGrpc {
+enum ArtifactTypeProto {
   SOURCE = 0;
   DEPENDENCY = 1;
   COMPILER_PLUGIN = 2;
   RESULT = 3;
 }
 
-enum CompilerModeGrpc {
+enum CompilerModeProto {
     NON_INCREMENTAL_COMPILER = 0;
     INCREMENTAL_COMPILER = 1;
     JPS_COMPILER = 2;
 }
 
-enum TargetPlatformGrpc {
+enum TargetPlatformProto {
     JVM = 0;
     JS = 1;
     METADATA = 2;
 }
 
-enum CompilerMessageSeverityGrpc {
+enum CompilerMessageSeverityProto {
   EXCEPTION = 0;
   ERROR = 1;
   STRONG_WARNING = 2;
@@ -103,40 +106,147 @@ enum CompilerMessageSeverityGrpc {
   OUTPUT = 7;
 }
 
-enum CompilationResultSourceGrpc {
+enum CompilationResultSourceProto {
   COMPILER = 0;
   CACHE = 1;
 }
 
-message FileTransferRequestGrpc{
+message FileTransferRequestProto{
   string file_path = 1;
   string file_fingerprint = 2;
-  ArtifactTypeGrpc artifact_type = 3;
+  ArtifactTypeProto artifact_type = 3;
 }
 
-message DirectoryTransferRequestGrpc{
+message DirectoryTransferRequestProto{
   string directory_path = 1;
   string directory_fingerprint = 2;
-  ArtifactTypeGrpc artifact_type = 3;
-  repeated FileTransferRequestGrpc directory_files = 4;
+  ArtifactTypeProto artifact_type = 3;
+  repeated FileTransferRequestProto directory_files = 4;
 }
 
-message FileTransferReplyGrpc{
+message FileTransferReplyProto{
   string file_path = 1;
   bool is_present = 2;
-  ArtifactTypeGrpc file_type = 3;
+  ArtifactTypeProto file_type = 3;
 }
 
-message FileIdentifierGrpc {
+message FileIdentifierProto {
   string file_path = 1;
   string file_fingerprint = 2;
 }
 
-message CompilerMessageSourceLocationGrpc {
+message CompilerMessageSourceLocationProto {
   string path = 1;
   int32 line = 2;
   int32 column = 3;
   int32 line_end = 4;
   int32 column_end = 5;
   optional string line_content = 6;
+}
+
+message IncrementalModuleEntryProto {
+  string project_path = 1;
+  string name = 2;
+  string build_dir = 3;
+  string build_history_file = 4;
+  string abi_snapshot = 5;
+}
+
+message IncrementalModuleEntrySetProto {
+  repeated IncrementalModuleEntryProto entries = 1;
+}
+
+message IncrementalModuleInfoProto {
+  string root_project_build_dir = 1;
+  map<string, IncrementalModuleEntryProto> dir_to_module = 2;
+  map<string, IncrementalModuleEntrySetProto> name_to_modules = 3;
+  map<string, string> jar_to_class_list_file = 4;
+  map<string, IncrementalModuleEntryProto> jar_to_module = 5;
+  map<string, string> jar_to_abi_snapshot = 6;
+}
+
+message IncrementalCompilationFeaturesProto {
+  bool use_precise_java_tracking = 1;
+  bool with_abi_snapshot = 2;
+  bool precise_compilation_results_backup = 3;
+  bool keep_incremental_compilation_caches_in_memory = 4;
+  bool enable_unsafe_incremental_compilation_for_multiplatform = 5;
+  bool enable_monotonous_incremental_compile_set_expansion = 6;
+}
+
+message IncrementalCompilationOptionsProto {
+  CompilationOptionsProto compilationOptions = 1;
+  SourcesChangesProto source_changes = 2;
+  ClasspathChangesProto classpath_changes = 3;
+  string working_dir = 4;
+  bool use_jvm_fir_runner = 5;
+  repeated string output_files = 6;
+  optional MultiModuleICSettingsProto multi_module_ic_settings = 7;
+  optional IncrementalModuleInfoProto modules_info = 8;
+  optional string root_project_dir = 9;
+  optional string build_dir = 10;
+  IncrementalCompilationFeaturesProto ic_features = 11;
+}
+
+message MultiModuleICSettingsProto {
+  string build_history_file = 1;
+  bool use_module_detection = 2;
+}
+
+
+message ClasspathChangesProto {
+  oneof kind {
+    ClasspathSnapshotEnabledProto classpath_snapshot_enabled = 1;
+    ClasspathSnapshotDisabledProto classpath_snapshot_disabled = 2;
+    NotAvailableForJSCompilerProto not_available_for_js_compiler = 3;
+  }
+
+  message ClasspathSnapshotEnabledProto {
+    ClasspathSnapshotFilesProto classpath_snapshot_files = 1;
+
+    oneof state {
+      IncrementalRunProto incremental_run = 2;
+      NotAvailableDueToMissingClasspathSnapshotProto not_available_due_to_missing_classpath_snapshot = 3;
+      NotAvailableForNonIncrementalRunProto not_available_for_non_incremental_run = 4;
+    }
+
+    message IncrementalRunProto {
+      oneof result {
+        NoChangesProto no_changes = 1;
+        ToBeComputedByIncrementalCompilerProto to_be_computed_by_incremental_compiler = 2;
+      }
+
+      message NoChangesProto {}
+      message ToBeComputedByIncrementalCompilerProto {}
+    }
+
+    message NotAvailableDueToMissingClasspathSnapshotProto {}
+    message NotAvailableForNonIncrementalRunProto {}
+  }
+
+  message ClasspathSnapshotDisabledProto {}
+  message NotAvailableForJSCompilerProto {}
+}
+
+
+message ClasspathSnapshotFilesProto {
+  repeated string current_classpath_entry_snapshot_files = 1;
+  string shrunk_previous_classpath_snapshot_file = 2;
+}
+
+message SourcesChangesProto {
+  oneof kind {
+    UnknownProto unknown = 1;
+    ToBeCalculatedProto to_be_calculated = 2;
+    KnownProto known = 3;
+  }
+}
+
+message UnknownProto {}
+
+message ToBeCalculatedProto {}
+
+message KnownProto {
+  repeated string modified_files = 1;
+  repeated string removed_files = 2;
 }
