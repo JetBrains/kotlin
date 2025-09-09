@@ -303,7 +303,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         ).toOutput()
 
         KotlinTestUtils.assertEqualsToFile(
-            rootDir.resolve("output.fir.txt"),
+            rootDir.resolve("output.txt"),
             compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
         )
     }
@@ -332,7 +332,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         ).toOutput()
 
         KotlinTestUtils.assertEqualsToFile(
-            rootDir.resolve("output.fir.txt"),
+            rootDir.resolve("output.txt"),
             compilationResult.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
         )
     }

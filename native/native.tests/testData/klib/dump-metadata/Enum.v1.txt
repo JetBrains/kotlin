@@ -5,9 +5,6 @@ library {
     // package name: <root>
 
     // class name: E
-    // class name: E.A
-    // class name: E.B
-    // class name: E.C
 
     // signature: /E|null[0]
     public final enum class E : kotlin/Enum<E> {
@@ -19,7 +16,7 @@ library {
       public open fun enumFun(): kotlin/Int
 
       // signature: /E.enumVal|-794670998786832931[0]
-      public final val enumVal: kotlin/Int /* = 0 */
+      public final val enumVal: kotlin/Int /* = ... */
         // signature: /E.enumVal.<get-enumVal>|2351802094437052431[0]
         public final get
 
@@ -45,21 +42,6 @@ library {
       C,
 
       // has Enum.entries
-    }
-
-    // signature: /E.A|null[0]
-    public final enum entry E.A : E {
-    }
-
-    // signature: /E.B|null[0]
-    public final enum entry E.B : E {
-    }
-
-    // signature: /E.C|null[0]
-    public final enum entry E.C : E {
-
-      // signature: /E.C.<EEC>.enumFun|7331595556228318192[0]
-      public open fun enumFun(): kotlin/Int
     }
   }
 }

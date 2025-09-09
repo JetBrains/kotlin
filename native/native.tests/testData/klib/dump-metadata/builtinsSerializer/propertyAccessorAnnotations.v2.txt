@@ -22,7 +22,7 @@ library {
 
       // signature: test/v1|{}v1[0]
       @test/Anno(value = "property")
-      public final val v1: kotlin/String /* = "" */
+      public final val v1: kotlin/String /* = ... */
         // signature: test/v1.<get-v1>|<get-v1>(){}[0]
         public final get
 

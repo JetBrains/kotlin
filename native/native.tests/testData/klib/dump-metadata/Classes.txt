@@ -20,7 +20,7 @@ library {
 
       public final fun aFun(): kotlin/Unit
 
-      public final val aVal: kotlin/Int /* = 0 */
+      public final val aVal: kotlin/Int /* = ... */
         public final get
 
       public final var aVar: kotlin/String
@@ -38,7 +38,7 @@ library {
 
       public final fun bFun(): kotlin/Unit
 
-      public final val bVal: kotlin/Int /* = 0 */
+      public final val bVal: kotlin/Int /* = ... */
         public final get
 
       public final var bVar: kotlin/String
@@ -56,7 +56,7 @@ library {
 
       public final fun cFun(): kotlin/Unit
 
-      public final val cVal: kotlin/Int /* = 0 */
+      public final val cVal: kotlin/Int /* = ... */
         public final get
 
       public final var cVar: kotlin/String
@@ -70,7 +70,7 @@ library {
 
       public final fun dFun(): kotlin/Unit
 
-      public final val dVal: kotlin/Int /* = 0 */
+      public final val dVal: kotlin/Int /* = ... */
         public final get
 
       public final var dVar: kotlin/String
@@ -84,7 +84,7 @@ library {
 
       public final fun eFun(): kotlin/Unit
 
-      public final val eVal: kotlin/Int /* = 0 */
+      public final val eVal: kotlin/Int /* = ... */
         public final get
 
       public final var eVar: kotlin/String
@@ -124,7 +124,7 @@ library {
 
       public open fun iFun(): kotlin/Unit
 
-      public open val iVal: kotlin/Int /* = 0 */
+      public open val iVal: kotlin/Int /* = ... */
         public open get
 
       public open var iVar: kotlin/String
@@ -150,7 +150,7 @@ library {
 
       public open fun iFun(): kotlin/Unit
 
-      public open val iVal: kotlin/Int /* = 0 */
+      public open val iVal: kotlin/Int /* = ... */
         public open get
 
       public open var iVar: kotlin/String

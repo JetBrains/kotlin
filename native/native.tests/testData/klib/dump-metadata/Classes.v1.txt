@@ -24,7 +24,7 @@ library {
       public final fun aFun(): kotlin/Unit
 
       // signature: /A.aVal|-4026160909590410018[0]
-      public final val aVal: kotlin/Int /* = 0 */
+      public final val aVal: kotlin/Int /* = ... */
         // signature: /A.aVal.<get-aVal>|1133261762939420636[0]
         public final get
 
@@ -50,7 +50,7 @@ library {
       public final fun bFun(): kotlin/Unit
 
       // signature: /A.B.bVal|47661200932476778[0]
-      public final val bVal: kotlin/Int /* = 0 */
+      public final val bVal: kotlin/Int /* = ... */
         // signature: /A.B.bVal.<get-bVal>|4280762573327915998[0]
         public final get
 
@@ -76,7 +76,7 @@ library {
       public final fun cFun(): kotlin/Unit
 
       // signature: /A.B.C.cVal|5776604707001436517[0]
-      public final val cVal: kotlin/Int /* = 0 */
+      public final val cVal: kotlin/Int /* = ... */
         // signature: /A.B.C.cVal.<get-cVal>|3075094094508885184[0]
         public final get
 
@@ -98,7 +98,7 @@ library {
       public final fun dFun(): kotlin/Unit
 
       // signature: /A.B.D.dVal|-4657921206489813306[0]
-      public final val dVal: kotlin/Int /* = 0 */
+      public final val dVal: kotlin/Int /* = ... */
         // signature: /A.B.D.dVal.<get-dVal>|8462599572645632105[0]
         public final get
 
@@ -120,7 +120,7 @@ library {
       public final fun eFun(): kotlin/Unit
 
       // signature: /A.E.eVal|3045358633348092364[0]
-      public final val eVal: kotlin/Int /* = 0 */
+      public final val eVal: kotlin/Int /* = ... */
         // signature: /A.E.eVal.<get-eVal>|5614868761266169748[0]
         public final get
 
@@ -182,7 +182,7 @@ library {
       public open fun iFun(): kotlin/Unit
 
       // signature: /FinalImpl.iVal|-7454916029695635493[0]
-      public open val iVal: kotlin/Int /* = 0 */
+      public open val iVal: kotlin/Int /* = ... */
         // signature: /FinalImpl.iVal.<get-iVal>|3700448028516726757[0]
         public open get
 
@@ -223,7 +223,7 @@ library {
       public open fun iFun(): kotlin/Unit
 
       // signature: /OpenImpl.iVal|-7454916029695635493[0]
-      public open val iVal: kotlin/Int /* = 0 */
+      public open val iVal: kotlin/Int /* = ... */
         // signature: /OpenImpl.iVal.<get-iVal>|3700448028516726757[0]
         public open get
 

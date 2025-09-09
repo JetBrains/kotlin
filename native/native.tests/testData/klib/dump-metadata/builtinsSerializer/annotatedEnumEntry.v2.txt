@@ -7,16 +7,12 @@ library {
     // class name: test/Anno
     // class name: test/Bnno
     // class name: test/Eee
-    // class name: test/Eee.Entry1
-    // class name: test/Eee.Entry2
-    // class name: test/Eee.Entry3
-    // class name: test/Eee.Entry4
 
     // signature: test/Anno|null[0]
     public final annotation class test/Anno : kotlin/Annotation {
 
       // signature: test/Anno.<init>|<init>(kotlin.String;kotlin.Int){}[0]
-      public constructor(value: kotlin/String /* = ... */, x: kotlin/Int /* = ... */)
+      public constructor(value: kotlin/String = "0", x: kotlin/Int = 0)
 
       // signature: test/Anno.value|{}value[0]
       public final val value: kotlin/String
@@ -59,26 +55,6 @@ library {
       Entry4,
 
       // has Enum.entries
-    }
-
-    // signature: test/Eee.Entry1|null[0]
-    @test/Anno
-    public final enum entry test/Eee.Entry1 : test/Eee {
-    }
-
-    // signature: test/Eee.Entry2|null[0]
-    public final enum entry test/Eee.Entry2 : test/Eee {
-    }
-
-    // signature: test/Eee.Entry3|null[0]
-    @test/Anno(value = "3")
-    @test/Bnno
-    public final enum entry test/Eee.Entry3 : test/Eee {
-    }
-
-    // signature: test/Eee.Entry4|null[0]
-    @test/Anno(value = "4", x = 4)
-    public final enum entry test/Eee.Entry4 : test/Eee {
     }
   }
 }

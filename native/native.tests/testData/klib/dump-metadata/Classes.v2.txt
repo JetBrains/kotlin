@@ -24,7 +24,7 @@ library {
       public final fun aFun(): kotlin/Unit
 
       // signature: /A.aVal|{}aVal[0]
-      public final val aVal: kotlin/Int /* = 0 */
+      public final val aVal: kotlin/Int /* = ... */
         // signature: /A.aVal.<get-aVal>|<get-aVal>(){}[0]
         public final get
 
@@ -50,7 +50,7 @@ library {
       public final fun bFun(): kotlin/Unit
 
       // signature: /A.B.bVal|{}bVal[0]
-      public final val bVal: kotlin/Int /* = 0 */
+      public final val bVal: kotlin/Int /* = ... */
         // signature: /A.B.bVal.<get-bVal>|<get-bVal>(){}[0]
         public final get
 
@@ -76,7 +76,7 @@ library {
       public final fun cFun(): kotlin/Unit
 
       // signature: /A.B.C.cVal|{}cVal[0]
-      public final val cVal: kotlin/Int /* = 0 */
+      public final val cVal: kotlin/Int /* = ... */
         // signature: /A.B.C.cVal.<get-cVal>|<get-cVal>(){}[0]
         public final get
 
@@ -98,7 +98,7 @@ library {
       public final fun dFun(): kotlin/Unit
 
       // signature: /A.B.D.dVal|{}dVal[0]
-      public final val dVal: kotlin/Int /* = 0 */
+      public final val dVal: kotlin/Int /* = ... */
         // signature: /A.B.D.dVal.<get-dVal>|<get-dVal>(){}[0]
         public final get
 
@@ -120,7 +120,7 @@ library {
       public final fun eFun(): kotlin/Unit
 
       // signature: /A.E.eVal|{}eVal[0]
-      public final val eVal: kotlin/Int /* = 0 */
+      public final val eVal: kotlin/Int /* = ... */
         // signature: /A.E.eVal.<get-eVal>|<get-eVal>(){}[0]
         public final get
 
@@ -182,7 +182,7 @@ library {
       public open fun iFun(): kotlin/Unit
 
       // signature: /FinalImpl.iVal|{}iVal[0]
-      public open val iVal: kotlin/Int /* = 0 */
+      public open val iVal: kotlin/Int /* = ... */
         // signature: /FinalImpl.iVal.<get-iVal>|<get-iVal>(){}[0]
         public open get
 
@@ -223,7 +223,7 @@ library {
       public open fun iFun(): kotlin/Unit
 
       // signature: /OpenImpl.iVal|{}iVal[0]
-      public open val iVal: kotlin/Int /* = 0 */
+      public open val iVal: kotlin/Int /* = ... */
         // signature: /OpenImpl.iVal.<get-iVal>|<get-iVal>(){}[0]
         public open get
 

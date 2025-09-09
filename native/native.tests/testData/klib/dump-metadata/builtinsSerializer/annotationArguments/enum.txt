@@ -9,9 +9,6 @@ library {
     // class name: test/EnumArray
     // class name: test/JustEnum
     // class name: test/Weapon
-    // class name: test/Weapon.PAPER
-    // class name: test/Weapon.ROCK
-    // class name: test/Weapon.SCISSORS
 
     @test/JustEnum(weapon = test/Weapon.SCISSORS)
     @test/EnumArray(enumArray = [])
@@ -53,15 +50,6 @@ library {
       SCISSORS,
 
       // has Enum.entries
-    }
-
-    public final enum entry test/Weapon.PAPER : test/Weapon {
-    }
-
-    public final enum entry test/Weapon.ROCK : test/Weapon {
-    }
-
-    public final enum entry test/Weapon.SCISSORS : test/Weapon {
     }
   }
 }
