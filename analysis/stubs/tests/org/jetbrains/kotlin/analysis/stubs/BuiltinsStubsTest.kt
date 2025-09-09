@@ -50,7 +50,7 @@ class BuiltinsStubsTest : AbstractAnalysisApiExecutionTest("analysis/stubs/testD
             val fileStub = stubsTestEngine.compute(builtinFile)
 
             val fileStubText = stubsTestEngine.render(fileStub)
-            assertEqualsToFile(fileExtension = ".compiled.stubs.txt", actual = fileStubText)
+            assertEqualsToFile(fileExtension = ".stubs.txt", actual = fileStubText)
 
             stubsTestEngine.validate(testServices, builtinFile, fileStub)
 
