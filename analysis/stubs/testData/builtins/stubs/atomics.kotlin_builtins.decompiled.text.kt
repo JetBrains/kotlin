@@ -133,3 +133,5 @@ package kotlin.concurrent.atomics
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
+@kotlin.RequiresOptIn @kotlin.annotation.Retention @kotlin.annotation.Target @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin public final annotation class ExperimentalAtomicApi public constructor() : kotlin.Annotation {
+}

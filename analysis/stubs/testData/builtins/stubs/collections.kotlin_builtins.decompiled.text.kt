@@ -3,6 +3,24 @@
 
 package kotlin.collections
 
+public abstract class BooleanIterator public constructor() : kotlin.collections.Iterator<kotlin.Boolean> {
+    public final operator fun next(): kotlin.Boolean { /* compiled code */ }
+
+    public abstract fun nextBoolean(): kotlin.Boolean
+}
+
+public abstract class ByteIterator public constructor() : kotlin.collections.Iterator<kotlin.Byte> {
+    public final operator fun next(): kotlin.Byte { /* compiled code */ }
+
+    public abstract fun nextByte(): kotlin.Byte
+}
+
+public abstract class CharIterator public constructor() : kotlin.collections.Iterator<kotlin.Char> {
+    public final operator fun next(): kotlin.Char { /* compiled code */ }
+
+    public abstract fun nextChar(): kotlin.Char
+}
+
 public interface Collection<out E> : kotlin.collections.Iterable<E> {
     public abstract val size: kotlin.Int
 
@@ -13,6 +31,24 @@ public interface Collection<out E> : kotlin.collections.Iterable<E> {
     public abstract operator fun iterator(): kotlin.collections.Iterator<E>
 
     public abstract fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+}
+
+public abstract class DoubleIterator public constructor() : kotlin.collections.Iterator<kotlin.Double> {
+    public final operator fun next(): kotlin.Double { /* compiled code */ }
+
+    public abstract fun nextDouble(): kotlin.Double
+}
+
+public abstract class FloatIterator public constructor() : kotlin.collections.Iterator<kotlin.Float> {
+    public final operator fun next(): kotlin.Float { /* compiled code */ }
+
+    public abstract fun nextFloat(): kotlin.Float
+}
+
+public abstract class IntIterator public constructor() : kotlin.collections.Iterator<kotlin.Int> {
+    public final operator fun next(): kotlin.Int { /* compiled code */ }
+
+    public abstract fun nextInt(): kotlin.Int
 }
 
 public interface Iterable<out T> {
@@ -61,6 +97,12 @@ public interface ListIterator<out T> : kotlin.collections.Iterator<T> {
     public abstract fun nextIndex(): kotlin.Int
 
     public abstract fun previousIndex(): kotlin.Int
+}
+
+public abstract class LongIterator public constructor() : kotlin.collections.Iterator<kotlin.Long> {
+    public final operator fun next(): kotlin.Long { /* compiled code */ }
+
+    public abstract fun nextLong(): kotlin.Long
 }
 
 public interface Map<K, out V> {
@@ -201,4 +243,10 @@ public interface Set<out E> : kotlin.collections.Collection<E> {
     public abstract operator fun iterator(): kotlin.collections.Iterator<E>
 
     public abstract fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+}
+
+public abstract class ShortIterator public constructor() : kotlin.collections.Iterator<kotlin.Short> {
+    public final operator fun next(): kotlin.Short { /* compiled code */ }
+
+    public abstract fun nextShort(): kotlin.Short
 }
