@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -36,6 +38,15 @@ internal class GenericCallsReturnTypeEraser(val context: Context) : BodyLowering
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+                if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+                    // Do not add cast if the return value isn't used.
+                    expression.argument.transformChildrenVoid(this)
+                else
+                    expression.transformChildrenVoid(this)
+                return expression
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
