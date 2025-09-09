@@ -19,59 +19,60 @@ digraph implicitReceiverAsWhenSubject_kt {
             subgraph cluster_3 {
                 color=blue
                 4 [label="Enter when"];
-                5 [label="Access variable this@R|/test_1|"];
-                6 [label="Variable declaration: lval <when-subject>: R|kotlin/Any|"];
+                5 [label="Enter variable declaration: lval <when-subject>: R|kotlin/Any|"];
+                6 [label="Access variable this@R|/test_1|"];
+                7 [label="Exit variable declaration: lval <when-subject>: R|kotlin/Any|"];
                 subgraph cluster_4 {
                     color=blue
-                    7 [label="Enter when branch condition "];
-                    8 [label="Access variable R|<local>/<when-subject>|"];
-                    9 [label="Exit $subj"];
-                    10 [label="Type operator: ($subj$ is R|kotlin/collections/List<*>|)"];
-                    11 [label="Exit when branch condition"];
+                    8 [label="Enter when branch condition "];
+                    9 [label="Access variable R|<local>/<when-subject>|"];
+                    10 [label="Exit $subj"];
+                    11 [label="Type operator: ($subj$ is R|kotlin/collections/List<*>|)"];
+                    12 [label="Exit when branch condition"];
                 }
                 subgraph cluster_5 {
                     color=blue
-                    12 [label="Enter when branch condition "];
-                    13 [label="Access variable R|<local>/<when-subject>|"];
-                    14 [label="Smart cast: $subj$"];
-                    15 [label="Exit $subj"];
-                    16 [label="Type operator: ($subj$ is R|kotlin/String|)"];
-                    17 [label="Exit when branch condition"];
+                    13 [label="Enter when branch condition "];
+                    14 [label="Access variable R|<local>/<when-subject>|"];
+                    15 [label="Smart cast: $subj$"];
+                    16 [label="Exit $subj"];
+                    17 [label="Type operator: ($subj$ is R|kotlin/String|)"];
+                    18 [label="Exit when branch condition"];
                 }
                 subgraph cluster_6 {
                     color=blue
-                    18 [label="Enter when branch condition else"];
-                    19 [label="Exit when branch condition"];
+                    19 [label="Enter when branch condition else"];
+                    20 [label="Exit when branch condition"];
                 }
-                20 [label="Enter when branch result"];
+                21 [label="Enter when branch result"];
                 subgraph cluster_7 {
                     color=blue
-                    21 [label="Enter block"];
-                    22 [label="Const: Int(0)"];
-                    23 [label="Exit block"];
+                    22 [label="Enter block"];
+                    23 [label="Const: Int(0)"];
+                    24 [label="Exit block"];
                 }
-                24 [label="Exit when branch result"];
-                25 [label="Enter when branch result"];
+                25 [label="Exit when branch result"];
+                26 [label="Enter when branch result"];
                 subgraph cluster_8 {
                     color=blue
-                    26 [label="Enter block"];
-                    27 [label="Access variable R|kotlin/String.length|"];
-                    28 [label="Exit block"];
+                    27 [label="Enter block"];
+                    28 [label="Access variable R|kotlin/String.length|"];
+                    29 [label="Exit block"];
                 }
-                29 [label="Exit when branch result"];
-                30 [label="Enter when branch result"];
+                30 [label="Exit when branch result"];
+                31 [label="Enter when branch result"];
                 subgraph cluster_9 {
                     color=blue
-                    31 [label="Enter block"];
-                    32 [label="Access variable this@R|/test_1|"];
-                    33 [label="Smart cast: this@R|/test_1|"];
-                    34 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
-                    35 [label="Exit block"];
+                    32 [label="Enter block"];
+                    33 [label="Access variable this@R|/test_1|"];
+                    34 [label="Smart cast: this@R|/test_1|"];
+                    35 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
+                    36 [label="Exit block"];
                 }
-                36 [label="Exit when branch result"];
-                37 [label="Exit when"];
+                37 [label="Exit when branch result"];
+                38 [label="Exit when"];
             }
-            38 [label="Jump: ^test_1 when (lval <when-subject>: R|kotlin/Any| = this@R|/test_1|) {
+            39 [label="Jump: ^test_1 when (lval <when-subject>: R|kotlin/Any| = this@R|/test_1|) {
     ($subj$ is R|kotlin/collections/List<*>|) ->  {
         this@R|/test_1|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
     }
@@ -83,10 +84,10 @@ digraph implicitReceiverAsWhenSubject_kt {
     }
 }
 "];
-            39 [label="Stub" style="filled" fillcolor=gray];
-            40 [label="Exit block" style="filled" fillcolor=gray];
+            40 [label="Stub" style="filled" fillcolor=gray];
+            41 [label="Exit block" style="filled" fillcolor=gray];
         }
-        41 [label="Exit function test_1" style="filled" fillcolor=red];
+        42 [label="Exit function test_1" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -97,26 +98,26 @@ digraph implicitReceiverAsWhenSubject_kt {
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {12 30};
-    12 -> {13};
+    11 -> {12};
+    12 -> {13 31};
     13 -> {14};
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {18 25};
-    18 -> {19};
+    17 -> {18};
+    18 -> {19 26};
     19 -> {20};
     20 -> {21};
     21 -> {22};
     22 -> {23};
     23 -> {24};
-    24 -> {37};
-    25 -> {26};
+    24 -> {25};
+    25 -> {38};
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {37};
-    30 -> {31};
+    29 -> {30};
+    30 -> {38};
     31 -> {32};
     32 -> {33};
     33 -> {34};
@@ -124,79 +125,81 @@ digraph implicitReceiverAsWhenSubject_kt {
     35 -> {36};
     36 -> {37};
     37 -> {38};
-    38 -> {41};
-    38 -> {39} [style=dotted];
+    38 -> {39};
+    39 -> {42};
     39 -> {40} [style=dotted];
     40 -> {41} [style=dotted];
+    41 -> {42} [style=dotted];
 
     subgraph cluster_10 {
         color=red
-        42 [label="Enter function test_2" style="filled" fillcolor=red];
+        43 [label="Enter function test_2" style="filled" fillcolor=red];
         subgraph cluster_11 {
             color=blue
-            43 [label="Enter block"];
+            44 [label="Enter block"];
             subgraph cluster_12 {
                 color=blue
-                44 [label="Enter when"];
-                45 [label="Access variable this@R|/test_2|"];
-                46 [label="Variable declaration: lval x: R|kotlin/Any|"];
+                45 [label="Enter when"];
+                46 [label="Enter variable declaration: lval x: R|kotlin/Any|"];
+                47 [label="Access variable this@R|/test_2|"];
+                48 [label="Exit variable declaration: lval x: R|kotlin/Any|"];
                 subgraph cluster_13 {
                     color=blue
-                    47 [label="Enter when branch condition "];
-                    48 [label="Access variable R|<local>/x|"];
-                    49 [label="Exit $subj"];
-                    50 [label="Type operator: ($subj$ is R|kotlin/collections/List<*>|)"];
-                    51 [label="Exit when branch condition"];
+                    49 [label="Enter when branch condition "];
+                    50 [label="Access variable R|<local>/x|"];
+                    51 [label="Exit $subj"];
+                    52 [label="Type operator: ($subj$ is R|kotlin/collections/List<*>|)"];
+                    53 [label="Exit when branch condition"];
                 }
                 subgraph cluster_14 {
                     color=blue
-                    52 [label="Enter when branch condition "];
-                    53 [label="Access variable R|<local>/x|"];
-                    54 [label="Smart cast: $subj$"];
-                    55 [label="Exit $subj"];
-                    56 [label="Type operator: ($subj$ is R|kotlin/String|)"];
-                    57 [label="Exit when branch condition"];
+                    54 [label="Enter when branch condition "];
+                    55 [label="Access variable R|<local>/x|"];
+                    56 [label="Smart cast: $subj$"];
+                    57 [label="Exit $subj"];
+                    58 [label="Type operator: ($subj$ is R|kotlin/String|)"];
+                    59 [label="Exit when branch condition"];
                 }
                 subgraph cluster_15 {
                     color=blue
-                    58 [label="Enter when branch condition else"];
-                    59 [label="Exit when branch condition"];
+                    60 [label="Enter when branch condition else"];
+                    61 [label="Exit when branch condition"];
                 }
-                60 [label="Enter when branch result"];
+                62 [label="Enter when branch result"];
                 subgraph cluster_16 {
                     color=blue
-                    61 [label="Enter block"];
-                    62 [label="Const: Int(0)"];
-                    63 [label="Exit block"];
+                    63 [label="Enter block"];
+                    64 [label="Const: Int(0)"];
+                    65 [label="Exit block"];
                 }
-                64 [label="Exit when branch result"];
-                65 [label="Enter when branch result"];
+                66 [label="Exit when branch result"];
+                67 [label="Enter when branch result"];
                 subgraph cluster_17 {
                     color=blue
-                    66 [label="Enter block"];
-                    67 [label="Access variable R|<local>/x|"];
-                    68 [label="Smart cast: R|<local>/x|"];
-                    69 [label="Access variable R|kotlin/String.length|"];
-                    70 [label="Access variable R|kotlin/String.length|"];
-                    71 [label="Exit block"];
+                    68 [label="Enter block"];
+                    69 [label="Access variable R|<local>/x|"];
+                    70 [label="Smart cast: R|<local>/x|"];
+                    71 [label="Access variable R|kotlin/String.length|"];
+                    72 [label="Access variable R|kotlin/String.length|"];
+                    73 [label="Exit block"];
                 }
-                72 [label="Exit when branch result"];
-                73 [label="Enter when branch result"];
+                74 [label="Exit when branch result"];
+                75 [label="Enter when branch result"];
                 subgraph cluster_18 {
                     color=blue
-                    74 [label="Enter block"];
-                    75 [label="Access variable R|<local>/x|"];
-                    76 [label="Smart cast: R|<local>/x|"];
-                    77 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
-                    78 [label="Access variable this@R|/test_2|"];
-                    79 [label="Smart cast: this@R|/test_2|"];
-                    80 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
-                    81 [label="Exit block"];
+                    76 [label="Enter block"];
+                    77 [label="Access variable R|<local>/x|"];
+                    78 [label="Smart cast: R|<local>/x|"];
+                    79 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
+                    80 [label="Access variable this@R|/test_2|"];
+                    81 [label="Smart cast: this@R|/test_2|"];
+                    82 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
+                    83 [label="Exit block"];
                 }
-                82 [label="Exit when branch result"];
-                83 [label="Exit when"];
+                84 [label="Exit when branch result"];
+                85 [label="Exit when"];
             }
-            84 [label="Jump: ^test_2 when (lval x: R|kotlin/Any| = this@R|/test_2|) {
+            86 [label="Jump: ^test_2 when (lval x: R|kotlin/Any| = this@R|/test_2|) {
     ($subj$ is R|kotlin/collections/List<*>|) ->  {
         R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
         this@R|/test_2|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|
@@ -210,12 +213,11 @@ digraph implicitReceiverAsWhenSubject_kt {
     }
 }
 "];
-            85 [label="Stub" style="filled" fillcolor=gray];
-            86 [label="Exit block" style="filled" fillcolor=gray];
+            87 [label="Stub" style="filled" fillcolor=gray];
+            88 [label="Exit block" style="filled" fillcolor=gray];
         }
-        87 [label="Exit function test_2" style="filled" fillcolor=red];
+        89 [label="Exit function test_2" style="filled" fillcolor=red];
     }
-    42 -> {43};
     43 -> {44};
     44 -> {45};
     45 -> {46};
@@ -224,30 +226,30 @@ digraph implicitReceiverAsWhenSubject_kt {
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    51 -> {52 73};
+    51 -> {52};
     52 -> {53};
-    53 -> {54};
+    53 -> {54 75};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58 65};
+    57 -> {58};
     58 -> {59};
-    59 -> {60};
+    59 -> {60 67};
     60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {83};
+    64 -> {65};
     65 -> {66};
-    66 -> {67};
+    66 -> {85};
     67 -> {68};
     68 -> {69};
     69 -> {70};
     70 -> {71};
     71 -> {72};
-    72 -> {83};
+    72 -> {73};
     73 -> {74};
-    74 -> {75};
+    74 -> {85};
     75 -> {76};
     76 -> {77};
     77 -> {78};
@@ -257,9 +259,11 @@ digraph implicitReceiverAsWhenSubject_kt {
     81 -> {82};
     82 -> {83};
     83 -> {84};
-    84 -> {87};
-    84 -> {85} [style=dotted];
-    85 -> {86} [style=dotted];
+    84 -> {85};
+    85 -> {86};
+    86 -> {89};
     86 -> {87} [style=dotted];
+    87 -> {88} [style=dotted];
+    88 -> {89} [style=dotted];
 
 }

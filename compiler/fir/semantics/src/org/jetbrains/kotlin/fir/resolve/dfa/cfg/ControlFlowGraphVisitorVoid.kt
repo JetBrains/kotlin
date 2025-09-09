@@ -259,7 +259,11 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+    open fun visitVariableDeclarationEnterNode(node: VariableDeclarationEnterNode) {
+        visitNode(node)
+    }
+
+    open fun visitVariableDeclarationExitNode(node: VariableDeclarationExitNode) {
         visitNode(node)
     }
 
@@ -532,8 +536,12 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitStubNode(node)
     }
 
-    final override fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: Nothing?) {
-        visitVariableDeclarationNode(node)
+    final override fun visitVariableDeclarationEnterNode(node: VariableDeclarationEnterNode, data: Nothing?) {
+        visitVariableDeclarationEnterNode(node)
+    }
+
+    final override fun visitVariableDeclarationExitNode(node: VariableDeclarationExitNode, data: Nothing?) {
+        visitVariableDeclarationExitNode(node)
     }
 
     final override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Nothing?) {

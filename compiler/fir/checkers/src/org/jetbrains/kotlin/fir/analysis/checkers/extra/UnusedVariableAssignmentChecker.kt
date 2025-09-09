@@ -134,7 +134,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
     private class AddAllWrites(private val data: VariableAssignmentData) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+        override fun visitVariableDeclarationExitNode(node: VariableDeclarationExitNode) {
             // `name.isSpecial` checks in this analysis are required to avoid cases like KT-72164:
             // In cases of incorrect syntactic constructions, the analysis is still performed.
             // However, some invalid constructions can be considered as variable declarations.
@@ -186,14 +186,14 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
 
             return when (from) {
                 // Do not propagate captured writes beyond the property declaration.
-                is VariableDeclarationNode -> super.visitEdge(from, to, metadata, data.remove(from.fir.symbol))
+                is VariableDeclarationExitNode -> super.visitEdge(from, to, metadata, data.remove(from.fir.symbol))
 
                 else -> super.visitEdge(from, to, metadata, data)
             }
         }
 
-        override fun visitVariableDeclarationNode(
-            node: VariableDeclarationNode,
+        override fun visitVariableDeclarationExitNode(
+            node: VariableDeclarationExitNode,
             data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
         ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
             return when {
@@ -265,8 +265,8 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
             return result
         }
 
-        override fun visitVariableDeclarationNode(
-            node: VariableDeclarationNode,
+        override fun visitVariableDeclarationExitNode(
+            node: VariableDeclarationExitNode,
             data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
         ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> =
             if (node.fir.name.isSpecial) data

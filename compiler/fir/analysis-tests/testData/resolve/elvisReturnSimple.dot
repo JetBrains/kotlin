@@ -16,56 +16,57 @@ digraph elvisReturnSimple_kt {
         subgraph cluster_2 {
             color=blue
             3 [label="Enter block"];
+            4 [label="Enter variable declaration: lval s1: R|kotlin/Nothing|"];
             subgraph cluster_3 {
                 color=blue
-                4 [label="Enter when"];
+                5 [label="Enter when"];
                 subgraph cluster_4 {
                     color=blue
-                    5 [label="Enter when branch condition "];
-                    6 [label="Access variable R|<local>/s|"];
-                    7 [label="Const: Null(null)"];
-                    8 [label="Equality operator !="];
-                    9 [label="Exit when branch condition"];
+                    6 [label="Enter when branch condition "];
+                    7 [label="Access variable R|<local>/s|"];
+                    8 [label="Const: Null(null)"];
+                    9 [label="Equality operator !="];
+                    10 [label="Exit when branch condition"];
                 }
                 subgraph cluster_5 {
                     color=blue
-                    10 [label="Enter when branch condition else"];
-                    11 [label="Exit when branch condition"];
+                    11 [label="Enter when branch condition else"];
+                    12 [label="Exit when branch condition"];
                 }
-                12 [label="Enter when branch result"];
+                13 [label="Enter when branch result"];
                 subgraph cluster_6 {
                     color=blue
-                    13 [label="Enter block"];
-                    14 [label="Const: Null(null)"];
-                    15 [label="Exit block"];
+                    14 [label="Enter block"];
+                    15 [label="Const: Null(null)"];
+                    16 [label="Exit block"];
                 }
-                16 [label="Exit when branch result"];
-                17 [label="Enter when branch result"];
+                17 [label="Exit when branch result"];
+                18 [label="Enter when branch result"];
                 subgraph cluster_7 {
                     color=blue
-                    18 [label="Enter block"];
-                    19 [label="Access variable R|<local>/s|"];
-                    20 [label="Smart cast: R|<local>/s|"];
-                    21 [label="Access variable R|kotlin/String.length|"];
-                    22 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
-                    23 [label="Stub" style="filled" fillcolor=gray];
-                    24 [label="Exit block" style="filled" fillcolor=gray];
+                    19 [label="Enter block"];
+                    20 [label="Access variable R|<local>/s|"];
+                    21 [label="Smart cast: R|<local>/s|"];
+                    22 [label="Access variable R|kotlin/String.length|"];
+                    23 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
+                    24 [label="Stub" style="filled" fillcolor=gray];
+                    25 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                25 [label="Exit when branch result" style="filled" fillcolor=gray];
-                26 [label="Exit when"];
+                26 [label="Exit when branch result" style="filled" fillcolor=gray];
+                27 [label="Exit when"];
             }
-            27 [label="Exit lhs of ?:"];
-            28 [label="Enter rhs of ?:"];
-            29 [label="Const: Int(0)"];
-            30 [label="Jump: ^stringReturnInLeftLen Int(0)"];
-            31 [label="Stub" style="filled" fillcolor=gray];
-            32 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
-            33 [label="Exit ?:" style="filled" fillcolor=gray];
-            34 [label="Stub" style="filled" fillcolor=gray];
-            35 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
-            36 [label="Exit block" style="filled" fillcolor=gray];
+            28 [label="Exit lhs of ?:"];
+            29 [label="Enter rhs of ?:"];
+            30 [label="Const: Int(0)"];
+            31 [label="Jump: ^stringReturnInLeftLen Int(0)"];
+            32 [label="Stub" style="filled" fillcolor=gray];
+            33 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
+            34 [label="Exit ?:" style="filled" fillcolor=gray];
+            35 [label="Stub" style="filled" fillcolor=gray];
+            36 [label="Exit variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+            37 [label="Exit block" style="filled" fillcolor=gray];
         }
-        37 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
+        38 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -74,36 +75,37 @@ digraph elvisReturnSimple_kt {
     6 -> {7};
     7 -> {8};
     8 -> {9};
-    9 -> {10 17};
-    10 -> {11};
+    9 -> {10};
+    10 -> {11 18};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {26};
-    17 -> {18};
+    16 -> {17};
+    17 -> {27};
     18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {37};
-    22 -> {23} [style=dotted];
+    22 -> {23};
+    23 -> {38};
     23 -> {24} [style=dotted];
     24 -> {25} [style=dotted];
     25 -> {26} [style=dotted];
-    26 -> {27};
+    26 -> {27} [style=dotted];
     27 -> {28};
-    27 -> {32} [style=dotted];
     28 -> {29};
+    28 -> {33} [style=dotted];
     29 -> {30};
-    30 -> {37};
-    30 -> {31} [style=dotted];
-    31 -> {33} [style=dotted];
-    32 -> {33} [style=dotted];
+    30 -> {31};
+    31 -> {38};
+    31 -> {32} [style=dotted];
+    32 -> {34} [style=dotted];
     33 -> {34} [style=dotted];
     34 -> {35} [style=dotted];
     35 -> {36} [style=dotted];
     36 -> {37} [style=dotted];
+    37 -> {38} [style=dotted];
 
 }

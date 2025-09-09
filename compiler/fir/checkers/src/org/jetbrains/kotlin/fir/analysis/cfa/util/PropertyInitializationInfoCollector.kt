@@ -80,8 +80,8 @@ class PropertyInitializationInfoCollector(
         return symbol.takeIf { receiver == expectedReceiver && symbol in localProperties }
     }
 
-    override fun visitVariableDeclarationNode(
-        node: VariableDeclarationNode,
+    override fun visitVariableDeclarationExitNode(
+        node: VariableDeclarationExitNode,
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)

@@ -39,48 +39,49 @@ digraph initBlockAndInPlaceLambda_kt {
             subgraph cluster_6 {
                 color=blue
                 11 [label="Enter block"];
-                12 [label="Access variable R|<local>/a|"];
-                13 [label="Access variable R|/A.b|"];
-                14 [label="Enter safe call"];
+                12 [label="Enter variable declaration: lval c: R|C?|"];
+                13 [label="Access variable R|<local>/a|"];
+                14 [label="Access variable R|/A.b|"];
+                15 [label="Enter safe call"];
                 subgraph cluster_7 {
                     color=blue
-                    15 [label="Function call arguments enter"];
-                    16 [label="Anonymous function capture"];
-                    17 [label="Postponed enter to lambda"];
+                    16 [label="Function call arguments enter"];
+                    17 [label="Anonymous function capture"];
+                    18 [label="Postponed enter to lambda"];
                     subgraph cluster_8 {
                         color=blue
-                        18 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                        19 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                         subgraph cluster_9 {
                             color=blue
-                            19 [label="Enter block"];
+                            20 [label="Enter block"];
                             subgraph cluster_10 {
                                 color=blue
-                                20 [label="Function call arguments enter"];
-                                21 [label="Access variable R|<local>/a|"];
-                                22 [label="Access variable R|<local>/it|"];
-                                23 [label="Function call arguments exit"];
+                                21 [label="Function call arguments enter"];
+                                22 [label="Access variable R|<local>/a|"];
+                                23 [label="Access variable R|<local>/it|"];
+                                24 [label="Function call arguments exit"];
                             }
-                            24 [label="Function call enter: R|/C.C|(...)"];
-                            25 [label="Function call exit: R|/C.C|(...)" style="filled" fillcolor=yellow];
-                            26 [label="Exit block"];
+                            25 [label="Function call enter: R|/C.C|(...)"];
+                            26 [label="Function call exit: R|/C.C|(...)" style="filled" fillcolor=yellow];
+                            27 [label="Exit block"];
                         }
-                        27 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                        28 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                     }
-                    28 [label="Function call arguments exit"];
+                    29 [label="Function call arguments exit"];
                 }
-                29 [label="Function call enter: $subj$.R|kotlin/let|<R|B|, R|C|>(...)"];
-                30 [label="Postponed exit from lambda"];
-                31 [label="Function call exit: $subj$.R|kotlin/let|<R|B|, R|C|>(...)" style="filled" fillcolor=yellow];
-                32 [label="Exit safe call"];
-                33 [label="Variable declaration: lval c: R|C?|"];
-                34 [label="Exit block"];
+                30 [label="Function call enter: $subj$.R|kotlin/let|<R|B|, R|C|>(...)"];
+                31 [label="Postponed exit from lambda"];
+                32 [label="Function call exit: $subj$.R|kotlin/let|<R|B|, R|C|>(...)" style="filled" fillcolor=yellow];
+                33 [label="Exit safe call"];
+                34 [label="Exit variable declaration: lval c: R|C?|"];
+                35 [label="Exit block"];
             }
-            35 [label="Exit init block" style="filled" fillcolor=red];
+            36 [label="Exit init block" style="filled" fillcolor=red];
         }
-        36 [label="Exit class C" style="filled" fillcolor=red];
+        37 [label="Exit class C" style="filled" fillcolor=red];
     }
     6 -> {7} [color=green];
-    6 -> {36} [style=dotted];
+    6 -> {37} [style=dotted];
     6 -> {7 10} [style=dashed];
     7 -> {8};
     8 -> {9};
@@ -88,15 +89,15 @@ digraph initBlockAndInPlaceLambda_kt {
     10 -> {11};
     11 -> {12};
     12 -> {13};
-    13 -> {14 32};
-    14 -> {15};
+    13 -> {14};
+    14 -> {15 33};
     15 -> {16};
     16 -> {17};
-    16 -> {18} [color=green style=dotted label="CapturedByValue"];
-    17 -> {18 28};
-    17 -> {30} [style=dotted];
-    17 -> {18} [style=dashed];
-    18 -> {19};
+    17 -> {18};
+    17 -> {19} [color=green style=dotted label="CapturedByValue"];
+    18 -> {19 29};
+    18 -> {31} [style=dotted];
+    18 -> {19} [style=dashed];
     19 -> {20};
     20 -> {21};
     21 -> {22};
@@ -105,14 +106,15 @@ digraph initBlockAndInPlaceLambda_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {30};
-    28 -> {29};
-    29 -> {31};
-    30 -> {31} [label="Postponed"];
-    31 -> {32};
+    27 -> {28};
+    28 -> {31};
+    29 -> {30};
+    30 -> {32};
+    31 -> {32} [label="Postponed"];
     32 -> {33};
     33 -> {34};
     34 -> {35};
-    35 -> {36} [color=green];
+    35 -> {36};
+    36 -> {37} [color=green];
 
 }
