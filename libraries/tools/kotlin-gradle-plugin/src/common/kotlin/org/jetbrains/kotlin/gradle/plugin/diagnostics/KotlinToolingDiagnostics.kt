@@ -1933,6 +1933,21 @@ internal object KotlinToolingDiagnostics {
             }
         }
     }
+
+    internal object UsingOutOfProcessDisablesBuildToolsApi : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke() = build {
+            title("Using out-of-process Kotlin compilation disables Build Tools API.")
+                .description(
+                    """
+                    By default, the Kotlin Gradle Plugin runs the compiler via the Build Tools API (BTA). 
+                    BTA doesn’t support out‑of‑process compilation, so the selected compilation mode disables BTA for this build. 
+                    This warning will become an error in a future release of KGP.
+                """.trimIndent()
+                )
+                .solution("Select the daemon or in-process compilation modes to allow KGP to run compilation through BTA.")
+                .documentationLink(URI("https://kotl.in/build-tools-api"))
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
