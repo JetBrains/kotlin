@@ -61458,6 +61458,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("explicitFieldControlFlowGraph.kt")
+        public void testExplicitFieldControlFlowGraph() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldControlFlowGraph.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitFieldRefersToThePropertyInTheInitializer.kt")
+        public void testExplicitFieldRefersToThePropertyInTheInitializer() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldRefersToThePropertyInTheInitializer.kt");
+        }
+
+        @Test
         @TestMetadata("explicitFieldWithFunctionType.kt")
         public void testExplicitFieldWithFunctionType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldWithFunctionType.kt");
