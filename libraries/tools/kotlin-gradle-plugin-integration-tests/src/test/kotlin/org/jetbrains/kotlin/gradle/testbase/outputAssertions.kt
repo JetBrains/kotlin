@@ -126,10 +126,9 @@ fun BuildResult.assertOutputContainsExactlyTimes(
     expectedCount: Int = 1,
 ) {
     val occurrenceCount = expected.findAll(output).count()
-    assert(occurrenceCount == expectedCount) {
+    if (occurrenceCount != expectedCount) {
         printBuildOutput()
-
-        "Build output contains different number of '$expected' string occurrences - $occurrenceCount then $expectedCount"
+        assertEquals(expectedCount, occurrenceCount, "Build output contains unexpected number of '$expected' string occurrences.")
     }
 }
 
@@ -233,7 +232,11 @@ fun BuildResult.assertCompilerArgument(
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
-    assert(compilerArguments.contains(expectedArgument)) {
+    assert(
+        compilerArguments.contains(expectedArgument) || (expectedArgument.contains("=") && compilerArguments.contains(
+            expectedArgument.replaceFirst("=", " ")
+        ))
+    ) {
         printBuildOutput()
 
         "$taskPath task compiler arguments don't contain $expectedArgument. Actual content: $compilerArguments"
