@@ -63,7 +63,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
 
         override fun visitNode(node: CFGNode<*>) {}
 
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+        override fun visitVariableDeclarationExitNode(node: VariableDeclarationExitNode) {
             declaredIn[node.fir.symbol] = node.owner.nearestNonInPlaceGraph()
         }
 
