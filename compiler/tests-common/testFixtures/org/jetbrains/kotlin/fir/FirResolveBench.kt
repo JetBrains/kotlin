@@ -359,7 +359,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
         fileCount,
         totalLines,
         errorTypesReports,
-        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!!.toString() }
+        timePerTransformer.mapKeys { (klass, _) -> klass.simpleName!! }
     )
 }
 

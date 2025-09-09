@@ -142,14 +142,14 @@ class ArraysTest {
     }
 
     @Test fun intArrayInit() {
-        val arr = IntArray(2) { it.toInt() }
+        val arr = IntArray(2) { it }
 
         assertEquals(2, arr.size)
-        assertEquals(0.toInt(), arr[0])
-        assertEquals(1.toInt(), arr[1])
+        assertEquals(0, arr[0])
+        assertEquals(1, arr[1])
 
         testExceptOn(TestPlatform.Js) {
-            assertFailsWith<RuntimeException> { IntArray(-1) { it.toInt() } }
+            assertFailsWith<RuntimeException> { IntArray(-1) { it } }
         }
     }
 
@@ -1163,8 +1163,8 @@ class ArraysTest {
         expect('2') { charArrayOf('1', '3', '2').reduceIndexed { index, a, b -> if (a > b && index == 1) a else b } }
         expect(true) { booleanArrayOf(true, true, false).reduceIndexed { index, a, b -> a && b || index == 2 } }
         expect(false) { booleanArrayOf(true, true).reduceIndexed { index, a, b -> a && b && index != 1 } }
-        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toByte() else a.toByte() } }
-        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toShort() else a.toShort() } }
+        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toByte() else a } }
+        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexed { index, a, b -> if (index != 2) (a - b).toShort() else a } }
 
         assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceIndexed { index, a, b -> index + a + b }
@@ -1179,8 +1179,8 @@ class ArraysTest {
         expect('2') { charArrayOf('1', '3', '2').reduceIndexedOrNull { index, a, b -> if (a > b && index == 1) a else b } }
         expect(true) { booleanArrayOf(true, true, false).reduceIndexedOrNull { index, a, b -> a && b || index == 2 } }
         expect(false) { booleanArrayOf(true, true).reduceIndexedOrNull { index, a, b -> a && b && index != 1 } }
-        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexedOrNull { index, a, b -> if (index != 2) (a - b).toByte() else a.toByte() } }
-        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexedOrNull { index, a, b -> if (index != 2) (a - b).toShort() else a.toShort() } }
+        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexedOrNull { index, a, b -> if (index != 2) (a - b).toByte() else a } }
+        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexedOrNull { index, a, b -> if (index != 2) (a - b).toShort() else a } }
 
         expect(null, { intArrayOf().reduceIndexedOrNull { index, a, b -> index + a + b } })
     }
@@ -1193,8 +1193,8 @@ class ArraysTest {
         expect('2') { charArrayOf('1', '3', '2').reduceRightIndexed { index, a, b -> if (a > b && index == 0) a else b } }
         expect(true) { booleanArrayOf(true, true, false).reduceRightIndexed { index, a, b -> a && b || index == 1 } }
         expect(false) { booleanArrayOf(true, true).reduceRightIndexed { index, a, b -> a && b && index != 0 } }
-        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toByte() else a.toByte() } }
-        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toShort() else a.toShort() } }
+        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toByte() else a } }
+        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexed { index, a, b -> if (index != 1) (a - b).toShort() else a } }
 
         assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceRightIndexed { index, a, b -> index + a + b }
@@ -1209,8 +1209,8 @@ class ArraysTest {
         expect('2') { charArrayOf('1', '3', '2').reduceRightIndexedOrNull { index, a, b -> if (a > b && index == 0) a else b } }
         expect(true) { booleanArrayOf(true, true, false).reduceRightIndexedOrNull { index, a, b -> a && b || index == 1 } }
         expect(false) { booleanArrayOf(true, true).reduceRightIndexedOrNull { index, a, b -> a && b && index != 0 } }
-        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, a, b -> if (index != 1) (a - b).toByte() else a.toByte() } }
-        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, a, b -> if (index != 1) (a - b).toShort() else a.toShort() } }
+        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, a, b -> if (index != 1) (a - b).toByte() else a } }
+        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, a, b -> if (index != 1) (a - b).toShort() else a } }
 
         expect(null, { intArrayOf().reduceRightIndexedOrNull { index, a, b -> index + a + b } })
     }
@@ -1869,7 +1869,7 @@ class ArraysTest {
         expect(listOf(), { intArrayOf().filterIndexed { i, v -> i > v } })
         expect(listOf(2, 5, 8), { intArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == value % 2 } })
         expect(listOf<Long>(2, 5, 8), { longArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } })
-        expect(listOf<Byte>(2, 5, 8), { byteArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } })
+        expect(listOf<Byte>(2, 5, 8), { byteArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == value % 2 } })
         expect(listOf('9', 'e', 'a'), { charArrayOf('9', 'e', 'd', 'a').filterIndexed { index, c -> c == 'a' || index < 2 }})
         expect(listOf("a", "c", "d"), { arrayOf("a", "b", "c", "d").filterIndexed { index, s -> s == "a" || index >= 2 } })
     }

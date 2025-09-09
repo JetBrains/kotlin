@@ -33,7 +33,7 @@ internal fun LargeDynamicMappedBuffer.contentsToByteArray(
     zipEntryDescription: ZipEntryDescription
 ): ByteArray =
     withMappedRangeFrom(zipEntryDescription.offsetInFile) {
-        val extraSize = getUnsignedShort((LOCAL_FILE_HEADER_EXTRA_OFFSET).toInt())
+        val extraSize = getUnsignedShort(LOCAL_FILE_HEADER_EXTRA_OFFSET)
         val startPos = LOCAL_FILE_HEADER_SIZE + zipEntryDescription.fileNameSize + extraSize
 
         require(zipEntryDescription.compressedSize - startPos < Int.MAX_VALUE && zipEntryDescription.uncompressedSize <= Int.MAX_VALUE) {

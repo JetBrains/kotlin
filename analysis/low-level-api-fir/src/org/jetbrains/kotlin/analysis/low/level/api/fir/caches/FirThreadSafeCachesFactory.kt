@@ -62,7 +62,7 @@ internal class FirThreadSafeCachesFactory(private val project: Project) : FirCac
         }
 
         if (maximumSize != null) {
-            builder.maximumSize(maximumSize.toLong())
+            builder.maximumSize(maximumSize)
         }
 
         if (keyStrength == KeyReferenceStrength.WEAK) {
