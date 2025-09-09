@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.klib
 
+import com.intellij.openapi.util.registry.EarlyAccessRegistryManager.fileName
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
+import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
 import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -49,7 +53,9 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         for (i in 0 until fileSize) {
             val fileStream = lib.file(i).codedInputStream
             val fileProto = IrFile.parseFrom(fileStream, extReg)
-            val fileName = lib.fileEntry(fileProto, i).name
+            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(lib, i))
+            val fileEntry = fileReader.fileEntry(fileProto)
+            val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
             result.add(fileName)
         }

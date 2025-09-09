@@ -8,24 +8,53 @@ public interface FileEntryOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_old` must be present.
+   * </pre>
+   */
+  boolean hasNameOld();
+  /**
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_old` must be present.
+   * </pre>
+   */
+  java.lang.String getNameOld();
+  /**
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_old` must be present.
+   * </pre>
+   */
+  org.jetbrains.kotlin.protobuf.ByteString
+      getNameOldBytes();
+
+  /**
+   * <code>optional int32 name = 4;</code>
+   *
+   * <pre>
+   * After 2.3.0 the string is stored in a string table with an index pointing to it,
+   * </pre>
    */
   boolean hasName();
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional int32 name = 4;</code>
+   *
+   * <pre>
+   * After 2.3.0 the string is stored in a string table with an index pointing to it,
+   * </pre>
    */
-  java.lang.String getName();
-  /**
-   * <code>required string name = 1;</code>
-   */
-  org.jetbrains.kotlin.protobuf.ByteString
-      getNameBytes();
+  int getName();
 
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    *
    * <pre>
-   * Before 2.3.0: Store the absolute offset of each line.
+   * the same way as in all other messages.
    * </pre>
    */
   java.util.List<java.lang.Integer> getLineStartOffsetList();
@@ -33,7 +62,7 @@ public interface FileEntryOrBuilder extends
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    *
    * <pre>
-   * Before 2.3.0: Store the absolute offset of each line.
+   * the same way as in all other messages.
    * </pre>
    */
   int getLineStartOffsetCount();
@@ -41,7 +70,7 @@ public interface FileEntryOrBuilder extends
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
    *
    * <pre>
-   * Before 2.3.0: Store the absolute offset of each line.
+   * the same way as in all other messages.
    * </pre>
    */
   int getLineStartOffset(int index);

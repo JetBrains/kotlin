@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.serialization.FileDeserializationState
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
 import org.jetbrains.kotlin.backend.common.serialization.deserializeFqName
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
@@ -32,7 +32,11 @@ fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
     }
     return fileProtos.mapIndexed { index, proto ->
         val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))
-        FileWithFqName(fileReader.fileEntry(proto).name, fileReader.deserializeFqName(proto.fqNameList))
+        val fileEntry = fileReader.fileEntry(proto)
+        FileWithFqName(
+                fileReader.deserializeFileEntryName(fileEntry),
+                fileReader.deserializeFqName(proto.fqNameList),
+        )
     }
 }
 
@@ -40,12 +44,13 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
     val fileProtos = Array<ProtoFile>(fileCount()) {
         ProtoFile.parseFrom(file(it).codedInputStream, ExtensionRegistryLite.newInstance())
     }
-    val filePathToIndex = fileProtos.withIndex().associate {
-        fileEntry(it.value, it.index).name to it.index
+    val filePathToIndexAndReader = fileProtos.withIndex().associate {
+        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, it.index))
+        val fileEntry = fileEntry(it.value, it.index)
+        fileReader.deserializeFileEntryName(fileEntry) to (it.index to fileReader)
     }
     return filePaths.map { filePath ->
-        val index = filePathToIndex[filePath] ?: error("No file with path $filePath is found in klib $libraryName")
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))
+        val (index, fileReader) = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $libraryName")
         fileReader.deserializeFqName(fileProtos[index].fqNameList)
     }
 }

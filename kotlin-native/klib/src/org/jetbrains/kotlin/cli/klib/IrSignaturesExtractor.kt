@@ -42,7 +42,7 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
         private val signatureDeserializer: IdSignatureDeserializer = run {
             val packageFQN = fileReader.deserializeFqName(fileProto.fqNameList)
             val fileEntry = library.fileEntry(fileProto, fileIndex)
-            val fileName = if (fileEntry.hasName()) fileEntry.name else "<unknown>"
+            val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
             val fileSignature = IdSignature.FileSignature(
                 id = Any(), // Just an unique object.
