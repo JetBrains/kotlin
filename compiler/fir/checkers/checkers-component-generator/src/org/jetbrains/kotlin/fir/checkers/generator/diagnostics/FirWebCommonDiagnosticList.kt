@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.util.PrivateForInline
 object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
         val WRONG_JS_QUALIFIER by error<KtElement>()
+        val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val EXTERNALS by object : DiagnosticGroup("Externals") {
