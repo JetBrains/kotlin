@@ -61606,6 +61606,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("explicitFieldAndBodylessAccessor.kt")
+        public void testExplicitFieldAndBodylessAccessor() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldAndBodylessAccessor.kt");
+        }
+
+        @Test
         @TestMetadata("explicitFieldWithFunctionType.kt")
         public void testExplicitFieldWithFunctionType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldWithFunctionType.kt");
