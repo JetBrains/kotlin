@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtFile
  * @see AbstractDecompiledStubsTest
  */
 abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) : AbstractStubsTest() {
+    override val outputFileExtension: String get() = "compiled.stubs.txt"
     override val configurator: AnalysisApiTestConfigurator = CompiledStubsTestConfigurator(defaultTargetPlatform)
 
     override fun computeStub(file: KtFile): PsiFileStub<*>? = ClsClassFinder.allowMultifileClassPart {
@@ -40,9 +41,10 @@ abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) 
     internal open class CompiledStubsTestConfigurator(
         override val defaultTargetPlatform: TargetPlatform,
     ) : AnalysisApiFirBinaryTestConfigurator() {
-        val platformPrefix: String get() = defaultTargetPlatform.single().platformName
+        override val testModuleFactory: KtTestModuleFactory
+            get() = KtLibraryBinaryDecompiledTestModuleFactory
 
-        override val testModuleFactory: KtTestModuleFactory get() = KtLibraryBinaryDecompiledTestModuleFactory
-        override val testPrefixes: List<String> get() = "compiled".let { listOf("$platformPrefix.$it", it) }
+        override val testPrefixes: List<String>
+            get() = listOf(defaultTargetPlatform.single().platformName) + super.testPrefixes
     }
 }

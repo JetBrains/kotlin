@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirBinaryTestConfigurator
+import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBinaryDecompiledTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -20,15 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractDecompiledTextTest(defaultTargetPlatform: TargetPlatform) : AbstractAnalysisApiBasedTest() {
-    override val configurator: AnalysisApiTestConfigurator = object : AnalysisApiFirBinaryTestConfigurator() {
-        override val testModuleFactory: KtTestModuleFactory
-            get() = KtLibraryBinaryDecompiledTestModuleFactory
-
-        override val defaultTargetPlatform: TargetPlatform = defaultTargetPlatform
-
-        override val testPrefixes: List<String>
-            get() = listOf(defaultTargetPlatform.single().platformName) + super.testPrefixes
-    }
+    override val configurator: AnalysisApiTestConfigurator = AbstractCompiledStubsTest.CompiledStubsTestConfigurator(defaultTargetPlatform)
 
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val files = mainModule.ktFiles.sortedBy(KtFile::getName)
