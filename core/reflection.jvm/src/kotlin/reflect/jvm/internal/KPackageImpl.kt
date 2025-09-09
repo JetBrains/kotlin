@@ -30,12 +30,21 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.metadata.KmPackage
+import kotlin.metadata.KmProperty
+import kotlin.metadata.internal.toKmPackage
+import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.reflect.KCallable
 
 internal class KPackageImpl(
     override val jClass: Class<*>,
 ) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
+        val kmPackage: KmPackage? by lazy(PUBLICATION) {
+            val scope = scope as? DeserializedPackageMemberScope ?: return@lazy null
+            scope.proto.toKmPackage(scope.c.nameResolver)
+        }
+
         private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
             ReflectKotlinClass.create(jClass)
         }
@@ -85,7 +94,7 @@ internal class KPackageImpl(
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
         scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
-    override fun getLocalProperty(index: Int): PropertyDescriptor? {
+    override fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor? {
         // According to how it's generated in the codegen, containing class of a local delegated property is always either a single file
         // facade, or a multifile part, but never multifile facade. This means that `scope` is always `DeserializedPackageMemberScope`
         // (not `ChainedMemberScope` with several deserialized scopes inside, as is for multifile facades).
@@ -97,6 +106,9 @@ internal class KPackageImpl(
             ) { proto -> loadProperty(proto, loadAnnotationsFromMetadata = true) }
         }
     }
+
+    override fun getLocalPropertyMetadata(index: Int): KmProperty? =
+        data.value.kmPackage?.localDelegatedProperties?.getOrNull(index)
 
     override fun equals(other: Any?): Boolean =
         other is KPackageImpl && jClass == other.jClass

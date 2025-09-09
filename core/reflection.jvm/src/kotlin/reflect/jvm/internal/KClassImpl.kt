@@ -49,6 +49,7 @@ import kotlin.metadata.ClassKind
 import kotlin.metadata.Modality
 import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
@@ -372,7 +373,7 @@ internal class KClassImpl<T : Any>(
         memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
                 staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
-    override fun getLocalProperty(index: Int): PropertyDescriptor? {
+    override fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor? {
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
             descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
@@ -381,6 +382,9 @@ internal class KClassImpl<T : Any>(
             }
         }
     }
+
+    override fun getLocalPropertyMetadata(index: Int): KmProperty? =
+        kmClass?.localDelegatedProperties?.getOrNull(index)
 
     override val simpleName: String? get() = data.value.simpleName
 

@@ -21,7 +21,7 @@ import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
-internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R>, KTypeParameterOwnerImpl {
+internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }

@@ -55813,6 +55813,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         }
 
         @Test
+        @TestMetadata("equals.kt")
+        public void testEquals() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/equals.kt");
+        }
+
+        @Test
         @TestMetadata("inInterface.kt")
         public void testInInterface() {
           runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inInterface.kt");

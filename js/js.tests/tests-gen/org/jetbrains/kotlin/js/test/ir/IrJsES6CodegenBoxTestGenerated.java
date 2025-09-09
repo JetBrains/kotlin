@@ -55742,6 +55742,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("equals.kt")
+        public void testEquals() {
+          runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/equals.kt");
+        }
+
+        @Test
         @TestMetadata("inInterface.kt")
         public void testInInterface() {
           runTest("compiler/testData/codegen/box/reflection/properties/localDelegated/inInterface.kt");

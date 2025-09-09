@@ -11,6 +11,7 @@ import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
 import kotlin.reflect.jvm.ReflectLambdaKt;
 import kotlin.reflect.jvm.internal.types.TypeOfImplKt;
+import kotlin.text.MatchResult;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -72,11 +73,29 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KProperty0 property0(PropertyReference0 p) {
-        return new DescriptorKProperty0(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
+        KDeclarationContainerImpl container = getOwner(p);
+        String signature = p.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
+            if (result != null) {
+                List<String> values = result.getGroupValues();
+                return container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
+            }
+        }
+        return new DescriptorKProperty0(container, p.getName(), signature, p.getBoundReceiver());
     }
 
     @Override
     public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
+        KDeclarationContainerImpl container = getOwner(p);
+        String signature = p.getSignature();
+        if (!SystemPropertiesKt.getUseK1Implementation()) {
+            MatchResult result = KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matchEntire(signature);
+            if (result != null) {
+                List<String> values = result.getGroupValues();
+                return (KMutableProperty0) container.createLocalProperty(Integer.parseInt(values.get(1)), signature);
+            }
+        }
         return new DescriptorKMutableProperty0(getOwner(p), p.getName(), p.getSignature(), p.getBoundReceiver());
     }
 
