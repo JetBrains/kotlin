@@ -1299,7 +1299,8 @@ abstract class FirDataFlowAnalyzer(
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
         val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.inlineFunction, session) ?: return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
-        flow.addTypeStatement(variable typeEq fieldSymbol.resolvedReturnType)
+        val returnType = components.returnTypeCalculator.tryCalculateReturnType(fieldSymbol).coneType
+        flow.addTypeStatement(variable typeEq returnType)
     }
 
     private fun getSubstitutor(
