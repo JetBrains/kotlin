@@ -723,6 +723,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformReplSnippet(replSnippet, data)
     }
 
+    open fun transformReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): FirStatement {
+        return transformElement(replDeclarationReference, data)
+    }
+
+    final override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): FirStatement {
+        return transformReplDeclarationReference(replDeclarationReference, data)
+    }
+
     open fun transformPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
         return transformElement(packageDirective, data)
     }

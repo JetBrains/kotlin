@@ -284,6 +284,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitReplSnippet(replSnippet: FirReplSnippet, data: D): R =
         visitElement(replSnippet, data)
 
+    open fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): R =
+        visitElement(replDeclarationReference, data)
+
     open fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): R =
         visitElement(packageDirective, data)
 
