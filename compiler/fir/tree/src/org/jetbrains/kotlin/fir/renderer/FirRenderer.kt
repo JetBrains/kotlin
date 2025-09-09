@@ -1182,7 +1182,7 @@ class FirRenderer(
 
         override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall) {
             annotationRenderer?.render(collectionLiteralCall)
-            print("<implicitOperatorOf>")
+            print("<collectionLiteralCall>")
             visitCall(collectionLiteralCall)
         }
 

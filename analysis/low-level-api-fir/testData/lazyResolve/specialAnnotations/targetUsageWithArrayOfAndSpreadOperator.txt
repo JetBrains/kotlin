@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] targetUsageWithArrayOfAndSpreadOperator.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] targetUsageWithArrayOfAndSpreadOperator.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class KaCachedService : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KaCachedService] constructor(): R|KaCachedService| {
             super<R|kotlin/Any|>()
         }

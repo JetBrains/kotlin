@@ -1,35 +1,35 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] targetAnnotationWithDifferentValues.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteral : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteral : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayLiteral] constructor(): R|AnnotationWithArrayLiteral| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Int(1)))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Int(1)))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayLiteralAndIncorrectValue] constructor(): R|AnnotationWithArrayLiteralAndIncorrectValue| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteralAndSpreadOperator : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayLiteralAndSpreadOperator : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayLiteralAndSpreadOperator] constructor(): R|AnnotationWithArrayLiteralAndSpreadOperator| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOf : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOf : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayOf] constructor(): R|AnnotationWithArrayOf| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOfAndSpreadOperator : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOfAndSpreadOperator : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayOfAndSpreadOperator] constructor(): R|AnnotationWithArrayOfAndSpreadOperator| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOfWithoutSpreadOperator : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(<collectionLiteralCall>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOfWithoutSpreadOperator : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayOfWithoutSpreadOperator] constructor(): R|AnnotationWithArrayOfWithoutSpreadOperator| {
             super<R|kotlin/Any|>()
         }

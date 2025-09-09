@@ -69,7 +69,7 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
     public open val endInclusive: R|kotlin/Char|
         public get(): R|kotlin/Char|
 
-    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.9)) @PROPERTY:R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public open val endExclusive: R|kotlin/Char|
+    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.9)) @PROPERTY:R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public open val endExclusive: R|kotlin/Char|
         public get(): R|kotlin/Char|
 
     public constructor(start: R|kotlin/Char|, endInclusive: R|kotlin/Char|): R|kotlin/ranges/CharRange|
@@ -168,7 +168,7 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
     public open val endInclusive: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.9)) @PROPERTY:R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public open val endExclusive: R|kotlin/Int|
+    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.9)) @PROPERTY:R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public open val endExclusive: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public constructor(start: R|kotlin/Int|, endInclusive: R|kotlin/Int|): R|kotlin/ranges/IntRange|
@@ -254,7 +254,7 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
     public open val endInclusive: R|kotlin/Long|
         public get(): R|kotlin/Long|
 
-    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.9)) @PROPERTY:R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public open val endExclusive: R|kotlin/Long|
+    @PROPERTY:R|kotlin/Deprecated|(message = String(Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.)) @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.9)) @PROPERTY:R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public open val endExclusive: R|kotlin/Long|
         public get(): R|kotlin/Long|
 
     public constructor(start: R|kotlin/Long|, endInclusive: R|kotlin/Long|): R|kotlin/ranges/LongRange|
@@ -269,7 +269,7 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
 
 }
 
-@R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public abstract interface OpenEndRange<T : R|kotlin/Comparable<T>|> : R|kotlin/Any| {
+@R|kotlin/SinceKotlin|(version = String(1.9)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalStdlibApi|)))) public abstract interface OpenEndRange<T : R|kotlin/Comparable<T>|> : R|kotlin/Any| {
     public open operator fun contains(value: R|T|): R|kotlin/Boolean|
 
     public open fun isEmpty(): R|kotlin/Boolean|

@@ -1,5 +1,5 @@
 FILE: annotationArguments.kt
-    @Arrays(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <implicitArrayOf>(Long(1)), <implicitArrayOf>(), <implicitArrayOf>(Double(2.2)), <implicitArrayOf>(Char(a)), <implicitArrayOf>(Boolean(true), Boolean(false))) public final? class WithArrays : R|kotlin/Any| {
+    @Arrays(<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <collectionLiteralCall>(Long(1)), <collectionLiteralCall>(), <collectionLiteralCall>(Double(2.2)), <collectionLiteralCall>(Char(a)), <collectionLiteralCall>(Boolean(true), Boolean(false))) public final? class WithArrays : R|kotlin/Any| {
         public? [ContainingClassKey=WithArrays] constructor(): R|WithArrays| {
             super<R|kotlin/Any|>()
         }
@@ -41,7 +41,7 @@ FILE: annotationArguments.kt
         }
 
     }
-    @VarArg(*<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4))) public final? class SpreadVararg : R|kotlin/Any| {
+    @VarArg(*<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4))) public final? class SpreadVararg : R|kotlin/Any| {
         public? [ContainingClassKey=SpreadVararg] constructor(): R|SpreadVararg| {
             super<R|kotlin/Any|>()
         }
@@ -140,7 +140,7 @@ FILE: annotationArguments.kt
         }
 
     }
-    @Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2)))) public final? class WithIncorrectArguments : R|kotlin/Any| {
+    @Arrays(<collectionLiteralCall>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2)))) public final? class WithIncorrectArguments : R|kotlin/Any| {
         public? [ContainingClassKey=WithIncorrectArguments] constructor(): R|WithIncorrectArguments| {
             super<R|kotlin/Any|>()
         }

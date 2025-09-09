@@ -1,4 +1,4 @@
-@Arrays(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <implicitArrayOf>(Long(1)), <implicitArrayOf>(), <implicitArrayOf>(Double(2.2)), <implicitArrayOf>(Char(a)), <implicitArrayOf>(Boolean(true), Boolean(false)))
+@Arrays(<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)), <collectionLiteralCall>(Long(1)), <collectionLiteralCall>(), <collectionLiteralCall>(Double(2.2)), <collectionLiteralCall>(Char(a)), <collectionLiteralCall>(Boolean(true), Boolean(false)))
 owner -> FirRegularClassSymbol WithArrays
 context -> FirRegularClassSymbol WithArrays
 
@@ -26,7 +26,7 @@ context -> FirRegularClassSymbol TwoVararg
 owner -> FirRegularClassSymbol ThreeVararg
 context -> FirRegularClassSymbol ThreeVararg
 
-@VarArg(*<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4)))
+@VarArg(*<collectionLiteralCall>(IntegerLiteral(1), IntegerLiteral(2), VarArg#.CONSTANT#, IntegerLiteral(4)))
 owner -> FirRegularClassSymbol SpreadVararg
 context -> FirRegularClassSymbol SpreadVararg
 
@@ -93,7 +93,7 @@ context -> FirRegularClassSymbol LongStringTemplateEntryWithTwoExpressions
 owner -> FirRegularClassSymbol Another
 context -> FirRegularClassSymbol Another
 
-@Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
+@Arrays(<collectionLiteralCall>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
 owner -> FirRegularClassSymbol WithIncorrectArguments
 context -> FirRegularClassSymbol WithIncorrectArguments
 
