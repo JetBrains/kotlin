@@ -6,7 +6,7 @@
 package model
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.server.FileTransferReplyGrpc
+import org.jetbrains.kotlin.server.FileTransferReplyProto
 
 @Serializable
 data class FileTransferReply(
@@ -15,14 +15,14 @@ data class FileTransferReply(
     val artifactType: ArtifactType
 ) : CompileResponse
 
-fun FileTransferReplyGrpc.toDomain(): FileTransferReply {
+fun FileTransferReplyProto.toDomain(): FileTransferReply {
     return FileTransferReply(filePath, isPresent, fileType.toDomain())
 }
 
-fun FileTransferReply.toGrpc(): FileTransferReplyGrpc {
-    return FileTransferReplyGrpc.newBuilder()
+fun FileTransferReply.toProto(): FileTransferReplyProto {
+    return FileTransferReplyProto.newBuilder()
         .setFilePath(filePath)
         .setIsPresent(isPresent)
-        .setFileType(artifactType.toGrpc())
+        .setFileType(artifactType.toProto())
         .build()
 }

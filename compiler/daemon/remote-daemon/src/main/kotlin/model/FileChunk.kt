@@ -7,7 +7,7 @@ package model
 
 import com.google.protobuf.kotlin.toByteString
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.server.FileChunkGrpc
+import org.jetbrains.kotlin.server.FileChunkProto
 
 @Serializable
 class FileChunk(
@@ -18,16 +18,16 @@ class FileChunk(
     val isLast: Boolean
 ) : CompileRequest, CompileResponse
 
-fun FileChunk.toGrpc(): FileChunkGrpc {
-    return FileChunkGrpc.newBuilder()
+fun FileChunk.toProto(): FileChunkProto {
+    return FileChunkProto.newBuilder()
         .setFilePath(filePath)
-        .setFileType(artifactType.toGrpc())
+        .setFileType(artifactType.toProto())
         .setContent(content.toByteString())
         .setIsDirectory(isDirectory)
         .setIsLast(isLast)
         .build()
 }
 
-fun FileChunkGrpc.toDomain(): FileChunk {
+fun FileChunkProto.toDomain(): FileChunk {
     return FileChunk(filePath, fileType.toDomain(), content.toByteArray(), isDirectory, isLast)
 }

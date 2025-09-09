@@ -6,7 +6,7 @@
 package model
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.server.FileTransferRequestGrpc
+import org.jetbrains.kotlin.server.FileTransferRequestProto
 
 @Serializable
 data class FileTransferRequest(
@@ -15,15 +15,15 @@ data class FileTransferRequest(
     val artifactType: ArtifactType
 ) : CompileRequest
 
-fun FileTransferRequest.toGrpc(): FileTransferRequestGrpc {
-    return FileTransferRequestGrpc.newBuilder()
+fun FileTransferRequest.toProto(): FileTransferRequestProto {
+    return FileTransferRequestProto.newBuilder()
         .setFilePath(filePath)
         .setFileFingerprint(fileFingerprint)
-        .setArtifactType(artifactType.toGrpc())
+        .setArtifactType(artifactType.toProto())
         .build()
 }
 
-fun FileTransferRequestGrpc.toDomain(): FileTransferRequest {
+fun FileTransferRequestProto.toDomain(): FileTransferRequest {
     return FileTransferRequest(
         filePath,
         fileFingerprint,

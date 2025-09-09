@@ -5,24 +5,24 @@
 
 package model
 
-import org.jetbrains.kotlin.server.CompilationResultSourceGrpc
+import org.jetbrains.kotlin.server.CompilationResultSourceProto
 
 enum class CompilationResultSource {
     COMPILER,
     CACHE
 }
 
-fun CompilationResultSource.toGrpc(): CompilationResultSourceGrpc {
+fun CompilationResultSource.toProto(): CompilationResultSourceProto {
     return when (this) {
-        CompilationResultSource.COMPILER -> CompilationResultSourceGrpc.COMPILER
-        CompilationResultSource.CACHE -> CompilationResultSourceGrpc.CACHE
+        CompilationResultSource.COMPILER -> CompilationResultSourceProto.COMPILER
+        CompilationResultSource.CACHE -> CompilationResultSourceProto.CACHE
     }
 }
 
-fun CompilationResultSourceGrpc.toDomain(): CompilationResultSource {
+fun CompilationResultSourceProto.toDomain(): CompilationResultSource {
     return when (this) {
-        CompilationResultSourceGrpc.COMPILER -> CompilationResultSource.COMPILER
-        CompilationResultSourceGrpc.CACHE -> CompilationResultSource.CACHE
-        CompilationResultSourceGrpc.UNRECOGNIZED -> CompilationResultSource.COMPILER // TODO double check
+        CompilationResultSourceProto.COMPILER -> CompilationResultSource.COMPILER
+        CompilationResultSourceProto.CACHE -> CompilationResultSource.CACHE
+        CompilationResultSourceProto.UNRECOGNIZED -> CompilationResultSource.COMPILER // TODO double check
     }
 }

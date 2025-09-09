@@ -20,8 +20,8 @@ import io.grpc.ForwardingClientCallListener
 import io.grpc.Metadata
 import io.grpc.MethodDescriptor
 import io.grpc.Status
-import org.jetbrains.kotlin.server.CompileRequestGrpc
-import org.jetbrains.kotlin.server.CompileResponseGrpc
+import org.jetbrains.kotlin.server.CompileRequestProto
+import org.jetbrains.kotlin.server.CompileResponseProto
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -47,10 +47,10 @@ class RemoteClientInterceptor : ClientInterceptor {
         // CLIENT ---> SERVER
         return object : ForwardingClientCall.SimpleForwardingClientCall<ReqT?, RespT?>(call) {
             override fun sendMessage(message: ReqT?) {
-                if (message is CompileRequestGrpc && message.hasSourceFileChunk()){
+                if (message is CompileRequestProto && message.hasSourceFileChunk()){
                     val chunk = message.sourceFileChunk
                     val size = chunk.content.size()
-                    debug("sending message: FileChunkGrpc{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
+                    debug("sending message: FileChunkProto{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
                 } else {
                     debug("sending message: ${printer.print(message as MessageOrBuilder)}")
                 }
@@ -72,10 +72,10 @@ class RemoteClientInterceptor : ClientInterceptor {
                 // SERVER ---> CLIENT
                 val wrappedListener = object : ForwardingClientCallListener.SimpleForwardingClientCallListener<RespT?>(responseListener) {
                     override fun onMessage(message: RespT?) {
-                        if (message is CompileResponseGrpc && message.hasCompiledFileChunk()){
+                        if (message is CompileResponseProto && message.hasCompiledFileChunk()){
                             val chunk = message.compiledFileChunk
                             val size = chunk.content.size()
-                            debug("receiving message: FileChunkGrpc{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
+                            debug("receiving message: FileChunkProto{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
                         } else {
                             debug("receiving message: ${printer.print(message as MessageOrBuilder)}")
                         }

@@ -6,8 +6,8 @@
 package model
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.server.CompilationResultGrpc
-import org.jetbrains.kotlin.server.CompileResponseGrpc
+import org.jetbrains.kotlin.server.CompilationResultProto
+import org.jetbrains.kotlin.server.CompileResponseProto
 
 @Serializable
 data class CompilationResult(
@@ -15,20 +15,20 @@ data class CompilationResult(
     val compilationResultSource: CompilationResultSource
 ) : CompileResponse
 
-fun CompilationResult.toGrpc(): CompilationResultGrpc {
-    return CompilationResultGrpc
+fun CompilationResult.toProto(): CompilationResultProto {
+    return CompilationResultProto
         .newBuilder()
         .setExitCode(exitCode)
-        .setResultSource(compilationResultSource.toGrpc())
+        .setResultSource(compilationResultSource.toProto())
         .build()
 }
 
-fun CompilationResultGrpc.toDomain(): CompilationResult {
+fun CompilationResultProto.toDomain(): CompilationResult {
     return CompilationResult(exitCode, resultSource.toDomain())
 }
 
-fun CompilationResultGrpc.toCompileResponse(): CompileResponseGrpc{
-    return CompileResponseGrpc
+fun CompilationResultProto.toCompileResponse(): CompileResponseProto{
+    return CompileResponseProto
         .newBuilder()
         .setCompilationResult(this)
         .build()
