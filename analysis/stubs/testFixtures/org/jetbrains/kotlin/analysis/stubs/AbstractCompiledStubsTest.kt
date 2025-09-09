@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
+import com.intellij.openapi.Disposable
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubTreeLoader
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
@@ -14,10 +15,14 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtLibraryBi
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
@@ -114,5 +119,18 @@ abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) 
 
                 return additionalNames + super.testPrefixes
             }
+
+        override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
+            super.configureTest(builder, disposable)
+
+            // Drop together with the test data as soon as 1.9 is unsupported
+            builder.forTestsMatching("*/k1/*") {
+                defaultDirectives {
+                    LanguageSettingsDirectives.LANGUAGE_VERSION with LanguageVersion.KOTLIN_1_9
+                    LanguageSettingsDirectives.API_VERSION with ApiVersion.KOTLIN_1_9
+                    +LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
+                }
+            }
+        }
     }
 }

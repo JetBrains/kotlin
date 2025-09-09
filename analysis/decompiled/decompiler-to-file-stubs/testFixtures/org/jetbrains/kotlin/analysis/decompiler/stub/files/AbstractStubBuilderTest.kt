@@ -5,43 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.stub.files
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.DebugUtil
-import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.psi.stubs.impl.STUB_TO_STRING_PREFIX
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.nio.file.Paths
-
-abstract class AbstractStubBuilderTest : AbstractDecompiledClassTest() {
-    open fun skipBinaryStubOnlyTest(): Boolean = false
-
-    fun runTest(testDirectory: String) {
-        val testDirectoryPath = Paths.get(testDirectory)
-        val testData = TestData.createFromDirectory(testDirectoryPath)
-        if (skipBinaryStubOnlyTest() && testData.containsDirective("BINARY_STUB_ONLY_TEST")) return
-        testData.withFirIgnoreDirective(useK2ToCompileCode) {
-            doTest(testData, useStringTable = true)
-            doTest(testData, useStringTable = false)
-        }
-    }
-
-
-    private fun doTest(testData: TestData, useStringTable: Boolean) {
-        val classFile = getClassFileToDecompile(testData, useStringTable)
-        testClsStubsForFile(classFile, testData)
-    }
-
-    private fun testClsStubsForFile(classFile: VirtualFile, testData: TestData) {
-        val stub = getStubToTest(classFile)
-        KotlinTestUtils.assertEqualsToFile(testData.getExpectedFile(useK2ToCompileCode), stub.serializeToString())
-        testData.checkIfIdentical(useK2ToCompileCode)
-    }
-
-    protected abstract fun getStubToTest(classFile: VirtualFile): PsiFileStub<*>
-}
 
 @TestOnly
 fun StubElement<out PsiElement>.serializeToString(): String {
