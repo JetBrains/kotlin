@@ -56,13 +56,13 @@ public final class FileEntry extends
           case 10: {
             org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
             bitField0_ |= 0x00000001;
-            name_ = bs;
+            nameOld_ = bs;
             break;
           }
           case 16: {
-            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
               lineStartOffset_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000002;
+              mutable_bitField0_ |= 0x00000004;
             }
             lineStartOffset_.add(input.readInt32());
             break;
@@ -70,9 +70,9 @@ public final class FileEntry extends
           case 18: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
               lineStartOffset_ = new java.util.ArrayList<java.lang.Integer>();
-              mutable_bitField0_ |= 0x00000002;
+              mutable_bitField0_ |= 0x00000004;
             }
             while (input.getBytesUntilLimit() > 0) {
               lineStartOffset_.add(input.readInt32());
@@ -81,8 +81,13 @@ public final class FileEntry extends
             break;
           }
           case 24: {
-            bitField0_ |= 0x00000002;
+            bitField0_ |= 0x00000004;
             firstRelevantLineIndex_ = input.readInt32();
+            break;
+          }
+          case 32: {
+            bitField0_ |= 0x00000002;
+            name_ = input.readInt32();
             break;
           }
         }
@@ -93,7 +98,7 @@ public final class FileEntry extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
         lineStartOffset_ = java.util.Collections.unmodifiableList(lineStartOffset_);
       }
       try {
@@ -122,19 +127,27 @@ public final class FileEntry extends
   }
 
   private int bitField0_;
-  public static final int NAME_FIELD_NUMBER = 1;
-  private java.lang.Object name_;
+  public static final int NAME_OLD_FIELD_NUMBER = 1;
+  private java.lang.Object nameOld_;
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_inline` must be present.
+   * </pre>
    */
-  public boolean hasName() {
+  public boolean hasNameOld() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_inline` must be present.
+   * </pre>
    */
-  public java.lang.String getName() {
-    java.lang.Object ref = name_;
+  public java.lang.String getNameOld() {
+    java.lang.Object ref = nameOld_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
@@ -142,32 +155,63 @@ public final class FileEntry extends
           (org.jetbrains.kotlin.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       if (bs.isValidUtf8()) {
-        name_ = s;
+        nameOld_ = s;
       }
       return s;
     }
   }
   /**
-   * <code>required string name = 1;</code>
+   * <code>optional string name_old = 1;</code>
+   *
+   * <pre>
+   * Required: either `name` or `name_inline` must be present.
+   * </pre>
    */
   public org.jetbrains.kotlin.protobuf.ByteString
-      getNameBytes() {
-    java.lang.Object ref = name_;
+      getNameOldBytes() {
+    java.lang.Object ref = nameOld_;
     if (ref instanceof java.lang.String) {
       org.jetbrains.kotlin.protobuf.ByteString b = 
           org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      name_ = b;
+      nameOld_ = b;
       return b;
     } else {
       return (org.jetbrains.kotlin.protobuf.ByteString) ref;
     }
   }
 
+  public static final int NAME_FIELD_NUMBER = 4;
+  private int name_;
+  /**
+   * <code>optional int32 name = 4;</code>
+   *
+   * <pre>
+   * After 2.3.0 the string is stored in a string table with an index pointing to it,
+   * </pre>
+   */
+  public boolean hasName() {
+    return ((bitField0_ & 0x00000002) == 0x00000002);
+  }
+  /**
+   * <code>optional int32 name = 4;</code>
+   *
+   * <pre>
+   * After 2.3.0 the string is stored in a string table with an index pointing to it,
+   * </pre>
+   */
+  public int getName() {
+    return name_;
+  }
+
   public static final int LINE_START_OFFSET_FIELD_NUMBER = 2;
   private java.util.List<java.lang.Integer> lineStartOffset_;
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * the same way as in all other messages.
+   * </pre>
    */
   public java.util.List<java.lang.Integer>
       getLineStartOffsetList() {
@@ -175,12 +219,20 @@ public final class FileEntry extends
   }
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * the same way as in all other messages.
+   * </pre>
    */
   public int getLineStartOffsetCount() {
     return lineStartOffset_.size();
   }
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * the same way as in all other messages.
+   * </pre>
    */
   public int getLineStartOffset(int index) {
     return lineStartOffset_.get(index);
@@ -193,7 +245,7 @@ public final class FileEntry extends
    * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
    */
   public boolean hasFirstRelevantLineIndex() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
+    return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
    * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
@@ -203,7 +255,8 @@ public final class FileEntry extends
   }
 
   private void initFields() {
-    name_ = "";
+    nameOld_ = "";
+    name_ = 0;
     lineStartOffset_ = java.util.Collections.emptyList();
     firstRelevantLineIndex_ = 0;
   }
@@ -213,10 +266,6 @@ public final class FileEntry extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -225,7 +274,7 @@ public final class FileEntry extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeBytes(1, getNameBytes());
+      output.writeBytes(1, getNameOldBytes());
     }
     if (getLineStartOffsetList().size() > 0) {
       output.writeRawVarint32(18);
@@ -234,8 +283,11 @@ public final class FileEntry extends
     for (int i = 0; i < lineStartOffset_.size(); i++) {
       output.writeInt32NoTag(lineStartOffset_.get(i));
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt32(3, firstRelevantLineIndex_);
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      output.writeInt32(4, name_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -248,7 +300,7 @@ public final class FileEntry extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBytesSize(1, getNameBytes());
+        .computeBytesSize(1, getNameOldBytes());
     }
     {
       int dataSize = 0;
@@ -264,9 +316,13 @@ public final class FileEntry extends
       }
       lineStartOffsetMemoizedSerializedSize = dataSize;
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(3, firstRelevantLineIndex_);
+    }
+    if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, name_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -362,12 +418,14 @@ public final class FileEntry extends
 
     public Builder clear() {
       super.clear();
-      name_ = "";
+      nameOld_ = "";
       bitField0_ = (bitField0_ & ~0x00000001);
-      lineStartOffset_ = java.util.Collections.emptyList();
+      name_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
-      firstRelevantLineIndex_ = 0;
+      lineStartOffset_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
+      firstRelevantLineIndex_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -394,14 +452,18 @@ public final class FileEntry extends
       if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
         to_bitField0_ |= 0x00000001;
       }
+      result.nameOld_ = nameOld_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+        to_bitField0_ |= 0x00000002;
+      }
       result.name_ = name_;
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
         lineStartOffset_ = java.util.Collections.unmodifiableList(lineStartOffset_);
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000004);
       }
       result.lineStartOffset_ = lineStartOffset_;
-      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-        to_bitField0_ |= 0x00000002;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        to_bitField0_ |= 0x00000004;
       }
       result.firstRelevantLineIndex_ = firstRelevantLineIndex_;
       result.bitField0_ = to_bitField0_;
@@ -410,15 +472,18 @@ public final class FileEntry extends
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance()) return this;
-      if (other.hasName()) {
+      if (other.hasNameOld()) {
         bitField0_ |= 0x00000001;
-        name_ = other.name_;
+        nameOld_ = other.nameOld_;
         
+      }
+      if (other.hasName()) {
+        setName(other.getName());
       }
       if (!other.lineStartOffset_.isEmpty()) {
         if (lineStartOffset_.isEmpty()) {
           lineStartOffset_ = other.lineStartOffset_;
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
           ensureLineStartOffsetIsMutable();
           lineStartOffset_.addAll(other.lineStartOffset_);
@@ -434,10 +499,6 @@ public final class FileEntry extends
     }
 
     public final boolean isInitialized() {
-      if (!hasName()) {
-        
-        return false;
-      }
       return true;
     }
 
@@ -460,24 +521,32 @@ public final class FileEntry extends
     }
     private int bitField0_;
 
-    private java.lang.Object name_ = "";
+    private java.lang.Object nameOld_ = "";
     /**
-     * <code>required string name = 1;</code>
+     * <code>optional string name_old = 1;</code>
+     *
+     * <pre>
+     * Required: either `name` or `name_inline` must be present.
+     * </pre>
      */
-    public boolean hasName() {
+    public boolean hasNameOld() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>optional string name_old = 1;</code>
+     *
+     * <pre>
+     * Required: either `name` or `name_inline` must be present.
+     * </pre>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
+    public java.lang.String getNameOld() {
+      java.lang.Object ref = nameOld_;
       if (!(ref instanceof java.lang.String)) {
         org.jetbrains.kotlin.protobuf.ByteString bs =
             (org.jetbrains.kotlin.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         if (bs.isValidUtf8()) {
-          name_ = s;
+          nameOld_ = s;
         }
         return s;
       } else {
@@ -485,66 +554,134 @@ public final class FileEntry extends
       }
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>optional string name_old = 1;</code>
+     *
+     * <pre>
+     * Required: either `name` or `name_inline` must be present.
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
+        getNameOldBytes() {
+      java.lang.Object ref = nameOld_;
       if (ref instanceof String) {
         org.jetbrains.kotlin.protobuf.ByteString b = 
             org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        name_ = b;
+        nameOld_ = b;
         return b;
       } else {
         return (org.jetbrains.kotlin.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>optional string name_old = 1;</code>
+     *
+     * <pre>
+     * Required: either `name` or `name_inline` must be present.
+     * </pre>
      */
-    public Builder setName(
+    public Builder setNameOld(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
-      name_ = value;
+      nameOld_ = value;
       
       return this;
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>optional string name_old = 1;</code>
+     *
+     * <pre>
+     * Required: either `name` or `name_inline` must be present.
+     * </pre>
      */
-    public Builder clearName() {
+    public Builder clearNameOld() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      name_ = getDefaultInstance().getName();
+      nameOld_ = getDefaultInstance().getNameOld();
       
       return this;
     }
     /**
-     * <code>required string name = 1;</code>
+     * <code>optional string name_old = 1;</code>
+     *
+     * <pre>
+     * Required: either `name` or `name_inline` must be present.
+     * </pre>
      */
-    public Builder setNameBytes(
+    public Builder setNameOldBytes(
         org.jetbrains.kotlin.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
+      nameOld_ = value;
+      
+      return this;
+    }
+
+    private int name_ ;
+    /**
+     * <code>optional int32 name = 4;</code>
+     *
+     * <pre>
+     * After 2.3.0 the string is stored in a string table with an index pointing to it,
+     * </pre>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 name = 4;</code>
+     *
+     * <pre>
+     * After 2.3.0 the string is stored in a string table with an index pointing to it,
+     * </pre>
+     */
+    public int getName() {
+      return name_;
+    }
+    /**
+     * <code>optional int32 name = 4;</code>
+     *
+     * <pre>
+     * After 2.3.0 the string is stored in a string table with an index pointing to it,
+     * </pre>
+     */
+    public Builder setName(int value) {
+      bitField0_ |= 0x00000002;
       name_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 name = 4;</code>
+     *
+     * <pre>
+     * After 2.3.0 the string is stored in a string table with an index pointing to it,
+     * </pre>
+     */
+    public Builder clearName() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      name_ = 0;
       
       return this;
     }
 
     private java.util.List<java.lang.Integer> lineStartOffset_ = java.util.Collections.emptyList();
     private void ensureLineStartOffsetIsMutable() {
-      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
         lineStartOffset_ = new java.util.ArrayList<java.lang.Integer>(lineStartOffset_);
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
        }
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public java.util.List<java.lang.Integer>
         getLineStartOffsetList() {
@@ -552,18 +689,30 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public int getLineStartOffsetCount() {
       return lineStartOffset_.size();
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public int getLineStartOffset(int index) {
       return lineStartOffset_.get(index);
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public Builder setLineStartOffset(
         int index, int value) {
@@ -574,6 +723,10 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public Builder addLineStartOffset(int value) {
       ensureLineStartOffsetIsMutable();
@@ -583,6 +736,10 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public Builder addAllLineStartOffset(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -594,10 +751,14 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * the same way as in all other messages.
+     * </pre>
      */
     public Builder clearLineStartOffset() {
       lineStartOffset_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
       
       return this;
     }
@@ -607,7 +768,7 @@ public final class FileEntry extends
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
      */
     public boolean hasFirstRelevantLineIndex() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
@@ -619,7 +780,7 @@ public final class FileEntry extends
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
      */
     public Builder setFirstRelevantLineIndex(int value) {
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
       firstRelevantLineIndex_ = value;
       
       return this;
@@ -628,7 +789,7 @@ public final class FileEntry extends
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
      */
     public Builder clearFirstRelevantLineIndex() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000008);
       firstRelevantLineIndex_ = 0;
       
       return this;

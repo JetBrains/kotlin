@@ -352,12 +352,6 @@ public final class IrFile extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (hasFileEntry()) {
-      if (!getFileEntry().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     for (int i = 0; i < getAnnotationCount(); i++) {
       if (!getAnnotation(i).isInitialized()) {
         memoizedIsInitialized = 0;
@@ -679,12 +673,6 @@ public final class IrFile extends
     }
 
     public final boolean isInitialized() {
-      if (hasFileEntry()) {
-        if (!getFileEntry().isInitialized()) {
-          
-          return false;
-        }
-      }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
           
