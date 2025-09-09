@@ -15,7 +15,7 @@ library {
 
       public abstract var b: kotlin/Int
         public abstract get
-        protected abstract /* non-default */ set(<set-?>: kotlin/Int)
+        protected abstract /* non-default */ set(value: kotlin/Int)
 
       public final val c: kotlin/Int
         public final get
@@ -29,7 +29,7 @@ library {
 
       public final var f: kotlin/Int
         public final get
-        private final /* non-default */ set(<set-?>: kotlin/Int)
+        private final /* non-default */ set(value: kotlin/Int)
 
       public open val g: kotlin/Int
         public open get
@@ -43,7 +43,7 @@ library {
 
       public open var l: kotlin/Int
         public open get
-        protected open /* non-default */ set(<set-?>: kotlin/Int)
+        protected open /* non-default */ set(value: kotlin/Int)
     }
   }
 }

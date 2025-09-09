@@ -5,9 +5,6 @@ library {
     // package name: test
 
     // class name: test/My
-    // class name: test/My.ALPHA
-    // class name: test/My.BETA
-    // class name: test/My.OMEGA
     // class name: test/ann
     // class name: test/annotated
 
@@ -27,18 +24,6 @@ library {
       OMEGA,
 
       // has Enum.entries
-    }
-
-    // signature: test/My.ALPHA|null[0]
-    public final enum entry test/My.ALPHA : test/My {
-    }
-
-    // signature: test/My.BETA|null[0]
-    public final enum entry test/My.BETA : test/My {
-    }
-
-    // signature: test/My.OMEGA|null[0]
-    public final enum entry test/My.OMEGA : test/My {
     }
 
     // signature: test/ann|null[0]

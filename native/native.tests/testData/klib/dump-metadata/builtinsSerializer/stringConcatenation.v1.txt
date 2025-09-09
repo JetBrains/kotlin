@@ -27,7 +27,7 @@ library {
         public final get
 
       // signature: /Obj.concat|4194001668264387881[0]
-      public final val concat: kotlin/String /* = "OK" */
+      public final val concat: kotlin/String /* = ... */
         // signature: /Obj.concat.<get-concat>|7226754227535139280[0]
         public final get
     }

@@ -7,12 +7,12 @@ library {
     package {
 
       // signature: custom.pkg/v1|7393439784805956893[0]
-      public final val v1: kotlin/Int /* = 1 */
+      public final val v1: kotlin/Int /* = ... */
         // signature: custom.pkg/v1.<get-v1>|6078408232880608613[0]
         public final get
 
       // signature: custom.pkg/v2|-7674839086071973207[0]
-      public final val v2: kotlin/String /* = "hello" */
+      public final val v2: kotlin/String /* = ... */
         // signature: custom.pkg/v2.<get-v2>|-1626959823585604055[0]
         public final get
 

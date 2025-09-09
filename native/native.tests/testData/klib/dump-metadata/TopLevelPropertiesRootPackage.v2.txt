@@ -7,12 +7,12 @@ library {
     package {
 
       // signature: /v1|{}v1[0]
-      public final val v1: kotlin/Int /* = 1 */
+      public final val v1: kotlin/Int /* = ... */
         // signature: /v1.<get-v1>|<get-v1>(){}[0]
         public final get
 
       // signature: /v2|{}v2[0]
-      public final val v2: kotlin/String /* = "hello" */
+      public final val v2: kotlin/String /* = ... */
         // signature: /v2.<get-v2>|<get-v2>(){}[0]
         public final get
 

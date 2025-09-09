@@ -47,7 +47,7 @@ library {
       public constructor()
 
       // signature: test/ClassA.classB.BC.memberFromBB|{}memberFromBB[0]
-      public final val memberFromBB: kotlin/Int /* = 150 */
+      public final val memberFromBB: kotlin/Int /* = ... */
         // signature: test/ClassA.classB.BC.memberFromBB.<get-memberFromBB>|<get-memberFromBB>(){}[0]
         public final get
     }
@@ -59,7 +59,7 @@ library {
       private constructor()
 
       // signature: test/ClassA.classB.BO.memberFromBO|{}memberFromBO[0]
-      public final val memberFromBO: kotlin/Int /* = 175 */
+      public final val memberFromBO: kotlin/Int /* = ... */
         // signature: test/ClassA.classB.BO.memberFromBO.<get-memberFromBO>|<get-memberFromBO>(){}[0]
         public final get
     }
@@ -71,7 +71,7 @@ library {
       public constructor()
 
       // signature: test/ClassA.classC.memberFromC|{}memberFromC[0]
-      public final val memberFromC: kotlin/Int /* = 200 */
+      public final val memberFromC: kotlin/Int /* = ... */
         // signature: test/ClassA.classC.memberFromC.<get-memberFromC>|<get-memberFromC>(){}[0]
         public final get
     }
@@ -94,7 +94,7 @@ library {
       private constructor()
 
       // signature: test/E.Companion.stat|{}stat[0]
-      public final val stat: kotlin/Int /* = 250 */
+      public final val stat: kotlin/Int /* = ... */
         // signature: test/E.Companion.stat.<get-stat>|<get-stat>(){}[0]
         public final get
 
@@ -108,7 +108,7 @@ library {
       public constructor()
 
       // signature: test/E.Companion.D.memberFromD|{}memberFromD[0]
-      public final val memberFromD: kotlin/Int /* = 275 */
+      public final val memberFromD: kotlin/Int /* = ... */
         // signature: test/E.Companion.D.memberFromD.<get-memberFromD>|<get-memberFromD>(){}[0]
         public final get
     }
@@ -129,7 +129,7 @@ library {
       private constructor()
 
       // signature: test/F.ObjA.memberFromObjA|{}memberFromObjA[0]
-      public final val memberFromObjA: kotlin/Int /* = 300 */
+      public final val memberFromObjA: kotlin/Int /* = ... */
         // signature: test/F.ObjA.memberFromObjA.<get-memberFromObjA>|<get-memberFromObjA>(){}[0]
         public final get
     }

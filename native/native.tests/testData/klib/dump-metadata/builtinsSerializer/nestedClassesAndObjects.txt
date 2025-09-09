@@ -39,7 +39,7 @@ library {
 
       public constructor()
 
-      public final val memberFromBB: kotlin/Int /* = 150 */
+      public final val memberFromBB: kotlin/Int /* = ... */
         public final get
     }
 
@@ -47,7 +47,7 @@ library {
 
       private constructor()
 
-      public final val memberFromBO: kotlin/Int /* = 175 */
+      public final val memberFromBO: kotlin/Int /* = ... */
         public final get
     }
 
@@ -55,7 +55,7 @@ library {
 
       public constructor()
 
-      public final val memberFromC: kotlin/Int /* = 200 */
+      public final val memberFromC: kotlin/Int /* = ... */
         public final get
     }
 
@@ -72,7 +72,7 @@ library {
 
       private constructor()
 
-      public final val stat: kotlin/Int /* = 250 */
+      public final val stat: kotlin/Int /* = ... */
         public final get
 
       // nested class: D
@@ -82,7 +82,7 @@ library {
 
       public constructor()
 
-      public final val memberFromD: kotlin/Int /* = 275 */
+      public final val memberFromD: kotlin/Int /* = ... */
         public final get
     }
 
@@ -97,7 +97,7 @@ library {
 
       private constructor()
 
-      public final val memberFromObjA: kotlin/Int /* = 300 */
+      public final val memberFromObjA: kotlin/Int /* = ... */
         public final get
     }
   }

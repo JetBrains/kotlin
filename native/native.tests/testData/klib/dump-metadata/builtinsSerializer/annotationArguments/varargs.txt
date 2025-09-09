@@ -5,9 +5,6 @@ library {
     // package name: test
 
     // class name: test/My
-    // class name: test/My.ALPHA
-    // class name: test/My.BETA
-    // class name: test/My.OMEGA
     // class name: test/ann
     // class name: test/annotated
 
@@ -22,15 +19,6 @@ library {
       OMEGA,
 
       // has Enum.entries
-    }
-
-    public final enum entry test/My.ALPHA : test/My {
-    }
-
-    public final enum entry test/My.BETA : test/My {
-    }
-
-    public final enum entry test/My.OMEGA : test/My {
     }
 
     public final annotation class test/ann : kotlin/Annotation {

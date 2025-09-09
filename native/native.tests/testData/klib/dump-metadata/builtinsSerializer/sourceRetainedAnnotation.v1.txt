@@ -6,7 +6,6 @@ library {
 
     // class name: test/A
     // class name: test/Enum
-    // class name: test/Enum.ENTRY
     // class name: test/Klass
 
     // signature: test/A|null[0]
@@ -28,10 +27,6 @@ library {
       ENTRY,
 
       // has Enum.entries
-    }
-
-    // signature: test/Enum.ENTRY|null[0]
-    public final enum entry test/Enum.ENTRY : test/Enum {
     }
 
     // signature: test/Klass|null[0]

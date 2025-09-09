@@ -17,7 +17,7 @@ library {
     package {
 
       @test/Anno(value = "property")
-      public final val v1: kotlin/String /* = "" */
+      public final val v1: kotlin/String /* = ... */
         public final get
 
       public final var v2: kotlin/String

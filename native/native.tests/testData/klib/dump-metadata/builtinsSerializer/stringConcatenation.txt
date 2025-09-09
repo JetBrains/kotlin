@@ -20,7 +20,7 @@ library {
       public final const val O: kotlin/String /* = "O" */
         public final get
 
-      public final val concat: kotlin/String /* = "OK" */
+      public final val concat: kotlin/String /* = ... */
         public final get
     }
   }
