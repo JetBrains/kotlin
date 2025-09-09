@@ -28,3 +28,6 @@ fun asyncList(): Promise<List<Int>> =
 @JsExport
 fun arrayOfLists(): Array<List<Int>> =
     arrayOf(listOf(1, 2))
+
+@JsExport
+fun acceptArrayOfPairs(array: Array<Pair<String, String>>) {}
