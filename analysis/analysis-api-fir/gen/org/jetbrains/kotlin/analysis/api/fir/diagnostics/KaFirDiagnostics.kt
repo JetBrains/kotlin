@@ -5018,6 +5018,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NestedJsExport::class
     }
 
+    interface MultipleJsExportDefaultInOneFile : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = MultipleJsExportDefaultInOneFile::class
+    }
+
     interface DelegationByDynamic : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = DelegationByDynamic::class
     }
