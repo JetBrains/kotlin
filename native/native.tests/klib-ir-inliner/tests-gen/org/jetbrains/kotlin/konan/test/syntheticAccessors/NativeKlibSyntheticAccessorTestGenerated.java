@@ -232,6 +232,12 @@ public class NativeKlibSyntheticAccessorTestGenerated extends AbstractNativeKlib
       }
 
       @Test
+      @TestMetadata("leakingInnerClassPrivateConstructor.kt")
+      public void testLeakingInnerClassPrivateConstructor() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingInnerClassPrivateConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
       public void testLeakingOuterPrivateMethodThroughInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateMethodThroughInnerClass.kt");
