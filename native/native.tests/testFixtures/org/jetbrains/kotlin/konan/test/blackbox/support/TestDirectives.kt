@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTION
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
@@ -153,10 +152,6 @@ object TestDirectives : SimpleDirectivesContainer() {
 
     val MUTED by stringDirective(
         description = "In native simple tests, mute the test",
-    )
-
-    val FIR_IDENTICAL by directive(
-        description = "Test behavior should be identical for FIR testing"
     )
 
     val FILECHECK_STAGE by stringDirective(
@@ -330,11 +325,9 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(testDataFile: File, registeredDirectives: RegisteredDirectives, settings: Settings): LLDBSessionSpec {
-    val firIdentical = FIR_IDENTICAL in registeredDirectives
-    val firSpecificExt = if (settings.get<PipelineType>() == PipelineType.K2 && !firIdentical) "fir." else ""
+internal fun parseLLDBSpec(testDataFile: File): LLDBSessionSpec {
     val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
-    val specFileLocation = "$specFilePathWithoutExtension${firSpecificExt}txt"
+    val specFileLocation = "${specFilePathWithoutExtension}txt"
     val specFile = File(specFileLocation)
     return try {
         LLDBSessionSpec.parse(specFile.readText())

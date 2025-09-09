@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// FIR_IDENTICAL
+
 
 inline fun foo(x: Int, y: Int, z: Int = 5): Int {
     return x + y

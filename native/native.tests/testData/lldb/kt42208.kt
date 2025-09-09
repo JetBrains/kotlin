@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// FIR_IDENTICAL
+
 
 
 // FILE: kt42208-1.kt

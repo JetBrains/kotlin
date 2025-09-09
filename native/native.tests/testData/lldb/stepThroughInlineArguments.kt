@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// FIR_IDENTICAL
+
 // FILE: main.kt
 fun bar(x: Int): Int {
     val res = foo(
