@@ -125,6 +125,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: D): R =
         visitDeclaration(codeFragment, data)
 
+    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): R =
+        visitStatement(replDeclarationReference, data)
+
     override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R =
         visitImport(resolvedImport, data)
 

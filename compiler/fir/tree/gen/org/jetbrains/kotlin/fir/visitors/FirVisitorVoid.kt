@@ -723,6 +723,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(replSnippet)
     }
 
+    final override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: Nothing?) {
+        visitReplDeclarationReference(replDeclarationReference)
+    }
+
+    open fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference) {
+        visitElement(replDeclarationReference)
+    }
+
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
         visitPackageDirective(packageDirective)
     }
