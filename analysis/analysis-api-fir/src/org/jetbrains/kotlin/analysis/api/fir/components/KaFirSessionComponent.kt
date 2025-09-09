@@ -12,20 +12,22 @@ import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
+import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.fir.utils.toKaSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.*
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeInferenceContext
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.types.model.convertVariance
 
 internal interface KaFirSessionComponent : KaSessionComponent {
     val analysisSession: KaFirSession
@@ -36,19 +38,14 @@ internal interface KaFirSessionComponent : KaSessionComponent {
     val firSymbolBuilder: KaSymbolByFirBuilder get() = analysisSession.firSymbolBuilder
     val resolutionFacade: LLResolutionFacade get() = analysisSession.resolutionFacade
 
-    fun ConeKotlinType.asKaType(): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
+    fun ConeKotlinType.asKaType(): KaType = asKaType(analysisSession)
 
-    fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> =
-        KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
+    fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiagnostic(analysisSession)
 
     fun ConeDiagnostic.asKaDiagnostic(
         source: KtSourceElement,
         callOrAssignmentSource: KtSourceElement?,
-    ): KaDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostics(analysisSession.firSession, source, callOrAssignmentSource).firstOrNull() ?: return null
-        check(firDiagnostic is KtPsiDiagnostic)
-        return firDiagnostic.asKaDiagnostic()
-    }
+    ): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source, callOrAssignmentSource, analysisSession)
 
     val KaType.coneType: ConeKotlinType
         get() {
@@ -57,20 +54,10 @@ internal interface KaFirSessionComponent : KaSessionComponent {
         }
 
     val KaTypeProjection.coneTypeProjection: ConeTypeProjection
-        get() = when (this) {
-            is KaStarTypeProjection -> ConeStarProjection
-            is KaTypeArgumentWithVariance -> {
-                typeContext.createTypeArgument(type.coneType, variance.convertVariance()) as ConeTypeProjection
-            }
-        }
+        get() = coneTypeProjection(analysisSession)
 
-    fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy): TypeCheckerState {
-        // TODO use correct session here,
-        return analysisSession.resolutionFacade.useSiteFirSession.typeContext.newTypeCheckerState(
-            errorTypesEqualToAnything = errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT,
-            stubTypesEqualToAnything = true,
-        )
-    }
+    fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy): TypeCheckerState =
+        createTypeCheckerContext(errorTypePolicy, analysisSession)
 
     fun ConeSubstitutor.toKaSubstitutor(): KaSubstitutor = toKaSubstitutor(analysisSession)
 }

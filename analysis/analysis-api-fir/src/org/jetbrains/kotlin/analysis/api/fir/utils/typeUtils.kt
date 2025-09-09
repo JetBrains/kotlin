@@ -5,21 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
-import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
+import org.jetbrains.kotlin.analysis.api.fir.asKaDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.createConeSubstitutorFromTypeArguments
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -30,8 +35,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.util.bfs
 
 /**
@@ -212,3 +219,58 @@ internal fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
 
 internal fun ConeSubstitutor.toKaSubstitutor(analysisSession: KaFirSession): KaSubstitutor =
     analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)
+
+context(analysisSession: KaFirSession)
+internal fun ConeSubstitutor.toKaSubstitutor(): KaSubstitutor = toKaSubstitutor(analysisSession)
+
+context(analysisSession: KaFirSession)
+internal fun ConeKotlinType.asKaType(): KaType = asKaType(analysisSession)
+
+internal fun ConeKotlinType.asKaType(analysisSession: KaFirSession): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
+
+context(analysisSession: KaFirSession)
+internal fun ConeDiagnostic.asKaDiagnostic(
+    source: KtSourceElement,
+    callOrAssignmentSource: KtSourceElement?,
+): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source, callOrAssignmentSource, analysisSession)
+
+internal fun ConeDiagnostic.asKaDiagnostic(
+    source: KtSourceElement,
+    callOrAssignmentSource: KtSourceElement?,
+    analysisSession: KaFirSession
+): KaDiagnosticWithPsi<*>? {
+    with(analysisSession) {
+        val firDiagnostic = toFirDiagnostics(firSession, source, callOrAssignmentSource).firstOrNull() ?: return null
+        check(firDiagnostic is KtPsiDiagnostic)
+        return firDiagnostic.asKaDiagnostic()
+    }
+}
+
+internal val KaType.coneType: ConeKotlinType
+    get() {
+        require(this is KaFirType)
+        return coneType
+    }
+
+context(analysisSession: KaFirSession)
+internal val KaTypeProjection.coneTypeProjection: ConeTypeProjection
+    get() = coneTypeProjection(analysisSession)
+
+internal fun KaTypeProjection.coneTypeProjection(analysisSession: KaFirSession): ConeTypeProjection = when (this) {
+    is KaStarTypeProjection -> ConeStarProjection
+    is KaTypeArgumentWithVariance -> {
+        analysisSession.firSession.typeContext.createTypeArgument(type.coneType, variance.convertVariance()) as ConeTypeProjection
+    }
+}
+
+context(analysisSession: KaFirSession)
+internal fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy): TypeCheckerState =
+    createTypeCheckerContext(errorTypePolicy, analysisSession)
+
+internal fun createTypeCheckerContext(errorTypePolicy: KaSubtypingErrorTypePolicy, analysisSession: KaFirSession): TypeCheckerState {
+    // TODO use correct session here,
+    return analysisSession.resolutionFacade.useSiteFirSession.typeContext.newTypeCheckerState(
+        errorTypesEqualToAnything = errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT,
+        stubTypesEqualToAnything = true,
+    )
+}
