@@ -80,6 +80,31 @@ public open class RangeIterationTestBase {
         compare(expectedElements.iterator(), sequence.iterator()) {
             iteratorBehavior()
         }
+
+        if (sequence is LongProgression || sequence is ULongProgression) {
+            when (sequence) {
+                is LongRange -> {
+                    assertEquals(
+                        if (sequence.isEmpty()) -1 else (31 * (sequence.first xor (sequence.first ushr 32)) + (sequence.last xor (sequence.last ushr 32))).toInt(),
+                        sequence.hashCode()
+                    )
+                }
+                is LongProgression -> assertEquals(
+                    if (sequence.isEmpty()) -1 else (31 * (31 * (sequence.first xor (sequence.first ushr 32)) + (sequence.last xor (sequence.last ushr 32))) + (sequence.step xor (sequence.step ushr 32))).toInt(),
+                    sequence.hashCode()
+                )
+                is ULongRange -> {
+                    assertEquals(
+                        if (sequence.isEmpty()) -1 else (31 * (sequence.first xor (sequence.first shr 32)).toInt() + (sequence.last xor (sequence.last shr 32)).toInt()),
+                        sequence.hashCode()
+                    )
+                }
+                is ULongProgression -> assertEquals(
+                    if (sequence.isEmpty()) -1 else (31 * (31 * (sequence.first xor (sequence.first shr 32)).toInt() + (sequence.last xor (sequence.last shr 32)).toInt()) + (sequence.step xor (sequence.step ushr 32)).toInt()),
+                    sequence.hashCode()
+                )
+            }
+        }
     }
 
 }

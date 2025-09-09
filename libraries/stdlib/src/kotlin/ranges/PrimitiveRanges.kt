@@ -116,7 +116,7 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
         first == other.first && last == other.last)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (first xor (first ushr 32)) + (last xor (last ushr 32))).toInt()
+        if (isEmpty()) -1 else 31 * first.hashCode() + last.hashCode()
 
     override fun toString(): String = "$first..$last"
 
