@@ -63,7 +63,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)
         register(project, AddKotlinPlatformIntegersSupportLibrary)
-        register(project, SetupSourceSetCommonizerTargetAssociation)
         register(project, FinalizeConfigurationFusMetricAction)
 
         if (isAbiValidationEnabled) {

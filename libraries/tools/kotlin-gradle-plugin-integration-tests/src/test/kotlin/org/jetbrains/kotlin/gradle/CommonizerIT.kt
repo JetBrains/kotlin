@@ -12,6 +12,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
@@ -524,6 +525,72 @@ open class CommonizerIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-48118 c-interops available in commonMain")
+    @GradleTest
+    fun testCInteropsAvailableInCommonMain(gradleVersion: GradleVersion) {
+        val project = project("empty", gradleVersion) {
+            buildScriptInjection {
+                project.extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, true)
+            }
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                val defFile = project.layout.projectDirectory.file("foo.def").asFile
+                defFile.writeText("""
+                    language = C
+                    ---
+                    void bar(void);
+                """.trimIndent())
+                project.applyMultiplatform {
+                    listOf(
+                        linuxX64(),
+                        linuxArm64(),
+                    ).forEach {
+                        it.compilations.getByName("main").cinterops.create("foo") {
+                            it.definitionFile.set(defFile)
+                        }
+                    }
+
+                    val commonMain = sourceSets.commonMain.get()
+                    val linuxArm64Main = sourceSets.linuxArm64Main.get()
+                    val linuxX64Main = sourceSets.linuxX64Main.get()
+
+                    val upperMain = sourceSets.create("upperMain") {
+                        it.dependsOn(commonMain)
+                    }
+
+                    upperMain.compileSource(
+                        """
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun consumeCinteropUpperMain() {
+                            foo.bar()
+                        }
+                        """.trimIndent()
+                    )
+                    commonMain.compileSource(
+                        """
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun consumeCinteropCommonMain() {
+                            foo.bar()
+                        }
+                        """.trimIndent()
+                    )
+
+                    sourceSets.create("lowerMain") {
+                        it.dependsOn(upperMain)
+                        it.dependsOn(commonMain)
+                        linuxArm64Main.dependsOn(it)
+                        linuxX64Main.dependsOn(it)
+                    }
+                }
+            }
+        }
+        project.build("compileUpperMainKotlinMetadata")
+        project.build("compileCommonMainKotlinMetadata")
+    }
+
 
     @DisplayName("KT-51517 commonization with transitive cinterop")
     @GradleTest
