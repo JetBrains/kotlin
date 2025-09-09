@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.js.naming.WasmNameSuggestion
 import org.jetbrains.kotlin.js.resolve.ExtensionFunctionToExternalIsInlinable
+import org.jetbrains.kotlin.js.resolve.NativeInvokeChecker
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.wasm.resolve.diagnostics.*
 //       KT-56848
 object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
+        NativeInvokeChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
         WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,

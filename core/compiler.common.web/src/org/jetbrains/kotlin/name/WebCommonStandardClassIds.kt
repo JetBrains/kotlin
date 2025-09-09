@@ -22,6 +22,9 @@ object WebCommonStandardClassIds {
 
         @JvmField
         val JsExport = "JsExport".jsId()
+
+        @JvmField
+        val JsNativeInvoke = "nativeInvoke".jsId()
     }
 
     object Callables {
