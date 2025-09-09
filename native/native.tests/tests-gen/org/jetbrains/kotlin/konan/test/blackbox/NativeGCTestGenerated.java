@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("gc")
 @UseStandardTestCaseGroupProvider()
-@ClassicPipeline()
 public class NativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInGc() {

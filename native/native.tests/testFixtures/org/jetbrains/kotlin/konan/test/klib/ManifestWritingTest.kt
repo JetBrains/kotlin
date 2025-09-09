@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -43,7 +45,8 @@ private const val TEST_DATA_ROOT = "native/native.tests/testData/klib/cross-comp
  */
 @Tag("klib")
 @TestDataPath("\$PROJECT_ROOT/$TEST_DATA_ROOT")
-abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
+@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
+class ManifestWritingTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("simpleManifest")
     fun testSimpleManifest(testInfo: TestInfo) {

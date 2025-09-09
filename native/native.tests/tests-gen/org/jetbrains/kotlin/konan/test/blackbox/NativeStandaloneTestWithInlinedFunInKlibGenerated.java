@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
 @UseStandardTestCaseGroupProvider()
 @Tag("klibIrInliner")
-public class FirNativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractNativeBlackBoxTest {
+public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInStandalone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone"), Pattern.compile("^(.+)\\.kt$"), null, true);

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -28,12 +27,8 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.time.Duration
 
-@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
-class ClassicFrameworkTest : FrameworkTestBase()
-
-@TestDataPath("\$PROJECT_ROOT")
-class FirFrameworkTest : FrameworkTestBase()
+class FrameworkTest : FrameworkTestBase()
 
 abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")

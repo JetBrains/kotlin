@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assumptions
@@ -22,14 +21,9 @@ import java.net.Socket
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 
-@ClassicPipeline()
 @TestMetadata("native/native.tests/testData/echoServer")
 @TestDataPath("\$PROJECT_ROOT")
-class ClassicEchoServerTest : EchoServerBaseTest()
-
-@TestMetadata("native/native.tests/testData/echoServer")
-@TestDataPath("\$PROJECT_ROOT")
-class FirEchoServerTest : EchoServerBaseTest()
+class EchoServerTest : EchoServerBaseTest()
 
 abstract class EchoServerBaseTest : AbstractNativeSimpleTest() {
     private val testCompilationFactory = TestCompilationFactory()
