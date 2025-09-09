@@ -763,13 +763,63 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(declaration)
         parent(controlFlowGraphOwner)
 
-        +FieldSets.name
-        +declaredSymbol(replSnippetSymbolType)
-
         +field("source", sourceElementType, nullable = false)
-        +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
-        +field("body", block, nullable = false, withTransform = true, withReplace = true)
-        +field("resultTypeRef", typeRef, withReplace = true, withTransform = true)
+        +declaredSymbol(replSnippetSymbolType)
+        +field("snippetClass", regularClass, withTransform = true)
+        +field("evalFunctionName", nameType)
+    }
+
+    val replDeclarationReference: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("symbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
+            withBindThis = false
+            isMutable = false
+        }
+    }
+
+    val replPropertyInitializer: Element by element(Expression) {
+        parent(expression)
+
+        +referencedSymbol("propertySymbol", propertySymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+        +field("expression", expression, withReplace = true, withTransform = true)
+    }
+
+    val replPropertyDelegate: Element by element(Expression) {
+        parent(expression)
+
+        +referencedSymbol("propertySymbol", propertySymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+        +field("expression", expression, withReplace = true, withTransform = true)
+    }
+
+    val delayedPropertyInitializer: Element by element(Expression) {
+        parent(expression)
+
+        +referencedSymbol("functionSymbol", namedFunctionSymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+        +field("expressionRef", referenceToReplPropertyInitializer) {
+            isMutable = false
+        }
+    }
+
+    val delayedPropertyDelegate: Element by element(Expression) {
+        parent(expression)
+
+        +referencedSymbol("functionSymbol", namedFunctionSymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+        +field("expressionRef", referenceToReplPropertyDelegate) {
+            isMutable = false
+        }
     }
 
     val packageDirective: Element by element(Other) {

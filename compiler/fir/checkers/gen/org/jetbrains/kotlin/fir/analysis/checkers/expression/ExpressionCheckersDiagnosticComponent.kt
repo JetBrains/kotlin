@@ -87,6 +87,26 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allBlockCheckers.check(block, data)
     }
 
+    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: CheckerContext) {
+        checkers.allReplDeclarationReferenceCheckers.check(replDeclarationReference, data)
+    }
+
+    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: CheckerContext) {
+        checkers.allReplPropertyInitializerCheckers.check(replPropertyInitializer, data)
+    }
+
+    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: CheckerContext) {
+        checkers.allReplPropertyDelegateCheckers.check(replPropertyDelegate, data)
+    }
+
+    override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: CheckerContext) {
+        checkers.allDelayedPropertyInitializerCheckers.check(delayedPropertyInitializer, data)
+    }
+
+    override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: CheckerContext) {
+        checkers.allDelayedPropertyDelegateCheckers.check(delayedPropertyDelegate, data)
+    }
+
     override fun visitAnnotation(annotation: FirAnnotation, data: CheckerContext) {
         checkers.allAnnotationCheckers.check(annotation, data)
     }
