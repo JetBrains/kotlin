@@ -10,7 +10,10 @@ option optimize_for = LITE_RUNTIME;
 /* ------ Top Level --------------------------------------------- */
 
 message FileEntry {
-  required string name = 1;
+  // Required: either `name` or `name_old` must be present.
+  optional string name_old = 1; // Before 2.3.0 the string is stored directly in the message.
+  optional int32 name = 4; // After 2.3.0 the string is stored in a string table with an index pointing to it,
+                           // the same way as in all other messages.
   repeated int32 line_start_offset = 2 [packed=true]; // Before 2.3.0: Store the absolute offset of each line.
   repeated int32 line_start_offset_delta = 5 [packed=true]; // After 2.3.0: The first element is the absolute offset of the first line,
                                                             // subsequent entries are offsets relative to the previous line (deltas).

@@ -1410,9 +1410,8 @@ open class IrFileSerializer(
 
     // This class is needed solely to have generated `equals()` and `hashCode()` for `FileEntry`, to compare objects by value.
     // For correct deduplication, it must have the same fields as `FileEntry` in `KotlinIr.proto`.
-    // TODO: KT-74258: bump Protobuf version to >3.x to have generated `ProtoFileEntry.equals()` and `ProtoFileEntry.hashCode()`
     data class ProtoFileEntryDeduplicationKey(
-        val name: String,
+        val name: Any,
         val lineStartOffsetList: List<Int>,
         val firstRelevantLineIndex: Int
     )
@@ -1425,7 +1424,7 @@ open class IrFileSerializer(
         val proto = serializeFileEntry(entry, includeLineStartOffsets, relevantLinesRange)
         return protoIrFileEntryMap.getOrPut(
             ProtoFileEntryDeduplicationKey(
-                proto.name,
+                if (proto.hasName()) proto.name else proto.nameOld,
                 if (proto.lineStartOffsetDeltaCount > 0) proto.lineStartOffsetDeltaList else proto.lineStartOffsetList,
                 proto.firstRelevantLineIndex
             )
@@ -1439,9 +1438,15 @@ open class IrFileSerializer(
         entry: IrFileEntry,
         includeLineStartOffsets: Boolean = true,
         relevantLinesRange: IntRange? = null,
-    ): ProtoFileEntry =
-        ProtoFileEntry.newBuilder()
-            .setName(entry.matchAndNormalizeFilePath())
+    ): ProtoFileEntry {
+        val name = entry.matchAndNormalizeFilePath()
+        return ProtoFileEntry.newBuilder()
+            .apply {
+                if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3))
+                    setName(serializeString(name))
+                else
+                    setNameOld(name)
+            }
             .applyIf(includeLineStartOffsets) {
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
@@ -1458,6 +1463,7 @@ open class IrFileSerializer(
                 this
             }
             .build()
+    }
 
     private fun getRelevantOffsets(entry: IrFileEntry, relevantLinesRange: IntRange?): List<Int> {
         return when {

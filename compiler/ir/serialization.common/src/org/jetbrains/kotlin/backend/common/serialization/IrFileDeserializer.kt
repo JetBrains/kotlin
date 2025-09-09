@@ -271,10 +271,16 @@ internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry):
     }
 
     return NaiveSourceBasedFileEntryImpl(
-        name = fileEntryProto.name,
+        name = deserializeFileEntryName(fileEntryProto),
         lineStartOffsets = lineStartOffsets,
         firstRelevantLineIndex = fileEntryProto.firstRelevantLineIndex
     )
+}
+
+fun IrLibraryFile.deserializeFileEntryName(fileEntryProto: ProtoFileEntry): String = when {
+    fileEntryProto.hasName() -> string(fileEntryProto.name)
+    fileEntryProto.hasNameOld() -> fileEntryProto.nameOld
+    else -> error("Malformed KLIB: File entry has no name")
 }
 
 

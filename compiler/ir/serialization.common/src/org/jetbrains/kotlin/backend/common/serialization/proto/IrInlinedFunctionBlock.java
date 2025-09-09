@@ -265,12 +265,6 @@ public final class IrInlinedFunctionBlock extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (hasInlinedFunctionFileEntry()) {
-      if (!getInlinedFunctionFileEntry().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     if (!getBase().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
@@ -527,12 +521,6 @@ public final class IrInlinedFunctionBlock extends
       if (!hasInlinedFunctionEndOffset()) {
         
         return false;
-      }
-      if (hasInlinedFunctionFileEntry()) {
-        if (!getInlinedFunctionFileEntry().isInitialized()) {
-          
-          return false;
-        }
       }
       if (!getBase().isInitialized()) {
         
