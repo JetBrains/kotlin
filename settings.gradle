@@ -213,11 +213,15 @@ include ":benchmarks",
         ":dependencies:bootstrap:kotlin-stdlib-bootstrap",
         ":dependencies:bootstrap:kotlin-build-tools-api-bootstrap",
         ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
+        ":dependencies:bootstrap:kotlin-build-tools-compat-bootstrap",
         ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
+        ":dependencies:bootstrap:kotlin-scripting-common-bootstrap",
+        ":dependencies:bootstrap:kotlin-scripting-jvm-bootstrap",
         ":dependencies:bootstrap:kotlin-daemon-client-bootstrap",
         ":dependencies:bootstrap:kotlin-reflect-bootstrap",
         ":dependencies:bootstrap:kotlin-tooling-core-bootstrap",
-        ":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap"
+        ":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap",
+        ":dependencies:bootstrap:kotlin-compiler-runner-bootstrap"
 
 include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.embeddable",
