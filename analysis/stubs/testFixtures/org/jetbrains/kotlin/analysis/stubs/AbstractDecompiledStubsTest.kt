@@ -7,31 +7,25 @@ package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.PsiFileStub
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 
 
 /**
- * This test is supposed to validate the decompiled stubs output.
+ * This test is supposed to validate the consistency between a stub-tree and an AST-tree for a [decompiled file][org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile].
  *
- * It takes a [KtDecompiledFile][org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile] and creates a stub for it.
+ * Via [PsiFileImpl.calcStubTree][com.intellij.psi.impl.source.PsiFileImpl.calcStubTree] it performs:
+ * 1. Builds the AST-tree from the decompiled text
+ * 2. Builds the stub-tree from the binary data (effectively the same as [AbstractCompiledStubsTest])
+ * 3. Binds the AST and stub trees (via [com.intellij.psi.impl.source.FileTrees.reconcilePsi])
  *
- * @see AbstractCompiledStubsTest
  * @see org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
  */
-abstract class AbstractDecompiledStubsTest(defaultTargetPlatform: TargetPlatform) : AbstractStubsTest() {
-    override val configurator: AnalysisApiTestConfigurator = DecompiledStubsTestConfigurator(defaultTargetPlatform)
+abstract class AbstractDecompiledStubsTest(defaultTargetPlatform: TargetPlatform) : AbstractCompiledStubsTest(defaultTargetPlatform) {
     override fun computeStub(file: KtFile): PsiFileStub<*> {
         requireIsInstance<KtDecompiledFile>(file)
 
         return file.calcStubTree().root
-    }
-
-    internal open class DecompiledStubsTestConfigurator(
-        defaultTargetPlatform: TargetPlatform,
-    ) : AbstractCompiledStubsTest.CompiledStubsTestConfigurator(defaultTargetPlatform) {
-        override val testPrefixes: List<String> get() = "decompiled".let { listOf("$platformPrefix.$it", it) } + super.testPrefixes
     }
 }
