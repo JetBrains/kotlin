@@ -58,6 +58,13 @@
 
     <registryKey
         defaultValue="false"
+        description="Log a GraphML file representing the current LL FIR session structure on low-memory events. Should only be used for development purposes."
+        key="kotlin.analysis.sessionStructureLogging"
+        restartRequired="true"
+    />
+
+    <registryKey
+        defaultValue="false"
         description="Enables post-compute-based Java Functions Cache (should be used only when data race is detected with less strict version)"
         key="kotlin.analysis.postComputeEnhancedJavaFunctionsCache"
         restartRequired="true"
