@@ -23,11 +23,6 @@ abstract class AbstractDecompiledKnmStubConsistencyFe10Test : AbstractDecompiled
         get() = Fe10KnmTestSupport
 }
 
-abstract class AbstractDecompiledKnmStubConsistencyK2Test : AbstractDecompiledKnmStubConsistencyTest() {
-    override val knmTestSupport: KnmTestSupport
-        get() = K2KnmTestSupport
-}
-
 abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmFileTest() {
 
     override fun doTest(testDirectoryPath: Path) {
