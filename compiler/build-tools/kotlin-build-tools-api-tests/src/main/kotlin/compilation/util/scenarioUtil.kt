@@ -7,28 +7,19 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.util
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
-
-fun Scenario.moduleWithoutInlineSnapshotting(
-    moduleName: String,
-    dependencies: List<ScenarioModule>,
-) = module(
-    moduleName = moduleName,
-    dependencies = dependencies,
-    snapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, false),
-)
 
 @OptIn(ExperimentalCompilerArgument::class)
 fun Scenario.moduleWithFir(
     moduleName: String,
+    dependencies: List<ScenarioModule> = emptyList(),
     compilationOperationConfig: (JvmCompilationOperation) -> Unit = {},
 ) = module(
     moduleName = moduleName,
+    dependencies = dependencies,
     compilationConfigAction = {
         it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
         compilationOperationConfig(it)
