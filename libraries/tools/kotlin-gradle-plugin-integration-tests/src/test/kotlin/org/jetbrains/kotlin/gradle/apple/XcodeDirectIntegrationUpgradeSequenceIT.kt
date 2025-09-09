@@ -25,11 +25,13 @@ class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
      * This test works by running a sequence of "xcodebuild test" incrementally against changes of Kotlin version. The test project:
      * 1. Generates a Kotlin source with [TestVersion.generatedValue]
      * 2. Runs an XCTest linked against compiled Kotlin version [TestVersion.kotlinVersion] and checks that [TestVersion.generatedValue] matches [TestVersion.expectedValue]
+     *
+     * Initially it tested a fix for KT-68257 regression specifically, but now it just tests a generic version upgrade
      */
-    @DisplayName("Test embedAndSign integration Kotlin version sequence")
+    @DisplayName("KT-68257: Test embedAndSign integration Kotlin version upgrade sequence doesn't result in incorrect binaries reuse")
     @ParameterizedTest(name = "{displayName} with Gradle: {0}, Kotlin versions: {1}")
     @ArgumentsSource(VersionSequenceProvider::class)
-    fun `KT-68257`(
+    fun `KT-68257 - embedAndSign integration - doesn't result in incorrect binaries reuse in incremental builds with Kotlin version upgrades`(
         gradleVersion: GradleVersion,
         versionSequence: List<TestVersion>,
     ) {
@@ -84,30 +86,15 @@ class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
             return super.provideArguments(context).flatMap { arguments ->
                 val gradleVersion = arguments.get().first()
                 Stream.of(
-                    // Reproduce KT-68257
+                    // Make sure going from prior to current version works
                     listOf(
-                        TestVersion("1", "1", "1.9.23"),
-                        TestVersion("1", "2", "2.0.0"),
-                        TestVersion("3", "3", KOTLIN_VERSION),
-                    ),
-                    // Make sure going from 1.9.23 to current version works
-                    listOf(
-                        TestVersion("1", "1", "1.9.23"),
-                        TestVersion("2", "2", KOTLIN_VERSION),
-                    ),
-                    // Make sure going from 2.0.0 to current version works since we need to remove a directory in BUILT_PRODUCTS_DIR
-                    listOf(
-                        TestVersion("1", "1", "2.0.0"),
+                        TestVersion("1", "1", TestVersions.Kotlin.STABLE_RELEASE),
                         TestVersion("2", "2", KOTLIN_VERSION),
                     ),
                     // Make sure going backwards also works
                     listOf(
                         TestVersion("1", "1", KOTLIN_VERSION),
-                        TestVersion("2", "2", "2.0.0"),
-                    ),
-                    listOf(
-                        TestVersion("1", "1", KOTLIN_VERSION),
-                        TestVersion("2", "2", "1.9.23"),
+                        TestVersion("2", "2", TestVersions.Kotlin.STABLE_RELEASE),
                     ),
                 ).map { versions ->
                     Arguments.of(gradleVersion, versions)
