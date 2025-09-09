@@ -16,9 +16,13 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmSignature
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctionsAndSelf
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
@@ -142,7 +146,11 @@ object ClassicBuiltinSpecialProperties {
 }
 
 private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolean {
-    if (dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin?.isBuiltIns == true) return true
+    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.isBuiltinClass(session) == true
+}
+
+fun FirClassLikeSymbol<*>.isBuiltinClass(session: FirSession): Boolean {
+    if (fir.origin.isBuiltIns) return true
     if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) return false
     val containingFile = session.firProvider.getContainingFile(this) ?: return false
     return containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
