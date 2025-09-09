@@ -25,11 +25,11 @@ import kotlin.reflect.jvm.internal.calls.ValueClassAwareCaller
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KParameterImpl(
-    val callable: KCallableImpl<*>,
+    override val callable: KCallableImpl<*>,
     override val index: Int,
     override val kind: KParameter.Kind,
     computeDescriptor: () -> ParameterDescriptor,
-) : KParameter {
+) : ReflectKParameter {
     private val descriptor: ParameterDescriptor by ReflectProperties.lazySoft(computeDescriptor)
 
     override val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
@@ -102,12 +102,12 @@ internal class KParameterImpl(
     override val isVararg: Boolean
         get() = descriptor.let { it is ValueParameterDescriptor && it.varargElementType != null }
 
-    override fun equals(other: Any?) =
-        other is KParameterImpl && callable == other.callable && index == other.index
+    override fun equals(other: Any?): Boolean =
+        other is ReflectKParameter && callable == other.callable && index == other.index
 
-    override fun hashCode() =
+    override fun hashCode(): Int =
         (callable.hashCode() * 31) + index.hashCode()
 
-    override fun toString() =
+    override fun toString(): String =
         ReflectionObjectRenderer.renderParameter(this)
 }

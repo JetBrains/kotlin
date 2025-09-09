@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Type
+import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.jvm.internal.RepeatableContainer
@@ -240,14 +241,23 @@ internal inline fun <R> reflectionCall(block: () -> R): R =
         throw IllegalCallableAccessException(e)
     }
 
-internal fun Any?.asKFunctionImpl(): KFunctionImpl? =
-    this as? KFunctionImpl ?: (this as? FunctionReference)?.compute() as? KFunctionImpl
+internal fun Any?.asReflectFunction(): ReflectKFunction? = when (this) {
+    is ReflectKFunction -> this
+    is FunctionReference -> compute() as? ReflectKFunction
+    else -> null
+}
 
-internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
-    this as? KPropertyImpl<*> ?: (this as? PropertyReference)?.compute() as? KPropertyImpl
+internal fun Any?.asReflectProperty(): ReflectKProperty<*>? = when (this) {
+    is ReflectKProperty<*> -> this
+    is PropertyReference -> compute() as? ReflectKProperty
+    else -> null
+}
 
-internal fun Any?.asKCallableImpl(): KCallableImpl<*>? =
-    this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()
+internal fun Any?.asReflectCallable(): ReflectKCallable<*>? = when (this) {
+    is ReflectKCallable<*> -> this
+    is CallableReference -> compute() as? ReflectKCallable<*>
+    else -> null
+}
 
 internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDescriptor?
     get() =

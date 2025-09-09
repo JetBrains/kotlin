@@ -20,25 +20,14 @@ import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray
 
-internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwnerImpl {
+internal abstract class KCallableImpl<out R> : ReflectKCallable<R>, KTypeParameterOwnerImpl {
     abstract val descriptor: CallableMemberDescriptor
-
-    // The instance which is used to perform a positional call, i.e. `call`
-    abstract val caller: Caller<*>
-
-    // The instance which is used to perform a call "by name", i.e. `callBy`
-    abstract val defaultCaller: Caller<*>?
-
-    abstract val container: KDeclarationContainerImpl
-
-    abstract val isBound: Boolean
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
@@ -64,7 +53,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         result
     }
 
-    val receiverParameters: List<KParameter> get() = _receiverParameters()
+    override val receiverParameters: List<KParameter> get() = _receiverParameters()
 
     private val _parameters = ReflectProperties.lazySoft {
         val descriptor = descriptor
@@ -193,7 +182,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
     private fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
 
     // See ArgumentGenerator#generate
-    internal fun callDefaultMethod(args: Map<KParameter, Any?>, continuationArgument: Continuation<*>?): R {
+    override fun callDefaultMethod(args: Map<KParameter, Any?>, continuationArgument: Continuation<*>?): R {
         val parameters = parameters
 
         // Optimization for functions without value/receiver parameters.

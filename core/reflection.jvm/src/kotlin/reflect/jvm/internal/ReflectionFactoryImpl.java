@@ -56,10 +56,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     public String renderLambdaToString(FunctionBase lambda) {
         KFunction kFunction = ReflectLambdaKt.reflect(lambda);
         if (kFunction != null) {
-            KFunctionImpl impl = UtilKt.asKFunctionImpl(kFunction);
-            if (impl != null) {
-                return ReflectionObjectRenderer.INSTANCE.renderLambda(impl);
-            }
+            return ReflectionObjectRenderer.INSTANCE.renderLambda(kFunction);
         }
         return super.renderLambdaToString(lambda);
     }

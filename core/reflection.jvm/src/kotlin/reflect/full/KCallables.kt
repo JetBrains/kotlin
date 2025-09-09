@@ -12,7 +12,7 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.asKCallableImpl
+import kotlin.reflect.jvm.internal.asReflectCallable
 
 /**
  * Returns a parameter representing the `this` instance needed to call this callable,
@@ -77,7 +77,7 @@ suspend fun <R> KCallable<R>.callSuspend(vararg args: Any?): R {
 suspend fun <R> KCallable<R>.callSuspendBy(args: Map<KParameter, Any?>): R {
     if (!this.isSuspend) return callBy(args)
     if (this !is KFunction<*>) throw IllegalArgumentException("Cannot callSuspendBy on a property $this: suspend properties are not supported yet")
-    val kCallable = asKCallableImpl() ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
+    val kCallable = asReflectCallable() ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
     val result = suspendCoroutineUninterceptedOrReturn<R> { kCallable.callDefaultMethod(args, it) }
     // If suspend function returns Unit and tail-call, it might appear, that it returns not Unit,
     // see comment above replaceReturnsUnitMarkersWithPushingUnitOnStack for explanation.
