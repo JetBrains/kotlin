@@ -993,11 +993,12 @@ class JavaClassUseSiteMemberScope(
             }
             isInterface || origin.isBuiltIns -> false
             session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib) -> {
-                val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)
-                if (containingFile == null) {
-                    true
-                } else {
-                    !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
+                when (val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol)) {
+                    null ->
+                        // No info about the containing file, so we assume it's a non-built-in Kotlin class
+                        true
+                    else ->
+                        !containingFile.symbol.hasAnnotation(StandardClassIds.Annotations.JvmBuiltin, session)
                 }
             }
             else -> true
