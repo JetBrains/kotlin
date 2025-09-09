@@ -43,7 +43,3 @@ tasks.generateGrammarSource {
             }
     }
 }
-
-tasks.compileKotlin {
-    dependsOn(tasks.generateGrammarSource)
-}
