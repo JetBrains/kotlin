@@ -140,6 +140,7 @@ public interface KotlinToolchains {
             try {
                 loadImplementation(KotlinToolchains::class, classLoader)
             } catch (_: NoImplementationFoundException) {
+                @Suppress("DEPRECATION")
                 classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter").constructors.first()
                     .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchains
             }
