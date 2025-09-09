@@ -56,7 +56,7 @@ class KlibSyntheticAccessorGenerator(
             accessor.parent = parent
 
             accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyParametersFrom(source)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
