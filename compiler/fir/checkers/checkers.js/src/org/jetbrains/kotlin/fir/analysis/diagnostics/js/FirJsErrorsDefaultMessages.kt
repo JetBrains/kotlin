@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAMED_COMPAN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_NON_PUBLIC_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER
@@ -125,11 +124,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Using value classes as parameter type or return type of external declarations is not supported."
         )
         map.put(EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, "Function types with receivers are prohibited in external declarations.")
-        map.put(
-            NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
-            "Annotation ''{0}'' is only allowed on member functions of declarations annotated with ''kotlin.js.native'' or on top-level extension functions.",
-            FirDiagnosticRenderers.RENDER_TYPE
-        )
         map.put(
             NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER,
             "Native {0}''s first parameter type must be ''kotlin.String'' or a subtype of ''kotlin.Number''.",

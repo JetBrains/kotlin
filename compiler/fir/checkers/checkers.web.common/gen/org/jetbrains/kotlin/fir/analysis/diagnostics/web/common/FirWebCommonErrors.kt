@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 object FirWebCommonErrors : KtDiagnosticsContainer() {
     // Annotations
     val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
     val NESTED_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtExpression::class, getRendererFactory())
