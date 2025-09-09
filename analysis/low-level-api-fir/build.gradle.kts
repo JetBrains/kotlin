@@ -10,6 +10,8 @@ plugins {
 val scriptingTestDefinition by configurations.creating
 
 dependencies {
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+
     api(project(":compiler:psi:psi-api"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
