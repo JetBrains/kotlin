@@ -154,14 +154,12 @@ and they generally do not depend on a particular Kotlin/Native target.
 
 A test can be ignored for certain property values with the help of test directives within
 [test data files](../compiler/testData/codegen):
-- `// IGNORE_NATIVE: <name>=<value>` to ignore test for both K1 and K2 frontends
-- `// IGNORE_NATIVE_K1: <name>=<value>` to ignore test for K1 frontend only
-- `// IGNORE_NATIVE_K2: <name>=<value>` to ignore test for K2 frontend only
+- `// IGNORE_NATIVE: <name>=<value>` to ignore test
 
 Good examples are:
 - `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE`
-- `// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE`
-- `// IGNORE_NATIVE_K2: optimizationMode=OPT`
+- `// IGNORE_NATIVE: mode=ONE_STAGE_MULTI_MODULE`
+- `// IGNORE_NATIVE: optimizationMode=OPT`
 - `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64`
 
 Test will be ignored in case value of any `// IGNORE_NATIVE*` directive would match to an actual test run setting.

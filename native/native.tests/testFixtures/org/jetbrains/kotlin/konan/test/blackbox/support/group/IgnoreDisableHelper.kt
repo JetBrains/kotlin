@@ -42,7 +42,7 @@ private val KLIB_IR_INLINER_NAMES = KlibIrInlinerMode.entries.map { it.name }
 internal fun Settings.isDisabledNative(directives: Directives) =
     evaluate(
         getDirectiveValues(
-            TestDirectives.DISABLE_NATIVE, TestDirectives.DISABLE_NATIVE_K1, TestDirectives.DISABLE_NATIVE_K2,
+            TestDirectives.DISABLE_NATIVE,
             { directives.contains(it.name) },
             { directives.listValues(it.name) },
         )
@@ -52,7 +52,7 @@ internal fun Settings.isDisabledNative(directives: Directives) =
 internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
     evaluate(
         getDirectiveValues(
-            TestDirectives.DISABLE_NATIVE, TestDirectives.DISABLE_NATIVE_K1, TestDirectives.DISABLE_NATIVE_K2,
+            TestDirectives.DISABLE_NATIVE,
             { registeredDirectives.contains(it) },
             { registeredDirectives.get(it) },
         )
@@ -62,7 +62,7 @@ internal fun Settings.isDisabledNative(registeredDirectives: RegisteredDirective
 internal fun Settings.isIgnoredWithIGNORE_NATIVE(directives: Directives) =
     evaluate(
         getDirectiveValues(
-            TestDirectives.IGNORE_NATIVE, TestDirectives.IGNORE_NATIVE_K1, TestDirectives.IGNORE_NATIVE_K2,
+            TestDirectives.IGNORE_NATIVE,
             { directives.contains(it.name) },
             { directives.listValues(it.name) },
         )
@@ -72,7 +72,7 @@ internal fun Settings.isIgnoredWithIGNORE_NATIVE(directives: Directives) =
 internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: RegisteredDirectives) =
     evaluate(
         getDirectiveValues(
-            TestDirectives.IGNORE_NATIVE, TestDirectives.IGNORE_NATIVE_K1, TestDirectives.IGNORE_NATIVE_K2,
+            TestDirectives.IGNORE_NATIVE,
             { registeredDirectives.contains(it) },
             { registeredDirectives.get(it) },
         )
@@ -155,20 +155,10 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
 // Returns list of relevant directive values.
 // Null is added to result list in case the directive given without value.
 internal fun Settings.getDirectiveValues(
-    directiveAllPipelineTypes: StringDirective,
-    directiveK1: StringDirective,
-    directiveK2: StringDirective,
+    directive: StringDirective,
     isSpecified: (StringDirective) -> Boolean,
     listValues: (StringDirective) -> List<String>?,
 ): List<String?> = buildList {
-    fun extract(directive: StringDirective) {
-        if (isSpecified(directive))
-            listValues(directive)?.let { addAll(it) } ?: add(null)
-    }
-    extract(directiveAllPipelineTypes)
-    when (get<PipelineType>()) {
-        PipelineType.K1 -> extract(directiveK1)
-        PipelineType.K2 -> extract(directiveK2)
-        else -> {}
-    }
+    if (isSpecified(directive))
+        listValues(directive)?.let { addAll(it) } ?: add(null)
 }

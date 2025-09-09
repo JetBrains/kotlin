@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K1
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K2
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
@@ -243,10 +241,7 @@ private class ExtTestDataFile(
         if (directives.contains(ASSERTIONS_MODE)) return true
         if (isExpectedFailure) return true
         // To make the debug of possible failed testruns easier, it makes sense to run dodgy tests alone
-        if (directives.contains(IGNORE_NATIVE) ||
-            directives.contains(IGNORE_NATIVE_K1) ||
-            directives.contains(IGNORE_NATIVE_K2)
-        ) return true
+        if (directives.contains(IGNORE_NATIVE)) return true
 
         /**
          * K2 in MPP compilation expects that it receives module structure with exactly one platform leaf module
