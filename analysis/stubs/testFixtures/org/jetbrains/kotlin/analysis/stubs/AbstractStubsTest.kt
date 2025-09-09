@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.test.assertEquals
 
 abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
+    abstract val outputFileExtension: String
+
     override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
         val files = mainModule.ktFiles
         val filesAndStubs = files.sortedBy(KtFile::getName).map { it to computeStub(it) }
@@ -46,7 +48,7 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".stubs.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = outputFileExtension)
 
         for ((_, stub) in filesAndStubs) {
             val fileStub = stub ?: continue

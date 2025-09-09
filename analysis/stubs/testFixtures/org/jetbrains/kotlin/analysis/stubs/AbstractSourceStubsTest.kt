@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
  * This test is supposed to validate the source stubs output
  */
 abstract class AbstractSourceStubsTest : AbstractStubsTest() {
+    override val outputFileExtension: String get() = "stubs.txt"
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     override fun computeStub(file: KtFile): PsiFileStub<*> = file.calcStubTree().root
