@@ -4,14 +4,14 @@ Marked.class:
     IMPORT_LIST
     CLASS[classId=/Marked, fqName=Marked, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Marked, superNames=[]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+                REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Marked]
         MODIFIER_LIST[public MustUseReturnValue]
         VALUE_PARAMETER_LIST

@@ -10,7 +10,7 @@ class Unmarked {
             field = value
         }
 
-    @MustUseReturnValue
+    @MustUseReturnValues
     class Marked {
         fun alreadyApplied(): String = ""
 

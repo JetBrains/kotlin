@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // ISSUE: KT-76776
 
-@MustUseReturnValue
+@MustUseReturnValues
 class A {
     companion object {
         fun foo(): Int = 123

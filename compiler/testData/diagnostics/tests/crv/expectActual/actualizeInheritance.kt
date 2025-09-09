@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 expect class Foo() {
     fun x(): String
@@ -21,7 +21,7 @@ fun commonMain() {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: BaseFoo.kt
 
-@MustUseReturnValue
+@MustUseReturnValues
 open class BaseFoo {
     @IgnorableReturnValue fun x(): String = ""
     fun ign(): String = ""

@@ -9674,7 +9674,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=LongIterator]
-  CLASS[classId=kotlin/MustUseReturnValue, fqName=kotlin.MustUseReturnValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MustUseReturnValue, superNames=[Annotation]]
+  CLASS[classId=kotlin/MustUseReturnValues, fqName=kotlin.MustUseReturnValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MustUseReturnValues, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.FILE, AnnotationTarget.CLASS] ]
@@ -9687,14 +9687,14 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: [ version -> "2.2" ]
+        valueArguments: [ version -> "2.3" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MustUseReturnValue]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MustUseReturnValues]
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST

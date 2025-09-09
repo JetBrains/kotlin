@@ -4,11 +4,11 @@ Marked.kt:
     IMPORT_LIST
     CLASS[classId=/Marked, fqName=Marked, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Marked, superNames=[]]
       MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+                REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       CLASS_BODY
         FUN[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
           VALUE_PARAMETER_LIST
@@ -88,12 +88,12 @@ markedTopLevel.kt:
     facadeFqName: MarkedTopLevelKt
     partSimpleName: "MarkedTopLevelKt"
     FILE_ANNOTATION_LIST
-      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
         ANNOTATION_TARGET[useSiteTarget=FILE]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+              REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]

@@ -21,14 +21,14 @@ Base2.class:
     IMPORT_LIST
     CLASS[classId=/Base2, fqName=Base2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Base2, superNames=[]]
       MODIFIER_LIST[public]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+                REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       CLASS_BODY
         FUN[fqName=Base2.mustUse, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mustUse]
           MODIFIER_LIST[public abstract MustUseReturnValue]
@@ -120,14 +120,14 @@ Impl3.class:
     IMPORT_LIST
     CLASS[classId=/Impl3, fqName=Impl3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl3, superNames=[Base2]]
       MODIFIER_LIST[public final]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
-                REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
+                REFERENCE_EXPRESSION[referencedName=MustUseReturnValues]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Impl3]
         MODIFIER_LIST[public MustUseReturnValue]
         VALUE_PARAMETER_LIST

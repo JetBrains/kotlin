@@ -6,7 +6,7 @@
       public abstract fun unspecified(): kotlin.String
   }
 
-  @kotlin.MustUseReturnValue public interface Base2 {
+  @kotlin.MustUseReturnValues public interface Base2 {
       public abstract fun mustUse(): kotlin.String
 
       @kotlin.IgnorableReturnValue public abstract fun ignorable(): kotlin.String
@@ -26,7 +26,7 @@
       public open fun ignorable(): kotlin.String { /* compiled code */ }
   }
 
-  @kotlin.MustUseReturnValue public final class Impl3 public constructor() : Base2 {
+  @kotlin.MustUseReturnValues public final class Impl3 public constructor() : Base2 {
       public open fun mustUse(): kotlin.String { /* compiled code */ }
 
       @kotlin.IgnorableReturnValue public open fun ignorable(): kotlin.String { /* compiled code */ }

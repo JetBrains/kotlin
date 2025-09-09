@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 fun stringF(): String = ""
 
-@MustUseReturnValue
+@MustUseReturnValues
 class MyList<T> {
     operator fun set(index: Int, value: T): T {
         return value
@@ -16,7 +16,7 @@ class MyList<T> {
     }
 }
 
-@MustUseReturnValue
+@MustUseReturnValues
 class MyMap<K, V> {
     operator fun set(key: K, value: V): V? {
         return null

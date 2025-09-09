@@ -20,7 +20,7 @@ fun main() {
 }
 
 fun main2() {
-    val myList = @MustUseReturnValue object : AbstractMutableList<String>() {
+    val myList = @MustUseReturnValues object : AbstractMutableList<String>() {
         override val size: Int get() = TODO("Not yet implemented")
 
         @IgnorableReturnValue override fun get(index: Int): String = TODO()

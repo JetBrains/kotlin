@@ -936,7 +936,7 @@ public final class LongArray public constructor(size: kotlin.Int) {
     public final operator fun iterator(): kotlin.collections.LongIterator { /* compiled code */ }
 }
 
-@kotlin.annotation.Target @kotlin.SinceKotlin public final annotation class MustUseReturnValue public constructor() : kotlin.Annotation {
+@kotlin.annotation.Target @kotlin.SinceKotlin public final annotation class MustUseReturnValues public constructor() : kotlin.Annotation {
 }
 
 public final class Nothing private constructor() {

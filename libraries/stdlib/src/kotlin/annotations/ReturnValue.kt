@@ -34,5 +34,5 @@ public annotation class IgnorableReturnValue
  * or deprecation cycle. This, in particular, concerns annotation's target list.
  */
 @Target(AnnotationTarget.FILE, AnnotationTarget.CLASS)
-@SinceKotlin("2.2")
-public annotation class MustUseReturnValue
+@SinceKotlin("2.3")
+public annotation class MustUseReturnValues

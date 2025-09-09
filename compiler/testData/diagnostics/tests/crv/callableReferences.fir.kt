@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 fun testFun(): Int = 1
 @IgnorableReturnValue fun ignorable(): Int = 2

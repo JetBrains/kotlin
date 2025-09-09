@@ -5,7 +5,7 @@ public interface X {
 
     @kotlin.IgnorableReturnValue public abstract fun ignorable(): kotlin.String
 
-    @kotlin.MustUseReturnValue public final class Y public constructor() {
+    @kotlin.MustUseReturnValues public final class Y public constructor() {
         public final fun y(): kotlin.String { /* compiled code */ }
 
         @kotlin.IgnorableReturnValue public final fun ignorable(): kotlin.String { /* compiled code */ }
@@ -16,7 +16,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=true] interface X : R|kotlin/Any| {
-    @R|kotlin/MustUseReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] class Y : R|kotlin/Any| {
+    @R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] class Y : R|kotlin/Any| {
         @R|kotlin/IgnorableReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] fun ignorable(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|

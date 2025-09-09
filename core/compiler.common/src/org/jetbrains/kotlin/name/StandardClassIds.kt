@@ -229,7 +229,7 @@ object StandardClassIds {
 
         val WasExperimental = "WasExperimental".baseId()
 
-        val MustUseReturnValue = "MustUseReturnValue".baseId()
+        val MustUseReturnValues = "MustUseReturnValues".baseId()
         val IgnorableReturnValue = "IgnorableReturnValue".baseId()
 
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()

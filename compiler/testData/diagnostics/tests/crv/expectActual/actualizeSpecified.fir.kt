@@ -3,7 +3,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 expect class Foo() {
     fun x(): String
@@ -30,7 +30,7 @@ fun commonMain() {
 // <init>, p: MustUse -> MustUse :ok:
 // x: MustUse -> ExplicitlyIgnorable :error:
 // ign: ExplicitlyIgnorable -> MustUse :error:
-@MustUseReturnValue
+@MustUseReturnValues
 actual class Foo actual constructor() {
     @IgnorableReturnValue actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; must-use; 'actual fun x(): String' defined in 'Foo'; ignorable")!>x<!>(): String = ""
     actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun ign(): String' defined in 'Foo'; ignorable; 'actual fun ign(): String' defined in 'Foo'; must-use")!>ign<!>(): String = ""

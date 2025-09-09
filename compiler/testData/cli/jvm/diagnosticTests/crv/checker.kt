@@ -1,6 +1,6 @@
 fun basic(): String = ""
 
-@MustUseReturnValue
+@MustUseReturnValues
 object Annotated {
     fun annotated(): String = ""
 }

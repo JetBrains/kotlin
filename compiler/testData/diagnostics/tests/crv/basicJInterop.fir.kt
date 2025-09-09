@@ -3,10 +3,10 @@
 
 // FILE: JavaMain.java
 
-import kotlin.MustUseReturnValue;
+import kotlin.MustUseReturnValues;
 import kotlin.IgnorableReturnValue;
 
-@MustUseReturnValue
+@MustUseReturnValues
 public class JavaMain {
     public JavaMain() { }
 
@@ -32,9 +32,9 @@ public class JavaMain {
 }
 
 // FILE: JavaImplicitConstructor.java
-import kotlin.MustUseReturnValue;
+import kotlin.MustUseReturnValues;
 
-@MustUseReturnValue
+@MustUseReturnValues
 public class JavaImplicitConstructor {}
 
 // FILE: KtFile.kt

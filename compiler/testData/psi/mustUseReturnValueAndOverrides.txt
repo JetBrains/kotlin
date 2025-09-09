@@ -41,7 +41,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('MustUseReturnValue')
+                PsiElement(IDENTIFIER)('MustUseReturnValues')
     PsiWhiteSpace('\n')
     PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
@@ -204,7 +204,7 @@ KtFile: mustUseReturnValueAndOverrides.kt
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('MustUseReturnValue')
+                PsiElement(IDENTIFIER)('MustUseReturnValues')
     PsiWhiteSpace('\n')
     PsiElement(class)('class')
     PsiWhiteSpace(' ')

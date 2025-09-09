@@ -2,7 +2,7 @@
 // LANGUAGE: +ContextParameters, +NestedTypeAliases
 // WITH_STDLIB
 
-@MustUseReturnValue
+@MustUseReturnValues
 class A(val x: String = "x") {
     constructor(a: String, b: String = "x") : this(a)
 

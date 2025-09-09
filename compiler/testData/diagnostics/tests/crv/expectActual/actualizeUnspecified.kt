@@ -29,7 +29,7 @@ fun commonMain() {
 
 // <init>, x, p: Unspecifed -> MustUse is not allowed
 // ign: Unspecified -> ExplicitlyIgnorable is allowed
-@MustUseReturnValue
+@MustUseReturnValues
 actual class Foo actual constructor() {
     actual fun x(): String = ""
     @IgnorableReturnValue actual fun ign(): String = ""

@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 // WITH_STDLIB
-@file:MustUseReturnValue
+@file:MustUseReturnValues
 
 fun baz() = 123
 fun nullableBaz(): Int? = null

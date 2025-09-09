@@ -2,11 +2,11 @@
 // WITH_STDLIB
 
 fun test() {
-    (@MustUseReturnValue object {
+    (@MustUseReturnValues object {
         val number: Int = 42
     }).<!RETURN_VALUE_NOT_USED!>number<!>
 
-    (@MustUseReturnValue object {
+    (@MustUseReturnValues object {
         fun compute(): Int = 24
     }).<!RETURN_VALUE_NOT_USED!>compute<!>()
 }

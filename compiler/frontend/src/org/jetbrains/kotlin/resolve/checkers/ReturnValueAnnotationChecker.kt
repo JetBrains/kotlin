@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 object ReturnValueAnnotationChecker : AdditionalAnnotationChecker {
-    val mustUseReturnValueFq = FqName("kotlin.MustUseReturnValue")
-    val ignorableFq = FqName("kotlin.IgnorableReturnValue")
+    val mustUseReturnValueFq = StandardClassIds.Annotations.MustUseReturnValues.asSingleFqName()
+    val ignorableFq = StandardClassIds.Annotations.IgnorableReturnValue.asSingleFqName()
 
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,

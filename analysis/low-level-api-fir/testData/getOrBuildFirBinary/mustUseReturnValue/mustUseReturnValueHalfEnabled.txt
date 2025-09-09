@@ -7,7 +7,7 @@ public final class Unmarked public constructor() {
 
     public final fun getStuff(): kotlin.String { /* compiled code */ }
 
-    @kotlin.MustUseReturnValue public final class Marked public constructor() {
+    @kotlin.MustUseReturnValues public final class Marked public constructor() {
         public final var prop: kotlin.String /* compiled code */
             public final get() { /* compiled code */ }
             public final set(value: kotlin.String) { /* compiled code */ }
@@ -46,7 +46,7 @@ public final [ResolvedTo(BODY_RESOLVE)] class Unmarked : R|kotlin/Any| {
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] enum entry B: R|Unmarked.E|
     }
 
-    @R|kotlin/MustUseReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
+    @R|kotlin/MustUseReturnValues|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun alreadyApplied(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var prop: R|kotlin/String|

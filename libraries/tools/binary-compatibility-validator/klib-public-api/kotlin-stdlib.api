@@ -247,8 +247,8 @@ open annotation class kotlin/IgnorableReturnValue : kotlin/Annotation { // kotli
     constructor <init>() // kotlin/IgnorableReturnValue.<init>|<init>(){}[0]
 }
 
-open annotation class kotlin/MustUseReturnValue : kotlin/Annotation { // kotlin/MustUseReturnValue|null[0]
-    constructor <init>() // kotlin/MustUseReturnValue.<init>|<init>(){}[0]
+open annotation class kotlin/MustUseReturnValues : kotlin/Annotation { // kotlin/MustUseReturnValues|null[0]
+    constructor <init>() // kotlin/MustUseReturnValues.<init>|<init>(){}[0]
 }
 
 open annotation class kotlin/OptIn : kotlin/Annotation { // kotlin/OptIn|null[0]
