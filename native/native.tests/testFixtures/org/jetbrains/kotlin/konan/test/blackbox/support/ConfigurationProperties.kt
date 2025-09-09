@@ -68,6 +68,7 @@ enum class ClassLevelProperty(val shortName: String) {
     GC_TYPE("gcType"),
     GC_SCHEDULER("gcScheduler"),
     ALLOCATOR("alloc"),
+    PAGED_ALLOCATOR("pagedAllocator"),
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),

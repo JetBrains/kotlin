@@ -292,8 +292,18 @@ object NativeTestSupport {
             enforcedProperties, { it.split(",") }, emptyList()
         ).let(::ExplicitBinaryOptions)
 
-    private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator =
-        ClassLevelProperty.ALLOCATOR.readValue(enforcedProperties, Allocator.values(), default = Allocator.UNSPECIFIED)
+    private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator {
+        val paged = ClassLevelProperty.PAGED_ALLOCATOR.readValue(
+            enforcedProperties,
+            transform = String::toBooleanStrictOrNull,
+            default = null
+        )?.let { if (it) Allocator.PAGED else Allocator.NOT_PAGED }
+        val legacy = ClassLevelProperty.ALLOCATOR.readValue(enforcedProperties, Allocator.values(), default = Allocator.UNSPECIFIED)
+        if (paged != null && legacy != Allocator.UNSPECIFIED) {
+            fail { "Both `pagedAllocator` and `alloc` can't be specified at the same time" }
+        }
+        return paged ?: legacy
+    }
 
     private fun computeNativeTargets(enforcedProperties: EnforcedProperties, hostManager: HostManager): KotlinNativeTargets {
         val hostTarget = HostManager.host

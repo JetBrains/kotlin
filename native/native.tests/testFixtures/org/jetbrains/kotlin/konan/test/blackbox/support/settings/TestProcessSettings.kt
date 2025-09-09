@@ -189,6 +189,11 @@ class ExplicitBinaryOptions(private val rawOptions: List<String>) {
 
 enum class Allocator(val compilerFlag: String?) {
     UNSPECIFIED(null),
+
+    NOT_PAGED("-Xbinary=pagedAllocator=false"),
+    PAGED("-Xbinary=pagedAllocator=true"),
+
+    // TODO remove (KT-75914)
     STD("-Xallocator=std"),
     CUSTOM("-Xallocator=custom");
 
