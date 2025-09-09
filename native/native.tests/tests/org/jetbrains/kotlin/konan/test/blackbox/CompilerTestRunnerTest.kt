@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
@@ -280,10 +279,5 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
-@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
-class ClassicCompilerTestRunnerTest : CompilerTestRunnerTestBase()
-
-@Suppress("JUnitTestCaseWithNoTests")
-@TestDataPath("\$PROJECT_ROOT")
-class FirCompilerTestRunnerTest : CompilerTestRunnerTestBase()
+class CompilerTestRunnerTest : CompilerTestRunnerTestBase()

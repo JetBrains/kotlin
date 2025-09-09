@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFrameworkCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
@@ -277,15 +276,9 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     })
 }
 
-@Suppress("JUnitTestCaseWithNoTests")
-@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-class ClassicCompilerOutputTest : CompilerOutputTestBase()
-
-@TestDataPath("\$PROJECT_ROOT")
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-class FirCompilerOutputTest : CompilerOutputTestBase() {
+class CompilerOutputTest : CompilerOutputTestBase() {
     @Test
     fun testReleaseCompilerAgainstPreReleaseFeature() {
         val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseFeature")

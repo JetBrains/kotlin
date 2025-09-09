@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -33,12 +32,8 @@ import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@ClassicPipeline()
 @TestDataPath("\$PROJECT_ROOT")
-class ClassicComplexCInteropTest : ComplexCInteropTestBase()
-
-@TestDataPath("\$PROJECT_ROOT")
-class FirComplexCInteropTest : ComplexCInteropTestBase()
+class ComplexCInteropTest : ComplexCInteropTestBase()
 
 abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     private val interopDir = File("native/native.tests/testData/interop")
