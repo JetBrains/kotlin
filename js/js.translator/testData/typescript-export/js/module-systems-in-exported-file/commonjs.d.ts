@@ -11,6 +11,23 @@ export declare namespace kotlin.collections {
         function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
     }
 }
+export declare namespace kotlin {
+    class Pair<A, B> /* implements kotlin.io.Serializable */ {
+        constructor(first: A, second: B);
+        get first(): A;
+        get second(): B;
+        toString(): string;
+        copy(first?: A, second?: B): kotlin.Pair<A, B>;
+        hashCode(): number;
+        equals(other: Nullable<any>): boolean;
+    }
+    namespace Pair {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new <A, B>() => Pair<A, B>;
+        }
+    }
+}
 export declare namespace foo {
     const prop: number;
     class C {

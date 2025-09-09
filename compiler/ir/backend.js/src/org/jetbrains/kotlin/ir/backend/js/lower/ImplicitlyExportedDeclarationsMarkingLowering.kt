@@ -81,19 +81,28 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
         val classifier = nonNullType.classifier
 
         return when {
-            nonNullType.isPrimitiveType() || nonNullType.isPrimitiveArray() || nonNullType.isAny() || nonNullType.isUnit() -> emptySet()
-            classifier is IrTypeParameterSymbol -> classifier.owner.superTypes.flatMap { it.collectImplicitlyExportedDeclarations() }
+            nonNullType.isPrimitiveType() ||
+                    nonNullType.isPrimitiveArray() ||
+                    nonNullType.isAny() ||
+                    nonNullType.isNothing() ||
+                    nonNullType.isUnit()
+                -> emptySet()
+
+            classifier is IrTypeParameterSymbol -> classifier.owner.superTypes
+                .flatMap { it.collectImplicitlyExportedDeclarations() }
                 .toSet()
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
                 val result = mutableSetOf<IrDeclaration>()
 
-                if (klass.shouldBeMarkedWithImplicitExportOrUpgraded()) {
+                val isSpeciallyExportedType = nonNullType.isSpeciallyExportedType()
+
+                if (!isSpeciallyExportedType && klass.shouldBeMarkedWithImplicitExportOrUpgraded()) {
                     result.add(klass)
                 }
 
-                if (includeArguments && (klass.couldBeConvertedToExplicitExport() == true || klass.isExternal || klass.isExported(context))) {
+                if (includeArguments && (isSpeciallyExportedType || klass.isExternal || klass.couldBeConvertedToExplicitExport() == true || klass.isExported(context))) {
                     arguments.flatMapTo(result) {
                         when (it) {
                             is IrStarProjection -> emptySet()
@@ -107,6 +116,10 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
 
             else -> emptySet()
         }
+    }
+
+    private fun IrSimpleType.isSpeciallyExportedType(): Boolean {
+        return isFunction() || isThrowable() || isArray()
     }
 
     private fun IrDeclaration.shouldBeMarkedWithImplicitExportOrUpgraded(): Boolean {
