@@ -37,8 +37,9 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     }
 
     private fun serializePreparedInlinableFunctions(preparedInlineFunctionCopies: List<IrSimpleFunction>): SerializedIrFile {
-        val fileSerializer = createFileSerializer()
-        return fileSerializer.serializeIrFileWithPreparedInlineFunctions(preparedInlineFunctionCopies)
+        return createFileSerializer(
+            settings = this.settings.copy(reuseExistingSignaturesForSymbols = true)
+        ).serializeIrFileWithPreparedInlineFunctions(preparedInlineFunctionCopies)
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {

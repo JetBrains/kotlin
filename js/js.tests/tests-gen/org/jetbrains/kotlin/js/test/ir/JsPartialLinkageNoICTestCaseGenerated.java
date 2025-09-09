@@ -74,6 +74,12 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
+  @TestMetadata("crossModuleInliningInPreprocessedFunctions")
+  public void testCrossModuleInliningInPreprocessedFunctions() {
+    runTest("compiler/testData/klib/partial-linkage/crossModuleInliningInPreprocessedFunctions/");
+  }
+
+  @Test
   @TestMetadata("externalDeclarations")
   public void testExternalDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/externalDeclarations/");

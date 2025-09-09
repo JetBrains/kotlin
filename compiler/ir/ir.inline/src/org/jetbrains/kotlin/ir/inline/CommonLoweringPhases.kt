@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
     ::AvoidLocalFOsInInlineFunctionsLowering,
@@ -110,8 +111,19 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler, inlineCrossModuleFunct
     prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
-private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
-    lowering = { InlineFunctionSerializationPreProcessing() },
+private fun inlineFunctionSerializationPreProcessing(irMangler: IrMangler, inlineCrossModuleFunctions: Boolean) = makeIrModulePhase(
+    lowering = { context ->
+        // Run the cross-module inliner against pre-processed functions (and only pre-processed functions) if cross-module
+        // inlining is not enabled in the main IR tree.
+        val inliner: FunctionInlining? = runUnless(inlineCrossModuleFunctions) {
+            FunctionInlining(
+                context,
+                PreSerializationNonPrivateInlineFunctionResolver(context, irMangler, inlineCrossModuleFunctions = true),
+            )
+        }
+
+        InlineFunctionSerializationPreProcessing(crossModuleFunctionInliner = inliner)
+    },
     name = "InlineFunctionSerializationPreProcessing",
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
@@ -156,7 +168,7 @@ fun loweringsOfTheFirstPhase(
         this += syntheticAccessorGenerationPhase
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
-        this += inlineFunctionSerializationPreProcessing
+        this += inlineFunctionSerializationPreProcessing(irMangler, inlineCrossModuleFunctions)
         this += validateIrAfterInliningAllFunctionsPhase(irMangler, inlineCrossModuleFunctions)
     }
 }

@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class InlineFunctionSerializationPreProcessing() : IrVisitorVoid(), ModuleLoweringPass {
+class InlineFunctionSerializationPreProcessing(
+    private val crossModuleFunctionInliner: FunctionInlining?,
+) : IrVisitorVoid(), ModuleLoweringPass {
     private val preprocessedFunctions = mutableListOf<IrSimpleFunction>()
 
     override fun lower(irModule: IrModuleFragment) {
@@ -33,7 +35,13 @@ class InlineFunctionSerializationPreProcessing() : IrVisitorVoid(), ModuleLoweri
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (!declaration.isInline || declaration.body == null || declaration.symbol.isConsideredAsPrivateForInlining()) return
-        val preprocessed = declaration.copyAndEraseTypeParameters().convertToPublicTopLevel().erasePrivateSymbols()
+
+        val preprocessed = declaration
+            .copyAndEraseTypeParameters()
+            .convertToPublicTopLevel()
+            .erasePrivateSymbols()
+            .applyCrossModuleFunctionInlining()
+
         declaration.preparedInlineFunctionCopy = preprocessed
         preprocessed.originalOfPreparedInlineFunctionCopy = declaration
         preprocessedFunctions += preprocessed
@@ -71,5 +79,10 @@ class InlineFunctionSerializationPreProcessing() : IrVisitorVoid(), ModuleLoweri
 
     private fun IrInlinedFunctionBlock.isEffectivelyPrivate(): Boolean {
         return inlinedFunctionSymbol?.isConsideredAsPrivateAndNotLocalForInlining() == true
+    }
+
+    private fun IrSimpleFunction.applyCrossModuleFunctionInlining(): IrSimpleFunction {
+        crossModuleFunctionInliner?.lower(body!!, this)
+        return this
     }
 }
