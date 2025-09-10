@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.fir.backend.utils.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.name.Name
 
 class ConstValueProviderImpl(
     components: Fir2IrComponents,
@@ -32,9 +30,8 @@ class ConstValueProviderImpl(
         // when there is only one argument, they both are going to have the same offset.
         if (firExpression is FirVarargArgumentsExpression) return null
 
-        val fileName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
         val (start, end) = firExpression.getCorrespondingIrOffset() ?: return null
-        return evaluatedConstTracker.load(start, end, fileName)
+        return evaluatedConstTracker.load(start, end, firFile.symbol)
     }
 
     companion object {

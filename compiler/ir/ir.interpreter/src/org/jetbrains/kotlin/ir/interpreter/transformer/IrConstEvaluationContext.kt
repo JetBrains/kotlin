@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.nameWithPackage
+import org.jetbrains.kotlin.ir.declarations.evaluatedConstTrackerKey
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -94,7 +94,7 @@ internal class IrConstEvaluationContext(
     fun saveInConstTracker(expression: IrExpression) {
         if (!shouldSaveEvaluatedConstants) return
         evaluatedConstTracker?.save(
-            expression.startOffset, expression.endOffset, irFile.nameWithPackage,
+            expression.startOffset, expression.endOffset, irFile.evaluatedConstTrackerKey,
             constant = if (expression is IrErrorExpression) ErrorValue.Companion.create(expression.description) else expression.toConstantValue()
         )
     }

@@ -22,7 +22,7 @@ package org.jetbrains.kotlin.powerassert.diagram
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.nameWithPackage
+import org.jetbrains.kotlin.ir.declarations.evaluatedConstTrackerKey
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
@@ -109,7 +109,7 @@ fun buildTree(
     expression: IrExpression,
 ): Node? {
     fun IrConst.isEvaluatedConst(): Boolean =
-        constTracker?.load(startOffset, endOffset, sourceFile.irFile.nameWithPackage) != null
+        constTracker?.load(startOffset, endOffset, sourceFile.irFile.evaluatedConstTrackerKey) != null
 
     val tree = RootNode()
     expression.accept(

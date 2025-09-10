@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
@@ -53,6 +54,10 @@ val IrFile.path: String get() = fileEntry.name
 val IrFile.name: String get() = File(path).name
 val IrFile.nameWithPackage: String get() = packageFqName.child(Name.identifier(name)).asString()
 val IrFile.packagePartClassName: String get() = getPackagePartClassNamePrefix(File(path).nameWithoutExtension) + "Kt"
+
+val IrFile.evaluatedConstTrackerKey: EvaluatedConstTracker.Key
+    get() = (metadata as? MetadataSource.File)?.asEvaluatedConstTrackerKey()
+        ?: EvaluatedConstTracker.Key.StringBased(fileEntry.name)
 
 val IrFunction.isStaticMethodOfClass: Boolean
     get() = this is IrSimpleFunction && parent is IrClass && dispatchReceiverParameter == null

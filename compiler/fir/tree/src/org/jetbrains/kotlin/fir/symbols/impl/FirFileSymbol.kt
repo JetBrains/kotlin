@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
-class FirFileSymbol : FirBasedSymbol<FirFile>() {
+class FirFileSymbol : FirBasedSymbol<FirFile>(), EvaluatedConstTracker.Key {
     override fun toString(): String = "${this::class.simpleName} ${fir.name}"
 
     val sourceFile: KtSourceFile? get() = fir.sourceFile
+
+    override fun asStringBasedKey(): EvaluatedConstTracker.Key.StringBased {
+        return EvaluatedConstTracker.Key.StringBased(sourceFile?.path ?: "<no path>")
+    }
 }

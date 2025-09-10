@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.nameWithPackage
+import org.jetbrains.kotlin.ir.declarations.evaluatedConstTrackerKey
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -134,7 +134,7 @@ interface IrInterpreterDumpHandlerTrait : EvaluatorHandlerTrait {
     private fun EvaluatedConstTracker.processFile(testFile: TestFile, irFile: IrFile): Map<TestFile, List<ParsedCodeMetaInfo>> {
         val resultMap = mutableMapOf<TestFile, MutableList<ParsedCodeMetaInfo>>()
         val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
-        this.load(irFile.nameWithPackage)?.forEach { (pair, constantValue) ->
+        this.loadAllForTests(irFile.evaluatedConstTrackerKey)?.forEach { (pair, constantValue) ->
             if (constantValue is AnnotationValue) return@forEach
 
             val (start, end) = pair

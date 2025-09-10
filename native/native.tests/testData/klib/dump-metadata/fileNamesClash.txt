@@ -14,7 +14,7 @@ library {
       public constructor()
     }
 
-    @Bar
+    @Foo
     public final class Class1 : kotlin/Any {
 
       public constructor()

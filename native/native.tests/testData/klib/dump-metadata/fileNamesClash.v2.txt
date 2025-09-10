@@ -17,7 +17,7 @@ library {
     }
 
     // signature: /Class1|null[0]
-    @Bar
+    @Foo
     public final class Class1 : kotlin/Any {
 
       // signature: /Class1.<init>|<init>(){}[0]

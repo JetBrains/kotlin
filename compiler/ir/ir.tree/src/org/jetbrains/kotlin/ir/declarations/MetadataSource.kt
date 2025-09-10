@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -16,6 +17,8 @@ interface MetadataSource {
 
     interface File : MetadataSource {
         var serializedIr: ByteArray?
+
+        fun asEvaluatedConstTrackerKey(): EvaluatedConstTracker.Key?
     }
     interface Class : MetadataSource {
         var serializedIr: ByteArray?
@@ -39,6 +42,8 @@ sealed class DescriptorMetadataSource : MetadataSource {
 
     class File(val descriptors: List<DeclarationDescriptor>) : DescriptorMetadataSource(), MetadataSource.File {
         override var serializedIr: ByteArray? = null
+
+        override fun asEvaluatedConstTrackerKey(): EvaluatedConstTracker.Key? = null
     }
 
     class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class {
