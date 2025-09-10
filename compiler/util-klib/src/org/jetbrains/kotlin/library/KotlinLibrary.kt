@@ -129,7 +129,6 @@ interface IrLibrary {
     fun debugInfoOfInlineableFuns(index: Int): ByteArray?
     fun fileEntryOfInlineableFuns(index: Int): ByteArray
 
-    fun declarationsOfInlineableFuns(): ByteArray
     fun signaturesOfInlineableFuns(): ByteArray
 }
 

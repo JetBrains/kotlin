@@ -233,10 +233,6 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
         IrMultiArrayReader(access, IrKotlinLibraryLayout::irFileEntriesOfInlineableFuns)
     }
 
-    override fun declarationsOfInlineableFuns(): ByteArray {
-        return combinedDeclarationsOfInlineableFuns.tableItemBytes(0)
-    }
-
     override fun signaturesOfInlineableFuns(): ByteArray {
         return signaturesOfInlineableFuns.tableItemBytes(0)
     }

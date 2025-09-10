@@ -78,7 +78,6 @@ fun <L : KotlinLibraryLayout> DeclarationIdTableReader(
 class DeclarationIdTableReader(private val buffer: ReadBuffer) {
     private val declarationIdToCoordinates: DeclarationIdToCoordinates = buffer.readDeclarationIdToCoordinates(0)
 
-    fun entryCount() = declarationIdToCoordinates.size
     fun tableItemBytes(declarationId: DeclarationId): ByteArray = buffer.readTableItemBytes(declarationIdToCoordinates, declarationId)
 }
 

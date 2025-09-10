@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.konan.library.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.library.IrKotlinLibraryLayout
 import org.jetbrains.kotlin.library.KLIB_IR_FOLDER_NAME
-import org.jetbrains.kotlin.library.KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME
 import org.jetbrains.kotlin.library.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KotlinLibrary
+import java.util.LinkedList
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
@@ -24,25 +24,25 @@ internal class KlibElementWithSize private constructor(val name: String, val siz
     constructor(name: String, children: List<KlibElementWithSize>) : this(name, children.sumOf { it.size }, children)
 }
 
-internal fun KotlinLibrary.loadSizeInfo(): KlibElementWithSize? {
+internal fun KotlinLibrary.loadSizeInfo(irInfo: KlibIrInfo?): KlibElementWithSize? {
     val libraryFile = libraryFile.absoluteFile
 
     return when {
         libraryFile.isFile -> KlibElementWithSize(
             "KLIB file cumulative size",
-            libraryFile.withZipFileSystem { fs -> fs.file("/").collectTopLevelElements() }
+            libraryFile.withZipFileSystem { fs -> fs.file("/").collectTopLevelElements(irInfo) }
         )
 
         !libraryFile.isDirectory -> null
 
         else -> KlibElementWithSize(
             "KLIB directory cumulative size",
-            libraryFile.collectTopLevelElements()
+            libraryFile.collectTopLevelElements(irInfo)
         )
     }
 }
 
-private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
+private fun KFile.collectTopLevelElements(irInfo: KlibIrInfo?): List<KlibElementWithSize> {
     var defaultEntry: KFile? = null
     val otherTopLevelEntries = ArrayList<KFile>()
 
@@ -63,8 +63,7 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
 
     return topLevelEntries.map { topLevelEntry ->
         when (val topLevelEntryName = topLevelEntry.name) {
-            KLIB_IR_FOLDER_NAME -> buildIrElement(name = "IR (main)", topLevelEntry)
-            KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME -> buildIrElement(name = "IR (inlinable functions)", topLevelEntry)
+            KLIB_IR_FOLDER_NAME -> buildIrElement(topLevelEntry, irInfo)
             KLIB_METADATA_FOLDER_NAME -> buildElement(name = "Metadata", topLevelEntry)
             KLIB_TARGETS_FOLDER_NAME -> buildElement(name = "Native-specific binary data", topLevelEntry)
             KLIB_MANIFEST_FILE_NAME -> buildElement(name = "Manifest file", topLevelEntry)
@@ -88,7 +87,7 @@ private fun buildElement(name: String, entry: KFile): KlibElementWithSize {
     return KlibElementWithSize(name, entry.cumulativeSize())
 }
 
-private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
+private fun buildIrElement(entry: KFile, irInfo: KlibIrInfo?): KlibElementWithSize {
     val nestedElements = ArrayList<KlibElementWithSize>()
 
     entry.entries.mapTo(nestedElements) { childEntry ->
@@ -107,5 +106,9 @@ private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
         buildElement(prettyName, childEntry)
     }
 
-    return KlibElementWithSize(name, nestedElements.sortedBy { it.name })
+    irInfo?.meaningfulInlineFunctionBodiesSize?.let { estimationOfInlineBodiesSizes ->
+        nestedElements += KlibElementWithSize("IR bodies (inline functions only)", estimationOfInlineBodiesSizes)
+    }
+
+    return KlibElementWithSize("IR", nestedElements.sortedBy { it.name })
 }
