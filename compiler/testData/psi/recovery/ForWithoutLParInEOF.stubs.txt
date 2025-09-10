@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=ForWithoutLParInEOFKt]]
+  facadeFqName: ForWithoutLParInEOFKt
+  partSimpleName: "ForWithoutLParInEOFKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]

@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
   CLASS[classId=kotlin/internal/IntrinsicConstEvaluation, fqName=kotlin.internal.IntrinsicConstEvaluation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntrinsicConstEvaluation, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -17,7 +17,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
-        valueArguments: (value = AnnotationRetention.BINARY)
+        valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -27,7 +27,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "1.7")
+        valueArguments: [ version -> "1.7" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -48,7 +48,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
   CLASS[classId=kotlin/internal/PlatformDependent, fqName=kotlin.internal.PlatformDependent, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PlatformDependent, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.FUNCTION])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.FUNCTION] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -58,7 +58,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
-        valueArguments: (value = AnnotationRetention.BINARY)
+        valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -81,7 +81,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
   CLASS[classId=kotlin/internal/PureReifiable, fqName=kotlin.internal.PureReifiable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PureReifiable, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.TYPE_PARAMETER])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE_PARAMETER] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -91,7 +91,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
-        valueArguments: (value = AnnotationRetention.BINARY)
+        valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

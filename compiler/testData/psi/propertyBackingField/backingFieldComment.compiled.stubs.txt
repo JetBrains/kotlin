@@ -1,7 +1,10 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=BackingFieldCommentKt]]
+  facadeFqName: BackingFieldCommentKt
+  partSimpleName: "BackingFieldCommentKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=customGetterOnly, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=customGetterOnly]
+    origin: Facade(className=BackingFieldCommentKt, jvmClassName=null)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE

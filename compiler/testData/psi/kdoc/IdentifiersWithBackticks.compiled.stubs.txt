@@ -1,8 +1,11 @@
 IdentifiersWithBackticksKt.class:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=IdentifiersWithBackticksKt]]
+    facadeFqName: IdentifiersWithBackticksKt
+    partSimpleName: "IdentifiersWithBackticksKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=main, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=main]
+      origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -11,6 +14,7 @@ IdentifiersWithBackticksKt.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
     FUN[fqName=top level, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=top level]
+      origin: Facade(className=IdentifiersWithBackticksKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE

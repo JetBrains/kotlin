@@ -8,6 +8,8 @@ Anno.kt:
 
 Properties.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesKt]]
+    facadeFqName: PropertiesKt
+    partSimpleName: "PropertiesKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=withCustomSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=withCustomSetter]

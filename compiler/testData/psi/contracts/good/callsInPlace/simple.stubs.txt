@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleKt]]
+  facadeFqName: SimpleKt
+  partSimpleName: "SimpleKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
     IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]

@@ -5,7 +5,7 @@ FILE[kind=File[packageFqName=test]]
   CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
-        valueArguments: (value = AnnotationRetention.RUNTIME)
+        valueArguments: [ value -> AnnotationRetention.RUNTIME ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -35,7 +35,7 @@ FILE[kind=File[packageFqName=test]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]
-            initializer: 10
+            constantInitializer: 10
             MODIFIER_LIST[public const]
             TYPE_REFERENCE
               USER_TYPE
@@ -44,10 +44,10 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
-            initializer: 10
+            constantInitializer: 10
             MODIFIER_LIST[public const]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -70,7 +70,7 @@ FILE[kind=File[packageFqName=test]]
           PROPERTY[fqName=test.PrivateConstField.Companion.fieldWithAnnotation, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=fieldWithAnnotation]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE

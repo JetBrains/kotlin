@@ -1,5 +1,7 @@
 TypeAliases.kt:
   FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasesKt]]
+    facadeFqName: test.TypeAliasesKt
+    partSimpleName: "TypeAliasesKt"
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -203,6 +205,8 @@ TypeAliases.kt:
 
 dependency.kt:
   FILE[kind=Facade[packageFqName=dependency, facadeFqName=dependency.DependencyKt]]
+    facadeFqName: dependency.DependencyKt
+    partSimpleName: "DependencyKt"
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST

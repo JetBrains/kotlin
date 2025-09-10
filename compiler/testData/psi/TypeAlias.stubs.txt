@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=foo.bar.goo, facadeFqName=foo.bar.goo.TypeAliasKt]]
+  facadeFqName: foo.bar.goo.TypeAliasKt
+  partSimpleName: "TypeAliasKt"
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

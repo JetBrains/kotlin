@@ -12,7 +12,8 @@ TypeAliasExpansion.class:
         PROPERTY[fqName=test.TypeAliasExpansion.functionAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=functionAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            FUNCTION_TYPE    abbreviatedType: test.FunctionAlias
+            FUNCTION_TYPE
+              abbreviatedType: test.FunctionAlias
               VALUE_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
@@ -28,14 +29,16 @@ TypeAliasExpansion.class:
         PROPERTY[fqName=test.TypeAliasExpansion.nestedStringAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedStringAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedStringAlias
+            USER_TYPE
+              abbreviatedType: test.NestedStringAlias
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.nestedFunctionAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedFunctionAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            FUNCTION_TYPE    abbreviatedType: test.NestedFunctionAlias
+            FUNCTION_TYPE
+              abbreviatedType: test.NestedFunctionAlias
               VALUE_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
@@ -51,7 +54,8 @@ TypeAliasExpansion.class:
         PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithString, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithString]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String>
+            USER_TYPE
+              abbreviatedType: test.ParameterizedListAlias<kotlin.String>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -67,7 +71,8 @@ TypeAliasExpansion.class:
         PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithStringAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithStringAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+            USER_TYPE
+              abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -76,14 +81,16 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.StringAlias
+                    USER_TYPE
+                      abbreviatedType: test.StringAlias
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithNestedStringAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithNestedStringAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
+            USER_TYPE
+              abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -92,14 +99,16 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.NestedStringAlias
+                    USER_TYPE
+                      abbreviatedType: test.NestedStringAlias
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithParameterizedListAliasWithStringAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithParameterizedListAliasWithStringAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.collections.List<kotlin.String (abbreviatedType: test.StringAlias)> (abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>)>
+            USER_TYPE
+              abbreviatedType: test.ParameterizedListAlias<kotlin.collections.List<kotlin.String (abbreviatedType: test.StringAlias)> (abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>)>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -108,7 +117,8 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+                    USER_TYPE
+                      abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -117,14 +127,16 @@ TypeAliasExpansion.class:
                       TYPE_ARGUMENT_LIST
                         TYPE_PROJECTION[projectionKind=NONE]
                           TYPE_REFERENCE
-                            USER_TYPE    abbreviatedType: test.StringAlias
+                            USER_TYPE
+                              abbreviatedType: test.StringAlias
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=kotlin]
                               REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithTypeArgument, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithTypeArgument]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedListAliasWithTypeArgument
+            USER_TYPE
+              abbreviatedType: test.NestedListAliasWithTypeArgument
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -140,7 +152,8 @@ TypeAliasExpansion.class:
         PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithAliasTypeArgument, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithAliasTypeArgument]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedListAliasWithAliasTypeArgument
+            USER_TYPE
+              abbreviatedType: test.NestedListAliasWithAliasTypeArgument
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -149,14 +162,16 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.StringAlias
+                    USER_TYPE
+                      abbreviatedType: test.StringAlias
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithNestedAliasTypeArgument, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithNestedAliasTypeArgument]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedListAliasWithNestedAliasTypeArgument
+            USER_TYPE
+              abbreviatedType: test.NestedListAliasWithNestedAliasTypeArgument
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -165,14 +180,16 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.NestedStringAlias
+                    USER_TYPE
+                      abbreviatedType: test.NestedStringAlias
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=kotlin]
                       REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithString, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithString]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedParameterizedListAlias<kotlin.String>
+            USER_TYPE
+              abbreviatedType: test.NestedParameterizedListAlias<kotlin.String>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -181,7 +198,8 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String>
+                    USER_TYPE
+                      abbreviatedType: test.ParameterizedListAlias<kotlin.String>
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -197,7 +215,8 @@ TypeAliasExpansion.class:
         PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithStringAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithStringAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+            USER_TYPE
+              abbreviatedType: test.NestedParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -206,7 +225,8 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+                    USER_TYPE
+                      abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -215,14 +235,16 @@ TypeAliasExpansion.class:
                       TYPE_ARGUMENT_LIST
                         TYPE_PROJECTION[projectionKind=NONE]
                           TYPE_REFERENCE
-                            USER_TYPE    abbreviatedType: test.StringAlias
+                            USER_TYPE
+                              abbreviatedType: test.StringAlias
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=kotlin]
                               REFERENCE_EXPRESSION[referencedName=String]
         PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithNestedStringAlias, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithNestedStringAlias]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.NestedParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
+            USER_TYPE
+              abbreviatedType: test.NestedParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -231,7 +253,8 @@ TypeAliasExpansion.class:
               TYPE_ARGUMENT_LIST
                 TYPE_PROJECTION[projectionKind=NONE]
                   TYPE_REFERENCE
-                    USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
+                    USER_TYPE
+                      abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -240,7 +263,8 @@ TypeAliasExpansion.class:
                       TYPE_ARGUMENT_LIST
                         TYPE_PROJECTION[projectionKind=NONE]
                           TYPE_REFERENCE
-                            USER_TYPE    abbreviatedType: test.NestedStringAlias
+                            USER_TYPE
+                              abbreviatedType: test.NestedStringAlias
                               USER_TYPE
                                 REFERENCE_EXPRESSION[referencedName=kotlin]
                               REFERENCE_EXPRESSION[referencedName=String]
@@ -248,7 +272,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.StringAlias?
+              USER_TYPE
+                abbreviatedType: test.StringAlias?
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -256,7 +281,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NestedStringAlias?
+              USER_TYPE
+                abbreviatedType: test.NestedStringAlias?
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -264,7 +290,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NullableStringAlias
+              USER_TYPE
+                abbreviatedType: test.NullableStringAlias
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -272,7 +299,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NullableStringAlias?
+              USER_TYPE
+                abbreviatedType: test.NullableStringAlias?
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -280,7 +308,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NestedNullableStringAlias
+              USER_TYPE
+                abbreviatedType: test.NestedNullableStringAlias
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -288,7 +317,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NestedNullableStringAlias?
+              USER_TYPE
+                abbreviatedType: test.NestedNullableStringAlias?
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -296,7 +326,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NullableNestedStringAlias
+              USER_TYPE
+                abbreviatedType: test.NullableNestedStringAlias
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -304,7 +335,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              USER_TYPE    abbreviatedType: test.NullableNestedStringAlias?
+              USER_TYPE
+                abbreviatedType: test.NullableNestedStringAlias?
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
@@ -312,7 +344,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.FunctionAlias?
+              FUNCTION_TYPE
+                abbreviatedType: test.FunctionAlias?
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -329,7 +362,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NestedFunctionAlias?
+              FUNCTION_TYPE
+                abbreviatedType: test.NestedFunctionAlias?
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -346,7 +380,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NullableFunctionAlias
+              FUNCTION_TYPE
+                abbreviatedType: test.NullableFunctionAlias
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -363,7 +398,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NullableFunctionAlias?
+              FUNCTION_TYPE
+                abbreviatedType: test.NullableFunctionAlias?
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -380,7 +416,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NestedNullableFunctionAlias
+              FUNCTION_TYPE
+                abbreviatedType: test.NestedNullableFunctionAlias
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -397,7 +434,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NestedNullableFunctionAlias?
+              FUNCTION_TYPE
+                abbreviatedType: test.NestedNullableFunctionAlias?
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -414,7 +452,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NullableNestedFunctionAlias
+              FUNCTION_TYPE
+                abbreviatedType: test.NullableNestedFunctionAlias
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -431,7 +470,8 @@ TypeAliasExpansion.class:
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             NULLABLE_TYPE
-              FUNCTION_TYPE    abbreviatedType: test.NullableNestedFunctionAlias?
+              FUNCTION_TYPE
+                abbreviatedType: test.NullableNestedFunctionAlias?
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
@@ -449,7 +489,8 @@ TypeAliasExpansion.class:
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=entry]
               TYPE_REFERENCE
-                USER_TYPE    abbreviatedType: test.EntryAlias
+                USER_TYPE
+                  abbreviatedType: test.EntryAlias
                   USER_TYPE
                     USER_TYPE
                       USER_TYPE
@@ -471,7 +512,8 @@ TypeAliasExpansion.class:
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=Int]
           TYPE_REFERENCE
-            USER_TYPE    abbreviatedType: test.StringAlias
+            USER_TYPE
+              abbreviatedType: test.StringAlias
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
@@ -479,6 +521,8 @@ TypeAliasExpansion.class:
 
 TypeAliasExpansionKt.class:
   FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
+    facadeFqName: test.TypeAliasExpansionKt
+    partSimpleName: "TypeAliasExpansionKt"
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

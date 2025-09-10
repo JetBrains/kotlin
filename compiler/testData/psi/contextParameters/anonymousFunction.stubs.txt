@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
+  facadeFqName: AnonymousFunctionKt
+  partSimpleName: "AnonymousFunctionKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]

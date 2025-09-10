@@ -1,5 +1,7 @@
 Foo.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=FooKt]]
+    facadeFqName: FooKt
+    partSimpleName: "FooKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     TYPEALIAS[classId=/Alias, fqName=Alias, isTopLevel=true, name=Alias]

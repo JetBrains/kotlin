@@ -28,9 +28,12 @@ Annotation.class:
 
 AnnotationAsArgComplexKt.class:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationAsArgComplexKt]]
+    facadeFqName: AnnotationAsArgComplexKt
+    partSimpleName: "AnnotationAsArgComplexKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=registerQuickFix, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=registerQuickFix]
+      origin: Facade(className=AnnotationAsArgComplexKt, jvmClassName=null)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=annotation]

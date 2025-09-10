@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
+  facadeFqName: IOSamplesKt
+  partSimpleName: "IOSamplesKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/IAdder, fqName=IAdder, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IAdder, superNames=[]]

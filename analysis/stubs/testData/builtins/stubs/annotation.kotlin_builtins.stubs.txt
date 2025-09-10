@@ -68,7 +68,7 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
       ENUM_ENTRY[classId=null, fqName=kotlin.annotation.AnnotationTarget.TYPEALIAS, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=TYPEALIAS, superNames=[]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.1")
+            valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -78,7 +78,7 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
   CLASS[classId=kotlin/annotation/MustBeDocumented, fqName=kotlin.annotation.MustBeDocumented, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MustBeDocumented, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.ANNOTATION_CLASS])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -101,7 +101,7 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
   CLASS[classId=kotlin/annotation/Repeatable, fqName=kotlin.annotation.Repeatable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Repeatable, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.ANNOTATION_CLASS])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -124,7 +124,7 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
   CLASS[classId=kotlin/annotation/Retention, fqName=kotlin.annotation.Retention, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Retention, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.ANNOTATION_CLASS])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -165,7 +165,7 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
   CLASS[classId=kotlin/annotation/Target, fqName=kotlin.annotation.Target, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Target, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.ANNOTATION_CLASS])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -175,7 +175,7 @@ FILE[kind=File[packageFqName=kotlin.annotation]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

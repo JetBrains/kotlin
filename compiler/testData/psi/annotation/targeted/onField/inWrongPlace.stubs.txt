@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=boo, facadeFqName=boo.InWrongPlaceKt]]
+  facadeFqName: boo.InWrongPlaceKt
+  partSimpleName: "InWrongPlaceKt"
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
       ANNOTATION_TARGET[useSiteTarget=FIELD]

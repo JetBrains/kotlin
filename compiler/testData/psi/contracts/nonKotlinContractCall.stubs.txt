@@ -20,6 +20,8 @@ MyBuilder.kt:
 
 main.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=MainKt]]
+    facadeFqName: MainKt
+    partSimpleName: "MainKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=test_1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test_1]

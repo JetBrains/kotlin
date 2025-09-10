@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=SoftKeywordsInTypeArgumentsKt]]
+  facadeFqName: SoftKeywordsInTypeArgumentsKt
+  partSimpleName: "SoftKeywordsInTypeArgumentsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]

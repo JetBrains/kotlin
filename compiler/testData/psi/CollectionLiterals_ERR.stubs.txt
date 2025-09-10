@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=CollectionLiterals_ERRKt]]
+  facadeFqName: CollectionLiterals_ERRKt
+  partSimpleName: "CollectionLiterals_ERRKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]

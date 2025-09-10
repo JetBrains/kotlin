@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationAsArgComplexKt]]
+  facadeFqName: AnnotationAsArgComplexKt
+  partSimpleName: "AnnotationAsArgComplexKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]

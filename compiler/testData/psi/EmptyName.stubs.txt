@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyNameKt]]
+  facadeFqName: EmptyNameKt
+  partSimpleName: "EmptyNameKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=null]

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=InterfaceInExpressionPositionKt]]
+  facadeFqName: InterfaceInExpressionPositionKt
+  partSimpleName: "InterfaceInExpressionPositionKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=p, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=p]

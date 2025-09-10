@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=TryRecoveryKt]]
+  facadeFqName: TryRecoveryKt
+  partSimpleName: "TryRecoveryKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=testOpenParens, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testOpenParens]

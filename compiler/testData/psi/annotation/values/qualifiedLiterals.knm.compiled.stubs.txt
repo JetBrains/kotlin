@@ -5,7 +5,7 @@
     CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
-          valueArguments: (i = -1)
+          valueArguments: [ i -> -1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -46,7 +46,7 @@
           MODIFIER_LIST[public companion]
           CLASS_BODY
             PROPERTY[fqName=test.Simple.Companion.CONST1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST1]
-              initializer: 1
+              constantInitializer: 1
               MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE
@@ -55,7 +55,7 @@
                   REFERENCE_EXPRESSION[referencedName=Int]
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
             PROPERTY[fqName=test.Simple.Companion.CONST2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
-              initializer: 2
+              constantInitializer: 2
               MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE
@@ -79,7 +79,7 @@
     CLASS[classId=/Negative2, fqName=Negative2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative2, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
-          valueArguments: (i = -1)
+          valueArguments: [ i -> -1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -99,7 +99,7 @@
     CLASS[classId=/Positive, fqName=Positive, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Positive, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
-          valueArguments: (i = 1)
+          valueArguments: [ i -> 1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -119,7 +119,7 @@
     CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
-          valueArguments: (i = 1)
+          valueArguments: [ i -> 1 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -139,7 +139,7 @@
     CLASS[classId=/Sum, fqName=Sum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sum, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
-          valueArguments: (i = 3)
+          valueArguments: [ i -> 3 ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

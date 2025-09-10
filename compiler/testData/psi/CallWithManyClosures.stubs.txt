@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=CallWithManyClosuresKt]]
+  facadeFqName: CallWithManyClosuresKt
+  partSimpleName: "CallWithManyClosuresKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=a, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]

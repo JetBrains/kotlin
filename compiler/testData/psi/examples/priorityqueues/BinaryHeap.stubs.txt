@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=BinaryHeapKt]]
+  facadeFqName: BinaryHeapKt
+  partSimpleName: "BinaryHeapKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/BinaryHeap, fqName=BinaryHeap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=BinaryHeap, superNames=[IPriorityQueue]]

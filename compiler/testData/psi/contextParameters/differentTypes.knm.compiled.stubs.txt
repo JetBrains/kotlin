@@ -5,7 +5,7 @@
     CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-          valueArguments: (allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER])
+          valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -43,7 +43,7 @@
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                    valueArguments: ()
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -51,7 +51,7 @@
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -134,7 +134,7 @@
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                    valueArguments: ()
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -142,7 +142,7 @@
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -191,7 +191,7 @@
           TYPE_REFERENCE
             MODIFIER_LIST[suspend]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -219,7 +219,7 @@
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                    valueArguments: ()
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -227,7 +227,7 @@
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -306,7 +306,7 @@
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                    valueArguments: ()
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -314,7 +314,7 @@
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE

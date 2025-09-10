@@ -8,7 +8,7 @@ FILE[kind=File[packageFqName=<root>]]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=A.valueA, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueA]
-        initializer: 10
+        constantInitializer: 10
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
@@ -23,7 +23,7 @@ FILE[kind=File[packageFqName=<root>]]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=B.valueB, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueB]
-        initializer: 11
+        constantInitializer: 11
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
@@ -43,7 +43,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

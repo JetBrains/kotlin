@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCommentsKt]]
+  facadeFqName: NestedCommentsKt
+  partSimpleName: "NestedCommentsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=doo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=doo]

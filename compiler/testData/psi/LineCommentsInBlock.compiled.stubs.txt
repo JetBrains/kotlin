@@ -1,7 +1,10 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=LineCommentsInBlockKt]]
+  facadeFqName: LineCommentsInBlockKt
+  partSimpleName: "LineCommentsInBlockKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
+    origin: Facade(className=LineCommentsInBlockKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -10,6 +13,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=LineCommentsInBlockKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    origin: Facade(className=LineCommentsInBlockKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

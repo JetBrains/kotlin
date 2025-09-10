@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersOnTopLevelCallablesKt]]
+  facadeFqName: ContextParametersOnTopLevelCallablesKt
+  partSimpleName: "ContextParametersOnTopLevelCallablesKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[]]

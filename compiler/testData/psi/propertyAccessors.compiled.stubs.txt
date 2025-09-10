@@ -1,7 +1,10 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
+  facadeFqName: PropertyAccessorsKt
+  partSimpleName: "PropertyAccessorsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=privateSetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=privateSetter]
+    origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -18,6 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=privateVarPrivateSetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=privateVarPrivateSetter]
+    origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[private]
     TYPE_REFERENCE
       USER_TYPE
@@ -25,6 +29,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=explicitPublicGetter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitPublicGetter]
+    origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -32,6 +37,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=inlineProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=inlineProperty]
+    origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE

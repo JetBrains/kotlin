@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithKt]]
+  facadeFqName: WithKt
+  partSimpleName: "WithKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=with, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=with]

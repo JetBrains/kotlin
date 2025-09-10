@@ -52,7 +52,7 @@ ContextReceiversOnClass.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
-          valueArguments: ()
+          valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

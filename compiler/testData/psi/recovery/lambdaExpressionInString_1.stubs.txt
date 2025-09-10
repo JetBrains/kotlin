@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=LambdaExpressionInString_1Kt]]
+  facadeFqName: LambdaExpressionInString_1Kt
+  partSimpleName: "LambdaExpressionInString_1Kt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=some1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=some1]

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTypeKt]]
+  facadeFqName: ContextReceiversOnFunctionTypeKt
+  partSimpleName: "ContextReceiversOnFunctionTypeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[]]

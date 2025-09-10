@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=<root>]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotations]
       MODIFIER_LIST[private]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-          valueArguments: ()
+          valueArguments: [ ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -21,7 +21,7 @@ FILE[kind=File[packageFqName=<root>]]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c1]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -34,7 +34,7 @@ FILE[kind=File[packageFqName=<root>]]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c2]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -51,7 +51,7 @@ FILE[kind=File[packageFqName=<root>]]
           PROPERTY[fqName=Annotations.Companion.field, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=f]
-                valueArguments: ()
+                valueArguments: [ ]
                 ANNOTATION_TARGET[useSiteTarget=FIELD]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -65,7 +65,7 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=Annotations.c1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c1]
         MODIFIER_LIST[private final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -78,7 +78,7 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=Annotations.c2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c2]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -91,7 +91,7 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=Annotations.hasValueArguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=hasValueArguments]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -118,7 +118,7 @@ FILE[kind=File[packageFqName=<root>]]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -126,7 +126,7 @@ FILE[kind=File[packageFqName=<root>]]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -143,7 +143,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               ANNOTATION_TARGET[useSiteTarget=RECEIVER]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -173,7 +173,7 @@ FILE[kind=File[packageFqName=<root>]]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -189,7 +189,7 @@ FILE[kind=File[packageFqName=<root>]]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -197,7 +197,7 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=Annotations.ownField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ownField]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             ANNOTATION_TARGET[useSiteTarget=FIELD]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -223,7 +223,7 @@ FILE[kind=File[packageFqName=<root>]]
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                  valueArguments: ()
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -237,7 +237,7 @@ FILE[kind=File[packageFqName=<root>]]
       PROPERTY[fqName=Annotations.deleage, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=deleage]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             ANNOTATION_TARGET[useSiteTarget=PROPERTY_DELEGATE_FIELD]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -254,7 +254,7 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=Annotations.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[protected final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -271,7 +271,7 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_PARAMETER[fqName=null, name=T]
             MODIFIER_LIST[reified]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -279,7 +279,7 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_PARAMETER[fqName=null, name=F]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -296,7 +296,7 @@ FILE[kind=File[packageFqName=<root>]]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
             MODIFIER_LIST[vararg]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -314,7 +314,7 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=Annotations.g, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-            valueArguments: ()
+            valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -323,7 +323,7 @@ FILE[kind=File[packageFqName=<root>]]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -343,7 +343,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                  valueArguments: ()
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -357,7 +357,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -371,7 +371,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               ANNOTATION_TARGET[useSiteTarget=RECEIVER]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -392,7 +392,7 @@ FILE[kind=File[packageFqName=<root>]]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -423,7 +423,7 @@ FILE[kind=File[packageFqName=<root>]]
           ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -431,13 +431,13 @@ FILE[kind=File[packageFqName=<root>]]
           ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=a]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=c]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -450,7 +450,7 @@ FILE[kind=File[packageFqName=<root>]]
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
-                  valueArguments: ()
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -471,7 +471,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.FIELD])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.FIELD] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -494,7 +494,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/b, fqName=b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -504,7 +504,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
-        valueArguments: (value = AnnotationRetention.SOURCE)
+        valueArguments: [ value -> AnnotationRetention.SOURCE ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -514,7 +514,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Repeatable]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -546,7 +546,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/c, fqName=c, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=c, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -569,7 +569,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=f, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.FIELD])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.FIELD] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

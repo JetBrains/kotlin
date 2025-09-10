@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
+  facadeFqName: UnionFindKt
+  partSimpleName: "UnionFindKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/UnionFind, fqName=UnionFind, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnionFind, superNames=[]]

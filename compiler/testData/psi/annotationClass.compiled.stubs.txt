@@ -38,7 +38,7 @@ FILE[kind=File[packageFqName=test.a]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=test.a.AnnotationClass.j, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
-        initializer: "a"
+        constantInitializer: "a"
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE

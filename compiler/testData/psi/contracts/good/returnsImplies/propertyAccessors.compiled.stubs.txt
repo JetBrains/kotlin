@@ -17,9 +17,12 @@ A.class:
 
 PropertyAccessorsKt.class:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
+    facadeFqName: PropertyAccessorsKt
+    partSimpleName: "PropertyAccessorsKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=isNotNull, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=isNotNull]
+      origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         NULLABLE_TYPE

@@ -1,8 +1,11 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=InPlaceLambdaKt]]
+  facadeFqName: InPlaceLambdaKt
+  partSimpleName: "InPlaceLambdaKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=bar]
-    effect:CallsInPlace(param(0), AT_MOST_ONCE)
+    contract: [ effect:CallsInPlace(param(0), AT_MOST_ONCE) ]
+    origin: Facade(className=InPlaceLambdaKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -20,7 +23,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InPlaceLambdaKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=foo]
-    effect:CallsInPlace(param(0), AT_LEAST_ONCE)
+    contract: [ effect:CallsInPlace(param(0), AT_LEAST_ONCE) ]
+    origin: Facade(className=InPlaceLambdaKt, jvmClassName=null)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

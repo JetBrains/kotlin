@@ -28,6 +28,8 @@ Anno.kt:
 
 check.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=CheckKt]]
+    facadeFqName: CheckKt
+    partSimpleName: "CheckKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]

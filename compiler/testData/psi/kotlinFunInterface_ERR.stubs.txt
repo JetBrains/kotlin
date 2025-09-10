@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=KotlinFunInterface_ERRKt]]
+  facadeFqName: KotlinFunInterface_ERRKt
+  partSimpleName: "KotlinFunInterface_ERRKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/<no name provided>, fqName=<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=null, superNames=[]]

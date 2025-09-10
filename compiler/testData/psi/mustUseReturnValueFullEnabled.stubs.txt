@@ -85,6 +85,8 @@ Unmarked.kt:
 
 markedTopLevel.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=MarkedTopLevelKt]]
+    facadeFqName: MarkedTopLevelKt
+    partSimpleName: "MarkedTopLevelKt"
     FILE_ANNOTATION_LIST
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
         ANNOTATION_TARGET[useSiteTarget=FILE]
@@ -117,6 +119,8 @@ markedTopLevel.kt:
 
 unmarkedTopLevel.kt:
   FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnmarkedTopLevelKt]]
+    facadeFqName: UnmarkedTopLevelKt
+    partSimpleName: "UnmarkedTopLevelKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]

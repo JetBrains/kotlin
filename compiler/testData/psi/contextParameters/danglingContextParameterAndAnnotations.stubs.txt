@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=DanglingContextParameterAndAnnotationsKt]]
+  facadeFqName: DanglingContextParameterAndAnnotationsKt
+  partSimpleName: "DanglingContextParameterAndAnnotationsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]

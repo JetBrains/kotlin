@@ -63,7 +63,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
     MODIFIER_LIST[internal]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-        valueArguments: ()
+        valueArguments: [ ]
         ANNOTATION_TARGET[useSiteTarget=FIELD]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -185,7 +185,7 @@ FILE[kind=File[packageFqName=foo.TopLevelMembers]]
   CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.FIELD])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.FIELD] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

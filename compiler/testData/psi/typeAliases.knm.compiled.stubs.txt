@@ -8,7 +8,8 @@
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
-            FUNCTION_TYPE    abbreviatedType: dependency.A
+            FUNCTION_TYPE
+              abbreviatedType: dependency.A
               VALUE_PARAMETER_LIST
               TYPE_REFERENCE
                 USER_TYPE
@@ -116,7 +117,7 @@
     CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-          valueArguments: (allowedTargets = [AnnotationTarget.TYPEALIAS])
+          valueArguments: [ allowedTargets -> [AnnotationTarget.TYPEALIAS] ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -147,7 +148,8 @@
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
               TYPE_REFERENCE
-                FUNCTION_TYPE    abbreviatedType: dependency.A
+                FUNCTION_TYPE
+                  abbreviatedType: dependency.A
                   VALUE_PARAMETER_LIST
                   TYPE_REFERENCE
                     USER_TYPE
@@ -156,11 +158,13 @@
                       REFERENCE_EXPRESSION[referencedName=Unit]
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
               TYPE_REFERENCE
-                FUNCTION_TYPE    abbreviatedType: test.TypeAliases.B
+                FUNCTION_TYPE
+                  abbreviatedType: test.TypeAliases.B
                   VALUE_PARAMETER_LIST
                     VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                       TYPE_REFERENCE
-                        FUNCTION_TYPE    abbreviatedType: dependency.A
+                        FUNCTION_TYPE
+                          abbreviatedType: dependency.A
                           VALUE_PARAMETER_LIST
                           TYPE_REFERENCE
                             USER_TYPE
@@ -174,7 +178,8 @@
                       REFERENCE_EXPRESSION[referencedName=Unit]
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=ta]
               TYPE_REFERENCE
-                USER_TYPE    abbreviatedType: test.Outer.Inner.TA<kotlin.Boolean>
+                USER_TYPE
+                  abbreviatedType: test.Outer.Inner.TA<kotlin.Boolean>
                   USER_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -247,7 +252,8 @@
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
               TYPE_REFERENCE
-                USER_TYPE    abbreviatedType: test.Z
+                USER_TYPE
+                  abbreviatedType: test.Z
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=dependency]
                   REFERENCE_EXPRESSION[referencedName=SomeClass]
@@ -275,7 +281,8 @@
               VALUE_PARAMETER_LIST
                 VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                   TYPE_REFERENCE
-                    FUNCTION_TYPE    abbreviatedType: dependency.A
+                    FUNCTION_TYPE
+                      abbreviatedType: dependency.A
                       VALUE_PARAMETER_LIST
                       TYPE_REFERENCE
                         USER_TYPE
@@ -290,7 +297,7 @@
         TYPEALIAS[classId=test/TypeAliases.Parametrized, fqName=test.TypeAliases.Parametrized, isTopLevel=false, name=Parametrized]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three four.EscapedNamesKt]]
+  facadeFqName: one two.three four.EscapedNamesKt
+  partSimpleName: "EscapedNamesKt"
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=one two]

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=some, facadeFqName=some.PackageRecoveryKt]]
+  facadeFqName: some.PackageRecoveryKt
+  partSimpleName: "PackageRecoveryKt"
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=some]
   IMPORT_LIST
