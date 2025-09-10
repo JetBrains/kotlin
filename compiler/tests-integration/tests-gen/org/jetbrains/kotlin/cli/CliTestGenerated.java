@@ -1721,6 +1721,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/modulesWithDependencyCycle.args");
     }
 
+    @TestMetadata("multipleBackendThreads.args")
+    public void testMultipleBackendThreads() {
+      runTest("compiler/testData/cli/jvm/multipleBackendThreads.args");
+    }
+
     @TestMetadata("nestedTypeAliasesEnabled.args")
     public void testNestedTypeAliasesEnabled() {
       runTest("compiler/testData/cli/jvm/nestedTypeAliasesEnabled.args");
