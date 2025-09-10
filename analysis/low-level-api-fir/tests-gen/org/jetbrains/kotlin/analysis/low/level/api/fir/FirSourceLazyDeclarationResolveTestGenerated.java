@@ -475,12 +475,6 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
   }
 
   @Test
-  @TestMetadata("jvmBuiltinsInHierarchy.kt")
-  public void testJvmBuiltinsInHierarchy() {
-    runTest("analysis/low-level-api-fir/testData/lazyResolve/jvmBuiltinsInHierarchy.kt");
-  }
-
-  @Test
   @TestMetadata("lambdaAsSAMInterface.kt")
   public void testLambdaAsSAMInterface() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterface.kt");
@@ -1697,12 +1691,6 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("integerLiteralCall.kt")
     public void testIntegerLiteralCall() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/integerLiteralCall.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmBuiltinAnnotation.kt")
-    public void testJvmBuiltinAnnotation() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/jvmBuiltinAnnotation.kt");
     }
 
     @Test
