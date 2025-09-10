@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.utils.topologicalSort
 
@@ -54,11 +53,8 @@ public fun KaModule.asDebugString(indent: Int = 0): String =
     }.prependIndent("  ".repeat(indent))
 
 /**
- * Used by the Analysis API engine
- * to mark [VirtualFile] generated from [KaResolveExtension][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension].
- *
- * This property is used to define whether [analysisContextModule] of a [VirtualFile]
- * was set by [KaResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider] or not.
+ * Used by implementations of [KaResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider]
+ * to store a reference of the [KaModule] for which a [VirtualFile] was generated.
  */
 @KaImplementationDetail
-public var VirtualFile.isGeneratedByResolveExtensions: Boolean? by UserDataProperty(Key.create("IS_GENERATED_BY_RESOLVE_EXTENSIONS"))
+public var VirtualFile.resolveExtensionFileModule: KaModule? by UserDataProperty(Key.create("RESOLVE_EXTENSION_FILE_MODULE"))
