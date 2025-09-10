@@ -24,6 +24,7 @@ data class IrTranslationResultValue(
     val signatures: ByteArray,
     val strings: ByteArray,
     val declarations: ByteArray,
+    val inlineDeclarations: ByteArray,
     val bodies: ByteArray,
     val fqn: ByteArray,
     val fileMetadata: ByteArray,
