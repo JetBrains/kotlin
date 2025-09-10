@@ -1,7 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76240
-// DIAGNOSTICS: -TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
-// Reason of diagnostics suppression: different diagnostics with AA normal and reverse resolving
+// IGNORE_REVERSED_RESOLVE
+// IGNORE_PARTIAL_BODY_ANALYSIS
+// Reason of diagnostics suppression: different diagnostics with normal and AA reversed/partial resolve
 
 // FILE: NewWarnings.kt
 
@@ -21,7 +22,7 @@ fun String.g(): Boolean = false
 
 class Bar {
     fun g() = "s2".g() // New warning
-    val g = g() // Currently `TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM` in regular compiler mode.
+    val g = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>g()<!>
 }
 
 // FILE: NoWarningsInCaseOfLocalProperty.kt
@@ -38,8 +39,8 @@ fun test() {
 fun Int.f3(): String = "ext func"
 
 class Foo3 {
-    val f3 = f3()
-    fun f3() = f3() // Currently TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR
+    val f3 = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f3()<!>
+    fun f3() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f3()<!>
 }
 
 // FILE: NoWarningsInCaseOfResolveToInvoke.kt
