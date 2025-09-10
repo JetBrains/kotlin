@@ -540,9 +540,6 @@ message IrFunctionBase {
 message IrFunction {
   required IrFunctionBase base = 1;
   repeated int64 overridden = 2 [packed=true]; // TODO: supposed to be deleted
-  // In case this is a prepared inlineable function copy, stores the file entry where the inline function was originally declared.
-  optional int32 prepared_inline_function_file_entry_id = 3;
-
   //optional UniqId corresponding_property = 7;
 }
 

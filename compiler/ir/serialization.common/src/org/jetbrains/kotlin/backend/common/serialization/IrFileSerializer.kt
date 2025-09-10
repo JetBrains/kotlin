@@ -1215,9 +1215,6 @@ open class IrFileSerializer(
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))
         }
-        declaration.originalOfErasedTopLevelCopy?.let { original ->
-            proto.preparedInlineFunctionFileEntryId = serializeFileEntryId(original.fileEntry)
-        }
 
         return proto.build()
     }
