@@ -67,15 +67,16 @@ internal class KaFirEnumEntrySymbol private constructor(
 
     override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
         get() = withValidityAssertion {
-            if (firSymbol.fir.initializer == null) {
-                return@withValidityAssertion null
-            }
+            val initializerBeforeResolve = firSymbol.fir.initializer ?: return@withValidityAssertion null
 
+            // Ensure the initializer is fully resolved before we inspect its shape
             firSymbol.fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-            val initializerExpression = firSymbol.fir.initializer
-            check(initializerExpression is FirAnonymousObjectExpression) {
-                "Unexpected enum entry initializer: ${initializerExpression?.javaClass}"
+            val initializerExpression = firSymbol.fir.initializer ?: return@withValidityAssertion null
+            if (initializerExpression !is FirAnonymousObjectExpression) {
+                // KT-54457: For simple enum entries, the initializer is a special constructor reference expression.
+                // In such cases, there is no initializer body with its own members, so we return null.
+                return@withValidityAssertion null
             }
 
             val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
