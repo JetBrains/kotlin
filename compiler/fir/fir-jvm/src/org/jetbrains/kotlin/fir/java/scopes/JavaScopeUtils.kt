@@ -146,7 +146,6 @@ private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolea
 }
 
 fun FirClassLikeSymbol<*>.isBuiltinClass(): Boolean {
-    if (fir.origin.isBuiltIns) return true
     // Generally the condition above should be enough, but in some environments built-in classes
     // might be loaded without the correct expected origin, e.g., when building stdlib artifact itself or for K2CL.
     // See KT-68154 and KT-80524 for details.
