@@ -80,8 +80,6 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                    dump-ir-signatures            Dump IR signatures of all non-private declarations in the library and all non-private
                                                    declarations consumed by this library (as two separate lists). This command relies
                                                    purely on the data in IR.
-                   dump-ir-inlinable-functions   Dump the intermediate representation (IR) of inlinable functions in the library.
-                                                   The output of this command is intended to be used for debugging purposes only.
                    dump-metadata                 Dump the metadata of all declarations in the library.
                                                    The output of this command intended to be used for debugging purposes only.
                    dump-metadata-signatures      Dump IR signatures of all non-private declarations in the library. Note, that this command

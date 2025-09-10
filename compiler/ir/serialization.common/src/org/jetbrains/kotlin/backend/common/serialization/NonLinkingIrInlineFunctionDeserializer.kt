@@ -142,7 +142,7 @@ class NonLinkingIrInlineFunctionDeserializer(
          * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
          * if the declaration happens to have multiple inline functions.
          */
-        val reversedSignatureIndex: Map<IdSignature, Int> = run {
+        private val reversedSignatureIndex: Map<IdSignature, Int> = run {
             val fileStream = library.irFileOfInlineableFuns().codedInputStream
             val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
             fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
@@ -159,7 +159,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                 val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
                 val fileEntry = deserializeFileEntry(fileEntryProto)
                 val file = IrFileImpl(
-                    symbol = IrFileSymbolImpl(with(originalFunctionPackage.symbol) { runIf(hasDescriptor) { descriptor } }),
+                    symbol = IrFileSymbolImpl(originalFunctionPackage.symbol.descriptor),
                     packageFqName = originalFunctionPackage.packageFqName,
                     fileEntry = fileEntry,
                 )
