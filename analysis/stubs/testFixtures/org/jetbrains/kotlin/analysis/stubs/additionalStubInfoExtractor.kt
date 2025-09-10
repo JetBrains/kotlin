@@ -6,131 +6,145 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 
-internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String {
-    val builder = StringBuilder()
-    extractAdditionInfo(stub, builder, 1)
-    return builder.toString()
+internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String = prettyPrint {
+    extractAdditionInfo(stub)
 }
 
-private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, level: Int) {
-    builder.append(stub.toString())
+private fun PrettyPrinter.extractAdditionInfo(stub: StubElement<*>) {
+    append(stub.toString())
     when (stub) {
         is KotlinUserTypeStubImpl -> {
             val upperBound = stub.upperBound
             if (upperBound != null) {
-                builder.append("    upperBound: ")
-                appendTypeInfo(builder, upperBound)
+                append("    upperBound: ")
+                appendTypeInfo(upperBound)
             }
 
             val abbreviatedType = stub.abbreviatedType
             if (abbreviatedType != null) {
-                builder.append("    abbreviatedType: ")
-                appendTypeInfo(builder, abbreviatedType)
+                append("    abbreviatedType: ")
+                appendTypeInfo(abbreviatedType)
             }
         }
+
         is KotlinFunctionTypeStubImpl -> {
             val abbreviatedType = stub.abbreviatedType
             if (abbreviatedType != null) {
-                builder.append("    abbreviatedType: ")
-                appendTypeInfo(builder, abbreviatedType)
+                append("    abbreviatedType: ")
+                appendTypeInfo(abbreviatedType)
             }
         }
+
         is KotlinFunctionStubImpl -> {
             val contract = stub.contract
             if (contract != null) {
-                for (element in contract) {
-                    builder.append("\n" + "  ".repeat(level)).append("effect:")
-                    element.accept(KotlinContractRenderer(builder), null)
+                withIndent {
+                    for (element in contract) {
+                        appendLine()
+                        append("effect:")
+                        element.accept(KotlinContractRenderer(this), null)
+                    }
                 }
             }
         }
         is KotlinPropertyStubImpl -> {
             val initializer = stub.constantInitializer
             if (initializer != null) {
-                builder.append("\n").append("  ".repeat(level)).append("initializer: $initializer")
+                withIndent {
+                    appendLine()
+                    append("initializer: $initializer")
+                }
             }
         }
         is KotlinAnnotationEntryStubImpl -> {
             val arguments = stub.valueArguments
             if (arguments != null) {
-                builder
-                    .append("\n")
-                    .append("  ".repeat(level))
-                    .append("valueArguments: ")
-                    .append(arguments.entries.joinToString(", ", "(", ")") { "${it.key.asString()} = ${it.value}" })
+                withIndent {
+                    appendLine()
+                    append("valueArguments: ")
+                    withIndent {
+                        arguments.entries.joinTo(this, ", ", "(", ")") { "${it.key.asString()} = ${it.value}" }
+                    }
+                }
             }
         }
         is KotlinParameterStubImpl -> {
-            stub.functionTypeParameterName?.let { builder.append("   paramNameByAnnotation: ").append(it) }
+            stub.functionTypeParameterName?.let { append("   paramNameByAnnotation: ").append(it) }
         }
         is KotlinClassStubImpl -> {
-            stub.valueClassRepresentation?.let { builder.append("   valueClassRepresentation: ").append(it) }
+            stub.valueClassRepresentation?.let { append("   valueClassRepresentation: ").append(it.toString()) }
         }
     }
     for (child in stub.childrenStubs) {
-        builder.append("\n").append("  ".repeat(level))
-        extractAdditionInfo(child, builder, level + 1)
+        withIndent {
+            appendLine()
+            extractAdditionInfo(child)
+        }
     }
 }
 
-private fun appendTypeInfo(builder: StringBuilder, typeBean: KotlinTypeBean) {
+private fun PrettyPrinter.appendTypeInfo(typeBean: KotlinTypeBean) {
     when (typeBean) {
         is KotlinClassTypeBean -> {
-            builder.append(typeBean.classId.asFqNameString())
+            append(typeBean.classId.asFqNameString())
             val arguments = typeBean.arguments
             if (arguments.isNotEmpty()) {
-                builder.append("<")
+                append("<")
                 arguments.forEachIndexed { index, arg ->
-                    if (index > 0) builder.append(", ")
+                    if (index > 0) append(", ")
                     if (arg.projectionKind != KtProjectionKind.NONE) {
-                        builder.append(arg.projectionKind.name)
+                        append(arg.projectionKind.name)
                     }
                     if (arg.projectionKind != KtProjectionKind.STAR) {
-                        appendTypeInfo(builder, arg.type!!)
+                        appendTypeInfo(arg.type!!)
                     }
                 }
-                builder.append(">")
+                append(">")
             }
             if (typeBean.nullable) {
-                builder.append("?")
+                append("?")
             }
 
             val abbreviatedType = typeBean.abbreviatedType
             if (abbreviatedType != null) {
-                builder.append(" (abbreviatedType: ")
-                appendTypeInfo(builder, abbreviatedType)
-                builder.append(")")
+                append(" (abbreviatedType: ")
+                appendTypeInfo(abbreviatedType)
+                append(")")
             }
         }
         is KotlinTypeParameterTypeBean -> {
-            builder.append(typeBean.typeParameterName)
+            append(typeBean.typeParameterName)
             if (typeBean.nullable) {
-                builder.append("?")
+                append("?")
             }
             if (typeBean.definitelyNotNull) {
-                builder.append(" & Any")
+                append(" & Any")
             }
         }
 
         is KotlinFlexibleTypeBean -> {
-            appendTypeInfo(builder, typeBean.lowerBound)
-            builder.append(" .. ")
-            appendTypeInfo(builder, typeBean.upperBound)
+            appendTypeInfo(typeBean.lowerBound)
+            append(" .. ")
+            appendTypeInfo(typeBean.upperBound)
         }
     }
 }
 
-class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
+class KotlinContractRenderer(
+    private val printer: PrettyPrinter,
+) : KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>,
         data: Nothing?,
     ) {
         conditionalEffect.effect.accept(this, data)
-        buffer.append(" -> ")
+        printer.append(" -> ")
         conditionalEffect.condition.accept(this, data)
     }
 
@@ -139,7 +153,7 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         data: Nothing?,
     ) {
         conditionalEffect.argumentsCondition.accept(this, data)
-        buffer.append(" -> ")
+        printer.append(" -> ")
         conditionalEffect.returnsEffect.accept(this, data)
     }
 
@@ -148,21 +162,21 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         data: Nothing?,
     ) {
         holdsInEffect.argumentsCondition.accept(this, data)
-        buffer.append(" HoldsIn(")
+        printer.append(" HoldsIn(")
         holdsInEffect.valueParameterReference.accept(this, data)
-        buffer.append(")")
+        printer.append(")")
     }
 
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        buffer.append("Returns(")
+        printer.append("Returns(")
         returnsEffect.value.accept(this, data)
-        buffer.append(")")
+        printer.append(")")
     }
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        buffer.append("CallsInPlace(")
+        printer.append("CallsInPlace(")
         callsEffect.valueParameterReference.accept(this, data)
-        buffer.append(", ${callsEffect.kind})")
+        printer.append(", ${callsEffect.kind})")
     }
 
     override fun visitLogicalBinaryOperationContractExpression(
@@ -170,7 +184,7 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         data: Nothing?,
     ) {
         binaryLogicExpression.left.accept(this, data)
-        buffer.append(" ${binaryLogicExpression.kind.token} ")
+        printer.append(" ${binaryLogicExpression.kind.token} ")
         binaryLogicExpression.right.accept(this, data)
     }
 
@@ -180,22 +194,22 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
 
     override fun visitIsInstancePredicate(isInstancePredicate: KtIsInstancePredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
         isInstancePredicate.arg.accept(this, data)
-        buffer.append(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type}")
+        printer.append(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type}")
     }
 
     override fun visitIsNullPredicate(isNullPredicate: KtIsNullPredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
         isNullPredicate.arg.accept(this, data)
-        buffer.append(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
+        printer.append(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
     }
 
     override fun visitConstantDescriptor(constantReference: KtConstantReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
-        buffer.append(constantReference.name)
+        printer.append(constantReference.name)
     }
 
     override fun visitValueParameterReference(
         valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>,
         data: Nothing?,
     ) {
-        buffer.append("param(").append(valueParameterReference.parameterIndex).append(")")
+        printer.append("param(").append(valueParameterReference.parameterIndex.toString()).append(")")
     }
 }
