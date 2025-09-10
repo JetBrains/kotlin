@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -98,10 +99,6 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
     return file.fileEntry == fileOrNull?.fileEntry
 }
 
-// Most of the internal annotations declared in these packages make visibility checks fail (KT-78100)
-private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
-    listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
-
 context(checker: IrChecker)
 internal fun checkVisibility(
     referencedDeclarationSymbol: IrSymbol,
@@ -118,7 +115,8 @@ internal fun checkVisibility(
     }
 
     if (context.withinAnnotationUsageSubTree &&
-        referencedDeclarationSymbol.owner.getPackageFragment()?.packageFqName in EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS
+        reference is IrConstructorCall &&
+        referencedDeclarationSymbol.isAnnotationExcludedFromVisibilityChecks()
     ) {
         return
     }
@@ -159,6 +157,19 @@ internal fun checkVisibility(
         visibilityError(reference, visibility, context)
     }
 }
+
+private fun IrSymbol.isAnnotationExcludedFromVisibilityChecks(): Boolean {
+    val clazz = when (val declaration = owner) {
+        is IrClass -> declaration
+        is IrConstructor -> declaration.constructedClass
+        else -> return false
+    }
+
+    // The `class` is an annotation class that has a specific meta-annotation on it.
+    return clazz.isAnnotationClass && clazz.hasAnnotation(NATIVE_TEST_SPECIFIC_META_ANNOTATION_FQN)
+}
+
+private val NATIVE_TEST_SPECIFIC_META_ANNOTATION_FQN = FqName("kotlin.native.internal.InternalForKotlinNativeTests")
 
 context(checker: IrChecker)
 internal fun checkFunctionUseSite(
