@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -156,16 +152,16 @@ public interface KaTypeProvider : KaSessionComponent {
      * nullability annotations have an impact on a resolved type's nullability.
      * These annotations are already taken into account in [KaType].
      *
-     * However,
-     * there are also [warning-level][org.jetbrains.kotlin.load.java.ReportLevel.WARN] nullability annotations, such
-     * as Android's `RecentlyNullable` and `RecentlyNonNull`.
-     * Such annotations have weaker constraints and don't affect a resolved type's nullability.
+     * However, there are also [warning-level][org.jetbrains.kotlin.load.java.ReportLevel.WARN] nullability annotations,
+     * such as Android's `RecentlyNullable` and `RecentlyNonNull`.
+     * These annotations have weaker constraints and don't affect a resolved type's nullability.
      * [augmentedByWarningLevelAnnotations] returns a [KaType] with weak annotations treated as strict ones.
      *
      * See the list of default report levels for different nullability annotations in
      * [NULLABILITY_ANNOTATION_SETTINGS][org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATION_SETTINGS]
      *
      * ### Examples
+     *
      * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] returns `X?`.
      * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] returns `X`.
      */
@@ -594,16 +590,16 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): Ka
  * nullability annotations have an impact on a resolved type's nullability.
  * These annotations are already taken into account in [KaType].
  *
- * However,
- * there are also [warning-level][org.jetbrains.kotlin.load.java.ReportLevel.WARN] nullability annotations, such
- * as Android's `RecentlyNullable` and `RecentlyNonNull`.
- * Such annotations have weaker constraints and don't affect a resolved type's nullability.
+ * However, there are also [warning-level][org.jetbrains.kotlin.load.java.ReportLevel.WARN] nullability annotations,
+ * such as Android's `RecentlyNullable` and `RecentlyNonNull`.
+ * These annotations have weaker constraints and don't affect a resolved type's nullability.
  * [augmentedByWarningLevelAnnotations] returns a [KaType] with weak annotations treated as strict ones.
  *
  * See the list of default report levels for different nullability annotations in
  * [NULLABILITY_ANNOTATION_SETTINGS][org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATION_SETTINGS]
  *
  * ### Examples
+ *
  * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] returns `X?`.
  * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] returns `X`.
  */
