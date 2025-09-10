@@ -2134,6 +2134,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/perFileWithWrongModuleKind.args");
     }
 
+    @TestMetadata("publicSyntheticAccessorGenerationWithExplicitAPIModeDisabled.args")
+    public void testPublicSyntheticAccessorGenerationWithExplicitAPIModeDisabled() {
+      runTest("compiler/testData/cli/js/publicSyntheticAccessorGenerationWithExplicitAPIModeDisabled.args");
+    }
+
+    @TestMetadata("publicSyntheticAccessorGenerationWithoutExplicitAPIFlag.args")
+    public void testPublicSyntheticAccessorGenerationWithoutExplicitAPIFlag() {
+      runTest("compiler/testData/cli/js/publicSyntheticAccessorGenerationWithoutExplicitAPIFlag.args");
+    }
+
     @TestMetadata("reifiedIntersectionType.args")
     public void testReifiedIntersectionType() {
       runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
