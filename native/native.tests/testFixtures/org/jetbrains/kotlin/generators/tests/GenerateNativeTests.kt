@@ -30,7 +30,7 @@ fun main() {
         // Former konan local tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenLocalTestGenerated",
+                suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                 )
@@ -38,7 +38,7 @@ fun main() {
                 model()
             }
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenLocalTestWithInlinedFunInKlibGenerated",
+                suiteTestClassName = "FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>()
@@ -51,7 +51,7 @@ fun main() {
         // Codegen box tests.
         testGroup("native/native.tests/codegen-box/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenBoxTestGenerated",
+                suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     codegenBox(),
@@ -61,7 +61,7 @@ fun main() {
                 model("boxInline")
             }
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenBoxTestNoPLGenerated",
+                suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     *noPartialLinkage(),
@@ -76,7 +76,7 @@ fun main() {
         // Samples (how to utilize the abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "InfrastructureTestGenerated",
+                suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
                     infrastructure(),
                     provider<UseStandardTestCaseGroupProvider>()
@@ -137,7 +137,7 @@ fun main() {
         // ObjCExport tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/ObjCExport") {
             testClass<AbstractNativeObjCExportTest>(
-                suiteTestClassName = "ObjCExportTestGenerated",
+                suiteTestClassName = "FirObjCExportTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -146,7 +146,7 @@ fun main() {
         // LLDB integration tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/lldb") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "LldbTestGenerated",
+                suiteTestClassName = "FirLldbTestGenerated",
                 annotations = listOf(
                     debugger(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -161,7 +161,7 @@ fun main() {
         // LitmusKt tests.
         testGroup("native/native.tests/litmus-tests/tests-gen", "native/native.tests/litmus-tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "LitmusKtTestsGenerated",
+                suiteTestClassName = "FirLitmusKtTestsGenerated",
                 annotations = listOf(
                     litmusktNative(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -175,7 +175,7 @@ fun main() {
         generateTestGroupSuiteWithJUnit5 {
             testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi/cinterop") {
                 testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
-                    suiteTestClassName = "NativeCInteropLibraryAbiReaderTest",
+                    suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
                 ) {
                     model()
                 }
@@ -185,7 +185,7 @@ fun main() {
         // Plain executable tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/standalone") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeStandaloneTestGenerated",
+                suiteTestClassName = "FirNativeStandaloneTestGenerated",
                 annotations = listOf(
                     *standalone(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -194,7 +194,7 @@ fun main() {
                 model()
             }
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeStandaloneTestWithInlinedFunInKlibGenerated",
+                suiteTestClassName = "FirNativeStandaloneTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(
                     *standalone(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -237,7 +237,7 @@ fun main() {
         // Stress tests
         testGroup("native/native.tests/stress/tests-gen", "native/native.tests/stress/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeStressTestGenerated",
+                suiteTestClassName = "FirNativeStressTestGenerated",
                 annotations = listOf(
                     *stress(),
                     provider<UseStandardTestCaseGroupProvider>(),
@@ -249,7 +249,7 @@ fun main() {
         // GC tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/gc") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "NativeGCTestGenerated",
+                suiteTestClassName = "FirNativeGCTestGenerated",
                 annotations = listOf(
                     *gc(),
                     provider<UseStandardTestCaseGroupProvider>(),
