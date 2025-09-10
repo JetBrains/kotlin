@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -97,7 +96,7 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
         if (declarationMaybeFromOtherModule.hasAnnotation(EXCLUDED_FROM_FIRST_STAGE_INLINING_ANNOTATION_FQNAME))
             return null
 
-        if (declarationMaybeFromOtherModule.body != null || declarationMaybeFromOtherModule !is IrSimpleFunction) {
+        if (declarationMaybeFromOtherModule.body != null) {
             return declarationMaybeFromOtherModule
         }
         if (inlineMode != InlineMode.ALL_INLINE_FUNCTIONS) return null

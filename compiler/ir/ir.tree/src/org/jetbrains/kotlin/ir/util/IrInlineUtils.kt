@@ -39,9 +39,9 @@ tailrec fun IrDeclaration.getSourceFile(): IrFileEntry? {
     }
 }
 
-var IrModuleFragment.preparedInlineFunctionCopies: List<IrSimpleFunction>? by irAttribute(copyByDefault = true)
-var IrSimpleFunction.preparedInlineFunctionCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
-var IrSimpleFunction.originalOfPreparedInlineFunctionCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrModuleFragment.erasedTopLevelInlineFunctions: List<IrSimpleFunction>? by irAttribute(copyByDefault = true)
+var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrFunction.originalOfErasedTopLevelCopy: IrFunction? by irAttribute(copyByDefault = true)
 
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
     return this.inlinedFunctionSymbol != null
