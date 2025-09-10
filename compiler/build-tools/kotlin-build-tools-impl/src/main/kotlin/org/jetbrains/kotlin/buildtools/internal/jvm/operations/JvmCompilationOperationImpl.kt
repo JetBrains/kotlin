@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfigur
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
@@ -213,6 +214,7 @@ internal class JvmCompilationOperationImpl(
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration
         val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.options as? JvmSnapshotBasedIncrementalCompilationOptionsImpl
         val rootProjectDir = aggregatedIcConfigurationOptions?.get(ROOT_PROJECT_DIR)
+        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val exitCode = daemon.compile(
             sessionId,
             arguments.toArgumentStrings().toTypedArray(),
@@ -273,6 +275,7 @@ internal class JvmCompilationOperationImpl(
                 register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
             }
         }.build()
+        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         return compiler.exec(loggerAdapter, services, arguments).asCompilationResult
     }
 
@@ -312,6 +315,7 @@ internal class JvmCompilationOperationImpl(
         }
 
         arguments.incrementalCompilation = true
+        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -385,6 +389,21 @@ internal class JvmCompilationOperationImpl(
         icFeatures = icFeatures
     )
 
+    private fun logCompilerArguments(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        arguments: K2JVMCompilerArguments,
+        argumentsLogLevel: CompilerArgumentsLogLevel,
+    ) {
+        with(loggerAdapter.kotlinLogger) {
+            val message = "Kotlin compiler args: ${arguments.toArgumentStrings().joinToString(" ")}"
+            when (argumentsLogLevel) {
+                CompilerArgumentsLogLevel.ERROR -> error(message)
+                CompilerArgumentsLogLevel.WARNING -> warn(message)
+                CompilerArgumentsLogLevel.INFO -> info(message)
+                CompilerArgumentsLogLevel.DEBUG -> debug(message)
+            }
+        }
+    }
 
     companion object {
         val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
@@ -392,6 +411,9 @@ internal class JvmCompilationOperationImpl(
         val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
 
         val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
+
+        val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> =
+            Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)
     }
 }
 
