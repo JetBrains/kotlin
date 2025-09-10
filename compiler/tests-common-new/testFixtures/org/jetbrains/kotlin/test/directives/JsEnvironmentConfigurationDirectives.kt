@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 

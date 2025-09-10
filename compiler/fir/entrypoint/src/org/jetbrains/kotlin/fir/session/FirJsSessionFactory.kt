@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 @OptIn(SessionConfiguration::class)
 object FirJsSessionFactory : AbstractFirKlibSessionFactory<FirJsSessionFactory.Context, FirJsSessionFactory.Context>() {

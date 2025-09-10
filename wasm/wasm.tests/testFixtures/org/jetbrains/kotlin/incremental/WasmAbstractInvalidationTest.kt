@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase

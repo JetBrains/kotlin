@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
-import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 

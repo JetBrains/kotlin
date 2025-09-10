@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
-import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleDependenciesResolver
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.generateSingleWrappedModuleBody
+import org.jetbrains.kotlin.js.config.ModuleKind
 
 /**
  * This class is responsible for incrementally producing the final JavaScript code based on the provided cache artifacts.

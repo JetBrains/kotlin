@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationStringParameter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 @NoMutableState
 class FirJsModuleKind(val moduleKind: ModuleKind) : FirSessionComponent

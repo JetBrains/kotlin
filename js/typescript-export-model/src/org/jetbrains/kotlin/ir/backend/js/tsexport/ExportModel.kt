@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 public sealed class ExportedDeclaration {
     public val attributes: MutableList<ExportedAttribute> = mutableListOf()

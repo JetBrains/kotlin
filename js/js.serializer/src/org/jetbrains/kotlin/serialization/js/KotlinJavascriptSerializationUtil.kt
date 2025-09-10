@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.protobuf.CodedInputStream

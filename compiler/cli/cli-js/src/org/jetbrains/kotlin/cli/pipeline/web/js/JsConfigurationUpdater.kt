@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.getJsLowerings
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
     override fun fillConfiguration(

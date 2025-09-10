@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
 object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
