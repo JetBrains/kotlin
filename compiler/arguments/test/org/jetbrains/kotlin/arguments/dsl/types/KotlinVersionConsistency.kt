@@ -70,6 +70,20 @@ class KotlinVersionConsistency {
             }
     }
 
+    @Test
+    fun versionIsExperimental() {
+        LanguageVersion.entries
+            .filter { it > LanguageVersion.LATEST_STABLE }
+            .forEach { languageVersion ->
+                languageVersion.toKotlinVersionOrNull()?.let {
+                    assertTrue(
+                        actual = it.releaseVersionsMetadata.stabilizedVersion == null,
+                        message = "LanguageVersion $languageVersion is not yet stable, while $it KotlinVersion is marked as stable"
+                    )
+                }
+            }
+    }
+
     private fun LanguageVersion.toKotlinVersion() = kotlinVersions.single { it.versionName == versionString }
     private fun LanguageVersion.toKotlinVersionOrNull() = kotlinVersions.singleOrNull { it.versionName == versionString }
 }
