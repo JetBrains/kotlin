@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: WASM
 // ISSUE: KT-70625
 // IGNORE_NATIVE_K1: optimizationMode=DEBUG
+// IGNORE_NATIVE_K1: optimizationMode=NO
 // DUMP_IR
 
 fun <T> mutate(x: MutableList<T>): MutableList<T> {
