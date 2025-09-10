@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.config.keys.generator
 
-import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker

@@ -13,7 +13,6 @@ package org.jetbrains.kotlin.js.config
  */
 
 import java.io.File
-import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
