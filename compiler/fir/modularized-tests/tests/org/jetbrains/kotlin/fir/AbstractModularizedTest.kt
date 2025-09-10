@@ -21,6 +21,9 @@ import java.util.*
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.memberProperties
 
 data class ModuleData(
     val name: String,
@@ -99,7 +102,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     protected fun runTestOnce(pass: Int) {
         beforePass(pass)
-        val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
+        val testDataPath = System.getProperty("fir.bench.jps.dir") ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 
         println("BASE PATH: ${root.absolutePath}")
@@ -286,32 +289,165 @@ private fun readModule(xr: XMLStreamReader): ModuleData {
     error("Unexpected end of XML while reading <module>")
 }
 
-private fun readCompilerArguments(xr: javax.xml.stream.XMLStreamReader): CommonCompilerArguments? {
+private fun readCompilerArguments(xr: XMLStreamReader): CommonCompilerArguments {
     // reader is positioned at START_ELEMENT <compilerArguments>
-    val args = mutableListOf<String>()
+    val argList = mutableListOf<String>()
+    var oldFormatArgs: CommonCompilerArguments? = null
     while (xr.hasNext()) {
         when (xr.next()) {
             XMLStreamConstants.START_ELEMENT -> {
                 when (xr.localName) {
                     "arg" -> {
-                        xr.getAttributeValue(null, "value")?.let { args += it }
+                        xr.getAttributeValue(null, "value")?.let { argList += it }
                         skipElement(xr)
                     }
+                    // Old variant that was serialized with com.intellij.util.xmlb + org.jdom
+                    "K2JVMCompilerArguments" -> {
+                        oldFormatArgs = readCompilerArgumentsOldVariant(xr)
+                    }
                     else -> {
-                        // Unknown format, skip it entirely
+                        // Unknown child, skip it entirely to keep parser in sync
                         skipElement(xr)
                     }
                 }
             }
             XMLStreamConstants.END_ELEMENT -> if (xr.localName == "compilerArguments") {
-                return parseCommandLineArguments<K2JVMCompilerArguments>(args)
+                return oldFormatArgs ?: parseCommandLineArguments<K2JVMCompilerArguments>(argList)
             }
         }
     }
     error("Unexpected end of XML while reading <compilerArguments>")
 }
 
-private fun skipElement(xr: javax.xml.stream.XMLStreamReader) {
+// Old XML model variant deserializer using StAX and reflection. (serialized with com.intellij.util.xmlb + org.jdom)
+// TODO: drop when no longer needed (KT-80860)
+private fun readCompilerArgumentsOldVariant(xr: XMLStreamReader): CommonCompilerArguments {
+    // reader is positioned at START_ELEMENT <K2JVMCompilerArguments>
+    val args = K2JVMCompilerArguments()
+
+    fun setOption(name: String, value: String) {
+        setOptionReflective(args, name, value)
+    }
+
+    fun setOptionArray(name: String, values: List<String>) {
+        setOptionReflective(args, name, values)
+    }
+
+    while (xr.hasNext()) {
+        when (xr.next()) {
+            XMLStreamConstants.START_ELEMENT -> when (xr.localName) {
+                "option" -> {
+                    val name = xr.getAttributeValue(null, "name") ?: run {
+                        skipElement(xr)
+                        continue
+                    }
+                    val valueAttr = xr.getAttributeValue(null, "value")
+                    if (valueAttr != null) {
+                        setOption(name, valueAttr)
+                        skipElement(xr)
+                    } else {
+                        // The value is specified via nested <array><option value="..."/></array> or <list><option value="..."/></list>
+                        var collected: MutableList<String>? = null
+                        loop@ while (xr.hasNext()) {
+                            when (xr.next()) {
+                                XMLStreamConstants.START_ELEMENT -> if (xr.localName == "array" || xr.localName == "list") {
+                                    collected = readStringArray(xr)
+                                } else {
+                                    skipElement(xr)
+                                }
+                                XMLStreamConstants.END_ELEMENT -> if (xr.localName == "option") {
+                                    break@loop
+                                }
+                            }
+                        }
+                        if (collected != null) setOptionArray(name, collected)
+                    }
+                }
+                else -> {
+                    skipElement(xr)
+                }
+            }
+            XMLStreamConstants.END_ELEMENT -> if (xr.localName == "K2JVMCompilerArguments") {
+                return args
+            }
+        }
+    }
+    error("Unexpected end of XML while reading <K2JVMCompilerArguments>")
+}
+
+private fun readStringArray(xr: XMLStreamReader): MutableList<String> {
+    // reader is positioned at START_ELEMENT <array>/<list>
+    val result = mutableListOf<String>()
+    while (xr.hasNext()) {
+        when (xr.next()) {
+            XMLStreamConstants.START_ELEMENT -> if (xr.localName == "option") {
+                xr.getAttributeValue(null, "value")?.let { result += it }
+                skipElement(xr)
+            } else {
+                skipElement(xr)
+            }
+            XMLStreamConstants.END_ELEMENT -> if (xr.localName == "array" || xr.localName == "list") return result
+        }
+    }
+    error("Unexpected end of XML while reading <array>")
+}
+
+private fun setOptionReflective(args: Any, name: String, value: Any) {
+    // Use Kotlin reflection to find a mutable property and set it with basic type conversions.
+    val anyProp = args::class.memberProperties.firstOrNull { it.name == name } ?: return
+
+    @Suppress("UNCHECKED_CAST")
+    val prop = anyProp as? KMutableProperty1<Any, Any?> ?: return
+
+    val returnType = prop.returnType
+    val classifier = returnType.classifier as? KClass<*>
+
+    val converted: Any? = try {
+        when (classifier) {
+            Boolean::class -> when (value) {
+                is Boolean -> value
+                is String -> value.toBooleanStrictOrNull() ?: value.equals("true", ignoreCase = true)
+                else -> false
+            }
+            String::class -> value.toString()
+            Array<Any>::class, Array<String>::class, Array::class -> {
+                // Expecting Array<String>
+                val componentIsString = returnType.arguments.firstOrNull()?.type?.classifier == String::class
+                if (componentIsString) {
+                    when (value) {
+                        is List<*> -> value.filterIsInstance<String>().toTypedArray()
+                        is Array<*> -> value.filterIsInstance<String>().toTypedArray()
+                        is String -> arrayOf(value)
+                        else -> emptyArray<String>()
+                    }
+                } else null
+            }
+            List::class, MutableList::class, Collection::class -> {
+                // Support List<String> and MutableList<String> properties
+                val elementClassifier = returnType.arguments.firstOrNull()?.type?.classifier as? KClass<*>
+                if (elementClassifier == String::class) {
+                    when (value) {
+                        is List<*> -> value.filterIsInstance<String>()
+                        is Array<*> -> value.filterIsInstance<String>()
+                        is String -> listOf(value)
+                        else -> emptyList()
+                    }
+                } else null
+            }
+            else -> value
+        }
+    } catch (_: Throwable) {
+        null
+    }
+
+    try {
+        prop.setter.call(args, converted)
+    } catch (_: Throwable) {
+        // ignore to keep compatibility if types don't match
+    }
+}
+
+private fun skipElement(xr: XMLStreamReader) {
     // Assumes the reader is at START_ELEMENT; consumes until matching END_ELEMENT
     var depth = 1
     while (depth > 0 && xr.hasNext()) {
