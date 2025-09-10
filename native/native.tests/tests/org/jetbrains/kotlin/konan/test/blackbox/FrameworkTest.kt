@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
-import org.jetbrains.kotlin.native.executors.RunProcessException
-import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -28,9 +26,7 @@ import java.io.File
 import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
-class FrameworkTest : FrameworkTestBase()
-
-abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
+class FrameworkTest : AbstractNativeSimpleTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
     private val extras = TestCase.NoTestRunnerExtras("There's no entrypoint in Swift program")
     private val testCompilationFactory = TestCompilationFactory()
@@ -464,7 +460,6 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         isStaticFramework: Boolean,
     ) {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
-        val lazyHeader: File = buildDir.resolve("lazy-$suffix.h").also { it.delete() } // Clean up lazy header after previous runs
 
         // Compile a couple of KLIBs
         val library = compileToLibrary(

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
 import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -123,15 +121,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private val TRANSIENT_MANIFEST_PROPERTIES = listOf(
-            KLIB_PROPERTY_ABI_VERSION,
-            KLIB_PROPERTY_METADATA_VERSION,
-            KLIB_PROPERTY_COMPILER_VERSION,
-            KLIB_PROPERTY_IR_SIGNATURE_VERSIONS
-        )
 
-        private const val SANITIZED_VALUE_STUB = "<value sanitized for test data stability>"
-        private const val SANITIZED_TEST_RUN_TARGET = "<test-run-target>"
 
         private fun AbstractNativeSimpleTest.compareManifests(
             compilationResult: TestCompilationResult<out TestCompilationArtifact.KLIB>,
@@ -143,40 +133,6 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             KotlinTestUtils.assertEqualsToFile(expectedManifest, actualManifestSanitizedText)
         }
 
-        fun readManifestAndSanitize(klibDir: File, singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?): String {
-            val manifestFile = File(klibDir, "default/manifest")
-            assertTrue(manifestFile.exists()) { "File does not exist: $manifestFile" }
-
-            val manifestProperties = manifestFile.bufferedReader().use { reader -> Properties().apply { load(reader) } }
-            return sanitizeManifest(manifestProperties, singleTargetInManifestToBeReplacedByTheAlias).joinToString(separator = "\n") { (key, value) -> "$key = $value" }
-        }
-
-        private fun sanitizeManifest(original: Properties, singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?): List<Pair<String, String>> {
-            // intentionally not using Properties as output to guarantee stable order of properties
-            val result = mutableListOf<Pair<String, String>>()
-            original.entries.forEach {
-                val key = it.key as String
-                val value = it.value as String
-
-                val sanitizedValue = when (key) {
-                    in TRANSIENT_MANIFEST_PROPERTIES -> SANITIZED_VALUE_STUB
-
-                    KLIB_PROPERTY_NATIVE_TARGETS -> {
-                        val singleTargetPresentInManifest = value.split(" ").singleOrNull()
-                        if (singleTargetPresentInManifest != null && singleTargetInManifestToBeReplacedByTheAlias != null) {
-                            SANITIZED_TEST_RUN_TARGET
-                        } else {
-                            value
-                        }
-                    }
-
-                    else -> value
-                }
-                result += key to sanitizedValue
-            }
-
-            return result.sortedBy { it.first }
-        }
 
         private fun checkPropertyAndValue(
             properties: Properties,

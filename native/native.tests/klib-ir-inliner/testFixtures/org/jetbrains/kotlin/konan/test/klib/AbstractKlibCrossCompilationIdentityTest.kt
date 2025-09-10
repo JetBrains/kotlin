@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
-import org.jetbrains.kotlin.konan.test.klib.ManifestWritingTest.Companion.readManifestAndSanitize
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend

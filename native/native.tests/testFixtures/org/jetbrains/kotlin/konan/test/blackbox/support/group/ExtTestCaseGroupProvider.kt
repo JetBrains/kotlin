@@ -180,15 +180,6 @@ private class ExtTestDataFile(
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
-                && (!hasK2OnlyLanguageFeature())
-
-    private fun hasK2OnlyLanguageFeature(): Boolean {
-        return testDataFileSettings.languageSettings
-            .any {
-                val (feature, mode) = it.parseLanguageFeature()
-                mode == LanguageFeature.State.ENABLED && (feature.sinceVersion?.usesK2 == true || feature in ClassicUnstableAndK2LanguageFeaturesSkipConfigurator.unscheduledK2OnlyFeatures)
-            }
-    }
 
     private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
         val args = mutableListOf<String>()

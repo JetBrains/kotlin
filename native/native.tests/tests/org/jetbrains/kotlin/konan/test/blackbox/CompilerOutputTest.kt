@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -64,7 +63,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         sanitizeCompilerOutput: (String) -> String = { it },
     ) {
         val library = compileLibrary(
-            settings = object : Settings(testRunSettings, emptyList()) {},
+            settings = testRunSettings,
             source = rootDir.resolve("library"),
             freeCompilerArgs = libraryOptions,
             dependencies = emptyList()
@@ -279,13 +278,13 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
         val poisonedLibrary = compileLibrary(
-            settings = object : Settings(testRunSettings, emptyList()) {},
+            settings = testRunSettings,
             source = rootDir.resolve("poisonedLibrary"),
             freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
-            settings = object : Settings(testRunSettings, emptyList()) {},
+            settings = testRunSettings,
             source = rootDir.resolve("library"),
         ).assertSuccess().resultingArtifact
 
@@ -308,13 +307,13 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
         val poisonedLibrary = compileLibrary(
-            settings = object : Settings(testRunSettings, emptyList()) {},
+            settings = testRunSettings,
             source = rootDir.resolve("poisonedLibrary"),
             freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
-            settings = object : Settings(testRunSettings, emptyList()) {},
+            settings = testRunSettings,
             source = rootDir.resolve("library"),
         ).assertSuccess().resultingArtifact
 
