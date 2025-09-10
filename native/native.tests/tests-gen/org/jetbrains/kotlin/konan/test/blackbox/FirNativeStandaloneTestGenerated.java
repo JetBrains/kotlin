@@ -25,8 +25,7 @@ import java.util.regex.Pattern;
 @Tag("standalone")
 @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
 @UseStandardTestCaseGroupProvider()
-@Tag("klibIrInliner")
-public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractNativeBlackBoxTest {
+public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInStandalone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -56,7 +55,6 @@ public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractN
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class Checkers {
     @Test
     public void testAllFilesPresentInCheckers() {
@@ -118,7 +116,6 @@ public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractN
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class Console {
     @Test
     public void testAllFilesPresentInConsole() {
@@ -192,7 +189,6 @@ public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractN
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class EntryPoint {
     @Test
     public void testAllFilesPresentInEntryPoint() {
@@ -248,7 +244,6 @@ public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractN
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class RuntimeLogging {
     @Test
     public void testAllFilesPresentInRuntimeLogging() {
@@ -274,7 +269,6 @@ public class NativeStandaloneTestWithInlinedFunInKlibGenerated extends AbstractN
   @Tag("standalone")
   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
   @UseStandardTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class Termination {
     @Test
     public void testAllFilesPresentInTermination() {

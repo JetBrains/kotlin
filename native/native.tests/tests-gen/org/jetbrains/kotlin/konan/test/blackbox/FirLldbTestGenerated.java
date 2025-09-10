@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @UseStandardTestCaseGroupProvider()
 @EnforcedProperty(property = ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 @EnforcedHostTarget()
-public class LldbTestGenerated extends AbstractNativeBlackBoxTest {
+public class FirLldbTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInLldb() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/lldb"), Pattern.compile("^(.+)\\.kt$"), null, true);

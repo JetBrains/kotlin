@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/ObjCExport")
 @TestDataPath("$PROJECT_ROOT")
-public class ObjCExportTestGenerated extends AbstractNativeObjCExportTest {
+public class FirObjCExportTestGenerated extends AbstractNativeObjCExportTest {
   @Test
   public void testAllFilesPresentInObjCExport() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/ObjCExport"), Pattern.compile("^([^_](.+))$"), null, false);

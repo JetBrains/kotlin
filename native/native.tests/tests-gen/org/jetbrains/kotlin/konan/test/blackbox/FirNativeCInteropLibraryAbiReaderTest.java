@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/dump-abi/cinterop")
 @TestDataPath("$PROJECT_ROOT")
-public class NativeCInteropLibraryAbiReaderTest extends AbstractNativeCInteropLibraryAbiReaderTest {
+public class FirNativeCInteropLibraryAbiReaderTest extends AbstractNativeCInteropLibraryAbiReaderTest {
   @Test
   public void testAllFilesPresentInCinterop() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/cinterop"), Pattern.compile("^(.+)\\.kt$"), null, true);

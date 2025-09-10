@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("gc")
 @UseStandardTestCaseGroupProvider()
-public class NativeGCTestGenerated extends AbstractNativeBlackBoxTest {
+public class FirNativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInGc() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/gc"), Pattern.compile("^(.+)\\.kt$"), null, true);

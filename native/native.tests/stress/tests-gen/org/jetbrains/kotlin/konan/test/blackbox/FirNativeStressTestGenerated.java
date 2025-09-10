@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Tag("stress")
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "15m")
 @UseStandardTestCaseGroupProvider()
-public class NativeStressTestGenerated extends AbstractNativeBlackBoxTest {
+public class FirNativeStressTestGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInTestData() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/stress/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);

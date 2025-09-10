@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @Tag("litmuskt-native")
 @UseStandardTestCaseGroupProvider()
 @EnforcedHostTarget()
-public class LitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
+public class FirLitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   @Test
   public void testAllFilesPresentInStandalone() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/litmus-tests/testData/standalone"), Pattern.compile("^(.+)\\.kt$"), null, true);

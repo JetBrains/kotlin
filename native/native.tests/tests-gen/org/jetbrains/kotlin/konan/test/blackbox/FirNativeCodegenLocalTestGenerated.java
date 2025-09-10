@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 @UseExtTestCaseGroupProvider()
-public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTest {
+public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTest {
   @Test
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, true);

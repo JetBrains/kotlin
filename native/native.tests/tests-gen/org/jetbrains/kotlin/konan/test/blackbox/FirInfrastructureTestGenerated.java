@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @Tag("infrastructure")
 @UseStandardTestCaseGroupProvider()
-public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
+public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
   @Nested
   @TestMetadata("native/native.tests/testData/samples")
   @TestDataPath("$PROJECT_ROOT")
