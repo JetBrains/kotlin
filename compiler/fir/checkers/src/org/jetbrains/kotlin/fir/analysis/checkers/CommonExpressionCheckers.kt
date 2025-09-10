@@ -78,6 +78,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirGenericQualifierOnConstructorCallChecker,
         FirVarargWithNonTrivialUpperBoundInferredToNothingChecker,
         PlatformClassMappedToKotlinConstructorCallChecker,
+        FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker,
     )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
