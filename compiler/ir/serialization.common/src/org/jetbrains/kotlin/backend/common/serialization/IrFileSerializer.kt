@@ -1444,7 +1444,9 @@ open class IrFileSerializer(
         return when {
             relevantLinesRange == null -> entry.lineStartOffsetsForSerialization
             relevantLinesRange.start < 0 || relevantLinesRange.endInclusive < 0 -> emptyList() // No real offsets.
-            else -> entry.lineStartOffsetsForSerialization.slice(relevantLinesRange)
+            else -> entry.lineStartOffsetsForSerialization.slice(
+                (relevantLinesRange.start - entry.firstRelevantLineIndex)..(relevantLinesRange.endInclusive - entry.firstRelevantLineIndex)
+            )
         }
     }
 
