@@ -6,6 +6,7 @@
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheOptTask
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
@@ -25,6 +26,7 @@ fun defFileToLibName(target: String, name: String) = "$target-$name"
 
 private fun interopTaskName(libName: String, targetName: String) = "compileKonan${libName.capitalized}${targetName.capitalized}"
 private fun cacheTaskName(target: String, name: String) = "${defFileToLibName(target, name)}Cache"
+private fun cacheOptTaskName(target: String, name: String) = "${defFileToLibName(target, name)}CacheOpt"
 
 private abstract class CompilePlatformLibsSemaphore : BuildService<BuildServiceParameters.None>
 private abstract class CachePlatformLibsSemaphore : BuildService<BuildServiceParameters.None>
@@ -128,7 +130,7 @@ enabledTargets(platformManager).forEach { target ->
                 dependsOn(":kotlin-native:${targetName}CrossDist")
                 // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
                 mustRunAfter(":kotlin-native:distInvalidateStaleCaches")
-                inputs.dir(dist.map { it.stdlibCache(targetName) }) // manually depend on the contents of stdlib cache
+                inputs.dir(dist.map { it.cache("stdlib", targetName) }) // manually depend on the contents of stdlib cache
 
                 // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
                 df.config.depends.forEach { dep ->
@@ -143,6 +145,29 @@ enabledTargets(platformManager).forEach { target ->
                 usesService(cachePlatformLibsSemaphore)
             }
             cacheTasks.add(cacheTask)
+            val cacheTaskOpt = tasks.register(cacheOptTaskName(targetName, df.name), KonanCacheOptTask::class.java) {
+                val dist = nativeDistribution
+
+                // Requires Native distribution with stdlib klib and its cache for `targetName`.
+                this.compilerDistribution.set(dist)
+                dependsOn(":kotlin-native:${targetName}CrossDist")
+                // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
+                mustRunAfter(":kotlin-native:distInvalidateStaleCaches")
+                inputs.dir(dist.map { it.cacheOpt("stdlib", targetName) }) // manually depend on the contents of stdlib cache
+
+                // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
+                df.config.depends.forEach { dep ->
+                    inputs.dir(tasks.named<KonanCacheOptTask>(cacheOptTaskName(targetName, dep)).map { it.outputDirectory })
+                    inputs.dir(tasks.named<Sync>(defFileToLibName(targetName, dep)).map { it.destinationDir })
+                }
+
+                this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
+                this.target.set(targetName)
+                this.outputDirectory.set(dist.map { it.cacheOpt(name = artifactName, target = targetName) })
+
+                usesService(cachePlatformLibsSemaphore)
+            }
+            cacheTasks.add(cacheTaskOpt)
         }
     }
 

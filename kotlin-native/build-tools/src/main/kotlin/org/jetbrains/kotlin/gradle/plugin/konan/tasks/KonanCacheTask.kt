@@ -99,3 +99,62 @@ open class KonanCacheTask @Inject constructor(
         }
     }
 }
+
+@CacheableTask
+open class KonanCacheOptTask @Inject constructor(
+        objectFactory: ObjectFactory,
+        private val workerExecutor: WorkerExecutor,
+) : DefaultTask() {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val klib: DirectoryProperty = objectFactory.directoryProperty()
+
+    @get:Input
+    val target: Property<String> = objectFactory.property(String::class.java)
+
+    @get:OutputDirectory
+    val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
+
+    @get:Internal("Depends upon the compiler classpath, native libraries (used by codegen) and konan.properties (compilation flags + dependencies)")
+    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+
+    @get:Classpath
+    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.NONE)
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val codegenLibs = compilerDistribution.map { it.nativeLibs }
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    @Suppress("unused") // used only by Gradle machinery via reflection.
+    protected val konanProperties = compilerDistribution.map { it.konanProperties }
+
+    @get:ServiceReference
+    protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
+
+    @TaskAction
+    fun compile() {
+        outputDirectory.get().asFile.prepareAsOutput()
+
+        val args = buildList {
+            add("-opt")
+            add("-target")
+            add(target.get())
+            add("-produce")
+            add("static_cache")
+            add("-Xadd-cache=${klib.get().asFile.absolutePath}")
+            add("-Xcache-directory=${outputDirectory.get().asFile.parentFile.absolutePath}")
+            PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
+                addAll(platform(targetByName(target.get())).additionalCacheFlags)
+            }
+        }
+        val workQueue = workerExecutor.noIsolation()
+        workQueue.submit(KonanCacheAction::class.java) {
+            this.isolatedClassLoaderService.set(this@KonanCacheOptTask.isolatedClassLoadersService)
+            this.compilerClasspath.from(this@KonanCacheOptTask.compilerClasspath)
+            this.args.addAll(args)
+        }
+    }
+}
