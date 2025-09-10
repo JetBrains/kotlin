@@ -17,7 +17,7 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     protected val settings: IrSerializationSettings,
     protected val diagnosticReporter: IrDiagnosticReporter,
 ) {
-    abstract fun createFileSerializer(): Serializer
+    abstract fun createSerializerForFile(file: IrFile): Serializer
 
     /**
      * Allows to skip [file] during serialization.
@@ -30,7 +30,7 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     protected abstract val globalDeclarationTable: GlobalDeclarationTable
 
     private fun serializeIrFile(file: IrFile): SerializedIrFile {
-        val fileSerializer = createFileSerializer()
+        val fileSerializer = createSerializerForFile(file)
         return fileSerializer.serializeIrFile(file)
     }
 

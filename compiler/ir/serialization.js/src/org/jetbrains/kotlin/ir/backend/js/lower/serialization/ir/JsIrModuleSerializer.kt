@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.declarations.IrFile
 
 class JsIrModuleSerializer(
     settings: IrSerializationSettings,
@@ -20,6 +21,6 @@ class JsIrModuleSerializer(
 
     override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
-    override fun createFileSerializer(): JsIrFileSerializer =
+    override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
         JsIrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
 }
