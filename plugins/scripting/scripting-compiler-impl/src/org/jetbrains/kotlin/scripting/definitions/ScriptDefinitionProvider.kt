@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import kotlin.script.experimental.api.SourceCode
 
 interface ScriptDefinitionProvider {
+    val currentDefinitions: Sequence<ScriptDefinition>
+
     fun isScript(script: SourceCode): Boolean
 
     fun findDefinition(script: SourceCode): ScriptDefinition?
