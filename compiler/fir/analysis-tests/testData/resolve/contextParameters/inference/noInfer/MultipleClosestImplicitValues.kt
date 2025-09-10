@@ -2,6 +2,7 @@
 // LANGUAGE: +ContextParameters
 // DONT_WARN_ON_ERROR_SUPPRESSION
 // ISSUE: KT-76772
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 
 @Suppress("INVISIBLE_REFERENCE")
 context(_: @kotlin.internal.NoInfer T) fun <T> function() {}

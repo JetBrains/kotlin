@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+
 // FILE: 1.kt
 
 package test

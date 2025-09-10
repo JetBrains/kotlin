@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: -PackagePrivateFileClassesWithAllPrivateMembers
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 
 private fun f() {
 }

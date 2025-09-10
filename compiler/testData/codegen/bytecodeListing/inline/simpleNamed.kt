@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 
 suspend inline fun simple() {}
 

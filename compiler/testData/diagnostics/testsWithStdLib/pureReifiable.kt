@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 inline fun <reified @kotlin.internal.PureReifiable T> foo(x: T) {}

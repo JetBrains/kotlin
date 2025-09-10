@@ -1,3 +1,4 @@
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 inline fun inlineOnlyFun(): Int {

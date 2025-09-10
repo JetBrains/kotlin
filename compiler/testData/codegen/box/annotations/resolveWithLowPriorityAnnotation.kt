@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.internal.LowPriorityInOverloadResolution

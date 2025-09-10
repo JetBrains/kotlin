@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 
 @file:[JvmName("Foo") JvmMultifileClass]
 package test

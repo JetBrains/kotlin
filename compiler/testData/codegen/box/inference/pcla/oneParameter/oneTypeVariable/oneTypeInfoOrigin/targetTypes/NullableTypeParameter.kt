@@ -1,4 +1,5 @@
 // CHECK_TYPE_WITH_EXACT
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 class Buildee<CT> {
     fun yield(arg: CT) {}

@@ -2,6 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // DONT_WARN_ON_ERROR_SUPPRESSION
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 import kotlin.reflect.KProperty0
 
 class Data(val stringVal: String)

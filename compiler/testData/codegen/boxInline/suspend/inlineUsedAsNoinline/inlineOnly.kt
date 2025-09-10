@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+
 // FILE: inlined.kt
 
 import kotlin.coroutines.*

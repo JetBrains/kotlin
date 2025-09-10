@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 // NB 'b' is evaluated before 's'
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")

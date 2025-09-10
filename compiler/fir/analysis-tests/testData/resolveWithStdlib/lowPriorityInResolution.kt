@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
+
 @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 @kotlin.internal.LowPriorityInOverloadResolution
 fun foo(): Int = 1

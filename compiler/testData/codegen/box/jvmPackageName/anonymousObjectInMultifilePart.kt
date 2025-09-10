@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR, JVM_IR_SERIALIZE
 
 // FILE: anonymousObject.kt
 import x.*
