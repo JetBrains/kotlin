@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
@@ -152,3 +153,14 @@ internal fun reportCollectedDiagnostics(
 
 internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
     get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS
+
+internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
+    configuration.artifactConfiguration = WebArtifactConfiguration(
+        moduleKind = configuration.moduleKind ?: return,
+        moduleName = configuration.moduleName ?: return,
+        outputDirectory = configuration.outputDir ?: return,
+        outputName = configuration.outputName ?: return,
+        granularity = arguments.granularity,
+        tsCompilationStrategy = arguments.dtsStrategy,
+    )
+}

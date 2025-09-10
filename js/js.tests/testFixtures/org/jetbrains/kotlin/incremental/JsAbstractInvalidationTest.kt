@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.dtsExtension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsGenerationGranularity
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest
 import org.jetbrains.kotlin.js.test.ir.JsCompilerInvocationTestConfiguration
@@ -253,11 +250,14 @@ abstract class JsAbstractInvalidationTest(
             dtsStrategy: TsCompilationStrategy
         ): List<String> {
             val compiledJsFiles = jsOutput.writeAll(
-                jsDir,
-                mainModuleName,
-                dtsStrategy,
-                mainModuleName,
-                projectInfo.moduleKind
+                WebArtifactConfiguration(
+                    moduleKind = projectInfo.moduleKind,
+                    moduleName = mainModuleName,
+                    outputDirectory = jsDir,
+                    outputName = mainModuleName,
+                    granularity = granularity,
+                    tsCompilationStrategy = dtsStrategy,
+                )
             ).filter {
                 it.extension == "js" || it.extension == "mjs"
             }

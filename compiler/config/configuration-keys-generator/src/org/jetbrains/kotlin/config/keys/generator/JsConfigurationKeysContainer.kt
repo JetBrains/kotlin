@@ -26,6 +26,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val USE_DEBUGGER_CUSTOM_FORMATTERS by key<Boolean>("add import of debugger custom formatters")
 
+    val ARTIFACT_CONFIGURATION by key<WebArtifactConfiguration>("JS/Wasm output configuration")
+
     val OUTPUT_DIR by key<File>("output directory")
 
     val SOURCE_MAP_PREFIX by key<String>("prefix to add to paths in source map")
@@ -107,8 +109,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val SAFE_EXTERNAL_BOOLEAN by key<Boolean>("Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'")
     val SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC by key<String>("Enable runtime diagnostics when accessing external 'Boolean' properties")
     val MINIMIZED_MEMBER_NAMES by key<Boolean>("Minimize the names of members")
-    val GRANULARITY by key<JsGenerationGranularity>("Granularity of JS files generation")
-    val TS_COMPILATION_STRATEGY by key<TsCompilationStrategy>("TS compilation strategy")
     val CALL_MAIN_MODE by key<String>("Specify whether the 'main' function should be called upon execution.")
     val IC_CACHE_DIRECTORY by key<String>("Directory for the IC cache", throwOnNull = false)
     val IC_CACHE_READ_ONLY by key<Boolean>("IC caches are read-only")

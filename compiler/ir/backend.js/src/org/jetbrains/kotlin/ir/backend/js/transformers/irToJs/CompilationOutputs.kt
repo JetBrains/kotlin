@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import java.io.File
 import java.nio.file.Files
 
@@ -36,7 +37,7 @@ abstract class CompilationOutputs {
 
     fun createWrittenFilesContainer(): MutableSet<File> = LinkedHashSet(2 * (dependencies.size + 1) + 1)
 
-    open fun writeAll(outputDir: File, outputName: String, dtsStrategy: TsCompilationStrategy, moduleName: String, moduleKind: ModuleKind): Collection<File> {
+    open fun writeAll(artifactConfiguration: WebArtifactConfiguration): Collection<File> {
         val writtenFiles = createWrittenFilesContainer()
 
         fun File.writeAsJsFile(out: CompilationOutputs) {
@@ -49,27 +50,27 @@ abstract class CompilationOutputs {
             writtenFiles += jsFile
             writtenFiles += jsMapFile
 
-            out.tsDefinitions.takeIf { dtsStrategy == TsCompilationStrategy.EACH_FILE }?.let {
-                val tsFile = jsFile.createDtsForJsFile(moduleKind)
-                tsFile.writeText(listOf(it).toTypeScript(name, moduleKind))
+            out.tsDefinitions.takeIf { artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.EACH_FILE }?.let {
+                val tsFile = jsFile.createDtsForJsFile(artifactConfiguration.moduleKind)
+                tsFile.writeText(listOf(it).toTypeScript(name, artifactConfiguration.moduleKind))
                 writtenFiles += tsFile
             }
         }
 
         dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name${moduleKind.jsExtension}").writeAsJsFile(content)
+            artifactConfiguration.outputDirectory.resolve("$name${artifactConfiguration.moduleKind.jsExtension}").writeAsJsFile(content)
         }
 
-        val outputJsFile = outputDir.resolve("$outputName${moduleKind.jsExtension}")
+        val outputJsFile = artifactConfiguration.outputDirectory.resolve("${artifactConfiguration.outputName}${artifactConfiguration.moduleKind.jsExtension}")
         outputJsFile.writeAsJsFile(this)
 
-        if (dtsStrategy == TsCompilationStrategy.MERGED) {
-            val dtsFile = outputJsFile.createDtsForJsFile(moduleKind)
-            dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
+        if (artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.MERGED) {
+            val dtsFile = outputJsFile.createDtsForJsFile(artifactConfiguration.moduleKind)
+            dtsFile.writeText(getFullTsDefinition(artifactConfiguration.moduleName, artifactConfiguration.moduleKind))
             writtenFiles += dtsFile
         }
 
-        return writtenFiles.also { deleteNonWrittenFiles(outputDir, it) }
+        return writtenFiles.also { deleteNonWrittenFiles(artifactConfiguration.outputDirectory, it) }
     }
 
     fun deleteNonWrittenFiles(outputDir: File, writtenFiles: Set<File>) {

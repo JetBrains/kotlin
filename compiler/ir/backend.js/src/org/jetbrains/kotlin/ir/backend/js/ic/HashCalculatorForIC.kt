@@ -181,11 +181,14 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
         val enumKeys = listOf(
             JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
             JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
-            JSConfigurationKeys.MODULE_KIND,
-            JSConfigurationKeys.GRANULARITY
         )
         hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)
+        }
+
+        hashCalculator.updateConfigKeys(config, listOf(JSConfigurationKeys.ARTIFACT_CONFIGURATION)) { value ->
+            hashCalculator.update(value.moduleKind.ordinal)
+            hashCalculator.update(value.granularity.ordinal)
         }
 
         hashCalculator.updateConfigKeys(

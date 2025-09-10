@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JsCompilerImpl
+import org.jetbrains.kotlin.cli.js.initializeFinalArtifactConfiguration
 import org.jetbrains.kotlin.cli.js.moduleKindMap
 import org.jetbrains.kotlin.cli.js.targetVersion
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
@@ -51,13 +52,14 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         val targetVersion = initializeAndCheckTargetVersion(arguments, configuration, messageCollector)
         configuration.optimizeGeneratedJs = arguments.optimizeGeneratedJs
         val isES2015 = targetVersion == EcmaVersion.es2015
-        val moduleKind = configuration.moduleKind
+        configuration.moduleKind = configuration.moduleKind
             ?: moduleKindMap[arguments.moduleKind]
-            ?: ModuleKind.ES.takeIf { isES2015 }
-            ?: ModuleKind.UMD
+                    ?: ModuleKind.ES.takeIf { isES2015 }
+                    ?: ModuleKind.UMD
+
+        initializeFinalArtifactConfiguration(configuration, arguments)
 
         configuration.keep = arguments.irKeep?.split(",")?.filterNot { it.isEmpty() }.orEmpty()
-        configuration.moduleKind = moduleKind
         configuration.safeExternalBoolean = arguments.irSafeExternalBoolean
         configuration.minimizedMemberNames = arguments.irMinimizedMemberNames
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
