@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 
-abstract class FirJsAbstractNativeAnnotationChecker(
+abstract class FirWebCommonAbstractNativeAnnotationChecker(
     private val requiredAnnotation: ClassId
 ) : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext)
@@ -48,4 +48,4 @@ abstract class FirJsAbstractNativeAnnotationChecker(
     }
 }
 
-object FirJsNativeInvokeChecker : FirJsAbstractNativeAnnotationChecker(WebCommonStandardClassIds.Annotations.JsNativeInvoke)
+object FirWebCommonNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(WebCommonStandardClassIds.Annotations.JsNativeInvoke)

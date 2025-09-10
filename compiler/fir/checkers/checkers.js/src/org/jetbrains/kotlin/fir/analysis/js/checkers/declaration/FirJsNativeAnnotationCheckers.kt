@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsAbstractNativeAnnotationChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonAbstractNativeAnnotationChecker
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -19,7 +19,7 @@ internal abstract class FirJsAbstractNativeIndexerChecker(
     requiredAnnotation: ClassId,
     private val indexerKind: String,
     private val requiredParametersCount: Int,
-) : FirJsAbstractNativeAnnotationChecker(requiredAnnotation) {
+) : FirWebCommonAbstractNativeAnnotationChecker(requiredAnnotation) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
         super.check(declaration)
