@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDe
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -162,6 +164,9 @@ internal class LLKotlinSourceSymbolProvider private constructor(
             if (virtualFile != null) {
                 val isInContentScope = searchScope.contains(virtualFile)
                 withEntry("isContextInScope", isInContentScope.toString())
+
+                val analysisContextModule = virtualFile.analysisContextModule
+                withKaModuleEntry("analysisContextModule", analysisContextModule)
             }
         }
 
