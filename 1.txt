@@ -1,0 +1,33 @@
+fir runner diff - output batch - Source
+fir runner diff - iteration: BarDummy.kt
+fir runner diff - iteration: B.kt
+fir runner diff - iteration: barUseAB.kt
+fir runner diff - iteration: A.kt
+fir runner diff - iteration: barUseA.kt
+fir runner diff - iteration: barUseB.kt
+fir runner diff - output batch - Source
+fir runner diff - iteration: fooCallUseAB.kt
+fir runner diff - iteration: FooDummy.kt
+fir runner diff - iteration: fooUseA.kt
+fir runner diff - iteration: BB.kt
+fir runner diff - iteration: fooUseBB.kt
+fir runner diff - iteration: AA.kt
+fir runner diff - iteration: fooUseB.kt
+fir runner diff - iteration: fooUseAA.kt
+fir runner diff - iteration: AAA.kt
+fir runner diff - output batch - Source
+fir runner diff - iteration: external.kt
+fir runner diff - output batch - Source
+fir runner diff - iteration: A.kt
+fir runner diff - output batch - Source
+fir runner diff - iteration: B.kt
+fir runner diff - iteration: A.kt
+fir runner diff - iteration: barUseA.kt
+fir runner diff - output batch - Source
+fir runner diff - iteration: B.kt
+fir runner diff - iteration: barUseA.kt
+fir runner diff - output batch - Source
+fir runner diff - iteration: fooUseA.kt
+fir runner diff - iteration: BB.kt
+fir runner diff - iteration: AA.kt
+fir runner diff - iteration: AAA.kt

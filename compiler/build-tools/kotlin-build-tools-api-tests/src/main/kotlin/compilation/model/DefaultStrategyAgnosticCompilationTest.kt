@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTestArgumentProvider.Companion.namedStrategyArguments
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import java.util.stream.Stream
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
@@ -16,3 +21,16 @@ import org.junit.jupiter.params.provider.ArgumentsSource
 )
 annotation class DefaultStrategyAgnosticCompilationTest
 
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    Debug_SingleStrategyArgumentProvider::class
+)
+annotation class Debug_SingleStrategyTest // for convenience in println based investigations
+
+class Debug_SingleStrategyArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return listOf(namedStrategyArguments().first().let { Arguments.of(it) }).stream()
+    }
+}

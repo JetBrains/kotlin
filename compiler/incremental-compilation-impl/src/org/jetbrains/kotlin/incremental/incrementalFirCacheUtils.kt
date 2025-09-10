@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -39,12 +41,14 @@ internal fun collectNewDirtySources(
 
     fun visitFirFiles(analyzedOutput: ModuleCompilerAnalyzedOutput) {
         for (file in analyzedOutput.fir) {
+            println("fir runner diff - iteration: ${file.name}")
             file.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
                 inline fun withMetadataSerializer(
                     metadata: FirMetadataSource,
                     data: MutableList<MetadataSerializer>,
                     body: (MetadataSerializer) -> Unit
                 ) {
+                    //println("fir runner diff - metadata: ${metadata.fir.symbol}")
                     val serializer = makeLocalFirMetadataSerializerForMetadataSource(
                         metadata,
                         analyzedOutput.session,
@@ -53,7 +57,7 @@ internal fun collectNewDirtySources(
                         data.lastOrNull(),
                         targetId,
                         configuration,
-                        actualizedExpectDeclarations = null
+                        actualizedExpectDeclarations = null //TODO(emazhukin) disable fir runner in kmp to skip a nasty new pile of test cases?
                     )
                     data.push(serializer)
                     body(serializer)
@@ -61,18 +65,22 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitElement(element: FirElement, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - element: ${element.render()}")
                     element.acceptChildren(this, data)
                 }
 
                 override fun visitRegularClass(regularClass: FirRegularClass, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - regular class: ${regularClass.name}")
                     visitClass(regularClass, data)
                 }
 
                 override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - anon object: ${anonymousObject.source}")
                     visitClass(anonymousObject, data)
                 }
 
                 override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - file: ${file.name}")
                     val metadata = FirMetadataSource.File(file)
                     withMetadataSerializer(metadata, data) {
                         file.acceptChildren(this, data)
@@ -81,6 +89,7 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - simple fun: ${simpleFunction.name}")
                     data.firstOrNull()?.let { serializer ->
                         super.visitFunction(simpleFunction, data)
                         serializer.bindMethodMetadata(
@@ -91,6 +100,7 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitConstructor(constructor: FirConstructor, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - constructor: ${constructor.render()}")
                     super.visitConstructor(constructor, data)
                     data.first().bindMethodMetadata(
                         FirMetadataSource.Function(constructor),
@@ -99,6 +109,7 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitProperty(property: FirProperty, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - property: ${property.name} ${property.source}")
                     property.acceptChildren(this, data)
                     //                    data.firstOrNull()?.let {
                     //                        property.acceptChildren(this, data)
@@ -111,10 +122,12 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitClass(klass: FirClass, data: MutableList<MetadataSerializer>) {
+                    //println("fir runner diff - klass: ${klass.render()}")
                     val metadata = FirMetadataSource.Class(klass)
                     withMetadataSerializer(metadata, data) { serializer ->
                         klass.acceptChildren(this, data)
                         serializer.serialize(metadata, FirMetadataSource.File(file))?.let { (classProto, nameTable) ->
+                            //println("fir runner diff - if everything else fails, print class protos, but it requires extra tricks with DebugProto")
                             caches.platformCache.saveFrontendClassToCache(
                                 klass.classId,
                                 classProto as ProtoBuf.Class,
@@ -129,14 +142,28 @@ internal fun collectNewDirtySources(
         }
     }
 
+//    println(
+//        "fir runner diff - all outputs: ${
+//            analysisResults.outputs.joinToString(",") {
+//                it.toString().replace("@.......".toRegex(), "")
+//            }
+//        }"
+//    )
     for (output in analysisResults.outputs) {
+        println("fir runner diff - output batch - ${output.session.kind}")
         visitFirFiles(output)
     }
 
+    //////////////println("fir runner diff - input platform cache: ${listOf(caches.platformCache).joinToString(",")}")
     val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) =
         changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+    ////println("fir runner diff - collected so far: ${changesCollector.joinToString(",")}") // TODO either hack to make lists public, or add tostring there
+    //println("fir runner diff - dirtyLookupSymbols: ${dirtyLookupSymbols.joinToString(",")}")
+    //println("fir runner diff - dirtyClassFqNames: ${dirtyClassFqNames.joinToString(",")}")
+    //println("fir runner diff - forceRecompile: ${forceRecompile.joinToString(",")}")
 
     val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
+    //println("fir runner diff - forceToRecompileFiles: ${forceToRecompileFiles.joinToString(",")}")
 
     return linkedSetOf<File>().apply {
         addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = alreadyCompiledSources))
@@ -151,6 +178,7 @@ internal fun collectNewDirtySources(
         if (!alreadyCompiledSources.containsAll(forceToRecompileFiles)) {
             addAll(forceToRecompileFiles)
         }
+        //println("fir runner diff - filtered: ${filter { !it.exists() }.joinToString(",")}")
         removeAll { !it.exists() }
     }
 }
