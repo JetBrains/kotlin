@@ -67,7 +67,7 @@ class Arrays {
             assertPrints(emptyArray.getOrElse(0) { "default" }, "default")
 
             val array = arrayOf(1)
-            assertPrints(array.getOrElse(0) { 0 }, "0")
+            assertPrints(array.getOrElse(0) { 0 }, "1")
             assertPrints(array.getOrElse(-1) { 0 }, "0")
             assertPrints(array.getOrElse(0) { "default" }, "1")
             assertPrints(array.getOrElse(-1) { "default" }, "default")
