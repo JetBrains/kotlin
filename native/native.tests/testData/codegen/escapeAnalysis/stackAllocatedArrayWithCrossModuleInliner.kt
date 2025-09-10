@@ -4,7 +4,10 @@
  */
 // IGNORE_NATIVE: optimizationMode=DEBUG
 // IGNORE_NATIVE: optimizationMode=NO
-// LANGUAGE: -IrCrossModuleInlinerBeforeKlibSerialization
+
+// LANGUAGE: +IrCrossModuleInlinerBeforeKlibSerialization
+// IGNORE_NATIVE: optimizationMode=OPT
+// ^^^KT-80867  both `array.isStack()` are wrongly false
 
 import kotlin.test.*
 import kotlin.native.internal.*
