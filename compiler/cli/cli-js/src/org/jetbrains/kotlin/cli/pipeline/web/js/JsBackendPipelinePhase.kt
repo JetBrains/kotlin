@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
 import org.jetbrains.kotlin.backend.common.CompilationException
-import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
