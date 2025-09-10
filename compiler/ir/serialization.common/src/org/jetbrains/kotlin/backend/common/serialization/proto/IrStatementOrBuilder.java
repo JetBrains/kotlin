@@ -8,11 +8,11 @@ public interface IrStatementOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int64 coordinates = 1;</code>
+   * <code>optional int64 coordinates = 1;</code>
    */
   boolean hasCoordinates();
   /**
-   * <code>required int64 coordinates = 1;</code>
+   * <code>optional int64 coordinates = 1;</code>
    */
   long getCoordinates();
 

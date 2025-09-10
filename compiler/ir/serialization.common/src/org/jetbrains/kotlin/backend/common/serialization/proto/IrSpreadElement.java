@@ -123,13 +123,13 @@ public final class IrSpreadElement extends
   public static final int COORDINATES_FIELD_NUMBER = 2;
   private long coordinates_;
   /**
-   * <code>required int64 coordinates = 2;</code>
+   * <code>optional int64 coordinates = 2;</code>
    */
   public boolean hasCoordinates() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int64 coordinates = 2;</code>
+   * <code>optional int64 coordinates = 2;</code>
    */
   public long getCoordinates() {
     return coordinates_;
@@ -146,10 +146,6 @@ public final class IrSpreadElement extends
     if (isInitialized == 0) return false;
 
     if (!hasExpression()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasCoordinates()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -338,10 +334,6 @@ public final class IrSpreadElement extends
         
         return false;
       }
-      if (!hasCoordinates()) {
-        
-        return false;
-      }
       if (!getExpression().isInitialized()) {
         
         return false;
@@ -430,19 +422,19 @@ public final class IrSpreadElement extends
 
     private long coordinates_ ;
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2;</code>
      */
     public boolean hasCoordinates() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2;</code>
      */
     public long getCoordinates() {
       return coordinates_;
     }
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2;</code>
      */
     public Builder setCoordinates(long value) {
       bitField0_ |= 0x00000002;
@@ -451,7 +443,7 @@ public final class IrSpreadElement extends
       return this;
     }
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2;</code>
      */
     public Builder clearCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000002);

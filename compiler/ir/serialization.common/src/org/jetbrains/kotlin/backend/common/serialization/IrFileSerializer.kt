@@ -228,8 +228,25 @@ open class IrFileSerializer(
         saveOriginIndex(originIndex)
     }
 
-    private fun serializeCoordinates(start: Int, end: Int): Long =
-        if (settings.publicAbiOnly && !isInsideInline) 0 else BinaryCoordinates.encode(start, end)
+    private val serializedElementWithCoordsStack = mutableListOf<IrElement>()
+    private fun serializeCoordinates(element: IrElement): Long? {
+        val parent = serializedElementWithCoordsStack.lastOrNull()
+        serializedElementWithCoordsStack.add(element)
+
+        if (settings.publicAbiOnly && !isInsideInline) {
+            return null
+        }
+        parent?.let {
+            if (it.startOffset == element.startOffset && it.endOffset == element.endOffset) {
+                return null
+            }
+        }
+        return BinaryCoordinates.encode(element.startOffset, element.endOffset)
+    }
+
+    private fun popSerializedElementWithCoords() {
+        serializedElementWithCoordsStack.removeLast()
+    }
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -803,11 +820,12 @@ open class IrFileSerializer(
             .build()
 
     private fun serializeSpreadElement(element: IrSpreadElement): ProtoSpreadElement {
-        val coordinates = serializeCoordinates(element.startOffset, element.endOffset)
+        val coordinates = serializeCoordinates(element)
         return ProtoSpreadElement.newBuilder()
             .setExpression(serializeExpression(element.expression))
-            .setCoordinates(coordinates)
+            .apply { coordinates?.let(::setCoordinates) }
             .build()
+            .also { popSerializedElementWithCoords() }
     }
 
     private fun serializeSyntheticBody(expression: IrSyntheticBody) = ProtoSyntheticBody.newBuilder()
@@ -1039,10 +1057,10 @@ open class IrFileSerializer(
     }
 
     private fun serializeExpression(expression: IrExpression): ProtoExpression {
-        val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
+        val coordinates = serializeCoordinates(expression)
         val proto = ProtoExpression.newBuilder()
             .setType(serializeIrType(expression.type))
-            .setCoordinates(coordinates)
+            .apply { coordinates?.let(::setCoordinates) }
 
         val operationProto = ProtoOperation.newBuilder()
 
@@ -1092,14 +1110,16 @@ open class IrFileSerializer(
         }
         proto.setOperation(operationProto)
 
+        popSerializedElementWithCoords()
+
         return proto.build()
     }
 
     private fun serializeStatement(statement: IrElement): ProtoStatement {
 
-        val coordinates = serializeCoordinates(statement.startOffset, statement.endOffset)
+        val coordinates = serializeCoordinates(statement)
         val proto = ProtoStatement.newBuilder()
-            .setCoordinates(coordinates)
+            .apply { coordinates?.let(::setCoordinates) }
 
         when (statement) {
             is IrDeclaration -> {
@@ -1127,16 +1147,24 @@ open class IrFileSerializer(
                 TODO("Statement not implemented yet: ${statement.render()}")
             }
         }
+
+        popSerializedElementWithCoords()
+
         return proto.build()
     }
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol, isDeclared = true)
-            coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
+            serializeCoordinates(declaration)?.let {
+                coordinates = it
+            }
             addAllAnnotation(serializeAnnotations(declaration.annotations))
             flags?.let { setFlags(it) }
             originName = serializeIrDeclarationOrigin(declaration.origin)
+
+            popSerializedElementWithCoords()
+
             build()
         }
     }

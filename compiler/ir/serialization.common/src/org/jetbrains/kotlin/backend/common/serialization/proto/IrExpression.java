@@ -143,13 +143,13 @@ public final class IrExpression extends
   public static final int COORDINATES_FIELD_NUMBER = 3;
   private long coordinates_;
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3;</code>
    */
   public boolean hasCoordinates() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3;</code>
    */
   public long getCoordinates() {
     return coordinates_;
@@ -171,10 +171,6 @@ public final class IrExpression extends
       return false;
     }
     if (!hasType()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasCoordinates()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -383,10 +379,6 @@ public final class IrExpression extends
         
         return false;
       }
-      if (!hasCoordinates()) {
-        
-        return false;
-      }
       if (!getOperation().isInitialized()) {
         
         return false;
@@ -507,19 +499,19 @@ public final class IrExpression extends
 
     private long coordinates_ ;
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3;</code>
      */
     public boolean hasCoordinates() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3;</code>
      */
     public long getCoordinates() {
       return coordinates_;
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3;</code>
      */
     public Builder setCoordinates(long value) {
       bitField0_ |= 0x00000004;
@@ -528,7 +520,7 @@ public final class IrExpression extends
       return this;
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3;</code>
      */
     public Builder clearCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000004);

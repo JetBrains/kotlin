@@ -26,11 +26,11 @@ public interface IrDeclarationBaseOrBuilder extends
   int getOriginName();
 
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3;</code>
    */
   boolean hasCoordinates();
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3;</code>
    */
   long getCoordinates();
 

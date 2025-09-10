@@ -342,7 +342,7 @@ message IrSetValue {
 
 message IrSpreadElement {
   required IrExpression expression = 1;
-  required int64 coordinates = 2;
+  optional int64 coordinates = 2;
 }
 
 message IrStringConcat {
@@ -515,7 +515,7 @@ enum IrTypeOperator {
 message IrExpression {
   required IrOperation operation = 1;
   required int32 type = 2;
-  required int64 coordinates = 3;
+  optional int64 coordinates = 3;
 }
 
 message NullableIrExpression {
@@ -527,7 +527,7 @@ message NullableIrExpression {
 message IrDeclarationBase {
   required int64 symbol = 1;
   required int32 origin_name = 2;
-  required int64 coordinates = 3;
+  optional int64 coordinates = 3;
   optional int64 flags = 4 [default = 0];
   repeated IrConstructorCall annotation = 5;
 }
@@ -679,7 +679,7 @@ message IrSyntheticBody {
 
 // Let's try to map IrElement as well as IrStatement to IrStatement.
 message IrStatement {
-  required int64 coordinates = 1;
+  optional int64 coordinates = 1;
   oneof statement {
     IrDeclaration declaration = 2;
     IrExpression expression = 3;
