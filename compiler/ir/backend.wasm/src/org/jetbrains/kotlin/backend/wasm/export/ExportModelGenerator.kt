@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
+import org.jetbrains.kotlin.utils.memoryOptimizedForEach
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
@@ -60,8 +61,8 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         val declarationVisitor = object : IrVisitorVoid() {
             override fun visitFunction(declaration: IrFunction) {
                 visitType(declaration.returnType)
-                declaration.typeParameters.forEach(::visitTypeParameter)
-                declaration.parameters.forEach {
+                declaration.typeParameters.memoryOptimizedForEach(::visitTypeParameter)
+                declaration.parameters.memoryOptimizedForEach {
                     if (it.kind != IrParameterKind.DispatchReceiver) {
                         visitValueParameter(it)
                     }
@@ -69,9 +70,9 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             }
 
             override fun visitClass(declaration: IrClass) {
-                declaration.superTypes.forEach(::visitType)
-                declaration.typeParameters.forEach(::visitTypeParameter)
-                declaration.declarations.forEach { it.acceptVoid(this) }
+                declaration.superTypes.memoryOptimizedForEach(::visitType)
+                declaration.typeParameters.memoryOptimizedForEach(::visitTypeParameter)
+                declaration.declarations.memoryOptimizedForEach { it.acceptVoid(this) }
             }
 
             override fun visitProperty(declaration: IrProperty) {
@@ -88,7 +89,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             }
 
             override fun visitTypeParameter(declaration: IrTypeParameter) {
-                declaration.superTypes.forEach(::visitType)
+                declaration.superTypes.memoryOptimizedForEach(::visitType)
             }
 
             private fun visitType(type: IrType) {
@@ -98,7 +99,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 if (!klass.isExternal || klass in excludedFromExport || klass in declarationsToExport) return
                 queue.add(klass)
                 declarationsToExport.add(klass)
-                type.arguments.forEach { it.typeOrNull?.let(::visitType) }
+                type.arguments.memoryOptimizedForEach { it.typeOrNull?.let(::visitType) }
             }
         }
 
