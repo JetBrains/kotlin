@@ -26,7 +26,8 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             switch self {
             case .A: "A"
             case .B: "B"
-            default: "C"
+            case .C: "C"
+            default: fatalError()
             }
         }
     }
@@ -35,7 +36,8 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
             switch self {
             case .A: 0
             case .B: 1
-            default: 2
+            case .C: 2
+            default: fatalError()
             }
         }
     }
@@ -62,14 +64,16 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         switch __externalRCRefUnsafe {
         case ENUM_A(): self = .A
         case ENUM_B(): self = .B
-        default: self = .C
+        case ENUM_C(): self = .C
+        default: fatalError()
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return switch self {
         case .A: ENUM_A()
         case .B: ENUM_B()
-        default: ENUM_C()
+        case .C: ENUM_C()
+        default: fatalError()
         }
     }
 }

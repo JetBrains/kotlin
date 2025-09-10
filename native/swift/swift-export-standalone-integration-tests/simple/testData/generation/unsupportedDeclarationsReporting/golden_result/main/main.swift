@@ -68,7 +68,8 @@ extension ExportedKotlinPackages.a.b.c {
                 switch self {
                 case .A: "A"
                 case .B: "B"
-                default: "C"
+                case .C: "C"
+                default: fatalError()
                 }
             }
         }
@@ -77,7 +78,8 @@ extension ExportedKotlinPackages.a.b.c {
                 switch self {
                 case .A: 0
                 case .B: 1
-                default: 2
+                case .C: 2
+                default: fatalError()
                 }
             }
         }
@@ -104,14 +106,16 @@ extension ExportedKotlinPackages.a.b.c {
             switch __externalRCRefUnsafe {
             case a_b_c_E_A(): self = .A
             case a_b_c_E_B(): self = .B
-            default: self = .C
+            case a_b_c_E_C(): self = .C
+            default: fatalError()
             }
         }
         public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
             return switch self {
             case .A: a_b_c_E_A()
             case .B: a_b_c_E_B()
-            default: a_b_c_E_C()
+            case .C: a_b_c_E_C()
+            default: fatalError()
             }
         }
     }

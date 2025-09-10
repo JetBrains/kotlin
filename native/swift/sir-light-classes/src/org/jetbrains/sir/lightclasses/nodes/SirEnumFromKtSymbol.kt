@@ -96,7 +96,7 @@ private class SirEnumFromKtSymbol(
         }
     }
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
-    private val cases: List<SirEnumCase> get() = childDeclarations.filterIsInstance<SirEnumCase>()
+    private val cases: List<SirEnumCaseFromKtSymbol> get() = childDeclarations.filterIsInstance<SirEnumCaseFromKtSymbol>()
     private val childDeclarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
             .extractDeclarations()
@@ -107,6 +107,7 @@ private class SirEnumFromKtSymbol(
         kotlinBaseInitDeclaration(),
         kotlinBridgeableExternalRcRef(),
         description(),
+        failableInitFromString(),
         rawValue(),
         failableInitFromInteger(),
     )
@@ -117,15 +118,10 @@ private class SirEnumFromKtSymbol(
             argumentName = "__externalRCRefUnsafe",
             type = unsafeMutableRawPointerFlexibleType()
         )
-        val caseSelector = if (cases.isEmpty()) {
-            "default: fatalError()"
-        } else {
-            cases.joinToString(separator = "\n                    ") {
-                val condition =
-                    if (it === cases.last()) "default" else "case ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
-                "$condition: self = .${it.name}"
-            }
-        }
+        val separator = "\n                    "
+        val caseSelector = cases.joinToString(separator = separator) {
+            "case ${it.nativeCaseRepresentation(ktSymbol)}: self = .${it.name}"
+        } + defaultBranch(separator)
         body = SirFunctionBody(
             listOf(
                 """
@@ -140,14 +136,10 @@ private class SirEnumFromKtSymbol(
     private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef) {
         origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
         returnType = unsafeMutableRawPointerFlexibleType()
-        val caseSelector = if (cases.isEmpty()) {
-            "default: fatalError()"
-        } else {
-            cases.joinToString(separator = "\n                    ") {
-                val condition = if (it === cases.last()) "default" else "case .${it.name}"
-                "$condition: ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
-            }
-        }
+        val separator = "\n                    "
+        val caseSelector = cases.joinToString(separator = separator) {
+            "case .${it.name}: ${it.nativeCaseRepresentation(ktSymbol)}"
+        } + defaultBranch(separator)
         body = SirFunctionBody(
             listOf(
                 """
@@ -159,34 +151,17 @@ private class SirEnumFromKtSymbol(
         )
     }.also { it.parent = this }
 
-    private fun ClassId.underscoredRepresentation(): String = buildString {
-        if (!packageFqName.isRoot) {
-            appendUnderscoredRepresentation(packageFqName)
-            append("_")
-        }
-        appendUnderscoredRepresentation(relativeClassName)
-    }
-
-    private fun StringBuilder.appendUnderscoredRepresentation(fqName: FqName) {
-        if (fqName.isRoot) return
-        val parent = fqName.parent()
-        if (!parent.isRoot) {
-            appendUnderscoredRepresentation(parent)
-            append("_")
-        }
-        append(fqName.shortName().asString())
-    }
+    private fun defaultBranch(separator: String): String =
+        (if (cases.isNotEmpty()) separator else "") + "default: fatalError()"
 
     private fun description(): SirVariable = buildVariable {
         name = "description"
         type = SirNominalType(SirSwiftModule.string)
+        val separator = "\n                        "
         getter = buildGetter {
-            val caseSelector = if (cases.isEmpty()) {
-                "default: fatalError()"
-            } else cases.joinToString(separator = "\n                        ") {
-                val condition = if (it === cases.last()) "default" else "case .${it.name}"
-                "$condition: \"${it.name}\""
-            }
+            val caseSelector = cases.joinToString(separator = separator) {
+                "case .${it.name}: \"${it.name}\""
+            } + defaultBranch(separator)
             body = SirFunctionBody(
                 listOf(
                     """
@@ -199,19 +174,38 @@ private class SirEnumFromKtSymbol(
         }
     }.also { it.parent = this }
 
+    private fun failableInitFromString(): SirInit = buildInit {
+        isFailable = true
+        parameters.add(
+            SirParameter(
+                parameterName = "description",
+                type = SirNominalType(SirSwiftModule.string),
+            )
+        )
+        val caseSelector = cases.joinToString(separator = "\n                        ") {
+            """case "${it.name}": self = .${it.name}"""
+        }
+        body = SirFunctionBody(
+            listOf(
+                """
+                        switch description {
+                        $caseSelector
+                        default: return nil
+                        }
+                    """.trimIndent()
+            )
+        )
+    }.also { it.parent = this }
+
     private fun rawValue(): SirVariable = buildVariable {
         name = "rawValue"
         type = SirNominalType(SirSwiftModule.int32)
+        val separator = "\n                        "
+        var index = 0
         getter = buildGetter {
-            val caseSelector = if (cases.isEmpty()) {
-                "default: fatalError()"
-            } else {
-                var index = 0
-                cases.joinToString(separator = "\n                        ") {
-                    val condition = if (it === cases.last()) "default" else "case .${it.name}"
-                    "$condition: ${index++}"
-                }
-            }
+            val caseSelector = cases.joinToString(separator = separator) {
+                "case .${it.name}: ${index++}"
+            } + defaultBranch(separator)
             body = SirFunctionBody(
                 listOf(
                     """
@@ -274,6 +268,27 @@ private class SirEnumCaseFromKtSymbol(
         }
     override val attributes: List<SirAttribute>
         get() = emptyList()
+
+    fun nativeCaseRepresentation(enumSymbol: KaNamedClassSymbol): String =
+        "${enumSymbol.classId!!.underscoredRepresentation()}_$name()"
+
+    private fun ClassId.underscoredRepresentation(): String = buildString {
+        if (!packageFqName.isRoot) {
+            appendUnderscoredRepresentation(packageFqName)
+            append("_")
+        }
+        appendUnderscoredRepresentation(relativeClassName)
+    }
+
+    private fun StringBuilder.appendUnderscoredRepresentation(fqName: FqName) {
+        if (fqName.isRoot) return
+        val parent = fqName.parent()
+        if (!parent.isRoot) {
+            appendUnderscoredRepresentation(parent)
+            append("_")
+        }
+        append(fqName.shortName().asString())
+    }
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = bridgeFqName ?: return@lazyWithSessions null

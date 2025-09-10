@@ -10,14 +10,16 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     public var description: Swift.String {
         get {
             switch self {
-            default: "ONE"
+            case .ONE: "ONE"
+            default: fatalError()
             }
         }
     }
     public var rawValue: Swift.Int32 {
         get {
             switch self {
-            default: 0
+            case .ONE: 0
+            default: fatalError()
             }
         }
     }
@@ -40,12 +42,14 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         switch __externalRCRefUnsafe {
-        default: self = .ONE
+        case EnumWithFactory_ONE(): self = .ONE
+        default: fatalError()
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return switch self {
-        default: EnumWithFactory_ONE()
+        case .ONE: EnumWithFactory_ONE()
+        default: fatalError()
         }
     }
 }

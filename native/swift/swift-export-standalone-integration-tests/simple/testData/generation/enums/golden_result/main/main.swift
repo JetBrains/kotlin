@@ -10,7 +10,8 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         get {
             switch self {
             case .a: "a"
-            default: "b"
+            case .b: "b"
+            default: fatalError()
             }
         }
     }
@@ -26,7 +27,8 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         get {
             switch self {
             case .a: 0
-            default: 1
+            case .b: 1
+            default: fatalError()
             }
         }
     }
@@ -51,13 +53,15 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
     ) {
         switch __externalRCRefUnsafe {
         case Enum_a(): self = .a
-        default: self = .b
+        case Enum_b(): self = .b
+        default: fatalError()
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return switch self {
         case .a: Enum_a()
-        default: Enum_b()
+        case .b: Enum_b()
+        default: fatalError()
         }
     }
     public func print() -> Swift.String {
@@ -73,7 +77,8 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
             switch self {
             case .FIRST: "FIRST"
             case .SECOND: "SECOND"
-            default: "LAST"
+            case .LAST: "LAST"
+            default: fatalError()
             }
         }
     }
@@ -82,7 +87,8 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
             switch self {
             case .FIRST: 0
             case .SECOND: 1
-            default: 2
+            case .LAST: 2
+            default: fatalError()
             }
         }
     }
@@ -109,14 +115,16 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         switch __externalRCRefUnsafe {
         case EnumSimple_FIRST(): self = .FIRST
         case EnumSimple_SECOND(): self = .SECOND
-        default: self = .LAST
+        case EnumSimple_LAST(): self = .LAST
+        default: fatalError()
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return switch self {
         case .FIRST: EnumSimple_FIRST()
         case .SECOND: EnumSimple_SECOND()
-        default: EnumSimple_LAST()
+        case .LAST: EnumSimple_LAST()
+        default: fatalError()
         }
     }
 }
@@ -129,7 +137,8 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
             switch self {
             case .YELLOW: "YELLOW"
             case .SKY: "SKY"
-            default: "MAGENTA"
+            case .MAGENTA: "MAGENTA"
+            default: fatalError()
             }
         }
     }
@@ -138,7 +147,8 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
             switch self {
             case .YELLOW: 0
             case .SKY: 1
-            default: 2
+            case .MAGENTA: 2
+            default: fatalError()
             }
         }
     }
@@ -170,14 +180,16 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         switch __externalRCRefUnsafe {
         case EnumWithAbstractMembers_YELLOW(): self = .YELLOW
         case EnumWithAbstractMembers_SKY(): self = .SKY
-        default: self = .MAGENTA
+        case EnumWithAbstractMembers_MAGENTA(): self = .MAGENTA
+        default: fatalError()
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return switch self {
         case .YELLOW: EnumWithAbstractMembers_YELLOW()
         case .SKY: EnumWithAbstractMembers_SKY()
-        default: EnumWithAbstractMembers_MAGENTA()
+        case .MAGENTA: EnumWithAbstractMembers_MAGENTA()
+        default: fatalError()
         }
     }
     public func blue() -> Swift.Int32 {
@@ -197,7 +209,8 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         get {
             switch self {
             case .NORTH: "NORTH"
-            default: "SOUTH"
+            case .SOUTH: "SOUTH"
+            default: fatalError()
             }
         }
     }
@@ -210,7 +223,8 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         get {
             switch self {
             case .NORTH: 0
-            default: 1
+            case .SOUTH: 1
+            default: fatalError()
             }
         }
     }
@@ -235,13 +249,15 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     ) {
         switch __externalRCRefUnsafe {
         case EnumWithMembers_NORTH(): self = .NORTH
-        default: self = .SOUTH
+        case EnumWithMembers_SOUTH(): self = .SOUTH
+        default: fatalError()
         }
     }
     public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
         return switch self {
         case .NORTH: EnumWithMembers_NORTH()
-        default: EnumWithMembers_SOUTH()
+        case .SOUTH: EnumWithMembers_SOUTH()
+        default: fatalError()
         }
     }
     public func foo() -> Swift.String {

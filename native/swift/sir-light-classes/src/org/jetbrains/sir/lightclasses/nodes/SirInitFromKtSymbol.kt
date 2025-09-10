@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
@@ -21,14 +20,12 @@ import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
-import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.translateType
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.sir.util.cases
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.returnType
 import org.jetbrains.kotlin.sir.util.swiftFqName
@@ -235,50 +232,4 @@ internal class SirRegularInitFromKtSymbol(
             },
         )
     }
-}
-
-internal class SirFailableInitFromKtValueOfFunctionSymbol(
-    ktSymbol: KaNamedFunctionSymbol,
-    val sirEnum: SirEnum,
-    sirSession: SirSession,
-) : SirInitFromKtSymbol(ktSymbol, sirSession), SirFromKtSymbol<KaFunctionSymbol> {
-
-    init {
-        require(ktSymbol.isStatic && ktSymbol.valueParameters.size == 1 && ktSymbol.name.asString() == "valueOf")
-    }
-
-    override val isFailable: Boolean
-        get() = true
-
-    override val bridges: List<SirBridge>
-        get() = emptyList()
-
-    override val parameters: List<SirParameter> by lazyWithSessions {
-        listOf(
-            SirParameter(
-                parameterName = "description",
-                type = SirNominalType(SirSwiftModule.string),
-                origin = KotlinParameterOrigin.ValueParameter(ktSymbol.valueParameters.single())
-            )
-        )
-    }
-
-    override var body: SirFunctionBody?
-        set(_) {}
-        get() {
-            val cases = sirEnum.cases
-            val caseSelector = cases.joinToString(separator = "\n                        ") {
-                """case "${it.name}": self = .${it.name}"""
-            }
-            return SirFunctionBody(
-                listOf(
-                    """
-                        switch description {
-                        $caseSelector
-                        default: return nil
-                        }
-                    """.trimIndent()
-                )
-            )
-        }
 }

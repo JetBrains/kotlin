@@ -629,14 +629,16 @@ extension ExportedKotlinPackages.ignored {
         public var description: Swift.String {
             get {
                 switch self {
-                default: "A"
+                case .A: "A"
+                default: fatalError()
                 }
             }
         }
         public var rawValue: Swift.Int32 {
             get {
                 switch self {
-                default: 0
+                case .A: 0
+                default: fatalError()
                 }
             }
         }
@@ -659,12 +661,14 @@ extension ExportedKotlinPackages.ignored {
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             switch __externalRCRefUnsafe {
-            default: self = .A
+            case ignored_ENUM_A(): self = .A
+            default: fatalError()
             }
         }
         public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
             return switch self {
-            default: ignored_ENUM_A()
+            case .A: ignored_ENUM_A()
+            default: fatalError()
             }
         }
     }

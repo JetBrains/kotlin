@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.sir.lightclasses.nodes.*
-import org.jetbrains.sir.lightclasses.utils.SirEnumSyntheticsTranslationStrategy
 import org.jetbrains.sir.lightclasses.utils.SirOperatorTranslationStrategy
 
 public class SirDeclarationFromKtSymbolProvider(
@@ -60,7 +59,9 @@ public class SirDeclarationFromKtSymbolProvider(
             is KaNamedFunctionSymbol -> {
                 SirOperatorTranslationStrategy(ktSymbol)?.translate(sirSession)
                     ?: runIf(sirSession.withSessions { ktSymbol.getSirParent() is SirEnum }) {
-                        SirEnumSyntheticsTranslationStrategy(ktSymbol)?.translate(sirSession)
+                        if (ktSymbol.isStatic && ktSymbol.name == StandardNames.ENUM_VALUE_OF) {
+                            SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
+                        } else null
                     } ?: SirFunctionFromKtSymbol(
                         ktSymbol = ktSymbol,
                         sirSession = sirSession,
