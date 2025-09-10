@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 /**
- * Used by implementations of [KaResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider]
- * to store a reference of the [KaModule] for which a [VirtualFile] was generated.
+ * When applied to a virtual file *A*, [analysisContextModule] determines the context module of any [KaDanglingFileModule] whose file has
+ * *A* as an *original file*. It does not affect the [KaModule] of *A* itself.
  *
- * Also used to set the context module of [KaDanglingFileModule]s for code fragments in the debugger's evaluate expression functionality.
- * This is particularly useful in KMP where the 'contextElement' of a code block might be located in a common module, while the context
- * should, for example, be a leaf JVM module.
+ * For example, it is used to set the context module of [KaDanglingFileModule]s for code fragments in the debugger's evaluate expression
+ * functionality. This is particularly useful in KMP where the 'contextElement' of a code block might be located in a common module, while
+ * the context should, for example, be a leaf JVM module.
  */
 @KaImplementationDetail
 public var VirtualFile.analysisContextModule: KaModule? by UserDataProperty(Key.create("ANALYSIS_CONTEXT_MODULE"))

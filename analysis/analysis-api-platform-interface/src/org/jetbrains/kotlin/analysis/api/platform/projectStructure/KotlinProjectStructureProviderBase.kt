@@ -31,13 +31,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
             }
         }
 
-        val virtualFile = file.virtualFile
-        if (virtualFile != null) {
-            val contextModule = virtualFile.analysisContextModule
-            if (contextModule != null) {
-                return contextModule
-            }
-        }
+        file.virtualFile?.resolveExtensionFileModule?.let { return it }
 
         if (file is KtFile && file.isDangling) {
             val contextModule = computeContextModule(file)

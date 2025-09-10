@@ -9,9 +9,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.isGeneratedByResolveExtensions
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.resolveExtensionFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
 
 @KaImplementationDetail
 class KaBaseResolveExtensionGeneratedFilesScope(val useSiteModules: List<KaModule>) : KaResolveExtensionGeneratedFilesScope() {
@@ -21,11 +20,8 @@ class KaBaseResolveExtensionGeneratedFilesScope(val useSiteModules: List<KaModul
 
     override fun getProject(): Project? = useSiteModules.firstOrNull()?.project
 
-    override fun contains(file: VirtualFile): Boolean {
-        return file.isGeneratedByResolveExtensions == true && file.analysisContextModule in useSiteModules
-    }
+    override fun contains(file: VirtualFile): Boolean = file.resolveExtensionFileModule in useSiteModules
 
-    override fun toString(): String {
-        return "Resolve Extensions Generated File Scope for [" + useSiteModules.joinToString(", ") { it.moduleDescription } + "]"
-    }
+    override fun toString(): String =
+        "Resolve Extensions Generated File Scope for [" + useSiteModules.joinToString(", ") { it.moduleDescription } + "]"
 }
