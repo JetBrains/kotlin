@@ -15,14 +15,26 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-class WorkspaceManager {
-
+class WorkspaceManager(
+    val userId: String,
+    val projectName: String,
+) {
 
     init {
         Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
     }
 
+    fun prependWorkspaceProjectDirectory(path: Path): Path {
+        return SERVER_COMPILATION_WORKSPACE_DIR
+            .resolve(userId)
+            .resolve(projectName)
+            .resolve(path)
+    }
+
     fun getOutputDir(userId: String, projectName: String, moduleName: String): Path {
+        // TODO revisit this, I think I could get rid of output part
+        // maybe it would be useful to pass root dir into compilation metadata
+        // potentially just append the full user client path to workspace path
         val outputPath = SERVER_COMPILATION_WORKSPACE_DIR
             .resolve(userId)
             .resolve(projectName)
