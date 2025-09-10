@@ -103,7 +103,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                             """permission java.io.FilePermission "${file.absolutePath}/", "read";""",
                             """permission java.io.FilePermission "${file.absolutePath}/-", "read${
                                 // We write to the testData folder from tests...
-                                if (file.canonicalPath.contains("/testData")) ",write"
+                                if (file.canonicalPath.contains("/testData")) ",write,delete"
                                 else ""
                             }";""",
                         )
