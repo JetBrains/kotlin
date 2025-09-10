@@ -3,7 +3,7 @@
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
-      initializer: 0
+      constantInitializer: 0
       MODIFIER_LIST[public const]
       TYPE_REFERENCE
         USER_TYPE
@@ -72,7 +72,11 @@
     CLASS[classId=/WithStringConstant, fqName=WithStringConstant, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringConstant, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
-          valueArguments: (s1 = "some 1", s2 = " 3", s3 = "str3")
+          valueArguments: [
+            s1 -> "some 1"
+            s2 -> " 3"
+            s3 -> "str3"
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -90,7 +94,11 @@
     CLASS[classId=/WithStringInterpolationPrefix, fqName=WithStringInterpolationPrefix, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringInterpolationPrefix, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
-          valueArguments: (s1 = "0", s2 = "0", s3 = "0")
+          valueArguments: [
+            s1 -> "0"
+            s2 -> "0"
+            s3 -> "0"
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -108,7 +116,11 @@
     CLASS[classId=/WithStringLiteral, fqName=WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteral, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
-          valueArguments: (s1 = "some", s2 = "", s3 = "H0")
+          valueArguments: [
+            s1 -> "some"
+            s2 -> ""
+            s3 -> "H0"
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -126,7 +138,11 @@
     CLASS[classId=/WithStringLiteralConcat, fqName=WithStringLiteralConcat, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteralConcat, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
-          valueArguments: (s1 = "some1", s2 = "02", s3 = "03")
+          valueArguments: [
+            s1 -> "some1"
+            s2 -> "02"
+            s3 -> "03"
+          ]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

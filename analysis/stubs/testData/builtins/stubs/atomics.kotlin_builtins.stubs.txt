@@ -9,7 +9,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicArray, fqName=kotlin.concurrent.atomics.AtomicArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicArray, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -17,7 +17,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -151,7 +151,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicBoolean, fqName=kotlin.concurrent.atomics.AtomicBoolean, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicBoolean, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -159,7 +159,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -267,7 +267,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicInt, fqName=kotlin.concurrent.atomics.AtomicInt, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicInt, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -275,7 +275,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -411,7 +411,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicIntArray, fqName=kotlin.concurrent.atomics.AtomicIntArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicIntArray, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -419,7 +419,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -613,7 +613,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicLong, fqName=kotlin.concurrent.atomics.AtomicLong, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicLong, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -621,7 +621,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -757,7 +757,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicLongArray, fqName=kotlin.concurrent.atomics.AtomicLongArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicLongArray, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -765,7 +765,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -959,7 +959,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/AtomicReference, fqName=kotlin.concurrent.atomics.AtomicReference, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AtomicReference, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -967,7 +967,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalAtomicApi]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -1057,7 +1057,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   CLASS[classId=kotlin/concurrent/atomics/ExperimentalAtomicApi, fqName=kotlin.concurrent.atomics.ExperimentalAtomicApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalAtomicApi, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=RequiresOptIn]
-        valueArguments: (level = Level.ERROR)
+        valueArguments: [ level -> Level.ERROR ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -1065,7 +1065,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=RequiresOptIn]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retention]
-        valueArguments: (value = AnnotationRetention.BINARY)
+        valueArguments: [ value -> AnnotationRetention.BINARY ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -1075,7 +1075,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Retention]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -1085,7 +1085,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=Target]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustBeDocumented]
-        valueArguments: ()
+        valueArguments: [ ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -1095,7 +1095,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=annotation]
               REFERENCE_EXPRESSION[referencedName=MustBeDocumented]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "2.1")
+        valueArguments: [ version -> "2.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

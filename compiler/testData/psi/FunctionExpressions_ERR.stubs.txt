@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressions_ERRKt]]
+  facadeFqName: FunctionExpressions_ERRKt
+  partSimpleName: "FunctionExpressions_ERRKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=a, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=a]

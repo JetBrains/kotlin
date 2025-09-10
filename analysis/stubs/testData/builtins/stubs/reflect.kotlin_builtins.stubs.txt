@@ -13,7 +13,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
       PROPERTY[fqName=kotlin.reflect.KCallable.name, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IntrinsicConstEvaluation]
-            valueArguments: ()
+            valueArguments: [ ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -65,7 +65,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
       FUN[fqName=kotlin.reflect.KClass.isInstance, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=isInstance]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.1")
+            valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -111,7 +111,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
   CLASS[classId=kotlin/reflect/KClassifier, fqName=kotlin.reflect.KClassifier, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KClassifier, superNames=[]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "1.1")
+        valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -480,7 +480,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
       PROPERTY[fqName=kotlin.reflect.KType.classifier, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=classifier]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.1")
+            valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -498,7 +498,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
       PROPERTY[fqName=kotlin.reflect.KType.arguments, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=arguments]
         MODIFIER_LIST[public expect abstract MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.1")
+            valueArguments: [ version -> "1.1" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -531,7 +531,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
   CLASS[classId=kotlin/reflect/KTypeParameter, fqName=kotlin.reflect.KTypeParameter, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KTypeParameter, superNames=[KClassifier]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "1.1")
+        valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -592,7 +592,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
   CLASS[classId=kotlin/reflect/KTypeProjection, fqName=kotlin.reflect.KTypeProjection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KTypeProjection, superNames=[]]
     MODIFIER_LIST[public final data]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "1.1")
+        valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -627,7 +627,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           PROPERTY[fqName=kotlin.reflect.KTypeProjection.Companion.star, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=star]
             MODIFIER_LIST[internal final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=PublishedApi]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -656,7 +656,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           FUN[fqName=kotlin.reflect.KTypeProjection.Companion.invariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invariant]
             MODIFIER_LIST[public final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -684,7 +684,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           FUN[fqName=kotlin.reflect.KTypeProjection.Companion.contravariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contravariant]
             MODIFIER_LIST[public final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -712,7 +712,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           FUN[fqName=kotlin.reflect.KTypeProjection.Companion.covariant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=covariant]
             MODIFIER_LIST[public final MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmStatic]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -843,7 +843,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
   CLASS[classId=kotlin/reflect/KVariance, fqName=kotlin.reflect.KVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KVariance, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "1.1")
+        valueArguments: [ version -> "1.1" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

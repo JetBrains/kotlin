@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithoutName_ERRKt]]
+  facadeFqName: FunctionsWithoutName_ERRKt
+  partSimpleName: "FunctionsWithoutName_ERRKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=<no name provided>, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]

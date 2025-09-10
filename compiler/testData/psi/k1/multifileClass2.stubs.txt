@@ -1,5 +1,7 @@
 MultifileClass.kt:
   FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass]]
+    facadeFqName: test.MultifileClass
+    partSimpleName: "MultifileClass"
     FILE_ANNOTATION_LIST
       ANNOTATION
         ANNOTATION_TARGET[useSiteTarget=FILE]
@@ -73,6 +75,8 @@ MultifileClass.kt:
 
 MultifileClass__Part.kt:
   FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass]]
+    facadeFqName: test.MultifileClass
+    partSimpleName: "MultifileClass"
     FILE_ANNOTATION_LIST
       ANNOTATION
         ANNOTATION_TARGET[useSiteTarget=FILE]
@@ -117,6 +121,8 @@ MultifileClass__Part.kt:
 
 part.kt:
   FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass]]
+    facadeFqName: test.MultifileClass
+    partSimpleName: "MultifileClass"
     FILE_ANNOTATION_LIST
       ANNOTATION
         ANNOTATION_TARGET[useSiteTarget=FILE]

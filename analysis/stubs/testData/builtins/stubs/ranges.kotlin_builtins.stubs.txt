@@ -314,7 +314,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       PROPERTY[fqName=kotlin.ranges.CharRange.endExclusive, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=endExclusive]
         MODIFIER_LIST[public open MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
-            valueArguments: (message = "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+            valueArguments: [ message -> "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw." ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -322,7 +322,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.9")
+            valueArguments: [ version -> "1.9" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -330,7 +330,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-            valueArguments: (markerClass = [NormalClass(value=kotlin/ExperimentalStdlibApi)])
+            valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -753,7 +753,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       PROPERTY[fqName=kotlin.ranges.IntRange.endExclusive, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=endExclusive]
         MODIFIER_LIST[public open MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
-            valueArguments: (message = "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+            valueArguments: [ message -> "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw." ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -761,7 +761,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.9")
+            valueArguments: [ version -> "1.9" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -769,7 +769,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-            valueArguments: (markerClass = [NormalClass(value=kotlin/ExperimentalStdlibApi)])
+            valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -1147,7 +1147,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       PROPERTY[fqName=kotlin.ranges.LongRange.endExclusive, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=endExclusive]
         MODIFIER_LIST[public open MustUseReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
-            valueArguments: (message = "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+            valueArguments: [ message -> "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw." ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -1155,7 +1155,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Deprecated]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-            valueArguments: (version = "1.9")
+            valueArguments: [ version -> "1.9" ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -1163,7 +1163,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=SinceKotlin]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-            valueArguments: (markerClass = [NormalClass(value=kotlin/ExperimentalStdlibApi)])
+            valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -1234,7 +1234,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
   CLASS[classId=kotlin/ranges/OpenEndRange, fqName=kotlin.ranges.OpenEndRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=OpenEndRange, superNames=[]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
-        valueArguments: (version = "1.9")
+        valueArguments: [ version -> "1.9" ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -1242,7 +1242,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=WasExperimental]
-        valueArguments: (markerClass = [NormalClass(value=kotlin/ExperimentalStdlibApi)])
+        valueArguments: [ markerClass -> [NormalClass(value=kotlin/ExperimentalStdlibApi)] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

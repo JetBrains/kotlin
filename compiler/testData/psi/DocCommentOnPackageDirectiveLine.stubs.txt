@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=p1.p2, facadeFqName=p1.p2.DocCommentOnPackageDirectiveLineKt]]
+  facadeFqName: p1.p2.DocCommentOnPackageDirectiveLineKt
+  partSimpleName: "DocCommentOnPackageDirectiveLineKt"
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=p1]

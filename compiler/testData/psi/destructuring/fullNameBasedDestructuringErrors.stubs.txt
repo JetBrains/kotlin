@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=FullNameBasedDestructuringErrorsKt]]
+  facadeFqName: FullNameBasedDestructuringErrorsKt
+  partSimpleName: "FullNameBasedDestructuringErrorsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=declaration, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=declaration]

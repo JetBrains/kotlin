@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -31,7 +31,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   MODIFIER_LIST[]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -49,7 +49,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                  valueArguments: ()
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -64,7 +64,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                    valueArguments: ()
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -83,7 +83,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                    valueArguments: ()
+                    valueArguments: [ ]
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -105,7 +105,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   MODIFIER_LIST[]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -125,7 +125,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                  valueArguments: ()
+                  valueArguments: [ ]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -149,7 +149,7 @@ FILE[kind=File[packageFqName=<root>]]
                     TYPE_REFERENCE
                       MODIFIER_LIST[]
                         ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                          valueArguments: ()
+                          valueArguments: [ ]
                           CONSTRUCTOR_CALLEE
                             TYPE_REFERENCE
                               USER_TYPE
@@ -167,7 +167,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -182,7 +182,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              valueArguments: ()
+              valueArguments: [ ]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -200,7 +200,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   MODIFIER_LIST[]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -210,7 +210,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
-        valueArguments: (allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER])
+        valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER] ]
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

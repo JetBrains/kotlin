@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
+  facadeFqName: test.TypeAliasExpansionKt
+  partSimpleName: "TypeAliasExpansionKt"
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST

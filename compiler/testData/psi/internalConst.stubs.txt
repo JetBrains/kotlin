@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=InternalConstKt]]
+  facadeFqName: InternalConstKt
+  partSimpleName: "InternalConstKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=FOO2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=FOO2]

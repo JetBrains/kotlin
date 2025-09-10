@@ -8,84 +8,92 @@ package org.jetbrains.kotlin.analysis.stubs
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import java.lang.reflect.Modifier
 
 internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String = prettyPrint {
     extractAdditionInfo(stub)
 }
 
 private fun PrettyPrinter.extractAdditionInfo(stub: StubElement<*>) {
-    append(stub.toString())
-    when (stub) {
-        is KotlinUserTypeStubImpl -> {
-            val upperBound = stub.upperBound
-            if (upperBound != null) {
-                append("    upperBound: ")
-                appendTypeInfo(upperBound)
+    // Nodes are stored in the form "NodeType:Node" and have too much repeating information for Kotlin stubs
+    // Remove all repeating information (See KotlinStubBaseImpl.toString())
+    val adjustedStubText = stub.toString().substringAfter(STUB_TO_STRING_PREFIX).replace(", [", "[")
+    appendLine(adjustedStubText)
+
+    withIndent {
+        val additionalProperties = stub::class.java
+            .declaredMethods
+            // All "public" information from stub interfaces is already rendered via regular toString()
+            .filter { it.parameterTypes.isEmpty() && Modifier.isFinal(it.modifiers) }
+            .sortedBy { it.name }
+
+        for (method in additionalProperties) {
+            val value = method(stub) ?: continue
+
+            val methodName = method.name
+            val name = if (methodName.startsWith("get")) {
+                methodName.substring(3).replaceFirstChar(Char::lowercaseChar)
+            } else {
+                methodName
             }
 
-            val abbreviatedType = stub.abbreviatedType
-            if (abbreviatedType != null) {
-                append("    abbreviatedType: ")
-                appendTypeInfo(abbreviatedType)
-            }
-        }
-
-        is KotlinFunctionTypeStubImpl -> {
-            val abbreviatedType = stub.abbreviatedType
-            if (abbreviatedType != null) {
-                append("    abbreviatedType: ")
-                appendTypeInfo(abbreviatedType)
-            }
-        }
-
-        is KotlinFunctionStubImpl -> {
-            val contract = stub.contract
-            if (contract != null) {
-                withIndent {
-                    for (element in contract) {
-                        appendLine()
-                        append("effect:")
-                        element.accept(KotlinContractRenderer(this), null)
-                    }
-                }
-            }
-        }
-        is KotlinPropertyStubImpl -> {
-            val initializer = stub.constantInitializer
-            if (initializer != null) {
-                withIndent {
-                    appendLine()
-                    append("initializer: $initializer")
-                }
-            }
-        }
-        is KotlinAnnotationEntryStubImpl -> {
-            val arguments = stub.valueArguments
-            if (arguments != null) {
-                withIndent {
-                    appendLine()
-                    append("valueArguments: ")
-                    withIndent {
-                        arguments.entries.joinTo(this, ", ", "(", ")") { "${it.key.asString()} = ${it.value}" }
-                    }
-                }
-            }
-        }
-        is KotlinParameterStubImpl -> {
-            stub.functionTypeParameterName?.let { append("   paramNameByAnnotation: ").append(it) }
-        }
-        is KotlinClassStubImpl -> {
-            stub.valueClassRepresentation?.let { append("   valueClassRepresentation: ").append(it.toString()) }
-        }
-    }
-    for (child in stub.childrenStubs) {
-        withIndent {
+            append(name).append(": ")
+            appendValue(value)
             appendLine()
+        }
+
+        for (child in stub.childrenStubs) {
             extractAdditionInfo(child)
         }
+    }
+}
+
+private fun PrettyPrinter.appendValue(value: Any?) {
+    when (value) {
+        is Map<*, *> -> appendValue(value.entries)
+        is Collection<*> -> when (value.size) {
+            0 -> append("[ ]")
+            1 -> {
+                append("[ ")
+                withIndent {
+                    appendValue(value.single())
+                }
+                append(" ]")
+            }
+
+            else -> printCollection(value, separator = "\n", prefix = "[\n", postfix = "\n]") {
+                withIndent {
+                    appendValue(it)
+                }
+            }
+        }
+
+        is Map.Entry<*, *> -> {
+            appendValue(value.key)
+            append(" -> ")
+            appendValue(value.value)
+        }
+
+        is KotlinTypeBean -> appendTypeInfo(value)
+        is Name -> append(value.asString())
+        is Enum<*> -> append(value.name)
+        is String -> append("\"").append(value).append("\"")
+        is FqName -> append(value.asString())
+        is KtContractDescriptionElement<*, *> -> {
+            append("effect:")
+            @Suppress("UNCHECKED_CAST")
+            (value as KtContractDescriptionElement<KotlinTypeBean, Nothing?>).accept(KotlinContractRenderer(this), null)
+        }
+
+        null -> append("null")
+        is ConstantValue<*>, is KotlinStubOrigin -> append(value.toString())
+        else -> error("Unsupported type: ${value::class}")
     }
 }
 

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=CloseBraceAtTopLevelKt]]
+  facadeFqName: CloseBraceAtTopLevelKt
+  partSimpleName: "CloseBraceAtTopLevelKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]

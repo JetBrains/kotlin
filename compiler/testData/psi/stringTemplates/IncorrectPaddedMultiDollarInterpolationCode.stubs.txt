@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=IncorrectPaddedMultiDollarInterpolationCodeKt]]
+  facadeFqName: IncorrectPaddedMultiDollarInterpolationCodeKt
+  partSimpleName: "IncorrectPaddedMultiDollarInterpolationCodeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=emptyInterpolation, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=emptyInterpolation]

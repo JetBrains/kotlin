@@ -353,7 +353,7 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   MODIFIER_LIST[]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExtensionFunctionType]
-                      valueArguments: ()
+                      valueArguments: [ ]
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -420,13 +420,15 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]   paramNameByAnnotation: first
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    functionTypeParameterName: "first"
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=String]
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]   paramNameByAnnotation: second
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    functionTypeParameterName: "second"
                     TYPE_REFERENCE
                       NULLABLE_TYPE
                         USER_TYPE

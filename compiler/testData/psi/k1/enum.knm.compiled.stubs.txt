@@ -61,10 +61,10 @@ FILE[kind=File[packageFqName=a.b.c.test.enum]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-            initializer: 1
+            constantInitializer: 1
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-                valueArguments: ()
+                valueArguments: [ ]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE

@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=CommentsBindingInLambdaKt]]
+  facadeFqName: CommentsBindingInLambdaKt
+  partSimpleName: "CommentsBindingInLambdaKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=la1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=la1]

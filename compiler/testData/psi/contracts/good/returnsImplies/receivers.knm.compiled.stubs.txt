@@ -13,7 +13,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=myRequireNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myRequireNotNull]
-    effect:Returns(WILDCARD) -> param(-1) != null
+    contract: [ effect:Returns(WILDCARD) -> param(-1) != null ]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       NULLABLE_TYPE

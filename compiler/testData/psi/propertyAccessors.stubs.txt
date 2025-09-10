@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
+  facadeFqName: PropertyAccessorsKt
+  partSimpleName: "PropertyAccessorsKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=privateSetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=privateSetter]

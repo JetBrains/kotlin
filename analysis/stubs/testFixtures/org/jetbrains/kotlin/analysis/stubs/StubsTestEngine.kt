@@ -12,7 +12,6 @@ import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.STUB_TO_STRING_PREFIX
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.TestServices
@@ -42,19 +41,7 @@ abstract class StubsTestEngine {
     /**
      * String representation of the given [KotlinFileStubImpl].
      */
-    fun render(stub: KotlinFileStubImpl): String {
-        val treeStr = extractAdditionalStubInfo(stub)
-
-        // Nodes are stored in form "NodeType:Node" and have too many repeating information for Kotlin stubs
-        // Remove all repeating information (See KotlinStubBaseImpl.toString())
-        return treeStr.lines().joinToString(separator = "\n", postfix = "\n") {
-            if (it.contains(STUB_TO_STRING_PREFIX)) {
-                it.takeWhile(Char::isWhitespace) + it.substringAfter(STUB_TO_STRING_PREFIX)
-            } else {
-                it
-            }
-        }.replace(", [", "[")
-    }
+    fun render(stub: KotlinFileStubImpl): String = extractAdditionalStubInfo(stub)
 
     open val additionalDirectives: List<DirectivesContainer> get() = emptyList()
 

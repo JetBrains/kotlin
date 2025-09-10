@@ -1,4 +1,6 @@
 FILE[kind=Facade[packageFqName=<root>, facadeFqName=UpdateOperationKt]]
+  facadeFqName: UpdateOperationKt
+  partSimpleName: "UpdateOperationKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Pair, fqName=Pair, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Pair, superNames=[]]
