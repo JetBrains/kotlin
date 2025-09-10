@@ -94,7 +94,6 @@ private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
     entry.entries.mapTo(nestedElements) { childEntry ->
         val prettyName = when (val childName = childEntry.name) {
             IrKotlinLibraryLayout.IR_FILES_FILE_NAME -> "IR files"
-            IrKotlinLibraryLayout.IR_FILE_ENTRIES_FILE_NAME -> "IR file entries"
             IrKotlinLibraryLayout.IR_DECLARATIONS_FILE_NAME -> "IR declarations"
             IrKotlinLibraryLayout.IR_BODIES_FILE_NAME -> "IR bodies"
             IrKotlinLibraryLayout.IR_TYPES_FILE_NAME -> "IR types"
