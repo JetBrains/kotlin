@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
-import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsNativeInvokeChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonNativeInvokeChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
 
 object WasmBaseDeclarationCheckers : DeclarationCheckers() {
@@ -44,7 +44,7 @@ object WasmJsDeclarationCheckers : DeclarationCheckers() {
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
-            FirJsNativeInvokeChecker,
+            FirWebCommonNativeInvokeChecker,
         )
 }
 
