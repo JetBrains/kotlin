@@ -36417,6 +36417,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantAAResolve.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops.kt")
+      public void testImplicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops() {
+        runTest("compiler/testData/diagnostics/tests/resolve/implicitPropertyTypeThatMakesBehaviorOrderDependantComplexLoops.kt");
+      }
+
+      @Test
       @TestMetadata("implicitReceiverProperty.kt")
       public void testImplicitReceiverProperty() {
         runTest("compiler/testData/diagnostics/tests/resolve/implicitReceiverProperty.kt");
