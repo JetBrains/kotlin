@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitPropertyTypeMakesBehaviorOrderDependant
 import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -119,15 +120,15 @@ internal class FirInvokeResolveTowerExtension(
     }
 
     /**
-     * Let we have a call if a form of "x.f()" or "f()"
+     * Let us having a call in the form of `x.f()` or `f()`
      *
-     * This method enqueues a task (based on runResolutionForInvokeReceiverVariable) that for each successful property enqueues another task
-     * that tries to resolve "f()" call itself
+     * This method enqueues a task (based on [runResolutionForInvokeReceiverVariable]) that for each successful property enqueues another task
+     * that tries to resolve `f()` call itself
      *
-     * @param info describes whole "x.f()" or "f()"
-     * @param invokeReceiverInfo describes "x.f" or "f" variable (in case of no-receiver call or in case of resolving invokeExtension with "x")
-     * @param invokeBuiltinExtensionMode is true only when the original call has a form "x.f()" and invokeReceiverInfo is "f"
-     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver ("x.f" or "f") on the given FirTowerResolveTask
+     * @param info describes the whole `x.f()` or `f()`
+     * @param invokeReceiverInfo describes `x.f` or `f` variable (in case of no-receiver call or in case of resolving invokeExtension with `x`)
+     * @param invokeBuiltinExtensionMode is true only when the original call has a form `x.f()` and invokeReceiverInfo is `f`
+     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver (`x.f` or `f`) on the given FirTowerResolveTask
      */
     private inline fun enqueueInvokeReceiverTask(
         info: CallInfo,
@@ -149,6 +150,7 @@ internal class FirInvokeResolveTowerExtension(
                     receiverGroup = towerGroup,
                     collector
                 )
+                collector.forwardedDiagnostics().forEach { candidateFactoriesAndCollectors.resultCollector.addForwardedDiagnostic(it) }
                 collector.newDataSet()
             }
         )
@@ -164,12 +166,18 @@ internal class FirInvokeResolveTowerExtension(
         collector: CandidateCollector
     ) {
         for (invokeReceiverCandidate in collector.bestCandidates()) {
-            val symbol = invokeReceiverCandidate.symbol
-            if (symbol !is FirCallableSymbol<*> && symbol !is FirClassLikeSymbol<*>) continue
-
-            val isExtensionFunctionType =
-                symbol is FirCallableSymbol<*> &&
-                        components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
+            val isExtensionFunctionType = when (val symbol = invokeReceiverCandidate.symbol) {
+                is FirCallableSymbol<*> -> {
+                    checkImplicitPropertyTypeMakesBehaviorOrderDependant(symbol, info, collector)
+                    components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
+                }
+                is FirClassLikeSymbol<*> -> {
+                    false
+                }
+                else -> {
+                    continue
+                }
+            }
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
@@ -209,6 +217,36 @@ internal class FirInvokeResolveTowerExtension(
                 receiverGroup
             )
         }
+    }
+
+    /**
+     * The diagnostic is dedicated to warn about code that can be resolved differently depending on declaration order (see KT-76240)
+     */
+    private fun checkImplicitPropertyTypeMakesBehaviorOrderDependant(
+        symbol: FirCallableSymbol<*>,
+        callInfo: CallInfo,
+        collector: CandidateCollector,
+    ) {
+        // The diagnostic is relevant only for properties because functions are not relevant in terms of possible invoke call resolution.
+        if (symbol !is FirPropertySymbol) return
+
+        // If the return type is not implicit, the resolving of the property has already been finished successfully.
+        if (symbol.fir.returnTypeRef !is FirImplicitTypeRef) return
+
+        // Local properties don't cause recursive problems
+        // because it's not possible to reference a declaration that are declared below a given local declaration
+        if (symbol.isLocal) return
+
+        // The call site without an explicit receiver can't cause the warning.
+        // In the case of nonnull `explicitReceiver`, the resolver is not trying to treat a property call as an invoke function call,
+        // and a recursive problem error is always reported on a function call site if it exists.
+        if (callInfo.explicitReceiver == null) return
+
+        // Resolving to the property from a call site in its body can cause a recursive problem.
+        // However, the declaration order in this case is trivial, and it can't affect resolution.
+        if (context.bodyResolveContext.containerIfAny?.symbol == symbol) return
+
+        collector.addForwardedDiagnostic(ImplicitPropertyTypeMakesBehaviorOrderDependant(symbol))
     }
 
     private fun enqueueResolverTasksForInvoke(

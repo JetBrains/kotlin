@@ -456,6 +456,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SelfCallInNestedObjectConstructorError::class
     }
 
+    interface ImplicitPropertyTypeMakesBehaviorOrderDependant : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = ImplicitPropertyTypeMakesBehaviorOrderDependant::class
+        val property: KaVariableSymbol
+    }
+
     interface SuperIsNotAnExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

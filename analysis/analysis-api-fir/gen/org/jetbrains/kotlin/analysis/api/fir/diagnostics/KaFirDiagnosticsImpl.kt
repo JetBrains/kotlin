@@ -533,6 +533,12 @@ internal class SelfCallInNestedObjectConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SelfCallInNestedObjectConstructorError
 
+internal class ImplicitPropertyTypeMakesBehaviorOrderDependantImpl(
+    override val property: KaVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ImplicitPropertyTypeMakesBehaviorOrderDependant
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -12,7 +12,7 @@ val Int.p: String
 
 class Foo {
     val f = f()
-    fun f() = 42.f() // New warning even if `f` is declared above and seems like resolved.
+    fun f() = 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() // New warning even if `f` is declared above and seems like resolved.
 
     val p = p()
     fun p() = 42.p // No warning because there is no attempt to resolve to an invoke call
@@ -21,7 +21,7 @@ class Foo {
 fun String.g(): Boolean = false
 
 class Bar {
-    fun g() = "s2".g() // New warning
+    fun g() = "s2".<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>g<!>() // New warning
     val g = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>g()<!>
 }
 
