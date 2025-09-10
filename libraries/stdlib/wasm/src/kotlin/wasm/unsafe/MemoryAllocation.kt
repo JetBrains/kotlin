@@ -8,6 +8,7 @@ package kotlin.wasm.unsafe
 import kotlin.wasm.internal.WasmOp
 import kotlin.wasm.internal.implementedAsIntrinsic
 import kotlin.contracts.*
+import kotlin.internal.DoNotInlineOnFirstStage
 
 /**
  * WebAssembly linear memory allocator.
@@ -48,6 +49,7 @@ public abstract class MemoryAllocator {
  * WARNING! Accessing the allocator outside of the [block] scope will throw [IllegalStateException].
  */
 @UnsafeWasmMemoryApi
+@DoNotInlineOnFirstStage
 public inline fun <T> withScopedMemoryAllocator(
     block: (allocator: MemoryAllocator) -> T
 ): T {

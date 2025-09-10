@@ -171,6 +171,7 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
             implementAsIntrinsic(thisKind, methodName)
         } else if (thisKind == PrimitiveType.LONG) {
             modifySignature { isInline = true }
+            annotations += "kotlin.internal.DoNotInlineOnFirstStage"
             "wasm_i64_${methodName.toWasmOperator().lowercase()}(this, ${parameterName}.toLong())".setAsExpressionBody()
         }
     }

@@ -8,6 +8,7 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.*
+import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @PublishedApi
@@ -28,10 +29,12 @@ internal fun <T> interceptContinuationIfNeeded(
 
 @UsedFromCompilerGeneratedCode
 @PublishedApi
+@DoNotInlineOnFirstStage
 internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
 @UsedFromCompilerGeneratedCode
 @PublishedApi
+@DoNotInlineOnFirstStage
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
 

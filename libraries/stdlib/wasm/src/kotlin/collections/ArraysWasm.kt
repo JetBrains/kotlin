@@ -5,6 +5,8 @@
 
 package kotlin.collections
 
+import kotlin.internal.DoNotInlineOnFirstStage
+
 /**
  * Returns a *typed* array containing all the elements of this collection.
  *
@@ -13,6 +15,7 @@ package kotlin.collections
  * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
 @kotlin.internal.InlineOnly
+@DoNotInlineOnFirstStage
 public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
 @Suppress("UNCHECKED_CAST")
