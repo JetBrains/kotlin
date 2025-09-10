@@ -60,6 +60,36 @@ class Arrays {
             val sameArray = nonEmptyArray.ifEmpty { arrayOf(2) }
             assertTrue(nonEmptyArray === sameArray)
         }
+
+        @Sample
+        fun getOrElse() {
+            val emptyArray: Array<Any> = emptyArray()
+            assertPrints(emptyArray.getOrElse(0) { "default" }, "default")
+
+            val array = arrayOf(1)
+            assertPrints(array.getOrElse(0) { 0 }, "1")
+            assertPrints(array.getOrElse(-1) { 0 }, "0")
+            assertPrints(array.getOrElse(0) { "default" }, "1")
+            assertPrints(array.getOrElse(-1) { "default" }, "default")
+
+            // arrays of primitive types
+            val intArray = intArrayOf(1, 2, 3)
+            assertPrints(intArray.getOrElse(0) { 0 }, "1")
+            assertPrints(intArray.getOrElse(-1) { 0 }, "0")
+
+            val booleanArray = booleanArrayOf(true, false)
+            assertPrints(booleanArray.getOrElse(0) { false }, "true")
+            assertPrints(booleanArray.getOrElse(-1) { false }, "false")
+
+            val charArray = charArrayOf('a', 'b', 'c')
+            assertPrints(charArray.getOrElse(0) { 'z' }, "a")
+            assertPrints(charArray.getOrElse(-1) { 'z' }, "z")
+
+            // arrays of unsigned types
+            val uIntArray = uintArrayOf(1u, 2u, 3u)
+            assertPrints(uIntArray.getOrElse(0) { 10u }, "1")
+            assertPrints(uIntArray.getOrElse(-1) { 10u }, "10")
+        }
     }
 
     class Transformations {
