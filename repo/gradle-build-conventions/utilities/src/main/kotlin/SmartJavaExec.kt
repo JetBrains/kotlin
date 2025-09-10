@@ -5,7 +5,9 @@
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 
@@ -54,12 +56,15 @@ private fun Project.registerJarTaskForJavaExec(
     }
 
     javaExec.configure {
-        dependsOn(jarTask)
+        inputs.files(jarTask.map { it.outputs.files })
+            .withPropertyName("jarTaskOutput")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+
+        inputs.files(classpath)
+            .withPropertyName("classpathToExecute")
+            .withNormalizer(ClasspathNormalizer::class.java)
+
         this.mainClass.set(mainClass)
-        this.classpath = objects.fileCollection().from(
-            {
-                jarTask.get().outputs.files
-            }
-        )
+        this.classpath = objects.fileCollection().from(jarTask.map { it.outputs.files })
     }
 }
