@@ -1640,7 +1640,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNSUPPORTED_COLLECTION_LITERAL_TYPE,
-            "No operator ''of'' is defined for expected type."
+            "No 'of' operator is defined for expected type."
         )
 
         // Context parameters resolution
