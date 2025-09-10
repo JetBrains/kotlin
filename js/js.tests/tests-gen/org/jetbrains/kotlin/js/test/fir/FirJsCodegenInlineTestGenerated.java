@@ -135,6 +135,12 @@ public class FirJsCodegenInlineTestGenerated extends AbstractFirJsCodegenInlineT
     }
 
     @Test
+    @TestMetadata("capturedLocalFunReflectionCrossModule.kt")
+    public void testCapturedLocalFunReflectionCrossModule() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunReflectionCrossModule.kt");
+    }
+
+    @Test
     @TestMetadata("capturedLocalFunTwice.kt")
     public void testCapturedLocalFunTwice() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunTwice.kt");
@@ -1212,12 +1218,6 @@ public class FirJsCodegenInlineTestGenerated extends AbstractFirJsCodegenInlineT
     @TestMetadata("kt69470.kt")
     public void testKt69470() {
       runTest("compiler/testData/codegen/boxInline/callableReference/kt69470.kt");
-    }
-
-    @Test
-    @TestMetadata("kt78537.kt")
-    public void testKt78537() {
-      runTest("compiler/testData/codegen/boxInline/callableReference/kt78537.kt");
     }
 
     @Test
