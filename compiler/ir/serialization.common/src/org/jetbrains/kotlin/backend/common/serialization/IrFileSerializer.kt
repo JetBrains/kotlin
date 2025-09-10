@@ -1424,7 +1424,11 @@ open class IrFileSerializer(
     ): Int {
         val proto = serializeFileEntry(entry, includeLineStartOffsets, relevantLinesRange)
         return protoIrFileEntryMap.getOrPut(
-            ProtoFileEntryDeduplicationKey(proto.name, proto.lineStartOffsetList, proto.firstRelevantLineIndex)
+            ProtoFileEntryDeduplicationKey(
+                proto.name,
+                if (proto.lineStartOffsetDeltaCount > 0) proto.lineStartOffsetDeltaList else proto.lineStartOffsetList,
+                proto.firstRelevantLineIndex
+            )
         ) {
             protoIrFileEntryArray.add(proto)
             protoIrFileEntryArray.size - 1
@@ -1441,7 +1445,17 @@ open class IrFileSerializer(
             .applyIf(includeLineStartOffsets) {
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
-                addAllLineStartOffset(getRelevantOffsets(entry, relevantLinesRange))
+                val lineOffsets = getRelevantOffsets(entry, relevantLinesRange)
+                if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3)) {
+                    var lastOffset = 0
+                    for (offset in lineOffsets) {
+                        addLineStartOffsetDelta(offset - lastOffset)
+                        lastOffset = offset
+                    }
+                } else {
+                    addAllLineStartOffset(lineOffsets)
+                }
+                this
             }
             .build()
 

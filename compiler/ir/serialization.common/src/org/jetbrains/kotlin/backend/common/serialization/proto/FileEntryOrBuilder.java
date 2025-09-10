@@ -23,23 +23,72 @@ public interface FileEntryOrBuilder extends
 
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * Before 2.3.0: Store the absolute offset of each line.
+   * </pre>
    */
   java.util.List<java.lang.Integer> getLineStartOffsetList();
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * Before 2.3.0: Store the absolute offset of each line.
+   * </pre>
    */
   int getLineStartOffsetCount();
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * Before 2.3.0: Store the absolute offset of each line.
+   * </pre>
    */
   int getLineStartOffset(int index);
 
   /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  java.util.List<java.lang.Integer> getLineStartOffsetDeltaList();
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  int getLineStartOffsetDeltaCount();
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  int getLineStartOffsetDelta(int index);
+
+  /**
    * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   *
+   * <pre>
+   * subsequent entries are offsets relative to the previous line (deltas).
+   * Effectively, each entry encodes the length of the previous line.
+   * This is a size optimization, see KT-80866.
+   * </pre>
    */
   boolean hasFirstRelevantLineIndex();
   /**
    * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   *
+   * <pre>
+   * subsequent entries are offsets relative to the previous line (deltas).
+   * Effectively, each entry encodes the length of the previous line.
+   * This is a size optimization, see KT-80866.
+   * </pre>
    */
   int getFirstRelevantLineIndex();
 }

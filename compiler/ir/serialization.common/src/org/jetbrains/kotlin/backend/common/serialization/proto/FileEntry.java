@@ -85,6 +85,27 @@ public final class FileEntry extends
             firstRelevantLineIndex_ = input.readInt32();
             break;
           }
+          case 40: {
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              lineStartOffsetDelta_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000004;
+            }
+            lineStartOffsetDelta_.add(input.readInt32());
+            break;
+          }
+          case 42: {
+            int length = input.readRawVarint32();
+            int limit = input.pushLimit(length);
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+              lineStartOffsetDelta_ = new java.util.ArrayList<java.lang.Integer>();
+              mutable_bitField0_ |= 0x00000004;
+            }
+            while (input.getBytesUntilLimit() > 0) {
+              lineStartOffsetDelta_.add(input.readInt32());
+            }
+            input.popLimit(limit);
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -95,6 +116,9 @@ public final class FileEntry extends
     } finally {
       if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
         lineStartOffset_ = java.util.Collections.unmodifiableList(lineStartOffset_);
+      }
+      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        lineStartOffsetDelta_ = java.util.Collections.unmodifiableList(lineStartOffsetDelta_);
       }
       try {
         unknownFieldsCodedOutput.flush();
@@ -168,6 +192,10 @@ public final class FileEntry extends
   private java.util.List<java.lang.Integer> lineStartOffset_;
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * Before 2.3.0: Store the absolute offset of each line.
+   * </pre>
    */
   public java.util.List<java.lang.Integer>
       getLineStartOffsetList() {
@@ -175,28 +203,83 @@ public final class FileEntry extends
   }
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * Before 2.3.0: Store the absolute offset of each line.
+   * </pre>
    */
   public int getLineStartOffsetCount() {
     return lineStartOffset_.size();
   }
   /**
    * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+   *
+   * <pre>
+   * Before 2.3.0: Store the absolute offset of each line.
+   * </pre>
    */
   public int getLineStartOffset(int index) {
     return lineStartOffset_.get(index);
   }
   private int lineStartOffsetMemoizedSerializedSize = -1;
 
+  public static final int LINE_START_OFFSET_DELTA_FIELD_NUMBER = 5;
+  private java.util.List<java.lang.Integer> lineStartOffsetDelta_;
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  public java.util.List<java.lang.Integer>
+      getLineStartOffsetDeltaList() {
+    return lineStartOffsetDelta_;
+  }
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  public int getLineStartOffsetDeltaCount() {
+    return lineStartOffsetDelta_.size();
+  }
+  /**
+   * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+   *
+   * <pre>
+   * After 2.3.0: The first element is the absolute offset of the first line,
+   * </pre>
+   */
+  public int getLineStartOffsetDelta(int index) {
+    return lineStartOffsetDelta_.get(index);
+  }
+  private int lineStartOffsetDeltaMemoizedSerializedSize = -1;
+
   public static final int FIRST_RELEVANT_LINE_INDEX_FIELD_NUMBER = 3;
   private int firstRelevantLineIndex_;
   /**
    * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   *
+   * <pre>
+   * subsequent entries are offsets relative to the previous line (deltas).
+   * Effectively, each entry encodes the length of the previous line.
+   * This is a size optimization, see KT-80866.
+   * </pre>
    */
   public boolean hasFirstRelevantLineIndex() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
    * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+   *
+   * <pre>
+   * subsequent entries are offsets relative to the previous line (deltas).
+   * Effectively, each entry encodes the length of the previous line.
+   * This is a size optimization, see KT-80866.
+   * </pre>
    */
   public int getFirstRelevantLineIndex() {
     return firstRelevantLineIndex_;
@@ -205,6 +288,7 @@ public final class FileEntry extends
   private void initFields() {
     name_ = "";
     lineStartOffset_ = java.util.Collections.emptyList();
+    lineStartOffsetDelta_ = java.util.Collections.emptyList();
     firstRelevantLineIndex_ = 0;
   }
   private byte memoizedIsInitialized = -1;
@@ -237,6 +321,13 @@ public final class FileEntry extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt32(3, firstRelevantLineIndex_);
     }
+    if (getLineStartOffsetDeltaList().size() > 0) {
+      output.writeRawVarint32(42);
+      output.writeRawVarint32(lineStartOffsetDeltaMemoizedSerializedSize);
+    }
+    for (int i = 0; i < lineStartOffsetDelta_.size(); i++) {
+      output.writeInt32NoTag(lineStartOffsetDelta_.get(i));
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -267,6 +358,20 @@ public final class FileEntry extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(3, firstRelevantLineIndex_);
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < lineStartOffsetDelta_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(lineStartOffsetDelta_.get(i));
+      }
+      size += dataSize;
+      if (!getLineStartOffsetDeltaList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      lineStartOffsetDeltaMemoizedSerializedSize = dataSize;
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -366,8 +471,10 @@ public final class FileEntry extends
       bitField0_ = (bitField0_ & ~0x00000001);
       lineStartOffset_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
-      firstRelevantLineIndex_ = 0;
+      lineStartOffsetDelta_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
+      firstRelevantLineIndex_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -400,7 +507,12 @@ public final class FileEntry extends
         bitField0_ = (bitField0_ & ~0x00000002);
       }
       result.lineStartOffset_ = lineStartOffset_;
-      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        lineStartOffsetDelta_ = java.util.Collections.unmodifiableList(lineStartOffsetDelta_);
+        bitField0_ = (bitField0_ & ~0x00000004);
+      }
+      result.lineStartOffsetDelta_ = lineStartOffsetDelta_;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000002;
       }
       result.firstRelevantLineIndex_ = firstRelevantLineIndex_;
@@ -422,6 +534,16 @@ public final class FileEntry extends
         } else {
           ensureLineStartOffsetIsMutable();
           lineStartOffset_.addAll(other.lineStartOffset_);
+        }
+        
+      }
+      if (!other.lineStartOffsetDelta_.isEmpty()) {
+        if (lineStartOffsetDelta_.isEmpty()) {
+          lineStartOffsetDelta_ = other.lineStartOffsetDelta_;
+          bitField0_ = (bitField0_ & ~0x00000004);
+        } else {
+          ensureLineStartOffsetDeltaIsMutable();
+          lineStartOffsetDelta_.addAll(other.lineStartOffsetDelta_);
         }
         
       }
@@ -545,6 +667,10 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public java.util.List<java.lang.Integer>
         getLineStartOffsetList() {
@@ -552,18 +678,30 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public int getLineStartOffsetCount() {
       return lineStartOffset_.size();
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public int getLineStartOffset(int index) {
       return lineStartOffset_.get(index);
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public Builder setLineStartOffset(
         int index, int value) {
@@ -574,6 +712,10 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public Builder addLineStartOffset(int value) {
       ensureLineStartOffsetIsMutable();
@@ -583,6 +725,10 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public Builder addAllLineStartOffset(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -594,6 +740,10 @@ public final class FileEntry extends
     }
     /**
      * <code>repeated int32 line_start_offset = 2 [packed = true];</code>
+     *
+     * <pre>
+     * Before 2.3.0: Store the absolute offset of each line.
+     * </pre>
      */
     public Builder clearLineStartOffset() {
       lineStartOffset_ = java.util.Collections.emptyList();
@@ -602,33 +752,151 @@ public final class FileEntry extends
       return this;
     }
 
+    private java.util.List<java.lang.Integer> lineStartOffsetDelta_ = java.util.Collections.emptyList();
+    private void ensureLineStartOffsetDeltaIsMutable() {
+      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        lineStartOffsetDelta_ = new java.util.ArrayList<java.lang.Integer>(lineStartOffsetDelta_);
+        bitField0_ |= 0x00000004;
+       }
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public java.util.List<java.lang.Integer>
+        getLineStartOffsetDeltaList() {
+      return java.util.Collections.unmodifiableList(lineStartOffsetDelta_);
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public int getLineStartOffsetDeltaCount() {
+      return lineStartOffsetDelta_.size();
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public int getLineStartOffsetDelta(int index) {
+      return lineStartOffsetDelta_.get(index);
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public Builder setLineStartOffsetDelta(
+        int index, int value) {
+      ensureLineStartOffsetDeltaIsMutable();
+      lineStartOffsetDelta_.set(index, value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public Builder addLineStartOffsetDelta(int value) {
+      ensureLineStartOffsetDeltaIsMutable();
+      lineStartOffsetDelta_.add(value);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public Builder addAllLineStartOffsetDelta(
+        java.lang.Iterable<? extends java.lang.Integer> values) {
+      ensureLineStartOffsetDeltaIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, lineStartOffsetDelta_);
+      
+      return this;
+    }
+    /**
+     * <code>repeated int32 line_start_offset_delta = 5 [packed = true];</code>
+     *
+     * <pre>
+     * After 2.3.0: The first element is the absolute offset of the first line,
+     * </pre>
+     */
+    public Builder clearLineStartOffsetDelta() {
+      lineStartOffsetDelta_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000004);
+      
+      return this;
+    }
+
     private int firstRelevantLineIndex_ ;
     /**
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     *
+     * <pre>
+     * subsequent entries are offsets relative to the previous line (deltas).
+     * Effectively, each entry encodes the length of the previous line.
+     * This is a size optimization, see KT-80866.
+     * </pre>
      */
     public boolean hasFirstRelevantLineIndex() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     *
+     * <pre>
+     * subsequent entries are offsets relative to the previous line (deltas).
+     * Effectively, each entry encodes the length of the previous line.
+     * This is a size optimization, see KT-80866.
+     * </pre>
      */
     public int getFirstRelevantLineIndex() {
       return firstRelevantLineIndex_;
     }
     /**
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     *
+     * <pre>
+     * subsequent entries are offsets relative to the previous line (deltas).
+     * Effectively, each entry encodes the length of the previous line.
+     * This is a size optimization, see KT-80866.
+     * </pre>
      */
     public Builder setFirstRelevantLineIndex(int value) {
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
       firstRelevantLineIndex_ = value;
       
       return this;
     }
     /**
      * <code>optional int32 first_relevant_line_index = 3 [default = 0];</code>
+     *
+     * <pre>
+     * subsequent entries are offsets relative to the previous line (deltas).
+     * Effectively, each entry encodes the length of the previous line.
+     * This is a size optimization, see KT-80866.
+     * </pre>
      */
     public Builder clearFirstRelevantLineIndex() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000008);
       firstRelevantLineIndex_ = 0;
       
       return this;
