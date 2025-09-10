@@ -42,7 +42,7 @@ class KotlinFunctionStubImpl(
     @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {
         val effects: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = contract
-        dataStream.writeVarInt(effects?.size ?: 0)
+        dataStream.writeVarInt(effects?.size?.plus(1) ?: 0)
         val visitor = KotlinContractSerializationVisitor(dataStream)
         effects?.forEach { it.accept(visitor, null) }
     }
@@ -63,14 +63,19 @@ class KotlinFunctionStubImpl(
     )
 
     companion object {
-        fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>> {
+        fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? {
             val effects = mutableListOf<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>()
             val count: Int = dataStream.readVarInt()
-            for (i in 0 until count) {
+            for (i in 0 until count - 1) {
                 val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[dataStream.readVarInt()]
                 effects.add(effectType.deserialize(dataStream))
             }
-            return effects
+
+            return when {
+                count == 0 -> null
+                effects.isEmpty() -> emptyList()
+                else -> effects
+            }
         }
     }
 }
