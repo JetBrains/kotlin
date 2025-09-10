@@ -943,12 +943,13 @@ fun IrFunction.copyValueParametersToStatic(
     source: IrFunction,
     origin: IrDeclarationOrigin,
     dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
+    customTypeParameterMapping: Map<IrTypeParameter, IrTypeParameter>? = null,
 ) {
     val target = this
     assert(target.parameters.isEmpty())
 
     val parameterMapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
-    val typeParameterMapping = source.typeParameters.zip(target.typeParameters).toMap()
+    val typeParameterMapping = customTypeParameterMapping ?: source.typeParameters.zip(target.typeParameters).toMap()
     target.parameters += source.parameters.map { param ->
         val name = when (param.kind) {
             IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
@@ -968,7 +969,8 @@ fun IrFunction.copyValueParametersToStatic(
 
         val remappedType = type.remapTypeParameters(
             (param.parent as IrTypeParametersContainer).classIfConstructor,
-            target.classIfConstructor
+            target.classIfConstructor,
+            typeParameterMapping
         )
         param.copyTo(
             target,
