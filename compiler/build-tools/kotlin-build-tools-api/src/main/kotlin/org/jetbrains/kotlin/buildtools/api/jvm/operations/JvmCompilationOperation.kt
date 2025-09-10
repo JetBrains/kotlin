@@ -102,5 +102,20 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
+
+        /**
+         * Controls at which logging level to display the command line arguments passed to the compiler.
+         *
+         * Defaults to [CompilerArgumentsLogLevel.DEBUG].
+         */
+        @JvmField
+        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
+    }
+
+    public enum class CompilerArgumentsLogLevel {
+        ERROR,
+        WARNING,
+        INFO,
+        DEBUG;
     }
 }
