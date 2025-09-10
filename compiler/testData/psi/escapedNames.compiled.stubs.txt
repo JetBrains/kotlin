@@ -8,6 +8,7 @@ Annotation Class.class:
     CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: (allowedTargets = [AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPEALIAS, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY])
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -39,6 +40,7 @@ Enum Class.class:
     CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum Class, superNames=[Enum]]
       MODIFIER_LIST[public final enum]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -70,6 +72,7 @@ Enum Class.class:
         ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -115,6 +118,7 @@ Top Level Class.class:
     CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Top Level Class, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -149,7 +153,7 @@ Top Level Class.class:
         PROPERTY[fqName=one two.three four.Top Level Class.member property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=member property]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
-            USER_TYPE
+            USER_TYPE    abbreviatedType: one two.three four.Top Level Class.Member Level TypeAlias<Type Parameter>
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=one two]
@@ -198,7 +202,7 @@ Top Level Class.class:
             CONTEXT_RECEIVER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=context name]
                 TYPE_REFERENCE
-                  USER_TYPE
+                  USER_TYPE    abbreviatedType: one two.three four.Top Level Class.Member Level TypeAlias<Type Parameter>
                     USER_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=one two]
@@ -240,6 +244,7 @@ Top Level Class.class:
         TYPEALIAS[classId=one two/three four/Top Level Class.Member Level TypeAlias, fqName=one two.three four.Top Level Class.Member Level TypeAlias, isTopLevel=false, name=Member Level TypeAlias]
           MODIFIER_LIST[public]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

@@ -31,6 +31,7 @@ TopLevelMembersAnnotatedKt.class:
     PROPERTY[fqName=a.b.c.topLevelMembersAnnotated.i, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=i]
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -42,6 +43,7 @@ TopLevelMembersAnnotatedKt.class:
                   REFERENCE_EXPRESSION[referencedName=f]
                 REFERENCE_EXPRESSION[referencedName=a]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -60,6 +62,7 @@ TopLevelMembersAnnotatedKt.class:
     FUN[fqName=a.b.c.topLevelMembersAnnotated.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -71,6 +74,7 @@ TopLevelMembersAnnotatedKt.class:
                   REFERENCE_EXPRESSION[referencedName=f]
                 REFERENCE_EXPRESSION[referencedName=a]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -85,6 +89,7 @@ TopLevelMembersAnnotatedKt.class:
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -96,6 +101,7 @@ TopLevelMembersAnnotatedKt.class:
                       REFERENCE_EXPRESSION[referencedName=f]
                     REFERENCE_EXPRESSION[referencedName=a]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

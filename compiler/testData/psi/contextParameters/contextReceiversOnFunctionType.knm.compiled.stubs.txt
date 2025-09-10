@@ -46,6 +46,7 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -164,6 +165,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        valueArguments: (allowedTargets = [AnnotationTarget.TYPE])
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

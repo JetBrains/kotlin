@@ -5,6 +5,7 @@
     CLASS[classId=/Anno1, fqName=Anno1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno1, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: (allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER])
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -33,6 +34,7 @@
     CLASS[classId=/Anno2, fqName=Anno2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno2, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: (allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER])
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -82,11 +84,13 @@
         TYPE_PARAMETER[fqName=null, name=T]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno1]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Anno1]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno2]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

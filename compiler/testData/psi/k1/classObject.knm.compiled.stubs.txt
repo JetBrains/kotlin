@@ -14,6 +14,7 @@ FILE[kind=File[packageFqName=test.class_object]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=test.class_object.ClassObject.Companion.j, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
+            initializer: 0
             MODIFIER_LIST[public final]
             TYPE_REFERENCE
               USER_TYPE
@@ -42,6 +43,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
                   PROPERTY[fqName=test.class_object.ClassObject.Companion.A.B.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                    initializer: 0
                     MODIFIER_LIST[public final]
                     TYPE_REFERENCE
                       USER_TYPE
@@ -58,6 +60,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=test.class_object.ClassObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+        initializer: 1
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE
@@ -101,6 +104,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                             MODIFIER_LIST[public companion]
                             CLASS_BODY
                               PROPERTY[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
+                                initializer: 3
                                 MODIFIER_LIST[public final]
                                 TYPE_REFERENCE
                                   USER_TYPE

@@ -2,6 +2,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
+    effect:Returns(WILDCARD) -> param(0) != null
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]
@@ -17,6 +18,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=test2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test2]
+    effect:Returns(WILDCARD) -> param(0) != null
+    effect:CallsInPlace(param(1), EXACTLY_ONCE)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -41,6 +44,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
+    effect:Returns(TRUE) -> param(0) != null
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]

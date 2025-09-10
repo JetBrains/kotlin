@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ModifierAsSelectorKt]]
   PROPERTY[fqName=z, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=z]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
-      USER_TYPE
+      USER_TYPE    upperBound: java.io.PrintStream?
         USER_TYPE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=java]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 
 fun extractAdditionalStubInfo(stub: StubElement<*>): String {
     val builder = StringBuilder()
-    extractAdditionInfo(stub, builder, 0)
+    extractAdditionInfo(stub, builder, 1)
     return builder.toString()
 }
 
@@ -51,7 +51,7 @@ private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, le
         is KotlinPropertyStubImpl -> {
             val initializer = stub.constantInitializer
             if (initializer != null) {
-                builder.append("\n").append("  ".repeat(level)).append("initializer: ${initializer.value}")
+                builder.append("\n").append("  ".repeat(level)).append("initializer: $initializer")
             }
         }
         is KotlinAnnotationEntryStubImpl -> {
@@ -125,7 +125,10 @@ private fun appendTypeInfo(builder: StringBuilder, typeBean: KotlinTypeBean) {
 }
 
 class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
-    override fun visitConditionalEffectDeclaration(conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+    override fun visitConditionalEffectDeclaration(
+        conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
         conditionalEffect.effect.accept(this, data)
         buffer.append(" -> ")
         conditionalEffect.condition.accept(this, data)
@@ -162,7 +165,10 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         buffer.append(", ${callsEffect.kind})")
     }
 
-    override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>, data: Nothing?) {
+    override fun visitLogicalBinaryOperationContractExpression(
+        binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
         binaryLogicExpression.left.accept(this, data)
         buffer.append(" ${binaryLogicExpression.kind.token} ")
         binaryLogicExpression.right.accept(this, data)
@@ -186,7 +192,10 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         buffer.append(constantReference.name)
     }
 
-    override fun visitValueParameterReference(valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
+    override fun visitValueParameterReference(
+        valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
         buffer.append("param(").append(valueParameterReference.parameterIndex).append(")")
     }
 }
