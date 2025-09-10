@@ -1426,7 +1426,8 @@ open class IrFileSerializer(
         return protoIrFileEntryMap.getOrPut(
             ProtoFileEntryDeduplicationKey(
                 if (proto.hasName()) proto.name else proto.nameOld,
-                proto.lineStartOffsetList, proto.firstRelevantLineIndex
+                if (proto.lineStartOffsetDeltaCount > 0) proto.lineStartOffsetDeltaList else proto.lineStartOffsetList,
+                proto.firstRelevantLineIndex
             )
         ) {
             protoIrFileEntryArray.add(proto)
@@ -1450,7 +1451,17 @@ open class IrFileSerializer(
             .applyIf(includeLineStartOffsets) {
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
-                addAllLineStartOffset(getRelevantOffsets(entry, relevantLinesRange))
+                val lineOffsets = getRelevantOffsets(entry, relevantLinesRange)
+                if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_3)) {
+                    var lastOffset = 0
+                    for (offset in lineOffsets) {
+                        addLineStartOffsetDelta(offset - lastOffset)
+                        lastOffset = offset
+                    }
+                } else {
+                    addAllLineStartOffset(lineOffsets)
+                }
+                this
             }
             .build()
     }

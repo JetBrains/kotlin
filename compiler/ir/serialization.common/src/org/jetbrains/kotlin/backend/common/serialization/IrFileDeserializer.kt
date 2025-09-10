@@ -257,19 +257,31 @@ fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): Ir
     return IrFileImpl(fileEntry, symbol, fqName, module)
 }
 
-internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry =
-    NaiveSourceBasedFileEntryImpl(
+internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry {
+    val lineStartOffsets: IntArray
+    if (fileEntryProto.lineStartOffsetDeltaCount > 0) {
+        lineStartOffsets = IntArray(fileEntryProto.lineStartOffsetDeltaCount)
+        var offset = 0
+        for ((index, delta) in fileEntryProto.lineStartOffsetDeltaList.withIndex()) {
+            offset += delta
+            lineStartOffsets[index] = offset
+        }
+    } else {
+        lineStartOffsets = fileEntryProto.lineStartOffsetList.toIntArray()
+    }
+
+    return NaiveSourceBasedFileEntryImpl(
         name = deserializeFileEntryName(fileEntryProto)!!,
-        lineStartOffsets = fileEntryProto.lineStartOffsetList.toIntArray(),
+        lineStartOffsets = lineStartOffsets,
         firstRelevantLineIndex = fileEntryProto.firstRelevantLineIndex
     )
+}
 
 fun IrLibraryFile.deserializeFileEntryName(fileEntryProto: ProtoFileEntry): String? = when {
     fileEntryProto.hasName() -> string(fileEntryProto.name)
     fileEntryProto.hasNameOld() -> fileEntryProto.nameOld
     else -> null
 }
-
 
 fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
     if (protoFile.hasFileEntryId())
