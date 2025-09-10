@@ -295,14 +295,7 @@ open class IrFileSerializer(
                 ?: error("Given symbol is unbound and have no signature: $symbol")
             symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
             else -> {
-                var symbolOwner = symbol.owner
-
-                // Prefer a real inline function over its prepared copy - the latter is only used store inlinable body,
-                // and only the former has the correct declaration shape (such as parameters) allowing to compute
-                // a valid signature of the function.
-                (symbolOwner as? IrSimpleFunction)?.originalOfErasedTopLevelCopy?.let {
-                    symbolOwner = it
-                }
+                val symbolOwner = symbol.owner
 
                 // Compute the signature:
                 when {
