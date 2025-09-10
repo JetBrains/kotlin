@@ -26625,6 +26625,12 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
       }
 
       @Test
+      @TestMetadata("defaultArgsLoweringWithIntraModuleInliner.kt")
+      public void testDefaultArgsLoweringWithIntraModuleInliner() {
+        runTest("compiler/testData/codegen/box/inline/defaultArgsLoweringWithIntraModuleInliner.kt");
+      }
+
+      @Test
       @TestMetadata("defaultArgsMultipleModules.kt")
       public void testDefaultArgsMultipleModules() {
         runTest("compiler/testData/codegen/box/inline/defaultArgsMultipleModules.kt");
