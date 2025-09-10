@@ -229,10 +229,10 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
  * │   └── protobuf-java-util:3.22.3
  * ├── io.netty
  * │   ├── netty-buffer:*
- * │   ├── netty-codec-http:* → 4.1.118.Final
- * │   ├── netty-codec-http2:* → 4.1.118.Final
- * │   ├── netty-common:* → 4.1.118.Final
- * │   └── netty-handler:* → 4.1.118.Final
+ * │   ├── netty-codec-http:* → 4.1.127.Final
+ * │   ├── netty-codec-http2:* → 4.1.127.Final
+ * │   ├── netty-common:* → 4.1.127.Final
+ * │   └── netty-handler:* → 4.1.127.Final
  * ├── org.apache.commons
  * │   ├── commons-compress:* → 1.27.1
  * │   └── commons-io:* → 2.16.1
@@ -248,6 +248,8 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
  *    - CVE-2024-29025: Remote code execution risk
  *    - CVE-2023-4586: Information disclosure vulnerability
  *    - CVE-2023-34462: Potential denial of service
+ *    - CVE-2025-58056: Inconsistent Interpretation of HTTP Requests
+ *    - CVE-2025-58057: mproper Handling of Highly Compressed Data
  *
  * 3. Bouncy Castle
  *    - CVE-2024-34447: Cryptographic security issue
@@ -271,8 +273,8 @@ configurations.all {
                 "netty-handler-proxy",
             ).contains(requested.name)
         ) {
-            useVersion("4.1.118.Final")
-            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
+            useVersion("4.1.127.Final")
+            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462, CVE-2025-55163, CVE-2025-58056, CVE-2025-58057")
         }
 
         if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {

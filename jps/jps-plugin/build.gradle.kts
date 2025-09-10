@@ -158,8 +158,8 @@ testsJar {}
  *
  * Affected Library:
  * └── io.netty
- *    ├── netty-buffer:* → 4.1.118.Final
- *    └── netty-codec-http2:* → 4.1.118.Final
+ *    ├── netty-buffer:* → 4.1.127.Final
+ *    └── netty-codec-http2:* → 4.1.127.Final
  *
  * Mitigated Vulnerabilities:
  * - CVE-2025-25193: Denial of Service Vulnerability
@@ -167,6 +167,9 @@ testsJar {}
  * - CVE-2024-29025: Remote code execution risk
  * - CVE-2023-4586: Information disclosure vulnerability
  * - CVE-2023-34462: Potential denial of service
+ * - CVE-2025-55163: Resource exhaustion and DDoS
+ * - CVE-2025-58056: Inconsistent Interpretation of HTTP Requests
+ * - CVE-2025-58057: Improper Handling of Highly Compressed Data
  *
  * This configuration overrides versions regardless of the declaring dependency.
  */
@@ -178,8 +181,8 @@ configurations.all {
                 "netty-codec-http2",
             ).contains(requested.name)
         ) {
-            useVersion("4.1.118.Final")
-            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
+            useVersion("4.1.127.Final")
+            because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462, CVE-2025-55163, CVE-2025-58056, CVE-2025-58057")
         }
     }
 }
