@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.decompiler.stub.files
+package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 
-fun extractAdditionalStubInfo(stub: StubElement<*>): String {
+internal fun extractAdditionalStubInfo(stub: KotlinFileStubImpl): String {
     val builder = StringBuilder()
     extractAdditionInfo(stub, builder, 1)
     return builder.toString()

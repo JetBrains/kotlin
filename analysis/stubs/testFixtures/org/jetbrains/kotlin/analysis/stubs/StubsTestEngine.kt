@@ -10,7 +10,6 @@ import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.AbstractStringEnumerator
 import com.intellij.util.io.UnsyncByteArrayOutputStream
-import org.jetbrains.kotlin.analysis.decompiler.stub.files.extractAdditionalStubInfo
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.STUB_TO_STRING_PREFIX
