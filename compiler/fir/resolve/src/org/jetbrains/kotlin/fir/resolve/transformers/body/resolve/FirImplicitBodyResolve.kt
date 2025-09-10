@@ -268,8 +268,12 @@ open class ReturnTypeCalculatorWithJump(
     }
 
 
-    protected fun recursionInImplicitTypeRef(): FirErrorTypeRef = buildErrorTypeRef {
+    protected fun recursionInImplicitTypeRef(declaration: FirCallableDeclaration): FirErrorTypeRef = buildErrorTypeRef {
         diagnostic = ConeSimpleDiagnostic("Recursive implicit type", DiagnosticKind.RecursionInImplicitTypes)
+    }.also {
+        // It also might be useful to use an extended cone diagnostic that will store info about loops
+        // that are encountered during implicit body resolving.
+        implicitBodyResolveComputationSession.calculateAndStoreNonTrivialLoop(declaration.symbol)
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
@@ -280,7 +284,7 @@ open class ReturnTypeCalculatorWithJump(
 
         val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(symbolForStatus)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
-            is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef()
+            is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef(declaration)
             else -> null
         }
 
@@ -393,6 +397,12 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 
 open class ImplicitBodyResolveComputationSession {
     private val implicitBodyResolveStatusMap = hashMapOf<FirCallableSymbol<*>, ImplicitBodyResolveComputationStatus>()
+    private val computingSymbolsStack: MutableList<FirCallableSymbol<*>> = mutableListOf()
+
+    /**
+     * Stores all symbols that belong to a loop of length > 1
+     */
+    private val nonTrivialLoops: MutableSet<FirCallableSymbol<*>> = mutableSetOf()
 
     internal fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
         if (symbol is FirSyntheticPropertySymbol) {
@@ -421,6 +431,7 @@ open class ImplicitBodyResolveComputationSession {
         }
 
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computing
+        computingSymbolsStack.add(symbol)
     }
 
     private fun storeResult(
@@ -436,7 +447,27 @@ open class ImplicitBodyResolveComputationSession {
             "Not FirResolvedTypeRef (${transformedDeclaration.returnTypeRef.render()}) in storeResult for: ${symbol.fir.render()}"
         }
 
+        computingSymbolsStack.removeLast()
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computed(returnTypeRef, transformedDeclaration)
+    }
+
+    /**
+     * Calculates a loop that the declaration of [symbol] forms with other ones and stores it if only it's not trivial (of length > 1)
+     */
+    fun calculateAndStoreNonTrivialLoop(symbol: FirCallableSymbol<*>) {
+        val loopTail = computingSymbolsStack.takeLastWhile { it != symbol }.takeIf { it.isNotEmpty() } ?: return
+
+        nonTrivialLoops.addAll(buildSet {
+            add(symbol)
+            addAll(loopTail)
+        })
+    }
+
+    /**
+     * Returns `true` if only ths [symbol] belongs to a nontrivial loop of length > 1
+     */
+    fun belongToSomeNonTrivialLoop(symbol: FirCallableSymbol<*>): Boolean {
+        return nonTrivialLoops.contains(symbol)
     }
 }
 
