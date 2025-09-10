@@ -1674,12 +1674,19 @@ class LightTreeRawFirExpressionBuilder(
                 VALUE_ARGUMENT_NAME -> identifier = it.asText
                 MUL -> isSpread = true
                 STRING_TEMPLATE -> firExpression = convertStringTemplate(it)
+                EMPTY_VALUE_ARGUMENT -> {
+                    firExpression = buildErrorExpression(
+                        it.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
+                        ConeArgumentIsNotProvided
+                    )
+                }
                 is KtConstantExpressionElementType -> firExpression = convertConstantExpression(it)
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "Argument is absent")
+                else if it.isExpression() -> firExpression = getAsFirExpression(it, "Argument is absent")
             }
         }
         val calculatedFirExpression =
             firExpression ?: buildErrorExpression(valueArgument.toFirSourceElement(), ConeSyntaxDiagnostic("Argument is absent"))
+
         return when {
             identifier != null -> buildNamedArgumentExpression {
                 source = valueArgument.toFirSourceElement()

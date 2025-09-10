@@ -91,6 +91,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val INCORRECT_CHARACTER_LITERAL by error<PsiElement>()
         val EMPTY_CHARACTER_LITERAL by error<PsiElement>()
+        val EMPTY_ARGUMENT by error<PsiElement>()
         val TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL by error<PsiElement>()
         val ILLEGAL_ESCAPE by error<PsiElement>()
         val INT_LITERAL_OUT_OF_RANGE by error<PsiElement>()

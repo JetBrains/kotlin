@@ -190,6 +190,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = EmptyCharacterLiteral::class
     }
 
+    interface EmptyArgument : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = EmptyArgument::class
+    }
+
     interface TooManyCharactersInCharacterLiteral : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TooManyCharactersInCharacterLiteral::class
     }

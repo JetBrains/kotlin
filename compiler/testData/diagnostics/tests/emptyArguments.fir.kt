@@ -17,52 +17,52 @@ fun test() {
     val b = B()
     val c = C()
 
-    asFunc(<!SYNTAX!>,<!> 2, <!NO_VALUE_FOR_PARAMETER!>3)<!>
-    asFunc(1, 2, <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(1, <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!>3,)<!>
-    asFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>3)<!>
-    asFunc(<!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>2)<!>
-    asFunc(1, <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(1, <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(1, 2, <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asFunc(<!SYNTAX!>,<!> 2, <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
+    asFunc(<!EMPTY_ARGUMENT!><!>, 2, 3)
+    asFunc(1, 2, <!EMPTY_ARGUMENT!><!>,)
+    asFunc(1, <!EMPTY_ARGUMENT!><!>, 3,)
+    asFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>,)
+    asFunc(<!EMPTY_ARGUMENT!><!>, <!NO_VALUE_FOR_PARAMETER!><!EMPTY_ARGUMENT!><!>,)<!>
+    asFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, 3)
+    asFunc(<!EMPTY_ARGUMENT!><!>, <!NO_VALUE_FOR_PARAMETER!>2)<!>
+    asFunc(1, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>,)
+    asFunc(1, <!NO_VALUE_FOR_PARAMETER!><!EMPTY_ARGUMENT!><!>,)<!>
+    asFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT, TOO_MANY_ARGUMENTS!><!>,)
+    asFunc(1, 2, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT, TOO_MANY_ARGUMENTS!><!>,)
+    asFunc(<!EMPTY_ARGUMENT!><!>, 2, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT, TOO_MANY_ARGUMENTS!><!>,)
 
-    asVarargFunc(<!SYNTAX!>,<!> 2, 3)
-    asVarargFunc(<!SYNTAX!>,<!> 2, 3,)
-    asVarargFunc(1, <!SYNTAX!>,<!> 3)
-    asVarargFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> 3,)
-    asVarargFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asVarargFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asVarargFunc(<!SYNTAX!>,<!> 2,)
+    asVarargFunc(<!EMPTY_ARGUMENT!><!>, 2, 3)
+    asVarargFunc(<!EMPTY_ARGUMENT!><!>, 2, 3,)
+    asVarargFunc(1, <!EMPTY_ARGUMENT!><!>, 3)
+    asVarargFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, 3,)
+    asVarargFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>,)
+    asVarargFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>,)
+    asVarargFunc(<!EMPTY_ARGUMENT!><!>, 2,)
 
-    asTypedFunc(<!SYNTAX!>,<!> <!ARGUMENT_TYPE_MISMATCH!>b<!>, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>,)<!>
-    asTypedFunc(<!SYNTAX!>,<!> <!ARGUMENT_TYPE_MISMATCH!>b<!>, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>)<!>
-    asTypedFunc(a, <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>,)<!>
-    asTypedFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asTypedFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asTypedFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asTypedFunc(<!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>b<!>,)<!>
-    asTypedFunc(a, b, <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asTypedFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>)<!>
-    asTypedFunc(a, <!SYNTAX!>,<!> <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asTypedFunc(a, b, c, <!SYNTAX!>,<!><!SYNTAX!><!>)
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, b, c,)
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, b, c)
+    asTypedFunc(a, <!EMPTY_ARGUMENT!><!>, c,)
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!NO_VALUE_FOR_PARAMETER!><!EMPTY_ARGUMENT!><!>,)<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>,)
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT, TOO_MANY_ARGUMENTS!><!>,)
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!NO_VALUE_FOR_PARAMETER!>b,)<!>
+    asTypedFunc(a, b, <!EMPTY_ARGUMENT!><!>,)
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, c)
+    asTypedFunc(a, <!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>,)
+    asTypedFunc(a, b, c, <!EMPTY_ARGUMENT, TOO_MANY_ARGUMENTS!><!>,)
 
-    asTypedFunc(a = A(), <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>)<!>
-    asTypedFunc(c = C(), <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!>b = B())<!>
-    asTypedFunc(<!SYNTAX!>,<!> a = A(), <!NO_VALUE_FOR_PARAMETER!>b,)<!>
-    asTypedFunc(<!SYNTAX!>,<!> a, b = B(), c)
-    asTypedFunc(<!SYNTAX!>,<!> b = B(), <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>a<!>, <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>c<!>)<!>
-    asTypedFunc(a = A(), <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>)<!>
-    asTypedFunc(a = A(), <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!>c = C(),)<!>
-    asTypedFunc(a = A(), <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>c<!>,)<!>
-    asTypedFunc(a = A(), <!SYNTAX!>,<!><!SYNTAX!><!>)
-    asTypedFunc(<!SYNTAX!>,<!> a = A(), b = B(), c = C())
-    asTypedFunc(<!SYNTAX!>,<!> a = A(), b, c)
-    asTypedFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>a = A())<!>
-    asTypedFunc(<!SYNTAX!>,<!> <!SYNTAX!>,<!> <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>c = C())<!>
+    asTypedFunc(a = A(), <!EMPTY_ARGUMENT!><!>, c)
+    asTypedFunc(c = C(), <!EMPTY_ARGUMENT, MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!><!>, <!NO_VALUE_FOR_PARAMETER!>b = B())<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>b<!>,)<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!ARGUMENT_TYPE_MISMATCH!>a<!>, <!ARGUMENT_PASSED_TWICE!>b<!> = B(), <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>c<!>)<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, b = B(), <!ARGUMENT_TYPE_MISMATCH!>a<!>, <!TOO_MANY_ARGUMENTS!>c<!>)
+    asTypedFunc(a = A(), <!EMPTY_ARGUMENT!><!>, c)
+    asTypedFunc(a = A(), <!EMPTY_ARGUMENT!><!>, c = C(),)
+    asTypedFunc(a = A(), <!EMPTY_ARGUMENT!><!>, c,)
+    asTypedFunc(a = A(), <!NO_VALUE_FOR_PARAMETER!><!EMPTY_ARGUMENT!><!>,)<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), b = B(), c = C())
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>b<!>, <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>c<!>)<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_PASSED_TWICE!>a<!> = A())<!>
+    asTypedFunc(<!EMPTY_ARGUMENT!><!>, <!EMPTY_ARGUMENT!><!>, c = C())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, vararg */

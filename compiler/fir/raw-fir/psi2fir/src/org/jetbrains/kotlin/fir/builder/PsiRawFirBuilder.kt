@@ -519,6 +519,13 @@ open class PsiRawFirBuilder(
                     expression.accept(this@Visitor, null) as FirExpression
                 }
 
+                is KtEmptyValueArgument -> {
+                    buildErrorExpression(
+                        source = expression.toFirSourceElement(KtFakeSourceElementKind.ErrorExpression),
+                        diagnostic = ConeArgumentIsNotProvided,
+                    )
+                }
+
                 else -> {
                     { expression }.toFirExpression("Argument is absent", sourceWhenInvalidExpression = this.asElement())
                 }

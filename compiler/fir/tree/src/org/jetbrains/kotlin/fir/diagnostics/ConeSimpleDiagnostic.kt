@@ -104,6 +104,11 @@ object ConeContextParameterWithDefaultValue : ConeDiagnostic {
     override val reason: String get() = "Context parameters cannot have default values"
 }
 
+object ConeArgumentIsNotProvided : ConeDiagnostic {
+    override val reason: String
+        get() = "Expected an argument"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,
