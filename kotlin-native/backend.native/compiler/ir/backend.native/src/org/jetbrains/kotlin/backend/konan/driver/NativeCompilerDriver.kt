@@ -138,9 +138,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
                 // Child performance manager is needed since otherwise the phase ordering is broken
-                PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
-                    it?.notifyPhaseFinished(PhaseType.Initialization)
-
+                PerformanceManagerImpl.createChildIfNeeded(performanceManager, start = false).let {
                     val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                         engine.runFir2IrSerializer(FirSerializerInput(loweredIr, produceHeaderKlib = true))
                     }
@@ -176,9 +174,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val headerKlibPath = config.headerKlibPath
         if (!headerKlibPath.isNullOrEmpty()) {
             // Child performance manager is needed since otherwise the phase ordering is broken
-            PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
-                it?.notifyPhaseFinished(PhaseType.Initialization)
-
+            PerformanceManagerImpl.createChildIfNeeded(performanceManager, start = false).let {
                 val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                     engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
                 }

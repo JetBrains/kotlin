@@ -391,9 +391,14 @@ class PerformanceManagerImpl(targetPlatform: TargetPlatform, presentableName: St
         /**
          * Useful for measuring time when a pipeline is split on multiple parallel steps (in multithread mode or not)
          */
-        fun createAndEnableChildIfNeeded(mainPerformanceManager: PerformanceManager?): PerformanceManagerImpl? {
+        fun createChildIfNeeded(mainPerformanceManager: PerformanceManager?, start: Boolean): PerformanceManagerImpl? {
             return if (mainPerformanceManager != null) {
                 PerformanceManagerImpl(mainPerformanceManager.targetPlatform, mainPerformanceManager.presentableName + " (Child)").also {
+                    if (!start) {
+                        // Currently, the perf manager is implemented in a way to start the initial measurement immediately after creating.
+                        // If we don't need to measure the initial phase, the only thing we can do is to stop it immediately.
+                        it.notifyPhaseFinished(PhaseType.Initialization)
+                    }
                     it.compilerType = mainPerformanceManager.compilerType
                 }
             } else {

@@ -123,7 +123,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 override fun spawn(configuration: CompilerConfiguration) {
                     val spawnedArguments = K2NativeCompilerArguments()
                     parseCommandLineArguments(emptyList(), spawnedArguments)
-                    val spawnedPerfManager = PerformanceManagerImpl.createAndEnableChildIfNeeded(perfManager)
+                    val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
                     configuration.perfManager = spawnedPerfManager
                     val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
                         rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
@@ -140,7 +140,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     parseCommandLineArguments(arguments, spawnedArguments)
                     val spawnedConfiguration = CompilerConfiguration()
 
-                    val spawnedPerfManager = PerformanceManagerImpl.createAndEnableChildIfNeeded(perfManager)
+                    val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
                     spawnedConfiguration.messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                     spawnedConfiguration.perfManager = spawnedPerfManager
                     spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)

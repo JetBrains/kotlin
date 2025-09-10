@@ -350,7 +350,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                     cacheDeserializationStrategy,
                     dependenciesTracker,
                     llvmModuleSpecification,
-                    PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseType.Initialization) },
+                    PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
             )
         }
     } else {
@@ -366,7 +366,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
                         context.config.libraryToCache?.strategy,
                         DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                         llvmModuleSpecification,
-                        PerformanceManagerImpl.createAndEnableChildIfNeeded(mainPerfManager)?.also { it.notifyPhaseFinished(PhaseType.Initialization) },
+                        PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
                 )
         )
     }
