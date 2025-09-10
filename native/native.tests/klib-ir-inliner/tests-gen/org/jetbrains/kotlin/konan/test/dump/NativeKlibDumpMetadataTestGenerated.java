@@ -67,6 +67,12 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
   }
 
   @Test
+  @TestMetadata("fileNamesClash.kt")
+  public void testFileNamesClash() {
+    runTest("native/native.tests/testData/klib/dump-metadata/fileNamesClash.kt");
+  }
+
+  @Test
   @TestMetadata("FunctionModifiers.kt")
   public void testFunctionModifiers() {
     runTest("native/native.tests/testData/klib/dump-metadata/FunctionModifiers.kt");
