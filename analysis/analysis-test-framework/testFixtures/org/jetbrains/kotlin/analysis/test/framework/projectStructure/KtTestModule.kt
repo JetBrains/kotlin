@@ -41,6 +41,9 @@ class KtTestModule(
 
     val ktFiles: List<KtFile>
         get() = psiFiles.filterIsInstance<KtFile>()
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : PsiFile> getKtTestFile(psiFile: T): KtTestFile<T> = testFiles.first { it.psiFile == psiFile } as KtTestFile<T>
 }
 
 /**

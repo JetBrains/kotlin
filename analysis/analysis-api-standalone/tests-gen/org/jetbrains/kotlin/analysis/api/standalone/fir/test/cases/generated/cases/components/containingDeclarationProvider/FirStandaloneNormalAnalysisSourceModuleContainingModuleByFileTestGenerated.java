@@ -46,6 +46,12 @@ public class FirStandaloneNormalAnalysisSourceModuleContainingModuleByFileTestGe
   }
 
   @Test
+  @TestMetadata("analysisContextModuleOriginalFile.kt")
+  public void testAnalysisContextModuleOriginalFile() {
+    runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingModuleByFile/analysisContextModuleOriginalFile.kt");
+  }
+
+  @Test
   @TestMetadata("codeFragment.kt")
   public void testCodeFragment() {
     runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingModuleByFile/codeFragment.kt");
