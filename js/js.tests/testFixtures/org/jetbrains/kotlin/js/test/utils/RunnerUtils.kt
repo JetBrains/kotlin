@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName

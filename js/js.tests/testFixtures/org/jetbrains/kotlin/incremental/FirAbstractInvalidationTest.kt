@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLeve
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.libraries

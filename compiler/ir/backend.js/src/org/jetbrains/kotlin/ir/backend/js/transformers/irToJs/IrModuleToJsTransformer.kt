@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelToJsStatements
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver

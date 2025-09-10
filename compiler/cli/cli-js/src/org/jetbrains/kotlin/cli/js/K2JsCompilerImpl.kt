@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments

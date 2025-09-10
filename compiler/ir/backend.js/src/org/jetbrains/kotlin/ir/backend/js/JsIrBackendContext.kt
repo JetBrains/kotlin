@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.name.*

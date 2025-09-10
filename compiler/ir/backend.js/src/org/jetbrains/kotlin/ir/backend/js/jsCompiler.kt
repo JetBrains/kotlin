@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
-import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType

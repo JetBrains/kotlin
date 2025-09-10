@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage

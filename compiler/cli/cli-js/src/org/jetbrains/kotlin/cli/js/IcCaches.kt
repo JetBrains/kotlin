@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContext
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.libraries
 import java.io.File
 
