@@ -3,6 +3,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ContractsKt]]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   FUN[fqName=test.myRequire, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequire]
+    effect:Returns(TRUE) -> param(0)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

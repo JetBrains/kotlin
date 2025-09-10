@@ -8,6 +8,7 @@
         PROPERTY[fqName=MyInterface.property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=property]
           MODIFIER_LIST[public abstract]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -15,6 +16,7 @@
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=TypeAnno]
+                valueArguments: ()
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -26,6 +28,7 @@
         FUN[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[public abstract]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -34,6 +37,7 @@
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=argument]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
+                  valueArguments: ()
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
                       USER_TYPE
@@ -41,6 +45,7 @@
               TYPE_REFERENCE
                 MODIFIER_LIST[]
                   ANNOTATION_ENTRY[hasValueArguments=false, shortName=TypeAnno]
+                    valueArguments: ()
                     CONSTRUCTOR_CALLEE
                       TYPE_REFERENCE
                         USER_TYPE
@@ -52,6 +57,7 @@
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=TypeAnno]
+                valueArguments: ()
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -88,6 +94,7 @@
     CLASS[classId=/TypeAnno, fqName=TypeAnno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAnno, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: (allowedTargets = [AnnotationTarget.TYPE])
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

@@ -51,6 +51,7 @@ AnnotatedParameterInEnumConstructor.class:
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=AnnoA]
+                valueArguments: ()
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -65,6 +66,7 @@ AnnotatedParameterInEnumConstructor.class:
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=AnnoB]
+                valueArguments: ()
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE

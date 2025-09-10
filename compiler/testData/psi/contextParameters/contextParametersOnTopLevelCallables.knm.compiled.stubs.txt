@@ -13,6 +13,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: ()
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -42,6 +43,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: ()
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE
@@ -80,6 +82,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=B]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
+        valueArguments: ()
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

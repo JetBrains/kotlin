@@ -8,6 +8,7 @@ OtherKt.class:
     FUN[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          valueArguments: (version = "1.2")
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -32,6 +33,7 @@ OtherKt__TopJvmPackageNameMultifileKt.class:
     FUN[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
+          valueArguments: (version = "1.2")
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

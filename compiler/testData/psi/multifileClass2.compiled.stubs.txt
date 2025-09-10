@@ -33,8 +33,10 @@ MultifileClass.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
+      initializer: 42
       MODIFIER_LIST[public const]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          valueArguments: (message = "deprecated")
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -215,6 +217,7 @@ MultifileClass__MultifileClassKt.class:
     PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       MODIFIER_LIST[public const]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+          valueArguments: (message = "deprecated")
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE

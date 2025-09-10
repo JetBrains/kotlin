@@ -22,6 +22,7 @@ Base2.class:
     CLASS[classId=/Base2, fqName=Base2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Base2, superNames=[]]
       MODIFIER_LIST[public]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -40,6 +41,7 @@ Base2.class:
         FUN[fqName=Base2.ignorable, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public abstract IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -119,6 +121,7 @@ Impl3.class:
     CLASS[classId=/Impl3, fqName=Impl3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Impl3, superNames=[Base2]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
+          valueArguments: ()
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -145,6 +148,7 @@ Impl3.class:
         FUN[fqName=Impl3.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
           MODIFIER_LIST[public open IgnorableReturnValue]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE

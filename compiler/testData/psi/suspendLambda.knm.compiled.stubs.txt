@@ -100,6 +100,7 @@ FILE[kind=File[packageFqName=test]]
           NULLABLE_TYPE
             MODIFIER_LIST[suspend]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                valueArguments: ()
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
@@ -192,6 +193,7 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              valueArguments: ()
               ANNOTATION_TARGET[useSiteTarget=RECEIVER]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -258,6 +260,7 @@ FILE[kind=File[packageFqName=test]]
                 TYPE_REFERENCE
                   MODIFIER_LIST[]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                      valueArguments: ()
                       CONSTRUCTOR_CALLEE
                         TYPE_REFERENCE
                           USER_TYPE
@@ -334,6 +337,7 @@ FILE[kind=File[packageFqName=test]]
         TYPE_REFERENCE
           MODIFIER_LIST[suspend]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              valueArguments: ()
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -380,6 +384,7 @@ FILE[kind=File[packageFqName=test]]
   CLASS[classId=test/A, fqName=test.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+        valueArguments: (allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER])
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             USER_TYPE

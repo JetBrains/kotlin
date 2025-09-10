@@ -8,6 +8,7 @@ A.class:
     CLASS[classId=foo/TopLevelMembers/A, fqName=foo.TopLevelMembers.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          valueArguments: (allowedTargets = [AnnotationTarget.FIELD])
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -125,6 +126,7 @@ TopLevelMembersKt.class:
     PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
       MODIFIER_LIST[internal]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+          valueArguments: ()
           ANNOTATION_TARGET[useSiteTarget=FIELD]
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
