@@ -69,13 +69,13 @@ internal abstract class AbiValidationLegacyDumpExtensionImpl @Inject constructor
     private val tasks: TaskContainer
 ) : AbiValidationLegacyDumpExtension {
     override val legacyCheckTaskProvider: TaskProvider<KotlinLegacyAbiCheckTask>
-        get() = tasks.named<KotlinLegacyAbiCheckTask>(KotlinLegacyAbiCheckTaskImpl.nameForVariant(variantName))
+        get() = tasks.named<KotlinLegacyAbiCheckTask>(KotlinAbiCheckTaskImpl.nameForVariant(variantName))
 
     override val legacyDumpTaskProvider: TaskProvider<KotlinLegacyAbiDumpTask>
-        get() = tasks.named<KotlinLegacyAbiDumpTask>(KotlinLegacyAbiDumpTaskImpl.nameForVariant(variantName))
+        get() = tasks.named<KotlinLegacyAbiDumpTask>(KotlinAbiDumpTaskImpl.nameForVariant(variantName))
 
     override val legacyUpdateTaskProvider: TaskProvider<Task>
-        get() = tasks.named(KotlinLegacyAbiUpdateTask.nameForVariant(variantName))
+        get() = tasks.named(KotlinAbiUpdateTask.nameForVariant(variantName))
 }
 
 internal fun ObjectFactory.AbiValidationLegacyDumpExtensionImpl(
