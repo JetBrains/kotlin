@@ -141,6 +141,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             isLateinit("receiverParameters", "body")
             default("origin", "REPL_SNIPPET_ORIGIN")
             default("declarationsFromOtherSnippets", "ArrayList()")
+            default("variablesFromOtherSnippets", "ArrayList()")
         }
 
         impl(moduleFragment) {
