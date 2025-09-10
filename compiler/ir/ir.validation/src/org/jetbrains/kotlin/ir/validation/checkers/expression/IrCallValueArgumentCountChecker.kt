@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 
 object IrCallValueArgumentCountChecker : IrElementChecker<IrFunctionAccessExpression>(IrFunctionAccessExpression::class) {
     override fun check(element: IrFunctionAccessExpression, context: CheckerContext) {
-        // FIXME: KT-80062
-        if (context.withinScripOrScriptClass)
-            return
-
         val function = element.symbol.owner
 
         if (element.arguments.size != function.parameters.size) {
