@@ -511,23 +511,6 @@ private class ReplSnippetToClassTransformer(
         return super.visitLocalDelegatedPropertyReference(expression, data)
     }
 
-    override fun visitConstructorCall(
-        expression: IrConstructorCall,
-        data: ScriptLikeToClassTransformerContext,
-    ): IrElement {
-        return if ((expression.symbol.owner.parent as? IrDeclaration)?.let { it in irSnippet.declarationsFromOtherSnippets } == true) {
-            expression.arguments +=
-                accessCallsGenerator.createAccessToSnippet(
-                    ((expression.symbol.owner.parent as IrClass).parent as IrClass).symbol,
-                    expression.startOffset, expression.endOffset
-                )
-            expression.transformChildren(this, data)
-            expression
-        } else {
-            super.visitConstructorCall(expression, data)
-        }
-    }
-
     override fun visitClass(declaration: IrClass, data: ScriptLikeToClassTransformerContext): IrClass {
         declaration.updateVisibilityToPublicIfNeeded()
         return super.visitClass(declaration, data)
