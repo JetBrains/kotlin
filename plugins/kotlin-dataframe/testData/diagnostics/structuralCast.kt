@@ -16,7 +16,7 @@ interface B {
 }
 
 fun check(df: DataFrame<A>) {
-    <!CAST_ERROR!>df.cast<B>()<!>
+    df.<!CAST_ERROR!>cast<!><B>()
 }
 
 fun checkAny(df: DataFrame<*>) {
