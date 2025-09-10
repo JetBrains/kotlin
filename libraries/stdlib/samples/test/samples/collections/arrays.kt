@@ -88,7 +88,7 @@ class Arrays {
             // arrays of unsigned types
             val uIntArray = uintArrayOf(1u, 2u, 3u)
             assertPrints(uIntArray.getOrElse(0) { 10u }, "1")
-            assertPrints(uIntArray.getOrElse(-1) { 10u }, "10u")
+            assertPrints(uIntArray.getOrElse(-1) { 10u }, "10")
         }
     }
 
