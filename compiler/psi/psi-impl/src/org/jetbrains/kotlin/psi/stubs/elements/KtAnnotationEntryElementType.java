@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKt;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +47,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
         dataStream.writeName(stub.getShortName());
         dataStream.writeBoolean(stub.getHasValueArguments());
         Map<Name, ConstantValue<?>> arguments = stub.getValueArguments();
-        dataStream.writeVarInt(arguments != null ? arguments.size() : 0);
+        dataStream.writeVarInt(arguments != null ? arguments.size() + 1 : 0);
         if (arguments != null) {
             for (Map.Entry<Name, ConstantValue<?>> valueEntry : arguments.entrySet()) {
                 dataStream.writeName(valueEntry.getKey().asString());
@@ -63,11 +64,16 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
         boolean hasValueArguments = dataStream.readBoolean();
         int valueArgCount = dataStream.readVarInt();
         Map<Name, ConstantValue<?>> args = new LinkedHashMap<>();
-        for (int i = 0; i < valueArgCount; i++) {
+        for (int i = 0; i < valueArgCount - 1; i++) {
             args.put(Name.identifier(Objects.requireNonNull(dataStream.readNameString())),
                      KotlinConstantValueKt.deserializeConstantValue(dataStream));
         }
-        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, text, hasValueArguments, args.isEmpty() ? null : args);
+        return new KotlinAnnotationEntryStubImpl(
+                (StubElement<?>) parentStub,
+                text,
+                hasValueArguments,
+                args.isEmpty() ? (valueArgCount == 0 ? null : Collections.emptyMap()) : args
+        );
     }
 
     @Override
