@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal.trackers
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl.Companion.METRICS_COLLECTOR
 
 internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCollector) :
     BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> {
@@ -104,4 +105,8 @@ private fun ValueType.toMetricsReporterType(): BuildMetricsCollector.ValueType {
 }
 
 internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> =
-    this[BuildOperationImpl.METRICS_COLLECTOR]?.let { BuildMetricsReporterAdapter(it) } ?: DoNothingBuildMetricsReporter
+    this[METRICS_COLLECTOR]?.let { BuildMetricsReporterAdapter(it) } ?: if (this[BuildOperationImpl.XX_KGP_METRICS_COLLECTOR]) {
+        BuildMetricsReporterImpl()
+    } else {
+        DoNothingBuildMetricsReporter
+    }
