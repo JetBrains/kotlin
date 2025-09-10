@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.ModuleStructureExtractorImpl
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -45,17 +45,21 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val klib: KLIB = testCompilationResult.assertSuccess().resultingArtifact
 
         val versions = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS + null
-        versions.forEach { signatureVersion: KotlinIrSignatureVersion? ->
-            val metadataDump = klib.dumpMetadata(
-                kotlinNativeClassLoader.classLoader,
-                printSignatures = signatureVersion != null,
-                signatureVersion
-            )
+        JUnit5Assertions.assertAll(
+            versions.map { signatureVersion: KotlinIrSignatureVersion? ->
+                {
+                    val metadataDump = klib.dumpMetadata(
+                        kotlinNativeClassLoader.classLoader,
+                        printSignatures = signatureVersion != null,
+                        signatureVersion
+                    )
 
-            val testDataFile = testDataFile(testPathFull, signatureVersion)
+                    val testDataFile = testDataFile(testPathFull, signatureVersion)
 
-            assertEqualsToFile(testDataFile, metadataDump)
-        }
+                    assertEqualsToFile(testDataFile, metadataDump)
+                }
+            }
+        )
     }
 
     private fun testDataFile(testPathFull: File, signatureVersion: KotlinIrSignatureVersion?): File {
