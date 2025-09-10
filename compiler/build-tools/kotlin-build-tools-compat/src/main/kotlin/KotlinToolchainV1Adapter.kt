@@ -9,12 +9,9 @@ package org.jetbrains.kotlin.buildtools.internal.compat
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
-import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.BACKUP_CLASSES
@@ -35,22 +32,28 @@ import kotlin.time.toJavaDuration
 public class KotlinToolchainV1Adapter(
     private val compilationService: CompilationService,
 ) : KotlinToolchain {
-    override val jvm: JvmPlatformToolchain = object : JvmPlatformToolchain {
-        override fun createJvmCompilationOperation(
-            sources: List<Path>,
-            destinationDirectory: Path,
-        ): JvmCompilationOperation {
-            return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
-        }
+    private val jvm: JvmPlatformToolchain by lazy {
+        object : JvmPlatformToolchain {
+            override fun createJvmCompilationOperation(
+                sources: List<Path>,
+                destinationDirectory: Path,
+            ): JvmCompilationOperation {
+                return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
+            }
 
-        override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
-            return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
+            override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
+                return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
+            }
         }
     }
 
-    override val js: JsPlatformToolchain get() = error("JS compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
-    override val native: NativePlatformToolchain get() = error("Native compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
-    override val wasm: WasmPlatformToolchain get() = error("WASM compilation is not available in BTA API v1 fallback (compiler version ${getCompilerVersion()}")
+    override fun <T : KotlinToolchain.Toolchain> getToolchain(type: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        return when (type) {
+            JvmPlatformToolchain::class.java -> jvm
+            else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported in BTA API v1 fallback (compiler version ${getCompilerVersion()}.")
+        } as T
+    }
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess {
         return ExecutionPolicyV1Adapter.InProcess(compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy())

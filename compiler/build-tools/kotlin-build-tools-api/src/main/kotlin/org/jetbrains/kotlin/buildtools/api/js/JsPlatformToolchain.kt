@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.js
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
 
 /**
  * Placeholder for Kotlin/JS compilation operations. Not functional in the current version.
@@ -13,4 +14,4 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
-public interface JsPlatformToolchain
+public interface JsPlatformToolchain : KotlinToolchain.Toolchain
