@@ -418,7 +418,6 @@ public actual fun max(a: Double, b: Double): Double = when {
  *   - If the argument is zero, then the result is a zero with the same sign as the argument.
  */
 @SinceKotlin("1.8")
-@WasExperimental(ExperimentalStdlibApi::class)
 @GCUnsafeCall("Kotlin_math_cbrt")
 public external actual fun cbrt(x: Double): Double
 
