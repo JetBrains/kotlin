@@ -2154,6 +2154,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reportDetailedPerf.args");
     }
 
+    @TestMetadata("reportDetailedPerfWithIntraModuleInliner.args")
+    public void testReportDetailedPerfWithIntraModuleInliner() {
+      runTest("compiler/testData/cli/js/reportDetailedPerfWithIntraModuleInliner.args");
+    }
+
     @TestMetadata("reportPerf.args")
     public void testReportPerf() {
       runTest("compiler/testData/cli/js/reportPerf.args");
