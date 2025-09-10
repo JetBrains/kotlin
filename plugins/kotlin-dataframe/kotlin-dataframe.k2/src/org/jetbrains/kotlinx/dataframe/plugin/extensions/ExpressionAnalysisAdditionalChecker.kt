@@ -138,6 +138,7 @@ private class Checker(
             val sourceType = coneType.fullyExpandedType(session).typeArguments.getOrNull(0)?.type as? ConeClassLikeType
                 ?: return
             val source = pluginDataFrameSchema(sourceType)
+            if (source.columns().isEmpty()) return
             val target = pluginDataFrameSchema(targetType)
             val sourceColumns = source.flatten(includeFrames = true)
             val targetColumns = target.flatten(includeFrames = true)
