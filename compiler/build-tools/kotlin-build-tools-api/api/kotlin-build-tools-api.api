@@ -95,10 +95,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public abstract fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
-	public abstract fun getJs ()Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
-	public abstract fun getJvm ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
-	public abstract fun getNative ()Lorg/jetbrains/kotlin/buildtools/api/knative/NativePlatformToolchain;
-	public abstract fun getWasm ()Lorg/jetbrains/kotlin/buildtools/api/js/WasmPlatformToolchain;
+	public abstract fun getToolchain (Ljava/lang/Class;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;
 }
 
@@ -113,6 +110,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 
 public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Companion {
 	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ProjectId {
@@ -424,7 +424,7 @@ public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/js/WasmPlatformToolchain {
@@ -507,9 +507,15 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmCompi
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchain$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain$Companion;
 	public abstract fun createClasspathSnapshottingOperation (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
 	public abstract fun createJvmCompilationOperation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
+	public static fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain$Companion {
+	public final fun get (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {

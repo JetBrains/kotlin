@@ -10,10 +10,7 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
-import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
@@ -21,14 +18,19 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-internal class KotlinToolchainImpl(
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap(),
-    override val jvm: JvmPlatformToolchain = JvmPlatformToolchainImpl(buildIdToSessionFlagFile),
-) : KotlinToolchain {
+internal class KotlinToolchainImpl() : KotlinToolchain {
+    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
+    val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchain.Toolchain> = ConcurrentHashMap()
 
-    override val js: JsPlatformToolchain get() = TODO("Not implemented yet. Only JVM compilation is supported for now.")
-    override val native: NativePlatformToolchain get() = TODO("Not implemented yet. Only JVM compilation is supported for now.")
-    override val wasm: WasmPlatformToolchain get() = TODO("Not implemented yet. Only JVM compilation is supported for now.")
+    override fun <T : KotlinToolchain.Toolchain> getToolchain(type: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        return toolchains.computeIfAbsent(type) { type ->
+            when(type) {
+                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(buildIdToSessionFlagFile)
+                else -> error("Unsupported platform toolchain type: $type. Only JVM compilation is supported for now.")
+            }
+        } as T
+    }
 
     override fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess = InProcessExecutionPolicyImpl
 

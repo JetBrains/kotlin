@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain.Companion.loadImplementation
-import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
 
 /**
  * The main entry point to the Build Tools API.
@@ -32,10 +29,9 @@ import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
  */
 @ExperimentalBuildToolsApi
 public interface KotlinToolchain {
-    public val jvm: JvmPlatformToolchain
-    public val js: JsPlatformToolchain
-    public val native: NativePlatformToolchain
-    public val wasm: WasmPlatformToolchain
+    public interface Toolchain
+
+    public fun <T : Toolchain> getToolchain(type: Class<T>): T
 
     public fun createInProcessExecutionPolicy(): ExecutionPolicy.InProcess
     public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon
@@ -120,4 +116,9 @@ public interface KotlinToolchain {
                     .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchain
             }
     }
+}
+
+@ExperimentalBuildToolsApi
+public inline fun <reified T : KotlinToolchain.Toolchain> KotlinToolchain.getToolchain(): T {
+    return getToolchain(T::class.java)
 }

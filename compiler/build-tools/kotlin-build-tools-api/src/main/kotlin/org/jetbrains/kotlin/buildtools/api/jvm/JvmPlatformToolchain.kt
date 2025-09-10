@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
@@ -27,7 +29,7 @@ import java.nio.file.Path
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
-public interface JvmPlatformToolchain {
+public interface JvmPlatformToolchain : KotlinToolchain.Toolchain {
     /**
      * Creates a build operation for compiling Kotlin sources into class files.
      *
@@ -52,4 +54,11 @@ public interface JvmPlatformToolchain {
      * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchain.BuildSession.executeOperation
      */
     public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
+
+    public companion object {
+        @JvmStatic
+        @get:JvmName("get")
+        public inline val KotlinToolchain.jvm: JvmPlatformToolchain get() = getToolchain<JvmPlatformToolchain>()
+    }
 }
+
