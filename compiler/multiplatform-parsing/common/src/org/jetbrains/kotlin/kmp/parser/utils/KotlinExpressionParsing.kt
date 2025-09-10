@@ -1804,9 +1804,6 @@ internal open class KotlinExpressionParsing(
         if (expect(KtTokens.LPAR, "Expecting an argument list", EXPRESSION_FOLLOW)) {
             if (!at(KtTokens.RPAR)) {
                 while (true) {
-                    while (at(KtTokens.COMMA)) {
-                        errorAndAdvance("Expecting an argument")
-                    }
                     parseValueArgument()
                     if (at(KtTokens.COLON) && lookahead(1) === KtTokens.IDENTIFIER) {
                         errorAndAdvance("Unexpected type specification", 2)
@@ -1850,7 +1847,12 @@ internal open class KotlinExpressionParsing(
         if (at(KtTokens.MUL)) {
             advance() // MUL
         }
-        parseExpression()
+        if (at(KtTokens.RPAR) || at(KtTokens.COMMA)) {
+            val empty = mark()
+            empty.done(KtNodeTypes.EMPTY_VALUE_ARGUMENT)
+        } else {
+            parseExpression()
+        }
         argument.done(KtNodeTypes.VALUE_ARGUMENT)
     }
 

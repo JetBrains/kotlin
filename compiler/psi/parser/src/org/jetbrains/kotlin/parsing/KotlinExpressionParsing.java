@@ -1804,7 +1804,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (expect(LPAR, "Expecting an argument list", EXPRESSION_FOLLOW)) {
             if (!at(RPAR)) {
                 while (true) {
-                    while (at(COMMA)) errorAndAdvance("Expecting an argument");
                     parseValueArgument();
                     if (at(COLON) && lookahead(1) == IDENTIFIER) {
                         errorAndAdvance("Unexpected type specification", 2);
@@ -1849,7 +1848,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(MUL)) {
             advance(); // MUL
         }
-        parseExpression();
+        if (at(RPAR) || at(COMMA)) {
+            PsiBuilder.Marker empty = mark();
+            empty.done(EMPTY_VALUE_ARGUMENT);
+        } else {
+            parseExpression();
+        }
         argument.done(VALUE_ARGUMENT);
     }
 

@@ -56,6 +56,7 @@ public interface KtNodeTypes {
     IElementType TYPE_ARGUMENT_LIST                 = KtStubBasedElementTypes.TYPE_ARGUMENT_LIST;
     IElementType VALUE_ARGUMENT_LIST                = KtStubBasedElementTypes.VALUE_ARGUMENT_LIST;
     IElementType VALUE_ARGUMENT                     = KtStubBasedElementTypes.VALUE_ARGUMENT;
+    IElementType EMPTY_VALUE_ARGUMENT               = KtStubBasedElementTypes.EMPTY_VALUE_ARGUMENT;
     IElementType CONTRACT_EFFECT_LIST               = KtStubBasedElementTypes.CONTRACT_EFFECT_LIST;
     IElementType CONTRACT_EFFECT                    = KtStubBasedElementTypes.CONTRACT_EFFECT;
     IElementType LAMBDA_ARGUMENT                    = KtStubBasedElementTypes.LAMBDA_ARGUMENT;

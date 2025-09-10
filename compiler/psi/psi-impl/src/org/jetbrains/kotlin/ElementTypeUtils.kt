@@ -54,6 +54,7 @@ object ElementTypeUtils {
         DOT_QUALIFIED_EXPRESSION,
         LAMBDA_EXPRESSION,
         FUN,
+        EMPTY_VALUE_ARGUMENT,
     )
 
     fun LighterASTNode.isExpression(): Boolean {

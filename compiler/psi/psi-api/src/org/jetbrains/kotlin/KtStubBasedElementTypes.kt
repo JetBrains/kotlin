@@ -301,6 +301,10 @@ internal object KtStubBasedElementTypes {
         provider.valueArgumentType
 
     @JvmField
+    val EMPTY_VALUE_ARGUMENT: KtStubElementType<out KotlinPlaceHolderStub<KtEmptyValueArgument>, KtEmptyValueArgument> =
+        provider.emptyValueArgumentType
+
+    @JvmField
     val CONTRACT_EFFECT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList> =
         provider.contractEffectListType
 

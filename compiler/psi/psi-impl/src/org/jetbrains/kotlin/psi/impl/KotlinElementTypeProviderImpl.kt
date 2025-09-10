@@ -242,6 +242,9 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val valueArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtValueArgument>, KtValueArgument> =
         KtStubElementTypes.VALUE_ARGUMENT
 
+    override val emptyValueArgumentType: KtStubElementType<out KotlinPlaceHolderStub<KtEmptyValueArgument>, KtEmptyValueArgument> =
+        KtStubElementTypes.EMPTY_VALUE_ARGUMENT
+
     override val contractEffectListType: KtStubElementType<out KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList> =
         KtStubElementTypes.CONTRACT_EFFECT_LIST
 

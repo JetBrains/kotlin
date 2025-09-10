@@ -103,6 +103,9 @@ public interface KtStubElementTypes {
     KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
             new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
 
+    KtPlaceHolderStubElementType<KtEmptyValueArgument> EMPTY_VALUE_ARGUMENT =
+            new KtPlaceHolderStubElementType<>("EMPTY_VALUE_ARGUMENT", KtEmptyValueArgument.class);
+
     KtPlaceHolderStubElementType<KtContractEffectList> CONTRACT_EFFECT_LIST =
             new KtContractEffectListElementType("CONTRACT_EFFECT_LIST");
 
