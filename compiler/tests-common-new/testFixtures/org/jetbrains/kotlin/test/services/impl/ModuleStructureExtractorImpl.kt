@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
+import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -44,6 +47,41 @@ class ModuleStructureExtractorImpl(
          * (\((.*?)\)(\((.*?)\))?)? module friendDependencies and dependsOnDependencies
          */
         private val moduleDirectiveRegex = """([^()\n]+)(\((.*?)\)(\((.*?)\)(\((.*?)\))?)?)?""".toRegex()
+
+        /**
+         * This method could be used by tests which are not based on the [TestServices] infrastructure,
+         * but still need to support multi-file multi-module tests.
+         */
+        fun parseModuleStructureWithoutService(testDataFile: File, vararg directivesContainers: DirectivesContainer): TestModuleStructure {
+            val testServices = TestServices().apply {
+                register(AssertionsService::class, JUnit5Assertions)
+                val defaultsProvider = DefaultsProvider(
+                    frontendKind = FrontendKind.NoFrontend,
+                    backendKind = BackendKind.NoBackend,
+                    defaultLanguageSettingsBuilder = LanguageVersionSettingsBuilder(),
+                    targetPlatform = CommonPlatforms.defaultCommonPlatform,
+                    artifactKind = ArtifactKind.NoArtifact,
+                    targetBackend = null,
+                    defaultDependencyKind = DependencyKind.Source
+                )
+                register(DefaultsProvider::class, defaultsProvider)
+                register(DefaultRegisteredDirectivesProvider::class, DefaultRegisteredDirectivesProvider(RegisteredDirectives.Empty))
+            }
+            val directivesContainer = ComposedDirectivesContainer(
+                listOf(
+                    ModuleStructureDirectives,
+                    LanguageSettingsDirectives,
+                    *directivesContainers,
+                )
+            )
+            val extractor = ModuleStructureExtractorImpl(
+                testServices,
+                additionalSourceProviders = emptyList(),
+                moduleStructureTransformers = emptyList(),
+                environmentConfigurators = emptyList()
+            )
+            return extractor.splitTestDataByModules(testDataFile.canonicalPath, directivesContainer)
+        }
     }
 
     override fun splitTestDataByModules(
