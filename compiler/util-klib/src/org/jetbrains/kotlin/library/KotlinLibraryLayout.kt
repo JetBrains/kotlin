@@ -82,8 +82,6 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     // "ir" directory (see KT-75794).
     val irOfInlineableFunsDir
         get() = File(componentDir, KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME)
-    val irFilesOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_FILES_FILE_NAME)
     val irDeclarationsOfInlineableFuns
         get() = File(irOfInlineableFunsDir, IR_DECLARATIONS_FILE_NAME)
     val irTypesOfInlineableFuns
