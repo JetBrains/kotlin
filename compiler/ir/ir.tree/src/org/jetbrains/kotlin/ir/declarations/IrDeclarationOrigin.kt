@@ -105,6 +105,8 @@ interface IrDeclarationOrigin {
          */
         val SYNTHETIC_ACCESSOR by IrDeclarationOriginImpl.Synthetic
 
+        val SYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER by IrDeclarationOriginImpl.Synthetic
+
         /**
          * Created by `Fir2IrDeclarationStorage.fillUnboundSymbols()` to handle the code fragment
          * in the middle of code compile of `KaCompilerFacility`.
