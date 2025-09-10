@@ -26,13 +26,18 @@ import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
 import model.ArtifactType
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
+import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import server.grpc.AuthServerInterceptor
 import java.io.File
 import java.nio.file.Files
@@ -74,6 +79,8 @@ class RemoteCompilationServiceImpl(
             val sourceFiles = ConcurrentHashMap<Path, File>()
             val dependencyFiles = ConcurrentHashMap<Path, File>()
             val compilerPluginFiles = ConcurrentHashMap<Path, File>()
+            val classpathEntrySnapshotFiles = ConcurrentHashMap<Path, File>()
+            val shrunkClasspathFile = ConcurrentHashMap<Path, File>()
 
             val workspaceFileLockMap = ConcurrentHashMap<Path, Mutex>()
             val cacheFileLockMap = ConcurrentHashMap<Path, Mutex>()
@@ -85,6 +92,8 @@ class RemoteCompilationServiceImpl(
                     ArtifactType.SOURCE -> sourceFiles[clientPath] = file
                     ArtifactType.DEPENDENCY -> dependencyFiles[clientPath] = file
                     ArtifactType.COMPILER_PLUGIN -> compilerPluginFiles[clientPath] = file
+                    ArtifactType.CLASSPATH_ENTRY_SNAPSHOT -> classpathEntrySnapshotFiles[clientPath] = file
+                    ArtifactType.SHRUNK_CLASSPATH_SNAPSHOT -> shrunkClasspathFile[clientPath] = file
                     ArtifactType.RESULT -> debug("Received illegal file type: $artifactType")
                 }
                 if (totalFilesExpected > 0 && filesReceivedCounter.incrementAndGet() == totalFilesExpected) {
@@ -104,7 +113,7 @@ class RemoteCompilationServiceImpl(
                     when (it) {
                         is CompilationMetadata -> {
                             compilationMetadata = it
-                            totalFilesExpected = it.sourceFilesCount + it.dependencyFilesCount + it.compilerPluginFilesCount
+                            totalFilesExpected = calculateTotalFiles(compilationMetadata)
                         }
                         is FileTransferRequest -> {
                             compilationMetadata?.let { metadata ->
@@ -176,7 +185,7 @@ class RemoteCompilationServiceImpl(
             launch {
                 allFilesReady.join()
 
-                val remoteCompilerArguments = CompilerUtils.replacePathsWithRemoteOnes(
+                val remoteCompilerArguments = CompilerUtils.getRemoteCompilerArguments(
                     userId,
                     compilationMetadata!!,
                     workspaceManager,
@@ -229,6 +238,27 @@ class RemoteCompilationServiceImpl(
                 this@channelFlow.close()
             }
         }
+    }
+
+    private fun calculateTotalFiles(compilationMetadata: CompilationMetadata): Int {
+        var total = 0
+        when (val co = compilationMetadata.compilationOptions) {
+            is IncrementalCompilationOptions -> {
+                val cpChanges = co.classpathChanges
+                if (cpChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                    // + 1 for a shrunk snapshot file
+                    total += cpChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size + 1
+                }
+                val srcChanges = co.sourceChanges
+                if (srcChanges is SourcesChanges.Known){
+                    total += srcChanges.modifiedFiles.size
+                }
+            }
+            is CompilationOptions -> {
+                total += compilationMetadata.sourceFilesCount + compilationMetadata.dependencyFilesCount + compilationMetadata.compilerPluginFilesCount
+            }
+        }
+        return total
     }
 
     private fun doCompilation(
