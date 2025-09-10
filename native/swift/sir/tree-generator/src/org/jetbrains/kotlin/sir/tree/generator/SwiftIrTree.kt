@@ -114,7 +114,6 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(namedDeclaration)
         parent(bridged)
 
-        +field("enum", enumType)
     }
 
     val struct: Element by element {

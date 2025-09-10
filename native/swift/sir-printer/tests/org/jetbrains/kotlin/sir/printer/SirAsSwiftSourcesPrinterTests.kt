@@ -577,6 +577,35 @@ class SirAsSwiftSourcesPrinterTests {
     }
 
     @Test
+    fun `should print simple enum with cases`() {
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildEnum {
+                    origin = SirOrigin.Unknown
+                    name = "SimpleEnum"
+
+                    declarations.add(
+                        buildEnumCase {
+                            name = "FIRST"
+                        }
+                    )
+                    declarations.add(
+                        buildEnumCase {
+                            name = "LAST"
+                        }
+                    )
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/simple_enum_with_cases"
+        )
+    }
+
+    @Test
     fun `should print empty class inside class`() {
 
         val module = buildModule {

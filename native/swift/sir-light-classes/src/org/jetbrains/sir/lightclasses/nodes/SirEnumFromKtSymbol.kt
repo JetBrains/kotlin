@@ -253,17 +253,15 @@ private class SirEnumCaseFromKtSymbol(
     override val sirSession: SirSession,
 ) : SirEnumCase(), SirFromKtSymbol<KaEnumEntrySymbol> {
     override val name: String = ktSymbol.name.asString()
-    override val enum: SirEnum = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
     override val origin: SirOrigin = KotlinSource(ktSymbol)
 
     override val visibility: SirVisibility
         get() = SirVisibility.PUBLIC
     override val documentation: String?
-        get() = enum.documentation
-    override var parent: SirDeclarationParent
-        get() = enum
+        get() = (parent as SirEnum).documentation
+    override var parent: SirDeclarationParent = sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
         set(arg) {
-            if (arg === enum) return
+            if (arg === field) return
             error("Changing SirEnumCase.parent is prohibited")
         }
     override val attributes: List<SirAttribute>
