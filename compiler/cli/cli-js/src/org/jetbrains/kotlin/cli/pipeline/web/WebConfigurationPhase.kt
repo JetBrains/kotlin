@@ -79,8 +79,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.wasmCompilation = arguments.wasm
         configuration.produceKlibFile = arguments.irProduceKlibFile
         configuration.produceKlibDir = arguments.irProduceKlibDir
-        configuration.granularity = arguments.granularity
-        configuration.tsCompilationStrategy = arguments.dtsStrategy
         arguments.main?.let { configuration.callMainMode = it }
         configuration.dce = arguments.irDce
 

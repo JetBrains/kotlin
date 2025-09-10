@@ -74,7 +74,7 @@ class Ir2JsTransformer private constructor(
         dceRuntimeDiagnostic = configuration.dceRuntimeDiagnostic,
         safeExternalBoolean = configuration.safeExternalBoolean,
         safeExternalBooleanDiagnostic = configuration.safeExternalBooleanDiagnostic,
-        granularity = configuration.granularity!!,
+        granularity = configuration.artifactConfiguration!!.granularity,
         dce = configuration.dce,
         minimizedMemberNames = configuration.minimizedMemberNames,
     )
@@ -191,12 +191,14 @@ internal class K2JsCompilerImpl(
         JsBackendPipelinePhase.compileIncrementally(
             icCaches,
             configuration,
-            moduleKind ?: return INTERNAL_ERROR,
-            moduleName,
-            outputDir,
-            outputName,
-            arguments.granularity,
-            arguments.dtsStrategy
+            WebArtifactConfiguration(
+                moduleKind ?: return INTERNAL_ERROR,
+                moduleName,
+                outputDir,
+                outputName,
+                arguments.granularity,
+                arguments.dtsStrategy
+            )
         )
         @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
         performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyPhaseFinished(PhaseMeasurementType.TranslationToIr)`, but it's not always started
@@ -219,12 +221,15 @@ internal class K2JsCompilerImpl(
         val outputs = JsBackendPipelinePhase.compileNonIncrementally(
             messageCollector,
             ir2JsTransformer,
-            // moduleKind for JS compilation is always not null (see [JsConfigurationUpdater.fillConfiguration])
-            moduleKind!!,
-            moduleName,
-            outputDir,
-            outputName,
-            arguments.dtsStrategy
+            WebArtifactConfiguration(
+                // moduleKind for JS compilation is always not null (see [JsConfigurationUpdater.fillConfiguration])
+                moduleKind!!,
+                moduleName,
+                outputDir,
+                outputName,
+                arguments.granularity,
+                arguments.dtsStrategy,
+            )
         )
 
         return if (outputs != null) OK else INTERNAL_ERROR

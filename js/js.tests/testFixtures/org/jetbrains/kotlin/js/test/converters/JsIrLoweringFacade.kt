@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsGenerationGranularity
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -209,7 +206,7 @@ class JsIrLoweringFacade(
                         ).finalizePath(moduleKind)
                     )
                 }
-                output.writeTo(outputFile, moduleId, moduleKind)
+                output.writeTo(outputFile, moduleId, moduleKind, mode.granularity)
             }
         }
 
@@ -240,12 +237,25 @@ class JsIrLoweringFacade(
         jsCodeMap?.let { File("${newJsTarget.absolutePath}.map").write(it) }
     }
 
-    private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
+    private fun CompilationOutputs.writeTo(
+        outputFile: File,
+        moduleId: String,
+        moduleKind: ModuleKind,
+        granularity: JsGenerationGranularity,
+    ) {
         val rootDir = outputFile.parentFile
         val tmpBuildDir = rootDir.resolve("tmp-build")
         // CompilationOutputs keeps the `outputDir` clean by removing all outdated JS and other unknown files.
         // To ensure that useful files around `outputFile`, such as irdump, are not removed, use `tmpBuildDir` instead.
-        val allJsFiles = writeAll(tmpBuildDir, outputFile.nameWithoutExtension, TsCompilationStrategy.NONE, moduleId, moduleKind).filter {
+        val artifactConfiguration = WebArtifactConfiguration(
+            moduleKind,
+            moduleId,
+            tmpBuildDir,
+            outputFile.nameWithoutExtension,
+            granularity,
+            TsCompilationStrategy.NONE
+        )
+        val allJsFiles = writeAll(artifactConfiguration).filter {
             it.extension == "js" || it.extension == "mjs"
         }
 

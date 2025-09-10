@@ -39,6 +39,9 @@ object JSConfigurationKeys {
     val USE_DEBUGGER_CUSTOM_FORMATTERS = CompilerConfigurationKey.create<Boolean>("add import of debugger custom formatters")
 
     @JvmField
+    val ARTIFACT_CONFIGURATION = CompilerConfigurationKey.create<WebArtifactConfiguration>("JS/Wasm output configuration")
+
+    @JvmField
     val OUTPUT_DIR = CompilerConfigurationKey.create<File>("output directory")
 
     @JvmField
@@ -168,12 +171,6 @@ object JSConfigurationKeys {
     val MINIMIZED_MEMBER_NAMES = CompilerConfigurationKey.create<Boolean>("Minimize the names of members")
 
     @JvmField
-    val GRANULARITY = CompilerConfigurationKey.create<JsGenerationGranularity>("Granularity of JS files generation")
-
-    @JvmField
-    val TS_COMPILATION_STRATEGY = CompilerConfigurationKey.create<TsCompilationStrategy>("TS compilation strategy")
-
-    @JvmField
     val CALL_MAIN_MODE = CompilerConfigurationKey.create<String>("Specify whether the 'main' function should be called upon execution.")
 
     @JvmField
@@ -210,6 +207,10 @@ var CompilerConfiguration.sourceMap: Boolean
 var CompilerConfiguration.useDebuggerCustomFormatters: Boolean
     get() = getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
     set(value) { put(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS, value) }
+
+var CompilerConfiguration.artifactConfiguration: WebArtifactConfiguration?
+    get() = get(JSConfigurationKeys.ARTIFACT_CONFIGURATION)
+    set(value) { put(JSConfigurationKeys.ARTIFACT_CONFIGURATION, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.outputDir: File?
     get() = get(JSConfigurationKeys.OUTPUT_DIR)
@@ -382,14 +383,6 @@ var CompilerConfiguration.safeExternalBooleanDiagnostic: String?
 var CompilerConfiguration.minimizedMemberNames: Boolean
     get() = getBoolean(JSConfigurationKeys.MINIMIZED_MEMBER_NAMES)
     set(value) { put(JSConfigurationKeys.MINIMIZED_MEMBER_NAMES, value) }
-
-var CompilerConfiguration.granularity: JsGenerationGranularity?
-    get() = get(JSConfigurationKeys.GRANULARITY)
-    set(value) { put(JSConfigurationKeys.GRANULARITY, requireNotNull(value) { "nullable values are not allowed" }) }
-
-var CompilerConfiguration.tsCompilationStrategy: TsCompilationStrategy?
-    get() = get(JSConfigurationKeys.TS_COMPILATION_STRATEGY)
-    set(value) { put(JSConfigurationKeys.TS_COMPILATION_STRATEGY, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.callMainMode: String?
     get() = get(JSConfigurationKeys.CALL_MAIN_MODE)

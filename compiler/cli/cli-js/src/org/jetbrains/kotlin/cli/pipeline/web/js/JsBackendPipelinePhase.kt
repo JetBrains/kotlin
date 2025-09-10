@@ -17,13 +17,14 @@ import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
+import org.jetbrains.kotlin.js.config.artifactConfiguration
+import org.jetbrains.kotlin.js.config.outputDir
 import java.io.File
 
 object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
@@ -33,16 +34,11 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-    ): JsBackendPipelineArtifact? {
+    ): JsBackendPipelineArtifact {
         val outputs = compileIncrementally(
             icCaches,
             configuration,
-            configuration.moduleKind!!,
-            configuration.moduleName!!,
-            configuration.outputDir!!,
-            configuration.outputName!!,
-            configuration.granularity!!,
-            configuration.tsCompilationStrategy!!
+            configuration.artifactConfiguration!!,
         )
         return JsBackendPipelineArtifact(outputs, configuration.outputDir!!, configuration)
     }
@@ -53,26 +49,21 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     internal fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-        moduleKind: ModuleKind,
-        moduleName: String,
-        outputDir: File,
-        outputName: String,
-        granularity: JsGenerationGranularity,
-        tsStrategy: TsCompilationStrategy,
+        artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs {
         val messageCollector = configuration.messageCollector
         val beforeIc2Js = System.currentTimeMillis()
 
         val jsArtifacts = icCaches.artifacts.filterIsInstance<JsModuleArtifact>()
         val jsExecutableProducer = JsExecutableProducer(
-            mainModuleName = moduleName,
-            moduleKind = moduleKind,
+            mainModuleName = artifactConfiguration.moduleName,
+            moduleKind = artifactConfiguration.moduleKind,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
             caches = jsArtifacts,
             relativeRequirePath = true
         )
-        val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(granularity, outJsProgram = false)
-        outputs.writeAll(outputDir, outputName, tsStrategy, moduleName, moduleKind)
+        val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(artifactConfiguration.granularity, outJsProgram = false)
+        outputs.writeAll(artifactConfiguration)
 
         messageCollector.report(LOGGING, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
         for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
@@ -95,11 +86,7 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
         val outputs = compileNonIncrementally(
             messageCollector,
             ir2JsTransformer,
-            configuration.moduleKind!!,
-            configuration.moduleName!!,
-            configuration.outputDir!!,
-            configuration.outputName!!,
-            configuration.tsCompilationStrategy!!
+            configuration.artifactConfiguration!!,
         ) ?: return null
         return JsBackendPipelineArtifact(outputs, configuration.outputDir!!, configuration)
     }
@@ -110,17 +97,13 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     internal fun compileNonIncrementally(
         messageCollector: MessageCollector,
         ir2JsTransformer: Ir2JsTransformer,
-        moduleKind: ModuleKind,
-        moduleName: String,
-        outputDir: File,
-        outputName: String,
-        tsStrategy: TsCompilationStrategy,
+        artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs? {
         val start = System.currentTimeMillis()
         try {
             val outputs = ir2JsTransformer.compileAndTransformIrNew()
             messageCollector.report(LOGGING, "Executable production duration: ${System.currentTimeMillis() - start}ms")
-            outputs.writeAll(outputDir, outputName, tsStrategy, moduleName, moduleKind)
+            outputs.writeAll(artifactConfiguration)
             return outputs
         } catch (e: CompilationException) {
             messageCollector.report(

@@ -76,7 +76,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                             generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         )
                         else -> IcCachesConfigurationData.Js(
-                            granularity = configuration.granularity!!
+                            granularity = configuration.artifactConfiguration!!.granularity
                         )
                     },
                     messageCollector = messageCollector,
