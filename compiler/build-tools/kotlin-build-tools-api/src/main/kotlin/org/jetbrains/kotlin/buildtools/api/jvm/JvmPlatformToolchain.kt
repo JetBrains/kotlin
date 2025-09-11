@@ -63,4 +63,16 @@ public interface JvmPlatformToolchain {
     public fun createCriLookupsDeserializationOperation(lookups: ByteArray): CriLookupsDeserializationOperation
     public fun createCriFileIdsToPathsDeserializationOperation(fileIdsToPaths: ByteArray): CriFileIdsToPathsDeserializationOperation
     public fun createCriSubtypesDeserializationOperation(subtypes: ByteArray): CriSubtypesDeserializationOperation
+
+
+    /**
+     * Example:
+     *  ```
+     *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
+     *   val operation = toolchain.jvm.createCriDeserializerRetrievalOperation()
+     *   val deserializer = toolchain.createBuildSession().use { it.executeOperation(operation) }
+     *   val deserializedLookups = deserializer.deserializeLookupData(lookupsByteArray)
+     *  ```
+     */
+    public fun createCriDeserializerRetrievalOperation(): CriDeserializerRetrievalOperation
 }

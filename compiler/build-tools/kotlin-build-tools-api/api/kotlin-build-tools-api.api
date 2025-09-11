@@ -508,6 +508,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmIncre
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain {
 	public abstract fun createClasspathSnapshottingOperation (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
+	public abstract fun createCriDeserializerRetrievalOperation ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriDeserializerRetrievalOperation;
 	public abstract fun createCriFileIdsToPathsDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriFileIdsToPathsDeserializationOperation;
 	public abstract fun createCriLookupsDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriLookupsDeserializationOperation;
 	public abstract fun createCriSubtypesDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriSubtypesDeserializationOperation;
@@ -544,6 +545,12 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncre
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/CriDataDeserializer {
+	public abstract fun deserializeFileIdToPathData ([B)Ljava/util/Collection;
+	public abstract fun deserializeLookupData ([B)Ljava/util/Collection;
+	public abstract fun deserializeSubtypeData ([B)Ljava/util/Collection;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/FileIdToPathEntry {
 	public abstract fun getFileId ()I
 	public abstract fun getPath ()Ljava/lang/String;
@@ -557,6 +564,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/Look
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/SubtypeEntry {
 	public abstract fun getClassName ()Ljava/lang/String;
 	public abstract fun getSubtypes ()Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/CriDeserializerRetrievalOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/CriFileIdsToPathsDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
