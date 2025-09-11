@@ -39,12 +39,14 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.Variance
@@ -1532,16 +1534,13 @@ open class PsiRawFirBuilder(
                         FirSingleExpressionBlock(buildBlock {
                             this.statements += extractScriptStatements(script, classSymbol).map { statement ->
                                 when (statement) {
-                                    is FirProperty -> {
-                                        members.add(statement)
-                                        convertReplProperty(statement, evalSymbol)
-                                    }
-
+                                    is FirProperty,
                                     is FirSimpleFunction,
                                     is FirRegularClass,
                                     is FirTypeAlias,
                                         -> {
                                         members.add(statement)
+                                        statement.isReplSnippetDeclaration = true
                                         buildReplDeclarationReference {
                                             source = statement.source
                                             symbol = statement.symbol
@@ -1599,57 +1598,16 @@ open class PsiRawFirBuilder(
                             ownerRegularOrAnonymousObjectSymbol = null,
                             context,
                         )
-                        firProperty.accept(snippetDeclarationVisitor)
                         add(firProperty)
                     }
                     else -> {
                         val firStatement = declaration.toFirStatement()
                         if (firStatement is FirDeclaration) {
-                            firStatement.accept(snippetDeclarationVisitor)
                             add(firStatement)
                         } else {
                             error("unexpected declaration type in script")
                         }
                     }
-                }
-            }
-        }
-
-        @OptIn(FirContractViolation::class)
-        private fun convertReplProperty(
-            property: FirProperty,
-            functionSymbol: FirNamedFunctionSymbol,
-        ): FirStatement {
-            val initializer = property.initializer
-            val delegate = property.delegate
-            return if (initializer != null) {
-                val ref = FirExpressionRef<FirReplPropertyInitializer>()
-                property.replaceInitializer(buildDelayedPropertyInitializer {
-                    source = property.source
-                    expressionRef = ref
-                    this.functionSymbol = functionSymbol
-                })
-                buildReplPropertyInitializer {
-                    source = initializer.source
-                    propertySymbol = property.symbol
-                    expression = initializer
-                }.also { ref.bind(it) }
-            } else if (delegate != null) {
-                val ref = FirExpressionRef<FirReplPropertyDelegate>()
-                property.replaceDelegate(buildDelayedPropertyDelegate {
-                    source = property.source
-                    expressionRef = ref
-                    this.functionSymbol = functionSymbol
-                })
-                buildReplPropertyDelegate {
-                    source = delegate.source
-                    propertySymbol = property.symbol
-                    expression = delegate
-                }.also { ref.bind(it) }
-            } else {
-                buildReplDeclarationReference {
-                    source = property.source
-                    symbol = property.symbol
                 }
             }
         }
@@ -3798,34 +3756,5 @@ enum class BodyBuildingMode {
 
     companion object {
         fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode = if (lazyBodies) LAZY_BODIES else NORMAL
-    }
-}
-
-private val snippetDeclarationVisitor: FirVisitorVoid = object : FirVisitorVoid() {
-    override fun visitElement(element: FirElement) {}
-
-    override fun visitProperty(property: FirProperty) {
-        property.isReplSnippetDeclaration = true
-        property.getter?.accept(this)
-        property.setter?.accept(this)
-    }
-
-    override fun visitRegularClass(regularClass: FirRegularClass) {
-        regularClass.isReplSnippetDeclaration = true
-        regularClass.declarations.forEach {
-            if (it is FirClass) it.accept(this)
-        }
-    }
-
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-        simpleFunction.isReplSnippetDeclaration = true
-    }
-
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
-        propertyAccessor.isReplSnippetDeclaration = true
-    }
-
-    override fun visitTypeAlias(typeAlias: FirTypeAlias) {
-        typeAlias.isReplSnippetDeclaration = true
     }
 }

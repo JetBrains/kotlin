@@ -163,22 +163,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitStatement(replDeclarationReference)
     }
 
-    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
-        visitExpression(replPropertyInitializer)
-    }
-
-    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
-        visitExpression(replPropertyDelegate)
-    }
-
-    override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer) {
-        visitExpression(delayedPropertyInitializer)
-    }
-
-    override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate) {
-        visitExpression(delayedPropertyDelegate)
-    }
-
     override fun visitResolvedImport(resolvedImport: FirResolvedImport) {
         visitImport(resolvedImport)
     }
