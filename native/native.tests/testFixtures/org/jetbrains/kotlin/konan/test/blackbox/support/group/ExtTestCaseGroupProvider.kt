@@ -146,6 +146,9 @@ private class ExtTestDataFile(
             if (klibIrInlinerMode == KlibIrInlinerMode.ON) {
                 add("+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}")
                 add("+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}")
+            } else {
+                add("-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}")
+                add("-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}")
             }
         }
 
