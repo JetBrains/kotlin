@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80864
 // FILE: Foo.java
 
@@ -17,7 +17,7 @@ public class Foo {
 
 fun main() {
     val foo = Foo()
-    foo.foo = 1
+    foo.<!VAL_REASSIGNMENT!>foo<!> = 1
     foo.bar = 1
 }
 
