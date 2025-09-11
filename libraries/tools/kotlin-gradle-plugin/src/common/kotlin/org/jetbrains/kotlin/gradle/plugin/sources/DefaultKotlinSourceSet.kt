@@ -98,6 +98,10 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     }
 
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
+
+    @Deprecated("KT-80897. Keep ABI compatibility with kotlinx-benchmarks", level = DeprecationLevel.ERROR)
+    override val implementationMetadataConfigurationName: String
+        get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 }
 
 internal val defaultSourceSetLanguageSettingsChecker =
