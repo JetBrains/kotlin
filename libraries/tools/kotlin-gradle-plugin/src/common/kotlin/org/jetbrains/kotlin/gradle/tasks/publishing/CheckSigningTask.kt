@@ -17,6 +17,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
+import org.gradle.plugins.signing.signatory.Signatory
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -56,9 +57,6 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
     abstract val publicationNamesWithSigning: MapProperty<String, Boolean>
 
     @get:Input
-    abstract val signatoryExists: Property<Boolean>
-
-    @get:Input
     abstract val gradleHomePath: Property<String>
 
     /**
@@ -68,12 +66,9 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
     @get:Optional
     abstract val signatoryKeyId: Property<String>
 
-    /**
-     * Will be used to extract the long key ID of the public key.
-     */
     @get:Input
     @get:Optional
-    abstract val exampleSignature: Property<ByteArray>
+    abstract val signatory: Property<Signatory>
 
     @get:Input
     abstract val keyservers: ListProperty<String>
@@ -83,7 +78,6 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
 
     @get:Internal
     abstract val offlineMode: Property<Boolean>
-
 
     internal interface CheckKeyserversParameters : WorkParameters {
         val signature: Property<String>
@@ -177,13 +171,14 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
         }
 
         workQueue.submit(CheckKeyservers::class.java) { parameters ->
-            parameters.signature.set(Base64.getEncoder().encode(exampleSignature.get()).decodeToString())
+            val signature = signatory.get().sign("example".byteInputStream())
+            parameters.signature.set(Base64.getEncoder().encode(signature).decodeToString())
             parameters.keyservers.set(keyservers)
         }
     }
 
     private fun checkSignatoryConfigured() {
-        if (!signatoryExists.getOrElse(false)) {
+        if (!signatory.isPresent) {
             if (keyId.isPresent || keyringPath.isPresent) {
                 val missingProperties = mutableListOf<String>()
                 val presentProperties = mutableListOf<String>()
