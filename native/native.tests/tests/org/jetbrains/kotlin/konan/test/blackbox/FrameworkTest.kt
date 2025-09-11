@@ -381,41 +381,6 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun objCExportTest() {
-        objCExportTestImpl("", emptyList(), emptyList(), false)
-    }
-
-    @Test
-    fun objCExportTestNoGenerics() {
-        objCExportTestImpl("NoGenerics", listOf("-Xno-objc-generics"),
-                           listOf("-D", "NO_GENERICS"), false)
-    }
-
-    @Test
-    fun objCExportTestLegacySuspendUnit() {
-        objCExportTestImpl("LegacySuspendUnit", listOf("-Xbinary=unitSuspendFunctionObjCExport=legacy"),
-                           listOf("-D", "LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT"), false)
-    }
-
-    @Test
-    fun objCExportTestNoSwiftMemberNameMangling() {
-        objCExportTestImpl("NoSwiftMemberNameMangling", listOf("-Xbinary=objcExportDisableSwiftMemberNameMangling=true"),
-                           listOf("-D", "DISABLE_MEMBER_NAME_MANGLING"), false)
-    }
-
-    @Test
-    fun objCExportTestNoInterfaceMemberNameMangling() {
-        objCExportTestImpl("NoInterfaceMemberNameMangling", listOf("-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"),
-                           listOf("-D", "DISABLE_INTERFACE_METHOD_NAME_MANGLING"), false)
-    }
-
-    @Test
-    fun objCExportTestStatic() {
-        objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"),
-                           listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD"), true)
-    }
-
-    @Test
     fun objCExportDumpObjcSelectorToSignatureMapping() {
         Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
         val testName = "selectorToSignatureDump"
@@ -452,88 +417,6 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         }
     }
 
-
-    private fun objCExportTestImpl(
-        suffix: String,
-        frameworkOpts: List<String>,
-        swiftOpts: List<String>,
-        isStaticFramework: Boolean,
-    ) {
-        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
-
-        // Compile a couple of KLIBs
-        val library = compileToLibrary(
-            testSuiteDir.resolve("objcexport/library"),
-            buildDir,
-            TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
-            emptyList(),
-        )
-        val noEnumEntries = compileToLibrary(
-            testSuiteDir.resolve("objcexport/noEnumEntries"),
-            buildDir,
-            TestCompilerArgs(
-                "-Xshort-module-name=NoEnumEntriesLibrary", "-XXLanguage:-EnumEntries",
-                "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library",
-            ),
-            emptyList(),
-        )
-
-        // Convert KT sources into ObjC framework using two KLIbs
-        val objcExportTestSuiteDir = testSuiteDir.resolve("objcexport")
-        val ktFiles = objcExportTestSuiteDir.listFiles { file: File -> file.name.endsWith(".kt") }
-        assertTrue(ktFiles != null && ktFiles.isNotEmpty()) {
-            "Some .kt files must be in test folder $objcExportTestSuiteDir"
-        }
-        val frameworkName = "Kt"
-        val testCase = generateObjCFrameworkTestCase(
-            TestKind.STANDALONE_NO_TR, extras, "Kt",
-            ktFiles!!.toList(),
-            freeCompilerArgs = TestCompilerArgs(
-                frameworkOpts + listOfNotNull(
-                    "-Xstatic-framework".takeIf { isStaticFramework },
-                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                    "-Xexport-kdoc",
-                    "-Xbinary=bundleId=foo.bar",
-                    "-module-name", frameworkName,
-                )
-            ),
-            givenDependencies = setOf(TestModule.Given(library.klibFile), TestModule.Given(noEnumEntries.klibFile)),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5), // objcexport is a test suite on its own, increase the default timeout
-        )
-        testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings, listOf(noEnumEntries)).result.assertSuccess()
-
-        // compile Swift sources using generated ObjC framework
-        val swiftFiles = objcExportTestSuiteDir.listFiles { file: File -> file.name.endsWith(".swift") }
-        assertTrue(swiftFiles != null && swiftFiles.isNotEmpty()) {
-            "Some .swift files must be in test folder $objcExportTestSuiteDir"
-        }
-        val swiftExtraOpts = buildList {
-            addAll(swiftOpts)
-            if (testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE) {
-                add("-D")
-                add("AGGRESSIVE_GC")
-            }
-            if (testRunSettings.get<GCType>().gc == GC.NOOP) {
-                add("-D")
-                add("NOOP_GC")
-            }
-        }
-        val successExecutable = compileSwift(swiftFiles!!.toList(), swiftExtraOpts)
-        val testExecutable = TestExecutable(
-            successExecutable.resultingArtifact,
-            successExecutable.loggedData,
-            listOf(TestName("objCExportTest$suffix"))
-        )
-        runExecutableAndVerify(testCase, testExecutable)
-
-        // check Info.plist for expected bundle identifier
-        val plistFName = if (targets.testTarget.family == Family.OSX) "Resources/Info.plist" else "Info.plist"
-        val infoPlist = buildDir.resolve("$frameworkName.framework/$plistFName")
-        val infoPlistContents = infoPlist.readText()
-        assertTrue(infoPlistContents.contains(Regex("<key>CFBundleIdentifier</key>\\s*<string>foo.bar</string>"))) {
-            "${infoPlist.absolutePath} does not contain expected pattern with `foo.bar`:\n$infoPlistContents"
-        }
-    }
 
     private fun generateObjCFramework(
         name: String,

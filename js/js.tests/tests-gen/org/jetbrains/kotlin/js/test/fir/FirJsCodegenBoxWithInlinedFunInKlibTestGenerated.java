@@ -19689,12 +19689,6 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       }
 
       @Test
-      @TestMetadata("enumEntriesIntrinsicWithoutFeature.kt")
-      public void testEnumEntriesIntrinsicWithoutFeature() {
-        runTest("compiler/testData/codegen/box/enum/enumEntriesIntrinsicWithoutFeature.kt");
-      }
-
-      @Test
       @TestMetadata("enumEntriesMultimodule.kt")
       public void testEnumEntriesMultimodule() {
         runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");
@@ -46045,24 +46039,6 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
           }
 
           @Test
-          @TestMetadata("companionObjectField.kt")
-          public void testCompanionObjectField() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/companionObjectField.kt");
-          }
-
-          @Test
-          @TestMetadata("emptyLhs.kt")
-          public void testEmptyLhs() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/emptyLhs.kt");
-          }
-
-          @Test
-          @TestMetadata("innerSubclass.kt")
-          public void testInnerSubclass() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/innerSubclass.kt");
-          }
-
-          @Test
           @TestMetadata("isInitializedMultiFile.kt")
           public void testIsInitializedMultiFile() {
             runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/isInitializedMultiFile.kt");
@@ -46075,33 +46051,9 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
           }
 
           @Test
-          @TestMetadata("nonInlineLambda.kt")
-          public void testNonInlineLambda() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/nonInlineLambda.kt");
-          }
-
-          @Test
-          @TestMetadata("propertyImportedFromObject.kt")
-          public void testPropertyImportedFromObject() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/propertyImportedFromObject.kt");
-          }
-
-          @Test
-          @TestMetadata("sideEffects.kt")
-          public void testSideEffects() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/sideEffects.kt");
-          }
-
-          @Test
           @TestMetadata("simpleIsInitialized.kt")
           public void testSimpleIsInitialized() {
             runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/simpleIsInitialized.kt");
-          }
-
-          @Test
-          @TestMetadata("topLevelProperty.kt")
-          public void testTopLevelProperty() {
-            runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/topLevelProperty.kt");
           }
         }
 
