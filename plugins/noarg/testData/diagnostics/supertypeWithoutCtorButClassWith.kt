@@ -4,7 +4,7 @@
 annotation class NoArg
 
 @NoArg
-class <!NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS!>SomeClass<!> : SomeBaseClass("hi")
+class SomeClass : SomeBaseClass("hi")
 
 open class SomeBaseClass(val someProperty: String)
 

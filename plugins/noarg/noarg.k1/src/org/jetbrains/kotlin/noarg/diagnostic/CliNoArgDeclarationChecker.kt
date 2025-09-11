@@ -37,6 +37,7 @@ abstract class AbstractNoArgDeclarationChecker(
             context.trace.report(NOARG_ON_LOCAL_CLASS_ERROR.on(declaration.reportTarget))
         }
 
+        if (descriptor.constructors.any { it.isNoArgConstructor() }) return
         val superClass = descriptor.getSuperClassOrAny()
         if (superClass.constructors.none { it.isNoArgConstructor() } && !superClass.hasSpecialAnnotation(declaration)) {
             context.trace.report(NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(declaration.reportTarget))

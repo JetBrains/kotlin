@@ -30,6 +30,8 @@ object FirNoArgDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common
             declaration.isLocal -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR)
         }
 
+        if (declaration.constructors(context.session).any { it.isNoArgConstructor() }) return
+
         val superClassSymbol = declaration.symbol.getSuperClassSymbolOrAny(context.session)
         if (superClassSymbol.constructors(context.session).none { it.isNoArgConstructor() } && !matcher.isAnnotated(superClassSymbol)) {
             reporter.reportOn(source, KtErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS)
