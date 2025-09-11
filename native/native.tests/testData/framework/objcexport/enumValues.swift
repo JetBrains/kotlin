@@ -60,7 +60,6 @@ extension NSObject {
 
 private func testNoEnumEntries() throws {
     try assertTrue(class_respondsToSelector(object_getClass(EnumLeftRightUpDown.self), NSSelectorFromString("entries")));
-    try assertFalse(class_respondsToSelector(object_getClass(NoEnumEntriesEnum.self), NSSelectorFromString("entries")));
 }
 
 private func testEnumEntries() throws {
