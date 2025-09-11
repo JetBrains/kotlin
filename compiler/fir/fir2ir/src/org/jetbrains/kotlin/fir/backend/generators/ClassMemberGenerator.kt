@@ -207,7 +207,8 @@ internal class ClassMemberGenerator(
         val initializer = property.backingField?.initializer ?: property.initializer
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
-        irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
+        val initializerExpression = (initializer ?: delegate)?.takeIf { property.isReplSnippetDeclaration != true }
+        irProperty.initializeBackingField(property, initializerExpression = initializerExpression)
         val needGenerateDefaultGetter = property.getter is FirDefaultPropertyGetter ||
                 (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
 

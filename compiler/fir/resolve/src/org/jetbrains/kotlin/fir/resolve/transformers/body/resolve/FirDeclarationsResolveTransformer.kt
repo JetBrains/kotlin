@@ -651,6 +651,13 @@ open class FirDeclarationsResolveTransformer(
         // Required because in the [FirAbstractBodyResolveTransformerDispatcher.transformAnnotationCall] we're skipping the annotations
         // if the container for the declaration is not in the context, and it prevents the correct annotation resolution in REPL snippets
         context.withVariableAsContainerIfNeeded(variable, treatAsProperty = context.containerIfAny is FirReplSnippet) {
+            if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
+                variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+            ) {
+                // script parameters should not be added to CFG to avoid graph building compilations
+                dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+            }
+
             if (delegate != null) {
                 transformPropertyAccessorsWithDelegate(variable, delegate, shouldResolveEverything = true)
                 if (variable.delegateFieldSymbol != null) {
@@ -861,17 +868,14 @@ open class FirDeclarationsResolveTransformer(
         if (!implicitTypeOnly) {
             context.withReplSnippet(replSnippet, components) {
                 dataFlowAnalyzer.enterReplSnippet(replSnippet, buildGraph = true)
-                replSnippet.transformBody(this, data)
-                val returnType = replSnippet.body.statements.lastOrNull()?.let {
-                    (it as? FirExpression)?.resolvedType
-                } ?:session.builtinTypes.unitType.coneType
-                replSnippet.replaceResultTypeRef(
-                    returnType.toFirResolvedTypeRef(replSnippet.source.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType))
-                )
+                replSnippet.transformSnippetClass(this, data)
                 for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
                     resolveExt.updateResolved(replSnippet)
                 }
-                dataFlowAnalyzer.exitReplSnippet(replSnippet)
+                val controlFlowGraph = dataFlowAnalyzer.exitReplSnippet(replSnippet)
+                if (controlFlowGraph != null) {
+                    replSnippet.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+                }
             }
         }
         return replSnippet

@@ -190,7 +190,6 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>() {
     }
 
     open fun visitReplSnippet(declaration: IrReplSnippet) {
-        declaration.returnType?.let { visitTypeRecursively(declaration, it) }
         visitDeclaration(declaration)
     }
 

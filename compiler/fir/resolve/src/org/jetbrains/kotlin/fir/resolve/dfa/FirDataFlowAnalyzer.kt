@@ -1317,6 +1317,10 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitLiteralExpression(literalExpression).mergeIncomingFlow()
     }
 
+    fun enterLocalVariableDeclaration(variable: FirProperty) {
+        graphBuilder.enterVariableDeclaration(variable).mergeIncomingFlow()
+    }
+
     fun exitLocalVariableDeclaration(variable: FirProperty, hadExplicitType: Boolean) {
         graphBuilder.exitVariableDeclaration(variable).mergeIncomingFlow { _, flow ->
             val initializer = variable.initializer ?: return@mergeIncomingFlow
@@ -1377,7 +1381,7 @@ abstract class FirDataFlowAnalyzer(
                 // val b = a
                 // if (b != null) { /* a != null */ }
                 logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
-            } else if (initializerVariable != null && (property.symbol is FirRegularPropertySymbol || !property.isVar)) {
+            } else if (initializerVariable != null && !(property.isEffectivelyLocal || !property.isVar)) {
                 // Case 1:
                 //   val b = x is String // initializer is synthetic, condition is boolean
                 //   if (b) { /* x is String */ }

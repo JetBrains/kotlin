@@ -332,7 +332,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     @OptIn(LookupTagInternals::class)
     fun createEarlierSnippetClass(snippet: FirReplSnippet, containingPackageFragment: IrPackageFragment, symbol: IrClassSymbol): IrClass {
-        val name = NameUtils.getScriptTargetClassName(snippet.name)
+        val name = snippet.snippetClass.name
         val firSnippetClassSymbol = FirRegularClassSymbol(ClassId(containingPackageFragment.packageFqName, name))
         val firSnippetClass = buildRegularClass {
             moduleData = snippet.moduleData

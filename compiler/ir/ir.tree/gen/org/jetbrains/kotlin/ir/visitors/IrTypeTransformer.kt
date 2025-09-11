@@ -63,11 +63,6 @@ abstract class IrTypeTransformer<out R, in D> : IrVisitor<R, D>() {
         return super.visitScript(declaration, data)
     }
 
-    override fun visitReplSnippet(declaration: IrReplSnippet, data: D): R {
-        declaration.returnType = transformTypeRecursively(declaration, declaration.returnType, data)
-        return super.visitReplSnippet(declaration, data)
-    }
-
     override fun visitTypeAlias(declaration: IrTypeAlias, data: D): R {
         declaration.expandedType = transformTypeRecursively(declaration, declaration.expandedType, data)
         return super.visitTypeAlias(declaration, data)

@@ -156,7 +156,6 @@ abstract class IrTypeTransformerVoid : IrTypeTransformer<Unit, Nothing?>() {
     }
 
     open fun visitReplSnippet(declaration: IrReplSnippet) {
-        declaration.returnType = transformTypeRecursively(declaration, declaration.returnType)
         visitDeclaration(declaration)
     }
 

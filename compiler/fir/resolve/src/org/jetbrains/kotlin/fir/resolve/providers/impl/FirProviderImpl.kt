@@ -213,7 +213,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data: FirRecorderData,
         ) {
             data.state.snippetContainerMap[replSnippet.symbol] = data.file
-            replSnippet.body.acceptChildren(this, data)
+            visitRegularClass(replSnippet.snippetClass, data)
             super.visitReplSnippet(replSnippet, data)
         }
     }

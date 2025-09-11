@@ -27,8 +27,9 @@ abstract class FirReplSnippet : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
-    abstract override val source: KtSourceElement
     abstract override val symbol: FirReplSnippetSymbol
+    abstract override val source: KtSourceElement
+    abstract val receivers: List<FirScriptReceiverParameter>
     abstract val snippetClass: FirRegularClass
     abstract val evalFunctionName: Name
 
@@ -44,6 +45,8 @@ abstract class FirReplSnippet : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReplSnippet
+
+    abstract fun <D> transformReceivers(transformer: FirTransformer<D>, data: D): FirReplSnippet
 
     abstract fun <D> transformSnippetClass(transformer: FirTransformer<D>, data: D): FirReplSnippet
 }

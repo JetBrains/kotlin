@@ -111,7 +111,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
     fun isUnstableInCurrentScope(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
         // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
         if (assignedLocalVariablesByDeclaration == null) return false
-        if (declaration !is FirProperty || declaration.symbol is FirRegularPropertySymbol || !declaration.isVar) return false
+        if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
         return !allAssignmentsPreserveType(scopes.top().second[declaration], types, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
@@ -585,9 +585,13 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
 
             override fun visitProperty(property: FirProperty, data: MiniCfgData) {
                 visitElement(property, data)
-                if (property.symbol is FirLocalPropertySymbol) {
+                if (property.isEffectivelyLocal) {
                     data.variableDeclarations.last()[property.name] = property
                 }
+            }
+
+            override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: MiniCfgData) {
+                replDeclarationReference.symbol.fir.accept(this, data)
             }
 
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {

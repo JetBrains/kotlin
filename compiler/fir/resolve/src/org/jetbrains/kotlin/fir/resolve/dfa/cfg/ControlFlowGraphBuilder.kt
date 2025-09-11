@@ -916,9 +916,16 @@ class ControlFlowGraphBuilder private constructor(
 
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
         if (!property.memberShouldHaveGraph) return null
+        val lastNode = lastNode
         return enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
             createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
-        }.also { addEdgeIfLocalClassMember(it) }
+        }.also {
+            if (lastNode is VariableDeclarationEnterNode && lastNode.fir === property) {
+                addEdge(lastNode, it)
+            } else {
+                addEdgeIfLocalClassMember(it)
+            }
+        }
     }
 
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
@@ -1468,8 +1475,22 @@ class ControlFlowGraphBuilder private constructor(
         return createLiteralExpressionNode(literalExpression).also { addNewSimpleNode(it) }
     }
 
-    fun exitVariableDeclaration(variable: FirProperty): VariableDeclarationNode {
-        return createVariableDeclarationNode(variable).also { addNewSimpleNode(it) }
+    fun enterVariableDeclaration(variable: FirProperty): VariableDeclarationEnterNode {
+        return createVariableDeclarationEnterNode(variable).also { addNewSimpleNode(it) }
+    }
+
+    fun exitVariableDeclaration(variable: FirProperty): VariableDeclarationExitNode {
+        val exitNode = createVariableDeclarationExitNode(variable)
+        val graph = variable.controlFlowGraphReference?.controlFlowGraph
+        if (graph != null && lastNode is VariableDeclarationEnterNode) {
+            addEdge(graph.exitNode, exitNode)
+            // Fake edge to enforce ordering.
+            addEdge(lastNodes.pop(), exitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
+            lastNodes.push(exitNode)
+        } else {
+            addNewSimpleNode(exitNode)
+        }
+        return exitNode
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment): VariableAssignmentNode {
