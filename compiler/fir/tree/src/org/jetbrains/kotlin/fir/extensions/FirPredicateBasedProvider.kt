@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class FirPredicateBasedProvider : FirSessionComponent {
     /**
-     * @return list of all declarations from compiled source module which are matched to [predicate]
+     * Returns a list of all declarations from compiled source module which are matched to [predicate].
+     *
+     * All returned declarations are guaranteed to be non-local due to the contract of [LookupPredicate]
+     * (see the documentation on [AbstractPredicate] for more details).
      */
     abstract fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>>
 
