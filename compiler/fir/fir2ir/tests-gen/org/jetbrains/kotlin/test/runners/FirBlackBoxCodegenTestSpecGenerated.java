@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirBlackBoxCodegenTestSpecGenerated extends AbstractFirBlackBoxCodegenTestSpec {
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates", "linked/exceptions", "linked/operator-call", "linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "linked/overloadable-operators");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates", "linked/exceptions", "linked/operator-call", "linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "linked/overload-resolution/receivers/p-5", "linked/overloadable-operators");
   }
 
   @Nested
@@ -30,7 +30,7 @@ public class FirBlackBoxCodegenTestSpecGenerated extends AbstractFirBlackBoxCode
   public class Linked {
     @Test
     public void testAllFilesPresentInLinked() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "operator-call", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overloadable-operators");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "operator-call", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overload-resolution/receivers/p-5", "overloadable-operators");
     }
 
     @Nested
@@ -2957,7 +2957,7 @@ public class FirBlackBoxCodegenTestSpecGenerated extends AbstractFirBlackBoxCode
     public class Overload_resolution {
       @Test
       public void testAllFilesPresentInOverload_resolution() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), null, true, "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), null, true, "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "receivers/p-5");
       }
 
       @Nested
@@ -3364,7 +3364,7 @@ public class FirBlackBoxCodegenTestSpecGenerated extends AbstractFirBlackBoxCode
       public class Receivers {
         @Test
         public void testAllFilesPresentInReceivers() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true, "p-5");
         }
 
         @Nested
