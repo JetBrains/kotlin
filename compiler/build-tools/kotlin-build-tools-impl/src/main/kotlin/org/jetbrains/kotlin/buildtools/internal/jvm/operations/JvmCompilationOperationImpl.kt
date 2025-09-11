@@ -114,7 +114,7 @@ internal class JvmCompilationOperationImpl(
         val reportCategories = arrayOf(
             ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code
         ) // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
-        val reportSeverity = if (/*logger.isDebugEnabled && */compilerArguments[VERBOSE]) {
+        val reportSeverity = if (VERBOSE in compilerArguments && compilerArguments[VERBOSE]) {
             ReportSeverity.DEBUG.code
         } else {
             ReportSeverity.INFO.code
