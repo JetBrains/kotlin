@@ -597,6 +597,15 @@ internal abstract class FunctionalStubBuilder(
             && !noStringConversion.contains(function.name)
 }
 
+private val allowedFunctions = setOf(
+//        "posix_errno",
+//        "set_posix_errno",
+        "native_pthread_mutex_create",
+        "native_pthread_mutex_destroy",
+        "native_pthread_mutex_lock",
+        "native_pthread_mutex_unlock",
+)
+
 internal class FunctionStubBuilder(
     context: StubsBuildingContext,
     func: FunctionDecl,
@@ -831,7 +840,7 @@ private fun StubElementBuilder.cCallModeAnnotations(
         }
     }
 
-    if (cCallMode != CCallMode.DIRECT) {
+    if (cCallMode != CCallMode.DIRECT || name in allowedFunctions) {
         add(indirect())
     }
 
