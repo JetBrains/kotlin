@@ -17,6 +17,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
+import org.gradle.plugins.signing.signatory.Signatory
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -75,6 +76,9 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
     @get:Optional
     abstract val exampleSignature: Property<ByteArray>
 
+    @get:Internal
+    internal var fallbackSignatory: Signatory? = null
+
     @get:Input
     abstract val keyservers: ListProperty<String>
 
@@ -83,7 +87,6 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
 
     @get:Internal
     abstract val offlineMode: Property<Boolean>
-
 
     internal interface CheckKeyserversParameters : WorkParameters {
         val signature: Property<String>
@@ -177,7 +180,12 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
         }
 
         workQueue.submit(CheckKeyservers::class.java) { parameters ->
-            parameters.signature.set(Base64.getEncoder().encode(exampleSignature.get()).decodeToString())
+            val signature = if (exampleSignature.isPresent) {
+                exampleSignature.get()
+            } else {
+                requireNotNull(fallbackSignatory).sign("example".byteInputStream())
+            }
+            parameters.signature.set(Base64.getEncoder().encode(signature).decodeToString())
             parameters.keyservers.set(keyservers)
         }
     }
