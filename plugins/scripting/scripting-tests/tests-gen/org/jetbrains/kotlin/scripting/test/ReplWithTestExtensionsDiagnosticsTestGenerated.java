@@ -54,6 +54,12 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
+  @TestMetadata("property_visibility.kts")
+  public void testProperty_visibility() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_visibility.kts");
+  }
+
+  @Test
   @TestMetadata("separate_snippets_use_before_define.repl.kts")
   public void testSeparate_snippets_use_before_define_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/separate_snippets_use_before_define.repl.kts");
