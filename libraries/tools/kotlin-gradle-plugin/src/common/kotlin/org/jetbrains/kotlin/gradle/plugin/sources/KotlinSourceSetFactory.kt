@@ -7,12 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -75,6 +71,11 @@ internal class DefaultKotlinSourceSetFactory(
     override fun setUpSourceSetDefaults(sourceSet: DefaultKotlinSourceSet) {
         super.setUpSourceSetDefaults(sourceSet)
         sourceSet.resources.srcDir(defaultSourceFolder(project, sourceSet.name, SOURCE_SET_TYPE_RESOURCES))
+        // Drop in KT-80897
+        @Suppress("DEPRECATION_ERROR")
+        project.configurations.maybeCreateResolvable(sourceSet.implementationMetadataConfigurationName) {
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
+        }
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet =
