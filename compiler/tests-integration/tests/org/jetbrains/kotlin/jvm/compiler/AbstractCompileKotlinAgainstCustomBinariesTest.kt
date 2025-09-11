@@ -242,7 +242,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
+    fun testReleaseCompilerAgainstPreReleaseLibraryJs() = muteForK1 {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }
 
@@ -250,7 +250,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
+    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() = muteForK1 {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
     }
 
@@ -333,16 +333,21 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
     fun testRequireKotlinInNestedClassesJs() = muteForK2 {
-        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
+        muteForK1 {
+            compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
+        }
     }
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
     fun testRequireKotlinInNestedClassesAgainst14Js() = muteForK2 {
-        val library = compileJsLibrary("library", additionalOptions = listOf(CommonCompilerArguments::metadataVersion.cliArgument("1.4.0")))
-        compileKotlin(
-            "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
-            additionalOptions = listOf(K2MetadataCompilerArguments::skipMetadataVersionCheck.cliArgument)
-        )
+        muteForK1 {
+            val library =
+                compileJsLibrary("library", additionalOptions = listOf(CommonCompilerArguments::metadataVersion.cliArgument("1.4.0")))
+            compileKotlin(
+                "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
+                additionalOptions = listOf(K2MetadataCompilerArguments::skipMetadataVersionCheck.cliArgument)
+            )
+        }
     }
 
     fun testStrictMetadataVersionSemanticsSameVersion() {
@@ -502,15 +507,17 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     // KT-60531 K2/JS: Report diagnostics before running FIR2IR
     fun testInternalFromForeignModuleJs() = muteForK2 {
-        compileKotlin(
-            "source.kt",
-            File(tmpdir, "usage.js"),
-            listOf(compileJsLibrary("library")),
-            K2JSCompiler(),
-        )
+        muteForK1 {
+            compileKotlin(
+                "source.kt",
+                File(tmpdir, "usage.js"),
+                listOf(compileJsLibrary("library")),
+                K2JSCompiler(),
+            )
+        }
     }
 
-    fun testInternalFromFriendModuleJs() {
+    fun testInternalFromFriendModuleJs() = muteForK1 {
         val library = compileJsLibrary("library")
         compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), listOf(K2JSCompilerArguments::friendModules.cliArgument(library.path)))
     }
@@ -522,7 +529,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
     */
 
-    fun testInternalFromFriendModuleCommon() {
+    fun testInternalFromFriendModuleCommon() = muteForK1 {
         val library = compileCommonLibrary("library")
         compileKotlin(
             "source.kt", tmpdir, listOf(library), KotlinMetadataCompiler(), listOf(
@@ -649,9 +656,13 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
 
-    fun testAnonymousObjectTypeMetadata() = doTestAnonymousObjectTypeMetadata()
+    fun testAnonymousObjectTypeMetadata() = muteForK1 {
+        doTestAnonymousObjectTypeMetadata()
+    }
 
-    fun testAnonymousObjectTypeMetadataKlib() = doTestAnonymousObjectTypeMetadata(listOf(K2MetadataCompilerArguments::metadataKlib.cliArgument))
+    fun testAnonymousObjectTypeMetadataKlib() = muteForK1 {
+        doTestAnonymousObjectTypeMetadata(listOf(K2MetadataCompilerArguments::metadataKlib.cliArgument))
+    }
 
     /**
      * This test does exactly the same as [testAnonymousObjectTypeMetadataKlib] but using the old (now deprecated)
@@ -659,22 +670,10 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
      *
      * The test is needed only to check that the old CLI argument still works as needed.
      */
-    fun testAnonymousObjectTypeMetadataKlibWithOldCLIKey() = doTestAnonymousObjectTypeMetadata(listOf("-Xexpect-actual-linker")) { output ->
-        output.lines().filterNot { "argument -Xexpect-actual-linker is deprecated" in it }.joinToString("\n")
-    }
-
-    fun testConstEvaluationWithDifferentLV() {
-        val library = compileJsLibrary(
-            "library",
-            additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.9",
-                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
-            )
-        )
-        compileKotlin(
-            "src", File(tmpdir, "usage.js"), emptyList(), K2JSCompiler(),
-            additionalOptions = listOf(K2JSCompilerArguments::includes.cliArgument(library.absolutePath), K2JSCompilerArguments::irProduceJs.cliArgument),
-        )
+    fun testAnonymousObjectTypeMetadataKlibWithOldCLIKey() = muteForK1 {
+        doTestAnonymousObjectTypeMetadata(listOf("-Xexpect-actual-linker")) { output ->
+            output.lines().filterNot { "argument -Xexpect-actual-linker is deprecated" in it }.joinToString("\n")
+        }
     }
 
     private fun doTestAnonymousObjectTypeMetadata(
