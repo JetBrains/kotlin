@@ -144,6 +144,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
             @Suppress("DEPRECATION")
             args.jvmDefault = originalArguments.jvmDefault
+            args.jvmDefaultStable = originalArguments.jvmDefaultStable
             args.jdkRelease = originalArguments.jdkRelease
             args.progressiveMode = originalArguments.progressiveMode
             args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn ?: emptyArray())).toTypedArray()
@@ -154,6 +155,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
             }?.toTypedArray()
             args.contextReceivers = originalArguments.contextReceivers
+            args.contextParameters = originalArguments.contextParameters
             args.multiDollarInterpolation = originalArguments.multiDollarInterpolation
             args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
             args.whenGuards = originalArguments.whenGuards
