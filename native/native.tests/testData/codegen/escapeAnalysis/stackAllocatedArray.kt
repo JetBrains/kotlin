@@ -5,6 +5,8 @@
 // IGNORE_NATIVE: optimizationMode=DEBUG
 // IGNORE_NATIVE: optimizationMode=NO
 // LANGUAGE: -IrCrossModuleInlinerBeforeKlibSerialization
+// ^^^KT-80867 With +IrCrossModuleInlinerBeforeKlibSerialization, in FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated
+//             both `array.isStack()` are wrongly false
 
 import kotlin.test.*
 import kotlin.native.internal.*

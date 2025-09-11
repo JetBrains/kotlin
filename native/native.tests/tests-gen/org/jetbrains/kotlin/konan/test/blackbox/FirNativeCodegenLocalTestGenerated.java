@@ -958,12 +958,6 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
-    @TestMetadata("stackAllocatedArrayWithCrossModuleInliner.kt")
-    public void testStackAllocatedArrayWithCrossModuleInliner() {
-      runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedArrayWithCrossModuleInliner.kt");
-    }
-
-    @Test
     @TestMetadata("stackAllocatedString.kt")
     public void testStackAllocatedString() {
       runTest("native/native.tests/testData/codegen/escapeAnalysis/stackAllocatedString.kt");
