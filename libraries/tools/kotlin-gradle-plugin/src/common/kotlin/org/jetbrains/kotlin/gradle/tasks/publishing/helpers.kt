@@ -17,6 +17,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
@@ -78,12 +79,16 @@ internal fun Project.addSigningValidationHelpers() {
                     logger.warn("Failed to create signatory: ${e.message}")
                     null
                 }
-                task.signatoryExists.set(signatory != null)
+                if (signatory != null) {
+                    task.signatory.set(signatory)
+                }
+                if (GradleVersion.current() < GradleVersion.version("8.1")) {
+                    task.notCompatibleWithConfigurationCache("checkSigningConfiguration task is not compatible with configuration cache on Gradle versions < 8.1.")
+                }
                 findProperty("signing.keyId")?.toString()?.let { task.keyId.set(it) }
                 findProperty("signing.secretKeyRingFile")?.toString()?.let { task.keyringPath.set(file(it)) }
                 findProperty("signing.password")?.toString()?.let { task.hasKeyPassword.set(true) } ?: task.hasKeyPassword.set(false)
                 signatory?.keyId?.let { task.signatoryKeyId.set(it) }
-                signatory?.sign("example".byteInputStream())?.let { task.exampleSignature.set(it) }
             }
         }
         project.pluginManager.withPlugin("maven-publish") {
