@@ -81,9 +81,9 @@ class UklibInterprojectResolutionTests {
         ).evaluate()
 
         listOf(
-            consumer.multiplatformExtension.iosArm64().compilationResolution(),
-            consumer.multiplatformExtension.jvm().compilationResolution(),
-            consumer.multiplatformExtension.js().compilationResolution(),
+            consumer.multiplatformExtension.iosArm64(),
+            consumer.multiplatformExtension.jvm(),
+            consumer.multiplatformExtension.js(),
         ).forEach {
             assertEquals(
                 mapOf(
@@ -92,13 +92,14 @@ class UklibInterprojectResolutionTests {
                         artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
-                it.prettyPrinted,
+                it.compilationResolution().prettyPrinted,
+                it.name,
             )
         }
 
         listOf(
-            consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
-            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration.resolveProjectDependencyComponentsWithArtifacts(),
+            consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration,
+            consumer.multiplatformExtension.sourceSets.commonMain.get().internal.resolvableMetadataConfiguration,
         ).forEach {
             assertEquals(
                 mapOf(
@@ -107,13 +108,14 @@ class UklibInterprojectResolutionTests {
                         artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
-                it.prettyPrinted,
+                it.resolveProjectDependencyComponentsWithArtifacts().prettyPrinted,
+                it.name,
             )
         }
     }
 
     @Test
-    fun `uklib resolution - direct dependency on a non-uklib producing component - with a subset of targets`() {
+    fun `interproject uklib resolution - direct dependency on a non-uklib producing component - with a subset of targets`() {
         val root = buildProject()
         buildProjectWithMPP(
             projectBuilder = {

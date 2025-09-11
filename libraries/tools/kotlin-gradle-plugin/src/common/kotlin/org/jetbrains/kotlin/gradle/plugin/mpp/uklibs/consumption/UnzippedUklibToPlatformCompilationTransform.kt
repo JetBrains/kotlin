@@ -30,6 +30,11 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform :
 
     override fun transform(outputs: TransformOutputs) {
         val unzippedUklib = inputArtifact.get().asFile
+        if (unzippedUklib.extension == "zip") {
+            outputs.file(unzippedUklib)
+            return
+        }
+
         val targetFragmentAttribute = parameters.targetFragmentAttribute.get()
         val uklib = deserializeUklibFromDirectory(unzippedUklib)
         val platformFragments = uklib

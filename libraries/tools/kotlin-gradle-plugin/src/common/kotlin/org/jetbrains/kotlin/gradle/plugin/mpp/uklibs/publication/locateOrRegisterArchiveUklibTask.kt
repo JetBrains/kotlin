@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication
 
+import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
@@ -18,13 +19,21 @@ import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.CLASSPATH
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibTrue
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibManifest
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibManifestTrue
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibManifestArtifactType
 
 internal const val UKLIB_API_ELEMENTS_NAME = "uklibApiElements"
 internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
@@ -58,7 +67,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
     publishedCompilations: List<KGPUklibFragment>,
 ): List<DefaultKotlinUsageContext> {
-    configurations.createConsumable(UKLIB_API_ELEMENTS_NAME) {
+    val uklibApiElements = configurations.createConsumable(UKLIB_API_ELEMENTS_NAME) {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_API))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -66,7 +75,39 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         }
         inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
     }
-    configurations.createConsumable(UKLIB_RUNTIME_ELEMENTS_NAME) {
+
+    val fragments = publishedCompilations.map { it.compilation to it.fragment.get() }
+    val manifest = mapOf(
+        FRAGMENTS to fragments.sortedBy {
+            // Make sure we have some stable order of fragments
+            it.second.identifier
+        }.map {
+            mapOf(
+                FRAGMENT_IDENTIFIER to it.second.identifier,
+                ATTRIBUTES to it.second.attributes
+                    // Make sure we have some stable order of attributes
+                    .sorted(),
+                CLASSPATH to it.first.output.classesDirs.files.map { it.path },
+            )
+        },
+    )
+    val uklibManifest = layout.buildDirectory.file("uklibManifest:${GsonBuilder().create().toJson(manifest)}")
+
+    uklibApiElements.outgoing.variants {
+        it.create("unpackedUKlibMetadata") {
+            it.artifact(
+                uklibManifest
+            ) {
+                it.type = uklibManifestArtifactType
+                it.extension = uklibManifestArtifactType
+            }
+            it.attributes {
+                it.attribute(isUklibManifest, isUklibManifestTrue)
+            }
+        }
+    }
+
+    val uklibRuntimeElements = configurations.createConsumable(UKLIB_RUNTIME_ELEMENTS_NAME) {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))

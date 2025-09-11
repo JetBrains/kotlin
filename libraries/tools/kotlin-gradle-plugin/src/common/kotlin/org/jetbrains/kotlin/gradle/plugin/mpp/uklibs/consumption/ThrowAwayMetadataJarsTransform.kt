@@ -35,7 +35,11 @@ internal abstract class ThrowAwayMetadataJarsTransform : TransformAction<Transfo
             outputs.file(jar)
             return
         }
-        if (!jar.exists()) return
+        if (!jar.exists()) {
+            // If artifact resolution happens before metadata jar has been created (e.g. interproject dependencies), keep the jar
+            outputs.file(jar)
+            return
+        }
 
         val isMetadataJar: Boolean = ZipFile(jar).use { zip ->
             zip.entries().asSequence().any {

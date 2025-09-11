@@ -31,3 +31,4 @@ internal val uklibViewAttribute = Attribute.of("org.jetbrains.kotlin.uklibView",
 internal val uklibViewAttributeWholeUklib = "whole_uklib"
 
 internal val uklibArtifactType = Uklib.UKLIB_EXTENSION
+internal val uklibManifestArtifactType = "uklibManifest"
