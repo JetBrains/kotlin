@@ -122,9 +122,3 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
         )
     }
 }
-
-@DisplayName("Basic incremental scenarios with tests in KMP - K1")
-class BasicTestIncrementalCompilationK1IT : BasicTestIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}
