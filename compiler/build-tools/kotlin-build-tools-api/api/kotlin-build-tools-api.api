@@ -541,6 +541,21 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncre
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/FileIdToPathEntry {
+	public abstract fun getFileId ()I
+	public abstract fun getPath ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/LookupEntry {
+	public abstract fun getFileIds ()Ljava/util/Collection;
+	public abstract fun getKey ()J
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/SubtypeEntry {
+	public abstract fun getClassName ()Ljava/lang/String;
+	public abstract fun getSubtypes ()Ljava/util/Collection;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Companion;
 	public static final field GRANULARITY Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;
