@@ -296,7 +296,12 @@ public class Instant internal constructor(
 
         /**
          * Returns an [Instant] that is the [epochSeconds] number of seconds from the epoch instant `1970-01-01T00:00:00Z`
-         * and the [nanosecondAdjustment] number of nanoseconds from the whole second.
+         * and the [nanosecondAdjustment] number of nanoseconds.
+         *
+         * [nanosecondAdjustment] describes how many nanoseconds later the given instant than the one defined by just [epochSeconds].
+         * For convenience and flexibility, [fromEpochSeconds] accepts [nanosecondAdjustment] values outside
+         * of [Instant.nanosecondsOfSecond] range. Negative [nanosecondAdjustment] means that the given instant will be earlier than
+         * the one defined by just [epochSeconds], and values greater than a second will contribute to the resulting number of seconds.
          *
          * The return value is clamped to the boundaries of [Instant] if the result exceeds them.
          * In any case, it is guaranteed that instants between [DISTANT_PAST] and [DISTANT_FUTURE] can be represented.
@@ -324,7 +329,12 @@ public class Instant internal constructor(
 
         /**
          * Returns an [Instant] that is the [epochSeconds] number of seconds from the epoch instant `1970-01-01T00:00:00Z`
-         * and the [nanosecondAdjustment] number of nanoseconds from the whole second.
+         * and the [nanosecondAdjustment] number of nanoseconds.
+         *
+         * [nanosecondAdjustment] describes how many nanoseconds later the given instant than the one defined by just [epochSeconds].
+         * For convenience and flexibility, [fromEpochSeconds] accepts [nanosecondAdjustment] values outside
+         * of [Instant.nanosecondsOfSecond] range. Negative [nanosecondAdjustment] means that the given instant will be earlier than
+         * the one defined by just [epochSeconds], and values greater than a second will contribute to the resulting number of seconds.
          *
          * The return value is clamped to the boundaries of [Instant] if the result exceeds them.
          * In any case, it is guaranteed that instants between [DISTANT_PAST] and [DISTANT_FUTURE] can be represented.

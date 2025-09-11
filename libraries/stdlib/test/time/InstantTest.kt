@@ -321,6 +321,8 @@ class InstantTest {
         )
         assertEquals(Instant.fromEpochSeconds(Instant.MAX.epochSeconds - 1L, Long.MAX_VALUE).toEpochMilliseconds(), Long.MAX_VALUE)
         assertEquals(Instant.fromEpochSeconds(Instant.MIN.epochSeconds + 1L, Long.MIN_VALUE).toEpochMilliseconds(), Long.MIN_VALUE)
+        assertEquals(Instant.fromEpochSeconds(1L, 2L.seconds.toLong(DurationUnit.NANOSECONDS)).toEpochMilliseconds(), 3L)
+        assertEquals(Instant.fromEpochSeconds(1L, -2L.seconds.toLong(DurationUnit.NANOSECONDS)).toEpochMilliseconds(), -1L)
     }
 
     @Test

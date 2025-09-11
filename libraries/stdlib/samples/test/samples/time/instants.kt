@@ -10,6 +10,7 @@ import kotlin.test.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.nanoseconds
+import kotlin.time.Duration.Companion.seconds
 
 class Instants {
 
@@ -138,6 +139,16 @@ class Instants {
         // The string representation of the constructed instants.
         assertPrints(unixEpochInstant, "1970-01-01T00:00:00Z")
         assertPrints(instant, "2001-09-09T01:46:39.999999999Z")
+
+        // Creating an Instant with negative nanosecondAdjustment
+        val earlierInstant = Instant.fromEpochSeconds(999_999_999, nanosecondAdjustment = -999_999_999)
+        assertPrints(earlierInstant, "2001-09-09T01:46:38.000000001Z")
+        assertTrue(earlierInstant < instant)
+
+        // Creating an Instant with nanosecondAdjustment > 1s
+        val laterInstant = Instant.fromEpochSeconds(999_999_999, nanosecondAdjustment = 1_999_999_999)
+        assertPrints(laterInstant, "2001-09-09T01:46:40.999999999Z")
+        assertTrue(laterInstant > instant)
     }
 
     @Sample
