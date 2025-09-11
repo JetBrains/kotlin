@@ -367,6 +367,8 @@ class WasmSymbols(
         val throwValue = getInternalWasmFunction("throwValue")
 
         val throw0 = getInternalWasmFunction("throw0")
+
+        val jsConcat = getFunction("jsConcat", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
     }
 
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))
