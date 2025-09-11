@@ -111,8 +111,8 @@ public annotation class ExperimentalJsStatic
 @OptionalExpectation
 public expect annotation class JsExport() {
     /**
-     * The annotation prevents exporting the annotated member of an exported class.
-     * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+     * This annotation prevents the annotated member of an exported class from being exported.
+     * It is experimental, meaning the restrictions described above are subject to change.
      */
     @ExperimentalJsExport
     @Retention(AnnotationRetention.BINARY)
