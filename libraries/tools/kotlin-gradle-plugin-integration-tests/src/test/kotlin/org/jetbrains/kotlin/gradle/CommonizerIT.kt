@@ -49,6 +49,7 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -322,7 +323,7 @@ open class CommonizerIT : KGPBaseTest() {
     @TestMetadata("commonize-kt-46142-singleNativeTarget")
     @GradleTest
     fun testStandaloneNativeSourceSet(gradleVersion: GradleVersion) {
-        project("empty", gradleVersion) {
+        val project = project("empty", gradleVersion) {
             plugins {
                 kotlin("multiplatform")
             }
@@ -331,9 +332,19 @@ open class CommonizerIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     linuxArm64()
                     jvm()
+
+                    sourceSets.commonMain.get().compileSource(
+                        """                            
+                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                        fun common() {
+                            platform.posix.usleep(100u)
+                        }
+                        """.trimIndent()
+                    )
                 }
             }
-        }.resolveIdeDependencies {
+        }
+        project.resolveIdeDependencies {
             val linuxMatchers = arrayOf(
                 nativeStdlibDependency,
                 IdeaKotlinDependencyMatcher("Platform cinterops matcher") {
@@ -358,6 +369,8 @@ open class CommonizerIT : KGPBaseTest() {
                 *linuxMatchers,
             )
         }
+        project.build("compileKotlinLinuxArm64")
+        project.buildAndFail("compileCommonMainKotlinMetadata")
     }
 
 
