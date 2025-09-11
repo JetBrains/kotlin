@@ -29,9 +29,12 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import kotlin.math.min
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
+
+private const val MAX_WASM_IMPORT_NAME_LENGTH = 100_000
 
 class DeclarationGenerator(
     private val backendContext: WasmBackendContext,
@@ -684,10 +687,21 @@ fun generateConstExpression(
             val stringValue = expression.value as String
             body.commentGroupStart { "const string: \"$stringValue\"" }
 
-            if (stringValue.fitsWasmImportName && backendContext.isWasmJsTarget) {
-                val (globalReference, literalId) = context.referenceGlobalString(stringValue)
-                body.buildConstI32Symbol(literalId, location)
-                body.buildGetGlobal(globalReference, location)
+            if (!stringValue.hasUnpairedSurrogates && backendContext.isWasmJsTarget) {
+                val stringValueSplits = stringValue.chunked(MAX_WASM_IMPORT_NAME_LENGTH).ifEmpty { listOf("") }
+                val jsConcat: WasmSymbol<WasmFunction> =
+                    context.referenceFunction(backendContext.wasmSymbols.jsRelatedSymbols.jsConcat)
+
+                val (globalReferenceFirst, literalIdToStore) = context.referenceGlobalString(stringValueSplits.first())
+                body.buildConstI32Symbol(literalIdToStore, location)
+                body.buildGetGlobal(globalReferenceFirst, location)
+
+                for (stringValueSplit in stringValueSplits.drop(1)) {
+                    val (globalReference, _) = context.referenceGlobalString(stringValueSplit)
+                    body.buildGetGlobal(globalReference, location)
+                    body.buildCall(jsConcat, location)
+                }
+
                 body.buildCall(context.wasmStringsElements.createStringLiteralJsString, location)
             } else {
                 val literalId = context.referenceStringLiteralId(stringValue)
