@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -74,7 +71,12 @@ open class FirDeclarationsResolveTransformer(
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
-        val container = context.containers.getOrNull(context.containers.size - 2)
+        val container = if (isReplSnippetDeclaration == true) {
+            // REPL snippets have extra nesting due to the snippet class and eval function.
+            context.containers.getOrNull(context.containers.size - 3)
+        } else {
+            context.containers.getOrNull(context.containers.size - 2)
+        }
         return visibilityForApproximation(container?.symbol)
     }
 
@@ -188,6 +190,7 @@ open class FirDeclarationsResolveTransformer(
                 dataFlowAnalyzer.enterProperty(property)
             }
 
+            val hadExplicitType = property.returnTypeRef !is FirImplicitTypeRef
             var backingFieldIsAlreadyResolved = false
             context.withProperty(property) {
                 // this is required to resolve annotations and return types on properties of local classes/scripts
@@ -290,7 +293,7 @@ open class FirDeclarationsResolveTransformer(
             }
 
             if (!initializerIsAlreadyResolved) {
-                dataFlowAnalyzer.exitProperty(property)?.let {
+                dataFlowAnalyzer.exitProperty(property, hadExplicitType)?.let {
                     property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                 }
             }
@@ -648,6 +651,13 @@ open class FirDeclarationsResolveTransformer(
         // Required because in the [FirAbstractBodyResolveTransformerDispatcher.transformAnnotationCall] we're skipping the annotations
         // if the container for the declaration is not in the context, and it prevents the correct annotation resolution in REPL snippets
         context.withVariableAsContainerIfNeeded(variable, treatAsProperty = context.containerIfAny is FirReplSnippet) {
+            if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
+                variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+            ) {
+                // script parameters should not be added to CFG to avoid graph building compilations
+                dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+            }
+
             if (delegate != null) {
                 transformPropertyAccessorsWithDelegate(variable, delegate, shouldResolveEverything = true)
                 if (variable.delegateFieldSymbol != null) {
@@ -858,17 +868,14 @@ open class FirDeclarationsResolveTransformer(
         if (!implicitTypeOnly) {
             context.withReplSnippet(replSnippet, components) {
                 dataFlowAnalyzer.enterReplSnippet(replSnippet, buildGraph = true)
-                replSnippet.transformBody(this, data)
-                val returnType = replSnippet.body.statements.lastOrNull()?.let {
-                    (it as? FirExpression)?.resolvedType
-                } ?:session.builtinTypes.unitType.coneType
-                replSnippet.replaceResultTypeRef(
-                    returnType.toFirResolvedTypeRef(replSnippet.source.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType))
-                )
+                replSnippet.transformSnippetClass(this, data)
                 for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
                     resolveExt.updateResolved(replSnippet)
                 }
-                dataFlowAnalyzer.exitReplSnippet(replSnippet)
+                val controlFlowGraph = dataFlowAnalyzer.exitReplSnippet(replSnippet)
+                if (controlFlowGraph != null) {
+                    replSnippet.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+                }
             }
         }
         return replSnippet
@@ -1029,10 +1036,11 @@ open class FirDeclarationsResolveTransformer(
             val returnTypeRef = expressionType
                 ?.toFirResolvedTypeRef(newSource)
                 ?.run {
-                    if (context.containers.getOrNull(context.containers.size - 2) is FirReplSnippet)
+                    if (function.isReplSnippetDeclaration == true)
                         approximateDeclarationType(
                             namedFunction?.visibilityForApproximation(),
-                            isLocal = false, isInlineFunction = namedFunction?.isInline == true
+                            isLocal = false,
+                            isInlineFunction = namedFunction?.isInline == true,
                         )
                     else
                         approximateDeclarationType(
@@ -1593,7 +1601,11 @@ open class FirDeclarationsResolveTransformer(
 
             val newTypeRef: FirResolvedTypeRef = resultType?.let {
                 val expectedType = it.toExpectedTypeRef(fallbackSource = variable.source)
-                expectedType.approximateDeclarationType(variable.visibilityForApproximation(), variable.isLocalVariableOrParameter)
+                expectedType.approximateDeclarationType(
+                    containingCallableVisibility = variable.visibilityForApproximation(),
+                    isLocal = variable.isLocalVariableOrParameter,
+                    approximateLocalTypes = variable.isReplSnippetDeclaration == true
+                )
             } ?: buildErrorTypeRef {
                 diagnostic = ConeLocalVariableNoTypeOrInitializer(variable)
                 source = variable.source

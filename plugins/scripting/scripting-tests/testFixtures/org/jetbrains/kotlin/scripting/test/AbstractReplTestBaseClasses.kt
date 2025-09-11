@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_EVAL_FUN_NAME
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_RESULT_PROP_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
@@ -27,26 +28,22 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirReplFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptAndReplCodegenTest
-import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
-import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
@@ -227,7 +224,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         val eval = snippetClass.methods.find { it.name == evalFunName }!!
 
         val snippet = snippetClass.getField("INSTANCE").get(null)
-        val (out, _, res) = captureOutErrRet {
+        val (out, err) = captureOutErrRet {
             eval.invoke(snippet)
         }
 
@@ -241,7 +238,9 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
                 }
             }
             val result = if (fieldName == "<res>") {
-                res
+                val resultField = snippetClass.fields.find { it.name == REPL_SNIPPET_RESULT_PROP_NAME.asString() }
+                resultField?.isAccessible = true
+                resultField?.get(snippet)
             } else {
                 val field = snippetClass.getDeclaredField(fieldName)
                 field.isAccessible = true
@@ -251,6 +250,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
             assertions.assertEquals(expectedValue.trim(), resultString) { "comparing variable $fieldName" }
         }
 
+        assertions.assertEquals("", err)
         assertions.assertEquals(expectedOut, out)
     }
 
@@ -344,14 +344,14 @@ private class ReplRunViaApiChecker(
 }
 
 
-internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
+internal fun captureOutErrRet(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()
     val errStream = ByteArrayOutputStream()
     val prevOut = System.out
     val prevErr = System.err
     System.setOut(PrintStream(outStream))
     System.setErr(PrintStream(errStream))
-    val ret = try {
+    try {
         body()
     } finally {
         System.out.flush()
@@ -359,5 +359,5 @@ internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
         System.setOut(prevOut)
         System.setErr(prevErr)
     }
-    return Triple(outStream.toString().trim(), errStream.toString().trim(), ret)
+    return Pair(outStream.toString().trim(), errStream.toString().trim())
 }

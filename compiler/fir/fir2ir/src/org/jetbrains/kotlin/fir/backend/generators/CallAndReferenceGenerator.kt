@@ -867,6 +867,42 @@ class CallAndReferenceGenerator(
             .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhsWithCast)
     }
 
+    // TODO(KT-82578): split property declaration and initializer to hopefully simplify FIR2IR
+    fun convertToIrSetCall(
+        rValue: FirExpression,
+        property: FirPropertySymbol,
+    ): IrExpression = convertCatching(rValue, conversionScope) {
+        val irExpression = visitor.convertToIrExpression(
+            expression = rValue,
+            expectedType = property.resolvedReturnType
+        )
+
+        val irFieldSymbol = declarationStorage.getIrBackingFieldSymbol(property)
+
+        val firClassSymbol = property.getContainingClassSymbol() as FirClassSymbol<*>
+        val irClassSymbol = classifierStorage.getIrClassSymbol(firClassSymbol)
+        val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
+        val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)!!
+
+        return rValue.convertWithOffsets { startOffset, endOffset ->
+            when (irFieldSymbol) {
+                is IrFieldSymbol -> IrSetFieldImpl(
+                    startOffset, endOffset, irFieldSymbol, type = builtins.unitType, origin = IrStatementOrigin.EQ,
+                ).apply {
+                    value = irExpression
+                    receiver = IrGetValueImpl(
+                        startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol, IrStatementOrigin.IMPLICIT_ARGUMENT
+                    )
+                }
+
+                else -> IrErrorCallExpressionImpl(
+                    startOffset, endOffset, createErrorType(),
+                    "Unresolved reference: ${property.name}"
+                )
+            }
+        }
+    }
+
     /**
      * If we have assignment like `this.x = ...` and this `this` is a dispatch this of some class, then we should unwrap
      *   smartcast if possible to generate SetField instead of setter call
@@ -1352,6 +1388,12 @@ class CallAndReferenceGenerator(
                     // (https://github.com/Kotlin/KEEP/blob/master/proposals/type-aliases.md#type-alias-constructors-for-inner-classes),
                     // They should work as real constructors with initialized `dispatchReceiver` instead of `extensionReceiver` on IR level.
                     val baseDispatchReceiver = when {
+                        // Dispatch receivers for previous snippet declarations are injected later by ReplSnippetToClassTransformer.
+                        declarationSiteSymbol.fir.originalReplSnippetSymbol != null -> IrErrorCallExpressionImpl(
+                            startOffset, endOffset, builtins.nothingType,
+                            description = "No REPL snippet class instance."
+                        )
+
                         // This logic is used by `js-plain-object` plugin.
                         // It could be removed only after "static members" will be available in the language
                         !declarationSiteSymbol.shouldHaveReceiver(session) -> null.toIrConst(builtins.nothingNType)

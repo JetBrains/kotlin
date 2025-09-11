@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import org.junit.jupiter.api.Assumptions.abort
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.reflect.full.declaredMemberFunctions
@@ -26,7 +27,7 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertNull
 import kotlin.test.fail
 
 class ReplReceiver1 {
@@ -174,7 +175,7 @@ class CustomK2ReplTest {
             {
                 it.onSuccess { s ->
                     s.get().result.let { r ->
-                        @Suppress("UNCHECKED_CAST") val propx = r.scriptClass!!.declaredMemberProperties.first() as kotlin.reflect.KMutableProperty1<Any, Int>
+                        @Suppress("UNCHECKED_CAST") val propx = r.scriptClass!!.declaredMemberProperties.first { it.name == "x" } as kotlin.reflect.KMutableProperty1<Any, Int>
                         val x = propx.get(r.scriptInstance!!)
                         assertEquals(3, x)
                         propx.set(r.scriptInstance!!, 5)
@@ -185,8 +186,8 @@ class CustomK2ReplTest {
             {
                 it.onSuccess { s ->
                     s.get().result.let { r ->
-                        val funf = r.scriptClass!!.declaredMemberFunctions.first()
-                        val fret = funf.call() as Int
+                        val funf = r.scriptClass!!.declaredMemberFunctions.first { it.name == "f" }
+                        val fret = funf.call(r.scriptInstance!!) as Int
                         assertEquals(5, fret)
                     }
                     it
@@ -246,6 +247,7 @@ class CustomK2ReplTest {
     }
 
     @Test
+    @Disabled("Dataframe compiler-plugin is not currently supported: KT-82554")
     fun testDataFrame() {
         if (!isK2) return
         val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
@@ -436,9 +438,9 @@ private fun checkEvaluatedSnippetsResultVals(
         if (!expectedIter.hasNext()) break
         val expectedVal = expectedIter.next()
         when (val resVal = res.get().result) {
-            is ResultValue.Unit -> assertTrue(expectedVal == null, "Unexpected evaluation result: Unit")
+            is ResultValue.Unit -> assertNull(expectedVal, "Unexpected evaluation result: Unit")
             is ResultValue.Error -> fail("Unexpected evaluation result: runtime error: ${resVal.error.message}")
-            is ResultValue.Value -> assertTrue(expectedVal == resVal.value, "Unexpected evaluation result: ${resVal.value}")
+            is ResultValue.Value -> assertEquals(expectedVal, resVal.value, "Unexpected evaluation result: ${resVal.value}")
             is ResultValue.NotEvaluated -> fail("Unexpected evaluation result: NotEvaluated")
         }
     }

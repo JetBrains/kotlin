@@ -578,11 +578,9 @@ object IrTree : AbstractTreeBuilder() {
                 Contains link to the static state object for this compilation session.
             """.trimIndent()
         }
-        +field("body", body)
-        +field("returnType", irTypeType, nullable = true)
-        +referencedSymbol("targetClass", classSymbol, nullable = true){
+        +referencedSymbol("targetClass", classSymbol, nullable = true) {
             kDoc = """
-                Contains link to the IrClass symbol to which this snippet should be lowered on the appropriate stage.
+                Contains link to the IrClass symbol to which this snippet was lowered.
             """.trimIndent()
         }
     }

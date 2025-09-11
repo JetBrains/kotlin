@@ -24,12 +24,6 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
-  @TestMetadata("class_references_top_level_mutating_properties.repl.kts")
-  public void testClass_references_top_level_mutating_properties_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/class_references_top_level_mutating_properties.repl.kts");
-  }
-
-  @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/delegated_extension_property.repl.kts");
@@ -51,6 +45,24 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
     runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("property_type_anonymous_object.kts")
+  public void testProperty_type_anonymous_object() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_type_anonymous_object.kts");
+  }
+
+  @Test
+  @TestMetadata("property_visibility.kts")
+  public void testProperty_visibility() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_visibility.kts");
+  }
+
+  @Test
+  @TestMetadata("sealed_hierarchies.repl.kts")
+  public void testSealed_hierarchies_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/sealed_hierarchies.repl.kts");
   }
 
   @Test

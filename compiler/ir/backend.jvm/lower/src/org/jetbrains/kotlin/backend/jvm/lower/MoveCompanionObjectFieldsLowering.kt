@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
  */
 internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (irClass.isNonCompanionObject && !irClass.isReplSnippet) {
+        if (irClass.isNonCompanionObject) {
             irClass.handle()
         } else {
             (irClass.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?)?.handle()

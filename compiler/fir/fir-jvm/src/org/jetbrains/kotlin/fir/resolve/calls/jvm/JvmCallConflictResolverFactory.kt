@@ -7,12 +7,19 @@ package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ReplOverloadCallConflictResolver
 
 @NoMutableState
 object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
-        return listOf(JvmPlatformOverloadsConflictResolver(session))
+        val isRepl = session.extensionService.replSnippetResolveExtensions.isNotEmpty()
+        return buildList {
+            if (isRepl) add(ReplOverloadCallConflictResolver)
+            add(JvmPlatformOverloadsConflictResolver(session))
+        }
     }
 }

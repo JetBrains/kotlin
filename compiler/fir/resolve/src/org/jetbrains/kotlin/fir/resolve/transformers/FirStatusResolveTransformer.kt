@@ -369,8 +369,8 @@ abstract class AbstractFirStatusResolveTransformer(
     override fun transformReplSnippet(
         replSnippet: FirReplSnippet,
         data: FirResolvedDeclarationStatus?,
-    ): FirReplSnippet {
-        // Processing snippet declarations as local ones
+    ): FirReplSnippet = whileAnalysing(session, replSnippet) {
+        transformRegularClass(replSnippet.snippetClass, data)
         return replSnippet
     }
 

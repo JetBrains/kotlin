@@ -5,28 +5,44 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildScriptReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
@@ -72,6 +88,70 @@ class FirReplSnippetConfiguratorExtensionImpl(
         }
     }
 
+    override fun MutableList<FirStatement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {
+        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
+            // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
+            return
+        }
+
+        val script = scriptSource.psi as? KtScript
+        val replSnippetId = script?.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
+        val resultFieldName = if (replSnippetId != null) {
+            configuration[ScriptCompilationConfiguration.repl.resultFieldPrefix]
+                ?.takeIf { it.isNotBlank() }?.let { "$it$replSnippetId" }
+        } else {
+            configuration[ScriptCompilationConfiguration.resultField]
+                ?.takeIf { it.isNotBlank() }
+        }
+
+        if (resultFieldName == null) return
+
+        val last = lastOrNull()
+        if (last == null || !last.isExpression()) return
+
+        val callableId = CallableId(context.packageFqName, Name.identifier(resultFieldName))
+        val propertySymbol = FirRegularPropertySymbol(callableId)
+        val propertyReturnType = FirImplicitTypeRefImplWithoutSource
+
+        val property = buildProperty {
+            source = last.source?.fakeElement(KtFakeSourceElementKind.ReplResultField)
+            moduleData = session.moduleData
+            origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
+            returnTypeRef = propertyReturnType
+            name = callableId.callableName
+            isVar = false
+            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+            symbol = propertySymbol
+            dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
+            isLocal = false
+
+            initializer = last
+
+            backingField = FirDefaultPropertyBackingField(
+                moduleData = session.moduleData,
+                origin = origin,
+                source = null,
+                annotations = annotations,
+                returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
+                isVar = isVar,
+                propertySymbol = symbol,
+                status = status,
+            )
+
+            getter = FirDefaultPropertyAccessor.createGetterOrSetter(
+                source = null,
+                session.moduleData,
+                origin,
+                propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef),
+                status.visibility,
+                propertySymbol,
+                isGetter = true,
+            )
+        }
+
+        this[this.lastIndex] = property
+    }
+
     // TODO: deduplicate with the very similar code in the script configurator (KT-74741)
     private fun FirReplSnippetBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(
         kotlinType: KotlinType,
@@ -107,4 +187,10 @@ class FirReplSnippetConfiguratorExtensionImpl(
             return Factory { session -> FirReplSnippetConfiguratorExtensionImpl(session, hostConfiguration) }
         }
     }
+}
+
+@OptIn(ExperimentalContracts::class)
+private fun FirElement.isExpression(): Boolean {
+    contract { returns(true) implies (this@isExpression is FirExpression) }
+    return this is FirExpression && (this !is FirBlock || this.statements.lastOrNull()?.isExpression() == true)
 }

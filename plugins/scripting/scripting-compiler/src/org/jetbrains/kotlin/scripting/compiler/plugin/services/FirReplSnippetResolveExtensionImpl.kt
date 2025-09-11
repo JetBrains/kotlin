@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.extensions.FirReplHistoryProvider
 import org.jetbrains.kotlin.fir.extensions.FirReplSnippetResolveExtension
@@ -48,6 +49,8 @@ class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
     }
 
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
+
+    override fun getSnippetCount(): Int = history.size
 }
 
 class FirReplSnippetResolveExtensionImpl(
@@ -71,24 +74,23 @@ class FirReplSnippetResolveExtensionImpl(
                     getImportsFromHistory(snippet)
         }
 
-    @OptIn(SymbolInternals::class)
-    override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope? {
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
+    override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope {
         // TODO: consider caching (KT-72975)
         val properties = HashMap<Name, ArrayList<FirVariableSymbol<*>>>()
         val functions = HashMap<Name, ArrayList<FirNamedFunctionSymbol>>() // TODO: find out how overloads should work
         val classLikes = HashMap<Name, FirClassLikeSymbol<*>>()
         replHistoryProvider.getSnippets().forEach { snippet ->
             if (currentSnippet == snippet) return@forEach
-            snippet.fir.body.statements.forEach {
-                if (it is FirDeclaration) {
-                    it.originalReplSnippetSymbol = snippet
-                    when (it) {
-                        is FirProperty -> properties.getOrPut(it.name, { ArrayList() }).add(it.createCopyForState(snippet).symbol)
-                        is FirNamedFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
-                        is FirRegularClass -> classLikes.put(it.name, it.symbol)
-                        is FirTypeAlias -> classLikes.put(it.name, it.symbol)
-                        else -> {}
-                    }
+            snippet.snippetClassSymbol.declarationSymbols.filter { it.isReplSnippetDeclaration == true }.forEach { symbol ->
+                val it = symbol.fir
+                it.originalReplSnippetSymbol = snippet
+                when (it) {
+                    is FirProperty -> properties.getOrPut(it.name, { ArrayList() }).add(it.symbol)
+                    is FirNamedFunction -> functions.getOrPut(it.name, { ArrayList() }).add(it.symbol)
+                    is FirRegularClass -> classLikes.put(it.name, it.symbol)
+                    is FirTypeAlias -> classLikes.put(it.name, it.symbol)
+                    else -> {}
                 }
             }
         }
@@ -97,33 +99,6 @@ class FirReplSnippetResolveExtensionImpl(
 
     override fun updateResolved(snippet: FirReplSnippet) {
         replHistoryProvider.putSnippet(snippet.symbol)
-    }
-
-    private fun FirProperty.createCopyForState(snippet: FirReplSnippetSymbol): FirProperty {
-        // Needed for delegated properties to be handled correctly in Fir2Ir. See also [Fir2IrReplSnippetConfiguratorExtensionImpl]
-        val makePublic = this.delegate != null
-        val oldSymbol = symbol
-        return buildPropertyCopy(this) {
-            origin = FirDeclarationOrigin.FromOtherReplSnippet
-            status =
-                this@createCopyForState.status.copy(
-                    visibility = if (makePublic) Visibilities.Public else Visibilities.Local,
-                    isStatic = true
-                )
-            symbol = when {
-                !makePublic -> FirLocalPropertySymbol()
-                oldSymbol is FirRegularPropertySymbol -> FirRegularPropertySymbol(oldSymbol.callableId)
-                // TODO: suspicious place, as we keep local visibility but create a regular (non-local) symbol
-                // Consider introducing special visibility in this case (KT-75301)
-                else -> FirRegularPropertySymbol(CallableId(oldSymbol.name))
-            }
-        }.also {
-            it.originalReplSnippetSymbol = snippet
-            if (makePublic) {
-                it.getter?.apply { replaceStatus(status.copy(visibility = Visibilities.Public)) }
-                it.setter?.apply { replaceStatus(status.copy(visibility = Visibilities.Public)) }
-            }
-        }
     }
 
     companion object {

@@ -1711,7 +1711,8 @@ class LightTreeRawFirExpressionBuilder(
         script: LighterASTNode,
         scriptSource: KtSourceElement,
         fileName: String,
-        setup: FirReplSnippetBuilder.() -> Unit,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        statementsSetup: MutableList<FirStatement>.() -> Unit,
     ): FirReplSnippet {
         shouldNotBeCalled()
     }

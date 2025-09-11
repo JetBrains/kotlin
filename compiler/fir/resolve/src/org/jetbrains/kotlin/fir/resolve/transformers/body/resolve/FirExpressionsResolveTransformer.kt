@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1020,6 +1021,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             } else {
                 val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)
+                dataFlowAnalyzer.enterLocalVariableDeclaration(unaryVariable)
                 dataFlowAnalyzer.exitLocalVariableDeclaration(unaryVariable, hadExplicitType = false)
 
                 // val <unary> = a
@@ -2065,6 +2067,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         dataFlowAnalyzer.exitAnonymousObjectExpression(anonymousObjectExpression)
         return anonymousObjectExpression
+    }
+
+    override fun transformReplDeclarationReference(
+        replDeclarationReference: FirReplDeclarationReference,
+        data: ResolutionMode,
+    ): FirStatement {
+        whileAnalysing(session, replDeclarationReference) {
+            val symbol = replDeclarationReference.symbol
+            val classSymbol = symbol.getContainingClassSymbol()!!.fir as FirClass
+            // TODO(KT-82554): withScopesForClass may cause problems for FirFunctionCallRefinementExtension
+            context.withScopesForClass(classSymbol, components) {
+                symbol.fir.transformSingle(transformer, data)
+            }
+        }
+        return replDeclarationReference
     }
 
     // ------------------------------------------------------------------------------------------------

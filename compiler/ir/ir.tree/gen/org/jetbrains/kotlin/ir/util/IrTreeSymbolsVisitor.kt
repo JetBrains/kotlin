@@ -122,7 +122,6 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
         visitDeclaredReplSnippet(declaration, declaration.symbol)
         declaration.stateObject?.let { visitReferencedClass(declaration, it) }
         declaration.targetClass?.let { visitReferencedClass(declaration, it) }
-        declaration.returnType?.let { visitTypeRecursively(declaration, it) }
         visitDeclaration(declaration)
     }
 

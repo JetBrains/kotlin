@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -197,9 +196,10 @@ open class PsiRawFirBuilder(
         script: PsiElement,
         scriptSource: KtSourceElement,
         fileName: String,
-        setup: FirReplSnippetBuilder.() -> Unit,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        statementsSetup: MutableList<FirStatement>.() -> Unit,
     ): FirReplSnippet {
-        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, setup)
+        return Visitor().convertReplSnippet(script as KtScript, scriptSource as KtPsiSourceElement, fileName, snippetSetup, statementsSetup)
     }
 
     protected open inner class Visitor : KtVisitor<FirElement, FirElement?>(), DestructuringContext<KtDestructuringDeclarationEntry> {
@@ -1436,81 +1436,197 @@ open class PsiRawFirBuilder(
             script: KtScript,
             scriptSource: KtPsiSourceElement,
             fileName: String,
-            setup: FirReplSnippetBuilder.() -> Unit = {},
+            snippetSetup: FirReplSnippetBuilder.() -> Unit,
+            statementsSetup: MutableList<FirStatement>.() -> Unit,
         ): FirReplSnippet {
-            val snippetName = Name.special("<$fileName>")
-            val snippetSymbol = FirReplSnippetSymbol(snippetName)
+            val snippetName = NameUtils.getSnippetTargetClassName(Name.special("<$fileName>"))
+            val classSymbol = FirRegularClassSymbol(ClassId(FqName.ROOT, snippetName))
 
-            return withContainerReplSymbol(snippetSymbol) {
-                buildReplSnippet {
-                    source = scriptSource
+            val snippetSymbol = FirReplSnippetSymbol(classSymbol)
+
+            val evalName = Name.identifier("$\$eval")
+
+            val klass = withContainerReplSymbol(snippetSymbol) {
+                withChildClassName(snippetName, isExpect = false) {
+                    withContainerSymbol(classSymbol) {
+                        buildRegularClass {
+                            source = script.toKtPsiSourceElement(KtFakeSourceElementKind.ReplBaseClass)
+                            moduleData = baseModuleData
+                            origin = FirDeclarationOrigin.Synthetic.ReplContainerClass
+                            name = snippetName
+                            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                            classKind = ClassKind.OBJECT
+                            scopeProvider = baseScopeProvider
+                            symbol = classSymbol
+                            superTypeRefs += implicitAnyType
+
+                            context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
+
+                            val delegatedSelfType = script.toDelegatedSelfType(this)
+                            registerSelfType(delegatedSelfType)
+
+                            val members = mutableListOf<FirDeclaration>()
+                            val evalFunction = createEvalFunction(script, classSymbol, members, evalName, statementsSetup)
+
+                            val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
+                            val constructorSource = script.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
+                            val constructor = buildPrimaryConstructor {
+                                source = constructorSource
+                                moduleData = baseModuleData
+                                origin = FirDeclarationOrigin.Source
+                                returnTypeRef = delegatedSelfType
+                                status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                                dispatchReceiverType = currentDispatchReceiverType()
+                                isLocal = false
+                                symbol = constructorSymbol
+                                delegatedConstructor = buildDelegatedConstructorCall {
+                                    source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                    constructedTypeRef = implicitAnyType
+                                    isThis = false
+                                    calleeReference = buildExplicitSuperReference {
+                                        source = constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                        superTypeRef = implicitAnyType
+                                    }
+                                }
+                            }
+
+                            declarations += listOf(constructor, evalFunction) + members
+                        }
+                    }
+                }
+            }
+
+            return buildReplSnippet {
+                source = scriptSource
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Source
+                symbol = snippetSymbol
+
+                snippetClass = klass
+                evalFunctionName = evalName
+
+                snippetSetup()
+            }
+        }
+
+        private fun createEvalFunction(
+            script: KtScript,
+            classSymbol: FirRegularClassSymbol,
+            members: MutableList<FirDeclaration>,
+            evalName: Name,
+            statementsSetup: MutableList<FirStatement>.() -> Unit,
+        ): FirNamedFunction {
+            val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
+            val evalTarget = FirFunctionTarget(labelName = null, isLambda = false)
+
+            val evalFunction = withContainerSymbol(evalSymbol) {
+                buildNamedFunction {
+                    source = script.toKtPsiSourceElement(KtFakeSourceElementKind.ReplEvalFunction)
                     moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Source
-                    name = snippetName
-                    symbol = snippetSymbol
+                    origin = FirDeclarationOrigin.Synthetic.ReplEvalFunction
+                    name = evalName
+                    symbol = evalSymbol
+                    dispatchReceiverType = currentDispatchReceiverType()
+                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                    returnTypeRef = implicitUnitType
+                    isLocal = false
+
+                    context.firFunctionTargets += evalTarget
 
                     body = buildOrLazyBlock {
-                        // see KT-75301 for discussion about `isLocal` here
-                        withContainerSymbol(snippetSymbol, isLocal = true) {
-                            buildBlock {
-                                withForcedLocalContext {
-                                    script.declarations.forEach { declaration ->
-                                        when (declaration) {
-                                            is KtScriptInitializer -> {
-                                                val initializer = buildAnonymousInitializer(
-                                                    initializer = declaration,
-                                                    containingDeclarationSymbol = snippetSymbol,
-                                                    allowLazyBody = true,
-                                                    isLocal = true,
-                                                )
+                        buildBlock {
+                            val extracted = extractReplStatements(script, classSymbol, statementsSetup)
+                            this.statements += extracted.map { statement ->
+                                when (statement) {
+                                    is FirProperty if statement.isLocal -> statement
 
-                                                statements.addAll(initializer.body!!.statements)
-                                            }
-                                            is KtDestructuringDeclaration -> {
-                                                val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
-                                                statements.add(destructuringContainerVar)
-
-                                                addDestructuringVariables(
-                                                    statements,
-                                                    baseModuleData,
-                                                    declaration,
-                                                    destructuringContainerVar,
-                                                    tmpVariable = false,
-                                                    forceLocal = false,
-                                                ) {
-                                                    configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
-                                                }
-                                            }
-                                            is KtProperty -> {
-                                                val firProperty = declaration.toFirProperty(
-                                                    ownerRegularOrAnonymousObjectSymbol = null,
-                                                    context,
-                                                    isFromReplSnippet = true
-                                                )
-                                                firProperty.accept(snippetDeclarationVisitor)
-                                                statements.add(firProperty)
-                                            }
-                                            else -> {
-                                                val firStatement = declaration.toFirStatement()
-                                                if (firStatement is FirDeclaration) {
-                                                    firStatement.accept(snippetDeclarationVisitor)
-                                                    statements.add(firStatement)
-                                                } else {
-                                                    error("unexpected declaration type in script")
-                                                }
-                                            }
+                                    is FirProperty,
+                                    is FirNamedFunction,
+                                    is FirRegularClass,
+                                    is FirTypeAlias,
+                                        -> {
+                                        members.add(statement)
+                                        statement.isReplSnippetDeclaration = true
+                                        buildReplDeclarationReference {
+                                            source = statement.source
+                                            symbol = statement.symbol
                                         }
                                     }
+
+                                    else -> statement
                                 }
                             }
                         }
                     }
-                    // TODO: proper lazy support - see the script
-                    resultTypeRef =
-                        if (body.statements.lastOrNull() is FirDeclaration) implicitUnitType else FirImplicitTypeRefImplWithoutSource
-                    setup()
+
+                    context.firFunctionTargets.removeLast()
+                }.also {
+                    bindFunctionTarget(evalTarget, it)
                 }
             }
+            return evalFunction
+        }
+
+        private fun extractReplStatements(
+            script: KtScript,
+            containingDeclarationSymbol: FirBasedSymbol<*>,
+            statementsSetup: MutableList<FirStatement>.() -> Unit,
+        ): List<FirStatement> = buildList {
+            script.declarations.forEach { declaration ->
+                when (declaration) {
+                    is KtScriptInitializer -> {
+                        val initializer = buildAnonymousInitializer(
+                            initializer = declaration,
+                            containingDeclarationSymbol = containingDeclarationSymbol,
+                            allowLazyBody = true,
+                            isLocal = true,
+                        )
+
+                        addAll(initializer.body!!.statements)
+                    }
+                    is KtDestructuringDeclaration -> {
+                        val destructuringContainerVar = generateTemporaryVariable(
+                            moduleData = baseModuleData,
+                            source = declaration.toFirSourceElement(),
+                            specialName = "destruct",
+                            initializer = declaration.initializer.toFirExpression(
+                                "Initializer required for destructuring declaration",
+                                sourceWhenInvalidExpression = declaration
+                            ),
+                            extractAnnotationsTo = { extractAnnotationsTo(it) }
+                        )
+                        add(destructuringContainerVar)
+
+                        this@PsiRawFirBuilder.addDestructuringVariables(
+                            destination = this,
+                            moduleData = baseModuleData,
+                            multiDeclaration = declaration,
+                            container = destructuringContainerVar,
+                            tmpVariable = false,
+                            forceLocal = false,
+                        ) {
+                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                        }
+                    }
+                    is KtProperty -> {
+                        val firProperty = declaration.toFirProperty(
+                            ownerRegularOrAnonymousObjectSymbol = null,
+                            context,
+                        )
+                        add(firProperty)
+                    }
+                    else -> {
+                        val firStatement = declaration.toFirStatement()
+                        if (firStatement is FirDeclaration) {
+                            add(firStatement)
+                        } else {
+                            error("unexpected declaration type in script")
+                        }
+                    }
+                }
+            }
+
+            statementsSetup()
         }
 
         private fun convertCodeFragment(
@@ -2320,14 +2436,13 @@ open class PsiRawFirBuilder(
         private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             context: Context<T>,
-            isFromReplSnippet: Boolean = false,
         ): FirProperty {
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
                 (isLocal || isInsideScript) && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
-            val propertySymbol = if (isLocal || isFromReplSnippet) {
+            val propertySymbol = if (isLocal) {
                 // TODO: KT-75301: consider setting some special visibility for isFromReplSnippet == true case
                 FirLocalPropertySymbol()
             } else {
@@ -3661,34 +3776,5 @@ enum class BodyBuildingMode {
 
     companion object {
         fun lazyBodies(lazyBodies: Boolean): BodyBuildingMode = if (lazyBodies) LAZY_BODIES else NORMAL
-    }
-}
-
-private val snippetDeclarationVisitor: FirVisitorVoid = object : FirVisitorVoid() {
-    override fun visitElement(element: FirElement) {}
-
-    override fun visitProperty(property: FirProperty) {
-        property.isReplSnippetDeclaration = true
-        property.getter?.accept(this)
-        property.setter?.accept(this)
-    }
-
-    override fun visitRegularClass(regularClass: FirRegularClass) {
-        regularClass.isReplSnippetDeclaration = true
-        regularClass.declarations.forEach {
-            if (it is FirClass) it.accept(this)
-        }
-    }
-
-    override fun visitNamedFunction(namedFunction: FirNamedFunction) {
-        namedFunction.isReplSnippetDeclaration = true
-    }
-
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
-        propertyAccessor.isReplSnippetDeclaration = true
-    }
-
-    override fun visitTypeAlias(typeAlias: FirTypeAlias) {
-        typeAlias.isReplSnippetDeclaration = true
     }
 }

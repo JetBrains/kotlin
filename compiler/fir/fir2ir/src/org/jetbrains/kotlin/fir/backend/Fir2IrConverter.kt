@@ -163,6 +163,7 @@ class Fir2IrConverter(
         for (declaration in file.declarations) {
             when (declaration) {
                 is FirRegularClass -> registerClassAndNestedClasses(declaration, irFile)
+                is FirReplSnippet -> registerClassAndNestedClasses(declaration.snippetClass, irFile)
                 is FirCodeFragment -> classifierStorage.createAndCacheCodeFragmentClass(declaration, irFile)
                 else -> {}
             }
@@ -175,9 +176,8 @@ class Fir2IrConverter(
         file.declarations.forEach {
             when (it) {
                 is FirRegularClass -> processClassAndNestedClassHeaders(it)
-                is FirTypeAlias -> {
-                    classifierStorage.createAndCacheIrTypeAlias(it, irFile)
-                }
+                is FirReplSnippet -> processClassAndNestedClassHeaders(it.snippetClass)
+                is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(it, irFile)
                 else -> {}
             }
         }
@@ -498,6 +498,8 @@ class Fir2IrConverter(
                 val irSnippet = declarationStorage.createIrReplSnippet(declaration)
                 addDeclarationToParentIfNeeded(irSnippet)
                 irSnippet.parent = parent
+
+                processMemberDeclaration(declaration.snippetClass, containingClass, parent, delegateFieldToPropertyMap)
             }
             is FirNamedFunction -> {
                 declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)

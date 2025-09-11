@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -914,16 +915,39 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Property -----------------------------------
 
-    fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
+    fun enterProperty(property: FirProperty): Pair<VariableDeclarationEnterNode?, PropertyInitializerEnterNode>? {
         if (!property.memberShouldHaveGraph) return null
-        return enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
+
+        // REPL property declarations need to be treated as local variable declarations.
+        val variableEnter = runIf(property.isReplSnippetDeclaration == true) {
+            createVariableDeclarationEnterNode(property).also { addNewSimpleNode(it) }
+        }
+
+        val initializerEnter = enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
             createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
-        }.also { addEdgeIfLocalClassMember(it) }
+        }
+
+        when {
+            variableEnter != null -> addEdge(variableEnter, initializerEnter)
+            else -> addEdgeIfLocalClassMember(initializerEnter)
+        }
+
+        return variableEnter to initializerEnter
     }
 
-    fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
+    fun exitProperty(property: FirProperty): Triple<PropertyInitializerExitNode, VariableDeclarationExitNode?, ControlFlowGraph>? {
         if (!property.memberShouldHaveGraph) return null
-        return exitGraph()
+        val (initializerExit, graph) = exitGraph<PropertyInitializerExitNode>()
+
+        // REPL property declarations need to be treated as local variable declarations.
+        if (property.isReplSnippetDeclaration == true) {
+            val variableExit = createVariableDeclarationExitNode(property)
+            addNewSimpleNode(variableExit)
+            addEdge(initializerExit, variableExit, propagateDeadness = false)
+            return Triple(initializerExit, variableExit, graph)
+        }
+
+        return Triple(initializerExit, null, graph)
     }
 
     // ----------------------------------- Field -----------------------------------
@@ -1468,8 +1492,12 @@ class ControlFlowGraphBuilder private constructor(
         return createLiteralExpressionNode(literalExpression).also { addNewSimpleNode(it) }
     }
 
-    fun exitVariableDeclaration(variable: FirProperty): VariableDeclarationNode {
-        return createVariableDeclarationNode(variable).also { addNewSimpleNode(it) }
+    fun enterVariableDeclaration(variable: FirProperty): VariableDeclarationEnterNode {
+        return createVariableDeclarationEnterNode(variable).also { addNewSimpleNode(it) }
+    }
+
+    fun exitVariableDeclaration(variable: FirProperty): VariableDeclarationExitNode {
+        return createVariableDeclarationExitNode(variable).also { addNewSimpleNode(it) }
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment): VariableAssignmentNode {

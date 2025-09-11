@@ -48,6 +48,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("class_references_top_level_mutating_properties.repl.kts")
+  public void testClass_references_top_level_mutating_properties_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_references_top_level_mutating_properties.repl.kts");
+  }
+
+  @Test
   @TestMetadata("class_uses_top_level_mutating_properties.repl.kts")
   public void testClass_uses_top_level_mutating_properties_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_uses_top_level_mutating_properties.repl.kts");
@@ -87,6 +93,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("function_calls_class.repl.kts")
   public void testFunction_calls_class_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_calls_class.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("function_inline.kts")
+  public void testFunction_inline() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_inline.kts");
+  }
+
+  @Test
+  @TestMetadata("function_override.kts")
+  public void testFunction_override() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/function_override.kts");
   }
 
   @Test
@@ -132,6 +150,36 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("property_accessors.kts")
+  public void testProperty_accessors() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_accessors.kts");
+  }
+
+  @Test
+  @TestMetadata("property_destructuring.kts")
+  public void testProperty_destructuring() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_destructuring.kts");
+  }
+
+  @Test
+  @TestMetadata("property_extension.kts")
+  public void testProperty_extension() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_extension.kts");
+  }
+
+  @Test
+  @TestMetadata("property_override.kts")
+  public void testProperty_override() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_override.kts");
+  }
+
+  @Test
+  @TestMetadata("property_smartcast.kts")
+  public void testProperty_smartcast() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_smartcast.kts");
+  }
+
+  @Test
   @TestMetadata("property_uses_anonymous_object.repl.kts")
   public void testProperty_uses_anonymous_object_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_uses_anonymous_object.repl.kts");
@@ -147,12 +195,6 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("resolve_annotations.repl.kts")
   public void testResolve_annotations_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/resolve_annotations.repl.kts");
-  }
-
-  @Test
-  @TestMetadata("sealed_hierarchies.repl.kts")
-  public void testSealed_hierarchies_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/sealed_hierarchies.repl.kts");
   }
 
   @Test

@@ -440,55 +440,9 @@ class FirElementSerializer private constructor(
 
     @OptIn(UnexpandedTypeCheck::class)
     fun snippetProto(snippet: FirReplSnippet): ProtoBuf.Class.Builder = whileAnalysing(session, snippet) {
-        val builder = ProtoBuf.Class.newBuilder()
-
-        val flags = Flags.getClassFlags(
-            extension.hasAdditionalAnnotations(snippet),
-            ProtoEnumFlags.visibility(Visibilities.Public),
-            ProtoEnumFlags.modality(Modality.FINAL),
-            ProtoEnumFlags.classKind(ClassKind.CLASS, false),
-            /* inner = */ false,
-            /* isData = */ false,
-            /* isExternal = */ false,
-            /* isExpect = */ false,
-            /* isValue = */ false,
-            /* isFun = */ false,
-            /* hasEnumEntries = */ false,
-        )
-        if (flags != builder.flags) {
-            builder.flags = flags
-        }
-
-        val classId = snippetClassId(snippet)
-
-        builder.fqName = getClassifierId(classId)
-
-        for (statement in snippet.body.statements) {
-            val declaration = statement as? FirDeclaration ?: continue
-            when (declaration) {
-                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                is FirNamedFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
-                is FirRegularClass -> builder.addNestedClassName(getSimpleNameIndex(declaration.name))
-                is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
-                else -> {}
-            }
-        }
-
         if (versionRequirementTable == null) error("Version requirements must be serialized for snippets: ${snippet.render()}")
-
-        builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(snippet))
-
+        val builder = classProtoImpl(snippet.snippetClass)
         extension.serializeSnippet(snippet, builder, versionRequirementTable, this)
-
-        if (metDefinitelyNotNullType) {
-            builder.addVersionRequirement(
-                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
-            )
-        }
-
-        typeTable.serialize()?.let { builder.typeTable = it }
-        versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
-
         return builder
     }
 
@@ -1632,4 +1586,4 @@ internal fun scriptClassId(script: FirScript): ClassId =
     ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, NameUtils.getScriptTargetClassName(script.name))
 
 internal fun snippetClassId(snippet: FirReplSnippet): ClassId =
-    ClassId(FqName.ROOT, NameUtils.getSnippetTargetClassName(snippet.name))
+    ClassId(FqName.ROOT, NameUtils.getSnippetTargetClassName(snippet.snippetClass.name))

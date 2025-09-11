@@ -49,7 +49,6 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
             // A "used" FirBlock is one that uses the last statement as an implicit return.
             // If the containing element of the block is an FirFunction or FirAnonymousInitializer, the block is unused.
             // All other FirBlocks are considered used.
-            is FirReplSnippet -> declaration.body.acceptChildren(visitor, UsageState.Used)
             is FirCodeFragment -> declaration.block.acceptChildren(visitor, UsageState.Used)
             is FirAnonymousInitializer -> declaration.body?.acceptChildren(visitor, UsageState.Unused)
             is FirFunction -> {

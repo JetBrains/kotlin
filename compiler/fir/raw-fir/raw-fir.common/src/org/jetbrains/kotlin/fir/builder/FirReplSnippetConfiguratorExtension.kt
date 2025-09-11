@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -32,6 +33,13 @@ abstract class FirReplSnippetConfiguratorExtension(
     abstract fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean
     abstract fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder)
     abstract fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>)
+
+    /**
+     * Allows mutating the statements of a `FirReplSnippet` `$$eval` function body as needed before
+     * it is created. For example, this can be used to turn the last expression of the body into a
+     * property to persist the result of the snippet.
+     */
+    abstract fun MutableList<FirStatement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>)
 }
 
 val FirExtensionService.replSnippetConfigurators: List<FirReplSnippetConfiguratorExtension> by FirExtensionService.registeredExtensions()

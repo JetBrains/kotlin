@@ -289,8 +289,6 @@ open class DeepCopyIrTreeWithSymbols(
             variablesFromOtherSnippets.assignFrom(declaration.variablesFromOtherSnippets) { it.transform() }
             declarationsFromOtherSnippets.assignFrom(declaration.declarationsFromOtherSnippets) { it.transform() }
             stateObject = declaration.stateObject?.let(symbolRemapper::getReferencedClass)
-            body = declaration.body.transform()
-            returnType = declaration.returnType?.remapType()
             targetClass = declaration.targetClass?.let(symbolRemapper::getReferencedClass)
             processAttributes(declaration)
         }

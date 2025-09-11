@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -278,17 +280,23 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 classifierStorage.preCacheTypeParameters(it)
                             }
                             createBackingField(
-                                this,
-                                property,
-                                IrDeclarationOrigin.PROPERTY_DELEGATE,
-                                symbols.backingFieldSymbol!!,
-                                c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                NameUtils.propertyDelegateName(property.name),
-                                true,
-                                delegate
+                                irProperty = this,
+                                firProperty = property,
+                                origin = IrDeclarationOrigin.PROPERTY_DELEGATE,
+                                symbol = symbols.backingFieldSymbol!!,
+                                visibility = c.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                name = NameUtils.propertyDelegateName(property.name),
+                                isFinal = true,
+                                firInitializerExpression = delegate.takeIf { property.isReplSnippetDeclaration != true },
+                                type = delegate.resolvedType.toIrType(),
                             )
                         } else {
-                            val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
+                            // REPL snippet properties are initialized within the `$$eval` function.
+                            // TODO(KT-82578): split declaration and initializer to hopefully simplify FIR2IR
+                            val initializer = runIf(property.isReplSnippetDeclaration != true) {
+                                getEffectivePropertyInitializer(property, resolveIfNeeded = true)
+                            }
+
                             // There are cases when we get here for properties
                             // that have no backing field. For example, in the
                             // funExpression.kt test there's an attempt
@@ -304,7 +312,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 property.name,
                                 property.isVal,
                                 initializer,
-                                typeToUse
+                                typeToUse,
                             ).also { field ->
                                 if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType()
@@ -488,7 +496,8 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 visibility = visibility,
                 symbol = symbol,
                 type = inferredType,
-                isFinal = isFinal,
+                // REPL snippet properties are initialized within the `$$eval` function so cannot be final.
+                isFinal = isFinal && firProperty.isReplSnippetDeclaration != true,
                 isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
                 isExternal = firProperty.isExternal || irProperty.isExternal,
             ).also {
@@ -894,7 +903,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     fun createIrReplSnippet(snippet: FirReplSnippet, symbol: IrReplSnippetSymbol): IrReplSnippet =
         snippet.convertWithOffsets { startOffset, endOffset ->
-            IrReplSnippetImpl(startOffset, endOffset, IrFactoryImpl, snippet.name, symbol).also { irSnippet ->
+            IrReplSnippetImpl(startOffset, endOffset, IrFactoryImpl, snippet.snippetClass.name, symbol).also { irSnippet ->
                 irSnippet.metadata = FirMetadataSource.ReplSnippet(snippet)
             }
         }

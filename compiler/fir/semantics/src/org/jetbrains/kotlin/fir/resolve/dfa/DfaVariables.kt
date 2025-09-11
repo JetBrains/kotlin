@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -62,11 +61,8 @@ class RealVariable(
     override val originalType: ConeKotlinType,
 ) : DataFlowVariable() {
     companion object {
-        fun local(symbol: FirVariableSymbol<*>): RealVariable =
-            RealVariable(symbol, isImplicit = false, dispatchReceiver = null, extensionReceiver = null, symbol.resolvedReturnType)
-
         fun implicit(symbol: FirBasedSymbol<*>, type: ConeKotlinType): RealVariable =
-            RealVariable(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, type)
+            RealVariable(symbol, isImplicit = true, dispatchReceiver = null, extensionReceiver = null, originalType = type)
     }
 
     // `originalType` cannot be included into equality comparisons because it can be a captured type.
@@ -140,7 +136,7 @@ class RealVariable(
                 fir.delegate != null -> PropertyStability.DELEGATED_PROPERTY
                 // Local vars are only *sometimes* unstable (when there are concurrent assignments). `FirDataFlowAnalyzer`
                 // will check that at each use site individually and mark the access as stable when possible.
-                fir.symbol is FirLocalPropertySymbol -> when {
+                fir.isEffectivelyLocal -> when {
                     fir.isVal -> PropertyStability.PRIVATE_OR_CONST_VAL
                     else -> PropertyStability.CAPTURED_VARIABLE
                 }

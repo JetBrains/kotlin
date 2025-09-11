@@ -195,7 +195,7 @@ class Fir2IrVisitor(
         return irEnumEntry
     }
 
-    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement = whileAnalysing(session, regularClass) {
+    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrClass = whileAnalysing(session, regularClass) {
         if (regularClass.visibility == Visibilities.Local) {
             val irParent = conversionScope.parentFromStack()
             // NB: for implicit types it is possible that local class is already cached
@@ -399,8 +399,10 @@ class Fir2IrVisitor(
                 }
             }
         }
+
         conversionScope.withParent(irSnippet) {
-            irSnippet.body = convertToIrBlockBody(replSnippet.body)
+            val irClass = visitRegularClass(replSnippet.snippetClass, data)
+            irSnippet.targetClass = irClass.symbol
         }
 
         declarationStorage.leaveScope(irSnippet.symbol)
@@ -851,10 +853,10 @@ class Fir2IrVisitor(
         val calleeReference = thisReceiverExpression.calleeReference
         val firSnippet = firSnippetSymbol.fir
         val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
-        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet) ?: error("IrReplSnippet for ${firSnippet.name} not found")
+        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet)
+            ?: error("IrReplSnippet for ${firSnippet.snippetClass.name} not found")
         val contextParameterNumber = firSnippetSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
-        val receiverParameter =
-            irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
+        val receiverParameter = irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol, origin)
@@ -970,6 +972,21 @@ class Fir2IrVisitor(
             is FirProperty if name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> when {
                 !isUnnamedLocalVariable -> null
                 else -> initializer?.accept(this@Fir2IrVisitor, null) as IrStatement
+            }
+            is FirReplDeclarationReference -> {
+                // REPL snippet properties are initialized within the `$$eval` function.
+                // TODO(KT-82578): split property declaration and initializer to hopefully simplify FIR2IR
+                val symbol = symbol
+                if (symbol is FirPropertySymbol) {
+                    val rValue = symbol.fir.initializer ?: symbol.fir.delegate
+                    if (rValue != null) {
+                        callGenerator.convertToIrSetCall(rValue, symbol)
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
             }
             else -> accept(this@Fir2IrVisitor, null) as IrStatement
         }

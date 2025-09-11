@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -1342,12 +1345,20 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             }
 
         return if (repSnippetConfigurator != null) {
-            convertReplSnippet(declaration, scriptSource, sourceFile.name) {
-                with(repSnippetConfigurator) {
-                    configureContainingFile(fileBuilder)
-                    configure(fileBuilder.sourceFile, context)
-                }
-            }
+            convertReplSnippet(
+                declaration, scriptSource, sourceFile.name,
+                snippetSetup = {
+                    with(repSnippetConfigurator) {
+                        configureContainingFile(fileBuilder)
+                        configure(fileBuilder.sourceFile, context)
+                    }
+                },
+                statementsSetup = {
+                    with(repSnippetConfigurator) {
+                        configure(fileBuilder.sourceFile, scriptSource, context)
+                    }
+                },
+            )
         } else {
             val scriptConfigurator =
                 baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
@@ -1374,7 +1385,8 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         script: T,
         scriptSource: KtSourceElement,
         fileName: String,
-        setup: FirReplSnippetBuilder.() -> Unit,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        statementsSetup: MutableList<FirStatement>.() -> Unit,
     ): FirReplSnippet
 
     protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {

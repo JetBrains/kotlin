@@ -527,6 +527,21 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ScriptBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
+     * For repl base class.
+     */
+    object ReplBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
+     * For repl eval function.
+     */
+    object ReplEvalFunction : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
+     * For repl result field.
+     */
+    object ReplResultField : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
      * When a lambda is converted to a SAM type, the expression is wrapped in an extra node
      */
     object SamConversion : KtFakeSourceElementKind()

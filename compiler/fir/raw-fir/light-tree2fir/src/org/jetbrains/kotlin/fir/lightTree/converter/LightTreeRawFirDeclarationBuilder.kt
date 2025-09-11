@@ -2912,7 +2912,8 @@ class LightTreeRawFirDeclarationBuilder(
         script: LighterASTNode,
         scriptSource: KtSourceElement,
         fileName: String,
-        setup: FirReplSnippetBuilder.() -> Unit,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        statementsSetup: MutableList<FirStatement>.() -> Unit,
     ): FirReplSnippet {
         TODO("KT-77583")
     }
