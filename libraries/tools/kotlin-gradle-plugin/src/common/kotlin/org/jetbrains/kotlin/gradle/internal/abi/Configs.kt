@@ -138,7 +138,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.variantName.convention(variantName)
 
         it.description = "Writes the public Application Binary Interface (ABI) of the current code to the reference dump " +
-                "for '$variantName' dump variant."
+                "file for the '$variantName' variant."
 
         it.onlyIf { isEnabled.get() }
     }
