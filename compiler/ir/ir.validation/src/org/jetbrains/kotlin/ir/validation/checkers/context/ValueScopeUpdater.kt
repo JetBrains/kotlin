@@ -55,6 +55,12 @@ object ValueScopeUpdater : ContextUpdater {
             }
         }
 
+        override fun visitReplSnippet(declaration: IrReplSnippet) {
+            context.withScopeOwner(declaration, block) {
+                declaration.variablesFromOtherSnippets.mapTo(this, IrVariable::symbol)
+            }
+        }
+
         override fun visitFunction(declaration: IrFunction) {
             context.withScopeOwner(declaration, block) {
                 // A function parameter's default value may reference the parameters that come after it,

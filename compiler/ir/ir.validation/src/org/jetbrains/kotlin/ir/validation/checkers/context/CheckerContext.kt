@@ -30,15 +30,6 @@ class CheckerContext(
     var withinAnnotationUsageSubTree: Boolean = false
         private set
 
-    // Some checks are (temporarily) disabled for scriping related IR, because it happens to violate many of the rules of IR.
-    //  At the same time:
-    //  1. Kotlin scripting is supported only in JVM - so the possibly invalid IR won't be stored anywhere, as in the case of Klibs.
-    //  2. The compiled code is executed immediately - so even if the generated code is invalid, you'll see the result right away.
-    //  3. It somehow worked before those checks were added.
-    //  This means the severity of invalid IR inside scripts is not that critical.
-    var withinScripOrScriptClass: Boolean = false
-        private set
-
     fun error(element: IrElement, cause: IrValidationError.Cause, message: String) =
         reportError(IrValidationError(file, element, cause, message, parentChain))
 
@@ -69,16 +60,6 @@ class CheckerContext(
             withinAnnotationUsageSubTree = true
             block()
             withinAnnotationUsageSubTree = false
-        }
-    }
-
-    fun withinScripOrScriptClass(block: () -> Unit) {
-        if (withinScripOrScriptClass) {
-            block()
-        } else {
-            withinScripOrScriptClass = true
-            block()
-            withinScripOrScriptClass = false
         }
     }
 }
