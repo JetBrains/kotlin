@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withAttributes
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 /**
@@ -83,8 +84,8 @@ internal class FE10LikeConeSubstitutor(
 private val ConeAttributes.originalProjection: OriginalProjectionTypeAttribute? by ConeAttributes.attributeAccessor()
 
 private class OriginalProjectionTypeAttribute(val data: ConeTypeProjection) : ConeAttribute<OriginalProjectionTypeAttribute>() {
-    override fun union(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute = other ?: this
-    override fun intersect(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute = other ?: this
+    override fun union(other: OriginalProjectionTypeAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): OriginalProjectionTypeAttribute = other ?: this
+    override fun intersect(other: OriginalProjectionTypeAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): OriginalProjectionTypeAttribute = other ?: this
     override fun add(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute = other ?: this
 
     override fun isSubtypeOf(other: OriginalProjectionTypeAttribute?): Boolean {

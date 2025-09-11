@@ -160,7 +160,10 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
      */
     fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker
 
-    fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker>
+    fun unionTypeAttributes(
+        types: List<KotlinTypeMarker>,
+        computeCommonSupertypes: (List<KotlinTypeMarker>) -> KotlinTypeMarker,
+    ): List<AnnotationMarker>
 
     fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker
 

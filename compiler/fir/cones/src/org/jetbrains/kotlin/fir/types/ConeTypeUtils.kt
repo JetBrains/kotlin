@@ -137,11 +137,11 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
 }
 
 fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
+    return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound, computeIntersection)
 }
 
 inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
+    return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func), computeIntersection)
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {

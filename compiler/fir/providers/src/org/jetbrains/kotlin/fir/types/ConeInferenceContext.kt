@@ -138,7 +138,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             } else {
                 ConeIntersectionType(
                     constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
+                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes),
+                    constructor.computeIntersection,
                 )
             }
             is ConeCapturedTypeConstructor,
@@ -523,9 +524,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeIntegerLiteralType.findCommonSuperType(explicitSupertypes)
     }
 
-    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> {
+    override fun unionTypeAttributes(
+        types: List<KotlinTypeMarker>,
+        computeCommonSupertypes: (List<KotlinTypeMarker>) -> KotlinTypeMarker,
+    ): List<AnnotationMarker> {
         @Suppress("UNCHECKED_CAST")
-        return (types as List<ConeKotlinType>).map { it.attributes }.reduce { x, y -> x.union(y) }.toList()
+        return (types as List<ConeKotlinType>).map { it.attributes }.reduce { x, y -> x.union(y, computeCommonSupertypes) }.toList()
     }
 
     private fun AnnotationMarker.isCustomAttribute(): Boolean {

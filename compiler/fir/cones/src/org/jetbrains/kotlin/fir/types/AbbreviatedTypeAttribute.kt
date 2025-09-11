@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 /**
@@ -19,8 +20,8 @@ import kotlin.reflect.KClass
 class AbbreviatedTypeAttribute(
     override val coneType: ConeKotlinType,
 ) : ConeAttributeWithConeType<AbbreviatedTypeAttribute>() {
-    override fun union(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
-    override fun intersect(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute? = null
+    override fun union(other: AbbreviatedTypeAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): AbbreviatedTypeAttribute? = null
+    override fun intersect(other: AbbreviatedTypeAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): AbbreviatedTypeAttribute? = null
     override fun add(other: AbbreviatedTypeAttribute?): AbbreviatedTypeAttribute = other ?: this
     override fun isSubtypeOf(other: AbbreviatedTypeAttribute?): Boolean = true
     override fun toString(): String = "{${coneType.renderForDebugging()}=}"

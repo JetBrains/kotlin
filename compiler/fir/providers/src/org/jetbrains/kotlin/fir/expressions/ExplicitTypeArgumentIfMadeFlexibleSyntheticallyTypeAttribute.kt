@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 /**
@@ -22,10 +23,10 @@ data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
 ) : ConeAttribute<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute>() {
     // Those methods should not matter too much because it's only assumed to be used for explicit type arguments
     // for which we don't expect to perform complex operations
-    override fun union(other: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute?): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute? =
+    override fun union(other: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute? =
         null
 
-    override fun intersect(other: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute?): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute? =
+    override fun intersect(other: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute? =
         null
 
     override fun add(other: ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute?): ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute =

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.types.model.AnnotationMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.util.AttributeArrayOwner
 import org.jetbrains.kotlin.util.TypeRegistry
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -14,8 +15,8 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 
 abstract class ConeAttribute<out T : ConeAttribute<T>> : AnnotationMarker {
-    abstract fun union(other: @UnsafeVariance T?): T?
-    abstract fun intersect(other: @UnsafeVariance T?): T?
+    abstract fun union(other: @UnsafeVariance T?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): T?
+    abstract fun intersect(other: @UnsafeVariance T?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): T?
 
     /**
      * This function is used to decide how multiple attributes should be united in presence of typealiases:
@@ -99,12 +100,12 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         }
     }
 
-    fun union(other: ConeAttributes): ConeAttributes {
-        return perform(other) { this.union(it) }
+    fun union(other: ConeAttributes, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): ConeAttributes {
+        return perform(other) { this.union(it, c) }
     }
 
-    fun intersect(other: ConeAttributes): ConeAttributes {
-        return perform(other) { this.intersect(it) }
+    fun intersect(other: ConeAttributes, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): ConeAttributes {
+        return perform(other) { this.intersect(it, computeIntersection) }
     }
 
     fun add(other: ConeAttributes): ConeAttributes {

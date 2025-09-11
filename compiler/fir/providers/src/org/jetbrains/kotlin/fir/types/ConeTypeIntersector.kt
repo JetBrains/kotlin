@@ -65,7 +65,7 @@ object ConeTypeIntersector {
 
         resultList.removeIfNonSingleErrorOrInRelation { candidate, other -> AbstractTypeChecker.equalTypes(context, candidate, other) }
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
-        return resultList.singleOrNull() ?: ConeIntersectionType(resultList)
+        return resultList.singleOrNull() ?: ConeIntersectionType(resultList) { types -> intersectTypes(context, types) }
     }
 
     private fun MutableCollection<ConeKotlinType>.removeIfNonSingleErrorOrInRelation(

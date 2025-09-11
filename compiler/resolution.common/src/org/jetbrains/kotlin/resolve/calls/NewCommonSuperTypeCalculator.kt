@@ -25,7 +25,8 @@ object NewCommonSuperTypeCalculator {
         types.singleOrNull()?.let { return it }
 
         val maxDepth = types.maxOfOrNull { it.typeDepth() } ?: 0
-        return commonSuperType(types, -maxDepth, true).replaceCustomAttributes(c.unionTypeAttributes(types))
+        return commonSuperType(types, -maxDepth, true)
+            .replaceCustomAttributes(c.unionTypeAttributes(types) { attrTypes -> commonSuperType(attrTypes) })
     }
 
     context(c: TypeSystemCommonSuperTypesContext)

@@ -288,6 +288,7 @@ class ConeRawType private constructor(
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>,
     val upperBoundForApproximation: ConeKotlinType? = null,
+    val computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker, ConeTypeConstructorMarker {
     // TODO: consider inheriting directly from ConeKotlinType (KT-70049)
     override val typeArguments: Array<out ConeTypeProjection>
@@ -295,7 +296,7 @@ class ConeIntersectionType(
 
     override val attributes: ConeAttributes = intersectedTypes.foldMap(
         { it.attributes },
-        { a, b -> a.intersect(b) }
+        { a, b -> a.intersect(b, computeIntersection) }
     )
 
     private var hashCode = 0

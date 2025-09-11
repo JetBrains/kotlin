@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 class ParameterNameTypeAttribute(
@@ -21,8 +22,8 @@ class ParameterNameTypeAttribute(
         require(annotations.isNotEmpty())
     }
 
-    override fun union(other: ParameterNameTypeAttribute?): ParameterNameTypeAttribute? = null
-    override fun intersect(other: ParameterNameTypeAttribute?): ParameterNameTypeAttribute? = null
+    override fun union(other: ParameterNameTypeAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): ParameterNameTypeAttribute? = null
+    override fun intersect(other: ParameterNameTypeAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): ParameterNameTypeAttribute? = null
     override fun add(other: ParameterNameTypeAttribute?): ParameterNameTypeAttribute = this
 
     override fun isSubtypeOf(other: ParameterNameTypeAttribute?): Boolean = true

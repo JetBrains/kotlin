@@ -10,14 +10,15 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 object CompilerConeAttributes {
     object Exact : ConeAttribute<Exact>() {
         val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin.internal"), Name.identifier("Exact"))
 
-        override fun union(other: Exact?): Exact? = null
-        override fun intersect(other: Exact?): Exact? = null
+        override fun union(other: Exact?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): Exact? = null
+        override fun intersect(other: Exact?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): Exact? = null
         override fun add(other: Exact?): Exact = this
 
         override fun isSubtypeOf(other: Exact?): Boolean = true
@@ -31,8 +32,8 @@ object CompilerConeAttributes {
     object NoInfer : ConeAttribute<NoInfer>() {
         val ANNOTATION_CLASS_ID: ClassId = StandardClassIds.Annotations.NoInfer
 
-        override fun union(other: NoInfer?): NoInfer? = null
-        override fun intersect(other: NoInfer?): NoInfer? = null
+        override fun union(other: NoInfer?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): NoInfer? = null
+        override fun intersect(other: NoInfer?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): NoInfer? = null
         override fun add(other: NoInfer?): NoInfer = this
         override fun isSubtypeOf(other: NoInfer?): Boolean = true
 
@@ -45,8 +46,8 @@ object CompilerConeAttributes {
     object EnhancedNullability : ConeAttribute<EnhancedNullability>() {
         val ANNOTATION_CLASS_ID: ClassId = StandardClassIds.Annotations.EnhancedNullability
 
-        override fun union(other: EnhancedNullability?): EnhancedNullability? = other
-        override fun intersect(other: EnhancedNullability?): EnhancedNullability = this
+        override fun union(other: EnhancedNullability?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): EnhancedNullability? = other
+        override fun intersect(other: EnhancedNullability?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): EnhancedNullability = this
         override fun add(other: EnhancedNullability?): EnhancedNullability = this
 
         override fun isSubtypeOf(other: EnhancedNullability?): Boolean = true
@@ -60,8 +61,8 @@ object CompilerConeAttributes {
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
         val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
 
-        override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
-        override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType = this
+        override fun union(other: ExtensionFunctionType?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): ExtensionFunctionType? = other
+        override fun intersect(other: ExtensionFunctionType?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): ExtensionFunctionType = this
         override fun add(other: ExtensionFunctionType?): ExtensionFunctionType = this
 
         override fun isSubtypeOf(other: ExtensionFunctionType?): Boolean = true
@@ -73,8 +74,8 @@ object CompilerConeAttributes {
     }
 
     object RawType : ConeAttribute<RawType>() {
-        override fun union(other: RawType?): RawType? = other
-        override fun intersect(other: RawType?): RawType? = other
+        override fun union(other: RawType?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): RawType? = other
+        override fun intersect(other: RawType?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): RawType? = other
         override fun add(other: RawType?): RawType = this
         override fun isSubtypeOf(other: RawType?): Boolean = true
 
@@ -85,8 +86,8 @@ object CompilerConeAttributes {
     }
 
     class ContextFunctionTypeParams(val contextParameterNumber: Int) : ConeAttribute<ContextFunctionTypeParams>() {
-        override fun union(other: ContextFunctionTypeParams?): ContextFunctionTypeParams? = other
-        override fun intersect(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this
+        override fun union(other: ContextFunctionTypeParams?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): ContextFunctionTypeParams? = other
+        override fun intersect(other: ContextFunctionTypeParams?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): ContextFunctionTypeParams = this
         override fun add(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this
 
         override fun isSubtypeOf(other: ContextFunctionTypeParams?): Boolean = true
@@ -106,8 +107,8 @@ object CompilerConeAttributes {
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
         val ANNOTATION_CLASS_ID: ClassId = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
 
-        override fun union(other: UnsafeVariance?): UnsafeVariance? = null
-        override fun intersect(other: UnsafeVariance?): UnsafeVariance? = null
+        override fun union(other: UnsafeVariance?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): UnsafeVariance? = null
+        override fun intersect(other: UnsafeVariance?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): UnsafeVariance? = null
         override fun add(other: UnsafeVariance?): UnsafeVariance = this
 
         override fun isSubtypeOf(other: UnsafeVariance?): Boolean = true

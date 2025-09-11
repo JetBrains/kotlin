@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 /**
@@ -19,8 +20,24 @@ import kotlin.reflect.KClass
 class RefinedTypeForDataFlowTypeAttribute(
     override val coneType: ConeKotlinType,
 ) : ConeAttributeWithConeType<RefinedTypeForDataFlowTypeAttribute>() {
-    override fun union(other: RefinedTypeForDataFlowTypeAttribute?): RefinedTypeForDataFlowTypeAttribute? = null
-    override fun intersect(other: RefinedTypeForDataFlowTypeAttribute?): RefinedTypeForDataFlowTypeAttribute? = null
+    override fun union(
+        other: RefinedTypeForDataFlowTypeAttribute?,
+        c: (List<KotlinTypeMarker>) -> KotlinTypeMarker,
+    ): RefinedTypeForDataFlowTypeAttribute? {
+        return null
+//        if (other == null) return this
+//        return RefinedTypeForDataFlowTypeAttribute(c(listOf(coneType, other.coneType)) as ConeKotlinType)
+    }
+
+    override fun intersect(
+        other: RefinedTypeForDataFlowTypeAttribute?,
+        computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType,
+    ): RefinedTypeForDataFlowTypeAttribute? {
+        return null
+//        if (other == null) return this
+//        return RefinedTypeForDataFlowTypeAttribute(computeIntersection(listOf(coneType, other.coneType)))
+    }
+
     override fun add(other: RefinedTypeForDataFlowTypeAttribute?): RefinedTypeForDataFlowTypeAttribute = other ?: this
     override fun isSubtypeOf(other: RefinedTypeForDataFlowTypeAttribute?): Boolean = true
     override fun toString(): String = "{${coneType.renderForDebugging()}=}"
