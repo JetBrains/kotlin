@@ -55,7 +55,15 @@ internal class LLFirSessionCleaner(private val disposable: Disposable?) : ValueR
             }
             append("write-access:")
             append(ApplicationManager.getApplication().isWriteAccessAllowed)
+            append(", has-disposable:")
+            append(disposable != null)
         }
-        cleanUp(value)
+
+        try {
+            cleanUp(value)
+        } catch (t: Throwable) {
+            value?.invalidationInformation += "\nException occurred in `cleanUp`:\n${t.stackTraceToString()}]"
+            throw t
+        }
     }
 }
