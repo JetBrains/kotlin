@@ -197,7 +197,9 @@ open class CompilerRequiredAnnotationsComputationSession {
 
     fun annotationsAreResolved(declaration: FirAnnotationContainer): Boolean {
         if (declaration is FirFile) return false
-        if (treatNonSourceDeclarationsAsResolved && declaration is FirDeclaration && declaration.origin != FirDeclarationOrigin.Source) {
+        if (treatNonSourceDeclarationsAsResolved && declaration is FirDeclaration &&
+            (declaration.origin != FirDeclarationOrigin.Source && declaration.origin != FirDeclarationOrigin.Synthetic.ReplContainer)
+        ) {
             return true
         }
 

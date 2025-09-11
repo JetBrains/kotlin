@@ -449,6 +449,28 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         return script
     }
 
+    inline fun resolveReplSnippet(
+        replSnippet: FirReplSnippet,
+        transformChildren: () -> Unit,
+    ) {
+        if (!shouldTransformDeclaration(replSnippet)) return
+
+        computationSession.recordThatAnnotationsAreResolved(replSnippet)
+        transformDeclaration(replSnippet, null).also {
+            transformChildren(replSnippet) {
+                transformChildren()
+            }
+        }
+    }
+
+    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: Nothing?): FirReplSnippet {
+        resolveReplSnippet(replSnippet) {
+            replSnippet.transformChildren(this, data)
+        }
+
+        return replSnippet
+    }
+
     inline fun withClass(
         klass: FirClass,
         action: () -> Unit

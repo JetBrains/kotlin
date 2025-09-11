@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1014,6 +1015,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             } else {
                 val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)
+                dataFlowAnalyzer.enterLocalVariableDeclaration(unaryVariable) // TODO before variable expression?
                 dataFlowAnalyzer.exitLocalVariableDeclaration(unaryVariable, hadExplicitType = false)
 
                 // val <unary> = a
@@ -2059,6 +2061,31 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         dataFlowAnalyzer.exitAnonymousObjectExpression(anonymousObjectExpression)
         return anonymousObjectExpression
+    }
+
+    override fun transformReplDeclarationReference(
+        replDeclarationReference: FirReplDeclarationReference,
+        data: ResolutionMode,
+    ): FirStatement {
+        whileAnalysing(session, replDeclarationReference) {
+            val symbol = replDeclarationReference.symbol
+            // TODO jump to resolve declaration as part of eval function
+            context.withScopesForClass(symbol.getContainingClassSymbol()!!.fir as FirClass, components) {
+                when (symbol) {
+                    is FirPropertySymbol -> {
+                        val variable = symbol.fir
+                        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
+                        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+                        variable.transformSingle(transformer, data)
+                        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
+                    }
+                    else -> {
+                        symbol.fir.transformSingle(transformer, data)
+                    }
+                }
+            }
+        }
+        return replDeclarationReference
     }
 
     // ------------------------------------------------------------------------------------------------

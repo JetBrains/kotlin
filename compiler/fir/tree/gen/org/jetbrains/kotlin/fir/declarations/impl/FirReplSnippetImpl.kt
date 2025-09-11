@@ -31,8 +31,9 @@ internal class FirReplSnippetImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override val source: KtSourceElement,
     override val symbol: FirReplSnippetSymbol,
+    override val source: KtSourceElement,
+    override var receivers: MutableOrEmptyList<FirScriptReceiverParameter>,
     override var snippetClass: FirRegularClass,
     override val evalFunctionName: Name,
 ) : FirReplSnippet() {
@@ -46,18 +47,25 @@ internal class FirReplSnippetImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
+        receivers.forEach { it.accept(visitor, data) }
         snippetClass.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReplSnippetImpl {
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
+        transformReceivers(transformer, data)
         transformSnippetClass(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReplSnippetImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceivers(transformer: FirTransformer<D>, data: D): FirReplSnippetImpl {
+        receivers.transformInplace(transformer, data)
         return this
     }
 

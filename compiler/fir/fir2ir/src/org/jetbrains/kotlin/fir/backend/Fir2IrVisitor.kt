@@ -11,46 +11,33 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.backend.utils.*
-import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_RECEIVER_NAME_PREFIX
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -209,7 +196,7 @@ class Fir2IrVisitor(
         return irEnumEntry
     }
 
-    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement = whileAnalysing(session, regularClass) {
+    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrClass = whileAnalysing(session, regularClass) {
         if (regularClass.visibility == Visibilities.Local) {
             val irParent = conversionScope.parentFromStack()
             // NB: for implicit types it is possible that local class is already cached
@@ -404,8 +391,10 @@ class Fir2IrVisitor(
                 }
             }
         }
+
         conversionScope.withParent(irSnippet) {
-            irSnippet.body = convertToIrBlockBody(replSnippet.body)
+            val irClass = visitRegularClass(replSnippet.snippetClass, data)
+            irSnippet.targetClass = irClass.symbol
         }
 
         declarationStorage.leaveScope(irSnippet.symbol)
@@ -893,10 +882,10 @@ class Fir2IrVisitor(
         val calleeReference = thisReceiverExpression.calleeReference
         val firSnippet = firSnippetSymbol.fir
         val origin = if (thisReceiverExpression.isImplicit) IrStatementOrigin.IMPLICIT_ARGUMENT else null
-        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet) ?: error("IrReplSnippet for ${firSnippet.name} not found")
+        val irSnippet = declarationStorage.getCachedIrReplSnippet(firSnippet)
+            ?: error("IrReplSnippet for ${firSnippet.snippetClass.name} not found")
         val contextParameterNumber = firSnippetSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
-        val receiverParameter =
-            irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
+        val receiverParameter = irSnippet.receiverParameters.find { it.indexInParameters == contextParameterNumber }
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol, origin)
@@ -1018,6 +1007,19 @@ class Fir2IrVisitor(
             is FirProperty if name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> when {
                 !isUnnamedLocalVariable -> null
                 else -> initializer?.accept(this@Fir2IrVisitor, null) as IrStatement
+            }
+            is FirReplDeclarationReference -> {
+                val symbol = symbol
+                if (symbol is FirPropertySymbol) {
+                    val rValue = symbol.fir.initializer ?: symbol.fir.delegate
+                    if (rValue != null) {
+                        callGenerator.convertToIrSetCall(rValue, symbol)
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
             }
             else -> accept(this@Fir2IrVisitor, null) as IrStatement
         }
