@@ -14860,9 +14860,6 @@ final fun kotlin.js/parseInt(kotlin/String): kotlin/Int // kotlin.js/parseInt|pa
 final fun kotlin.js/parseInt(kotlin/String, kotlin/Int = ...): kotlin/Int // kotlin.js/parseInt|parseInt(kotlin.String;kotlin.Int){}[0]
 
 // Targets: [js]
-final fun kotlin/throwKotlinNothingValueException(): kotlin/Nothing // kotlin/throwKotlinNothingValueException|throwKotlinNothingValueException(){}[0]
-
-// Targets: [js]
 final inline fun (kotlin.js/RegExpMatch).kotlin.js/asArray(): kotlin/Array<out kotlin/String?> // kotlin.js/asArray|asArray@kotlin.js.RegExpMatch(){}[0]
 
 // Targets: [js]
