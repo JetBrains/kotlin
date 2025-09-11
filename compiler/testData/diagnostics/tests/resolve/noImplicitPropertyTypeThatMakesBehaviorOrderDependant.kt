@@ -18,5 +18,12 @@ class C2 {
 
 fun String.extDecl() = "Extension top-level function"
 
+// FILE: withStdlib.kt
+
+class A {
+    val l = listOf("").map { it.length }
+    val map = mutableMapOf<String, String>()
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
 propertyDeclaration, propertyDelegate */

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76240
 // IGNORE_REVERSED_RESOLVE
+// IGNORE_PARTIAL_BODY_ANALYSIS
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS -DEBUG_INFO_MISSING_UNRESOLVED
 
 // FILE: loop.kt
@@ -34,6 +35,38 @@ class Foo(val b1: Boolean, val b2: Boolean) {
 
     fun g() = if (b1) 56.g() else 78.f()
     val g = if (b2) g() else <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>f()<!>
+}
+
+// FILE: localFunction.kt
+
+package localFunction
+
+fun String.foo() = ""
+
+class MyClass {
+    fun foo() = run {
+        fun localFun() {
+            "".foo()
+        }
+        ""
+    }
+
+    val foo = foo()
+}
+
+// FILE: localProperty.kt
+
+package localProperty
+
+fun String.foo() = ""
+
+class MyClass {
+    val foo = foo()
+
+    fun foo() = run {
+        val localProp = "".foo()
+        ""
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral,
