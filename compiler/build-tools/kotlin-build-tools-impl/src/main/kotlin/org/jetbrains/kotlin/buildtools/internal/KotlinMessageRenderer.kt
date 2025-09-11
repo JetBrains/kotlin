@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import java.io.File
 
 internal object KotlinMessageRenderer : MessageRenderer {
+    private val extendedLocations: Boolean by lazy(LazyThreadSafetyMode.NONE) {
+        java.lang.Boolean.getBoolean("org.jetbrains.kotlin.buildtools.logger.extendedLocation")
+    }
+
     override fun render(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?): String {
         return buildString {
             location?.apply {
@@ -18,6 +22,9 @@ internal object KotlinMessageRenderer : MessageRenderer {
                 append("$fileUri")
                 if (line > 0 && column > 0) {
                     append(":$line:$column")
+                    if (extendedLocations) {
+                        append(":$lineEnd:$columnEnd")
+                    }
                 }
                 append(' ')
             }
