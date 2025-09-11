@@ -108,7 +108,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
                         node.fir.initializer?.mark()
                         node.fir.delegate?.mark()
                     }
-                    is VariableDeclarationNode -> {
+                    is VariableDeclarationExitNode -> {
                         node.fir.initializer?.mark()
                         node.fir.delegate?.mark()
                     }

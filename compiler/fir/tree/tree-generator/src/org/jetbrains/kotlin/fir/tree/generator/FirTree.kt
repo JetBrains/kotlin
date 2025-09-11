@@ -763,8 +763,10 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(declaration)
         parent(controlFlowGraphOwner)
 
-        +field("source", sourceElementType, nullable = false)
         +declaredSymbol(replSnippetSymbolType)
+
+        +field("source", sourceElementType, nullable = false)
+        +listField("receivers", scriptReceiverParameter, useMutableOrEmpty = true, withTransform = true)
         +field("snippetClass", regularClass, withTransform = true)
         +field("evalFunctionName", nameType)
     }

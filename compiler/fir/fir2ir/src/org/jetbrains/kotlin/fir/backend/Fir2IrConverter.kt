@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.name.Name
@@ -160,6 +161,7 @@ class Fir2IrConverter(
         for (declaration in file.declarations) {
             when (declaration) {
                 is FirRegularClass -> registerClassAndNestedClasses(declaration, irFile)
+                is FirReplSnippet -> registerClassAndNestedClasses(declaration.snippetClass, irFile)
                 is FirCodeFragment -> classifierStorage.createAndCacheCodeFragmentClass(declaration, irFile)
                 else -> {}
             }
@@ -172,9 +174,8 @@ class Fir2IrConverter(
         file.declarations.forEach {
             when (it) {
                 is FirRegularClass -> processClassAndNestedClassHeaders(it)
-                is FirTypeAlias -> {
-                    classifierStorage.createAndCacheIrTypeAlias(it, irFile)
-                }
+                is FirReplSnippet -> processClassAndNestedClassHeaders(it.snippetClass)
+                is FirTypeAlias -> classifierStorage.createAndCacheIrTypeAlias(it, irFile)
                 else -> {}
             }
         }
@@ -487,6 +488,8 @@ class Fir2IrConverter(
                 val irSnippet = declarationStorage.createIrReplSnippet(declaration)
                 addDeclarationToParentIfNeeded(irSnippet)
                 irSnippet.parent = parent
+
+                processMemberDeclaration(declaration.snippetClass, containingClass, parent, delegateFieldToPropertyMap)
             }
             is FirSimpleFunction -> {
                 declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)
@@ -681,8 +684,10 @@ class Fir2IrConverter(
                 generatedFiles.forEach { components.firProvider.recordFile(it) }
             }
 
+//            println(allFirFiles.singleOrNull()?.render())
             components.converter.runSourcesConversion(allFirFiles, irModuleFragment, components.fir2IrVisitor)
 
+//            println(irModuleFragment.dump())
             return irModuleFragment
         }
     }

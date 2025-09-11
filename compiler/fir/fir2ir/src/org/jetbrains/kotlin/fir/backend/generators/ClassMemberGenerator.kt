@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationCom
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirDelayedPropertyDelegate
+import org.jetbrains.kotlin.fir.expressions.FirDelayedPropertyInitializer
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -236,7 +238,8 @@ internal class ClassMemberGenerator(
         val initializer = property.backingField?.initializer ?: property.initializer
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
-        irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
+        val initializerExpression = initializer?.takeIf { it !is FirDelayedPropertyInitializer } ?: delegate?.takeIf { it !is FirDelayedPropertyDelegate }
+        irProperty.initializeBackingField(property, initializerExpression = initializerExpression)
         val needGenerateDefaultGetter = property.getter is FirDefaultPropertyGetter ||
                 (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
 

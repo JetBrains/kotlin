@@ -1004,6 +1004,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             } else {
                 val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)
+                dataFlowAnalyzer.enterLocalVariableDeclaration(unaryVariable) // TODO before variable expression?
                 dataFlowAnalyzer.exitLocalVariableDeclaration(unaryVariable, hadExplicitType = false)
 
                 // val <unary> = a
@@ -2017,6 +2018,71 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
         dataFlowAnalyzer.exitAnonymousObjectExpression(anonymousObjectExpression)
         return anonymousObjectExpression
+    }
+
+    override fun transformReplDeclarationReference(
+        replDeclarationReference: FirReplDeclarationReference,
+        data: ResolutionMode,
+    ): FirStatement {
+        whileAnalysing(session, replDeclarationReference) {
+            // TODO jump to resolve declaration as part of eval function
+            context.withScopesForClass(replDeclarationReference.symbol.getContainingClassSymbol()!!.fir as FirClass, components) {
+                replDeclarationReference.symbol.fir.transformSingle(transformer, data)
+            }
+        }
+        return replDeclarationReference
+    }
+
+    override fun transformReplPropertyInitializer(
+        replPropertyInitializer: FirReplPropertyInitializer,
+        data: ResolutionMode,
+    ): FirStatement {
+        val variable = replPropertyInitializer.propertySymbol.fir
+        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
+        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+        whileAnalysing(session, replPropertyInitializer) {
+            // TODO jump to resolve property as part of eval function
+            context.withScopesForClass(variable.getContainingClassSymbol()!!.fir as FirClass, components) {
+                variable.transformSingle(transformer, data)
+            }
+        }
+        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
+        return replPropertyInitializer
+    }
+
+    override fun transformReplPropertyDelegate(
+        replPropertyDelegate: FirReplPropertyDelegate,
+        data: ResolutionMode,
+    ): FirStatement {
+        val variable = replPropertyDelegate.propertySymbol.fir
+        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
+        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+        whileAnalysing(session, replPropertyDelegate) {
+            // TODO jump to resolve property as part of eval function
+            context.withScopesForClass(variable.getContainingClassSymbol()!!.fir as FirClass, components) {
+                variable.transformSingle(transformer, data)
+            }
+        }
+        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
+        return replPropertyDelegate
+    }
+
+    override fun transformDelayedPropertyInitializer(
+        delayedPropertyInitializer: FirDelayedPropertyInitializer,
+        data: ResolutionMode,
+    ): FirStatement {
+        // TODO to maintain correct CFG, initializer needs to be resolved as part of property
+        delayedPropertyInitializer.expressionRef.value.transformExpression(transformer, data)
+        return delayedPropertyInitializer
+    }
+
+    override fun transformDelayedPropertyDelegate(
+        delayedPropertyDelegate: FirDelayedPropertyDelegate,
+        data: ResolutionMode,
+    ): FirStatement {
+        // TODO to maintain correct CFG, delegate needs to be resolved as part of property
+        delayedPropertyDelegate.expressionRef.value.transformExpression(transformer, data)
+        return delayedPropertyDelegate
     }
 
     // ------------------------------------------------------------------------------------------------

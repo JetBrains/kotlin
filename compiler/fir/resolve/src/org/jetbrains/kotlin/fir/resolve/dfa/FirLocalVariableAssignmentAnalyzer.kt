@@ -109,7 +109,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
     fun isUnstableInCurrentScope(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
         // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
         if (assignedLocalVariablesByDeclaration == null) return false
-        if (declaration !is FirProperty || !declaration.isLocal || !declaration.isVar) return false
+        if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
         return !allAssignmentsPreserveType(scopes.top().second[declaration], types, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
@@ -583,9 +583,31 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
 
             override fun visitProperty(property: FirProperty, data: MiniCfgData) {
                 visitElement(property, data)
-                if (property.isLocal) {
+                if (property.isEffectivelyLocal) {
                     data.variableDeclarations.last()[property.name] = property
                 }
+            }
+
+            override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: MiniCfgData) {
+                replDeclarationReference.symbol.fir.accept(this, data)
+            }
+
+            override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: MiniCfgData) {
+                val property = replPropertyInitializer.propertySymbol.fir
+                property.accept(this, data)
+            }
+
+            override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: MiniCfgData) {
+                val property = replPropertyDelegate.propertySymbol.fir
+                property.accept(this, data)
+            }
+
+            override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: MiniCfgData) {
+                delayedPropertyInitializer.expressionRef.value.expression.accept(this, data)
+            }
+
+            override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: MiniCfgData) {
+                delayedPropertyDelegate.expressionRef.value.expression.accept(this, data)
             }
 
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
