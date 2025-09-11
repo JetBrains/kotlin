@@ -449,17 +449,6 @@ open class CommonizerIT : KGPBaseTest() {
         `test multiple cinterops with test source sets and compilations`(gradleVersion, false)
     }
 
-    // FIXME: Just drop this test because multiple-same target is disallowed in native?
-    @DisplayName("KT-49735 two kotlin targets with same konanTarget")
-    @GradleTest
-    fun testTwoKotlinTargetsWithSameKonanTarget(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-49735-twoKotlinTargets-oneKonanTarget", gradleVersion) {
-            build(":assemble", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError") {
-                assertTasksExecuted(":compileCommonMainKotlinMetadata")
-            }
-        }
-    }
-
     @DisplayName("KT-47641 commonizing c-interops does not depend on any source compilation")
     @GradleTest
     fun testCInteropsDoesNotDependOnAnySourceCompilation(gradleVersion: GradleVersion) {
