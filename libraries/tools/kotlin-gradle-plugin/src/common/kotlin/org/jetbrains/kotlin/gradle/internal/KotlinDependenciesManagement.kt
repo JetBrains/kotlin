@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -62,6 +63,7 @@ private fun ConfigurationContainer.configureDefaultVersionsResolutionStrategy(
     coreLibrariesVersion: Provider<String>,
     constraintsHandler: DependencyConstraintHandler,
 ) = configureEach { configuration ->
+    if (configuration.name.startsWith(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)) return@configureEach
     configuration.withDependencies { dependencySet ->
         dependencySet
             .filterIsInstance<ExternalDependency>()

@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
@@ -112,37 +114,24 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                     project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
                 )
             }
-        project
-            .configurations
-            .maybeCreateResolvable(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
-            .also {
-                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
-                project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
-                it.withDependencies { dependencies ->
-                    dependencies
-                        .withType<ExternalDependency>()
-                        .configureEach { dependency ->
-                            if (dependency.name != KOTLIN_BUILD_TOOLS_API_COMPAT) {
-                                dependency.version { versionConstraint ->
-                                    versionConstraint.strictly(project.kotlinExtensionOrNull?.compilerVersion?.get() ?: pluginVersion)
-                                }
-                            }
-                        }
-                }
-
-            }
+        project.maybeCreateBuildToolsApiConfiguration(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME, project.provider {
+            project.kotlinExtensionOrNull?.compilerVersion?.get() ?: pluginVersion
+        })
         project
             .tasks
             .withType(AbstractKotlinCompileTool::class.java)
             .configureEach { task ->
                 task.defaultCompilerClasspath.setFrom(
-                    {
-                        val classpathConfiguration = when (task.runViaBuildToolsApi.get()) {
-                            true -> BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
-                            false -> COMPILER_CLASSPATH_CONFIGURATION_NAME
-                        }
-                        project.configurations.named(classpathConfiguration)
+                    task.customCompilerVersion.map { _ ->
+                        project.configurations.named("$BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME-${task.name}")
                     }
+                        .orElse(project.provider {
+                            val classpathConfiguration = when (task.runViaBuildToolsApi.get()) {
+                                true -> BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
+                                false -> COMPILER_CLASSPATH_CONFIGURATION_NAME
+                            }
+                            project.configurations.named(classpathConfiguration)
+                        })
                 )
             }
     }
@@ -331,4 +320,26 @@ private fun loadKotlinPluginVersionFromResourcesOf(any: Any) =
 
 private val kotlinPluginVersionFromResources = lazy {
     loadKotlinPluginVersionFromResourcesOf(object {})
+}
+
+internal fun Project.maybeCreateBuildToolsApiConfiguration(name: String, versionProvider: Provider<String>): Configuration {
+    return project
+        .configurations
+        .maybeCreateResolvable(name)
+        .also {
+            project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:${getKotlinPluginVersion(logger)}")
+            project.dependencies.add(it.name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL")
+            it.withDependencies { dependencies ->
+                dependencies
+                    .withType<ExternalDependency>()
+                    .configureEach { dependency ->
+                        if (dependency.name != KOTLIN_BUILD_TOOLS_API_COMPAT) {
+                            dependency.version { versionConstraint ->
+                                versionConstraint.strictly(versionProvider.get())
+                            }
+                        }
+                    }
+            }
+
+        }
 }
