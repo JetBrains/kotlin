@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
@@ -350,6 +352,65 @@ class KotlinAndroidIT : KGPBaseTest() {
             }
 
             build("help")
+        }
+    }
+
+    @DisplayName("KT-80785: AGP 9.0 with disabled built-in Kotlin fails with actionable diagnostic because of the new AGP DSL")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
+    fun testNewAgpDslDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("android")
+                id("com.android.library")
+            }
+            gradleProperties.appendText(
+                //language=properties
+                """
+                |
+                |android.builtInKotlin=false
+                """.trimMargin()
+            )
+            buildAndFail("help") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+            }
+        }
+    }
+
+    @DisplayName("KT-80785: usage of new AGP DSL does not hide AgpWithBuiltInKotlinIsAlreadyApplied")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
+    fun testNewAgpDslDiagnosticWithBuiltInKotlin(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                /*
+                 * The plugin ordering matters here.
+                 * If the order is reversed, a similar diagnostic is reported by AGP failing the build.
+                 */
+                id("com.android.library")
+                kotlin("android")
+            }
+            buildAndFail("help") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.AgpWithBuiltInKotlinIsAlreadyApplied)
+            }
         }
     }
 }

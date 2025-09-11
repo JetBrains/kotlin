@@ -1846,6 +1846,18 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object IncompatibleWithTheNewAgpDsl :
+        ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            trace: Throwable,
+        ) = build(throwable = trace) {
+            title("Failed to apply plugin 'com.jetbrains.kotlin.android'")
+                .description("The 'org.jetbrains.kotlin.android' plugin is not compatible with AGP's new DSL (`android.newDsl=true`).")
+                .solution("Set `android.builtInKotlin=true` in `gradle.properties` and migrate to built-in Kotlin (see https://kotl.in/gradle/agp-built-in-kotlin for guidance), or set `android.newDsl=false` in `gradle.properties` to temporarily bypass this issue.")
+                .documentationLink(URI("https://kotl.in/gradle/agp-new-dsl"))
+        }
+    }
+
     object DeprecatedKotlinVersionKotlinDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         internal class VersionMetadata(
             val version: KotlinVersion,
