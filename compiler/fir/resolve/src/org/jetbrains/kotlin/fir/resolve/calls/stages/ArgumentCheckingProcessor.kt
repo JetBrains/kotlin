@@ -360,7 +360,7 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.collectionLiteralExpression
 
         if (!LanguageFeature.CollectionLiterals.isEnabled()) {
-            atom.useArrayLiteralSubAtom()
+            atom.useFallbackForDisabledCollectionLiterals()
             resolveArgumentExpression(atom.subAtom!!)
             return
         }

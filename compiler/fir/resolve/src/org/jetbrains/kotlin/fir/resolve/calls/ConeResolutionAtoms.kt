@@ -160,7 +160,7 @@ class ConeResolutionAtomWithPostponedChild(
         subAtom = fallbackSubAtom
     }
 
-    fun useArrayLiteralSubAtom() {
+    fun useFallbackForDisabledCollectionLiterals() {
         require(expression is FirCollectionLiteralCall) {
             "expected atom with ${FirCollectionLiteralCall::class.simpleName}, got ${expression::class.simpleName}"
         }

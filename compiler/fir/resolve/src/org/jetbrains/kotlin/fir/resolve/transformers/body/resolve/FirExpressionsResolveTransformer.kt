@@ -1959,10 +1959,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     @OptIn(ExperimentalContracts::class)
-    private val ResolutionMode.forArrayLiteralResolution: Boolean
+    private val ResolutionMode.forCollectionLiteralInAnnotationResolution: Boolean
         get() {
             contract {
-                returns(true) implies (this@forArrayLiteralResolution is ResolutionMode.WithExpectedType)
+                returns(true) implies (this@forCollectionLiteralInAnnotationResolution is ResolutionMode.WithExpectedType)
             }
             return (this as? ResolutionMode.WithExpectedType)?.arrayLiteralPosition != null
         }
@@ -1972,8 +1972,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             when {
                 // if the feature is not supported, OR collection literal is in the annotation, use old resolution
                 !session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) ||
-                        data.forArrayLiteralResolution ->
-                    transformArrayLiteral(collectionLiteralCall, data)
+                        data.forCollectionLiteralInAnnotationResolution ->
+                    transformCollectionLiteralInAnnotation(collectionLiteralCall, data)
                 else -> {
                     collectionLiteralCall.transformAnnotations(transformer, data)
                     collectionLiteralCall.transformChildren(transformer, ResolutionMode.ContextDependent)
@@ -1985,18 +1985,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-    private fun transformArrayLiteral(arrayLiteral: FirCollectionLiteralCall, data: ResolutionMode): FirStatement {
+    private fun transformCollectionLiteralInAnnotation(
+        collectionLiteral: FirCollectionLiteralCall,
+        data: ResolutionMode,
+    ): FirStatement {
         return when {
-            data.forArrayLiteralResolution -> {
+            data.forCollectionLiteralInAnnotationResolution -> {
                 // Default value of a constructor parameter inside an annotation class or an argument in an annotation call.
-                arrayLiteral.transformChildren(
+                collectionLiteral.transformChildren(
                     transformer,
                     data.expectedType.arrayElementType()?.let { withExpectedType(it) }
                         ?: ResolutionMode.ContextDependent,
                 )
 
                 val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(
-                    arrayLiteral,
+                    collectionLiteral,
                     data.expectedType,
                     resolutionContext,
                     data,
@@ -2006,22 +2009,22 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             else -> {
                 // Other unsupported usage.
-                arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
+                collectionLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
                 // We set the arrayLiteral's type to the expect type or Array<Any>
                 // because arguments need to have a type during resolution of the synthetic call.
                 // We remove the type so that it will be set during completion to the CST of the arguments.
-                arrayLiteral.replaceConeTypeOrNull(
+                collectionLiteral.replaceConeTypeOrNull(
                     (data as? ResolutionMode.WithExpectedType)?.expectedType
                         ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardClassIds.Any.constructClassLikeType()))
                 )
                 val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
-                    arrayLiteral,
+                    collectionLiteral,
                     resolutionContext,
                     data,
                 )
-                arrayLiteral.replaceConeTypeOrNull(null)
+                collectionLiteral.replaceConeTypeOrNull(null)
                 callCompleter.completeCall(syntheticIdCall, ResolutionMode.ContextIndependent)
-                arrayLiteral
+                collectionLiteral
             }
         }
     }
