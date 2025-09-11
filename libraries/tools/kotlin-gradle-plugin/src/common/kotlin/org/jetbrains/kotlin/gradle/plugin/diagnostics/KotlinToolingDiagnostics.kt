@@ -1842,7 +1842,7 @@ internal object KotlinToolingDiagnostics {
             title("Failed to apply plugin 'com.jetbrains.kotlin.android'")
                 .description("The 'org.jetbrains.kotlin.android' plugin is no longer required for Kotlin support since AGP 9.0.")
                 .solution("Remove the 'org.jetbrains.kotlin.android' plugin from this project's build file: ${buildFile}.")
-                .documentationLink(URI("https://issuetracker.google.com/438678642"))
+                .documentationLink(URI("https://kotl.in/gradle/agp-built-in-kotlin"))
         }
     }
 
