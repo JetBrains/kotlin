@@ -171,17 +171,23 @@ fun Project.configureKotlinCompilationOptions() {
 
                 if (!skipJvmDefaultForModule(project.path)) {
                     freeCompilerArgs.add(
-                        if (project.shouldUseOldJvmDefaultArgument(this@configureEach))
-                            "-Xjvm-default=all"
-                        else
-                            "-jvm-default=no-compatibility"
+                        project.shouldUseOldJvmDefaultArgument(this@configureEach).map {
+                            if (it) {
+                                "-Xjvm-default=all"
+                            } else {
+                                "-jvm-default=no-compatibility"
+                            }
+                        }
                     )
                 } else {
                     freeCompilerArgs.add(
-                        if (project.shouldUseOldJvmDefaultArgument(this@configureEach))
-                            "-Xjvm-default=disable"
-                        else
-                            "-jvm-default=disable"
+                        project.shouldUseOldJvmDefaultArgument(this@configureEach).map {
+                            if (it) {
+                                "-Xjvm-default=disable"
+                            } else {
+                                "-jvm-default=disable"
+                            }
+                        }
                     )
                 }
             }
@@ -189,14 +195,26 @@ fun Project.configureKotlinCompilationOptions() {
     }
 }
 
-private fun Project.shouldUseOldJvmDefaultArgument(task: KotlinJvmCompile): Boolean {
-    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-    val isOldCompilerVersion =
-        MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
-
+private fun Project.shouldUseOldJvmDefaultArgument(task: KotlinJvmCompile): Provider<Boolean> {
     // In most projects which enable old compiler version, test tasks still use the bootstrap compiler.
-    return isOldCompilerVersion && task.name != "compileTestKotlin" && task.name != "compileFunctionalTestKotlin" &&
-            (task.name != "compileTestFixturesKotlin" || path == ":kotlin-gradle-plugin")
+    return project.provider {
+        fun getCustomCompilerVersion(task: KotlinJvmCompile): String? {
+            try {
+                val customCompilerVersionMethod =
+                    org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java.getMethod("getCustomCompilerVersion")
+                @Suppress("UNCHECKED_CAST") val customCompilerVersion = customCompilerVersionMethod.invoke(task) as Property<String>
+                return customCompilerVersion.orNull
+            } catch (_: NoSuchMethodException) {
+                return null
+            }
+        }
+
+        @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
+        val isOldCompilerVersion =
+            (getCustomCompilerVersion(task)?.let { MavenComparableVersion(it) < MavenComparableVersion("2.2")} ?: false) || MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
+        isOldCompilerVersion && task.name != "compileTestKotlin" && task.name != "compileFunctionalTestKotlin" &&
+                (task.name != "compileTestFixturesKotlin" || path == ":kotlin-gradle-plugin")
+    }
 }
 
 fun Project.configureArtifacts() {

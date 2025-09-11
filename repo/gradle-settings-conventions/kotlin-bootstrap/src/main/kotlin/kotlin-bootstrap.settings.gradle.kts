@@ -253,7 +253,7 @@ private fun Settings.applyBootstrapConfiguration(
             }
 
             // Overriding built tools API classpath
-            if (name == "kotlinBuildToolsApiClasspath") {
+            if (name.startsWith("kotlinBuildToolsApiClasspath")) {
                 if (path == ":compiler:build-tools:kotlin-build-tools-api") {
                     resolutionStrategy.dependencySubstitution {
                         substitute(module("org.jetbrains.kotlin:kotlin-build-tools-api"))

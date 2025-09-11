@@ -5876,6 +5876,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileToo
 	public final fun exclude (Ljava/lang/Iterable;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public final fun exclude (Lorg/gradle/api/specs/Spec;)Lorg/gradle/api/tasks/util/PatternFilterable;
 	public final fun exclude ([Ljava/lang/String;)Lorg/gradle/api/tasks/util/PatternFilterable;
+	public abstract fun getCustomCompilerVersion ()Lorg/gradle/api/provider/Property;
 	public fun getDefaultSerializedCompilerArguments ()Ljava/util/List;
 	public final fun getExcludes ()Ljava/util/Set;
 	public final fun getIncludes ()Ljava/util/Set;

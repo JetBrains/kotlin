@@ -14,6 +14,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -83,6 +84,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .value(explicitApiMode)
                 .finalizeValueOnRead()
             task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
+            project.maybeCreateBuildToolsApiConfiguration(
+                "$BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME-${task.name}",
+                task.customCompilerVersion.orElse(project.provider {
+                    project.kotlinExtensionOrNull?.compilerVersion?.get() ?: getKotlinPluginVersion(task.logger)
+                })
+            )
         }
     }
 
