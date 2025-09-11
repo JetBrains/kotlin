@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.utils.memoryOptimizedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEach
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -153,8 +153,8 @@ class WasmCompiledModuleFragment(
     private fun partitionDefinedAndImportedFunctions(): Pair<MutableList<WasmFunction.Defined>, MutableList<WasmFunction.Imported>> {
         val definedFunctions = mutableListOf<WasmFunction.Defined>()
         val importedFunctions = mutableListOf<WasmFunction.Imported>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
-            fragment.functions.elements.memoryOptimizedForEach { function ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
+            fragment.functions.elements.indexBasedForEach { function ->
                 when (function) {
                     is WasmFunction.Defined -> definedFunctions.add(function)
                     is WasmFunction.Imported -> importedFunctions.add(function)
@@ -261,7 +261,7 @@ class WasmCompiledModuleFragment(
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
         val importsInOrder = importedFunctions + importedTags
-        tags.memoryOptimizedForEach { additionalTypes.add(it.type) }
+        tags.indexBasedForEach { additionalTypes.add(it.type) }
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
 
@@ -307,13 +307,13 @@ class WasmCompiledModuleFragment(
         additionalTypes.add(rttiTypeDeclaration)
 
         val rttiGlobals = mutableMapOf<IdSignature, RttiGlobal>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
-            fragment.rttiElements?.globals?.memoryOptimizedForEach { global ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
+            fragment.rttiElements?.globals?.indexBasedForEach { global ->
                 rttiGlobals[global.classSignature] = global
             }
         }
 
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.rttiElements?.run {
                 globalReferences.unbound.forEach { unbound ->
                     unbound.value.bind(rttiGlobals[unbound.key]?.global ?: error("A RttiGlobal was not found for ${unbound.key}"))
@@ -355,7 +355,7 @@ class WasmCompiledModuleFragment(
         )
         syntheticTypes.add(specialSlotITableType)
 
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.specialITableTypes?.let { specialITableTypes ->
                 specialITableTypes.wasmAnyArrayType.bind(wasmAnyArrayType)
                 specialITableTypes.specialSlotITableType.bind(specialSlotITableType)
@@ -416,13 +416,13 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        additionalTypes.memoryOptimizedForEach { groupsWithMixIns.add(listOf(it)) }
+        additionalTypes.indexBasedForEach { groupsWithMixIns.add(listOf(it)) }
 
         return groupsWithMixIns
     }
 
     private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>) = mutableListOf<WasmGlobal>().apply {
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             addAll(fragment.globalFields.elements)
             addAll(fragment.globalVTables.elements)
             addAll(fragment.globalClassITables.elements.distinct())
@@ -461,8 +461,8 @@ class WasmCompiledModuleFragment(
                 buildInstr(WasmOp.CALL, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(registerModuleDescriptor)))
             }
 
-            wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
-                fragment.mainFunctionWrappers.memoryOptimizedForEach { signature ->
+            wasmCompiledFileFragments.indexBasedForEach { fragment ->
+                fragment.mainFunctionWrappers.indexBasedForEach { signature ->
                     val wrapperFunction = fragment.functions.defined[signature]
                         ?: compilationException("Cannot find symbol for main wrapper", type = null)
                     buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
@@ -503,17 +503,17 @@ class WasmCompiledModuleFragment(
         }
 
         val allDefinedFunctions = mutableMapOf<IdSignature, WasmFunction>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { allDefinedFunctions.putAll(it.functions.defined) }
+        wasmCompiledFileFragments.indexBasedForEach { allDefinedFunctions.putAll(it.functions.defined) }
 
         associatedObjectGetter.instructions.clear()
         with(WasmExpressionBuilder(associatedObjectGetter.instructions)) {
-            wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+            wasmCompiledFileFragments.indexBasedForEach { fragment ->
                 for ((klassId, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
                     buildGetLocal(WasmLocal(0, "classId", WasmI64, true), serviceCodeLocation)
                     buildConstI64(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                     buildIf("Class matches")
-                    associatedObjectsInstanceGetters.memoryOptimizedForEach { (keyId, getter, isExternal) ->
+                    associatedObjectsInstanceGetters.indexBasedForEach { (keyId, getter, isExternal) ->
                         val getterFunction = allDefinedFunctions[getter]
                         if (getterFunction != null) { //Could be deleted with DCE
                             buildGetLocal(WasmLocal(1, "keyId", WasmI64, true), serviceCodeLocation)
@@ -541,8 +541,8 @@ class WasmCompiledModuleFragment(
         val runRootSuites = tryFindBuiltInFunction { it.runRootSuites } ?: return null
         val startUnitTestsFunction = WasmFunction.Defined("startUnitTests", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
-            wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
-                fragment.testFunctionDeclarators.memoryOptimizedForEach{ declarator ->
+            wasmCompiledFileFragments.indexBasedForEach { fragment ->
+                fragment.testFunctionDeclarators.indexBasedForEach{ declarator ->
                     val declaratorFunction = fragment.functions.defined[declarator]
                         ?: compilationException("Cannot find symbol for test declarator", type = null)
                     buildCall(WasmSymbol(declaratorFunction), serviceCodeLocation)
@@ -575,15 +575,15 @@ class WasmCompiledModuleFragment(
             } ?: compilationException("stringPool initializer not found!", type = null)
             buildCall(stringPoolInitializer, serviceCodeLocation)
 
-            wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
-                fragment.objectInstanceFieldInitializers.memoryOptimizedForEach { objectInitializer ->
+            wasmCompiledFileFragments.indexBasedForEach { fragment ->
+                fragment.objectInstanceFieldInitializers.indexBasedForEach { objectInitializer ->
                     val functionSymbol = WasmSymbol(fragment.functions.defined[objectInitializer]!!)
                     buildCall(functionSymbol, serviceCodeLocation)
                 }
             }
 
-            wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
-                fragment.nonConstantFieldInitializers.memoryOptimizedForEach { nonConstantInitializer ->
+            wasmCompiledFileFragments.indexBasedForEach { fragment ->
+                fragment.nonConstantFieldInitializers.indexBasedForEach { nonConstantInitializer ->
                     val functionSymbol = WasmSymbol(fragment.functions.defined[nonConstantInitializer]!!)
                     buildCall(functionSymbol, serviceCodeLocation)
                 }
@@ -798,7 +798,7 @@ class WasmCompiledModuleFragment(
             )
         )
 
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             if (isLatin1) {
                 fragment.wasmStringsElements?.createStringLiteralLatin1?.bind(stringLiteralFunction)
             } else {
@@ -828,7 +828,7 @@ class WasmCompiledModuleFragment(
         definedSelector: (WasmCompiledFileFragment) -> Map<IrSymbolType, WasmDeclarationType>,
     ) {
         val allDefined = mutableMapOf<IrSymbolType, WasmDeclarationType>()
-        fragments.memoryOptimizedForEach { fragment ->
+        fragments.indexBasedForEach { fragment ->
             definedSelector(fragment).forEach { defined ->
                 check(!allDefined.containsKey(defined.key)) {
                     "Redeclaration of symbol ${defined.key}"
@@ -845,11 +845,11 @@ class WasmCompiledModuleFragment(
     private fun bindUnboundFunctionTypes(): Map<WasmFunctionType, WasmFunctionType> {
         // Associate function types to a single canonical function type
         val canonicalFunctionTypes = LinkedHashMap<WasmFunctionType, WasmFunctionType>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.functionTypes.elements.associateWithTo(canonicalFunctionTypes) { it }
         }
         // Rebind symbol to canonical
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.functionTypes.unbound.forEach { (_, wasmSymbol) ->
                 wasmSymbol.bind(canonicalFunctionTypes.getValue(wasmSymbol.owner))
             }
@@ -862,7 +862,7 @@ class WasmCompiledModuleFragment(
         var stringDataSectionStart = 0
         val visitedStrings = mutableMapOf<String, Int>()
         val addressesAndLengths = mutableListOf<Long>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             for ((string, literalIdSymbol) in fragment.stringLiteralId.unbound) {
                 val visitedStringId = visitedStrings[string]
                 val stringId: Int
@@ -881,7 +881,7 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.wasmStringsElements?.stringPoolSize?.bind(visitedStrings.size)
         }
 
@@ -893,7 +893,7 @@ class WasmCompiledModuleFragment(
     }
 
     private fun bindConstantArrayDataSegmentIds(data: MutableList<WasmData>) {
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.constantArrayDataSegmentId.unbound.forEach { (constantArraySegment, symbol) ->
                 symbol.bind(data.size)
                 val integerSize = when (constantArraySegment.second) {
@@ -911,7 +911,7 @@ class WasmCompiledModuleFragment(
 
     private fun bindUniqueJsFunNames() {
         val jsCodeCounter = mutableMapOf<String, Int>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             fragment.jsFuns.forEach { jsCodeSnippet ->
                 val jsFunName = jsCodeSnippet.value.importName.owner
                 val counterValue = jsCodeCounter.getOrPut(jsFunName, defaultValue = { 0 })
@@ -925,7 +925,7 @@ class WasmCompiledModuleFragment(
 
     private fun rebindEquivalentFunctions() {
         val equivalentFunctions = mutableMapOf<String, WasmFunction>()
-        wasmCompiledFileFragments.memoryOptimizedForEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             for ((signatureString, idSignature) in fragment.equivalentFunctions) {
                 val func = equivalentFunctions[signatureString]
                 if (func == null) {

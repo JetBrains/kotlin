@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.memoryOptimizedForEachIndexed
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 
 private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
 
@@ -238,7 +238,7 @@ class WasmStringSwitchOptimizerLowering(
         var firstEqCall: IrCall? = null
         var isSimpleWhen = true //simple when is when without else block and commas
         val stringConstantToMatchedCase = mutableMapOf<String?, MatchedCase>()
-        visitedWhen.branches.memoryOptimizedForEachIndexed { branchIndex, branch ->
+        visitedWhen.branches.indexBasedForEachIndexed { branchIndex, branch ->
             if (!isElseBranch(branch)) {
                 val conditions = IrWhenUtils.matchConditions<IrCall>(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
                 if (conditions.isEmpty()) return visitedWhen

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.utils.memoryOptimizedForEach
-import org.jetbrains.kotlin.utils.memoryOptimizedForEachIndexed
+import org.jetbrains.kotlin.utils.indexBasedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
 // Representation of constant data in Wasm memory
@@ -89,7 +89,7 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>, val fitsLatin1: B
 
     override fun toBytes(): ByteArray {
         return ByteArray(value.size * bytesPerChar).apply {
-            value.memoryOptimizedForEachIndexed { index, symbol -> symbol.owner.toLittleEndianBytes(this, index * bytesPerChar, fitsLatin1) }
+            value.indexBasedForEachIndexed { index, symbol -> symbol.owner.toLittleEndianBytes(this, index * bytesPerChar, fitsLatin1) }
         }
     }
 
@@ -107,7 +107,7 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>, val fitsLatin1: B
 class ConstantDataStruct(val elements: List<ConstantDataElement>) : ConstantDataElement() {
     override fun toBytes(): ByteArray {
         return buildList {
-            elements.memoryOptimizedForEach {
+            elements.indexBasedForEach {
                 for (byte in it.toBytes()) {
                     add(byte)
                 }

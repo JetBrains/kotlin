@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.typeScriptInnerClassReference
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.backend.js.utils.shouldGenerateObjectWithGetInstanceInEsModuleTypeScript
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
-import org.jetbrains.kotlin.utils.memoryOptimizedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEach
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
@@ -61,8 +60,8 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         val declarationVisitor = object : IrVisitorVoid() {
             override fun visitFunction(declaration: IrFunction) {
                 visitType(declaration.returnType)
-                declaration.typeParameters.memoryOptimizedForEach(::visitTypeParameter)
-                declaration.parameters.memoryOptimizedForEach {
+                declaration.typeParameters.indexBasedForEach(::visitTypeParameter)
+                declaration.parameters.indexBasedForEach {
                     if (it.kind != IrParameterKind.DispatchReceiver) {
                         visitValueParameter(it)
                     }
@@ -70,9 +69,9 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             }
 
             override fun visitClass(declaration: IrClass) {
-                declaration.superTypes.memoryOptimizedForEach(::visitType)
-                declaration.typeParameters.memoryOptimizedForEach(::visitTypeParameter)
-                declaration.declarations.memoryOptimizedForEach { it.acceptVoid(this) }
+                declaration.superTypes.indexBasedForEach(::visitType)
+                declaration.typeParameters.indexBasedForEach(::visitTypeParameter)
+                declaration.declarations.indexBasedForEach { it.acceptVoid(this) }
             }
 
             override fun visitProperty(declaration: IrProperty) {
@@ -89,7 +88,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             }
 
             override fun visitTypeParameter(declaration: IrTypeParameter) {
-                declaration.superTypes.memoryOptimizedForEach(::visitType)
+                declaration.superTypes.indexBasedForEach(::visitType)
             }
 
             private fun visitType(type: IrType) {
@@ -99,7 +98,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 if (!klass.isExternal || klass in excludedFromExport || klass in declarationsToExport) return
                 queue.add(klass)
                 declarationsToExport.add(klass)
-                type.arguments.memoryOptimizedForEach { it.typeOrNull?.let(::visitType) }
+                type.arguments.indexBasedForEach { it.typeOrNull?.let(::visitType) }
             }
         }
 

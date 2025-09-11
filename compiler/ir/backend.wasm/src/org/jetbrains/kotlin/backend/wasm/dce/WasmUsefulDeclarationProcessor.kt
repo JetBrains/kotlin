@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.memoryOptimizedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEach
 
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
@@ -212,7 +212,7 @@ internal class WasmUsefulDeclarationProcessor(
         val isIntrinsic = irFunction.hasWasmNoOpCastAnnotation() || irFunction.getWasmOpAnnotation() != null
         if (isIntrinsic) return
 
-        irFunction.getEffectiveValueParameters().memoryOptimizedForEach { it.enqueueValueParameterType(irFunction) }
+        irFunction.getEffectiveValueParameters().indexBasedForEach { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
 
         kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction.fileOrNull]?.get(irFunction)?.enqueue(
@@ -237,7 +237,7 @@ internal class WasmUsefulDeclarationProcessor(
 
         // Primitive constructors has no body, since that such constructors implicitly initialize all fields, so we have to preserve them
         if (irConstructor.hasWasmPrimitiveConstructorAnnotation()) {
-            constructedClass.declarations.memoryOptimizedForEach { declaration ->
+            constructedClass.declarations.indexBasedForEach { declaration ->
                 if (declaration is IrField) {
                     declaration.enqueue(constructedClass, "preserve all fields for primitive constructors")
                 }

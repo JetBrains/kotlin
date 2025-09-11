@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.utils.memoryOptimizedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEach
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -134,7 +134,7 @@ class WasmSerializer(outputStream: OutputStream) {
         while (newReferences.isNotEmpty()) {
             val sorted = newReferences.sortedBy { it.id }
             newReferences.clear()
-            sorted.memoryOptimizedForEach {
+            sorted.indexBasedForEach {
                 tempBuffer.reset()
                 it.serializeFunc()
                 tableElementsInBytes.add(tempBuffer.toByteArray())
@@ -146,7 +146,7 @@ class WasmSerializer(outputStream: OutputStream) {
         out.writeUInt32(size.toUInt())
 
         // Output each element in the form: sizeInBytes data
-        tableElementsInBytes.memoryOptimizedForEach {
+        tableElementsInBytes.indexBasedForEach {
             val bytesCount = it.size
             out.writeUInt32(bytesCount.toUInt())
             out.writeBytes(it)
@@ -394,7 +394,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun <T> serializeList(list: List<T>, serializeFunc: (T) -> Unit) {
         b.writeUInt32(list.size.toUInt())
-        list.memoryOptimizedForEach { serializeFunc(it) }
+        list.indexBasedForEach { serializeFunc(it) }
     }
 
     private fun <T> serializeSet(set: Set<T>, serializeFunc: (T) -> Unit) {

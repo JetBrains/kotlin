@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.utils.memoryOptimizedForEach
-import org.jetbrains.kotlin.utils.memoryOptimizedForEachIndexed
+import org.jetbrains.kotlin.utils.indexBasedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -122,7 +122,7 @@ class BodyGenerator(
     }
 
     private fun tryGenerateVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.GcType) {
-        irVararg.elements.memoryOptimizedForEach {
+        irVararg.elements.indexBasedForEach {
             check(it is IrExpression)
             generateExpression(it)
         }
@@ -333,7 +333,7 @@ class BodyGenerator(
     private fun buildFinallyBody(catchBlock: IrCatch) {
         val composite = catchBlock.result as IrComposite
         assert(composite.statements.last().isSimpleRethrowing(catchBlock)) { "Last throw is not rethrowing" }
-        composite.statements.dropLast(1).memoryOptimizedForEach(::generateStatement)
+        composite.statements.dropLast(1).indexBasedForEach(::generateStatement)
     }
 
     private fun buildCatchBlockBody(catchBlock: IrCatch) {
@@ -688,7 +688,7 @@ class BodyGenerator(
             body.buildIf("this_init")
             generateAnyParameters(parentClass.symbol, location)
             val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
-            irFields.memoryOptimizedForEachIndexed { index, field ->
+            irFields.indexBasedForEachIndexed { index, field ->
                 if (index > 0) {
                     generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), body)
                 }
@@ -1218,7 +1218,7 @@ class BodyGenerator(
     }
 
     override fun visitBlockBody(body: IrBlockBody) {
-        body.statements.memoryOptimizedForEach(::generateStatement)
+        body.statements.indexBasedForEach(::generateStatement)
         this.body.buildNop(body.getSourceEndLocation())
     }
 
@@ -1246,7 +1246,7 @@ class BodyGenerator(
 
     private fun processContainerExpression(expression: IrContainerExpression) {
         val statements = expression.statements
-        statements.memoryOptimizedForEachIndexed { i, statement ->
+        statements.indexBasedForEachIndexed { i, statement ->
             if (i != statements.lastIndex) {
                 generateStatement(statement)
             } else {

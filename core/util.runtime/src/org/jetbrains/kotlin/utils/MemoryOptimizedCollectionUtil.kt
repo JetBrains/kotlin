@@ -95,10 +95,12 @@ infix fun <T> List<T>.memoryOptimizedPlus(element: T): List<T> =
 
 /**
  * A memory-optimized version of [Iterable.forEach]. It uses indexed access to avoid iterator allocation.
+ *
+ * **Using this in a non-random access-based list will lead to performance degradation.**
  * @see Iterable.forEach
  */
 @OptIn(ExperimentalContracts::class)
-public inline fun <T> List<T>.memoryOptimizedForEach(action: (T) -> Unit): Unit {
+public inline fun <T> List<T>.indexBasedForEach(action: (T) -> Unit): Unit {
     contract {
         callsInPlace(action)
     }
@@ -107,10 +109,12 @@ public inline fun <T> List<T>.memoryOptimizedForEach(action: (T) -> Unit): Unit 
 
 /**
  * A memory-optimized version of [Iterable.forEachIndexed]. It uses indexed access to avoid iterator allocation.
+ *
+ * **Using this in a non-random access-based list will lead to performance degradation.**
  * @see Iterable.forEachIndexed
  */
 @OptIn(ExperimentalContracts::class)
-public inline fun <T> List<T>.memoryOptimizedForEachIndexed(action: (Int, T) -> Unit): Unit {
+public inline fun <T> List<T>.indexBasedForEachIndexed(action: (Int, T) -> Unit): Unit {
     contract {
         callsInPlace(action)
     }
