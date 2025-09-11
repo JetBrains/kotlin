@@ -229,23 +229,34 @@ open class IrFileSerializer(
     }
 
     private val serializedElementWithCoordsStack = mutableListOf<IrElement>()
+    private var serializedElementWithCoordLevel = 0
     private fun serializeCoordinates(element: IrElement): Long? {
-        val parent = serializedElementWithCoordsStack.lastOrNull()
+        val previous = serializedElementWithCoordsStack.lastOrNull()
+
+        serializedElementWithCoordLevel++
+        while (serializedElementWithCoordsStack.size > serializedElementWithCoordLevel) {
+            serializedElementWithCoordsStack.removeLast()
+        }
         serializedElementWithCoordsStack.add(element)
 
         if (settings.publicAbiOnly && !isInsideInline) {
             return null
         }
-        parent?.let {
+
+        var startDelta = element.startOffset
+        var endDelta = element.endOffset
+        previous?.let {
             if (it.startOffset == element.startOffset && it.endOffset == element.endOffset) {
                 return null
             }
+            startDelta -= it.startOffset
+            endDelta -= it.endOffset
         }
-        return BinaryCoordinates.encode(element.startOffset, element.endOffset)
+        return BinaryCoordinates.encode(startDelta, endDelta)
     }
 
     private fun popSerializedElementWithCoords() {
-        serializedElementWithCoordsStack.removeLast()
+        serializedElementWithCoordLevel--
     }
 
     /* ------- Strings ---------------------------------------------------------- */
