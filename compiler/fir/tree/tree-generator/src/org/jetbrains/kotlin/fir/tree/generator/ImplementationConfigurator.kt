@@ -74,32 +74,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultEmptyList("annotations", withGetter = true)
         }
 
-        impl(replPropertyInitializer) {
-            defaultEmptyList("annotations", withGetter = true)
-            defaultBuiltInType("Unit")
-        }
-
-        impl(replPropertyDelegate) {
-            defaultEmptyList("annotations", withGetter = true)
-            defaultBuiltInType("Unit")
-        }
-
-        impl(delayedPropertyInitializer) {
-            defaultEmptyList("annotations", withGetter = true)
-            default("coneTypeOrNull") {
-                value = "expressionRef.value.expression.coneTypeOrNull"
-                withGetter = true
-            }
-        }
-
-        impl(delayedPropertyDelegate) {
-            defaultEmptyList("annotations", withGetter = true)
-            default("coneTypeOrNull") {
-                value = "expressionRef.value.expression.coneTypeOrNull"
-                withGetter = true
-            }
-        }
-
         impl(import)
 
         impl(resolvedImport) {

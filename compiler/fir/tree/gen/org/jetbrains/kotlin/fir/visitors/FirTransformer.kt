@@ -731,38 +731,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformReplDeclarationReference(replDeclarationReference, data)
     }
 
-    open fun transformReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): FirStatement {
-        return transformElement(replPropertyInitializer, data)
-    }
-
-    final override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): FirStatement {
-        return transformReplPropertyInitializer(replPropertyInitializer, data)
-    }
-
-    open fun transformReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): FirStatement {
-        return transformElement(replPropertyDelegate, data)
-    }
-
-    final override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): FirStatement {
-        return transformReplPropertyDelegate(replPropertyDelegate, data)
-    }
-
-    open fun transformDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: D): FirStatement {
-        return transformElement(delayedPropertyInitializer, data)
-    }
-
-    final override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: D): FirStatement {
-        return transformDelayedPropertyInitializer(delayedPropertyInitializer, data)
-    }
-
-    open fun transformDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: D): FirStatement {
-        return transformElement(delayedPropertyDelegate, data)
-    }
-
-    final override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: D): FirStatement {
-        return transformDelayedPropertyDelegate(delayedPropertyDelegate, data)
-    }
-
     open fun transformPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
         return transformElement(packageDirective, data)
     }

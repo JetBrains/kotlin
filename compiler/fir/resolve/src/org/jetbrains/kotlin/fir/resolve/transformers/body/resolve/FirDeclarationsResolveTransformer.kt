@@ -370,16 +370,7 @@ open class FirDeclarationsResolveTransformer(
         property: FirProperty,
         delegateContainer: FirExpression,
         shouldResolveEverything: Boolean,
-        delayed: FirDelayedPropertyDelegate? = null,
     ) {
-        if (delegateContainer is FirDelayedPropertyDelegate) {
-            return transformPropertyAccessorsWithDelegate(
-                property,
-                delegateContainer.expressionRef.value.expression,
-                shouldResolveEverything,
-                delayed = delegateContainer,
-            )
-        }
         require(delegateContainer is FirWrappedDelegateExpression)
         dataFlowAnalyzer.enterDelegateExpression()
 
@@ -405,13 +396,10 @@ open class FirDeclarationsResolveTransformer(
                 delegateExpression,
             )
         ) {
-            val resolvedDelegate = (getResolvedProvideDelegateIfSuccessful(delegateContainer.provideDelegateCall, delegateExpression)
-                ?: delegateExpression)
-            if (delayed != null) {
-                delayed.expressionRef.value.replaceExpression(resolvedDelegate)
-            } else {
-                property.replaceDelegate(resolvedDelegate)
-            }
+            property.replaceDelegate(
+                getResolvedProvideDelegateIfSuccessful(delegateContainer.provideDelegateCall, delegateExpression)
+                    ?: delegateExpression
+            )
 
             // We don't use inference from setValue calls (i.e., don't resolve setters until the delegate inference is completed)
             // when the property doesn't have an explicit type.

@@ -780,50 +780,6 @@ object FirTree : AbstractFirTreeBuilder() {
         }
     }
 
-    val replPropertyInitializer: Element by element(Expression) {
-        parent(expression)
-
-        +referencedSymbol("propertySymbol", propertySymbolType) {
-            withBindThis = false
-            isMutable = false
-        }
-        +field("expression", expression, withReplace = true, withTransform = true)
-    }
-
-    val replPropertyDelegate: Element by element(Expression) {
-        parent(expression)
-
-        +referencedSymbol("propertySymbol", propertySymbolType) {
-            withBindThis = false
-            isMutable = false
-        }
-        +field("expression", expression, withReplace = true, withTransform = true)
-    }
-
-    val delayedPropertyInitializer: Element by element(Expression) {
-        parent(expression)
-
-        +referencedSymbol("functionSymbol", namedFunctionSymbolType) {
-            withBindThis = false
-            isMutable = false
-        }
-        +field("expressionRef", referenceToReplPropertyInitializer) {
-            isMutable = false
-        }
-    }
-
-    val delayedPropertyDelegate: Element by element(Expression) {
-        parent(expression)
-
-        +referencedSymbol("functionSymbol", namedFunctionSymbolType) {
-            withBindThis = false
-            isMutable = false
-        }
-        +field("expressionRef", referenceToReplPropertyDelegate) {
-            isMutable = false
-        }
-    }
-
     val packageDirective: Element by element(Other) {
         +field("packageFqName", fqNameType)
     }
