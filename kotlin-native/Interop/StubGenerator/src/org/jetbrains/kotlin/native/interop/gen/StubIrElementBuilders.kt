@@ -763,12 +763,22 @@ internal class GlobalStubBuilder(
     }
 
     private fun indirectCCallOrUnavailable(indirect: () -> AnnotationStub.CCall.Symbol): AnnotationStub? =
-            if (context.configuration.cCallMode != CCallMode.DIRECT) {
+            if (global.name in allowedGlobals || context.configuration.cCallMode != CCallMode.DIRECT) {
                 indirect()
             } else {
                 null
             }
 }
+
+private val allowedGlobals = setOf(
+        "errno",
+        "NULL",
+        "SIG_IGN",
+        "FormatMessage",
+        "HKEY_LOCAL_MACHINE",
+        "HKEY_CURRENT_USER",
+        "stderr"
+)
 
 internal class TypedefStubBuilder(
         override val context: StubsBuildingContext,

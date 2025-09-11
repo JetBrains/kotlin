@@ -303,14 +303,14 @@ class StubIrBridgeBuilder(
     }
 
     private fun generateProtocolGetter(protocolGetterName: String, protocol: ObjCProtocol) {
-        val builder = NativeCodeBuilder(simpleBridgeGenerator.topLevelNativeScope)
-        val nativeBacked = object : NativeBacked {}
-        with(builder) {
-            out("Protocol* $protocolGetterName() {")
-            out("    return @protocol(${protocol.name});")
-            out("}")
-        }
-        simpleBridgeGenerator.insertNativeBridge(nativeBacked, emptyList(), builder.lines)
+//        val builder = NativeCodeBuilder(simpleBridgeGenerator.topLevelNativeScope)
+//        val nativeBacked = object : NativeBacked {}
+//        with(builder) {
+//            out("Protocol* $protocolGetterName() {")
+//            out("    return @protocol(${protocol.name});")
+//            out("}")
+//        }
+//        simpleBridgeGenerator.insertNativeBridge(nativeBacked, emptyList(), builder.lines)
     }
 
     fun build(): BridgeBuilderResult {
