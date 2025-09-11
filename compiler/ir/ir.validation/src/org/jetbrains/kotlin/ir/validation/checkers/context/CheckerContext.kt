@@ -30,6 +30,9 @@ class CheckerContext(
     var withinAnnotationUsageSubTree: Boolean = false
         private set
 
+    var withinTypeSubTree: Boolean = false
+        private set
+
     // Some checks are (temporarily) disabled for scriping related IR, because it happens to violate many of the rules of IR.
     //  At the same time:
     //  1. Kotlin scripting is supported only in JVM - so the possibly invalid IR won't be stored anywhere, as in the case of Klibs.
@@ -69,6 +72,16 @@ class CheckerContext(
             withinAnnotationUsageSubTree = true
             block()
             withinAnnotationUsageSubTree = false
+        }
+    }
+
+    fun withinTypeSubTree(block: () -> Unit) {
+        if (withinTypeSubTree) {
+            block()
+        } else {
+            withinTypeSubTree = true
+            block()
+            withinTypeSubTree = false
         }
     }
 

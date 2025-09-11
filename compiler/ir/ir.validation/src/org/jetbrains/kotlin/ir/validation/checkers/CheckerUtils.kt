@@ -116,7 +116,7 @@ internal fun checkVisibility(
 
     if (context.withinAnnotationUsageSubTree &&
         reference is IrConstructorCall &&
-        referencedDeclarationSymbol.isAnnotationExcludedFromVisibilityChecks()
+        referencedDeclarationSymbol.isAnnotationExcludedFromVisibilityChecks(context.withinTypeSubTree)
     ) {
         return
     }
@@ -158,18 +158,38 @@ internal fun checkVisibility(
     }
 }
 
-private fun IrSymbol.isAnnotationExcludedFromVisibilityChecks(): Boolean {
+private fun IrSymbol.isAnnotationExcludedFromVisibilityChecks(withinTypeSubtree: Boolean): Boolean {
     val clazz = when (val declaration = owner) {
         is IrClass -> declaration
         is IrConstructor -> declaration.constructedClass
         else -> return false
     }
 
-    // The `class` is an annotation class that has a specific meta-annotation on it.
-    return clazz.isAnnotationClass && clazz.hasAnnotation(NATIVE_TEST_SPECIFIC_META_ANNOTATION_FQN)
+    if (!clazz.isAnnotationClass) {
+        // Not an annotation class.
+        return false
+    }
+
+    if (clazz.hasAnnotation(NATIVE_TEST_SPECIFIC_META_ANNOTATION_FQN)) {
+        // The annotation class that has a specific known meta-annotation on it.
+        return true
+    }
+
+    if (withinTypeSubtree && INTERNAL_ANNOTATIONS_LEAKING_THROUGH_TYPES.any(clazz::hasEqualFqName)) {
+        // The annotation on an IR type that is known to be leaking.
+        return true
+    }
+
+    return false
 }
 
 private val NATIVE_TEST_SPECIFIC_META_ANNOTATION_FQN = FqName("kotlin.native.internal.InternalForKotlinNativeTests")
+
+// TODO: Drop this list of annotations after fixing KT-78100.
+private val INTERNAL_ANNOTATIONS_LEAKING_THROUGH_TYPES = listOf(
+    FqName("kotlin.internal.NoInfer"), // Example: compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages/typeWithContextWithTypeParameter.kt
+    FqName("kotlin.internal.Exact"), // Example: compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt
+)
 
 context(checker: IrChecker)
 internal fun checkFunctionUseSite(

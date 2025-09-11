@@ -115,6 +115,12 @@ private class IrFileValidator(
         visitElement(declaration)
     }
 
+    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+        context.withinTypeSubTree {
+            super.visitTypeRecursively(container, type)
+        }
+    }
+
     override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
         context.withinAnnotationUsageSubTree {
             super.visitAnnotationUsage(annotationUsage)
