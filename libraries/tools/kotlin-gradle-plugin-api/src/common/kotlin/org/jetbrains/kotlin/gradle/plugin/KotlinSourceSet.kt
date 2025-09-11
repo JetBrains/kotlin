@@ -142,4 +142,10 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
      * ```
      */
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
+
+    /**
+     * @suppress
+     */
+    @Deprecated(message = "KT-80897. Keep ABI compatibility with kotlinx-benchmarks", level = DeprecationLevel.HIDDEN)
+    val implementationMetadataConfigurationName: String
 }

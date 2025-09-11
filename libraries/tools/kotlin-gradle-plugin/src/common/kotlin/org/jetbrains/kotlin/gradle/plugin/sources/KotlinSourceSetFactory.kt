@@ -36,6 +36,14 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
     }
 
     private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with(project.configurations) {
+        if (this is DefaultKotlinSourceSet) {
+            // Drop in KT-80897
+            @Suppress("DEPRECATION_ERROR")
+            maybeCreateResolvable(implementationMetadataConfigurationName) {
+                attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
+            }
+        }
+
         sourceSet.run {
             listOfNotNull(
                 apiConfigurationName,
