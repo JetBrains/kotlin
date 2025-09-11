@@ -156,6 +156,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("property_smartcast.kts")
+  public void testProperty_smartcast() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_smartcast.kts");
+  }
+
+  @Test
   @TestMetadata("property_uses_anonymous_object.repl.kts")
   public void testProperty_uses_anonymous_object_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/property_uses_anonymous_object.repl.kts");
