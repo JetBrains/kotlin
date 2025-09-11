@@ -152,10 +152,6 @@ fun main(args: Array<String>) {
             alias<FirReturnExpression>("ReturnExpressionChecker")
             alias<FirBlock>("BlockChecker")
             alias<FirReplDeclarationReference>("ReplDeclarationReferenceChecker")
-            alias<FirReplPropertyInitializer>("ReplPropertyInitializerChecker")
-            alias<FirReplPropertyDelegate>("ReplPropertyDelegateChecker")
-            alias<FirDelayedPropertyInitializer>("DelayedPropertyInitializerChecker")
-            alias<FirDelayedPropertyDelegate>("DelayedPropertyDelegateChecker")
             alias<FirAnnotation>("AnnotationChecker")
             alias<FirAnnotationCall>("AnnotationCallChecker").let {
                 visitAlso<FirErrorAnnotationCall>(it)

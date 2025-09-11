@@ -128,18 +128,6 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: D): R =
         visitStatement(replDeclarationReference, data)
 
-    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): R =
-        visitExpression(replPropertyInitializer, data)
-
-    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): R =
-        visitExpression(replPropertyDelegate, data)
-
-    override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: D): R =
-        visitExpression(delayedPropertyInitializer, data)
-
-    override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: D): R =
-        visitExpression(delayedPropertyDelegate, data)
-
     override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R =
         visitImport(resolvedImport, data)
 

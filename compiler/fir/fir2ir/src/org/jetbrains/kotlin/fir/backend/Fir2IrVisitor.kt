@@ -1008,7 +1008,19 @@ class Fir2IrVisitor(
                 !isUnnamedLocalVariable -> null
                 else -> initializer?.accept(this@Fir2IrVisitor, null) as IrStatement
             }
-            is FirReplDeclarationReference -> null
+            is FirReplDeclarationReference -> {
+                val symbol = symbol
+                if (symbol is FirPropertySymbol) {
+                    val rValue = symbol.fir.initializer ?: symbol.fir.delegate
+                    if (rValue != null) {
+                        callGenerator.convertToIrSetCall(rValue, symbol)
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
+            }
             else -> accept(this@Fir2IrVisitor, null) as IrStatement
         }
     }
@@ -1889,20 +1901,6 @@ class Fir2IrVisitor(
         // and because this replicates K1 behavior (see `ConstantExpressionEvaluatorVisitor.visitClassLiteralExpression`).
         configuration.skipBodies && annotationMode &&
                 expression is FirGetClassCall && expression.argument.resolvedType is ConeErrorType
-
-    override fun visitReplPropertyInitializer(
-        replPropertyInitializer: FirReplPropertyInitializer,
-        data: Any?,
-    ): IrElement = whileAnalysing(session, replPropertyInitializer) {
-        return callGenerator.convertToIrSetCall(replPropertyInitializer)
-    }
-
-    override fun visitReplPropertyDelegate(
-        replPropertyDelegate: FirReplPropertyDelegate,
-        data: Any?,
-    ): IrElement = whileAnalysing(session, replPropertyDelegate) {
-        return callGenerator.convertToIrSetCall(replPropertyDelegate)
-    }
 }
 
 val KtSourceElement.isChildOfForLoop: Boolean

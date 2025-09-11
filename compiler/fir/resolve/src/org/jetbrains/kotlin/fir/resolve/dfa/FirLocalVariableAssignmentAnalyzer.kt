@@ -592,24 +592,6 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
                 replDeclarationReference.symbol.fir.accept(this, data)
             }
 
-            override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: MiniCfgData) {
-                val property = replPropertyInitializer.propertySymbol.fir
-                property.accept(this, data)
-            }
-
-            override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: MiniCfgData) {
-                val property = replPropertyDelegate.propertySymbol.fir
-                property.accept(this, data)
-            }
-
-            override fun visitDelayedPropertyInitializer(delayedPropertyInitializer: FirDelayedPropertyInitializer, data: MiniCfgData) {
-                delayedPropertyInitializer.expressionRef.value.expression.accept(this, data)
-            }
-
-            override fun visitDelayedPropertyDelegate(delayedPropertyDelegate: FirDelayedPropertyDelegate, data: MiniCfgData) {
-                delayedPropertyDelegate.expressionRef.value.expression.accept(this, data)
-            }
-
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
                 visitElement(variableAssignment, data)
                 if (variableAssignment.explicitReceiver != null) return

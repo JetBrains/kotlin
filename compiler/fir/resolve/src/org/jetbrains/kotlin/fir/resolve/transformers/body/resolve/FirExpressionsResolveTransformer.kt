@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -2025,64 +2026,24 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirStatement {
         whileAnalysing(session, replDeclarationReference) {
+            val symbol = replDeclarationReference.symbol
             // TODO jump to resolve declaration as part of eval function
-            context.withScopesForClass(replDeclarationReference.symbol.getContainingClassSymbol()!!.fir as FirClass, components) {
-                replDeclarationReference.symbol.fir.transformSingle(transformer, data)
+            context.withScopesForClass(symbol.getContainingClassSymbol()!!.fir as FirClass, components) {
+                when (symbol) {
+                    is FirPropertySymbol -> {
+                        val variable = symbol.fir
+                        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
+                        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+                        variable.transformSingle(transformer, data)
+                        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
+                    }
+                    else -> {
+                        symbol.fir.transformSingle(transformer, data)
+                    }
+                }
             }
         }
         return replDeclarationReference
-    }
-
-    override fun transformReplPropertyInitializer(
-        replPropertyInitializer: FirReplPropertyInitializer,
-        data: ResolutionMode,
-    ): FirStatement {
-        val variable = replPropertyInitializer.propertySymbol.fir
-        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
-        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
-        whileAnalysing(session, replPropertyInitializer) {
-            // TODO jump to resolve property as part of eval function
-            context.withScopesForClass(variable.getContainingClassSymbol()!!.fir as FirClass, components) {
-                variable.transformSingle(transformer, data)
-            }
-        }
-        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
-        return replPropertyInitializer
-    }
-
-    override fun transformReplPropertyDelegate(
-        replPropertyDelegate: FirReplPropertyDelegate,
-        data: ResolutionMode,
-    ): FirStatement {
-        val variable = replPropertyDelegate.propertySymbol.fir
-        val hadExplicitType = variable.returnTypeRef !is FirImplicitTypeRef
-        dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
-        whileAnalysing(session, replPropertyDelegate) {
-            // TODO jump to resolve property as part of eval function
-            context.withScopesForClass(variable.getContainingClassSymbol()!!.fir as FirClass, components) {
-                variable.transformSingle(transformer, data)
-            }
-        }
-        dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
-        return replPropertyDelegate
-    }
-
-    override fun transformDelayedPropertyInitializer(
-        delayedPropertyInitializer: FirDelayedPropertyInitializer,
-        data: ResolutionMode,
-    ): FirStatement {
-        // TODO to maintain correct CFG, initializer needs to be resolved as part of property
-        delayedPropertyInitializer.expressionRef.value.transformExpression(transformer, data)
-        return delayedPropertyInitializer
-    }
-
-    override fun transformDelayedPropertyDelegate(
-        delayedPropertyDelegate: FirDelayedPropertyDelegate,
-        data: ResolutionMode,
-    ): FirStatement {
-        // TODO to maintain correct CFG, delegate needs to be resolved as part of property
-        delayedPropertyDelegate.expressionRef.value.transformExpression(transformer, data)
-        return delayedPropertyDelegate
     }
 
     // ------------------------------------------------------------------------------------------------
