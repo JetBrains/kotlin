@@ -85,7 +85,12 @@ private class IrFileValidator(
     }
 
     override fun visitElement(element: IrElement) {
-        var block = { element.acceptChildrenVoid(this) }
+        var block = {
+            // Visit annotations in the context of the current declaration.
+            (element as? IrDeclarationBase)?.annotations?.forEach { visitAnnotationUsage(it) }
+            element.acceptChildrenVoid(this)
+        }
+
         for (contextUpdater in contextUpdaters) {
             val currentBlock = block
             block = { contextUpdater.runInNewContext(context, element, currentBlock) }
@@ -96,6 +101,11 @@ private class IrFileValidator(
             @Suppress("UNCHECKED_CAST")
             (checker as IrElementChecker<IrElement>).check(element, context)
         }
+    }
+
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+        // Don't visit annotations here, because the declaration is not in the context yet.
+        visitElement(declaration)
     }
 
     override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
