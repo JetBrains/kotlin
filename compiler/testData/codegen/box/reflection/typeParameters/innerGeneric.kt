@@ -3,6 +3,7 @@
 
 import kotlin.reflect.KVariance
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class A<out T> {
     inner class B<in U> {
@@ -18,8 +19,12 @@ fun box(): String {
 
     assertEquals("T", t.name)
     assertEquals(KVariance.OUT, t.variance)
+    assertEquals(false, t.isReified)
     assertEquals("U", u.name)
     assertEquals(KVariance.IN, u.variance)
+    assertEquals(false, u.isReified)
+
+    assertNotEquals(t, u)
 
     assertEquals(t, fn.returnType.classifier)
     assertEquals(u, fn.parameters[1].type.classifier)

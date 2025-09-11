@@ -42,7 +42,13 @@ internal fun ClassName.toNonLocalSimpleName(): String {
 internal fun ClassLoader.loadKClass(name: ClassName): KClass<*>? =
     loadClass(name.toClassId())?.kotlin
 
-internal class TypeParameterTable(
+/**
+ * Provides the mapping from type parameter "id" to [KTypeParameter] objects, allowing to look for type parameters not only in the
+ * immediate container, but also its containers. Note that integer key in [map] is not the type parameter's index, it's the **id**
+ * as returned by [KmTypeParameter.id].
+ */
+internal class TypeParameterTable private constructor(
+    val ownTypeParameters: List<KTypeParameterImpl>,
     private val map: Map<Int, KTypeParameter>,
     private val parent: TypeParameterTable?,
 ) {
@@ -50,7 +56,25 @@ internal class TypeParameterTable(
 
     companion object {
         @JvmField
-        val EMPTY = TypeParameterTable(emptyMap(), null)
+        val EMPTY = TypeParameterTable(emptyList(), emptyMap(), null)
+
+        fun create(
+            kmTypeParameters: List<KmTypeParameter>,
+            parent: TypeParameterTable?,
+            container: KTypeParameterOwnerImpl,
+            classLoader: ClassLoader,
+        ): TypeParameterTable {
+            val kTypeParameters = kmTypeParameters.map { km ->
+                KTypeParameterImpl(container, km.name, km.variance.toKVariance(), km.isReified)
+            }
+            val map = kmTypeParameters.withIndex().associate { (index, km) -> km.id to kTypeParameters[index] }
+            return TypeParameterTable(kTypeParameters, map, parent).also { table ->
+                for ((i, typeParameter) in kTypeParameters.withIndex()) {
+                    typeParameter.upperBounds = kmTypeParameters[i].upperBounds.map { it.toKType(classLoader, table) }
+                        .ifEmpty { listOf(StandardKTypes.NULLABLE_ANY) }
+                }
+            }
+        }
     }
 }
 
