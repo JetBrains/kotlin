@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -173,10 +175,7 @@ internal class FirInvokeResolveTowerExtension(
             val isExtensionFunctionType = when (val symbol = invokeReceiverCandidate.symbol) {
                 is FirCallableSymbol<*> -> {
                     val calculatedType = components.returnTypeCalculator.tryCalculateReturnType(symbol)
-                    if (symbol is FirPropertySymbol) {
-                        // Check the diagnostic for properties because only they can be affected by possible invoke call resolution.
-                        checkImplicitPropertyTypeMakesBehaviorOrderDependant(symbol, info, collector)
-                    }
+                    checkImplicitPropertyTypeMakesBehaviorOrderDependant(symbol, info, collector)
                     calculatedType.isExtensionFunctionType(components.session)
                 }
                 is FirClassLikeSymbol<*> -> {
@@ -231,16 +230,19 @@ internal class FirInvokeResolveTowerExtension(
      * The diagnostic is dedicated to warn about code that can be resolved differently depending on declaration order (see KT-76240)
      */
     private fun checkImplicitPropertyTypeMakesBehaviorOrderDependant(
-        propertySymbol: FirPropertySymbol,
+        symbol: FirCallableSymbol<*>,
         callInfo: CallInfo,
         collector: CandidateCollector,
     ) {
+        // Check the diagnostic for properties because only they can be affected by possible invoke call resolution.
+        if (symbol !is FirPropertySymbol) return
+
         // If the return type has never been implicit, we interrupt the further checks. Such a property can't lead to an implicit resolve loop.
-        if (propertySymbol.fir.returnTypeRef.let { it !is FirImplicitTypeRef && it.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef }) return
+        if (symbol.fir.returnTypeRef.let { it !is FirImplicitTypeRef && it.source?.kind != KtFakeSourceElementKind.ImplicitTypeRef }) return
 
         // Local properties don't cause recursive problems
         // because it's not possible to reference a declaration that are declared below a given local declaration
-        if (propertySymbol.isLocal) return
+        if (symbol.isLocal) return
 
         // The call site without an explicit receiver can't cause the warning.
         // In the case of nonnull `explicitReceiver`, the resolver is not trying to treat a property call as an invoke function call,
@@ -249,14 +251,14 @@ internal class FirInvokeResolveTowerExtension(
 
         // Try to get a declaration we are currently in and check it for looping with the provided property.
         // Ignore irrelevant containers that don't relate to implicit body resolution or can't cause loops.
-        val implicitCallableDeclarationBeingResolved = (context.bodyResolveContext.containers.asReversed()
-            .firstOrNull { it is FirProperty || it is FirSimpleFunction } as? FirCallableDeclaration)
+        val implicitCallableMemberBeingResolved = (context.bodyResolveContext.containers
+            .lastOrNull { it is FirProperty && !it.isLocal || it is FirSimpleFunction && !it.isLocal } as? FirCallableDeclaration)
             ?.takeIf { it.returnTypeRef is FirImplicitTypeRef }
             ?: return
 
         // Resolving to the property from a call site in its body can cause a recursive problem.
         // However, the declaration order in this case is trivial, and it can't affect resolution (it's a single-element loop).
-        if (implicitCallableDeclarationBeingResolved.symbol == propertySymbol) return
+        if (implicitCallableMemberBeingResolved.symbol == symbol) return
 
         // It seems like the warning is only actual with `ReturnTypeCalculatorWithJump`
         // If we encounter a similar problem with `ReturnTypeCalculatorForFullBodyResolve` we can consider its support later
@@ -265,9 +267,9 @@ internal class FirInvokeResolveTowerExtension(
             (context.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.implicitBodyResolveComputationSession ?: return
 
         // Check loops to filter out irrelevant cases
-        if (!implicitBodyResolveComputationSession.isInLoop(implicitCallableDeclarationBeingResolved.symbol)) return
+        if (!implicitBodyResolveComputationSession.isInLoop(implicitCallableMemberBeingResolved.symbol)) return
 
-        collector.addForwardedDiagnostic(ImplicitPropertyTypeMakesBehaviorOrderDependant(propertySymbol))
+        collector.addForwardedDiagnostic(ImplicitPropertyTypeMakesBehaviorOrderDependant(symbol))
     }
 
     private fun enqueueResolverTasksForInvoke(

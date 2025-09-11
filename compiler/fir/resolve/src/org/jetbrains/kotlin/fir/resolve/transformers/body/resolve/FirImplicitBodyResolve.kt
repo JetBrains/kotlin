@@ -390,7 +390,7 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 
 open class ImplicitBodyResolveComputationSession {
     private val implicitBodyResolveStatusMap = hashMapOf<FirCallableSymbol<*>, ImplicitBodyResolveComputationStatus>()
-    private var computingSymbolsSequence: MutableList<FirCallableSymbol<*>> = mutableListOf()
+    private val computingSymbolsStack: MutableList<FirCallableSymbol<*>> = mutableListOf()
     private val loops: MutableList<Set<FirCallableSymbol<*>>> = mutableListOf()
 
     internal fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
@@ -420,7 +420,7 @@ open class ImplicitBodyResolveComputationSession {
         }
 
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computing
-        computingSymbolsSequence.add(symbol)
+        computingSymbolsStack.add(symbol)
     }
 
     private fun storeResult(
@@ -436,16 +436,18 @@ open class ImplicitBodyResolveComputationSession {
             "Not FirResolvedTypeRef (${transformedDeclaration.returnTypeRef.render()}) in storeResult for: ${symbol.fir.render()}"
         }
 
-        computingSymbolsSequence.removeLast()
+        computingSymbolsStack.removeLast()
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computed(returnTypeRef, transformedDeclaration)
     }
 
     fun calculateAndStoreLoop(symbol: FirCallableSymbol<*>) {
+        // During implicit body resolve we can end up with the same erroneous recursive call from multiple use sites.
+        // However, all of them form the same loop. That's why we should check if the symbol is contained in a loop to prevent adding a duplicate.
         if (isInLoop(symbol)) return
 
         loops.add(buildSet {
             add(symbol)
-            addAll(computingSymbolsSequence.takeLastWhile { it != symbol })
+            addAll(computingSymbolsStack.takeLastWhile { it != symbol })
         })
     }
 
