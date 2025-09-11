@@ -669,7 +669,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildRefNull(WasmHeapType.Simple.None, location) // this = null
+        body.buildRefNull(WasmHeapType.Simple.None.maybeShared(useSharedObjects), location) // this = null
         generateCall(expression)
     }
 
@@ -715,7 +715,7 @@ class BodyGenerator(
         if (klassSymbol.owner.hasInterfaceSuperClass()) {
             body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalClassITable(klassSymbol), location)
         } else {
-            body.buildRefNull(WasmHeapType.Simple.None, location)
+            body.buildRefNull(WasmHeapType.Simple.None.maybeShared(useSharedObjects), location)
         }
 
         body.buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(klassSymbol), location)
@@ -1201,7 +1201,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.returnArgumentIfItIsKotlinAny -> {
-                body.buildBlock("returnIfAny", WasmAnyRef) { innerLabel ->
+                body.buildBlock("returnIfAny", WasmAnyRef.maybeShared(useSharedObjects)) { innerLabel ->
                     body.buildGetLocal(functionContext.referenceLocal(0), location)
                     body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
 
@@ -1210,7 +1210,7 @@ class BodyGenerator(
                         innerLabel,
                         fromIsNullable = true,
                         toIsNullable = true,
-                        from = WasmHeapType.Simple.Any,
+                        from = WasmHeapType.Simple.Any.maybeShared(useSharedObjects),
                         to = WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)),
                         location,
                     )
@@ -1398,7 +1398,7 @@ class BodyGenerator(
             if (expectedClass?.isExternal == true) {
                 body.buildDrop(location)
                 val baseWasmType = if (useSharedObjects && expectedClass.name.identifier == "JsReference")
-                    WasmHeapType.Simple.SharedNoExtern
+                    WasmHeapType.SharedSimple.NO_EXTERN
                 else
                     WasmHeapType.Simple.NoExtern
                 body.buildRefNull(baseWasmType, location)
@@ -1410,9 +1410,9 @@ class BodyGenerator(
         if (actualType.isNullable() && expectedType.isNullableNothing()) {
             val type =
                 if (expectedType.getClass()?.isExternal == true)
-                    WasmHeapType.Simple.NoExtern // fixme support shared
+                    WasmHeapType.Simple.NoExtern.maybeShared(useSharedObjects && expectedType.getClass()?.name?.identifier == "JsReference")
                 else
-                    WasmHeapType.Simple.None
+                    WasmHeapType.Simple.None.maybeShared(useSharedObjects)
 
             body.buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(type))
 

@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 
@@ -81,9 +83,9 @@ class WasmTypeTransformer(
 
         builtIns.doubleType to WasmF64,
 
-        builtIns.nothingNType to WasmRefNullrefType,
+        builtIns.nothingNType to WasmRefNullrefType.maybeShared(useSharedObjects),
 
-        builtIns.nothingType to WasmAnyRef, // Value will not be created. Just using a random Wasm type.
+        builtIns.nothingType to WasmAnyRef.maybeShared(useSharedObjects), // Value will not be created. Just using a random Wasm type.
     )
 
     fun IrType.toWasmValueType(isFieldType: Boolean = false, isManagedExternrefField: Boolean = false): WasmType {
@@ -102,20 +104,23 @@ class WasmTypeTransformer(
             }
 
             if (useSharedObjects && klass.name.identifier == "JsReference") {
-                return WasmSharedExternRef
+                return WasmRefNullType(WasmHeapType.SharedSimple.EXTERN)
             }
 
             WasmExternRef
         } else if (isBuiltInWasmRefType(this)) {
-            when (val name = klass.name.identifier) {
-                "anyref" -> WasmAnyRef
-                "eqref" -> WasmEqRef
-                "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
-                "i31ref" -> WasmI31Ref
-                "SmartShareableFuncRef" if useSharedObjects -> WasmI32
-                "funcref", "SmartShareableFuncRef" -> WasmRefNullType(WasmHeapType.Simple.Func)
-                else -> error("Unknown reference type $name")
-            }
+            maybeShared(
+                when (val name = klass.name.identifier) {
+                    "anyref" -> WasmAnyRef
+                    "eqref" -> WasmEqRef
+                    "structref" ->
+                        WasmRefNullType(WasmHeapType.Simple.Struct)
+                    "i31ref" -> WasmI31Ref
+                    "SmartShareableFuncRef" if useSharedObjects -> WasmI32
+                    "funcref", "SmartShareableFuncRef" -> WasmRefNullType(WasmHeapType.Simple.Func)
+                    else -> error("Unknown reference type $name")
+                }
+            )
         } else {
             val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
             if (ic != null) {
@@ -125,6 +130,8 @@ class WasmTypeTransformer(
             }
         }
     }
+
+    private fun maybeShared(type: WasmType) = if (type is WasmReferenceType) type.maybeShared(useSharedObjects) else type
 }
 
 private val internalReftypesFqName: FqName = FqName("kotlin.wasm.internal.reftypes")
