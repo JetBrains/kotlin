@@ -1,0 +1,4 @@
+KtNameReferenceExpression(160,169): 'dummyTest'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'dummyTest'.>

@@ -6302,9 +6302,21 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("customSerlializable_localDeclarations.kt")
+    public void testCustomSerlializable_localDeclarations() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withTestCompilerPluginEnabled/customSerlializable_localDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("dummyFunction.kt")
     public void testDummyFunction() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withTestCompilerPluginEnabled/dummyFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("dummyFunction_localDeclarations.kt")
+    public void testDummyFunction_localDeclarations() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withTestCompilerPluginEnabled/dummyFunction_localDeclarations.kt");
     }
   }
 }
