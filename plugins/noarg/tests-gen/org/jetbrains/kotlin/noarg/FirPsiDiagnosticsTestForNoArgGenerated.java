@@ -40,4 +40,10 @@ public class FirPsiDiagnosticsTestForNoArgGenerated extends AbstractFirPsiDiagno
   public void testNoargConstructorIsHidden() {
     runTest("plugins/noarg/testData/diagnostics/noargConstructorIsHidden.kt");
   }
+
+  @Test
+  @TestMetadata("supertypeWithoutCtorButClassWith.kt")
+  public void testSupertypeWithoutCtorButClassWith() {
+    runTest("plugins/noarg/testData/diagnostics/supertypeWithoutCtorButClassWith.kt");
+  }
 }
