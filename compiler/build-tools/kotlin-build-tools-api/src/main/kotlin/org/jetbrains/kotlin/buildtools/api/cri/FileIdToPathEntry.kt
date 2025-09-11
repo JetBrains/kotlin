@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.jvm.cri
+package org.jetbrains.kotlin.buildtools.api.cri
 
-public interface SubtypeEntry {
-    public val className: String
-    public val subtypes: Collection<String>
+public interface FileIdToPathEntry {
+    public val fileId: Int
+    public val path: String
 }

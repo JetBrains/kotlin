@@ -94,6 +94,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public abstract fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
+	public abstract fun getCri ()Lorg/jetbrains/kotlin/buildtools/api/cri/CriToolchain;
 	public abstract fun getJs ()Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
 	public abstract fun getJvm ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
 	public abstract fun getNative ()Lorg/jetbrains/kotlin/buildtools/api/knative/NativePlatformToolchain;
@@ -417,6 +418,31 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnVal
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriDataDeserializer {
+	public abstract fun deserializeFileIdToPathData ([B)Ljava/util/Collection;
+	public abstract fun deserializeLookupData ([B)Ljava/util/Collection;
+	public abstract fun deserializeSubtypeData ([B)Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/CriToolchain {
+	public abstract fun createCriDeserializerRetrievalOperation ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriDeserializerRetrievalOperation;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/FileIdToPathEntry {
+	public abstract fun getFileId ()Ljava/lang/Integer;
+	public abstract fun getPath ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/LookupEntry {
+	public abstract fun getFileIds ()Ljava/util/Collection;
+	public abstract fun getKey ()Ljava/lang/Long;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/cri/SubtypeEntry {
+	public abstract fun getClassName ()Ljava/lang/String;
+	public abstract fun getSubtypes ()Ljava/util/Collection;
+}
+
 public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getId ()Ljava/lang/String;
@@ -541,19 +567,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncre
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/FileIdToPathEntry {
-	public abstract fun getFileId ()I
-	public abstract fun getPath ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/LookupEntry {
-	public abstract fun getFileIds ()Ljava/util/Collection;
-	public abstract fun getKey ()J
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/SubtypeEntry {
-	public abstract fun getClassName ()Ljava/lang/String;
-	public abstract fun getSubtypes ()Ljava/util/Collection;
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/CriDeserializerRetrievalOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
