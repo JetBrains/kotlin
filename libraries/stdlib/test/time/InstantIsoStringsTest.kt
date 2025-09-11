@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -200,6 +200,7 @@ class InstantIsoStringsTest {
             Triple("-819839065-09-06T07:25:58.953784983Z", -25871684167672442, 953784983),
             Triple("+673467211-06-05T02:15:40.712392732Z", 21252510297310540, 712392732),
             Triple("+982441727-04-13T12:12:06.776817565Z", 31002804263391126, 776817565),
+            Triple("0010-09-11T23:47:55Z", -61829655125L, 0),
         )) {
             val instant = Instant.parse(str)
             assertEquals(
@@ -348,6 +349,13 @@ class InstantIsoStringsTest {
             "1970-02-03T04:05:06.123456789+1:12:50",
             "1970-02-03T04:05:06.123456789+01:2:60",
             "1970-02-03T04:05:06.123456789+01:12:6",
+            // padding characters in the end
+            "2005-04-01T00:59:00Zzz",
+            // year is too long
+            "10000000005-04-01T00:59:00Z",
+            "2000000000-04-01T00:59:00Z",
+            // too many digits in a fractional part
+            "2005-04-01T00:59:00.00123456789Z",
         )) {
             assertInvalidFormat(nonIsoString) { Instant.parse(nonIsoString) }
             assertNull(Instant.parseOrNull(nonIsoString), nonIsoString)
