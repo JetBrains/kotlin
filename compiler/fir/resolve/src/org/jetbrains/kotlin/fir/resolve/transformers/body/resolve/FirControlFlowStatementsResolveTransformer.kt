@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.expectedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
-import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
-import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.types.*
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
@@ -347,8 +344,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     }
                 }
                 is ConeIntersectionType -> ConeIntersectionType(
-                    intersectedTypes.map { it.makeConeFlexibleTypeWithNotNullableLowerBound(typeContext) },
-                    computeIntersection = computeIntersection,
+                    intersectedTypes.map { it.makeConeFlexibleTypeWithNotNullableLowerBound(typeContext) }
                 )
                 is ConeSimpleKotlinType -> ConeFlexibleType(
                     makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeRigidType,

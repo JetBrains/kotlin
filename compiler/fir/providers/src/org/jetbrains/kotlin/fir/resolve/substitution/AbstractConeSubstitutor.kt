@@ -88,7 +88,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             substitutedTypes += substitutedType
         }
         if (!somethingIsSubstituted) return null
-        return ConeIntersectionType(substitutedTypes, computeIntersection = computeIntersection)
+        return ConeIntersectionType(substitutedTypes)
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {

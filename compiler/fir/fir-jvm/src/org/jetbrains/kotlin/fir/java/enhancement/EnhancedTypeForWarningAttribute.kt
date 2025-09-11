@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 data class EnhancedTypeForWarningAttribute(
     override val coneType: ConeKotlinType,
     val isDeprecation: Boolean,
 ) : ConeAttributeWithConeType<EnhancedTypeForWarningAttribute>() {
-    override fun union(other: EnhancedTypeForWarningAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): EnhancedTypeForWarningAttribute? = null
-    override fun intersect(other: EnhancedTypeForWarningAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): EnhancedTypeForWarningAttribute? = null
+    override fun union(other: EnhancedTypeForWarningAttribute?): EnhancedTypeForWarningAttribute? = null
+    override fun intersect(other: EnhancedTypeForWarningAttribute?): EnhancedTypeForWarningAttribute? = null
     override fun add(other: EnhancedTypeForWarningAttribute?): EnhancedTypeForWarningAttribute = other ?: this
     override fun isSubtypeOf(other: EnhancedTypeForWarningAttribute?): Boolean = true
     override fun toString(): String = "Enhanced for warning(${coneType.renderForDebugging()})"

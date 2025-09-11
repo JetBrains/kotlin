@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 /**
@@ -240,8 +239,8 @@ private class SourceAttribute(private val data: FirTypeRefSource) : ConeAttribut
     val source: KtSourceElement? get() = data.source
     val typeRef: FirTypeRef? get() = data.typeRef
 
-    override fun union(other: SourceAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): SourceAttribute = other ?: this
-    override fun intersect(other: SourceAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): SourceAttribute = other ?: this
+    override fun union(other: SourceAttribute?): SourceAttribute = other ?: this
+    override fun intersect(other: SourceAttribute?): SourceAttribute = other ?: this
     override fun add(other: SourceAttribute?): SourceAttribute = other ?: this
 
     override fun isSubtypeOf(other: SourceAttribute?): Boolean = true

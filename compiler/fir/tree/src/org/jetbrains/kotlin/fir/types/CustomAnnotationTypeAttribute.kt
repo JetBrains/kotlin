@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
-    override fun union(other: CustomAnnotationTypeAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): CustomAnnotationTypeAttribute? = null
+    override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
-    override fun intersect(other: CustomAnnotationTypeAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): CustomAnnotationTypeAttribute? = null
+    override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
         if (other == null || other === this) return this

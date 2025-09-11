@@ -673,7 +673,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)
     }
 
-    override fun unionTypeAttributes(types: List<KotlinTypeMarker>, computeCommonSupertypes: (List<KotlinTypeMarker>) -> KotlinTypeMarker): List<AnnotationMarker> {
+    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> {
         @Suppress("UNCHECKED_CAST")
         return (types as List<KotlinType>).map { it.unwrap().attributes }.reduce { x, y -> x.union(y) }.toList()
     }

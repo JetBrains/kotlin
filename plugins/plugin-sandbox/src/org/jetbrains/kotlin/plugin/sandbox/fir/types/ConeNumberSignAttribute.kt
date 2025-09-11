@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.types
 
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.ConeAttributes
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import kotlin.reflect.KClass
 
 class ConeNumberSignAttribute private constructor(val sign: Sign) : ConeAttribute<ConeNumberSignAttribute>() {
@@ -48,11 +46,11 @@ class ConeNumberSignAttribute private constructor(val sign: Sign) : ConeAttribut
         return fromSign(sign.combine(other?.sign))
     }
 
-    override fun union(other: ConeNumberSignAttribute?, c: (List<KotlinTypeMarker>) -> KotlinTypeMarker): ConeNumberSignAttribute? {
+    override fun union(other: ConeNumberSignAttribute?): ConeNumberSignAttribute? {
         return combine(other)
     }
 
-    override fun intersect(other: ConeNumberSignAttribute?, computeIntersection: (List<ConeKotlinType>) -> ConeKotlinType): ConeNumberSignAttribute? {
+    override fun intersect(other: ConeNumberSignAttribute?): ConeNumberSignAttribute? {
         return combine(other)
     }
 
