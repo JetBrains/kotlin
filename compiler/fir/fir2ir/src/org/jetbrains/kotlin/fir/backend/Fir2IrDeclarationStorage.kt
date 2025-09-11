@@ -944,6 +944,10 @@ class Fir2IrDeclarationStorage(
         return getIrPropertyForwardedSymbol(firBackingFieldSymbol.fir.propertySymbol.fir)
     }
 
+    fun getIrBackingFieldSymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
+        return getIrPropertyForwardedSymbol(firPropertySymbol.fir)
+    }
+
     fun getIrDelegateFieldSymbol(delegateFieldSymbol: FirDelegateFieldSymbol): IrSymbol {
         return getIrPropertyForwardedSymbol(delegateFieldSymbol.fir)
     }

@@ -114,6 +114,10 @@ private class FirApplySupertypesTransformer(
         }
     }
 
+    override fun transformReplSnippet(replSnippet: FirReplSnippet, data: Any?): FirReplSnippet {
+        return transformDeclarationContent(replSnippet, null) as FirReplSnippet
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         applyResolvedSupertypesToClass(regularClass)
 
@@ -196,6 +200,7 @@ open class FirSupertypeResolverVisitor(
 
     @PrivateForInline
     val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    private var replSnippet: FirReplSnippet? = null
 
     init {
         containingDeclarations.forEach {
@@ -227,6 +232,16 @@ open class FirSupertypeResolverVisitor(
         return supertypeComputationSession.getOrPutFileScope(file) {
             createImportingScopes(file, session, scopeSession).asReversed().toPersistentList()
         }
+    }
+
+    private fun prepareReplScopes(replSnippet: FirReplSnippet): ScopePersistentList {
+        return buildList {
+            // TODO: robuster matching and error reporting on no extension (KT-72969)
+            for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
+                val scope = resolveExt.getSnippetScope(replSnippet, session)
+                if (scope != null) add(scope)
+            }
+        }.toPersistentList()
     }
 
     private fun prepareScopeForNestedClasses(klass: FirClass, forStaticNestedClass: Boolean): ScopePersistentList {
@@ -314,6 +329,7 @@ open class FirSupertypeResolverVisitor(
                 val isStatic = !classLikeDeclaration.isInner
                 prepareScopeForNestedClasses(outerClassFir ?: return persistentListOf(), isStatic || forStaticNestedClass)
             }
+            replSnippet != null -> prepareReplScopes(replSnippet!!)
             else -> getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)?.let(::prepareFileScopes) ?: persistentListOf()
         }
 
@@ -390,7 +406,13 @@ open class FirSupertypeResolverVisitor(
     }
 
     override fun visitReplSnippet(replSnippet: FirReplSnippet, data: Any?) {
-        visitDeclarationContent(replSnippet, data)
+        val original = this.replSnippet
+        this.replSnippet = replSnippet
+        try {
+            visitDeclarationContent(replSnippet, data)
+        } finally {
+            this.replSnippet = original
+        }
     }
 
     /**

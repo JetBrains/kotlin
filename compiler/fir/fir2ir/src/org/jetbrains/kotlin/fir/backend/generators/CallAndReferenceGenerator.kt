@@ -863,6 +863,75 @@ class CallAndReferenceGenerator(
             .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhsWithCast)
     }
 
+
+    fun convertToIrSetCall(
+        replPropertyInitializer: FirReplPropertyInitializer,
+    ): IrExpression = convertCatching(replPropertyInitializer, conversionScope) {
+        val rValue = visitor.convertToIrExpression(
+            expression = replPropertyInitializer.expression,
+            expectedType = replPropertyInitializer.propertySymbol.resolvedReturnType
+        )
+
+        val irFieldSymbol = declarationStorage.getIrBackingFieldSymbol(replPropertyInitializer.propertySymbol)
+
+        val firClassSymbol = replPropertyInitializer.propertySymbol.getContainingClassSymbol() as FirClassSymbol<*>
+        val irClassSymbol = classifierStorage.getIrClassSymbol(firClassSymbol)
+        val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
+        val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)!!
+
+        return replPropertyInitializer.convertWithOffsets { startOffset, endOffset ->
+            when (irFieldSymbol) {
+                is IrFieldSymbol -> IrSetFieldImpl(
+                    startOffset, endOffset, irFieldSymbol, type = builtins.unitType, origin = IrStatementOrigin.EQ,
+                ).apply {
+                    value = rValue
+                    receiver = IrGetValueImpl(
+                        startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol, IrStatementOrigin.IMPLICIT_ARGUMENT
+                    )
+                }
+
+                else -> IrErrorCallExpressionImpl(
+                    startOffset, endOffset, createErrorType(),
+                    "Unresolved reference: ${replPropertyInitializer.propertySymbol.name}"
+                )
+            }
+        }
+    }
+
+    fun convertToIrSetCall(
+        replPropertyDelegate: FirReplPropertyDelegate,
+    ): IrExpression = convertCatching(replPropertyDelegate, conversionScope) {
+        val rValue = visitor.convertToIrExpression(
+            expression = replPropertyDelegate.expression,
+            expectedType = replPropertyDelegate.propertySymbol.resolvedReturnType
+        )
+
+        val irFieldSymbol = declarationStorage.getIrBackingFieldSymbol(replPropertyDelegate.propertySymbol)
+
+        val firClassSymbol = replPropertyDelegate.propertySymbol.getContainingClassSymbol() as FirClassSymbol<*>
+        val irClassSymbol = classifierStorage.getIrClassSymbol(firClassSymbol)
+        val irClass = conversionScope.findDeclarationInParentsStack<IrClass>(irClassSymbol)
+        val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)!!
+
+        return replPropertyDelegate.convertWithOffsets { startOffset, endOffset ->
+            when (irFieldSymbol) {
+                is IrFieldSymbol -> IrSetFieldImpl(
+                    startOffset, endOffset, irFieldSymbol, type = builtins.unitType, origin = IrStatementOrigin.EQ,
+                ).apply {
+                    value = rValue
+                    receiver = IrGetValueImpl(
+                        startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol, IrStatementOrigin.IMPLICIT_ARGUMENT
+                    )
+                }
+
+                else -> IrErrorCallExpressionImpl(
+                    startOffset, endOffset, createErrorType(),
+                    "Unresolved reference: ${replPropertyDelegate.propertySymbol.name}"
+                )
+            }
+        }
+    }
+
     /**
      * If we have assignment like `this.x = ...` and this `this` is a dispatch this of some class, then we should unwrap
      *   smartcast if possible to generate SetField instead of setter call

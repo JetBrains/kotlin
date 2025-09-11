@@ -370,7 +370,16 @@ open class FirDeclarationsResolveTransformer(
         property: FirProperty,
         delegateContainer: FirExpression,
         shouldResolveEverything: Boolean,
+        delayed: FirDelayedPropertyDelegate? = null,
     ) {
+        if (delegateContainer is FirDelayedPropertyDelegate) {
+            return transformPropertyAccessorsWithDelegate(
+                property,
+                delegateContainer.expressionRef.value.expression,
+                shouldResolveEverything,
+                delayed = delegateContainer,
+            )
+        }
         require(delegateContainer is FirWrappedDelegateExpression)
         dataFlowAnalyzer.enterDelegateExpression()
 
@@ -396,10 +405,13 @@ open class FirDeclarationsResolveTransformer(
                 delegateExpression,
             )
         ) {
-            property.replaceDelegate(
-                getResolvedProvideDelegateIfSuccessful(delegateContainer.provideDelegateCall, delegateExpression)
-                    ?: delegateExpression
-            )
+            val resolvedDelegate = (getResolvedProvideDelegateIfSuccessful(delegateContainer.provideDelegateCall, delegateExpression)
+                ?: delegateExpression)
+            if (delayed != null) {
+                delayed.expressionRef.value.replaceExpression(resolvedDelegate)
+            } else {
+                property.replaceDelegate(resolvedDelegate)
+            }
 
             // We don't use inference from setValue calls (i.e., don't resolve setters until the delegate inference is completed)
             // when the property doesn't have an explicit type.
@@ -649,6 +661,13 @@ open class FirDeclarationsResolveTransformer(
         // Required because in the [FirAbstractBodyResolveTransformerDispatcher.transformAnnotationCall] we're skipping the annotations
         // if the container for the declaration is not in the context, and it prevents the correct annotation resolution in REPL snippets
         context.withVariableAsContainerIfNeeded(variable, treatAsProperty = context.containerIfAny is FirReplSnippet) {
+            if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
+                variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+            ) {
+                // script parameters should not be added to CFG to avoid graph building compilations
+                dataFlowAnalyzer.enterLocalVariableDeclaration(variable)
+            }
+
             if (delegate != null) {
                 transformPropertyAccessorsWithDelegate(variable, delegate, shouldResolveEverything = true)
                 if (variable.delegateFieldSymbol != null) {
@@ -847,17 +866,14 @@ open class FirDeclarationsResolveTransformer(
         if (!implicitTypeOnly) {
             context.withReplSnippet(replSnippet, components) {
                 dataFlowAnalyzer.enterReplSnippet(replSnippet, buildGraph = true)
-                replSnippet.transformBody(this, data)
-                val returnType = replSnippet.body.statements.lastOrNull()?.let {
-                    (it as? FirExpression)?.resolvedType
-                } ?:session.builtinTypes.unitType.coneType
-                replSnippet.replaceResultTypeRef(
-                    returnType.toFirResolvedTypeRef(replSnippet.source.fakeElement(KtFakeSourceElementKind.ImplicitFunctionReturnType))
-                )
+                replSnippet.transformSnippetClass(this, data)
                 for (resolveExt in session.extensionService.replSnippetResolveExtensions) {
                     resolveExt.updateResolved(replSnippet)
                 }
-                dataFlowAnalyzer.exitReplSnippet(replSnippet)
+                val controlFlowGraph = dataFlowAnalyzer.exitReplSnippet(replSnippet)
+                if (controlFlowGraph != null) {
+                    replSnippet.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+                }
             }
         }
         return replSnippet
