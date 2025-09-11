@@ -8053,6 +8053,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("javaFieldAssigned.kt")
+      public void testJavaFieldAssigned() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/javaFieldAssigned.kt");
+      }
+
+      @Test
       @TestMetadata("kt1001.kt")
       public void testKt1001() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1001.kt");
