@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
 import java.lang.reflect.Modifier
+import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.metadata.*
@@ -164,16 +165,24 @@ internal class KClassImpl<T : Any>(
         }
 
         val typeParameters: List<KTypeParameter> by ReflectProperties.lazySoft {
-            descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
+            if (useK1Implementation) {
+                descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
+            } else if (kmClass == null) {
+                jClass.typeParameters.toKTypeParameters()
+            } else {
+                typeParameterTable.ownTypeParameters
+            }
         }
 
         private val typeParameterTable: TypeParameterTable by ReflectProperties.lazySoft {
             if (kmClass == null)
                 TypeParameterTable.EMPTY
             else
-                TypeParameterTable(
-                    kmClass!!.typeParameters.withIndex().associate { (index, km) -> km.id to typeParameters[index] },
+                TypeParameterTable.create(
+                    kmClass!!.typeParameters,
                     (jClass.enclosingClass?.takeIf { kmClass!!.isInner }?.kotlin as? KClassImpl<*>)?.data?.value?.typeParameterTable,
+                    this@KClassImpl,
+                    jClass.safeClassLoader,
                 )
         }
 
@@ -218,10 +227,10 @@ internal class KClassImpl<T : Any>(
                 }
             } else {
                 jClass.genericSuperclass?.takeUnless { it == Any::class.java }?.let {
-                    result += it.toKType(nullability = TypeNullability.NOT_NULL)
+                    result += it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
                 }
                 jClass.genericInterfaces.mapTo(result) {
-                    it.toKType(nullability = TypeNullability.NOT_NULL)
+                    it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
                 }
             }
 
