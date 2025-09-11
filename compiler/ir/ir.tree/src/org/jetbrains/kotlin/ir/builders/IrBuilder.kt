@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 abstract class IrBuilder(
     override val context: IrGeneratorContext,
@@ -250,12 +252,14 @@ inline fun IrGeneratorWithScope.irBlockBody(
         endOffset
     ).blockBody(body)
 
+@OptIn(ExperimentalContracts::class)
 inline fun IrBuilderWithScope.irReturnableBlock(
     resultType: IrType,
     origin: IrStatementOrigin? = null,
     body: IrReturnableBlockBuilder.() -> Unit
-): IrReturnableBlock =
-    IrReturnableBlockBuilder(
+): IrReturnableBlock {
+    contract { callsInPlace(body, kotlin.contracts.InvocationKind.EXACTLY_ONCE) }
+    return IrReturnableBlockBuilder(
         context, scope,
         startOffset,
         endOffset,
@@ -264,6 +268,7 @@ inline fun IrBuilderWithScope.irReturnableBlock(
     ).apply {
         body()
     }.doBuild()
+}
 
 inline fun IrBuilderWithScope.irInlinedFunctionBlock(
     origin: IrStatementOrigin? = null,

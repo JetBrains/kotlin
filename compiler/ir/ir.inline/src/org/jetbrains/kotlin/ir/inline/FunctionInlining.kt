@@ -134,39 +134,54 @@ private class CallInlining(
 
         val returnType = callSite.type
 
-        return outerIrBuilder.irBlockOrSingleExpression(origin = IrStatementOrigin.INLINE_ARGS_CONTAINER) {
-            +irReturnableBlock(returnType) {
-                val inlinedFunctionBlock = irInlinedFunctionBlock(
-                    inlinedFunctionStartOffset = callee.startOffset,
-                    inlinedFunctionEndOffset = callee.endOffset,
-                    resultType = returnType,
-                    inlinedFunctionSymbol = inlinedFunctionSymbol,
-                    inlinedFunctionFileEntry = callee.fileEntry,
-                    origin = null,
-                ) {
-                    evaluateArguments(
-                        callSiteBuilder = this@irBlockOrSingleExpression,
-                        inlinedBlockBuilder = this@irInlinedFunctionBlock,
-                        callSite, copiedCallee, substituteMap
-                    )
-                    +functionStatements
-                    // Insert a return statement for the function that is supposed to return Unit
-                    if (callee.returnType.isUnit()) {
-                        val potentialReturn = functionStatements.lastOrNull() as? IrReturn
-                        if (potentialReturn == null) {
-                            at(callee.endOffset, callee.endOffset)
-                            +irReturn(irGetObject(context.irBuiltIns.unitClass))
-                        }
+        val returnOpsCount: Int
+        val returnableBlock = outerIrBuilder.irReturnableBlock(returnType) {
+            val inlinedFunctionBlock = irInlinedFunctionBlock(
+                inlinedFunctionStartOffset = callee.startOffset,
+                inlinedFunctionEndOffset = callee.endOffset,
+                resultType = returnType,
+                inlinedFunctionSymbol = inlinedFunctionSymbol,
+                inlinedFunctionFileEntry = callee.fileEntry,
+                origin = null,
+            ) {
+                evaluateArguments(
+                    callSiteBuilder = this@irReturnableBlock,
+                    inlinedBlockBuilder = this@irInlinedFunctionBlock,
+                    callSite, copiedCallee, substituteMap
+                )
+                +functionStatements
+                // Insert a return statement for the function that is supposed to return Unit
+                if (callee.returnType.isUnit()) {
+                    val potentialReturn = functionStatements.lastOrNull() as? IrReturn
+                    if (potentialReturn == null) {
+                        at(callee.endOffset, callee.endOffset)
+                        +irReturn(irGetObject(context.irBuiltIns.unitClass))
                     }
                 }
-                val transformer = InlinePostprocessor(
-                    substituteMap, returnType, copiedCallee.symbol,
-                    returnableBlockSymbol
-                )
-                inlinedFunctionBlock.transformChildrenVoid(transformer)
-                +inlinedFunctionBlock
             }
-            at(callSite) // block is using offsets at the end, let's restore them just in case
+            val transformer = InlinePostprocessor(
+                substituteMap, returnType, copiedCallee.symbol,
+                returnableBlockSymbol
+            )
+            inlinedFunctionBlock.transformChildrenVoid(transformer)
+            returnOpsCount = transformer.returnOpsCount
+            +inlinedFunctionBlock
+        }
+        return when (returnOpsCount) {
+            0 -> outerIrBuilder.irBlockOrSingleExpression { +returnableBlock.statements }
+            1 -> {
+                val last = returnableBlock.statements.last() as IrInlinedFunctionBlock
+                val lastReturn = last.statements.lastOrNull() as? IrReturn
+                if (lastReturn?.returnTargetSymbol == returnableBlock.symbol) {
+                    last.statements[last.statements.lastIndex] = lastReturn.value
+                    outerIrBuilder.irBlockOrSingleExpression {
+                        +returnableBlock.statements
+                    }
+                } else {
+                    returnableBlock
+                }
+            }
+            else -> returnableBlock
         }
     }
 
@@ -185,6 +200,7 @@ private class CallInlining(
         val inlinedFunctionSymbol: IrFunctionSymbol,
         val returnableBlockSymbol: IrReturnableBlockSymbol,
     ) : IrElementTransformerVoid() {
+        var returnOpsCount: Int = 0
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock {
             inlinedBlock.transformChildrenVoid(this)
             if (currentFile.fileEntry == inlinedBlock.inlinedFunctionFileEntry) return inlinedBlock
@@ -199,6 +215,7 @@ private class CallInlining(
         override fun visitReturn(expression: IrReturn): IrExpression {
             expression.transformChildrenVoid(this)
             if (expression.returnTargetSymbol == inlinedFunctionSymbol) {
+                returnOpsCount++
                 expression.returnTargetSymbol = returnableBlockSymbol
                 expression.value = expression.value.doImplicitCastIfNeededTo(returnType)
             }
@@ -386,19 +403,13 @@ private class CallInlining(
                 continue
             }
 
-            fun IrBuilderWithScope.computeInitializer() = irBlock(resultType = parameter.type) {
-                +variableInitializer.doImplicitCastIfNeededTo(parameter.type)
-            }
-
             val valueForTmpVar = if (isDefaultArg) {
-                inlinedBlockBuilder
-                    .at(variableInitializer)
-                    .computeInitializer()
+                variableInitializer.doImplicitCastIfNeededTo(parameter.type)
             } else {
                 // This variable is required to trigger argument evaluation outside the scope of the inline function
                 val tempVarOutsideInlineBlock = callSiteBuilder
                     .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                    .irTemporary(callSiteBuilder.computeInitializer())
+                    .irTemporary(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 inlinedBlockBuilder
                     .at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                     .irGet(tempVarOutsideInlineBlock)
