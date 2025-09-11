@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.*
 import java.nio.file.Path
 
 /**
@@ -52,4 +51,16 @@ public interface JvmPlatformToolchain {
      * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchain.BuildSession.executeOperation
      */
     public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
+
+    /**
+     * Example:
+     *  ```
+     *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
+     *   val operation = toolchain.jvm.createCriLookupsDeserializationOperation(lookupsByteArray)
+     *   val deserializedLookups = toolchain.createBuildSession().use { it.executeOperation(operation) }
+     *  ```
+     */
+    public fun createCriLookupsDeserializationOperation(lookups: ByteArray): CriLookupsDeserializationOperation
+    public fun createCriFileIdsToPathsDeserializationOperation(fileIdsToPaths: ByteArray): CriFileIdsToPathsDeserializationOperation
+    public fun createCriSubtypesDeserializationOperation(subtypes: ByteArray): CriSubtypesDeserializationOperation
 }

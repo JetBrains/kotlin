@@ -508,6 +508,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmIncre
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain {
 	public abstract fun createClasspathSnapshottingOperation (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
+	public abstract fun createCriFileIdsToPathsDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriFileIdsToPathsDeserializationOperation;
+	public abstract fun createCriLookupsDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriLookupsDeserializationOperation;
+	public abstract fun createCriSubtypesDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriSubtypesDeserializationOperation;
 	public abstract fun createJvmCompilationOperation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
 }
 
@@ -554,6 +557,15 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/Look
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/cri/SubtypeEntry {
 	public abstract fun getClassName ()Ljava/lang/String;
 	public abstract fun getSubtypes ()Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/CriFileIdsToPathsDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/CriLookupsDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/CriSubtypesDeserializationOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
