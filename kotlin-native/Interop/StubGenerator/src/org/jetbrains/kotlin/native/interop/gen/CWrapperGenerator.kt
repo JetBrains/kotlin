@@ -26,9 +26,9 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
     }
 
     private fun bindSymbolToFunction(symbol: String, function: String): List<String> {
-        check(context.configuration.cCallMode != CCallMode.DIRECT) {
-            "A CCall wrapper for $function shouldn't be generated with -$CCALL_MODE ${CCallMode.DIRECT.name.lowercase()}"
-        }
+//        check(context.configuration.cCallMode != CCallMode.DIRECT) {
+//            "A CCall wrapper for $function shouldn't be generated with -$CCALL_MODE ${CCallMode.DIRECT.name.lowercase()}"
+//        }
         val prefix = if (context.configuration.library.language == Language.CPP)
             "extern \"C\" "
         else

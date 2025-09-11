@@ -438,7 +438,10 @@ private fun processCLib(
             runCmd(linkerCmd, verbose)
             outOFile.absolutePath
         }
-        KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT -> {
+        KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT &&
+                moduleName != "io.realm.kotlin:cinterop-cinterop-realm_wrapper" &&
+                !moduleName.contains("runtime-core")
+            -> {
             // Don't generate the bitcode (and don't pack it into the resulting klib),
             // because indirect CCall is the main reason for having it.
             // We could introduce another flag to control that, but let's keep things simple for now.

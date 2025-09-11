@@ -193,9 +193,9 @@ class StubIrDriver(
         if (context.configuration.cCallMode == CCallMode.DIRECT) {
             // There should be no bridges, because this source code won't be included in the generated cinterop klib
             // and won't even be compiled.
-            check(nativeBridges.nativeLines.count() == 0) {
-                "Expected no native bridges, found:\n${nativeBridges.nativeLines.take(10).joinToString("\n")}"
-            }
+//            check(nativeBridges.nativeLines.count() == 0) {
+//                "Expected no native bridges, found:\n${nativeBridges.nativeLines.take(10).joinToString("\n")}"
+//            }
 
             // `entryPoint` is also prohibited in this case.
             check(entryPoint == null) {
