@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.serialization
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -84,6 +86,12 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
         )
         configureFirParser(parser)
 
+        defaultDirectives {
+            LANGUAGE with listOf(
+                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
+        }
         forTestsNotMatching(
             "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
                     "compiler/testData/diagnostics/*"

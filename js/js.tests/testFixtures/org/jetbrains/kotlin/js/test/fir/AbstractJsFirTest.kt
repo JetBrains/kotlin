@@ -76,6 +76,12 @@ open class AbstractFirJsTest(
                     ::FirResolvedTypesVerifier,
                 )
             }
+            defaultDirectives {
+                LANGUAGE with listOf(
+                    "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
+            }
 
             configureJsArtifactsHandlersStep {
                 useHandlers(
