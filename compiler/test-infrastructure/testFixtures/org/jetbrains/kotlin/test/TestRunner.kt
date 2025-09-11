@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.IOException
 
@@ -134,6 +135,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     ): Boolean {
         var inputArtifact = testConfiguration.startingArtifactFactory.invoke(module)
 
+        require(testConfiguration.steps.any { it is TestStep.FacadeStep && it.facade is IrPreSerializationLoweringFacade }) {
+            "Must be a IrPreSerializationLoweringFacade"
+        }
         for (step in testConfiguration.steps) {
             if (!step.shouldProcessModule(module, inputArtifact)) continue
 
