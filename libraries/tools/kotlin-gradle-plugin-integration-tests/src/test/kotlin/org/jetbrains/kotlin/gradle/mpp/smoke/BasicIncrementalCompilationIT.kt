@@ -127,9 +127,3 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
         )
     }
 }
-
-@DisplayName("Basic incremental scenarios with Kotlin Multiplatform - K1")
-class BasicIncrementalCompilationK1IT : BasicIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}

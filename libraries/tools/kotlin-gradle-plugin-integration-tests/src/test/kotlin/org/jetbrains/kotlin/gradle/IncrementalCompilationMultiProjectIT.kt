@@ -156,30 +156,8 @@ abstract class IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT : Incr
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-
-    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
-    @GradleTest
-    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
-        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
-        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
-    }
-}
-
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-}
-
-class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
-
-    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
-    @GradleTest
-    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
-        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
-        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
-    }
 }
 
 class IncrementalCompilationK2JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
