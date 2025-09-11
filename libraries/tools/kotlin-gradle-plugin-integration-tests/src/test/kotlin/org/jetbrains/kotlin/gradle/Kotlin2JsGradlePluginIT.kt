@@ -999,9 +999,9 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("path in source maps are remapped for custom outputFile")
+    @DisplayName("path in source maps are remapped for custom outputFile in executable")
     @GradleTest
-    fun testKotlinJsSourceMapCustomOutputFile(gradleVersion: GradleVersion) {
+    fun testKotlinJsSourceMapCustomOutputFileInExecutable(gradleVersion: GradleVersion) {
         project("kotlin2JsProjectWithSourceMap", gradleVersion) {
             val taskSelector = "named<KotlinJsIrLink>(\"compileDevelopmentExecutableKotlinJs\")"
             buildGradleKts.appendText(
@@ -1023,6 +1023,64 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(mapFilePath, "\"../../../lib/src/main/kotlin/foo.kt\"")
             }
         }
+    }
+
+    @DisplayName("path in source maps are remapped for custom outputFile in library")
+    @GradleTest
+    fun testKotlinJsSourceMapCustomOutputFileInLibrary(gradleVersion: GradleVersion) {
+        // With .js extension
+        project("kotlin-multiplatform-browser-project", gradleVersion) {
+            build(":lib:jsBrowserDevelopmentDistribution") {
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.js")
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.js.map")
+
+                val mapFilePath = projectPath
+                    .resolve("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.js.map")
+
+                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+            }
+
+            build(":lib:jsBrowserProductionDistribution") {
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.js")
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.js.map")
+
+                val mapFilePath = projectPath
+                    .resolve("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.js.map")
+
+                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+            }
+        }
+
+        // With .mjs extension
+        project("kotlin-multiplatform-browser-project", gradleVersion) {
+            subProject("lib").buildScriptInjection {
+                kotlinMultiplatform.js {
+                    useEsModules()
+                }
+            }
+
+            build(":lib:jsBrowserDevelopmentDistribution") {
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.mjs")
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.mjs.map")
+
+                val mapFilePath = projectPath
+                    .resolve("lib/build/${Distribution.DIST}/js/developmentLibrary/kotlin-js-browser-lib.mjs.map")
+
+                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+            }
+
+            build(":lib:jsBrowserProductionDistribution") {
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.mjs")
+                assertFileInProjectExists("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.mjs.map")
+
+                val mapFilePath = projectPath
+                    .resolve("lib/build/${Distribution.DIST}/js/productionLibrary/kotlin-js-browser-lib.mjs.map")
+
+                assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
+            }
+        }
+
+
     }
 
     @DisplayName("source map is not generated when disabled")
