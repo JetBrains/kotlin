@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
@@ -138,7 +139,10 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
                 )
             }
             configureLoweredIrHandlersStep {
-                useHandlers({ ts, ak -> IrTextDumpHandler(ts, ak, "inlined.ir", DUMP_IR_AFTER_INLINE) })
+                useHandlers(
+                    { ts, ak -> IrTextDumpHandler(ts, ak, "inlined.ir", DUMP_IR_AFTER_INLINE) },
+                    ::IrPreprocessedInlineFunctionDumpHandler,
+                )
             }
         }
     }

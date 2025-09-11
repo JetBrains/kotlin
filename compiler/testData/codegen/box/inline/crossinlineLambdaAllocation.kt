@@ -4,6 +4,7 @@
 // NO_COMMON_FILES
 // DUMP_IR
 // DUMP_IR_AFTER_INLINE
+// DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 
 class Pair<T>(val first: T, val second: T)
 
