@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.validation.checkers.*
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
@@ -87,7 +88,13 @@ private class IrFileValidator(
     override fun visitElement(element: IrElement) {
         var block = {
             // Visit annotations in the context of the current declaration.
-            (element as? IrDeclarationBase)?.annotations?.forEach { visitAnnotationUsage(it) }
+            (element as? IrDeclarationBase)?.let { declaration ->
+                if (!declaration.isFakeOverride) {
+                    // Don't inspect annotations of fake overrides, because fake overrides are not serialized.
+                    declaration.annotations.forEach { visitAnnotationUsage(it) }
+                }
+            }
+
             element.acceptChildrenVoid(this)
         }
 
