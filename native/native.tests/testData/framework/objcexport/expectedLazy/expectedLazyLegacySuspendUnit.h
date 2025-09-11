@@ -546,7 +546,7 @@ __attribute__((swift_name("EnumValuesKt")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ExplicitBlockParameterNamesKt")))
 @interface KtExplicitBlockParameterNamesKt : KtBase
-+ (NSString *)callMyParametersExplicitlyPleaseCb:(NSString *(^)(KtInt *, KtInt *, NSString *))cb __attribute__((swift_name("callMyParametersExplicitlyPlease(cb:)")));
++ (NSString *)callMyParametersExplicitlyPleaseCb:(NSString *(^)(KtInt *a, KtInt *b, NSString *c))cb __attribute__((swift_name("callMyParametersExplicitlyPlease(cb:)")));
 @end
 
 __attribute__((swift_name("FunInterface")))
