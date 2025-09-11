@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAG
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
-class KotlinJsIrK1IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}
-
 class KotlinJsIrK2IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK2()

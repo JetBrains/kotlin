@@ -15,32 +15,12 @@ import java.nio.file.Path
 @MppGradlePluginTests
 @DisplayName("Tests for KLIB resolver inside the Kotlin compiler")
 class KlibResolverInsideCompilerIT : KGPBaseTest() {
-    @DisplayName("KLIBs with duplicated unique_name not discriminated, library + composite build, LV=1.9 (KT-63573)")
-    @GradleTest
-    fun testKlibsWithDuplicatedUniqueNameNotDiscriminated1(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        buildLibraryAndCompositeProjectForKT63573(
-            baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-and-composite-build",
-            languageVersion = EnforcedLanguageVersion.K1,
-            tempDir, gradleVersion
-        )
-    }
-
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library + composite build, LV=2.0 (KT-63573)")
     @GradleTest
     fun testKlibsWithDuplicatedUniqueNameNotDiscriminated2(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         buildLibraryAndCompositeProjectForKT63573(
             baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-and-composite-build",
             languageVersion = EnforcedLanguageVersion.K2,
-            tempDir, gradleVersion
-        )
-    }
-
-    @DisplayName("KLIBs with duplicated unique_name not discriminated, library x2 + app, LV=1.9 (KT-63573)")
-    @GradleTest
-    fun testKlibsWithDuplicatedUniqueNameNotDiscriminated3(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        buildTwoLibrariesAndAppForKT63573(
-            baseDir = "mpp-klib-resolver-inside-compiler/klibs-with-duplicated-unique_name-library-x2-and-app",
-            languageVersion = EnforcedLanguageVersion.K1,
             tempDir, gradleVersion
         )
     }

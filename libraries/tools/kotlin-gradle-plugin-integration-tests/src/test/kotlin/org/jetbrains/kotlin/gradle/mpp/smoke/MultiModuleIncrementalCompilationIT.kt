@@ -239,9 +239,3 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         )
     }
 }
-
-@DisplayName("Incremental scenarios with expect/actual - K1")
-class MultiModuleIncrementalCompilationK1IT : MultiModuleIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK1()
-}
