@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
@@ -31,6 +33,8 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
+import org.jetbrains.kotlin.gradle.util.kotlinStdlibDependencies
+import org.jetbrains.kotlin.gradle.util.nativeStdlibDependency
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
@@ -314,7 +318,48 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
-    // FIXME: Discuss with @andrei.tyrin IDE tests for single native target cinterop API visibility
+    @DisplayName("KT-46142 standalone native source set")
+    @TestMetadata("commonize-kt-46142-singleNativeTarget")
+    @GradleTest
+    fun testStandaloneNativeSourceSet(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    jvm()
+                }
+            }
+        }.resolveIdeDependencies {
+            val linuxMatchers = arrayOf(
+                nativeStdlibDependency,
+                IdeaKotlinDependencyMatcher("Platform cinterops matcher") {
+                    (it is IdeaKotlinResolvedBinaryDependency)
+                            && it.isNativeDistribution
+                            && it.klibExtra?.commonizerTarget == null
+                            && it.klibExtra?.isInterop == true
+                            && it.klibExtra?.nativeTargets == listOf(LINUX_ARM64.name)
+                }
+            )
+            it["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+            )
+            it["nativeMain"].assertMatches(
+                dependsOnDependency(":/commonMain"),
+                *linuxMatchers,
+            )
+            it["linuxArm64Main"].assertMatches(
+                dependsOnDependency(":/commonMain"),
+                dependsOnDependency(":/nativeMain"),
+                dependsOnDependency(":/linuxMain"),
+                *linuxMatchers,
+            )
+        }
+    }
+
 
     @DisplayName("KT-47523 single supported native target dependency propagation - cinterop")
     @TestMetadata("commonize-kt-47523-singleNativeTargetPropagation-cinterop")

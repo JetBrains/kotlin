@@ -8,10 +8,17 @@ package org.jetbrains.kotlin.gradle.util
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 
 val kotlinStdlibDependencies = binaryCoordinates(Regex(".*kotlin-stdlib.*"))
+
+val nativeStdlibDependency = IdeaKotlinDependencyMatcher("Native stdlib") {
+    (it is IdeaKotlinResolvedBinaryDependency)
+            && it.isNativeStdlib
+            && ("common/stdlib" in it.classpath.single().path)
+}
 
 val jetbrainsAnnotationDependencies = binaryCoordinates(Regex("org\\.jetbrains:annotations:.*"))
 

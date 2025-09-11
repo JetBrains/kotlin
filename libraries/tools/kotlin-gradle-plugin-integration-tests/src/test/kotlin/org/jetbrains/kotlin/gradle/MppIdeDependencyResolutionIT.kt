@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -61,6 +60,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 val nativeTestDependencies = dependencies["nativeTest"].filterNativePlatformDependencies()
                 val linuxMainDependencies = dependencies["linuxMain"].filterNativePlatformDependencies()
                 val linuxTestDependencies = dependencies["linuxTest"].filterNativePlatformDependencies()
+                val linuxArm64MainDependencies = dependencies["linuxArm64Main"].filterNativePlatformDependencies()
 
                 /* Check test and main receive the same dependencies */
                 run {
@@ -72,6 +72,9 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 run {
                     nativeMainDependencies.plus(linuxMainDependencies).forEach { dependency ->
                         if (!dependency.isCommonized) fail("$dependency is not marked as 'isCommonized'")
+                    }
+                    linuxArm64MainDependencies.forEach { dependency ->
+                        if (dependency.isCommonized) fail("$dependency is marked as 'isCommonized'")
                     }
 
                     val nativeMainTarget = CommonizerTarget(
