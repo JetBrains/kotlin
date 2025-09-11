@@ -63,6 +63,7 @@ interface TestVersions {
         const val AGP_89 = "8.9.3"
         const val AGP_810 = "8.10.1"
         const val AGP_811 = "8.11.1" //  Remove suppressAgpWarningSinceGradle814 once AGP 8.12 is default
+        const val AGP_90 = "9.0.0-alpha04"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_82 // AgpCompatibilityCheck.minimalSupportedAgpVersion
@@ -85,6 +86,7 @@ interface TestVersions {
         AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_12), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
+        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
         ;
 
         companion object {
