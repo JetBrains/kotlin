@@ -6454,7 +6454,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckPomTask 
 public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	protected final fun execute ()V
 	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getExampleSignature ()Lorg/gradle/api/provider/Property;
 	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
 	public abstract fun getHasKeyPassword ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKeyId ()Lorg/gradle/api/provider/Property;
@@ -6462,7 +6461,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningT
 	public abstract fun getKeyservers ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getOfflineMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
-	public abstract fun getSignatoryExists ()Lorg/gradle/api/provider/Property;
+	public abstract fun getSignatory ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 }

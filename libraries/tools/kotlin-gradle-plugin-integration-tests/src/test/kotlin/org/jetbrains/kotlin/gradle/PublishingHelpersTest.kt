@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.publishing.CheckSigningTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
@@ -207,6 +208,65 @@ class PublishingHelpersTest : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @Disabled("For manual testing only: needs external GnuPG program and key setup (replace keyName and passphrase in test)")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_1],
+    )
+    @DisplayName("Signing check works with configuration cache and GPG signatory")
+    internal fun signingCheckWorksWithConfigurationCacheAndGpg(gradleVersion: GradleVersion) {
+        checkSigningConfigurationTest(gradleVersion) { buildArguments ->
+            buildScriptInjection {
+                signing.useGpgCmd()
+                signing.sign(publishing.publications)
+                project.tasks.named<CheckSigningTask>("checkSigningConfiguration").configure {
+                    it.keyservers.set(emptyList())
+                }
+            }
+            fun buildWithConfCacheCheck(firstRun: Boolean) {
+                buildAndFail(
+                    *buildArguments,
+                    "-Psigning.gnupg.keyName=48153D94",
+                    "-Psigning.gnupg.passphrase=testtesttest",
+                ) {
+                    if (gradleVersion >= GradleVersion.version("8.1")) {
+                        if (firstRun) {
+                            assertConfigurationCacheStored()
+                        } else {
+                            assertConfigurationCacheReused()
+                        }
+                    }
+                    assertOutputDoesNotContain("Plugin 'org.jetbrains.kotlin.jvm': external process started 'gpg")
+                    assertOutputContains("None of the keyservers contain the public key with id: 48153D94")
+                }
+            }
+            buildWithConfCacheCheck(firstRun = true)
+            buildWithConfCacheCheck(firstRun = false)
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Signing check works with configuration cache and without GPG signatory")
+    internal fun signingCheckWorksWithConfigurationCacheAndWithoutGpg(gradleVersion: GradleVersion) {
+        checkSigningConfigurationTest(gradleVersion) { buildArguments ->
+            buildScriptInjection {
+                signing.sign(publishing.publications)
+                project.tasks.named<CheckSigningTask>("checkSigningConfiguration").configure {
+                    it.keyservers.set(emptyList())
+                }
+            }
+            buildAndFail(
+                *buildArguments,
+            ) {
+                if (gradleVersion >= GradleVersion.version("8.1")) {
+                    assertConfigurationCacheStored()
+                }
+                assertOutputContains("None of the keyservers contain the public key with id:")
+            }
+        }
+    }
+
 
     private fun checkSigningConfigurationTest(
         gradleVersion: GradleVersion,
