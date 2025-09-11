@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -73,6 +75,12 @@ abstract class AbstractDiagnosticsWasmKlibTestBase(
         facadeStep(::Fir2IrResultsConverter)
         irHandlersStep()
 
+        defaultDirectives {
+            LANGUAGE with listOf(
+                "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
+        }
         facadeStep(::WasmPreSerializationLoweringFacade)
         loweredIrHandlersStep()
 
