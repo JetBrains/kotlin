@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.PROGRESSIVE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.SCRIPT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.XX_DEBUG_LEVEL_COMPILER_CHECKS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.XX_DUMP_MODEL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.XX_EXPLICIT_RETURN_TYPES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.XX_LANGUAGE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.XX_LENIENT_MODE
@@ -176,6 +177,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (X_REPORT_PERF in this) { arguments.reportPerf = get(X_REPORT_PERF)}
     if (X_DETAILED_PERF in this) { arguments.detailedPerf = get(X_DETAILED_PERF)}
     if (X_DUMP_PERF in this) { arguments.dumpPerf = get(X_DUMP_PERF)}
+    if (XX_DUMP_MODEL in this) { arguments.dumpArgumentsDir = get(XX_DUMP_MODEL)}
     if (X_METADATA_VERSION in this) { arguments.metadataVersion = get(X_METADATA_VERSION)}
     if (X_COMMON_SOURCES in this) { arguments.commonSources = get(X_COMMON_SOURCES)}
     if (X_LIST_PHASES in this) { arguments.listPhases = get(X_LIST_PHASES)}
@@ -272,6 +274,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
     try { this[X_DETAILED_PERF] = arguments.detailedPerf } catch (_: NoSuchMethodError) {  }
     try { this[X_DUMP_PERF] = arguments.dumpPerf } catch (_: NoSuchMethodError) {  }
+    try { this[XX_DUMP_MODEL] = arguments.dumpArgumentsDir } catch (_: NoSuchMethodError) {  }
     try { this[X_METADATA_VERSION] = arguments.metadataVersion } catch (_: NoSuchMethodError) {  }
     try { this[X_COMMON_SOURCES] = arguments.commonSources } catch (_: NoSuchMethodError) {  }
     try { this[X_LIST_PHASES] = arguments.listPhases } catch (_: NoSuchMethodError) {  }
@@ -415,6 +418,9 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
         CommonCompilerArgument("X_DETAILED_PERF")
 
     public val X_DUMP_PERF: CommonCompilerArgument<String?> = CommonCompilerArgument("X_DUMP_PERF")
+
+    public val XX_DUMP_MODEL: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("XX_DUMP_MODEL")
 
     public val X_METADATA_VERSION: CommonCompilerArgument<String?> =
         CommonCompilerArgument("X_METADATA_VERSION")
