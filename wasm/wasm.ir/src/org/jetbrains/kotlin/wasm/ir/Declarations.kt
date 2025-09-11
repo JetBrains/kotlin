@@ -218,24 +218,34 @@ sealed class WasmExport<T : WasmNamedModuleField>(
 
 sealed class WasmTypeDeclaration(
     override val name: String
-) : WasmNamedModuleField()
+) : WasmNamedModuleField() {
+    abstract fun isShared(): Boolean
+}
 
 data class WasmFunctionType(
     val parameterTypes: List<WasmType>,
     val resultTypes: List<WasmType>
-) : WasmTypeDeclaration("")
+) : WasmTypeDeclaration("") {
+    override fun isShared(): Boolean = false
+}
 
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>,
     val superType: WasmSymbolReadOnly<WasmTypeDeclaration>?,
-    val isFinal: Boolean
-) : WasmTypeDeclaration(name)
+    val isFinal: Boolean,
+    private val isShared: Boolean,
+) : WasmTypeDeclaration(name) {
+    override fun isShared(): Boolean = isShared
+}
 
 class WasmArrayDeclaration(
     name: String,
-    val field: WasmStructFieldDeclaration
-) : WasmTypeDeclaration(name)
+    val field: WasmStructFieldDeclaration,
+    private val isShared: Boolean,
+) : WasmTypeDeclaration(name) {
+    override fun isShared(): Boolean = isShared
+}
 
 class WasmStructFieldDeclaration(
     val name: String,

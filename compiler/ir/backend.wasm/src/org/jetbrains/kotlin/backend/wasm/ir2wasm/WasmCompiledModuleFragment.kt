@@ -335,7 +335,10 @@ class WasmCompiledModuleFragment(
     }
 
     private fun createRttiTypeAndProcessRttiGlobals(globals: MutableList<WasmGlobal>, additionalTypes: MutableList<WasmTypeDeclaration>) {
-        val wasmLongArray = WasmArrayDeclaration("LongArray", WasmStructFieldDeclaration("Long", WasmI64, false))
+        val wasmLongArray = WasmArrayDeclaration(
+            name = "LongArray",
+            field = WasmStructFieldDeclaration("Long", WasmI64, false),
+            isShared = useSharedObjects)
         additionalTypes.add(wasmLongArray)
 
         val rttiTypeDeclarationSymbol = WasmSymbol<WasmStructDeclaration>()
@@ -352,7 +355,8 @@ class WasmCompiledModuleFragment(
                 WasmStructFieldDeclaration("simpleNameStringLoader", if (useSharedObjects) WasmI32 else WasmFuncRef, false),
             ),
             superType = null,
-            isFinal = true
+            isFinal = true,
+            isShared = useSharedObjects,
         )
         rttiTypeDeclarationSymbol.bind(rttiTypeDeclaration)
         additionalTypes.add(rttiTypeDeclaration)
@@ -382,12 +386,13 @@ class WasmCompiledModuleFragment(
     private fun createAndBindSpecialITableTypes(syntheticTypes: MutableList<WasmTypeDeclaration>): MutableList<WasmTypeDeclaration> {
         val wasmAnyArrayType = WasmArrayDeclaration(
             name = "AnyArray",
-            field = WasmStructFieldDeclaration("", WasmRefNullType(WasmHeapType.Simple.Any), false)
+            field = WasmStructFieldDeclaration("", WasmRefNullType(WasmHeapType.Simple.Any.maybeShared(useSharedObjects)), false),
+            isShared = useSharedObjects,
         )
         syntheticTypes.add(wasmAnyArrayType)
 
         val specialSlotITableTypeSlots = mutableListOf<WasmStructFieldDeclaration>()
-        val wasmAnyRefStructField = WasmStructFieldDeclaration("", WasmAnyRef, false)
+        val wasmAnyRefStructField = WasmStructFieldDeclaration("", WasmAnyRef.maybeShared(useSharedObjects), false)
         repeat(WasmBackendContext.SPECIAL_INTERFACE_TABLE_SIZE) {
             specialSlotITableTypeSlots.add(wasmAnyRefStructField)
         }
@@ -402,7 +407,8 @@ class WasmCompiledModuleFragment(
             name = "SpecialITable",
             fields = specialSlotITableTypeSlots,
             superType = null,
-            isFinal = true
+            isFinal = true,
+            isShared = useSharedObjects,
         )
         syntheticTypes.add(specialSlotITableType)
 
@@ -461,7 +467,7 @@ class WasmCompiledModuleFragment(
 
         recursiveGroups.mapTo(groupsWithMixIns) { group ->
             if (group.any { it in gcTypes } && group.singleOrNull() !is WasmArrayDeclaration) {
-                addMixInGroup(group, mixInIndexesForGroups)
+                addMixInGroup(group, mixInIndexesForGroups, useSharedObjects)
             } else {
                 group
             }
@@ -640,7 +646,7 @@ class WasmCompiledModuleFragment(
                     buildEnd()
                 }
             }
-            buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
+            buildRefNull(WasmHeapType.Simple.None.maybeShared(useSharedObjects), serviceCodeLocation)
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
         return associatedObjectGetter
@@ -702,15 +708,18 @@ class WasmCompiledModuleFragment(
     }
 
     private fun stringAddressesAndLengthsField(additionalTypes: MutableList<WasmTypeDeclaration>): Pair<WasmGlobal, WasmArrayDeclaration> {
-        val wasmLongArrayDeclaration =
-            WasmArrayDeclaration("long_array", WasmStructFieldDeclaration("long", WasmI64, false))
+        val wasmLongArrayDeclaration = WasmArrayDeclaration(
+            name = "long_array",
+            field = WasmStructFieldDeclaration("long", WasmI64, false),
+            isShared = useSharedObjects,
+        )
         additionalTypes.add(wasmLongArrayDeclaration)
 
         val stringAddressesAndLengthsInitializer = listOf(
             WasmInstrWithLocation(
                 operator = WasmOp.REF_NULL,
                 location = serviceCodeLocation,
-                immediates = listOf(WasmImmediate.HeapType(WasmRefNullrefType))
+                immediates = listOf(WasmImmediate.HeapType(WasmRefNullrefType.maybeShared(useSharedObjects)))
             ),
         )
 
@@ -722,8 +731,11 @@ class WasmCompiledModuleFragment(
     }
 
     private fun createStringPoolField(stringPoolSize: Int, kotlinStringType: WasmType, additionalTypes: MutableList<WasmTypeDeclaration>): Pair<WasmGlobal, WasmArrayDeclaration> {
-        val wasmStringArrayDeclaration =
-            WasmArrayDeclaration("string_array", WasmStructFieldDeclaration("string", kotlinStringType, true))
+        val wasmStringArrayDeclaration = WasmArrayDeclaration(
+            name = "string_array",
+            field = WasmStructFieldDeclaration("string", kotlinStringType, true),
+            isShared = useSharedObjects,
+        )
         additionalTypes.add(wasmStringArrayDeclaration)
 
         val stringCacheFieldInitializer = listOf(
@@ -762,7 +774,11 @@ class WasmCompiledModuleFragment(
         val stringLiteralFunctionType = WasmFunctionType(listOf(WasmI32), listOf(kotlinStringType))
         additionalTypes.add(stringLiteralFunctionType)
 
-        val byteArray = WasmArrayDeclaration("byte_array", WasmStructFieldDeclaration("byte", WasmI8, false))
+        val byteArray = WasmArrayDeclaration(
+            name = "byte_array",
+            field = WasmStructFieldDeclaration("byte", WasmI8, false),
+            isShared = useSharedObjects,
+        )
         additionalTypes.add(byteArray)
 
         val poolIdLocal = WasmLocal(0, "poolId", WasmI32, true)

@@ -31,10 +31,6 @@ private object WasmBinary {
     const val SUB_FINAL_TYPE: Byte = -0x31 // 0x4F
     const val REC_GROUP: Byte = -0x32 // 0x4E
 
-    // while it can be omitted in most cases, V8 currently requires explicit 'ref null' byte if combined with 'shared' heaptype
-    const val EXPLICIT_NULL_REF: Byte = 0x63
-    const val EXPLICIT_REF: Byte = 0x64
-
     // https://github.com/WebAssembly/shared-everything-threads/blob/main/proposals/shared-everything-threads/Overview.md#types
     const val SHARED_COMPTYPE: Byte = 0x65
     const val SHARED_HEAPTYPE: Byte = 0x65
@@ -402,10 +398,6 @@ class WasmIrToBinary(
         b.writeVarUInt1(field.isMutable)
     }
 
-    // TODO add 'shared' flag directly to the type declaration instead?
-    private val WasmTypeDeclaration.shared
-        get() = useSharedObjects
-
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
         val superType = type.superType
 
@@ -429,7 +421,7 @@ class WasmIrToBinary(
             }
         }
 
-        if (type.shared) {
+        if (type.isShared()) {
             b.writeByte(WasmBinary.SHARED_COMPTYPE)
         }
 
@@ -441,7 +433,7 @@ class WasmIrToBinary(
     }
 
     private fun appendArrayTypeDeclaration(type: WasmArrayDeclaration) {
-        if (type.shared) {
+        if (type.isShared()) {
             b.writeByte(WasmBinary.SHARED_COMPTYPE)
         }
 
@@ -651,30 +643,26 @@ class WasmIrToBinary(
     }
 
     fun appendHeapType(type: WasmHeapType) {
-        if (useSharedObjects && type is WasmHeapType.Simple && type.isShareable())
-            b.writeByte(WasmBinary.SHARED_HEAPTYPE)
-
         val code: Int = when (type) {
-            is WasmHeapType.Simple -> type.code.toInt()
             is WasmHeapType.Type -> type.type.owner.id!!
+            is WasmHeapType.Simple -> type.code.toInt()
+            is WasmHeapType.SharedSimple -> {
+                check(useSharedObjects) { "Shared objects are not enabled" }
+                b.writeByte(WasmBinary.SHARED_HEAPTYPE)
+                type.type.code.toInt()
+            }
         }
         b.writeVarInt32(code)
     }
 
     fun appendType(type: WasmType) {
-        if (useSharedObjects && type.isShareableRefType()) {
-            b.writeByte(WasmBinary.EXPLICIT_NULL_REF)
-            b.writeByte(WasmBinary.SHARED_HEAPTYPE)
-            b.writeVarInt7(type.code)
-        } else {
-            b.writeVarInt7(type.code)
+        b.writeVarInt7(type.code)
 
-            if (type is WasmRefType) {
-                appendHeapType(type.heapType)
-            }
-            if (type is WasmRefNullType) {
-                appendHeapType(type.heapType)
-            }
+        if (type is WasmRefType) {
+            appendHeapType(type.heapType)
+        }
+        if (type is WasmRefNullType) {
+            appendHeapType(type.heapType)
         }
     }
 
