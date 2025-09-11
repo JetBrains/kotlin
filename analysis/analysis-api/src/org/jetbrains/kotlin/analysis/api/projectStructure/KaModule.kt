@@ -376,6 +376,8 @@ public interface KaDanglingFileModule : KaModule {
 
     /**
      * All dangling files analyzed together, as a single module.
+     *
+     * Throws an exception when the files are no longer valid (see [isValid]).
      */
     public val files: List<KtFile>
 
@@ -395,6 +397,13 @@ public interface KaDanglingFileModule : KaModule {
      * This is useful to recognize code fragments when their PSI was collected.
      */
     public val isCodeFragment: Boolean
+
+    /**
+     * Whether the dangling file module's [files] are still valid.
+     *
+     * @see KtFile.isValid
+     */
+    public val isValid: Boolean
 
     @KaExperimentalApi
     override val moduleDescription: String
