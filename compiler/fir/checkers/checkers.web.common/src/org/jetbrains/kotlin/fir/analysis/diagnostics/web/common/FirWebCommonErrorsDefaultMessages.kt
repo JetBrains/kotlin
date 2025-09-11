@@ -80,7 +80,7 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NESTED_JS_EXPORT, "'@JsExport' is only allowed on files and top-level declarations.")
         map.put(
             MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE,
-            "It is not allowed to have more than one declaration with '@JsExport.Default' in a single file."
+            "Only one declaration with '@JsExport.Default' is allowed per file."
         )
 
         map.put(JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "An argument for the 'js()' function must be a constant string expression.")
