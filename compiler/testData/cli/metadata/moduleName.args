@@ -4,4 +4,4 @@ $TEMP_DIR$
 -module-name
 foo
 -language-version
-2.1
+2.0

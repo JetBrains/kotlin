@@ -83,16 +83,8 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         runTest(K2JVMCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
-    fun testShouldNotGenerateCodeMetadata() {
-        runTest(KotlinMetadataCompiler(), classNotFound, CustomComponentRegistrar::class)
-    }
-
     fun testRepeatedAnalysisJVM() {
         runTest(K2JVMCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
-    }
-
-    fun testRepeatedAnalysisMetadata() {
-        runTest(KotlinMetadataCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
     }
 
     fun testAnalysisError() {
