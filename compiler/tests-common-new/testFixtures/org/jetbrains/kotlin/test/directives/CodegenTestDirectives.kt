@@ -118,6 +118,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Dumps generated backend IR after inlining (enables ${IrTextDumpHandler::class} after inlining)"
     )
 
+    val DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS by directive(
+        description = "Dumps generated backend IR of preprocessed inline functions (enables ${IrPreprocessedInlineFunctionDumpHandler::class})"
+    )
+
     val DUMP_EXTERNAL_CLASS by stringDirective(
         description = "Specifies names of external classes which IR should be dumped"
     )
