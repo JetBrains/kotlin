@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationEvent
@@ -217,7 +218,16 @@ class LLFirSessionCacheStorageInvalidator(
      */
     private inline fun performInvalidation(block: () -> Unit) {
         synchronized(this) {
-            block()
+            // Any exception from session invalidation is an error that should be logged (even control flow exceptions). Since an exception
+            // interrupts session invalidation, session caches might be left in an inconsistent state. See KT-78994.
+            //
+            // This is temporary code to gather more diagnostic data.
+            try {
+                block()
+            } catch (t: Throwable) {
+                LOG.error("Exception from LL FIR session invalidation!", t)
+                throw t
+            }
         }
     }
 
@@ -351,4 +361,7 @@ class LLFirSessionCacheStorageInvalidator(
         }
     }
 
+    companion object {
+        private val LOG = logger<LLFirSessionCacheStorageInvalidator>()
+    }
 }
