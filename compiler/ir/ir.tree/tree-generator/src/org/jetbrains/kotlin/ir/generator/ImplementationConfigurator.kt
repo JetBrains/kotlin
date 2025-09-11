@@ -137,8 +137,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(replSnippet) {
             implementation.putImplementationOptInInConstructor = false
-            defaultNull("returnType", "stateObject", "targetClass")
-            isLateinit("receiverParameters", "body")
+            defaultNull("stateObject", "targetClass")
+            isLateinit("receiverParameters")
             default("origin", "REPL_SNIPPET_ORIGIN")
             default("declarationsFromOtherSnippets", "ArrayList()")
             default("variablesFromOtherSnippets", "ArrayList()")

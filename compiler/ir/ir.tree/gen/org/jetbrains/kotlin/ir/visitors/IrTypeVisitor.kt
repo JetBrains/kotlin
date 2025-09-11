@@ -92,11 +92,6 @@ abstract class IrTypeVisitor<out R, in D> : IrVisitor<R, D>() {
         return super.visitScript(declaration, data)
     }
 
-    override fun visitReplSnippet(declaration: IrReplSnippet, data: D): R {
-        declaration.returnType?.let { visitTypeRecursively(declaration, it, data) }
-        return super.visitReplSnippet(declaration, data)
-    }
-
     override fun visitTypeAlias(declaration: IrTypeAlias, data: D): R {
         visitTypeRecursively(declaration, declaration.expandedType, data)
         return super.visitTypeAlias(declaration, data)
