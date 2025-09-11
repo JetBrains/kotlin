@@ -104,22 +104,6 @@ private class IrFileValidator(
         }
     }
 
-    override fun visitReplSnippet(declaration: IrReplSnippet) {
-        context.withinScripOrScriptClass {
-            super.visitReplSnippet(declaration)
-        }
-    }
-
-    override fun visitClass(declaration: IrClass) {
-        if (declaration.origin == IrDeclarationOrigin.REPL_SNIPPET_CLASS || declaration.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
-            context.withinScripOrScriptClass {
-                super.visitClass(declaration)
-            }
-        } else {
-            super.visitClass(declaration)
-        }
-    }
-
     override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
         for (checker in symbolCheckers) {
             checker.check(symbol, container, context)
