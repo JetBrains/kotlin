@@ -120,7 +120,7 @@ internal abstract class SirAbstractGetter(
     override val documentation: String? get() = null
     override val attributes: List<SirAttribute> get() = emptyList()
     override val errorType: SirType get() = SirType.never
-
+    override val isAsync: Boolean get() = false
     private val variable get() = parent as? SirVariable
 
     open val fqName: List<String>? by lazyWithSessions {
@@ -187,7 +187,7 @@ internal abstract class SirAbstractSetter(
     override val parameterName: String = "newValue"
     override val attributes: List<SirAttribute> get() = emptyList()
     override val errorType: SirType get() = SirType.never
-
+    override val isAsync: Boolean get() = false
     private val variable get() = parent as? SirVariable
 
     open val fqName: List<String>? by lazyWithSessions {

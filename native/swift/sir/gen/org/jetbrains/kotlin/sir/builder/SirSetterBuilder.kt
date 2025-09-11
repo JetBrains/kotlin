@@ -23,6 +23,7 @@ class SirSetterBuilder {
     val bridges: MutableList<SirBridge> = mutableListOf()
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
+    var isAsync: Boolean = false
     var parameterName: String = "newValue"
 
     fun build(): SirSetter {
@@ -34,6 +35,7 @@ class SirSetterBuilder {
             bridges,
             body,
             errorType,
+            isAsync,
             parameterName,
         )
     }
@@ -61,6 +63,7 @@ inline fun buildSetterCopy(original: SirSetter, init: SirSetterBuilder.() -> Uni
     copyBuilder.bridges.addAll(original.bridges)
     copyBuilder.body = original.body
     copyBuilder.errorType = original.errorType
+    copyBuilder.isAsync = original.isAsync
     copyBuilder.parameterName = original.parameterName
     return copyBuilder.apply(init).build()
 }

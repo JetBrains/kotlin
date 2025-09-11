@@ -22,6 +22,7 @@ sealed class SirCallable : SirBridged(), SirDeclaration {
     abstract override val bridges: List<SirBridge>
     abstract var body: SirFunctionBody?
     abstract val errorType: SirType
+    abstract val isAsync: Boolean
     override fun toString(): String {
         return this.debugString
     }

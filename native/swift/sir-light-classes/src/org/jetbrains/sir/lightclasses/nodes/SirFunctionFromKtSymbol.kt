@@ -73,6 +73,8 @@ internal open class SirFunctionFromKtSymbol(
 
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 
+    override val isAsync: Boolean get() = false
+
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = bridgeFqName ?: return@lazyWithSessions null
         val suffix = ""

@@ -56,6 +56,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("empty")
+  public void testEmpty() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/empty/");
+  }
+
+  @Test
   @TestMetadata("enums")
   public void testEnums() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/enums/");

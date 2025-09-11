@@ -104,6 +104,8 @@ internal class SirFunctionFromKtPropertySymbol(
 
     override val errorType: SirType get() = if (ktPropertySymbol.throwsAnnotation != null) SirType.any else SirType.never
 
+    override val isAsync: Boolean get() = false
+
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val fqName = ktPropertySymbol
             .callableId?.asSingleFqName()

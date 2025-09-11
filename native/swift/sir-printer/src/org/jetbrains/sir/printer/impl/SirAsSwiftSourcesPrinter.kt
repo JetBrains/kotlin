@@ -499,6 +499,10 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     }
 
     private fun SirCallable.printEffects() {
+        if (this !is SirSetter && isAsync) {
+            print(" async")
+        }
+
         if (this !is SirSetter && errorType != SirType.never) {
             print(" throws")
             if (errorType != SirType.any) {

@@ -199,7 +199,7 @@ internal class SirObjectSyntheticInit(
         )
     }
     override val errorType: SirType get() = SirType.never
-
+    override val isAsync: Boolean get() = false
     override val bridges: List<SirBridge> get() = emptyList()
     override var body: SirFunctionBody?
         get() = null
@@ -218,7 +218,7 @@ internal class SirObjectAccessorVariableFromKtSymbol(
         override val documentation: String? by lazy { ktSymbol.documentation() }
         override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
         override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
-
+        override val isAsync: Boolean get() = false
         override val fqName: List<String>? by lazyWithSessions {
             ktSymbol
                 .classId?.asSingleFqName()

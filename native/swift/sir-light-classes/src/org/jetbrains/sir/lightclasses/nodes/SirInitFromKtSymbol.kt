@@ -88,6 +88,8 @@ internal sealed class SirInitFromKtSymbol(
 
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 
+    override val isAsync: Boolean get() = false
+
     protected val isBridged: Boolean
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {

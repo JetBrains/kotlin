@@ -70,7 +70,7 @@ val SirType.swiftName
         ).joinToString("")
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
-        is SirFunctionalType -> "(${parameterTypes.joinToString { it.swiftName }}) -> ${returnType.swiftName}"
+        is SirFunctionalType -> "(${parameterTypes.joinToString { it.swiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
     }
 
 val SirDeclaration.swiftParentNamePrefix: String?

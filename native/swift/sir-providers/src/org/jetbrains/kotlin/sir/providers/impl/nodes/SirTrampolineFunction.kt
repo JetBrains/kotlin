@@ -41,6 +41,8 @@ public class SirTrampolineFunction(
 
     override val errorType: SirType get() = source.errorType
 
+    override val isAsync: Boolean get() = source.isAsync
+
     override val bridges: List<SirBridge> = emptyList()
 
     override var body: SirFunctionBody?

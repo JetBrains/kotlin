@@ -22,6 +22,7 @@ abstract class SirSetter : SirAccessor() {
     abstract override val bridges: List<SirBridge>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
+    abstract override val isAsync: Boolean
     abstract val parameterName: String
     override fun toString(): String {
         return this.debugString

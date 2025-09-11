@@ -20,6 +20,7 @@ internal class SirFunctionImpl(
     override val bridges: MutableList<SirBridge>,
     override var body: SirFunctionBody?,
     override val errorType: SirType,
+    override val isAsync: Boolean,
     override val isOverride: Boolean,
     override val isInstance: Boolean,
     override val modality: SirModality,

@@ -57,7 +57,7 @@ internal abstract class SirClassOperatorTrampolineFunction(
     override val attributes: List<SirAttribute> get() = source.attributes
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
     override val errorType: SirType get() = source.errorType
-
+    override val isAsync: Boolean get() = source.isAsync
     override val parameters: List<SirParameter>
         get() = listOf(
             SirParameter(argumentName = "this", type = selfType)

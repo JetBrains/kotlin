@@ -162,6 +162,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("body", functionBodyType, nullable = true, mutable = true)
 
         +field("errorType", typeType)
+        +field("isAsync", boolean)
     }
 
     val init by element {

@@ -22,6 +22,7 @@ abstract class SirInit : SirCallable() {
     abstract override val bridges: List<SirBridge>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
+    abstract override val isAsync: Boolean
     abstract val isFailable: Boolean
     abstract val parameters: List<SirParameter>
     abstract val isConvenience: Boolean

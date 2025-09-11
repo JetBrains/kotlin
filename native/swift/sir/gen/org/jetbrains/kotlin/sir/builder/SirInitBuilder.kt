@@ -23,6 +23,7 @@ class SirInitBuilder {
     val bridges: MutableList<SirBridge> = mutableListOf()
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
+    var isAsync: Boolean = false
     var isFailable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     val parameters: MutableList<SirParameter> = mutableListOf()
     var isConvenience: Boolean = false
@@ -38,6 +39,7 @@ class SirInitBuilder {
             bridges,
             body,
             errorType,
+            isAsync,
             isFailable,
             parameters,
             isConvenience,
@@ -69,6 +71,7 @@ inline fun buildInitCopy(original: SirInit, init: SirInitBuilder.() -> Unit): Si
     copyBuilder.bridges.addAll(original.bridges)
     copyBuilder.body = original.body
     copyBuilder.errorType = original.errorType
+    copyBuilder.isAsync = original.isAsync
     copyBuilder.isFailable = original.isFailable
     copyBuilder.parameters.addAll(original.parameters)
     copyBuilder.isConvenience = original.isConvenience

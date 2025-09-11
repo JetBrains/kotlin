@@ -27,11 +27,12 @@ sealed interface SirWrappedType : SirType
 
 class SirFunctionalType(
     val parameterTypes: List<SirType>,
+    val isAsync: Boolean = false,
     val returnType: SirType,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirWrappedType {
     fun copyAppendingAttributes(vararg attributes: SirAttribute): SirFunctionalType =
-        SirFunctionalType(parameterTypes, returnType, this.attributes + attributes)
+        SirFunctionalType(parameterTypes, isAsync, returnType, this.attributes + attributes)
 }
 
 open class SirNominalType(

@@ -46,6 +46,10 @@ class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator
             default(it, "SirType.never")
         }
 
+        configureFieldInAllLeafBuilders("isAsync") {
+            default(it, "false")
+        }
+
         configureFieldInAllLeafBuilders("bridges") {
             default(it, "emptyList()")
         }
