@@ -150,11 +150,11 @@ private class ExtTestDataFile(
         }
 
         ExtTestDataFileSettings(
-            languageSettings = structure.directives.multiValues(LANGUAGE_DIRECTIVE) {
+            languageSettings = extraLanguageSettings + structure.directives.multiValues(LANGUAGE_DIRECTIVE) {
                 // It is already on by default, but passing it explicitly turns on a special "compatibility mode" in FE,
                 // which is not desirable.
                 it != "+NewInference"
-            } + extraLanguageSettings,
+            },
             optInsForSourceCode = optInsForSourceCode + structure.directives.multiValues(USE_EXPERIMENTAL_DIRECTIVE),
             optInsForCompiler = optInsForCompiler,
             generatedSourcesDir = computeGeneratedSourcesDir(
@@ -189,7 +189,7 @@ private class ExtTestDataFile(
         val defaultDirectives = settings.get<RegisteredDirectives>()
         args += defaultDirectives[FREE_COMPILER_ARGS]
         args += structure.directives[FREE_COMPILER_ARGS]
-        testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
+        testDataFileSettings.languageSettings.mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
             !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
