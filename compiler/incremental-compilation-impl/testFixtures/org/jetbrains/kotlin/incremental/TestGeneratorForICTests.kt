@@ -52,27 +52,8 @@ fun main(args: Array<String>) {
                 )
             )
 
-            testClass<AbstractIncrementalK1JsKlibCompilerRunnerTest> {
-                // IC of sealed interfaces are not supported in JS
-                modelForDirectoryBasedTest("incremental", "pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
-                modelForDirectoryBasedTest("incremental", "classHierarchyAffected", extension = null, recursive = false)
-                model("incremental/js", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
-            }
-
             testClass<AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest> {
                 modelForDirectoryBasedTest("incremental/multiModule", "common", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest> {
-                // IC of sealed interfaces are not supported in JS
-                modelForDirectoryBasedTest("incremental", "pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
-                modelForDirectoryBasedTest("incremental", "classHierarchyAffected", extension = null, recursive = false)
-                modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
-                modelForDirectoryBasedTest("incremental", "scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
             // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
@@ -90,16 +71,9 @@ fun main(args: Array<String>) {
                 modelForDirectoryBasedTest("incremental", "js", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest> {
-                modelForDirectoryBasedTest("incremental/js", "friendsModuleDisabled", extension = null, recursive = false)
-            }
-
             testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
                 modelForDirectoryBasedTest("incremental/mpp", "allPlatforms", extension = null, excludeParentDirs = true)
                 modelForDirectoryBasedTest("incremental/mpp", "jvmOnlyK1", extension = null, excludeParentDirs = true)
-            }
-            testClass<AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest> {
-                modelForDirectoryBasedTest("incremental/mpp", "allPlatforms", extension = null, excludeParentDirs = true)
             }
             //TODO: write a proper k2 multiplatform test runner KT-63183
         }
