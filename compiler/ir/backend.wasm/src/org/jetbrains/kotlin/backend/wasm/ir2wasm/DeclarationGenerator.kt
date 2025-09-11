@@ -256,14 +256,20 @@ class DeclarationGenerator(
             name = name,
             fields = vtableFields,
             superType = superType,
-            isFinal = isFinal
+            isFinal = isFinal,
+            isShared = useSharedObjects,
         )
+    }
+
+    private fun WasmExpressionBuilder.buildRefNullNone(location: SourceLocation) {
+        val noneType = WasmHeapType.Simple.None.maybeShared(useSharedObjects)
+        buildRefNull(noneType, location)
     }
 
     private fun buildSpecialITableInit(metadata: ClassMetadata, builder: WasmExpressionBuilder, location: SourceLocation) {
         val klass = metadata.klass
         if (!klass.hasInterfaceSuperClass()) {
-            builder.buildRefNull(WasmHeapType.Simple.None, location)
+            builder.buildRefNullNone(location)
             return
         }
 
@@ -274,7 +280,7 @@ class DeclarationGenerator(
         val specialInterfacesIfSupported = specialSlotITableTypes.map { iFace -> iFace.takeIf { it.owner in supportedIFaces } }
 
         if (functionalInterfaces.isEmpty() && specialInterfacesIfSupported.all { it == null }) {
-            builder.buildRefNull(WasmHeapType.Simple.None, location)
+            builder.buildRefNullNone(location)
             return
         }
 
@@ -286,7 +292,7 @@ class DeclarationGenerator(
                 }
                 builder.buildStructNew(wasmFileCodegenContext.referenceVTableGcType(supportedSpecialInterface), location)
             } else {
-                builder.buildRefNull(WasmHeapType.Simple.None, location)
+                builder.buildRefNullNone(location)
             }
         }
 
@@ -303,7 +309,7 @@ class DeclarationGenerator(
                     }
                     builder.buildStructNew(wasmFileCodegenContext.referenceVTableGcType(currentInterface), location)
                 } else {
-                    builder.buildRefNull(WasmHeapType.Simple.Any, location)
+                    builder.buildRefNull(WasmHeapType.Simple.Any.maybeShared(useSharedObjects), location)
                 }
             }
             builder.buildInstr(
@@ -313,7 +319,7 @@ class DeclarationGenerator(
                 WasmImmediate.ConstI32(functionsITableSize)
             )
         } else {
-            builder.buildRefNull(WasmHeapType.Simple.None, location)
+            builder.buildRefNullNone(location)
         }
         builder.buildStructNew(wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType, location)
     }
@@ -428,7 +434,7 @@ class DeclarationGenerator(
             if (superType != null) {
                 buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(superType), location)
             } else {
-                buildRefNull(WasmHeapType.Simple.None, location)
+                buildRefNullNone(location)
             }
 
             buildConstI32Symbol(packageNameStringLiteralId, location)
@@ -528,8 +534,9 @@ class DeclarationGenerator(
                 WasmStructFieldDeclaration(
                     name = "field",
                     type = wasmModuleTypeTransformer.transformFieldType(wasmArrayAnnotation.type, false),
-                    isMutable = wasmArrayAnnotation.isMutable
-                )
+                    isMutable = wasmArrayAnnotation.isMutable,
+                ),
+                isShared = useSharedObjects
             )
 
             wasmFileCodegenContext.defineGcType(symbol, wasmArrayDeclaration)
@@ -571,7 +578,8 @@ class DeclarationGenerator(
                 name = nameStr,
                 fields = fields,
                 superType = superClass?.let { wasmFileCodegenContext.referenceGcType(superClass.klass.symbol) },
-                isFinal = declaration.modality == Modality.FINAL
+                isFinal = declaration.modality == Modality.FINAL,
+                isShared = useSharedObjects
             )
             wasmFileCodegenContext.defineGcType(symbol, structType)
         }
@@ -585,7 +593,7 @@ class DeclarationGenerator(
         val supportedInterfaces = classMetadata.interfaces
 
         if (supportedInterfaces.isEmpty()) {
-            builder.buildRefNull(WasmHeapType.Simple.None, location)
+            builder.buildRefNullNone(location)
             return
         }
 
@@ -652,10 +660,8 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefType -> g.buildRefNull(type.heapType, location)
             is WasmRefNullrefType -> g.buildRefNull(WasmHeapType.Simple.None, location)
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
-            is WasmRefNullSharedExternrefType -> g.buildRefNull(WasmHeapType.Simple.SharedNoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
-            is WasmSharedExternRef -> g.buildRefNull(WasmHeapType.Simple.SharedExtern, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }
@@ -684,12 +690,10 @@ fun generateConstExpression(
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound.isExternal
-            val bottomType = if (isExternal) {
-                if (useSharedObjects && expression.type.getClass()?.name?.identifier == "JsReference")
-                    WasmRefNullSharedExternrefType
-                else
-                    WasmRefNullExternrefType
-            } else WasmRefNullrefType
+            val bottomType = if (isExternal)
+                WasmRefNullExternrefType.maybeShared(useSharedObjects && expression.type.getClass()?.name?.identifier == "JsReference")
+            else
+                WasmRefNullrefType.maybeShared(useSharedObjects)
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (expression.value as Boolean) 1 else 0, location)

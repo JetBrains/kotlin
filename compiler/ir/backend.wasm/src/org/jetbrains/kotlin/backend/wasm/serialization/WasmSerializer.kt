@@ -209,14 +209,14 @@ class WasmSerializer(outputStream: OutputStream) {
         }
 
     private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {
-        serializeNamedModuleField(structDecl, listOf(structDecl.superType == null, structDecl.isFinal)) {
+        serializeNamedModuleField(structDecl, listOf(structDecl.superType == null, structDecl.isFinal, structDecl.isShared())) {
             serializeList(structDecl.fields, ::serializeWasmStructFieldDeclaration)
             structDecl.superType?.let { serializeWasmSymbolReadOnly(it, ::serializeWasmTypeDeclaration) }
         }
     }
 
     private fun serializeWasmArrayDeclaration(arrDecl: WasmArrayDeclaration): Unit =
-        serializeNamedModuleField(arrDecl, listOf(arrDecl.field.isMutable)) {
+        serializeNamedModuleField(arrDecl, listOf(arrDecl.field.isMutable, arrDecl.isShared())) {
             serializeString(arrDecl.field.name)
             serializeWasmType(arrDecl.field.type)
         }
@@ -247,7 +247,6 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmEqRef -> setTag(TypeTags.EQREF)
             WasmExnRefType -> setTag(TypeTags.EXTERN_REF_TYPE)
             WasmExternRef -> setTag(TypeTags.EXTERN_REF)
-            WasmSharedExternRef -> setTag(TypeTags.SHARED_EXTERN_REF)
             WasmF32 -> setTag(TypeTags.F32)
             WasmF64 -> setTag(TypeTags.F64)
             WasmFuncRef -> setTag(TypeTags.FUNC_REF)
@@ -258,7 +257,6 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmI8 -> setTag(TypeTags.I8)
             WasmNullExnRefType -> setTag(TypeTags.NULL_EXTERN_REF_TYPE)
             WasmRefNullExternrefType -> setTag(TypeTags.REF_NULL_EXTERN_REF_TYPE)
-            WasmRefNullSharedExternrefType -> setTag(TypeTags.REF_NULL_SHARED_EXTERN_REF_TYPE)
             WasmRefNullrefType -> setTag(TypeTags.REF_NULL_REF_TYPE)
             WasmStructRef -> setTag(TypeTags.STRUCT_REF)
             WasmUnreachableType -> setTag(TypeTags.UNREACHABLE_TYPE)
@@ -268,17 +266,23 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeWasmHeapType(type: WasmHeapType) =
         when (type) {
-            WasmHeapType.Simple.Any -> setTag(HeapTypeTags.ANY)
-            WasmHeapType.Simple.Eq -> setTag(HeapTypeTags.EQ)
-            WasmHeapType.Simple.Extern -> setTag(HeapTypeTags.EXTERN)
-            WasmHeapType.Simple.SharedExtern -> setTag(HeapTypeTags.SHARED_EXTERN)
-            WasmHeapType.Simple.Func -> setTag(HeapTypeTags.FUNC)
-            WasmHeapType.Simple.NoExtern -> setTag(HeapTypeTags.NO_EXTERN)
-            WasmHeapType.Simple.SharedNoExtern -> setTag(HeapTypeTags.SHARED_NO_EXTERN)
-            WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
-            WasmHeapType.Simple.NoFunc -> setTag(HeapTypeTags.NO_FUNC)
-            WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
+            is WasmHeapType.Simple -> withTag(HeapTypeTags.SIMPLE) { serializeWasmSimpleHeapType(type) }
             is WasmHeapType.Type -> withTag(HeapTypeTags.HEAP_TYPE) { serializeWasmSymbolReadOnly(type.type) { serializeWasmTypeDeclaration(it) } }
+            is WasmHeapType.SharedSimple -> withTag(HeapTypeTags.SHARED) { serializeWasmSimpleHeapType(type.type) }
+        }
+
+    private fun serializeWasmSimpleHeapType(type: WasmHeapType.Simple) =
+        when (type) {
+            WasmHeapType.Simple.Any -> setTag(HeapSimpleTypeTags.ANY)
+            WasmHeapType.Simple.Eq -> setTag(HeapSimpleTypeTags.EQ)
+            WasmHeapType.Simple.Extern -> setTag(HeapSimpleTypeTags.EXTERN)
+            WasmHeapType.Simple.Func -> setTag(HeapSimpleTypeTags.FUNC)
+            WasmHeapType.Simple.NoExtern -> setTag(HeapSimpleTypeTags.NO_EXTERN)
+            WasmHeapType.Simple.None -> setTag(HeapSimpleTypeTags.NONE)
+            WasmHeapType.Simple.NoFunc -> setTag(HeapSimpleTypeTags.NO_FUNC)
+            WasmHeapType.Simple.Struct -> setTag(HeapSimpleTypeTags.STRUCT)
+            WasmHeapType.Simple.Array -> setTag(HeapSimpleTypeTags.ARRAY)
+            WasmHeapType.Simple.I31 -> setTag(HeapSimpleTypeTags.I31)
         }
 
     private fun serializeWasmLocal(local: WasmLocal) {

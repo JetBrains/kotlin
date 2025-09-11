@@ -128,11 +128,13 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val fields = deserializeList(::deserializeStructFieldDeclaration)
             val superType = if (flags.consume()) null else deserializeSymbol(::deserializeTypeDeclaration)
             val isFinal = flags.consume()
+            val isShared = flags.consume()
             WasmStructDeclaration(
                 name,
                 fields,
                 superType,
-                isFinal
+                isFinal,
+                isShared,
             )
         }
 
@@ -141,13 +143,15 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             val fieldName = deserializeString()
             val fieldType = deserializeType()
             val isMutable = flags.consume()
+            val isShared = flags.consume()
             WasmArrayDeclaration(
-                name,
-                WasmStructFieldDeclaration(
-                    fieldName,
-                    fieldType,
-                    isMutable
-                )
+                name = name,
+                field = WasmStructFieldDeclaration(
+                    name = fieldName,
+                    type = fieldType,
+                    isMutable = isMutable
+                ),
+                isShared = isShared
             )
         }
 
@@ -181,7 +185,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.EQREF -> WasmEqRef
                 TypeTags.EXTERN_REF_TYPE -> WasmExnRefType
                 TypeTags.EXTERN_REF -> WasmExternRef
-                TypeTags.SHARED_EXTERN_REF -> WasmSharedExternRef
                 TypeTags.F32 -> WasmF32
                 TypeTags.F64 -> WasmF64
                 TypeTags.FUNC_REF -> WasmFuncRef
@@ -192,7 +195,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeTags.I8 -> WasmI8
                 TypeTags.NULL_EXTERN_REF_TYPE -> WasmNullExnRefType
                 TypeTags.REF_NULL_EXTERN_REF_TYPE -> WasmRefNullExternrefType
-                TypeTags.REF_NULL_SHARED_EXTERN_REF_TYPE -> WasmRefNullSharedExternrefType
                 TypeTags.REF_NULL_REF_TYPE -> WasmRefNullrefType
                 TypeTags.STRUCT_REF -> WasmStructRef
                 TypeTags.UNREACHABLE_TYPE -> WasmUnreachableType
@@ -202,20 +204,29 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             }
         }
 
-    private fun deserializeHeapType() =
+    private fun deserializeHeapType() : WasmHeapType =
         withTag { tag ->
             when (tag) {
-                HeapTypeTags.ANY -> WasmHeapType.Simple.Any
-                HeapTypeTags.EQ -> WasmHeapType.Simple.Eq
-                HeapTypeTags.EXTERN -> WasmHeapType.Simple.Extern
-                HeapTypeTags.SHARED_EXTERN -> WasmHeapType.Simple.SharedExtern
-                HeapTypeTags.FUNC -> WasmHeapType.Simple.Func
-                HeapTypeTags.NO_EXTERN -> WasmHeapType.Simple.NoExtern
-                HeapTypeTags.SHARED_NO_EXTERN -> WasmHeapType.Simple.SharedNoExtern
-                HeapTypeTags.NONE -> WasmHeapType.Simple.None
-                HeapTypeTags.NO_FUNC -> WasmHeapType.Simple.NoFunc
-                HeapTypeTags.STRUCT -> WasmHeapType.Simple.Struct
+                HeapTypeTags.SIMPLE -> deserializeSimpleHeapType()
+                HeapTypeTags.SHARED -> WasmHeapType.SharedSimple(deserializeSimpleHeapType())
                 HeapTypeTags.HEAP_TYPE -> WasmHeapType.Type(deserializeSymbol(::deserializeTypeDeclaration))
+                else -> tagError(tag)
+            }
+        }
+
+    private fun deserializeSimpleHeapType() : WasmHeapType.Simple =
+        withTag { tag ->
+            when (tag) {
+                HeapSimpleTypeTags.ANY -> WasmHeapType.Simple.Any
+                HeapSimpleTypeTags.EQ -> WasmHeapType.Simple.Eq
+                HeapSimpleTypeTags.EXTERN -> WasmHeapType.Simple.Extern
+                HeapSimpleTypeTags.FUNC -> WasmHeapType.Simple.Func
+                HeapSimpleTypeTags.NO_EXTERN -> WasmHeapType.Simple.NoExtern
+                HeapSimpleTypeTags.NONE -> WasmHeapType.Simple.None
+                HeapSimpleTypeTags.NO_FUNC -> WasmHeapType.Simple.NoFunc
+                HeapSimpleTypeTags.STRUCT -> WasmHeapType.Simple.Struct
+                HeapSimpleTypeTags.I31 -> WasmHeapType.Simple.I31
+                HeapSimpleTypeTags.ARRAY -> WasmHeapType.Simple.Array
                 else -> tagError(tag)
             }
         }

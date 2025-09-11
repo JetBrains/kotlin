@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.wasm.ir.*
 import java.io.BufferedInputStream
 import java.nio.ByteBuffer
 
-
+// TODO support shared heap types
 class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
 

@@ -195,10 +195,9 @@ fun compileWasm(
     val sourceMapGeneratorForText = runIf(generateWat && generateSourceMaps) {
         SourceMapGenerator("$baseFileName.wat", configuration)
     }
-    val useSharedObjects = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
     val wat = if (generateWat) {
-        val watGenerator = WasmIrToText(sourceMapGeneratorForText, emitSharedObjects = useSharedObjects)
+        val watGenerator = WasmIrToText(sourceMapGeneratorForText)
         watGenerator.appendWasmModule(linkedModule)
         watGenerator.toString()
     } else {

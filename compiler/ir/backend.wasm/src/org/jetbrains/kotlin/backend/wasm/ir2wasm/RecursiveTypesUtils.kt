@@ -66,15 +66,21 @@ private fun typeFingerprint(type: WasmType, currentHash: Hash128Bits, visited: M
         is WasmRefNullType -> type.getHeapType()
         else -> return currentHash.combineWith(Hash128Bits(type.code.toULong()))
     }
+    return typeFingerprint(heapType, currentHash, visited)
+}
+
+private fun typeFingerprint(heapType: WasmHeapType, currentHash: Hash128Bits, visited: MutableSet<WasmTypeDeclaration>): Hash128Bits {
     return when (heapType) {
         is WasmHeapType.Type -> wasmDeclarationFingerprint(heapType.type.owner, currentHash, visited)
         is WasmHeapType.Simple -> currentHash.combineWith(Hash128Bits(heapType.code.toULong()))
+        is WasmHeapType.SharedSimple -> typeFingerprint(heapType.type, currentHash.combineWith(sharedHash), visited)
     }
 }
 
 private val structHash = Hash128Bits(1U, 1U)
 private val functionHash = Hash128Bits(2U, 2U)
 private val arrayHash = Hash128Bits(3U, 3U)
+private val sharedHash = Hash128Bits(4U, 4U)
 
 private fun wasmDeclarationFingerprint(
     declaration: WasmTypeDeclaration,
@@ -126,7 +132,7 @@ private val indexes = arrayOf(
     WasmArrayRef,
 )
 
-internal fun encodeIndex(index: ULong): List<WasmStructFieldDeclaration> {
+internal fun encodeIndex(index: ULong, useSharedObjects: Boolean): List<WasmStructFieldDeclaration> {
     var current = index
     val result = mutableListOf<WasmStructFieldDeclaration>()
     val indexesSize = indexes.size.toUInt()
@@ -134,16 +140,19 @@ internal fun encodeIndex(index: ULong): List<WasmStructFieldDeclaration> {
     var wasI31 = false
 
     while (current != 0UL) {
-        val fieldType = indexes[(current % indexesSize).toInt()]
-        result.add(WasmStructFieldDeclaration("", fieldType, false))
+        var fieldType = indexes[(current % indexesSize).toInt()]
         wasI31 = wasI31 || fieldType == WasmI31Ref
+        if (fieldType is WasmReferenceType) {
+            fieldType = fieldType.maybeShared(useSharedObjects)
+        }
+        result.add(WasmStructFieldDeclaration("", fieldType, false))
 
         current /= indexesSize
     }
 
     //i31 type is not used by kotlin/wasm, so mixin index would never clash with regular signature
     if (!wasI31) {
-        result.add(WasmStructFieldDeclaration("", WasmI31Ref, false))
+        result.add(WasmStructFieldDeclaration("", WasmI31Ref.maybeShared(useSharedObjects), false))
     }
 
     return result
