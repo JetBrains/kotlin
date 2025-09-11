@@ -12525,9 +12525,6 @@ final fun <#A: kotlin/Any?> kotlin.native.internal/createUninitializedInstance()
 final fun <#A: kotlin/Any?> kotlin.native.internal/getContinuation(): kotlin.coroutines/Continuation<#A> // kotlin.native.internal/getContinuation|getContinuation(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
-final fun <#A: kotlin/Any?> kotlin.native.internal/isSubtype(kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/isSubtype|isSubtype(kotlin.native.internal.NativePtr){0§<kotlin.Any?>}[0]
-
-// Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.native.ref/createCleaner(#A, kotlin/Function1<#A, kotlin/Unit>): kotlin.native.ref/Cleaner // kotlin.native.ref/createCleaner|createCleaner(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
@@ -12595,12 +12592,6 @@ final fun <#A: kotlin/Enum<#A>> kotlin.native.internal/enumValueOfIntrinsic(kotl
 
 // Targets: [native]
 final fun <#A: kotlin/Enum<#A>> kotlin.native.internal/enumValuesIntrinsic(): kotlin/Array<#A> // kotlin.native.internal/enumValuesIntrinsic|enumValuesIntrinsic(){0§<kotlin.Enum<0:0>>}[0]
-
-// Targets: [native]
-final fun <#A: kotlin/Enum<#A>> kotlin.native.internal/valueOfForEnum(kotlin/String, kotlin/Array<#A>): #A // kotlin.native.internal/valueOfForEnum|valueOfForEnum(kotlin.String;kotlin.Array<0:0>){0§<kotlin.Enum<0:0>>}[0]
-
-// Targets: [native]
-final fun <#A: kotlin/Enum<#A>> kotlin.native.internal/valuesForEnum(kotlin/Array<#A>): kotlin/Array<#A> // kotlin.native.internal/valuesForEnum|valuesForEnum(kotlin.Array<0:0>){0§<kotlin.Enum<0:0>>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Float> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/FloatVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.Float>}[0]
@@ -12750,9 +12741,6 @@ final fun kotlin.native.internal.test/testLauncherEntryPoint(kotlin/Array<kotlin
 final fun kotlin.native.internal.test/worker(kotlin/Array<kotlin/String>) // kotlin.native.internal.test/worker|worker(kotlin.Array<kotlin.String>){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/KonanObjectToUtf8Array(kotlin/Any?): kotlin/ByteArray // kotlin.native.internal/KonanObjectToUtf8Array|KonanObjectToUtf8Array(kotlin.Any?){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/Kotlin_boxUnit(): kotlin/Unit? // kotlin.native.internal/Kotlin_boxUnit|Kotlin_boxUnit(){}[0]
 
 // Targets: [native]
@@ -12765,25 +12753,7 @@ final fun kotlin.native.internal/Kotlin_hashCode(kotlin/Any): kotlin/Int // kotl
 final fun kotlin.native.internal/Kotlin_toString(kotlin/Any): kotlin/String // kotlin.native.internal/Kotlin_toString|Kotlin_toString(kotlin.Any){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/OnUnhandledException(kotlin/Throwable) // kotlin.native.internal/OnUnhandledException|OnUnhandledException(kotlin.Throwable){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowClassCastException(kotlin/Any, kotlin.native.internal/NativePtr): kotlin/Nothing // kotlin.native.internal/ThrowClassCastException|ThrowClassCastException(kotlin.Any;kotlin.native.internal.NativePtr){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowInvalidReceiverTypeException(kotlin.reflect/KClass<*>): kotlin/Nothing // kotlin.native.internal/ThrowInvalidReceiverTypeException|ThrowInvalidReceiverTypeException(kotlin.reflect.KClass<*>){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowKotlinNothingValueException(): kotlin/Nothing // kotlin.native.internal/ThrowKotlinNothingValueException|ThrowKotlinNothingValueException(){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowNoWhenBranchMatchedException(): kotlin/Nothing // kotlin.native.internal/ThrowNoWhenBranchMatchedException|ThrowNoWhenBranchMatchedException(){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/ThrowNullPointerException(): kotlin/Nothing // kotlin.native.internal/ThrowNullPointerException|ThrowNullPointerException(){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/ThrowTypeCastException(kotlin/Any, kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowTypeCastException|ThrowTypeCastException(kotlin.Any;kotlin.String){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal/areEqualByValue(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/areEqualByValue|areEqualByValue(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
@@ -12849,15 +12819,6 @@ final fun kotlin.native.internal/boxULong(kotlin/ULong): kotlin/ULong? // kotlin
 final fun kotlin.native.internal/boxUShort(kotlin/UShort): kotlin/UShort? // kotlin.native.internal/boxUShort|boxUShort(kotlin.UShort){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/checkProgressionStep(kotlin/Int): kotlin/Int // kotlin.native.internal/checkProgressionStep|checkProgressionStep(kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/checkProgressionStep(kotlin/Long): kotlin/Long // kotlin.native.internal/checkProgressionStep|checkProgressionStep(kotlin.Long){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/createEmptyString(): kotlin/String // kotlin.native.internal/createEmptyString|createEmptyString(){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/getCachedBooleanBox(kotlin/Boolean): kotlin/Boolean? // kotlin.native.internal/getCachedBooleanBox|getCachedBooleanBox(kotlin.Boolean){}[0]
 
 // Targets: [native]
@@ -12882,22 +12843,10 @@ final fun kotlin.native.internal/getCoroutineSuspended(): kotlin/Any // kotlin.n
 final fun kotlin.native.internal/getNativeNullPtr(): kotlin.native.internal/NativePtr // kotlin.native.internal/getNativeNullPtr|getNativeNullPtr(){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/getProgressionLast(kotlin/Char, kotlin/Char, kotlin/Int): kotlin/Char // kotlin.native.internal/getProgressionLast|getProgressionLast(kotlin.Char;kotlin.Char;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/getProgressionLast(kotlin/Int, kotlin/Int, kotlin/Int): kotlin/Int // kotlin.native.internal/getProgressionLast|getProgressionLast(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/getProgressionLast(kotlin/Long, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.native.internal/getProgressionLast|getProgressionLast(kotlin.Long;kotlin.Long;kotlin.Long){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/ieee754Equals(kotlin/Double, kotlin/Double): kotlin/Boolean // kotlin.native.internal/ieee754Equals|ieee754Equals(kotlin.Double;kotlin.Double){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal/ieee754Equals(kotlin/Float, kotlin/Float): kotlin/Boolean // kotlin.native.internal/ieee754Equals|ieee754Equals(kotlin.Float;kotlin.Float){}[0]
-
-// Targets: [native]
-final fun kotlin.native.internal/immutableBlobOfImpl(kotlin/String): kotlin.native/ImmutableBlob // kotlin.native.internal/immutableBlobOfImpl|immutableBlobOfImpl(kotlin.String){}[0]
 
 // Targets: [native]
 final fun kotlin.native.internal/inBooleanBoxCache(kotlin/Boolean): kotlin/Boolean // kotlin.native.internal/inBooleanBoxCache|inBooleanBoxCache(kotlin.Boolean){}[0]
