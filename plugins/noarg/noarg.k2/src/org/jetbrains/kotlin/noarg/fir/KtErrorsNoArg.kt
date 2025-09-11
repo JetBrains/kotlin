@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 
 object KtErrorsNoArg : KtDiagnosticsContainer() {
-    val NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS by warning0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val NOARG_ON_INNER_CLASS_ERROR by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val NOARG_ON_LOCAL_CLASS_ERROR by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
