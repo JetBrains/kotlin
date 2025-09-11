@@ -56,17 +56,3 @@ internal fun throwNoBranchMatchedException(): Nothing {
 internal fun rangeCheck(index: Int, size: Int) {
   if (index < 0 || index >= size) throw IndexOutOfBoundsException()
 }
-
-// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUninitializedPropertyAccessException` instead
-@UsedFromCompilerGeneratedCode
-@PublishedApi
-internal fun throwUninitializedPropertyAccessException(name: String): Nothing {
-    kotlin.internal.throwUninitializedPropertyAccessException(name)
-}
-
-// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUnsupportedOperationException` instead
-@UsedFromCompilerGeneratedCode
-@PublishedApi
-internal fun throwUnsupportedOperationException(message: String): Nothing {
-    kotlin.internal.throwUnsupportedOperationException(message)
-}
