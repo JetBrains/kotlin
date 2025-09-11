@@ -10,6 +10,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
@@ -24,8 +25,11 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportImpl
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -44,6 +48,68 @@ import kotlin.test.fail
 @MppGradlePluginTests
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
+    @GradleTest
+    fun `import of modular dependencies in platform source sets - passes only platform artifacts to IDE and doesn't leak artifacts to source sets where the dependency is not declared`(gradleVersion: GradleVersion) {
+        val targets: KotlinMultiplatformExtension.() -> Unit = {
+            jvm()
+            linuxX64()
+            linuxArm64()
+        }
+        val producer = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    targets()
+                    sourceSets.commonMain.get().compileSource("fun common() {}")
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(
+            group = "producer",
+        ))
+
+        project("empty", gradleVersion) {
+            addPublishedProjectToRepositories(producer)
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    targets()
+                    listOf(
+                        sourceSets.jvmMain.get(),
+                        sourceSets.linuxArm64Main.get(),
+                        sourceSets.linuxX64Main.get(),
+                    ).forEach {
+                        it.dependencies {
+                            implementation(producer.rootCoordinate)
+                        }
+                    }
+                }
+            }
+        }.resolveIdeDependencies {
+            it["commonMain"].assertMatches(
+                kotlinStdlibDependencies,
+            )
+            it["linuxMain"].assertMatches(
+                kotlinNativeDistributionDependencies,
+                anyDependsOnDependency(),
+            )
+            it["jvmMain"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                binaryCoordinates("producer:empty-jvm:1.0"),
+                anyDependsOnDependency(),
+            )
+            it["linuxArm64Main"].assertMatches(
+                kotlinNativeDistributionDependencies,
+                binaryCoordinates("producer:empty-linuxarm64:1.0"),
+                anyDependsOnDependency(),
+            )
+        }
+    }
+
     @GradleTest
     fun testCommonizedPlatformDependencyResolution(gradleVersion: GradleVersion) {
         with(project("commonizeHierarchically", gradleVersion)) {
