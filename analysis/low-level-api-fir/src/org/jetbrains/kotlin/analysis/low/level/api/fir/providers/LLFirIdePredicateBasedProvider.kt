@@ -60,13 +60,13 @@ internal class LLFirIdePredicateBasedProvider(
 
         return annotatedDeclarations
             .asSequence()
-            .mapNotNull { it.findFirDeclaration() }
+            .mapNotNull { it.findFirDeclarationForLookupPredicate() }
             .filter { matches(predicate, it) }
             .map { it.symbol }
             .toList()
     }
 
-    private fun KtElement.findFirDeclaration(): FirDeclaration? {
+    private fun KtElement.findFirDeclarationForLookupPredicate(): FirDeclaration? {
         if (this !is KtDeclaration) return null
 
         if (this !is KtClassLikeDeclaration &&
@@ -74,6 +74,9 @@ internal class LLFirIdePredicateBasedProvider(
             this !is KtConstructor<*> &&
             this !is KtProperty
         ) return null
+
+        // LookupPredicates should never match local declarations, so we filter them early
+        if (KtPsiUtil.isLocal(this)) return null
 
         val moduleForFile = projectStructureProvider.getModule(this, session.ktModule)
         val resolutionFacadeForFile = moduleForFile.getResolutionFacade(project)
