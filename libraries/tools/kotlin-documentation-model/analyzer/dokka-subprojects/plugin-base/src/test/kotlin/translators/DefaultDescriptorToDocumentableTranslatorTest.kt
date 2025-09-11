@@ -828,32 +828,32 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
 
                 assertSeeTag(
                     tag = documentationTags[1],
-                    expectedName = "kotlin.collections.List",
+                    expectedName = "List",
                     expectedDescription = "stdlib list"
                 )
                 assertSeeTag(
                     tag = documentationTags[2],
-                    expectedName = "kotlin.collections.Map",
+                    expectedName = "Map",
                     expectedDescription = "stdlib map"
                 )
                 assertSeeTag(
                     tag = documentationTags[3],
-                    expectedName = "com.example.util.CollectionExtensions.emptyMap",
+                    expectedName = "emptyMap",
                     expectedDescription = "static emptyMap"
                 )
                 assertSeeTag(
                     tag = documentationTags[4],
-                    expectedName = "com.example.util.CollectionExtensions.emptyList",
+                    expectedName = "emptyList",
                     expectedDescription = "static emptyList"
                 )
                 assertSeeTag(
                     tag = documentationTags[5],
-                    expectedName = "com.example.util.CollectionExtensions.emptySet",
+                    expectedName = "emptySet",
                     expectedDescription = "static emptySet"
                 )
                 assertSeeTag(
                     tag = documentationTags[6],
-                    expectedName = "com.example.util.CollectionExtensions.property",
+                    expectedName = "property",
                     expectedDescription = "static property"
                 )
             }

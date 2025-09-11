@@ -7,7 +7,6 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
-import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser.Companion.fqDeclarationName
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.Suppress
@@ -49,19 +48,17 @@ internal fun parseFromKDocTag(
                     )
                     KDocKnownTag.AUTHOR -> Author(parseStringToDocNode(tag.getContent(), externalDRIProvider))
                     KDocKnownTag.THROWS -> {
-                        val dri = pointedLink(tag)
                         Throws(
                             parseStringToDocNode(tag.getContent(), externalDRIProvider),
-                            dri?.fqDeclarationName() ?: tag.getSubjectName().orEmpty(),
-                            dri,
+                            tag.getSubjectName().orEmpty(),
+                            pointedLink(tag),
                         )
                     }
                     KDocKnownTag.EXCEPTION -> {
-                        val dri = pointedLink(tag)
                         Throws(
                             parseStringToDocNode(tag.getContent(), externalDRIProvider),
-                            dri?.fqDeclarationName() ?: tag.getSubjectName().orEmpty(),
-                            dri
+                            tag.getSubjectName().orEmpty(),
+                            pointedLink(tag)
                         )
                     }
                     KDocKnownTag.PARAM -> Param(
@@ -71,11 +68,10 @@ internal fun parseFromKDocTag(
                     KDocKnownTag.RECEIVER -> Receiver(parseStringToDocNode(tag.getContent(), externalDRIProvider))
                     KDocKnownTag.RETURN -> Return(parseStringToDocNode(tag.getContent(), externalDRIProvider))
                     KDocKnownTag.SEE -> {
-                        val dri = pointedLink(tag)
                         See(
                             parseStringToDocNode(tag.getContent(), externalDRIProvider),
-                            dri?.fqDeclarationName() ?: tag.getSubjectName().orEmpty(),
-                            dri,
+                            tag.getSubjectName().orEmpty(),
+                            pointedLink(tag),
                         )
                     }
                     KDocKnownTag.SINCE -> Since(parseStringToDocNode(tag.getContent(), externalDRIProvider))
