@@ -6,6 +6,7 @@ kotlin {
     js {
         useCommonJs()
         browser()
+        binaries.library()
     }
 
     sourceSets {

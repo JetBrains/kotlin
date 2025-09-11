@@ -5,10 +5,12 @@
 
 package com.example
 
+@JsExport
 fun answer(): Int {
     return best()
 }
 
+@JsExport
 fun sheldon(): Int {
     return simpleBest()
 }

@@ -31,17 +31,8 @@ abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
             into(destinationDir)
             duplicatesStrategy = this@DefaultIncrementalSyncTask.duplicatesStrategy
             // Rewrite relative paths in sourcemaps in the target directory
+            remapJavaScriptSourceMapSourcePaths(destinationDir)
             eachFile {
-                if (it.name.endsWith(".js.map")) {
-                    it.filter(
-                        mapOf(
-                            RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
-                            RewriteSourceMapFilterReader::targetSourceRoot.name to destinationDir
-                        ),
-                        RewriteSourceMapFilterReader::class.java
-                    )
-                }
-
                 if (it.name.endsWith(".wasm.map")) {
                     it.filter(
                         mapOf(
