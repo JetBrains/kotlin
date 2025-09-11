@@ -167,7 +167,6 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
         }
-        add("-XXLanguage:-${LanguageFeature.SkipStandaloneScriptsInSourceRoots.name}")
     }
 
     override fun doCompile(
