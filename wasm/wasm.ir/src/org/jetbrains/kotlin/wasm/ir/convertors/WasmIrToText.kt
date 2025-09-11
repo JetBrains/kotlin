@@ -274,13 +274,6 @@ class WasmIrToText(
         }
     }
 
-    fun appendRefType(type: WasmRefType) {
-        when (type.heapType) {
-            is WasmHeapType.Simple -> appendElement(type.heapType.name + "ref")
-            is WasmHeapType.Type -> sameLineList("ref") { appendHeapType(type.heapType) }
-        }
-    }
-
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
         typeList.forEach { type ->
             when (type) {
@@ -551,23 +544,16 @@ class WasmIrToText(
 
     fun appendHeapType(type: WasmHeapType) {
         when (type) {
+            is WasmHeapType.SharedSimple ->
+                shared { appendElement(type.type.name) }
+
             is WasmHeapType.Simple ->
-                maybeShared(emitSharedObjects && type.isShareable()) { appendElement(type.name) }
+                appendElement(type.name)
 
             is WasmHeapType.Type -> {
 //                appendElement("opt")
                 appendModuleFieldReference(type.type.owner)
             }
-        }
-    }
-
-    fun appendReferencedType(type: WasmType) {
-        when (type) {
-            is WasmFuncRef -> appendElement("func")
-            is WasmAnyRef -> appendElement("any")
-            is WasmExternRef -> appendElement("extern")
-            is WasmSharedExternRef -> appendElement("(shared extern)")
-            else -> TODO()
         }
     }
 
@@ -586,11 +572,7 @@ class WasmIrToText(
             WasmUnreachableType -> {
             }
 
-            else ->
-                if (type.isShareableRefType())
-                    maybeShared(emitSharedObjects) { appendElement(type.name) }
-                else
-                    appendElement(type.name)
+            else -> appendElement(type.name)
         }
     }
 

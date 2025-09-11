@@ -37,11 +37,15 @@ internal object TypeTags {
     const val STRUCT_REF = 17u
     const val UNREACHABLE_TYPE = 18u
     const val V12 = 19u
-    const val SHARED_EXTERN_REF = 20u
-    const val REF_NULL_SHARED_EXTERN_REF_TYPE = 21u
 }
 
 internal object HeapTypeTags {
+    const val SIMPLE = 0u
+    const val SHARED = 1u
+    const val HEAP_TYPE = 2u
+}
+
+internal object HeapSimpleTypeTags {
     const val ANY = 0u
     const val EQ = 1u
     const val EXTERN = 2u
@@ -50,9 +54,7 @@ internal object HeapTypeTags {
     const val NONE = 5u
     const val NO_FUNC = 5u
     const val STRUCT = 6u
-    const val HEAP_TYPE = 7u
-    const val SHARED_EXTERN = 8u
-    const val SHARED_NO_EXTERN = 9u
+    const val I31 = 7u
 }
 
 internal object InstructionTags {

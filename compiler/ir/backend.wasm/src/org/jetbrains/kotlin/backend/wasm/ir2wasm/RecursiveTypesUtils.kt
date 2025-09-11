@@ -73,15 +73,21 @@ private fun typeFingerprint(type: WasmType, currentHash: Hash128Bits, visited: M
         is WasmRefNullType -> type.getHeapType()
         else -> return currentHash.combineWith(Hash128Bits(type.code.toULong()))
     }
+    return typeFingerprint(heapType, currentHash, visited)
+}
+
+private fun typeFingerprint(heapType: WasmHeapType, currentHash: Hash128Bits, visited: MutableSet<WasmTypeDeclaration>): Hash128Bits {
     return when (heapType) {
         is WasmHeapType.Type -> wasmDeclarationFingerprint(heapType.type.owner, currentHash, visited)
         is WasmHeapType.Simple -> currentHash.combineWith(Hash128Bits(heapType.code.toULong()))
+        is WasmHeapType.SharedSimple -> typeFingerprint(heapType.type, currentHash.combineWith(sharedHash), visited)
     }
 }
 
 private val structHash = Hash128Bits(1U, 1U)
 private val functionHash = Hash128Bits(2U, 2U)
 private val arrayHash = Hash128Bits(3U, 3U)
+private val sharedHash = Hash128Bits(4U, 4U)
 
 private fun wasmDeclarationFingerprint(
     declaration: WasmTypeDeclaration,
@@ -128,19 +134,23 @@ private val indexes = arrayOf(
     WasmStructRef,
 )
 
-internal fun encodeIndex(index: Int): List<WasmStructFieldDeclaration> {
+internal fun encodeIndex(index: Int, useSharedObjects: Boolean): List<WasmStructFieldDeclaration> {
     var current = index
     val result = mutableListOf<WasmStructFieldDeclaration>()
     //i31 type is not used by kotlin/wasm, so mixin index would never clash with regular signature
-    result.add(WasmStructFieldDeclaration("", WasmI31Ref, false))
+    result.add(WasmStructFieldDeclaration("", WasmI31Ref.maybeShared(useSharedObjects), false))
     while (current != 0) {
-        result.add(WasmStructFieldDeclaration("", indexes[current % 10], false))
+        var indexType = indexes[current % 10]
+        if (indexType is WasmReferenceType) {
+            indexType = indexType.maybeShared(useSharedObjects)
+        }
+        result.add(WasmStructFieldDeclaration("", indexType, false))
         current /= 10
     }
     return result
 }
 
-internal fun addMixInGroup(group: RecursiveTypeGroup, mixInIndexesForGroups: MutableMap<Hash128Bits, Int>): RecursiveTypeGroup {
+internal fun addMixInGroup(group: RecursiveTypeGroup, mixInIndexesForGroups: MutableMap<Hash128Bits, Int>, useSharedObjects: Boolean): RecursiveTypeGroup {
     val firstDeclaration = group.firstOrNull() ?: return group
 
     val fingerprint = wasmDeclarationFingerprint(firstDeclaration, Hash128Bits(), visited = mutableSetOf())
@@ -149,7 +159,7 @@ internal fun addMixInGroup(group: RecursiveTypeGroup, mixInIndexesForGroups: Mut
     if (groupIndex != null) {
         val nextIndex = groupIndex + 1
         mixInIndexesForGroups[fingerprint] = nextIndex
-        val mixIn = WasmStructDeclaration("mixin_$nextIndex", encodeIndex(nextIndex), null, true)
+        val mixIn = WasmStructDeclaration("mixin_$nextIndex", encodeIndex(nextIndex, useSharedObjects), null, true, useSharedObjects)
         return group + mixIn
     } else {
         mixInIndexesForGroups[fingerprint] = 0
