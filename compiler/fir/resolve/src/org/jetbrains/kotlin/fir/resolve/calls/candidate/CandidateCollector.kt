@@ -31,8 +31,8 @@ open class CandidateCollector(
     private var bestGroup = TowerGroup.Last
 
     /**
-     * It can be used for diagnostics that are dropped during tower resolution but should be preserved for reporting useful cases.
-     * For instance, a case when declaration order affects resolution.
+     * Diagnostics that should not be bound to specific candidates but should be put to the resulting call.
+     * For instance, a case when declaration order affects resolution (see KT-76240).
      */
     private val forwardedDiagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
 
