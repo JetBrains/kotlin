@@ -115,7 +115,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
             it.excludedClasses.convention(filters.excluded.byNames)
             it.excludedAnnotatedWith.convention(filters.excluded.annotatedWith)
 
-            it.description = "Dumps the public Application Binary Interface (ABI) in files into the build directory " +
+            it.description = "Dumps the public Application Binary Interface (ABI) into files in the build directory " +
                     "for '$variantName' dump variant."
 
             it.onlyIf { isEnabled.get() }
