@@ -84,6 +84,9 @@ public class KaDanglingFileModuleImpl(
     override val transitiveDependsOnDependencies: List<KaModule>
         get() = contextModule.transitiveDependsOnDependencies
 
+    override val isValid: Boolean
+        get() = validFilesOrNull != null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
 
