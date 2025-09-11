@@ -51,19 +51,18 @@ public open class MarkdownParser(
         when (tagName) {
             "see" -> {
                 val referencedName = content.substringBefore(' ')
-                val dri = externalDri(referencedName)
                 See(
                     parseStringToDocNode(content.substringAfter(' ')),
-                    dri?.fqDeclarationName() ?: referencedName,
-                    dri
+                    referencedName,
+                    externalDri(referencedName)
                 )
             }
             "throws", "exception" -> {
-                val dri = externalDri(content.substringBefore(' '))
+                val referencedName = content.substringBefore(' ')
                 Throws(
                     parseStringToDocNode(content.substringAfter(' ')),
-                    dri?.fqDeclarationName() ?: content.substringBefore(' '),
-                    dri
+                    referencedName,
+                    externalDri(referencedName)
                 )
             }
             else -> super.parseTagWithBody(tagName, content)
