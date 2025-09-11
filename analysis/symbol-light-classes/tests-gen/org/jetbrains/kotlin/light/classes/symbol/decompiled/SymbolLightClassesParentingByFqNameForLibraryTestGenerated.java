@@ -229,6 +229,18 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("duplicatedNoArg.kt")
+  public void testDuplicatedNoArg() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/duplicatedNoArg.kt");
+  }
+
+  @Test
+  @TestMetadata("duplicatedNoArg2.kt")
+  public void testDuplicatedNoArg2() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/duplicatedNoArg2.kt");
+  }
+
+  @Test
   @TestMetadata("EnumClass.kt")
   public void testEnumClass() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/EnumClass.kt");

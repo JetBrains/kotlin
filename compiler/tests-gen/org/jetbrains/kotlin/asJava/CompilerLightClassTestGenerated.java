@@ -199,6 +199,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DollarsInNameNoPackage.kt");
   }
 
+  @TestMetadata("duplicatedNoArg.kt")
+  public void testDuplicatedNoArg() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/duplicatedNoArg.kt");
+  }
+
+  @TestMetadata("duplicatedNoArg2.kt")
+  public void testDuplicatedNoArg2() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/duplicatedNoArg2.kt");
+  }
+
   @TestMetadata("EnumClass.kt")
   public void testEnumClass() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/EnumClass.kt");
