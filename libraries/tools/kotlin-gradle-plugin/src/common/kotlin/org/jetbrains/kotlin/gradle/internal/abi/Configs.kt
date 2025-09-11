@@ -126,8 +126,8 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
 
-        it.description = "Checks that the public Application Binary Interface (ABI) of the current code in the project does not " +
-                "differ from what is specified in the reference dump file for '$variantName' dump variant."
+        it.description = "Checks that the public Application Binary Interface (ABI) of the current project code matches" +
+                "the reference dump file for the '$variantName' variant."
 
         it.onlyIf { isEnabled.get() }
     }
