@@ -71,14 +71,12 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -224,6 +222,32 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             )
         }
 
+        private val cachedClasses = mutableListOf<IrClassSymbol>()
+        private val classesToCache = mutableListOf("Throwable", "Collection", "Iterable")
+
+        private fun withKotlinBuiltinsHack(idSig: IdSignature, f: () -> IrSymbol?): IrSymbol? {
+            val symbol = f()
+            if (idSig is IdSignature.CommonSignature) {
+                val className = idSig.nameSegments.first()
+                val funName = idSig.nameSegments.last()
+                if (symbol != null) {
+                    if (symbol is IrClassSymbol && className in classesToCache) {
+                        cachedClasses.add(symbol)
+                        classesToCache.remove(className)
+                    }
+                    return symbol
+                }
+
+                for (declaration in cachedClasses.flatMap { it.owner.declarations }) {
+                    if (declaration.getNameWithAssert().asString() == funName) {
+                        return declaration.symbol
+                    }
+                }
+                return null
+            }
+            return symbol
+        }
+
         private inner class MetadataJVMModuleDeserializer(moduleDescriptor: ModuleDescriptor, dependencies: List<IrModuleDeserializer>) :
             IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
@@ -237,36 +261,25 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
             private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor? = descriptorFinder.findDescriptorBySignature(idSig)
 
-            private val throwableSymbols = mutableMapOf<String, IrSymbol>()
+            override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? =
+                withKotlinBuiltinsHack(idSig) {
+                    val descriptor = resolveDescriptor(idSig) ?: return@withKotlinBuiltinsHack null
 
-            override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-                val descriptor = resolveDescriptor(idSig)
-
-                if (descriptor == null) {
-                    if (idSig is IdSignature.CommonSignature) {
-                        return throwableSymbols[idSig.nameSegments.last()]
+                    val declaration = stubGenerator.run {
+                        when (symbolKind) {
+                            BinarySymbolData.SymbolKind.CLASS_SYMBOL -> generateClassStub(descriptor as ClassDescriptor)
+                            BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> generatePropertyStub(descriptor as PropertyDescriptor)
+                            BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> generateFunctionStub(descriptor as FunctionDescriptor)
+                            BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> generateConstructorStub(descriptor as ClassConstructorDescriptor)
+                            BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> generateEnumEntryStub(descriptor as ClassDescriptor)
+                            BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> generateTypeAliasStub(descriptor as TypeAliasDescriptor)
+                            BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> generateFieldStub(descriptor as PropertyDescriptor)
+                            else -> error("Unexpected type $symbolKind for sig $idSig")
+                        }
                     }
-                    return null
-                }
 
-                val declaration = stubGenerator.run {
-                    when (symbolKind) {
-                        BinarySymbolData.SymbolKind.CLASS_SYMBOL -> generateClassStub(descriptor as ClassDescriptor)
-                        BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> generatePropertyStub(descriptor as PropertyDescriptor)
-                        BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> generateFunctionStub(descriptor as FunctionDescriptor)
-                        BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> generateConstructorStub(descriptor as ClassConstructorDescriptor)
-                        BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> generateEnumEntryStub(descriptor as ClassDescriptor)
-                        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> generateTypeAliasStub(descriptor as TypeAliasDescriptor)
-                        BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> generateFieldStub(descriptor as PropertyDescriptor)
-                        else -> error("Unexpected type $symbolKind for sig $idSig")
-                    }
+                    return@withKotlinBuiltinsHack declaration.symbol
                 }
-
-                if (idSig is IdSignature.CommonSignature && idSig.nameSegments.first() == "Throwable") {
-                    throwableSymbols[idSig.nameSegments.last()] = declaration.symbol
-                }
-                return declaration.symbol
-            }
 
             override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
@@ -319,13 +332,14 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
             private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
-            override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-                super.tryDeserializeIrSymbol(idSig, symbolKind)?.let { return it }
-                deserializedSymbols[idSig]?.let { return it }
-                val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
-                descriptorSignatures[descriptor] = idSig
-                return (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
-            }
+            override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? =
+                withKotlinBuiltinsHack(idSig) {
+                    super.tryDeserializeIrSymbol(idSig, symbolKind)?.let { return@withKotlinBuiltinsHack it }
+                    deserializedSymbols[idSig]?.let { return@withKotlinBuiltinsHack it }
+                    val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return@withKotlinBuiltinsHack null
+                    descriptorSignatures[descriptor] = idSig
+                    return@withKotlinBuiltinsHack (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
+                }
         }
 
         override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
@@ -461,10 +475,11 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 //         DEBUG
 //		 val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         compileLibrary(arguments, rootDisposable, paths, klibDestination)
+        println(klibDestination)
 //         DEBUG
-//         if (!klibDestination.exists) {
-//             error("Failed to compile KLIB $klibDestination")
-//         }
+        if (!klibDestination.exists) {
+            error("Failed to compile KLIB $klibDestination")
+        }
         return compileIr(arguments, rootDisposable, klibDestination)
     }
 
@@ -601,6 +616,13 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         // Deserialize modules
         // We explicitly use the DeserializationStrategy.ALL to deserialize the whole world,
         // so that we don't rely on linker side effects for proper deserialization.
+        linker.deserializeIrModuleHeader(
+            jarDepsModuleDescriptor,
+            null,
+            { DeserializationStrategy.ALL },
+            jarDepsModuleDescriptor.name.asString()
+        )
+
         lateinit var mainModuleFragment: IrModuleFragment
         for (dep in sortedDependencies) {
             val descriptor = getModuleDescriptor(dep)
@@ -611,12 +633,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
             }
         }
-        linker.deserializeIrModuleHeader(
-            jarDepsModuleDescriptor,
-            null,
-            { DeserializationStrategy.ALL },
-            jarDepsModuleDescriptor.name.asString()
-        )
 
         irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
             irBuiltIns,
