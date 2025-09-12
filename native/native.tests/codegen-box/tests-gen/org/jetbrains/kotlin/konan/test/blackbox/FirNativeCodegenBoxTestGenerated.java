@@ -57979,6 +57979,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("rawRecursiveType.kt")
+        public void testRawRecursiveType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/rawRecursiveType.kt");
+        }
+
+        @Test
         @TestMetadata("rawTypes.kt")
         public void testRawTypes() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes.kt");

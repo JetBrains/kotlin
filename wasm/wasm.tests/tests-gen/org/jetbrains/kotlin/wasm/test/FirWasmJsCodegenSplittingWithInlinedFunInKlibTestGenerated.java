@@ -55884,6 +55884,12 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
         }
 
         @Test
+        @TestMetadata("rawRecursiveType.kt")
+        public void testRawRecursiveType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/rawRecursiveType.kt");
+        }
+
+        @Test
         @TestMetadata("rawTypes.kt")
         public void testRawTypes() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes.kt");

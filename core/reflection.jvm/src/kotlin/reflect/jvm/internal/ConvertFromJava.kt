@@ -20,12 +20,12 @@ internal fun Type.toKType(
 ): KType {
     val base: SimpleKType = when (this) {
         is Class<*> -> {
-            if (typeParameters.isNotEmpty()) return createRawJavaType(this)
+            if (allTypeParameters().isNotEmpty() && !replaceNonArrayArgumentsWithStarProjections) return createRawJavaType(this)
             if (isArray) {
                 return createJavaSimpleType(this, kotlin, listOf(componentType.toKTypeProjection()), isMarkedNullable = false)
                     .toFlexibleArrayElementVarianceType(this)
             }
-            createJavaSimpleType(this, kotlin, emptyList(), isMarkedNullable = false)
+            createJavaSimpleType(this, kotlin, allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = false)
         }
         is GenericArrayType -> {
             val componentType = genericComponentType.toKTypeProjection()
@@ -99,16 +99,28 @@ private fun createRawJavaType(klass: Class<*>): KType =
     FlexibleKType.create(
         createJavaSimpleType(
             klass, klass.kotlin,
-            klass.typeParameters.map {
-                // For a lower bound of a raw type, we must take the corresponding bound of each type parameter, but erase their type
-                // arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`.
-                KTypeProjection.invariant(it.bounds.first().toKType(replaceNonArrayArgumentsWithStarProjections = true))
+            klass.allTypeParameters().map { typeParameter ->
+                // When creating a lower bound for a raw type, we must take the corresponding bound of each type parameter, but erase their
+                // type arguments to star projections. E.g. `T : Comparable<String>` becomes `Comparable<*>`. We have to be very careful not
+                // to translate the bound's own type parameters because it will lead to stack overflow in cases like `class A<T extends A>`.
+                // Since a type parameter's upper bound may be another type parameter, we need to unwrap it until we end up with anything
+                // but the type parameter (`Class` or `ParameterizedType`).
+                // Note that this is still not exactly how the compiler translates raw types
+                // (see `JavaClassifierType.toConeKotlinTypeForFlexibleBound` in K2, or `JavaTypeResolver.computeRawTypeArguments` in K1),
+                // but it's a good enough approximation.
+                val upperBound = generateSequence(typeParameter) { it.bounds.first() as? TypeVariable<*> }.last().bounds.first()
+                KTypeProjection.invariant(upperBound.toKType(replaceNonArrayArgumentsWithStarProjections = true))
             },
             isMarkedNullable = false,
         ),
-        createJavaSimpleType(klass, klass.kotlin, klass.typeParameters.map { KTypeProjection.STAR }, isMarkedNullable = true),
+        createJavaSimpleType(klass, klass.kotlin, klass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true),
         isRawType = true,
     ) { klass }
+
+internal fun Class<*>.allTypeParameters(): List<TypeVariable<*>> =
+    generateSequence(this) {
+        if (!Modifier.isStatic(it.modifiers)) it.declaringClass else null
+    }.flatMap { it.typeParameters.asSequence() }.toList()
 
 private fun ParameterizedType.collectAllArguments(): List<Type> =
     generateSequence(this) { it.ownerType as? ParameterizedType }.flatMap { it.actualTypeArguments.toList() }.toList()
