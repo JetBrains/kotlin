@@ -11,6 +11,18 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.nanoseconds
 
+/**
+ * Dedicated test class for Duration parsing on wasmJs platform.
+ *
+ * These tests are separate from the main Duration tests because Wasm uses its own
+ * floating-point arithmetic internally, which can produce different rounding behavior
+ * compared to JVM or Native platforms. The differences are particularly noticeable when
+ * parsing fractional durations that approach the limits of floating-point precision.
+ *
+ * The tests here verify that Duration parsing correctly handles edge cases where
+ * Wasm's number representation might cause values to round differently than
+ * on other platforms, ensuring consistent behavior across all Kotlin targets.
+ */
 class DurationWasmTest {
 
     @Test
