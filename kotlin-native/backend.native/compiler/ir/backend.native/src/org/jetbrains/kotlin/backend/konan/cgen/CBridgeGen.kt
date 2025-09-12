@@ -226,7 +226,7 @@ internal fun KotlinStubs.generateCCall(
         val symbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCallDirect, "name")!!
         val signature = callBuilder.cFunctionBuilder.buildSignature(targetFunctionName, language)
 
-        callBuilder.state.addC(listOf("""$signature __asm("$symbolName");"""))
+        callBuilder.state.addC(listOf("""$signature __asm(${symbolName.cLiteral()});"""))
     }
 
     val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
@@ -238,6 +238,8 @@ internal fun KotlinStubs.generateCCall(
 
     return result
 }
+
+private fun String.cLiteral(): String = "\"${this.replace("$", "\\044")}\""
 
 internal fun KotlinStubs.generateCGlobalDirectAccess(
         expression: IrCall, builder: IrBuilderWithScope,
@@ -284,7 +286,7 @@ internal fun KotlinStubs.generateCGlobalDirectAccess(
     if (globalBinaryName.startsWith("_")) {
         callBuilder.cBridgeBodyLines.add("extern ${globalCType.render(globalName)};") // FIXME: use unique name.
     } else {
-        callBuilder.cBridgeBodyLines.add("extern ${globalCType.render(globalName)} __asm(\"$globalBinaryName\");") // FIXME: use unique name.
+        callBuilder.cBridgeBodyLines.add("extern ${globalCType.render(globalName)} __asm(${globalBinaryName.cLiteral()});") // FIXME: use unique name.
     }
 
     val result: IrExpression
