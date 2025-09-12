@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
@@ -388,6 +389,8 @@ class FirCallCompletionResultsWriterTransformer(
             return replacement.transform(this, data)
         }
 
+        collectionLiteralCall.transformChildren(this, null)
+        collectionLiteralCall.replaceConeTypeOrNull(ConeErrorType(ConeUnsupportedCollectionLiteralType))
         return collectionLiteralCall
     }
 

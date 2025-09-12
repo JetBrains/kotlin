@@ -1977,10 +1977,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 else -> {
                     collectionLiteralCall.transformAnnotations(transformer, data)
                     collectionLiteralCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-
-                    components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
-                        collectionLiteralCall, data as? ResolutionMode.WithExpectedType, resolutionContext
-                    )
+                    if (data != ResolutionMode.ContextDependent) {
+                        components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
+                            collectionLiteralCall, data as? ResolutionMode.WithExpectedType, resolutionContext
+                        )
+                    } else {
+                        collectionLiteralCall
+                    }
                 }
             }
         }

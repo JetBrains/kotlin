@@ -275,14 +275,6 @@ class FirSyntheticCallGenerator(
 
         val resolvedCollectionLiteral = resultingCall.arguments.single()
 
-        if (!resolvedCollectionLiteral.isResolved) {
-            check(resolvedCollectionLiteral is FirCollectionLiteralCall) {
-                "If collection literal is not resolved, it must stay a collection literal."
-            }
-            val diagnostic = ConeUnsupportedCollectionLiteralType
-
-            resolvedCollectionLiteral.replaceConeTypeOrNull(ConeErrorType(diagnostic))
-        }
         return resolvedCollectionLiteral
     }
 
