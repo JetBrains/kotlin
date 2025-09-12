@@ -4,7 +4,7 @@
 // IGNORE_BACKEND_K1: JS_IR
 // LANGUAGE: +BreakContinueInInlineLambdas
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
+// IGNORE_BACKEND_K2: JS_IR, NATIVE, WASM
 // STATUS: K2 reports a false-positive `CANNOT_INFER_PARAMETER_TYPE` on things like `{break}()`
 // RUN_PIPELINE_TILL: FIR2IR
 // DISABLE_NEXT_PHASE_SUGGESTION: K1 fails at backend stage

@@ -98,11 +98,11 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
     AbstractKlibAbiDumpBeforeInliningSavingHandler(testServices) {
     override fun serializeModule(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
-            "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input"
+            "FirJsKlibAbiDumpBeforeInliningSavingHandler expects Fir2IrCliBasedWebOutputArtifact as input"
         }
         val cliArtifact = inputArtifact.cliArtifact
         require(cliArtifact is JsFir2IrPipelineArtifact) {
-            "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
+            "FirJsKlibAbiDumpBeforeInliningSavingHandler expects JsFir2IrPipelineArtifact as input"
         }
 
         val tmpConfiguration = cliArtifact.configuration.copy()

@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
+import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
+import org.jetbrains.kotlin.js.test.fir.AbstractFirPsiJsIrTextTest
+import org.jetbrains.kotlin.js.test.ir.AbstractClassicJsIrTextTest
 import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
@@ -166,5 +169,13 @@ fun main(args: Array<String>) {
                 model()
             }
         }
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
+            testClass<AbstractWasmJsIrTextTest> {
+                model(
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
+            }
+        }
+
     }
 }
