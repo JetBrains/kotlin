@@ -161,6 +161,12 @@ open class FirImplicitAwareBodyResolveTransformer(
         }
     }
 
+    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirBackingField {
+        return computeCachedTransformationResult(backingField) {
+            super.transformBackingField(backingField, data)
+        }
+    }
+
     private fun <D : FirCallableDeclaration> computeCachedTransformationResult(
         member: D,
         transform: () -> D
@@ -273,7 +279,12 @@ open class ReturnTypeCalculatorWithJump(
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
-        val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
+        val symbolForStatus = when {
+            declaration is FirBackingField -> declaration.propertySymbol
+            else -> declaration.symbol
+        }
+
+        val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(symbolForStatus)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef()
             else -> null

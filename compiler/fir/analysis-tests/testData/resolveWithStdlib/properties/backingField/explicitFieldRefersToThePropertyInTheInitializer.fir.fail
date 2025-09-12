@@ -1,9 +1,0 @@
-java.lang.ArrayIndexOutOfBoundsException: -1
-	at java.util.ArrayList.elementData(ArrayList.java:424)
-	at java.util.ArrayList.remove(ArrayList.java:501)
-	at org.jetbrains.kotlin.fir.resolve.dfa.StackImpl.pop(Stack.kt:38)
-	at org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphBuilder.addNewSimpleNode(ControlFlowGraphBuilder.kt:1648)
-	at org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphBuilder.addNewSimpleNode$default(ControlFlowGraphBuilder.kt:1647)
-	at org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphBuilder.exitAnonymousObjectExpression(ControlFlowGraphBuilder.kt:783)
-	at org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer.exitAnonymousObjectExpression(FirDataFlowAnalyzer.kt:437)
-	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformAnonymousObjectExpression(FirExpressionsResolveTransformer.kt:2018)
