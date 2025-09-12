@@ -13,32 +13,23 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 
 class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
     override fun addIr(ir: SerializedIrModule) {
-        irLayout.irDir.mkdirs()
-
-        with(ir.files.sortedBy { it.path }) {
-            serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFiles)
-            serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarations)
-            serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypes)
-            serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignatures)
-            serializeNonNullableEntities(SerializedIrFile::strings, irLayout::irStrings)
-            serializeNonNullableEntities(SerializedIrFile::bodies, irLayout::irBodies)
-            serializeNullableEntries(SerializedIrFile::debugInfo, irLayout::irDebugInfo)
-            serializeNullableEntries(SerializedIrFile::fileEntries, irLayout::irFileEntries)
-        }
-
+        serializeIrDirectory(irLayout.mainIr, ir.files.sortedBy { it.path })
         if (ir.fileWithPreparedInlinableFunctions != null) {
-            irLayout.irOfInlineableFunsDir.mkdirs()
-            // Write all inlinable functions together, in a single file.
-            with(listOf(ir.fileWithPreparedInlinableFunctions)) {
-                serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFilesOfInlineableFuns)
-                serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarationsOfInlineableFuns)
-                serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypesOfInlineableFuns)
-                serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignaturesOfInlineableFuns)
-                serializeNonNullableEntities(SerializedIrFile::strings, irLayout::irStringsOfInlineableFuns)
-                serializeNonNullableEntities(SerializedIrFile::bodies, irLayout::irBodiesOfInlineableFuns)
-                serializeNullableEntries(SerializedIrFile::debugInfo, irLayout::irDebugInfoOfInlineableFuns)
-                serializeNullableEntries(SerializedIrFile::fileEntries, irLayout::irFileEntriesOfInlineableFuns)
-            }
+            serializeIrDirectory(irLayout.inlineableFunsIr, listOf(ir.fileWithPreparedInlinableFunctions))
+        }
+    }
+
+    private fun serializeIrDirectory(irDirectory: IrKotlinLibraryLayout.IrDirectory, irFiles: List<SerializedIrFile>) {
+        irDirectory.dir.mkdirs()
+        with(irFiles.sortedBy { it.path }) {
+            serializeNonNullableEntities(SerializedIrFile::fileData, irDirectory::irFiles)
+            serializeNonNullableEntities(SerializedIrFile::declarations, irDirectory::irDeclarations)
+            serializeNonNullableEntities(SerializedIrFile::types, irDirectory::irTypes)
+            serializeNonNullableEntities(SerializedIrFile::signatures, irDirectory::irSignatures)
+            serializeNonNullableEntities(SerializedIrFile::strings, irDirectory::irStrings)
+            serializeNonNullableEntities(SerializedIrFile::bodies, irDirectory::irBodies)
+            serializeNullableEntries(SerializedIrFile::debugInfo, irDirectory::irDebugInfo)
+            serializeNullableEntries(SerializedIrFile::fileEntries, irDirectory::irFileEntries)
         }
     }
 
