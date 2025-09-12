@@ -3029,6 +3029,142 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IsImplicitReferenceToCompanion {
+    @Test
+    public void testAllFilesPresentInIsImplicitReferenceToCompanion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "cloneable");
+    }
+
+    @Test
+    @TestMetadata("callableReference.kt")
+    public void testCallableReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/callableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReference2.kt")
+    public void testCallableReference2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/callableReference2.kt");
+    }
+
+    @Test
+    @TestMetadata("classAccessWithExplicitReferenceToCompanion.kt")
+    public void testClassAccessWithExplicitReferenceToCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("classAccessWithExplicitReferenceToNamedCompanion.kt")
+    public void testClassAccessWithExplicitReferenceToNamedCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToNamedCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorCall.kt")
+    public void testConstructorCall() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/constructorCall.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorCallWithInvokeInCompanion.kt")
+    public void testConstructorCallWithInvokeInCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/constructorCallWithInvokeInCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitReferenceToCompanion.kt")
+    public void testExplicitReferenceToCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/explicitReferenceToCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitReferenceToNamedCompanion.kt")
+    public void testExplicitReferenceToNamedCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/explicitReferenceToNamedCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("impicitReferenceToCompanion.kt")
+    public void testImpicitReferenceToCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/impicitReferenceToCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("invokeInCompanion.kt")
+    public void testInvokeInCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/invokeInCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("invokeInCompanion_explicitCompanion.kt")
+    public void testInvokeInCompanion_explicitCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/invokeInCompanion_explicitCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassWithCompanion.kt")
+    public void testNestedClassWithCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/nestedClassWithCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassWithCompanionInCompanion.kt")
+    public void testNestedClassWithCompanionInCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/nestedClassWithCompanionInCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassWithCompanionInCompanion_companionQualifier.kt")
+    public void testNestedClassWithCompanionInCompanion_companionQualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/nestedClassWithCompanionInCompanion_companionQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassWithCompanion_qualifier.kt")
+    public void testNestedClassWithCompanion_qualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/nestedClassWithCompanion_qualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassWithCompanion_withInvoke.kt")
+    public void testNestedClassWithCompanion_withInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/nestedClassWithCompanion_withInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassWithCompanion_withInvoke_qualifier.kt")
+    public void testNestedClassWithCompanion_withInvoke_qualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/nestedClassWithCompanion_withInvoke_qualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifierReferenceToClassWithCompanion.kt")
+    public void testQualifierReferenceToClassWithCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/qualifierReferenceToClassWithCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasInvokeInCompanion.kt")
+    public void testTypealiasInvokeInCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/typealiasInvokeInCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasReferenceToCompanion.kt")
+    public void testTypealiasReferenceToCompanion() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/typealiasReferenceToCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasReferenceToCompanionReceiver.kt")
+    public void testTypealiasReferenceToCompanionReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion/typealiasReferenceToCompanionReceiver.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/java")
   @TestDataPath("$PROJECT_ROOT")
   public class Java {

@@ -335,6 +335,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IsImplicitReferenceToCompanion {
+    @Test
+    public void testAllFilesPresentInIsImplicitReferenceToCompanion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/isImplicitReferenceToCompanion"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/java")
   @TestDataPath("$PROJECT_ROOT")
   public class Java {

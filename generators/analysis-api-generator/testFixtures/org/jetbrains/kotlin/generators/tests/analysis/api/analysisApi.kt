@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInt
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractOriginalConstructorIfTypeAliasedTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
@@ -654,12 +653,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractCanBeCalledAsExtensionOnTest>(filter = frontendIs(FrontendKind.Fir)) {
             model(it, "canBeCalledAsExtensionOn")
-        }
-    }
-
-    component("referenceResolveProvider") {
-        test<AbstractIsImplicitCompanionReferenceTest> {
-            model(it, "isImplicitReferenceToCompanion")
         }
     }
 
