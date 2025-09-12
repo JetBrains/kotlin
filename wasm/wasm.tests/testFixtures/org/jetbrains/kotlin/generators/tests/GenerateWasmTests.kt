@@ -83,6 +83,14 @@ fun main(args: Array<String>) {
             testClass<AbstractDiagnosticsFirWasmKlibTest> {
                 model("diagnostics/wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
+
+            testClass<AbstractFirWasmJsDiagnosticWithIrInlinerTestBase> {
+                model("diagnostics/irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractFirWasmWasiDiagnosticWithIrInlinerTestBase> {
+                model("diagnostics/irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
         }
 
         testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
