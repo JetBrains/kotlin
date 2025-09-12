@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 
 @ExperimentalWasmDsl
 abstract class D8Plugin internal constructor() :
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin() {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)

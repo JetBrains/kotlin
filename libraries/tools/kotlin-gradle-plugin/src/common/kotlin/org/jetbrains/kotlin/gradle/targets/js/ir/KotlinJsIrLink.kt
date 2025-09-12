@@ -81,7 +81,10 @@ abstract class KotlinJsIrLink @Inject constructor(
         get() = super.taskBuildCacheableOutputDirectory
 
     @get:Internal
-    @get:Deprecated("Internal development property. Scheduled for removal in Kotlin 2.4.")
+    @get:Deprecated(
+        "Internal development property. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     var mode: KotlinJsBinaryMode
         get() = modeProperty.get()
         set(value) {

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 @ExperimentalWasmDsl
 abstract class BinaryenPlugin internal constructor() :
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootPlugin() {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)

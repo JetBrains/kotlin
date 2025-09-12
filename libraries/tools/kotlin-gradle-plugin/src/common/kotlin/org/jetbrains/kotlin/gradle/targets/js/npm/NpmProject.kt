@@ -120,7 +120,10 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         nodeJs.executable.get()
     }
 
-    @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     fun useTool(
         exec: ExecSpec,
         tool: String,
@@ -129,14 +132,17 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
     ) {
         exec.workingDir(dir)
         exec.executable(nodeExecutable)
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         exec.args = nodeArgs + require(tool) + args
     }
 
     /**
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
-    @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated(
+        "Internal KGP utility. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
     fun require(request: String): String {
 //        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
         return modules.require(request)
