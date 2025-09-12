@@ -1,1 +1,5 @@
-isImplicitCompanionReference: false
+KtNameReferenceExpression(93,95): 'AA'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in AA) constructor()

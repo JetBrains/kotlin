@@ -1,0 +1,10 @@
+KtNameReferenceExpression(86,88): 'BB'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in AA) companion object BB
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

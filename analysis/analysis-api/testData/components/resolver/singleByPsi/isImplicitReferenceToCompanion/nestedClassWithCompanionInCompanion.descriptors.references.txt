@@ -1,0 +1,10 @@
+KtNameReferenceExpression(146,163): 'NestedInCompanion'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in AA.Companion.NestedInCompanion) companion object
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

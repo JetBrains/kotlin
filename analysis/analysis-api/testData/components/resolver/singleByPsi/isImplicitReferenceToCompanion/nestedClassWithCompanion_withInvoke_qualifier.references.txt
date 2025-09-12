@@ -1,1 +1,5 @@
-isImplicitCompanionReference: false
+KtNameReferenceExpression(134,136): 'AA'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class AA

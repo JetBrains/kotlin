@@ -1,0 +1,10 @@
+KtNameReferenceExpression(80,82): 'AA'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in AA) constructor()
+
+  SyntheticPropertyAccessorReference:
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

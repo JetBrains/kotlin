@@ -1,1 +1,5 @@
-isImplicitCompanionReference: true
+KtNameReferenceExpression(71,73): 'TA'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in ROOT) typealias TA = AA

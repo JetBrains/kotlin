@@ -1,1 +1,5 @@
-isImplicitCompanionReference: true
+KtNameReferenceExpression(80,82): 'AA'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in AA) companion object

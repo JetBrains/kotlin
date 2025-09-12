@@ -1,1 +1,5 @@
-isImplicitCompanionReference: true
+KtNameReferenceExpression(146,163): 'NestedInCompanion'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in AA.Companion.NestedInCompanion) companion object
