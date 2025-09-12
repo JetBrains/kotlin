@@ -24,6 +24,13 @@ class WorkspaceManager(
         Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
     }
 
+    companion object {
+        fun cleanup() {
+            SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
+            Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
+        }
+    }
+
     fun prependWorkspaceProjectDirectory(path: Path): Path {
         return SERVER_COMPILATION_WORKSPACE_DIR
             .resolve(userId)
@@ -31,7 +38,16 @@ class WorkspaceManager(
             .resolve(path)
     }
 
-    fun getOutputDir(userId: String, projectName: String, moduleName: String): Path {
+    fun removeWorkspaceProjectPrefix(path: Path): Path {
+        val workspaceProjectDir = SERVER_COMPILATION_WORKSPACE_DIR
+            .resolve(userId)
+            .resolve(projectName)
+
+        val relativePath = workspaceProjectDir.relativize(path)
+        return Paths.get("/").resolve(relativePath)
+    }
+
+    fun getOutputDir(moduleName: String): Path {
         // TODO revisit this, I think I could get rid of output part
         // maybe it would be useful to pass root dir into compilation metadata
         // potentially just append the full user client path to workspace path
@@ -76,8 +92,5 @@ class WorkspaceManager(
     fun getUserProjectSourceFolder(userId: String, projectName: String) =
         "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName/output"
 
-    fun cleanup() {
-        SERVER_COMPILATION_WORKSPACE_DIR.toFile().deleteRecursively()
-        Files.createDirectories(SERVER_COMPILATION_WORKSPACE_DIR)
-    }
+
 }
