@@ -10,6 +10,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
@@ -115,6 +116,9 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
             it.excludedClasses.convention(filters.excluded.byNames)
             it.excludedAnnotatedWith.convention(filters.excluded.annotatedWith)
 
+            // task should be hidden from the task list
+            it.group = null
+
             it.onlyIf { isEnabled.get() }
         }
 
@@ -123,6 +127,8 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
 
+        it.group = LifecycleBasePlugin.VERIFICATION_GROUP
+
         it.onlyIf { isEnabled.get() }
     }
 
@@ -130,6 +136,8 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)
         it.variantName.convention(variantName)
+
+        it.group = LifecycleBasePlugin.VERIFICATION_GROUP
 
         it.onlyIf { isEnabled.get() }
     }
