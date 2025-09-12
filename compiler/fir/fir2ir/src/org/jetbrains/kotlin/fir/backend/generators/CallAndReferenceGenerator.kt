@@ -1534,7 +1534,7 @@ class CallAndReferenceGenerator(
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
                             null
                         } else {
-                            val varargType = parameter.returnTypeRef.toIrType()
+                            val varargType = parameter.returnTypeRef.toIrType(ConversionTypeOrigin.ANNOTATION_CONSTRUCTOR_VARARG)
                             IrVarargImpl(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,

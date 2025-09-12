@@ -111,7 +111,9 @@ class Fir2IrTypeConverter(
             }
             is ConeLookupTagBasedType -> {
                 val typeAnnotations = mutableListOf<IrConstructorCall>()
-                typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
+                if (typeOrigin != ConversionTypeOrigin.ANNOTATION_CONSTRUCTOR_VARARG) {
+                    typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
+                }
 
                 val irSymbol =
                     getBuiltInClassSymbol(type.classId)
@@ -160,7 +162,9 @@ class Fir2IrTypeConverter(
                         it.unexpandedConeClassLikeType == attributeAnnotation.unexpandedConeClassLikeType
                     }
                     if (isAlreadyPresentInAnnotations) continue
-                    typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
+                    if (typeOrigin != ConversionTypeOrigin.ANNOTATION_CONSTRUCTOR_VARARG) {
+                        typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
+                    }
                 }
                 val approximatedType = type.approximateForIrOrSelf()
 

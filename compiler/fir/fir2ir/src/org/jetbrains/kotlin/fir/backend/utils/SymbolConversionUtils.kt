@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ConversionTypeOrigin(val forSetter: Boolean) {
     DEFAULT(forSetter = false),
-    SETTER(forSetter = true);
+    SETTER(forSetter = true),
+    ANNOTATION_CONSTRUCTOR_VARARG(forSetter = false),
+    ;
 }
 
 context(c: Fir2IrComponents)

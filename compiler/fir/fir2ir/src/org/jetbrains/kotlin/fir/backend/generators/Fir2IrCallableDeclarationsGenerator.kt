@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.isFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.resolve.isKSuspendFunctionInvoke
@@ -717,10 +719,17 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 this += createDefaultSetterParameter(startOffset, endOffset, type, parent = this@declareParameters, valueParameter)
             } else {
                 function?.valueParameters?.mapIndexedTo(this) { index, valueParameter ->
+                    val modifiedOrigin = when {
+                        valueParameter.isVararg && function is FirPrimaryConstructor &&
+                                function.getContainingClass()?.classKind == ClassKind.ANNOTATION_CLASS -> {
+                            ConversionTypeOrigin.ANNOTATION_CONSTRUCTOR_VARARG
+                        }
+                        else -> typeOrigin
+                    }
                     declarationStorage.createAndCacheParameter(
                         valueParameter,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.classId != StandardClassIds.Enum,
-                        typeOrigin,
+                        modifiedOrigin,
                         skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER,
                         forcedDefaultValueConversion = containingClass?.isAnnotationClass == true
                     ).apply {
