@@ -193,6 +193,50 @@ class DurationParserTest {
             assertFalse(hasOverflow)
         }
         assertEquals(1L, result)
+
+        // Test multiple consecutive signs - these should stop at the first invalid character
+        result = parser.parse("+-123", 0) { endIndex, sign, hasOverflow ->
+            assertEquals(1, endIndex)  // Stops after '+' since '-' is not a digit
+            assertEquals(1, sign)
+            assertFalse(hasOverflow)
+        }
+        assertEquals(0L, result)
+
+        result = parser.parse("++123", 0) { endIndex, sign, hasOverflow ->
+            assertEquals(1, endIndex)  // Stops after the first '+' since the second '+' is not a digit
+            assertEquals(1, sign)
+            assertFalse(hasOverflow)
+        }
+        assertEquals(0L, result)
+
+        result = parser.parse("--123", 0) { endIndex, sign, hasOverflow ->
+            assertEquals(1, endIndex)  // Stops after the first '-' since the second '-' is not a digit
+            assertEquals(-1, sign)
+            assertFalse(hasOverflow)
+        }
+        assertEquals(0L, result)
+
+        // Test parsing from index 1 with multiple signs
+        result = parser.parse("+-123", 1) { endIndex, sign, hasOverflow ->
+            assertEquals(5, endIndex)
+            assertEquals(-1, sign)
+            assertFalse(hasOverflow)
+        }
+        assertEquals(123L, result)
+
+        result = parser.parse("++123", 1) { endIndex, sign, hasOverflow ->
+            assertEquals(5, endIndex)
+            assertEquals(1, sign)
+            assertFalse(hasOverflow)
+        }
+        assertEquals(123L, result)
+
+        result = parser.parse("--123", 1) { endIndex, sign, hasOverflow ->
+            assertEquals(5, endIndex)
+            assertEquals(-1, sign)
+            assertFalse(hasOverflow)
+        }
+        assertEquals(123L, result)
     }
 
     @Test
