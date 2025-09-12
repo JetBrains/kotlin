@@ -168,6 +168,17 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     protected fun runTestOnce(pass: Int) {
         beforePass(pass)
+        val prefixPath = System.getProperty("fir.bench.prefix")?.toString() ?: "/Users/jetbrains"
+        val prefixDir = File(prefixPath).normalize().absoluteFile
+        println("PREFIX PATH: $prefixDir (exists=${prefixDir.exists()})")
+        if (prefixDir.exists()) {
+            for (f in prefixDir.listFiles() ?: arrayOf()) {
+                if (f.isDirectory) {
+                    println("${f.name}/")
+                }
+            }
+        }
+
         val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
         val root = File(testDataPath).normalize().absoluteFile
 
