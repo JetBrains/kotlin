@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
@@ -28,10 +28,11 @@ abstract class CompilationOutputs {
     open fun writeAll(artifactConfiguration: WebArtifactConfiguration): Collection<File> {
         val writtenFiles = createWrittenFilesContainer()
 
-        fun File.writeAsJsFile(out: CompilationOutputs) {
-            parentFile.mkdirs()
-            val jsMapFile = mapForJsFile
-            val jsFile = normalizedAbsoluteFile
+        fun writeOutputFiles(outputName: String, out: CompilationOutputs) {
+            var jsFile = artifactConfiguration.outputJsFile(outputName)
+            jsFile.parentFile.mkdirs()
+            jsFile = jsFile.normalizedAbsoluteFile
+            val jsMapFile = artifactConfiguration.outputSourceMapFile(outputName).normalizedAbsoluteFile
 
             out.writeJsCode(jsFile, jsMapFile)
 
@@ -39,21 +40,20 @@ abstract class CompilationOutputs {
             writtenFiles += jsMapFile
 
             out.tsDefinitions.takeIf { artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.EACH_FILE }?.let {
-                val tsFile = jsFile.createDtsForJsFile(artifactConfiguration.moduleKind)
-                tsFile.writeText(listOf(it).toTypeScript(name, artifactConfiguration.moduleKind))
+                val tsFile = artifactConfiguration.outputDtsFile(outputName).normalizedAbsoluteFile
+                tsFile.writeText(listOf(it).toTypeScript(jsFile.name, artifactConfiguration.moduleKind))
                 writtenFiles += tsFile
             }
         }
 
         dependencies.forEach { (name, content) ->
-            artifactConfiguration.outputDirectory.resolve("$name${artifactConfiguration.moduleKind.jsExtension}").writeAsJsFile(content)
+            writeOutputFiles(name, content)
         }
 
-        val outputJsFile = artifactConfiguration.outputDirectory.resolve("${artifactConfiguration.outputName}${artifactConfiguration.moduleKind.jsExtension}")
-        outputJsFile.writeAsJsFile(this)
+        writeOutputFiles(artifactConfiguration.outputName, this)
 
         if (artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.MERGED) {
-            val dtsFile = outputJsFile.createDtsForJsFile(artifactConfiguration.moduleKind)
+            val dtsFile = artifactConfiguration.outputDtsFile().normalizedAbsoluteFile
             dtsFile.writeText(getFullTsDefinition(artifactConfiguration.moduleName, artifactConfiguration.moduleKind))
             writtenFiles += dtsFile
         }
@@ -76,12 +76,6 @@ abstract class CompilationOutputs {
 
     protected val File.normalizedAbsoluteFile
         get() = absoluteFile.normalize()
-
-    protected val File.mapForJsFile
-        get() = resolveSibling("$name.map").normalizedAbsoluteFile
-
-    protected fun File.createDtsForJsFile(moduleKind: ModuleKind) =
-        resolveSibling("$nameWithoutExtension${moduleKind.dtsExtension}").normalizedAbsoluteFile
 }
 
 private fun File.copyModificationTimeFrom(from: File) {
