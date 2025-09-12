@@ -166,7 +166,7 @@ class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: Ko
 
     fun invalidate() {
         outputDir.deleteRecursively()
-        library.layout.irDir.mkdirs()
+        library.layout.mainIr.dir.mkdirs()
     }
 
     fun writeIr(serializedIrModule: SerializedIrModule) {
