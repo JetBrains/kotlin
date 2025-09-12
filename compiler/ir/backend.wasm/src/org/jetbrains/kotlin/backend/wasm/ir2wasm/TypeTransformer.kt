@@ -107,11 +107,7 @@ class WasmTypeTransformer(
                 return WasmRefNullType(WasmHeapType.SharedSimple.EXTERN)
             }
 
-            if (klass.name.identifier != "JsStringRef") {
-                WasmExternRef
-            } else {
-                WasmRefType(WasmHeapType.Simple.Extern)
-            }
+            WasmExternRef
         } else if (isBuiltInWasmRefType(this)) {
             maybeShared(
                 when (val name = klass.name.identifier) {
