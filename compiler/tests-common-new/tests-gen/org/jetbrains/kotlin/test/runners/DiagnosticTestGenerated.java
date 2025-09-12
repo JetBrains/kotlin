@@ -10062,6 +10062,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       public void testDisabledChecker() {
         runTest("compiler/testData/diagnostics/tests/crvDisabled/disabledChecker.kt");
       }
+
+      @Test
+      @TestMetadata("oldMustUse.kt")
+      public void testOldMustUse() {
+        runTest("compiler/testData/diagnostics/tests/crvDisabled/oldMustUse.kt");
+      }
     }
 
     @Nested
