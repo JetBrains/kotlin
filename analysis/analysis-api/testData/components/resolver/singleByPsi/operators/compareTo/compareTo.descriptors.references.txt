@@ -1,6 +1,10 @@
 KtNameReferenceExpression(114,123): 'compareTo'
   KtSimpleNameReference:
-    (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

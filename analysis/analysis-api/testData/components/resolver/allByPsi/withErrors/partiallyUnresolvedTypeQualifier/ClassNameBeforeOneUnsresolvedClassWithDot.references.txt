@@ -1,39 +1,59 @@
 KtNameReferenceExpression(36,39): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
 
 KtNameReferenceExpression(40,43): 'Bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(83,86): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
 
 KtNameReferenceExpression(87,90): 'Bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(117,118): 'T'
   KtSimpleNameReference:
-    (in <local>: take) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: take) T
 
 KtNameReferenceExpression(123,127): 'Unit'
   KtSimpleNameReference:
-    (in kotlin) object Unit
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) object Unit
 
 KtCallExpression(144,181): 'take {'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(144,148): 'take'
   KtSimpleNameReference:
-    (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
 KtNameReferenceExpression(168,171): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
 
 KtNameReferenceExpression(172,175): 'Bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

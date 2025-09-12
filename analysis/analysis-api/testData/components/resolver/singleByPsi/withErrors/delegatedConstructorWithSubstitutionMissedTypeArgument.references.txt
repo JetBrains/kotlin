@@ -1,3 +1,5 @@
 KtConstructorDelegationReferenceExpression(106,111): 'super'
   KtConstructorDelegationReference:
-    (in kotlin.Any) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.Any) constructor()

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(157,161): 'call'
   KtSimpleNameReference:
-    (in ROOT) fun call(a: kotlin.Int, b: kotlin.String)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun call(a: kotlin.Int, b: kotlin.String)

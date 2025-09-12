@@ -1,3 +1,5 @@
 KtNameReferenceExpression(93,96): 'bar'
   KtSimpleNameReference:
-    package foo.bar
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package foo.bar

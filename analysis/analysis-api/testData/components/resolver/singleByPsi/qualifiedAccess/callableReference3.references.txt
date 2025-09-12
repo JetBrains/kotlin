@@ -1,3 +1,5 @@
 KtNameReferenceExpression(115,117): 'AA'
   KtSimpleNameReference:
-    (in foo.bar.baz.AA) companion object
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in foo.bar.baz.AA) companion object

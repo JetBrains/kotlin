@@ -1,3 +1,5 @@
 KtNameReferenceExpression(110,111): 'x'
   KtSimpleNameReference:
-    (in <local>: call) fun x(b: kotlin.Boolean)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: call) fun x(b: kotlin.Boolean)

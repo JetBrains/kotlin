@@ -1,3 +1,5 @@
 KtNameReferenceExpression(136,140): 'Anno'
   KtSimpleNameReference:
-    (in Anno) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Anno) constructor()

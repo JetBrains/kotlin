@@ -1,3 +1,5 @@
 KtNameReferenceExpression(331,351): 'serializeFirstTarget'
   KtSimpleNameReference:
-    (in test.Serializer) fun serializeFirstTarget(x: test.FirstTarget)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test.Serializer) fun serializeFirstTarget(x: test.FirstTarget)

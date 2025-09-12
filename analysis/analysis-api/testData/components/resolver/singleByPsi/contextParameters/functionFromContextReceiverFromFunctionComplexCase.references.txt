@@ -1,4 +1,6 @@
 KtNameReferenceExpression(119,120): 'c'
   KtSimpleNameReference:
-    (in Container) context(Receiver@Receiver)
-    fun c()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Container) context(Receiver@Receiver)
+      fun c()

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(55,58): 'bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

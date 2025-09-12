@@ -1,3 +1,5 @@
 KtNameReferenceExpression(92,100): 'Conflict'
   KtSimpleNameReference:
-    (in test.Conflict) companion object
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in test.Conflict) companion object

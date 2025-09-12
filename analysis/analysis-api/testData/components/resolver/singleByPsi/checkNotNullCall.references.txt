@@ -1,3 +1,5 @@
 KtNameReferenceExpression(24,25): 'a'
   KtSimpleNameReference:
-    a: kotlin.Any?
+    isImplicitReferenceToCompanion: false
+    symbols:
+      a: kotlin.Any?

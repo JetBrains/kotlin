@@ -1,10 +1,16 @@
 KtNameReferenceExpression(99,104): 'param'
   KtSimpleNameReference:
-    param: kotlin.String
+    isImplicitReferenceToCompanion: false
+    symbols:
+      param: kotlin.String
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(91,115): 'MyAlias(param = "hello")'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

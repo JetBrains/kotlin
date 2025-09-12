@@ -1,51 +1,77 @@
 KtNameReferenceExpression(54,57): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
 
 KtNameReferenceExpression(58,61): 'Bar'
   KtSimpleNameReference:
-    (in Foo) class Bar
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) class Bar
 
 KtNameReferenceExpression(62,65): 'Baz'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(104,107): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
 
 KtNameReferenceExpression(108,111): 'Bar'
   KtSimpleNameReference:
-    (in Foo) class Bar
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) class Bar
 
 KtNameReferenceExpression(112,115): 'Baz'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(141,142): 'T'
   KtSimpleNameReference:
-    (in <local>: take) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: take) T
 
 KtNameReferenceExpression(147,151): 'Unit'
   KtSimpleNameReference:
-    (in kotlin) object Unit
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) object Unit
 
 KtCallExpression(168,208): 'take {'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(168,172): 'take'
   KtSimpleNameReference:
-    (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
 KtNameReferenceExpression(192,195): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
 
 KtNameReferenceExpression(196,199): 'Bar'
   KtSimpleNameReference:
-    (in Foo) class Bar
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) class Bar
 
 KtNameReferenceExpression(200,203): 'Baz'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

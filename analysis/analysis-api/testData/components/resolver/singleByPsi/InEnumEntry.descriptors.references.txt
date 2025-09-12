@@ -1,6 +1,10 @@
 KtNameReferenceExpression(100,109): 'TOP_LEVEL'
   KtSimpleNameReference:
-    (in test) val TOP_LEVEL: kotlin.Int
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test) val TOP_LEVEL: kotlin.Int
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

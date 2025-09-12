@@ -1,3 +1,5 @@
 KDocName(8,47): 'kotlin.LazyThreadSafetyMode.PUBLICATION'
   KDocReference:
-    (in kotlin.LazyThreadSafetyMode) PUBLICATION
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.LazyThreadSafetyMode) PUBLICATION

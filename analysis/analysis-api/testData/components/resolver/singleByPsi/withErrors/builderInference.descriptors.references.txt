@@ -1,6 +1,10 @@
 KtNameReferenceExpression(248,251): 'add'
   KtSimpleNameReference:
-    (in test.Target) fun add(t: T)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test.Target) fun add(t: T)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

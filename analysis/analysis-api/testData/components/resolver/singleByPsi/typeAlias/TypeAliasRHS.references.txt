@@ -1,3 +1,5 @@
 KtNameReferenceExpression(38,39): 'C'
   KtSimpleNameReference:
-    (in test) class C
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test) class C

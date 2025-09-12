@@ -1,9 +1,13 @@
 <caret_1>:
   KDocName(104,112): 'AInt.foo'
     KDocReference:
-      (in ROOT) fun A<kotlin.Number>.foo()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in ROOT) fun A<kotlin.Number>.foo()
 
 <caret_2>:
   KDocName(118,129): 'AString.foo'
     KDocReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)

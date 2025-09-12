@@ -1,237 +1,365 @@
 KtNameReferenceExpression(148,154): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(163,174): 'SealedClass'
   KtSimpleNameReference:
-    (in SealedClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(215,218): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(225,236): 'SealedClass'
   KtSimpleNameReference:
-    (in SealedClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(291,298): 'Boolean'
   KtSimpleNameReference:
-    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(308,319): 'SealedClass'
   KtSimpleNameReference:
-    (in SealedClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(358,374): 'SealedInheritor1'
   KtSimpleNameReference:
-    (in SealedClass.SealedInheritor1) constructor(prop1: kotlin.String)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass.SealedInheritor1) constructor(prop1: kotlin.String)
 
 KtNameReferenceExpression(415,421): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(439,450): 'SealedClass'
   KtSimpleNameReference:
-    (in SealedClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(500,511): 'SealedClass'
   KtSimpleNameReference:
-    (in ROOT) sealed class SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) sealed class SealedClass
 
 KtNameReferenceExpression(514,520): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(531,539): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(540,542): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(543,559): 'SealedInheritor1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(578,586): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(587,592): 'prop1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(608,616): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(617,619): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(620,643): 'IndirectSealedInheritor'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(662,670): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(671,676): 'prop1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(692,700): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(701,703): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(704,709): 'Inner'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(728,736): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(737,746): 'innerProp'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(762,770): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(771,774): '!is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(775,791): 'SealedInheritor1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(792,794): '&&'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(795,803): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(804,807): '!is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(808,830): 'SealedSealedInheritor1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(846,854): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(855,857): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(858,874): 'SealedInheritor2'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(897,905): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(906,911): 'prop2'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(937,945): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(946,948): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(949,971): 'SealedSealedInheritor1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(990,998): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(999,1004): 'prop3'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1020,1028): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtOperationReferenceExpression(1029,1031): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(1032,1039): 'Nested1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

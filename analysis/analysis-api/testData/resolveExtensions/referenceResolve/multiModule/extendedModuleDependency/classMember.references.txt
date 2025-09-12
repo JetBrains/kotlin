@@ -1,3 +1,5 @@
 KtNameReferenceExpression(140,161): 'generatedClassMember2'
   KtSimpleNameReference:
-    (in generated.GeneratedClass2) fun generatedClassMember2(): generated.GeneratedClass1 [origin = SOURCE]
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in generated.GeneratedClass2) fun generatedClassMember2(): generated.GeneratedClass1 [origin = SOURCE]

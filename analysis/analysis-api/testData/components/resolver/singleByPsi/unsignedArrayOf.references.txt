@@ -1,7 +1,11 @@
 KtNameReferenceExpression(39,50): 'uintArrayOf'
   KtSimpleNameReference:
-    (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
 
 KtCallExpression(31,56): 'println(uintArrayOf(42u))'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

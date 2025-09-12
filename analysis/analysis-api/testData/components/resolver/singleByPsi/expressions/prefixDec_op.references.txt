@@ -1,6 +1,10 @@
 KtOperationReferenceExpression(138,140): '--'
   KtSimpleNameReference:
-    (in MyClass) operator fun dec(): MyClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) operator fun dec(): MyClass
 
   KtSimpleNameReference:
-    (in MyClass) operator fun dec(): MyClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) operator fun dec(): MyClass

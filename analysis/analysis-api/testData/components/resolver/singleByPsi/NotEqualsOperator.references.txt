@@ -1,3 +1,5 @@
 KtOperationReferenceExpression(112,114): '!='
   KtSimpleNameReference:
-    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean

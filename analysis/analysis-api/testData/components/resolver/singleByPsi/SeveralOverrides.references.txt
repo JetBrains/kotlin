@@ -1,3 +1,5 @@
 KtNameReferenceExpression(110,113): 'foo'
   KtSimpleNameReference:
-    (in C) override fun foo()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in C) override fun foo()

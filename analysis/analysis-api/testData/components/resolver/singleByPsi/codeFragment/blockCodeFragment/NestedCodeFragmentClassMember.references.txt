@@ -1,3 +1,5 @@
 KtNameReferenceExpression(156,161): 'Local'
   KtSimpleNameReference:
-    (in <local>: Local) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: Local) constructor()

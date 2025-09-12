@@ -1,3 +1,5 @@
 KtCallExpression(75,78): 'f()'
   KtInvokeFunctionReference:
-    (in Foo) operator fun invoke(vararg a: kotlin.Any)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) operator fun invoke(vararg a: kotlin.Any)

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(48,49): 'A'
   KtSimpleNameReference:
-    (in ROOT) object A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) object A

@@ -1,6 +1,10 @@
 KtNameReferenceExpression(144,145): 'A'
   KtSimpleNameReference:
-    (in t.A) companion object : t.Trait
-  
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in t.A) companion object : t.Trait
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

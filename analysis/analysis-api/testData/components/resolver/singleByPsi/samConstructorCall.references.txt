@@ -1,3 +1,5 @@
 KtNameReferenceExpression(8,18): 'Comparator'
   KtSimpleNameReference:
-    (in kotlin) <T> Comparator(function: (T!, T!) -> kotlin.Int): kotlin.Comparator<T> /* = java.util.Comparator<T> */
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) <T> Comparator(function: (T!, T!) -> kotlin.Int): kotlin.Comparator<T> /* = java.util.Comparator<T> */

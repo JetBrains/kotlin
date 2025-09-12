@@ -1,39 +1,59 @@
 KtNameReferenceExpression(23,27): 'main'
   KtSimpleNameReference:
-    package main
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package main
 
 KtNameReferenceExpression(54,60): 'kotlin'
   KtSimpleNameReference:
-    package kotlin
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package kotlin
 
 KtNameReferenceExpression(61,72): 'collections'
   KtSimpleNameReference:
-    package kotlin.collections
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package kotlin.collections
 
 KtNameReferenceExpression(82,88): 'kotlin'
   KtSimpleNameReference:
-    package kotlin
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package kotlin
 
 KtNameReferenceExpression(89,93): 'text'
   KtSimpleNameReference:
-    package kotlin.text
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package kotlin.text
 
 KtNameReferenceExpression(120,124): 'java'
   KtSimpleNameReference:
-    package java
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package java
 
 KtNameReferenceExpression(125,129): 'util'
   KtSimpleNameReference:
-    package java.util
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package java.util
 
 KtNameReferenceExpression(139,143): 'java'
   KtSimpleNameReference:
-    package java
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package java
 
 KtNameReferenceExpression(144,148): 'lang'
   KtSimpleNameReference:
-    package java.lang
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package java.lang
 
 KtNameReferenceExpression(149,153): 'Math'
   KtSimpleNameReference:
-    (in java.lang) class Math
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in java.lang) class Math

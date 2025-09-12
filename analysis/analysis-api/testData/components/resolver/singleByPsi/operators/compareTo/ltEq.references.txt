@@ -1,3 +1,5 @@
 KtOperationReferenceExpression(114,116): '<='
   KtSimpleNameReference:
-    (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int

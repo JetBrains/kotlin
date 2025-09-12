@@ -1,6 +1,10 @@
 KtNameReferenceExpression(64,65): 'a'
   KtSimpleNameReference:
-    vararg a: test.A
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      vararg a: test.A
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

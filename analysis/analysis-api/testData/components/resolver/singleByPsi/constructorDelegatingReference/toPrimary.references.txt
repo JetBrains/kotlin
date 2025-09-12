@@ -1,3 +1,5 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
   KtConstructorDelegationReference:
-    (in A) constructor(a: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor(a: kotlin.Int)

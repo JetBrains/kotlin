@@ -1,7 +1,11 @@
 KtNameReferenceExpression(87,90): 'obj'
   KtSimpleNameReference:
-    obj: Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      obj: Foo
 
 KtCallExpression(79,96): 'consume(obj::foo)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

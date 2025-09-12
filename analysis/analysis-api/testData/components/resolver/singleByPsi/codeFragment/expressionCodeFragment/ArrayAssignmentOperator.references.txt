@@ -1,3 +1,5 @@
 KtOperationReferenceExpression(150,151): '='
   KtSimpleNameReference:
-    (in MyList) operator fun set(index: kotlin.Int, value: kotlin.String)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyList) operator fun set(index: kotlin.Int, value: kotlin.String)

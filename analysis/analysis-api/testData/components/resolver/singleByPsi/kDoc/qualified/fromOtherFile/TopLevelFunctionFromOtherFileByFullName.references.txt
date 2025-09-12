@@ -1,3 +1,5 @@
 KDocName(22,26): 'b.bb'
   KDocReference:
-    (in b) fun bb()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in b) fun bb()

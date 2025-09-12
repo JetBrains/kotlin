@@ -1,3 +1,5 @@
 KtNameReferenceExpression(74,77): 'foo'
   KtSimpleNameReference:
-    (in DeclSite) open var foo: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in DeclSite) open var foo: kotlin.Int

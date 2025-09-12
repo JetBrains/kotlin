@@ -1,112 +1,170 @@
 <caret_1>:
   KtNameReferenceExpression(147,156): 'something'
     KtSimpleNameReference:
-      (in <local>: JavaClass.something) get()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in <local>: JavaClass.something) get()
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_2>:
   KtNameReferenceExpression(172,181): 'something'
     KtSimpleNameReference:
-      (in <local>: JavaClass.something) set(value: kotlin.Int)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in <local>: JavaClass.something) set(value: kotlin.Int)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_3>:
   KtNameReferenceExpression(200,209): 'something'
     KtSimpleNameReference:
-      0: (in <local>: JavaClass.something) get()
-      1: (in <local>: JavaClass.something) set(value: kotlin.Int)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: (in <local>: JavaClass.something) get()
+        1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_4>:
   KtNameReferenceExpression(229,238): 'something'
     KtSimpleNameReference:
-      0: (in <local>: JavaClass.something) get()
-      1: (in <local>: JavaClass.something) set(value: kotlin.Int)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: (in <local>: JavaClass.something) get()
+        1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_5>:
   KtNameReferenceExpression(257,266): 'something'
     KtSimpleNameReference:
-      0: (in <local>: JavaClass.something) get()
-      1: (in <local>: JavaClass.something) set(value: kotlin.Int)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: (in <local>: JavaClass.something) get()
+        1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_6>:
   KtNameReferenceExpression(271,280): 'something'
     KtSimpleNameReference:
-      0: (in <local>: JavaClass.something) get()
-      1: (in <local>: JavaClass.something) set(value: kotlin.Int)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: (in <local>: JavaClass.something) get()
+        1: (in <local>: JavaClass.something) set(value: kotlin.Int)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_7>:
   KtNameReferenceExpression(384,393): 'something'
     KtSimpleNameReference:
-      (in KotlinClass) open var something: kotlin.Int
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) open var something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_8>:
   KtNameReferenceExpression(415,424): 'something'
     KtSimpleNameReference:
-      (in KotlinClass) open var something: kotlin.Int
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) open var something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_9>:
   KtNameReferenceExpression(449,458): 'something'
     KtSimpleNameReference:
-      (in KotlinClass) open var something: kotlin.Int
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) open var something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_10>:
   KtNameReferenceExpression(484,493): 'something'
     KtSimpleNameReference:
-      (in KotlinClass) open var something: kotlin.Int
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) open var something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_11>:
   KtNameReferenceExpression(518,527): 'something'
     KtSimpleNameReference:
-      (in KotlinClass) open var something: kotlin.Int
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) open var something: kotlin.Int
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)

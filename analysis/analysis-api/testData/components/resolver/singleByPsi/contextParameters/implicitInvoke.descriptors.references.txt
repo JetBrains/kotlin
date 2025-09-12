@@ -1,6 +1,10 @@
 KtNameReferenceExpression(117,125): 'thisProp'
   KtSimpleNameReference:
-    (in <local>: usage.<no name>) var thisProp: A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: usage.<no name>) var thisProp: A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(31,34): 'foo'
   KtSimpleNameReference:
-    (in ROOT) fun foo() [fake.kt]
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun foo() [fake.kt]

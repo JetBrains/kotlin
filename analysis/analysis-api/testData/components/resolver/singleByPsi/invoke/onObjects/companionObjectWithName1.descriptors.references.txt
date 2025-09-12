@@ -1,6 +1,10 @@
 KtNameReferenceExpression(127,133): 'Helper'
   KtSimpleNameReference:
-    (in Foo) companion object Helper
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) companion object Helper
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

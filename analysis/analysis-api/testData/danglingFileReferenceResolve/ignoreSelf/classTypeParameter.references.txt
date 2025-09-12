@@ -1,3 +1,5 @@
 KtNameReferenceExpression(48,53): 'Value'
   KtSimpleNameReference:
-    (in <local>: Foo) Value [classTypeParameter.kt]
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: Foo) Value [classTypeParameter.kt]

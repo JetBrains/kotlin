@@ -1,6 +1,10 @@
 KtNameReferenceExpression(193,196): 'foo'
   KtSimpleNameReference:
-    (in Another) abstract val foo: kotlin.Long
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Another) abstract val foo: kotlin.Long
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

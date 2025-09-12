@@ -1,3 +1,5 @@
 KtNameReferenceExpression(94,97): 'bar'
   KtSimpleNameReference:
-    (in one.two.TopLevelObject) val bar: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in one.two.TopLevelObject) val bar: kotlin.Int

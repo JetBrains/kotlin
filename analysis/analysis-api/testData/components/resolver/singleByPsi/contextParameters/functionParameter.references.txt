@@ -1,3 +1,5 @@
 KtNameReferenceExpression(84,89): 'param'
   KtSimpleNameReference:
-    param: Context
+    isImplicitReferenceToCompanion: false
+    symbols:
+      param: Context

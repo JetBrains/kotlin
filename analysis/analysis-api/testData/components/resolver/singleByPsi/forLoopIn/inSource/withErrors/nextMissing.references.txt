@@ -1,4 +1,6 @@
 KtForExpression(23,37): 'for(i in f) {}'
   KtForLoopInReference:
-    0: (in Foo) operator fun iterator(): Iterator
-    1: (in Iterator) operator fun hasNext(): kotlin.Boolean
+    isImplicitReferenceToCompanion: false
+    symbols:
+      0: (in Foo) operator fun iterator(): Iterator
+      1: (in Iterator) operator fun hasNext(): kotlin.Boolean

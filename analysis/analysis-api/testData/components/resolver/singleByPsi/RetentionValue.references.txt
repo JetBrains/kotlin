@@ -1,3 +1,5 @@
 KtNameReferenceExpression(31,37): 'SOURCE'
   KtSimpleNameReference:
-    (in kotlin.annotation.AnnotationRetention) SOURCE
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.annotation.AnnotationRetention) SOURCE

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(88,95): 'MyAlias'
   KtSimpleNameReference:
-    (in test.MyAlias) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test.MyAlias) constructor()

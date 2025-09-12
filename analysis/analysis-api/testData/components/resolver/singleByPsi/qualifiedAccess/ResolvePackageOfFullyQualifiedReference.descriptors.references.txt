@@ -1,6 +1,10 @@
 KtNameReferenceExpression(114,117): 'baz'
   KtSimpleNameReference:
-    package foo.bar.baz
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package foo.bar.baz
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

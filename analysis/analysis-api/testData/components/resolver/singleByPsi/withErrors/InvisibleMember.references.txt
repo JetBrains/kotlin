@@ -1,3 +1,5 @@
 KtNameReferenceExpression(63,64): 'i'
   KtSimpleNameReference:
-    (in A) private val i: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) private val i: kotlin.Int

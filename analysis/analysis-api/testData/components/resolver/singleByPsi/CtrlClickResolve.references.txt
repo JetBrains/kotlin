@@ -1,3 +1,5 @@
 KtNameReferenceExpression(202,210): 'IntArray'
   KtSimpleNameReference:
-    (in ctrl_click) fun IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ctrl_click) fun IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>

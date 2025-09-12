@@ -1,3 +1,5 @@
 KtNameReferenceExpression(202,205): 'foo'
   KtSimpleNameReference:
-    (in r) fun foo(): kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in r) fun foo(): kotlin.Int

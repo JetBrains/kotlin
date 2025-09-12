@@ -1,6 +1,10 @@
 KtNameReferenceExpression(64,67): 'ALE'
   KtSimpleNameReference:
-    (in ALE) constructor()
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ALE) constructor()
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

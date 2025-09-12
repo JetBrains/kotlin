@@ -1,7 +1,11 @@
 KtNameReferenceExpression(249,252): 'Bar'
   KtSimpleNameReference:
-    (in ROOT) interface Bar
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface Bar
 
 KtCallExpression(241,258): 'consume(Bar::foo)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

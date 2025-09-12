@@ -1,3 +1,5 @@
 KtNameReferenceExpression(122,128): 'Server'
   KtSimpleNameReference:
-    (in Server) companion object
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in Server) companion object

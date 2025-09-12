@@ -1,3 +1,5 @@
 KDocName(34,36): 'BB'
   KDocReference:
-    (in b) class BB
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in b) class BB

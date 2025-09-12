@@ -1,3 +1,5 @@
 KtNameReferenceExpression(81,82): 'x'
   KtSimpleNameReference:
-    (in <local>: call) val x: (a: kotlin.Int) -> kotlin.Unit
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: call) val x: (a: kotlin.Int) -> kotlin.Unit

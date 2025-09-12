@@ -1,6 +1,10 @@
 KtNameReferenceExpression(77,80): 'foo'
   KtSimpleNameReference:
-    (in Foo) fun foo(a: kotlin.Int)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) fun foo(a: kotlin.Int)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

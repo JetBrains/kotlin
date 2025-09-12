@@ -1,3 +1,5 @@
 KtNameReferenceExpression(173,176): 'obj'
   KtSimpleNameReference:
-    obj: kotlin.Any
+    isImplicitReferenceToCompanion: false
+    symbols:
+      obj: kotlin.Any

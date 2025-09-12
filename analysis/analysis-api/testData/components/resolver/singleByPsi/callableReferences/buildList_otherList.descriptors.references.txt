@@ -1,6 +1,10 @@
 KtNameReferenceExpression(141,145): 'list'
   KtSimpleNameReference:
-    (in <local>: test) val list: kotlin.collections.MutableList<kotlin.String>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: test) val list: kotlin.collections.MutableList<kotlin.String>
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

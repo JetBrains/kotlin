@@ -1,6 +1,10 @@
 KtNameReferenceExpression(48,57): 'Companion'
   KtSimpleNameReference:
-    (in dependency.C) companion object
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in dependency.C) companion object
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,6 +1,10 @@
 KtNameReferenceExpression(33,37): 'List'
   KtSimpleNameReference:
-    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

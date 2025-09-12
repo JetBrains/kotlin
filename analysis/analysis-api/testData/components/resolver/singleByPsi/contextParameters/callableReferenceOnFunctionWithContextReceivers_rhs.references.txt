@@ -1,4 +1,6 @@
 KtNameReferenceExpression(67,70): 'foo'
   KtSimpleNameReference:
-    (in ROOT) context(Int@kotlin.Int, String@kotlin.String)
-    fun foo(b: kotlin.Boolean)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) context(Int@kotlin.Int, String@kotlin.String)
+      fun foo(b: kotlin.Boolean)

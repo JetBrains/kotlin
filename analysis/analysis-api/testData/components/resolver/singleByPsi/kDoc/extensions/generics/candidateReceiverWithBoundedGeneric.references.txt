@@ -1,3 +1,5 @@
 KDocName(152,173): 'Derived.someExtension'
   KDocReference:
-    (in ROOT) fun Base<DerivedBound>.someExtension()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun Base<DerivedBound>.someExtension()

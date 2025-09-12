@@ -1,3 +1,5 @@
 KtConstructorDelegationReferenceExpression(115,119): 'this'
   KtConstructorDelegationReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

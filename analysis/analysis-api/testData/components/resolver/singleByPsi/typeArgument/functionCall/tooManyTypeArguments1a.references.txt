@@ -1,3 +1,5 @@
 KtNameReferenceExpression(94,95): 'X'
   KtSimpleNameReference:
-    (in ROOT) interface X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface X

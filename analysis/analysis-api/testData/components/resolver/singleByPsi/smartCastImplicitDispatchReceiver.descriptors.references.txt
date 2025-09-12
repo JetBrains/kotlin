@@ -1,6 +1,10 @@
 KtNameReferenceExpression(51,57): 'length'
   KtSimpleNameReference:
-    (in kotlin.String) override val length: kotlin.Int
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.String) override val length: kotlin.Int
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

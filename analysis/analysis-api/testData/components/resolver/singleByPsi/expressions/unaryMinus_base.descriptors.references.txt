@@ -1,6 +1,10 @@
 KtNameReferenceExpression(192,200): 'variable'
   KtSimpleNameReference:
-    (in ROOT) var variable: MyClass
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) var variable: MyClass
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

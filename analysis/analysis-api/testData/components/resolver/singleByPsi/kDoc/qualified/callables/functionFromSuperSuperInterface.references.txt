@@ -1,3 +1,5 @@
 KDocName(95,102): 'Foo.foo'
   KDocReference:
-    (in Baz) fun foo()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Baz) fun foo()

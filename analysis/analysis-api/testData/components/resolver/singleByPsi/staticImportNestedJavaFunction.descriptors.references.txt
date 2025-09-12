@@ -1,6 +1,10 @@
 KtNameReferenceExpression(95,98): 'foo'
   KtSimpleNameReference:
-    (in Dependency.Nested) open fun foo()
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Dependency.Nested) open fun foo()
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

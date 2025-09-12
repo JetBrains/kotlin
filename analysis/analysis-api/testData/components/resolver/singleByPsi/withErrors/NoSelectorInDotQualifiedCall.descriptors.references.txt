@@ -1,6 +1,10 @@
 KtNameReferenceExpression(108,115): 'makeFoo'
   KtSimpleNameReference:
-    (in testing) fun makeFoo(): testing.Foo
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in testing) fun makeFoo(): testing.Foo
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

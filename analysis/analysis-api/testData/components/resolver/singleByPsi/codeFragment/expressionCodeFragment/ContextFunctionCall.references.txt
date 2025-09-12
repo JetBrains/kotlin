@@ -1,3 +1,5 @@
 KtNameReferenceExpression(138,142): 'test'
   KtSimpleNameReference:
-    (in ROOT) fun test()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun test()

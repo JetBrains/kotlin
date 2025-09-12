@@ -1,3 +1,5 @@
 KtNameReferenceExpression(64,65): 'T'
   KtSimpleNameReference:
-    (in <local>: labeledComponent) reified T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: labeledComponent) reified T

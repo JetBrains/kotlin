@@ -1,23 +1,35 @@
 <caret_1>:
   KtNameReferenceExpression(309,312): 'foo'
     KtSimpleNameReference:
-      (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
-      (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
 
 <caret_2>:
   KtNameReferenceExpression(330,333): 'foo'
     KtSimpleNameReference:
-      (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
-      (in KotlinClass) override fun setFoo(foo: Foo<kotlin.Any>)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) override fun setFoo(foo: Foo<kotlin.Any>)
 
 <caret_3>:
   KtNameReferenceExpression(442,445): 'foo'
     KtSimpleNameReference:
-      (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) var KotlinClass.foo: Foo<kotlin.Any>
 
     SyntheticPropertyAccessorReference:
-      (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in KotlinClass) override fun getFoo(): Foo<kotlin.Any>

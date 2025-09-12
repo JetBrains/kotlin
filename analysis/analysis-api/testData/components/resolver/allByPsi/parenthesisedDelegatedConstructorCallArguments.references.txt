@@ -1,87 +1,131 @@
 KtNameReferenceExpression(19,20): 'T'
   KtSimpleNameReference:
-    (in <local>: A) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: A) T
 
 KtNameReferenceExpression(43,44): 'T'
   KtSimpleNameReference:
-    (in <local>: A) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: A) T
 
 KtNameReferenceExpression(51,57): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtConstructorDelegationReferenceExpression(61,65): 'this'
   KtConstructorDelegationReference:
-    (in A) constructor <T>(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor <T>(i: T)
 
 KtNameReferenceExpression(69,70): 'i'
   KtSimpleNameReference:
-    i: T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: T
 
 KtNameReferenceExpression(94,95): 'T'
   KtSimpleNameReference:
-    (in <local>: A) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: A) T
 
 KtNameReferenceExpression(104,107): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtConstructorDelegationReferenceExpression(111,115): 'this'
   KtConstructorDelegationReference:
-    (in A) constructor <T>(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor <T>(i: T)
 
 KtNameReferenceExpression(116,117): 'i'
   KtSimpleNameReference:
-    i: T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: T
 
 KtNameReferenceExpression(123,124): 'i'
   KtSimpleNameReference:
-    i: T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: T
 
 KtNameReferenceExpression(142,143): 'A'
   KtSimpleNameReference:
-    (in ROOT) open class A<T>(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) open class A<T>(i: T)
 
 KtNameReferenceExpression(147,150): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtConstructorDelegationReferenceExpression(177,182): 'super'
   KtConstructorDelegationReference:
-    (in A) constructor <T>(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor <T>(i: T)
 
 KtNameReferenceExpression(214,217): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtConstructorDelegationReferenceExpression(221,226): 'super'
   KtConstructorDelegationReference:
-    (in A) constructor <T>(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor <T>(i: T)
 
 KtNameReferenceExpression(227,228): 'i'
   KtSimpleNameReference:
-    i: T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: T
 
 KtNameReferenceExpression(233,238): 'value'
   KtSimpleNameReference:
-    value: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      value: kotlin.Int
 
 KtNameReferenceExpression(266,272): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtConstructorDelegationReferenceExpression(276,281): 'super'
   KtConstructorDelegationReference:
-    (in A) constructor <T>(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor <T>(i: T)
 
 KtNameReferenceExpression(282,283): 'i'
   KtSimpleNameReference:
-    i: T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: T
 
 KtOperationReferenceExpression(292,294): 'as'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(295,298): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(138,143): 'annos'
   KtSimpleNameReference:
-    vararg annos: Annotation
+    isImplicitReferenceToCompanion: false
+    symbols:
+      vararg annos: Annotation

@@ -1,3 +1,5 @@
 KDocName(8,10): 'AA'
   KDocReference:
-    (in <local>: C) AA
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: C) AA

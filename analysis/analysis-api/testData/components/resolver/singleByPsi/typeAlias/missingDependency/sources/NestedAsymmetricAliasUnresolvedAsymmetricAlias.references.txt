@@ -1,3 +1,5 @@
 KtNameReferenceExpression(188,193): 'check'
   KtSimpleNameReference:
-    (in dependency4.MyInterface) fun check(list: dependency3.AsymmetricAlias2<dependency1.IntAlias /* = kotlin.Int */, kotlin.String> /* = kotlin.collections.List<kotlin.String> */)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in dependency4.MyInterface) fun check(list: dependency3.AsymmetricAlias2<dependency1.IntAlias /* = kotlin.Int */, kotlin.String> /* = kotlin.collections.List<kotlin.String> */)

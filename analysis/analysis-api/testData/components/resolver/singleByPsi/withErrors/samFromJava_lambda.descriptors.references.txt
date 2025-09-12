@@ -1,6 +1,10 @@
 KtNameReferenceExpression(156,163): 'handler'
   KtSimpleNameReference:
-    handler: test.pkg.MyHandler
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      handler: test.pkg.MyHandler
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

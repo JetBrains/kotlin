@@ -1,3 +1,5 @@
 KtNameReferenceExpression(70,74): 'name'
   KtSimpleNameReference:
-    (in Foo) private val name: kotlin.String [fake.kt]
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) private val name: kotlin.String [fake.kt]

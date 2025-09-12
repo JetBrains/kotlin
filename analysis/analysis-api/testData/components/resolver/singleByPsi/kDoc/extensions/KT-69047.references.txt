@@ -1,9 +1,13 @@
 <caret_1>:
   KDocName(47,61): 'C.ensureActive'
     KDocReference:
-      (in ROOT) fun C.ensureActive()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in ROOT) fun C.ensureActive()
 
 <caret_2>:
   KDocName(83,97): 'C.ensureActive'
     KDocReference:
-      (in ROOT) fun C.ensureActive()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in ROOT) fun C.ensureActive()

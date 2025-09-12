@@ -1,6 +1,10 @@
 KtNameReferenceExpression(270,279): 'getString'
   KtSimpleNameReference:
-    (in test.pkg.Context) fun getString(id: kotlin.Int): kotlin.String!
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test.pkg.Context) fun getString(id: kotlin.Int): kotlin.String!
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

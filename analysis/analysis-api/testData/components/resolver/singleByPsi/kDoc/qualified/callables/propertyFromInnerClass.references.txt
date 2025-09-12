@@ -1,3 +1,5 @@
 KDocName(78,91): 'Foo.Inner.foo'
   KDocReference:
-    (in Foo.Inner) val foo: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo.Inner) val foo: kotlin.Int

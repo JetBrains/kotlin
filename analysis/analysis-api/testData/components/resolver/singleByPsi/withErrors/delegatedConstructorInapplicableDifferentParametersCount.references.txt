@@ -1,3 +1,5 @@
 KtNameReferenceExpression(31,32): 'A'
   KtSimpleNameReference:
-    (in A) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) constructor()

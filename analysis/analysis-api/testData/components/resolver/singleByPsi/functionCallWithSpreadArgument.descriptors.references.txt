@@ -1,6 +1,10 @@
 KtNameReferenceExpression(84,92): 'function'
   KtSimpleNameReference:
-    (in ROOT) fun function(vararg a: kotlin.Int)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun function(vararg a: kotlin.Int)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

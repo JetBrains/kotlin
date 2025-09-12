@@ -1,10 +1,16 @@
 KtNameReferenceExpression(131,141): 'Annotation'
   KtSimpleNameReference:
-    (in Annotation) constructor(vararg strings: kotlin.String)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Annotation) constructor(vararg strings: kotlin.String)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtValueArgument(131,156): 'Annotation(*["v1", "v2"])'
   KtDefaultAnnotationArgumentReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(24,27): 'abc'
   KtSimpleNameReference:
-    abc: kotlin.Int [fake.kt]
+    isImplicitReferenceToCompanion: false
+    symbols:
+      abc: kotlin.Int [fake.kt]

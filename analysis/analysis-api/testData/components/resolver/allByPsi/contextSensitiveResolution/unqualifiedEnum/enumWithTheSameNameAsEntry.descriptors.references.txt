@@ -1,38 +1,60 @@
 KtNameReferenceExpression(115,116): 'A'
   KtSimpleNameReference:
-    (in ROOT) enum class A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class A
 
 KtNameReferenceExpression(126,127): 'a'
   KtSimpleNameReference:
-    a: A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      a: A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(135,136): 'A'
   KtSimpleNameReference:
-    (in ROOT) enum class A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(137,138): 'A'
   KtSimpleNameReference:
-    (in A) A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(150,151): 'A'
   KtSimpleNameReference:
-    (in ROOT) enum class A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(152,153): 'B'
   KtSimpleNameReference:
-    (in A) B
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) B
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

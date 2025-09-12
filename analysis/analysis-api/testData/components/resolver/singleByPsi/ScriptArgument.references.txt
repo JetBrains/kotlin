@@ -1,3 +1,5 @@
 KtNameReferenceExpression(16,20): 'args'
   KtSimpleNameReference:
-    (in kotlin.script.templates.standard.ScriptTemplateWithArgs) val args: kotlin.Array<kotlin.String>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.script.templates.standard.ScriptTemplateWithArgs) val args: kotlin.Array<kotlin.String>

@@ -1,23 +1,35 @@
 <caret_1>:
   KtNameReferenceExpression(192,195): 'foo'
     KtSimpleNameReference:
-      (in <local>: JavaClass.foo) get()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in <local>: JavaClass.foo) get()
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_2>:
   KtNameReferenceExpression(211,214): 'foo'
     KtSimpleNameReference:
-      (in <local>: JavaClass.foo) set(value: (Foo<kotlin.String!>..Foo<kotlin.String!>?))
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in <local>: JavaClass.foo) set(value: (Foo<kotlin.String!>..Foo<kotlin.String!>?))
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)
 
 <caret_3>:
   KtNameReferenceExpression(329,332): 'foo'
     KtSimpleNameReference:
-      (in <local>: JavaClass.foo) get()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in <local>: JavaClass.foo) get()
 
     SyntheticPropertyAccessorReference:
-      Nothing (Unresolved reference)
+      isImplicitReferenceToCompanion: false
+      symbols:
+        Nothing (Unresolved reference)

@@ -1,3 +1,5 @@
 KtConstructorDelegationReferenceExpression(144,149): 'super'
   KtConstructorDelegationReference:
-    (in ClassWithType) constructor(i: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ClassWithType) constructor(i: T)

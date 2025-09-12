@@ -1,6 +1,10 @@
 KtNameReferenceExpression(94,95): 'c'
   KtSimpleNameReference:
-    (in Container) fun c()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Container) fun c()
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

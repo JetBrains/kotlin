@@ -1,9 +1,15 @@
 KtNameReferenceExpression(73,74): 'l'
   KtSimpleNameReference:
-    l: A
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      l: A
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

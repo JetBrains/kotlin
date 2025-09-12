@@ -1,6 +1,10 @@
 KtNameReferenceExpression(64,65): 'T'
   KtSimpleNameReference:
-    (in <local>: labeledComponent) reified T
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: labeledComponent) reified T
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

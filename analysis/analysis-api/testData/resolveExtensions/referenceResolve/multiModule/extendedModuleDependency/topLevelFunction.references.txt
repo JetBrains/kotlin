@@ -1,3 +1,5 @@
 KtNameReferenceExpression(111,137): 'generatedTopLevelFunction1'
   KtSimpleNameReference:
-    (in generated) fun generatedTopLevelFunction1(): generated.GeneratedClass2 [origin = SOURCE]
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in generated) fun generatedTopLevelFunction1(): generated.GeneratedClass2 [origin = SOURCE]

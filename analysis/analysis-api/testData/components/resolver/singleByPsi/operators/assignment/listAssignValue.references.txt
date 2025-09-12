@@ -1,3 +1,5 @@
 KtOperationReferenceExpression(57,59): '+='
   KtSimpleNameReference:
-    (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.collections.MutableList) operator fun set(index: kotlin.Int, element: E): E

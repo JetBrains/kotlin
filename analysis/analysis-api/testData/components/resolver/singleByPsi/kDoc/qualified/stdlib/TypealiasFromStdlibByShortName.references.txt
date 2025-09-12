@@ -1,3 +1,5 @@
 KDocName(45,54): 'ArrayList'
   KDocReference:
-    (in kotlin.collections) typealias ArrayList<E> = java.util.ArrayList<E>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.collections) typealias ArrayList<E> = java.util.ArrayList<E>

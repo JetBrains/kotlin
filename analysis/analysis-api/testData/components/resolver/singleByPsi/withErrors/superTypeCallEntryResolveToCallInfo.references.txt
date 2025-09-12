@@ -1,3 +1,5 @@
 KtNameReferenceExpression(26,30): 'java'
   KtSimpleNameReference:
-    package java
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package java

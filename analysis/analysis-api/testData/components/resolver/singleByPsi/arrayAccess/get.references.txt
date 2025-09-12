@@ -1,3 +1,5 @@
 KtArrayAccessExpression(70,77): 'list[0]'
   KtArrayAccessReference:
-    (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.collections.MutableList) override operator fun get(index: kotlin.Int): E

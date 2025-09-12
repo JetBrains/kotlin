@@ -1,3 +1,5 @@
 KtNameReferenceExpression(95,98): 'foo'
   KtSimpleNameReference:
-    (in one.two.TopLevelObject) fun foo()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in one.two.TopLevelObject) fun foo()

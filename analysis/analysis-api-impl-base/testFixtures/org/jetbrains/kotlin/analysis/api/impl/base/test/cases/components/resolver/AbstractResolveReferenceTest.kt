@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.test.framework.services.toCaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
@@ -71,7 +72,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
     protected fun collectElementsToResolve(
         carets: List<FileMarker<Int>>,
         file: KtFile,
-    ): Collection<ResolveTestCaseContext<KtReference?>> = carets.flatMap<FileMarker<Int>, ResolveTestCaseContext<KtReference?>> { caret ->
+    ): Collection<ResolveTestCaseContext<KtReference?>> = carets.flatMap { caret ->
         val marker = caret.tagText
         val contexts: List<ResolveTestCaseContext<KtReference?>> = findReferencesAtCaret(file, caret.value).map { reference ->
             ResolveReferenceTestCaseContext(element = reference, marker = marker)
@@ -115,7 +116,19 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in module.testModule.directives
             val options = createRenderingOptions(renderPsiClassName)
-            renderResolvedTo(symbols, options, sortRenderedDeclarations = reference !is KDocReference) { getAdditionalSymbolInfo(it) }
+            prettyPrint {
+                appendLine("isImplicitReferenceToCompanion: ${reference.isImplicitReferenceToCompanion()}")
+                appendLine("symbols:")
+                withIndent {
+                    val resolvedSymbolsInfo = renderResolvedTo(
+                        symbols = symbols,
+                        renderer = options,
+                        sortRenderedDeclarations = reference !is KDocReference,
+                    ) { getAdditionalSymbolInfo(it) }
+
+                    append(resolvedSymbolsInfo)
+                }
+            }
         }
     }
 

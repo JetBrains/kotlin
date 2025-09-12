@@ -1,59 +1,89 @@
 KtNameReferenceExpression(37,43): 'second'
   KtSimpleNameReference:
-    package second
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package second
 
 KtNameReferenceExpression(52,57): 'first'
   KtSimpleNameReference:
-    package first
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package first
 
 KtNameReferenceExpression(58,63): 'First'
   KtSimpleNameReference:
-    (in first) enum class First
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in first) enum class First
 
 KtNameReferenceExpression(71,76): 'first'
   KtSimpleNameReference:
-    package first
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package first
 
 KtNameReferenceExpression(77,82): 'THREE'
   KtSimpleNameReference:
-    (in first) val THREE: first.First
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in first) val THREE: first.First
 
 KtNameReferenceExpression(134,140): 'Second'
   KtSimpleNameReference:
-    (in second) enum class Second
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in second) enum class Second
 
 KtNameReferenceExpression(141,146): 'THREE'
   KtSimpleNameReference:
-    (in second.Second) THREE
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in second.Second) THREE
 
 KtNameReferenceExpression(159,164): 'First'
   KtSimpleNameReference:
-    (in first) enum class First
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in first) enum class First
 
 KtNameReferenceExpression(174,175): 'f'
   KtSimpleNameReference:
-    f: first.First
+    isImplicitReferenceToCompanion: false
+    symbols:
+      f: first.First
 
 KtNameReferenceExpression(183,186): 'ONE'
   KtSimpleNameReference:
-    (in second) val ONE: second.Second
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in second) val ONE: second.Second
 
 KtNameReferenceExpression(196,199): 'TWO'
   KtSimpleNameReference:
-    (in first.First) TWO
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in first.First) TWO
 
 KtNameReferenceExpression(219,225): 'Second'
   KtSimpleNameReference:
-    (in second) enum class Second
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in second) enum class Second
 
 KtNameReferenceExpression(235,236): 's'
   KtSimpleNameReference:
-    s: second.Second
+    isImplicitReferenceToCompanion: false
+    symbols:
+      s: second.Second
 
 KtNameReferenceExpression(244,249): 'THREE'
   KtSimpleNameReference:
-    (in first) val THREE: first.First
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in first) val THREE: first.First
 
 KtNameReferenceExpression(259,263): 'FOUR'
   KtSimpleNameReference:
-    (in second.Second) FOUR
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in second.Second) FOUR

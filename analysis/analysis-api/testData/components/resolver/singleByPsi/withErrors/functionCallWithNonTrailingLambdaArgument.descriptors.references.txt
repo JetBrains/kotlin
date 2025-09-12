@@ -1,7 +1,11 @@
 KtNameReferenceExpression(191,199): 'function'
   KtSimpleNameReference:
-    0: (in ROOT) fun <T1, O1> function(a: O1, b: (kotlin.Int) -> kotlin.Boolean, c: T1)
-    1: (in ROOT) fun <T2, O2> function(a: O2, b: (kotlin.String) -> kotlin.Boolean, c: T2)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      0: (in ROOT) fun <T1, O1> function(a: O1, b: (kotlin.Int) -> kotlin.Boolean, c: T1)
+      1: (in ROOT) fun <T2, O2> function(a: O2, b: (kotlin.String) -> kotlin.Boolean, c: T2)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

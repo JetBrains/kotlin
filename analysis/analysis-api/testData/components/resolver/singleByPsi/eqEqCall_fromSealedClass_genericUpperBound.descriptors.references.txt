@@ -1,6 +1,10 @@
 KtNameReferenceExpression(357,364): 'oldItem'
   KtSimpleNameReference:
-    oldItem: T
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      oldItem: T
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

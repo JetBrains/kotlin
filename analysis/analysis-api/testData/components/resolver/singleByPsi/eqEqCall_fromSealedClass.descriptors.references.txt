@@ -1,6 +1,10 @@
 KtNameReferenceExpression(199,201): 's1'
   KtSimpleNameReference:
-    s1: SealedClass
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      s1: SealedClass
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

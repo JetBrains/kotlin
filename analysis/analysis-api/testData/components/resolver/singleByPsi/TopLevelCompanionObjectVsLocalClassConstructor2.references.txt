@@ -1,3 +1,5 @@
 KtNameReferenceExpression(141,149): 'Conflict'
   KtSimpleNameReference:
-    (in <local>: test.Conflict) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: test.Conflict) constructor()

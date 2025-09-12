@@ -1,155 +1,233 @@
 KtNameReferenceExpression(146,152): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(158,160): 'A1'
   KtSimpleNameReference:
-    (in A1) constructor(value: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A1) constructor(value: MyEnum)
 
 KtValueArgument(161,162): 'X'
   KtDefaultAnnotationArgumentReference:
-    value: MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      value: MyEnum
 
 KtNameReferenceExpression(161,162): 'X'
   KtSimpleNameReference:
-    (in MyEnum) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) X
 
 KtNameReferenceExpression(222,228): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(234,236): 'A2'
   KtSimpleNameReference:
-    (in A2) constructor(vararg value: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A2) constructor(vararg value: MyEnum)
 
 KtNameReferenceExpression(237,238): 'X'
   KtSimpleNameReference:
-    (in MyEnum) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) X
 
 KtNameReferenceExpression(240,241): 'Y'
   KtSimpleNameReference:
-    (in MyEnum) Y
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) Y
 
 KtNameReferenceExpression(260,262): 'A2'
   KtSimpleNameReference:
-    (in A2) constructor(vararg value: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A2) constructor(vararg value: MyEnum)
 
 KtValueArgument(263,270): '*[X, Y]'
   KtDefaultAnnotationArgumentReference:
-    vararg value: MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      vararg value: MyEnum
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
   KtCollectionLiteralReference:
-    (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtNameReferenceExpression(265,266): 'X'
   KtSimpleNameReference:
-    (in MyEnum) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) X
 
 KtNameReferenceExpression(268,269): 'Y'
   KtSimpleNameReference:
-    (in MyEnum) Y
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) Y
 
 KtNameReferenceExpression(324,329): 'Array'
   KtSimpleNameReference:
-    (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
 
 KtNameReferenceExpression(330,336): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(343,345): 'A3'
   KtSimpleNameReference:
-    (in A3) constructor(value: kotlin.Array<MyEnum>)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A3) constructor(value: kotlin.Array<MyEnum>)
 
 KtValueArgument(346,349): '[X]'
   KtDefaultAnnotationArgumentReference:
-    value: kotlin.Array<MyEnum>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      value: kotlin.Array<MyEnum>
 
 KtCollectionLiteralExpression(346,349): '[X]'
   KtCollectionLiteralReference:
-    (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtNameReferenceExpression(347,348): 'X'
   KtSimpleNameReference:
-    (in MyEnum) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) X
 
 KtNameReferenceExpression(368,370): 'A3'
   KtSimpleNameReference:
-    (in A3) constructor(value: kotlin.Array<MyEnum>)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A3) constructor(value: kotlin.Array<MyEnum>)
 
 KtValueArgument(371,381): 'arrayOf(X)'
   KtDefaultAnnotationArgumentReference:
-    value: kotlin.Array<MyEnum>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      value: kotlin.Array<MyEnum>
 
 KtCallExpression(371,381): 'arrayOf(X)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(371,378): 'arrayOf'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtValueArgument(379,380): 'X'
   KtDefaultAnnotationArgumentReference:
-    value: kotlin.Array<MyEnum>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      value: kotlin.Array<MyEnum>
 
 KtNameReferenceExpression(379,380): 'X'
   KtSimpleNameReference:
-    (in MyEnum) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) X
 
 KtNameReferenceExpression(435,438): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(444,446): 'A4'
   KtSimpleNameReference:
-    (in A4) constructor(value: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A4) constructor(value: kotlin.Int)
 
 KtValueArgument(447,456): 'MAX_VALUE'
   KtDefaultAnnotationArgumentReference:
-    value: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      value: kotlin.Int
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
   KtSimpleNameReference:
-    (in kotlin.Int.Companion) const val MAX_VALUE: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.Int.Companion) const val MAX_VALUE: kotlin.Int
 
 KtNameReferenceExpression(474,483): 'Retention'
   KtSimpleNameReference:
-    (in kotlin.annotation.Retention) constructor(value: kotlin.annotation.AnnotationRetention)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.annotation.Retention) constructor(value: kotlin.annotation.AnnotationRetention)
 
 KtValueArgument(484,491): 'RUNTIME'
   KtDefaultAnnotationArgumentReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
   KtSimpleNameReference:
-    (in kotlin.annotation.AnnotationRetention) RUNTIME
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.annotation.AnnotationRetention) RUNTIME
 
 KtNameReferenceExpression(494,500): 'Target'
   KtSimpleNameReference:
-    (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
 
 KtNameReferenceExpression(501,506): 'CLASS'
   KtSimpleNameReference:
-    (in kotlin.annotation.AnnotationTarget) CLASS
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.annotation.AnnotationTarget) CLASS
 
 KtNameReferenceExpression(508,516): 'PROPERTY'
   KtSimpleNameReference:
-    (in kotlin.annotation.AnnotationTarget) PROPERTY
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.annotation.AnnotationTarget) PROPERTY
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
   KtSimpleNameReference:
-    (in MyAnnotation) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyAnnotation) constructor()
 
 KtNameReferenceExpression(570,573): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
   KtSimpleNameReference:
-    (in MyAnnotation) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyAnnotation) constructor()
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
   KtSimpleNameReference:
-    (in MyAnnotation) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyAnnotation) constructor()

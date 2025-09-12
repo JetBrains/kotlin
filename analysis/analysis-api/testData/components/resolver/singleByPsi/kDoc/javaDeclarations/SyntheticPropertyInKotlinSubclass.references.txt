@@ -1,9 +1,13 @@
 <caret_2>:
   KDocName(53,57): 'prop'
     KDocReference:
-      (in dependency.JavaBase) open fun getProp(): kotlin.String!
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in dependency.JavaBase) open fun getProp(): kotlin.String!
 
 <caret_1>:
   KDocName(63,79): 'KotlinChild.prop'
     KDocReference:
-      (in dependency.JavaBase) open fun getProp(): kotlin.String!
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in dependency.JavaBase) open fun getProp(): kotlin.String!

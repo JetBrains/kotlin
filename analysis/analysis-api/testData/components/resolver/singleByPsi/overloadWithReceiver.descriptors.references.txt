@@ -1,6 +1,10 @@
 KtNameReferenceExpression(50,55): 'myRun'
   KtSimpleNameReference:
-    (in foo) fun kotlin.Any.myRun()
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in foo) fun kotlin.Any.myRun()
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

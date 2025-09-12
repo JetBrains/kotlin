@@ -1,4 +1,6 @@
 KtConstructorDelegationReferenceExpression(115,119): 'this'
   KtConstructorDelegationReference:
-    0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
-    1: (in Sub) constructor(p: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
+      1: (in Sub) constructor(p: kotlin.Int)

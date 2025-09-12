@@ -1,6 +1,10 @@
 KtNameReferenceExpression(71,79): 'Conflict'
   KtSimpleNameReference:
-    (in <local>: testFoo.Conflict) constructor()
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: testFoo.Conflict) constructor()
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

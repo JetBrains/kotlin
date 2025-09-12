@@ -1,9 +1,13 @@
 <caret_1>:
   KDocName(25,38): 'Storage.value'
     KDocReference:
-      (in Storage) open fun getValue(): kotlin.String!
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in Storage) open fun getValue(): kotlin.String!
 
 <caret_2>:
   KDocName(44,60): 'Storage.getValue'
     KDocReference:
-      (in Storage) open fun getValue(): kotlin.String!
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in Storage) open fun getValue(): kotlin.String!

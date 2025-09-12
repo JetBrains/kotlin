@@ -1,3 +1,5 @@
 KtDestructuringDeclarationEntry(34,35): 'x'
   KtDestructuringDeclarationReference:
-    val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)

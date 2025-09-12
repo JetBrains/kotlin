@@ -1,6 +1,10 @@
 KtNameReferenceExpression(43,50): 'generic'
   KtSimpleNameReference:
-    (in ROOT) fun <A> generic(a: A)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <A> generic(a: A)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

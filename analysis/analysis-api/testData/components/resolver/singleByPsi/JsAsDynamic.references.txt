@@ -1,3 +1,5 @@
 KtNameReferenceExpression(100,109): 'asDynamic'
   KtSimpleNameReference:
-    (in kotlin.js) inline fun kotlin.Any?.asDynamic(): dynamic
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.js) inline fun kotlin.Any?.asDynamic(): dynamic

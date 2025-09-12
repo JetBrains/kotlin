@@ -1,3 +1,5 @@
 KtNameReferenceExpression(22,28): 'kotlin'
   KtSimpleNameReference:
-    package kotlin
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package kotlin

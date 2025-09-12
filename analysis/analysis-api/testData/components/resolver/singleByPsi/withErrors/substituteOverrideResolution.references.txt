@@ -1,3 +1,5 @@
 KtNameReferenceExpression(162,163): 'b'
   KtSimpleNameReference:
-    b: main.B?
+    isImplicitReferenceToCompanion: false
+    symbols:
+      b: main.B?

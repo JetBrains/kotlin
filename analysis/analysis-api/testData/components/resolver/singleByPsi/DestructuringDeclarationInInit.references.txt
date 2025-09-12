@@ -1,3 +1,5 @@
 KtNameReferenceExpression(141,142): 'x'
   KtSimpleNameReference:
-    (in ROOT) var x: kotlin.Any
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) var x: kotlin.Any

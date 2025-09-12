@@ -1,3 +1,5 @@
 KtNameReferenceExpression(64,65): 'a'
   KtSimpleNameReference:
-    vararg a: test.A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      vararg a: test.A

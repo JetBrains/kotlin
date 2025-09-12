@@ -1,3 +1,5 @@
 KDocName(48,55): 'Foo.foo'
   KDocReference:
-    (in Foo) private fun foo()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) private fun foo()

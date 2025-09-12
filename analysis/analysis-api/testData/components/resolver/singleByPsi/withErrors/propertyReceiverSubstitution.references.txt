@@ -1,3 +1,5 @@
 KtNameReferenceExpression(77,78): 'f'
   KtSimpleNameReference:
-    f: Foo<kotlin.String>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      f: Foo<kotlin.String>

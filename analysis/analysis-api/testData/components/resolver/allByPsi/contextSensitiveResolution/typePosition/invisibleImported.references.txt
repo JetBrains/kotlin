@@ -1,67 +1,101 @@
 KtNameReferenceExpression(31,32): 'a'
   KtSimpleNameReference:
-    package a
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package a
 
 KtNameReferenceExpression(86,92): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(95,103): 'MySealed'
   KtSimpleNameReference:
-    (in ROOT) interface MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface MySealed
 
 KtNameReferenceExpression(127,133): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(136,144): 'MySealed'
   KtSimpleNameReference:
-    (in ROOT) interface MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface MySealed
 
 KtNameReferenceExpression(152,160): 'MySealed'
   KtSimpleNameReference:
-    (in ROOT) interface MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface MySealed
 
 KtNameReferenceExpression(182,186): 'this'
   KtSimpleNameReference:
-    extension receiver with type MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      extension receiver with type MySealed
 
 KtNameReferenceExpression(197,201): 'Left'
   KtSimpleNameReference:
-    (in MySealed) class Left(x: kotlin.String) : MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MySealed) class Left(x: kotlin.String) : MySealed
 
 KtNameReferenceExpression(205,206): 'x'
   KtSimpleNameReference:
-    (in MySealed.Left) val x: kotlin.String
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MySealed.Left) val x: kotlin.String
 
 KtNameReferenceExpression(214,219): 'Right'
   KtSimpleNameReference:
-    (in MySealed) class Right(y: kotlin.String) : MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MySealed) class Right(y: kotlin.String) : MySealed
 
 KtNameReferenceExpression(223,224): 'y'
   KtSimpleNameReference:
-    (in MySealed.Right) val y: kotlin.String
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MySealed.Right) val y: kotlin.String
 
 KtNameReferenceExpression(232,235): 'Any'
   KtSimpleNameReference:
-    (in kotlin) open class Any
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) open class Any
 
 KtNameReferenceExpression(257,261): 'this'
   KtSimpleNameReference:
-    extension receiver with type kotlin.Any
+    isImplicitReferenceToCompanion: false
+    symbols:
+      extension receiver with type kotlin.Any
 
 KtNameReferenceExpression(272,276): 'Left'
   KtSimpleNameReference:
-    (in a) private class Left
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in a) private class Left
 
 KtNameReferenceExpression(280,281): 'x'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(289,294): 'Right'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(298,299): 'y'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

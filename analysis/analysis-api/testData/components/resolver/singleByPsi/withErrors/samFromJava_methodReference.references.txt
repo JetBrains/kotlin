@@ -1,3 +1,5 @@
 KtNameReferenceExpression(137,144): 'handler'
   KtSimpleNameReference:
-    handler: test.pkg.MyHandler
+    isImplicitReferenceToCompanion: false
+    symbols:
+      handler: test.pkg.MyHandler

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(136,138): 'b1'
   KtSimpleNameReference:
-    b1: B
+    isImplicitReferenceToCompanion: false
+    symbols:
+      b1: B

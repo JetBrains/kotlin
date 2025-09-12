@@ -1,96 +1,150 @@
 KtNameReferenceExpression(150,156): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(191,197): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(198,208): 'EnumValue1'
   KtSimpleNameReference:
-    (in MyEnum) EnumValue1
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) EnumValue1
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(224,234): 'EnumValue2'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(240,251): 'receiveEnum'
   KtSimpleNameReference:
-    (in ROOT) fun receiveEnum(arg: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun receiveEnum(arg: MyEnum)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(252,262): 'EnumValue2'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(268,285): 'receiveEnum(arg1)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(268,279): 'receiveEnum'
   KtSimpleNameReference:
-    (in ROOT) fun receiveEnum(arg: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun receiveEnum(arg: MyEnum)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(280,284): 'arg1'
   KtSimpleNameReference:
-    (in <local>: test0) val arg1: MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: test0) val arg1: MyEnum
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(290,307): 'receiveEnum(arg2)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(290,301): 'receiveEnum'
   KtSimpleNameReference:
-    (in ROOT) fun receiveEnum(arg: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun receiveEnum(arg: MyEnum)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(302,306): 'arg2'
   KtSimpleNameReference:
-    (in <local>: test0) val arg2: ERROR(Not found recorded type for EnumValue2)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: test0) val arg2: ERROR(Not found recorded type for EnumValue2)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
   KtSimpleNameReference:
-    (in ROOT) fun receiveEnum(arg: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun receiveEnum(arg: MyEnum)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(324,328): 'arg3'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

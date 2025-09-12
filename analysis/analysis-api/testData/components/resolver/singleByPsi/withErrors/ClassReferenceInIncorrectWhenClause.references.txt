@@ -1,3 +1,5 @@
 KtNameReferenceExpression(60,69): 'SomeClass'
   KtSimpleNameReference:
-    (in ROOT) class SomeClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class SomeClass

@@ -1,14 +1,20 @@
 <caret_1>:
   KDocName(96,103): 'Foo.ext'
     KDocReference:
-      (in test) fun test.Foo.ext()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in test) fun test.Foo.ext()
 
 <caret_2>:
   KDocName(113,116): 'Foo'
     KDocReference:
-      (in test) class Foo
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in test) class Foo
 
 <caret_3>:
   KDocName(137,140): 'Foo'
     KDocReference:
-      (in test.WithMember) fun Foo()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in test.WithMember) fun Foo()

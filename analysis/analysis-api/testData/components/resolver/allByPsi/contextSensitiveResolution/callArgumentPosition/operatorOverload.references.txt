@@ -1,51 +1,77 @@
 KtNameReferenceExpression(166,173): 'MyClass'
   KtSimpleNameReference:
-    (in MyClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(243,249): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtNameReferenceExpression(282,289): 'MyClass'
   KtSimpleNameReference:
-    (in ROOT) open class MyClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) open class MyClass
 
 KtNameReferenceExpression(317,331): 'OperatorHolder'
   KtSimpleNameReference:
-    (in ROOT) class OperatorHolder
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class OperatorHolder
 
 KtNameReferenceExpression(339,340): 'i'
   KtSimpleNameReference:
-    i: OperatorHolder
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: OperatorHolder
 
 KtOperationReferenceExpression(341,342): '+'
   KtSimpleNameReference:
-    (in OperatorHolder) operator fun plus(enumArg: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in OperatorHolder) operator fun plus(enumArg: MyEnum)
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
   KtSimpleNameReference:
-    (in MyEnum) EnumValue1
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) EnumValue1
 
 KtNameReferenceExpression(358,359): 'i'
   KtSimpleNameReference:
-    i: OperatorHolder
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: OperatorHolder
 
 KtOperationReferenceExpression(360,361): '+'
   KtSimpleNameReference:
-    (in OperatorHolder) operator fun plus(enumArg: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in OperatorHolder) operator fun plus(enumArg: MyEnum)
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(382,383): 'i'
   KtSimpleNameReference:
-    i: OperatorHolder
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: OperatorHolder
 
 KtOperationReferenceExpression(384,385): '-'
   KtSimpleNameReference:
-    (in OperatorHolder) operator fun minus(arg: MyClass)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in OperatorHolder) operator fun minus(arg: MyClass)
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
   KtSimpleNameReference:
-    (in MyClass) object InheritorObject : MyClass()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) object InheritorObject : MyClass()

@@ -1,6 +1,10 @@
 KtNameReferenceExpression(74,81): 'valueOf'
   KtSimpleNameReference:
-    (in java.lang.annotation.RetentionPolicy) fun valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in java.lang.annotation.RetentionPolicy) fun valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

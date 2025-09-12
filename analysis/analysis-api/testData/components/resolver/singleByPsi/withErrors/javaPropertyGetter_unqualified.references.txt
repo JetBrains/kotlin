@@ -1,3 +1,5 @@
 KtNameReferenceExpression(44,47): 'foo'
   KtSimpleNameReference:
-    (in JavaClass) open val foo: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in JavaClass) open val foo: kotlin.Int

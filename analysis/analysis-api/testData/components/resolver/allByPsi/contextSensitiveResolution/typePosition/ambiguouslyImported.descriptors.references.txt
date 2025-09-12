@@ -1,83 +1,127 @@
 KtNameReferenceExpression(35,36): 'a'
   KtSimpleNameReference:
-    package a
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package a
 
 KtNameReferenceExpression(46,47): 'b'
   KtSimpleNameReference:
-    package b
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package b
 
 KtNameReferenceExpression(101,107): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(110,118): 'MySealed'
   KtSimpleNameReference:
-    (in ROOT) interface MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface MySealed
 
 KtNameReferenceExpression(142,148): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(151,159): 'MySealed'
   KtSimpleNameReference:
-    (in ROOT) interface MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface MySealed
 
 KtNameReferenceExpression(167,175): 'MySealed'
   KtSimpleNameReference:
-    (in ROOT) interface MySealed
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface MySealed
 
 KtNameReferenceExpression(197,201): 'this'
   KtSimpleNameReference:
-    (in ROOT) fun MySealed.getOrElse1(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun MySealed.getOrElse1(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
 
 KtNameReferenceExpression(212,216): 'Left'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(220,221): 'x'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(229,234): 'Right'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(238,239): 'y'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(247,250): 'Any'
   KtSimpleNameReference:
-    (in kotlin) open class Any
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) open class Any
 
 KtNameReferenceExpression(272,276): 'this'
   KtSimpleNameReference:
-    (in ROOT) fun kotlin.Any.getOrElse2(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun kotlin.Any.getOrElse2(): ERROR(Cannot infer a type variable <TYPE-PARAMETER-FOR-WHEN-RESOLVE>)
 
 KtNameReferenceExpression(287,291): 'Left'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(295,296): 'x'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(304,309): 'Right'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(313,314): 'y'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

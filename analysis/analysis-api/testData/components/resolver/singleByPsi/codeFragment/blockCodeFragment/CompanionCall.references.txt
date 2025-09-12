@@ -1,3 +1,5 @@
 KtNameReferenceExpression(133,139): 'String'
   KtSimpleNameReference:
-    (in kotlin.String) companion object
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in kotlin.String) companion object

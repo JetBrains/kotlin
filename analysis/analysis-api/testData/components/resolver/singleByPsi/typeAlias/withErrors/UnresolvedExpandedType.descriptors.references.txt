@@ -1,6 +1,10 @@
 KtNameReferenceExpression(67,70): 'foo'
   KtSimpleNameReference:
-    (in main) fun foo(t: ERROR_TYPE(Unresolved type for A))
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in main) fun foo(t: ERROR_TYPE(Unresolved type for A))
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

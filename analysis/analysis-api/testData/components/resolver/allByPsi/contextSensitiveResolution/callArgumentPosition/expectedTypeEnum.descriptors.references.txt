@@ -1,73 +1,113 @@
 KtNameReferenceExpression(131,132): 'X'
   KtSimpleNameReference:
-    (in <local>: id) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: id) X
 
 KtNameReferenceExpression(135,136): 'X'
   KtSimpleNameReference:
-    (in <local>: id) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: id) X
 
 KtNameReferenceExpression(139,140): 'x'
   KtSimpleNameReference:
-    x: X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      x: X
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(162,163): 'T'
   KtSimpleNameReference:
-    (in <local>: receive) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: receive) T
 
 KtNameReferenceExpression(206,212): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtCallExpression(215,229): 'id(EnumValue1)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(215,217): 'id'
   KtSimpleNameReference:
-    (in ROOT) fun <X> id(x: X): X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <X> id(x: X): X
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(218,228): 'EnumValue1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(235,242): 'receive'
   KtSimpleNameReference:
-    (in ROOT) fun <T> receive(arg: T)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <T> receive(arg: T)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(243,249): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtCallExpression(251,265): 'id(EnumValue1)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(251,253): 'id'
   KtSimpleNameReference:
-    (in ROOT) fun <X> id(x: X): X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <X> id(x: X): X
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(254,264): 'EnumValue1'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

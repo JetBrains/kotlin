@@ -1,12 +1,16 @@
 <caret_1>:
   KDocName(8,33): '`With Space`.`with space`'
     KDocReference:
-      (in With Space) fun `with space`()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in With Space) fun `with space`()
 
 <caret_2>:
   KDocName(43,68): '`With Space`.`with space`'
     KDocReference:
-      (in With Space) fun `with space`()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in With Space) fun `with space`()
 
 <caret_3>:
   no references found
@@ -17,9 +21,13 @@
 <caret_5>:
   KDocName(128,142): 'O.`with space`'
     KDocReference:
-      (in O) fun `with space`()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in O) fun `with space`()
 
 <caret_6>:
   KDocName(152,166): 'O.`with space`'
     KDocReference:
-      (in O) fun `with space`()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in O) fun `with space`()

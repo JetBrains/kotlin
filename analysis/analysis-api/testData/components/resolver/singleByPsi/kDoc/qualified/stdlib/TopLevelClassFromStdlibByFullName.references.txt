@@ -1,3 +1,5 @@
 KDocName(8,45): 'kotlin.collections.AbstractCollection'
   KDocReference:
-    (in kotlin.collections) abstract class AbstractCollection<out E>protected constructor : kotlin.collections.Collection<E>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.collections) abstract class AbstractCollection<out E>protected constructor : kotlin.collections.Collection<E>

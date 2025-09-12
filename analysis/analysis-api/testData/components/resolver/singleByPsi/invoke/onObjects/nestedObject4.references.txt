@@ -1,3 +1,5 @@
 KtNameReferenceExpression(129,135): 'Helper'
   KtSimpleNameReference:
-    (in foo.bar.baz.Foo) object Helper
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in foo.bar.baz.Foo) object Helper

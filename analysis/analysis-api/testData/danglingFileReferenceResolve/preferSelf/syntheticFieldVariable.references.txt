@@ -1,3 +1,5 @@
 KtNameReferenceExpression(27,32): 'field'
   KtSimpleNameReference:
-    (in <local>: x) field
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: x) field

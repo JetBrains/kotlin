@@ -1,3 +1,5 @@
 KtNameReferenceExpression(50,51): 'y'
   KtSimpleNameReference:
-    (in A) fun y(a: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) fun y(a: kotlin.Int)

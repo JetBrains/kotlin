@@ -1,6 +1,10 @@
 KtNameReferenceExpression(22,28): 'kotlin'
   KtSimpleNameReference:
-    package kotlin
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package kotlin
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

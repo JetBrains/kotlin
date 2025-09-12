@@ -1,3 +1,5 @@
 KDocName(69,74): 'B.foo'
   KDocReference:
-    (in ROOT) fun A<in kotlin.Nothing>.foo()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun A<in kotlin.Nothing>.foo()

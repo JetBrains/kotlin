@@ -1,7 +1,11 @@
 KtNameReferenceExpression(134,135): 'x'
   KtSimpleNameReference:
-    0: (in <local>: call) operator fun kotlin.Int.invoke(a: kotlin.String)
-    1: (in <local>: call) operator fun kotlin.Int.invoke(b: kotlin.Boolean)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      0: (in <local>: call) operator fun kotlin.Int.invoke(a: kotlin.String)
+      1: (in <local>: call) operator fun kotlin.Int.invoke(b: kotlin.Boolean)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,6 +1,10 @@
 KtNameReferenceExpression(78,85): 'suspend'
   KtSimpleNameReference:
-    (in kotlin) inline fun <R> suspend(noinline block: suspend () -> R): suspend () -> R
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) inline fun <R> suspend(noinline block: suspend () -> R): suspend () -> R
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

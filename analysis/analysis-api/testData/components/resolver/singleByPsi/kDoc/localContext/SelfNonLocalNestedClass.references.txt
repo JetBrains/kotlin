@@ -1,3 +1,5 @@
 KDocName(44,50): 'Nested'
   KDocReference:
-    (in C) class Nested
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in C) class Nested

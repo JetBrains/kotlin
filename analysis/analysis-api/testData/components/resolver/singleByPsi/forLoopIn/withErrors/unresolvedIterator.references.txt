@@ -1,3 +1,5 @@
 KtForExpression(15,32): 'for (x in Y()) {}'
   KtForLoopInReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

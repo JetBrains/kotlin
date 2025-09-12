@@ -1,3 +1,5 @@
 KDocName(48,50): 'bb'
   KDocReference:
-    (in <local>: f.C) val bb: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: f.C) val bb: kotlin.Int

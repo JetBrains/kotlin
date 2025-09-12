@@ -1,4 +1,6 @@
 KtNameReferenceExpression(159,163): 'test'
   KtSimpleNameReference:
-    0: (in testing) fun test()
-    1: (in testing) fun test()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      0: (in testing) fun test()
+      1: (in testing) fun test()

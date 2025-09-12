@@ -1,9 +1,13 @@
 <caret_1>:
   KDocName(121,140): 'WithGenerics.intExt'
     KDocReference:
-      (in test) fun test.WithGenerics<kotlin.Int>.intExt()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in test) fun test.WithGenerics<kotlin.Int>.intExt()
 
 <caret_2>:
   KDocName(146,168): 'WithGenerics.stringExt'
     KDocReference:
-      (in test) fun test.WithGenerics<kotlin.String>.stringExt()
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in test) fun test.WithGenerics<kotlin.String>.stringExt()

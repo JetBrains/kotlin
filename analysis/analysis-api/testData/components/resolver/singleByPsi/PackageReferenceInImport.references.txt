@@ -1,3 +1,5 @@
 KtNameReferenceExpression(45,56): 'testPackage'
   KtSimpleNameReference:
-    package testPackage
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package testPackage

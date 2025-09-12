@@ -1,6 +1,10 @@
 KtNameReferenceExpression(86,96): 'intArrayOf'
   KtSimpleNameReference:
-    (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

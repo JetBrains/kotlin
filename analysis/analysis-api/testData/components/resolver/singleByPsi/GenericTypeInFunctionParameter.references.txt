@@ -1,3 +1,5 @@
 KtNameReferenceExpression(28,29): 'X'
   KtSimpleNameReference:
-    (in <local>: A) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: A) X

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(47,49): 'AA'
   KtSimpleNameReference:
-    (in resolve) open class AA
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in resolve) open class AA

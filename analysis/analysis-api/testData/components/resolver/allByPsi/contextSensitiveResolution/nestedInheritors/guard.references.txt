@@ -1,95 +1,143 @@
 KtNameReferenceExpression(146,152): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(161,172): 'SealedClass'
   KtSimpleNameReference:
-    (in SealedClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) constructor()
 
 KtNameReferenceExpression(210,225): 'SealedInheritor'
   KtSimpleNameReference:
-    (in SealedClass.SealedInheritor) constructor(prop: kotlin.String)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass.SealedInheritor) constructor(prop: kotlin.String)
 
 KtNameReferenceExpression(274,285): 'SealedClass'
   KtSimpleNameReference:
-    (in ROOT) sealed class SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) sealed class SealedClass
 
 KtNameReferenceExpression(288,294): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(314,322): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
 KtNameReferenceExpression(337,352): 'SealedInheritor'
   KtSimpleNameReference:
-    (in SealedClass) open class SealedInheritor(prop: kotlin.String) : SealedClass()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) open class SealedInheritor(prop: kotlin.String) : SealedClass()
 
 KtNameReferenceExpression(356,364): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
 KtOperationReferenceExpression(365,367): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(368,391): 'IndirectSealedInheritor'
   KtSimpleNameReference:
-    (in SealedClass) class IndirectSealedInheritor : SealedClass.SealedInheritor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass) class IndirectSealedInheritor : SealedClass.SealedInheritor()
 
 KtNameReferenceExpression(395,403): 'instance'
   KtSimpleNameReference:
-    instance: SealedClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: SealedClass
 
 KtNameReferenceExpression(404,408): 'prop'
   KtSimpleNameReference:
-    (in SealedClass.SealedInheritor) val prop: kotlin.String
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in SealedClass.SealedInheritor) val prop: kotlin.String
 
 KtNameReferenceExpression(515,521): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(530,539): 'OpenClass'
   KtSimpleNameReference:
-    (in OpenClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in OpenClass) constructor()
 
 KtNameReferenceExpression(588,614): 'SealedInheritorOfOpenClass'
   KtSimpleNameReference:
-    (in OpenClass.SealedInheritorOfOpenClass) constructor(prop: kotlin.String)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in OpenClass.SealedInheritorOfOpenClass) constructor(prop: kotlin.String)
 
 KtNameReferenceExpression(661,670): 'OpenClass'
   KtSimpleNameReference:
-    (in ROOT) open class OpenClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) open class OpenClass
 
 KtNameReferenceExpression(673,679): 'String'
   KtSimpleNameReference:
-    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
 
 KtNameReferenceExpression(699,707): 'instance'
   KtSimpleNameReference:
-    instance: OpenClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: OpenClass
 
 KtNameReferenceExpression(722,748): 'SealedInheritorOfOpenClass'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(752,760): 'instance'
   KtSimpleNameReference:
-    instance: OpenClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: OpenClass
 
 KtOperationReferenceExpression(761,763): 'is'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(764,798): 'IndirectSealedInheritorOfOpenClass'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(802,810): 'instance'
   KtSimpleNameReference:
-    instance: OpenClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      instance: OpenClass
 
 KtNameReferenceExpression(811,815): 'prop'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

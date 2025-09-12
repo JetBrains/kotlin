@@ -1,6 +1,10 @@
 KtNameReferenceExpression(150,153): 'foo'
   KtSimpleNameReference:
-    (in Base) abstract val foo: T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Base) abstract val foo: T
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

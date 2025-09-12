@@ -1,42 +1,64 @@
 KtNameReferenceExpression(39,42): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo<T>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo<T>
 
 KtNameReferenceExpression(43,46): 'Bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(85,88): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo<T>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo<T>
 
 KtNameReferenceExpression(89,92): 'Bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(118,119): 'T'
   KtSimpleNameReference:
-    (in <local>: take) T
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: take) T
 
 KtNameReferenceExpression(124,128): 'Unit'
   KtSimpleNameReference:
-    (in kotlin) object Unit
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) object Unit
 
 KtCallExpression(145,181): 'take {'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(145,149): 'take'
   KtSimpleNameReference:
-    (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <T> take(action: (T) -> kotlin.Unit)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(169,172): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo<T>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo<T>
 
 KtNameReferenceExpression(173,176): 'Bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

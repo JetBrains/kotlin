@@ -1,3 +1,5 @@
 KDocName(84,92): 'A.toName'
   KDocReference:
-    (in A.Companion) fun toName(): kotlin.String
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A.Companion) fun toName(): kotlin.String

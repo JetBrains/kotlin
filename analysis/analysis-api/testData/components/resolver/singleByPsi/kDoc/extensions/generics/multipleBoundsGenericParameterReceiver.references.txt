@@ -1,3 +1,5 @@
 KDocName(177,207): 'BoundedContainer.someExtension'
   KDocReference:
-    (in ROOT) fun <T : C> Container<T>.someExtension()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <T : C> Container<T>.someExtension()

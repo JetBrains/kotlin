@@ -1,19 +1,29 @@
 KtNameReferenceExpression(128,134): 'MyEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class MyEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class MyEnum
 
 KtCallExpression(157,166): 'foo(X, Y)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(157,160): 'foo'
   KtSimpleNameReference:
-    (in ROOT) fun foo(vararg a: MyEnum)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun foo(vararg a: MyEnum)
 
 KtNameReferenceExpression(161,162): 'X'
   KtSimpleNameReference:
-    (in MyEnum) X
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) X
 
 KtNameReferenceExpression(164,165): 'Y'
   KtSimpleNameReference:
-    (in MyEnum) Y
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyEnum) Y

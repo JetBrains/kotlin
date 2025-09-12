@@ -1,3 +1,5 @@
 KtNameReferenceExpression(58,64): 'sample'
   KtSimpleNameReference:
-    package my.sample
+    isImplicitReferenceToCompanion: true
+    symbols:
+      package my.sample

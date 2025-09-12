@@ -1,23 +1,35 @@
 KtNameReferenceExpression(122,123): 'A'
   KtSimpleNameReference:
-    (in ROOT) enum class A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class A
 
 KtNameReferenceExpression(137,138): 'a'
   KtSimpleNameReference:
-    a: A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      a: A
 
 KtNameReferenceExpression(150,151): 'A'
   KtSimpleNameReference:
-    (in ROOT) enum class A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class A
 
 KtNameReferenceExpression(152,153): 'A'
   KtSimpleNameReference:
-    (in A) A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) A
 
 KtNameReferenceExpression(169,170): 'A'
   KtSimpleNameReference:
-    (in ROOT) enum class A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class A
 
 KtNameReferenceExpression(171,172): 'B'
   KtSimpleNameReference:
-    (in A) B
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) B

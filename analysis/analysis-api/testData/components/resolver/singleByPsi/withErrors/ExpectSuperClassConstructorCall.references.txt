@@ -1,3 +1,5 @@
 KtNameReferenceExpression(149,152): 'Foo'
   KtSimpleNameReference:
-    (in Foo) expect constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Foo) expect constructor()

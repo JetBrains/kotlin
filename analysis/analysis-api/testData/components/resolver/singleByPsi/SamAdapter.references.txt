@@ -1,3 +1,5 @@
 KtNameReferenceExpression(35,46): 'invokeLater'
   KtSimpleNameReference:
-    (in javax.swing.SwingUtilities) open fun invokeLater(doRun: java.lang.Runnable!)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in javax.swing.SwingUtilities) open fun invokeLater(doRun: java.lang.Runnable!)

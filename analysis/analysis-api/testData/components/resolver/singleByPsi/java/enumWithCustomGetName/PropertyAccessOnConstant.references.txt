@@ -1,3 +1,5 @@
 KtNameReferenceExpression(54,58): 'name'
   KtSimpleNameReference:
-    (in kotlin.Enum) val name: kotlin.String
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin.Enum) val name: kotlin.String

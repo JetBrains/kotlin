@@ -1,3 +1,5 @@
 KtOperationReferenceExpression(105,106): '='
   KtSimpleNameReference:
-    (in MyClass) operator fun set(i: kotlin.Int, v: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) operator fun set(i: kotlin.Int, v: kotlin.Int)

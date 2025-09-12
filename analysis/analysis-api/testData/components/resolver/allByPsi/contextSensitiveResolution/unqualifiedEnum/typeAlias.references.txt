@@ -1,19 +1,29 @@
 KtNameReferenceExpression(120,124): 'Some'
   KtSimpleNameReference:
-    (in ROOT) enum class Some
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class Some
 
 KtNameReferenceExpression(137,142): 'Other'
   KtSimpleNameReference:
-    (in ROOT) typealias Other = Some
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) typealias Other = Some
 
 KtNameReferenceExpression(152,153): 'o'
   KtSimpleNameReference:
-    o: Other /* = Some */
+    isImplicitReferenceToCompanion: false
+    symbols:
+      o: Other /* = Some */
 
 KtNameReferenceExpression(161,166): 'FIRST'
   KtSimpleNameReference:
-    (in Some) FIRST
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Some) FIRST
 
 KtNameReferenceExpression(176,182): 'SECOND'
   KtSimpleNameReference:
-    (in Some) SECOND
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Some) SECOND

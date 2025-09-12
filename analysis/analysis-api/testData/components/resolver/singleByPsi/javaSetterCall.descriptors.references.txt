@@ -1,6 +1,10 @@
 KtNameReferenceExpression(74,77): 'foo'
   KtSimpleNameReference:
-    (in DeclSite) var DeclSite.foo: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in DeclSite) var DeclSite.foo: kotlin.Int
 
   SyntheticPropertyAccessorReference:
-    (in DeclSite) open fun setFoo(value: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in DeclSite) open fun setFoo(value: kotlin.Int)

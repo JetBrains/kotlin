@@ -1,6 +1,10 @@
 KtNameReferenceExpression(156,164): 'FooAlias'
   KtSimpleNameReference:
-    (in test) typealias FooAlias = test.Foo
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in test) typealias FooAlias = test.Foo
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

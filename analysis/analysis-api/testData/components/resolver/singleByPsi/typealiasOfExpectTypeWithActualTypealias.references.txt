@@ -5,14 +5,20 @@ jvm - Jvm.kt:
   <caret_return>:
     KtNameReferenceExpression(183,205): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
-        (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
+        isImplicitReferenceToCompanion: false
+        symbols:
+          (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
   <caret_instanceCheck>:
     KtNameReferenceExpression(226,248): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
-        (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
+        isImplicitReferenceToCompanion: false
+        symbols:
+          (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
   <caret_typeArg>:
     KtNameReferenceExpression(273,295): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
-        (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
+        isImplicitReferenceToCompanion: false
+        symbols:
+          (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */

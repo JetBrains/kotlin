@@ -1,6 +1,10 @@
 KtNameReferenceExpression(99,100): 'a'
   KtSimpleNameReference:
-    (in <local>: usage) val a: A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: usage) val a: A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

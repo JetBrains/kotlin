@@ -1,3 +1,5 @@
 KDocName(22,28): 'b.E.AA'
   KDocReference:
-    (in b.E) AA
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in b.E) AA

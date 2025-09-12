@@ -1,83 +1,125 @@
 KtNameReferenceExpression(151,156): 'Outer'
   KtSimpleNameReference:
-    (in ROOT) enum class Outer
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class Outer
 
 KtNameReferenceExpression(161,166): 'Inner'
   KtSimpleNameReference:
-    (in ROOT) enum class Inner
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class Inner
 
 KtNameReferenceExpression(169,172): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(192,193): 'o'
   KtSimpleNameReference:
-    o: Outer
+    isImplicitReferenceToCompanion: false
+    symbols:
+      o: Outer
 
 KtNameReferenceExpression(205,210): 'FIRST'
   KtSimpleNameReference:
-    (in Outer) FIRST
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Outer) FIRST
 
 KtNameReferenceExpression(224,230): 'SECOND'
   KtSimpleNameReference:
-    (in Outer) SECOND
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Outer) SECOND
 
 KtNameReferenceExpression(240,241): 'i'
   KtSimpleNameReference:
-    i: Inner
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: Inner
 
 KtNameReferenceExpression(257,263): 'SECOND'
   KtSimpleNameReference:
-    (in Inner) SECOND
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Inner) SECOND
 
 KtNameReferenceExpression(281,286): 'THIRD'
   KtSimpleNameReference:
-    (in Inner) THIRD
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Inner) THIRD
 
 KtNameReferenceExpression(322,327): 'Outer'
   KtSimpleNameReference:
-    (in ROOT) enum class Outer
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class Outer
 
 KtNameReferenceExpression(332,337): 'Inner'
   KtSimpleNameReference:
-    (in ROOT) enum class Inner
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class Inner
 
 KtNameReferenceExpression(340,343): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(363,364): 'o'
   KtSimpleNameReference:
-    o: Outer
+    isImplicitReferenceToCompanion: false
+    symbols:
+      o: Outer
 
 KtNameReferenceExpression(376,381): 'FIRST'
   KtSimpleNameReference:
-    (in Outer) FIRST
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Outer) FIRST
 
 KtNameReferenceExpression(395,401): 'SECOND'
   KtSimpleNameReference:
-    (in Outer) SECOND
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Outer) SECOND
 
 KtNameReferenceExpression(430,433): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(465,466): 'i'
   KtSimpleNameReference:
-    i: Inner
+    isImplicitReferenceToCompanion: false
+    symbols:
+      i: Inner
 
 KtNameReferenceExpression(490,496): 'SECOND'
   KtSimpleNameReference:
-    (in Inner) SECOND
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Inner) SECOND
 
 KtNameReferenceExpression(522,527): 'THIRD'
   KtSimpleNameReference:
-    (in Inner) THIRD
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Inner) THIRD
 
 KtCallExpression(577,582): 'baz()'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(577,580): 'baz'
   KtSimpleNameReference:
-    (in <local>: bar) fun baz(): kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: bar) fun baz(): kotlin.Int

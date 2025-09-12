@@ -1,6 +1,10 @@
 KtNameReferenceExpression(53,61): 'instance'
   KtSimpleNameReference:
-    (in KtClass) val instance: KtSubClass
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in KtClass) val instance: KtSubClass
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(157,162): 'check'
   KtSimpleNameReference:
-    (in library3.MyInterface) fun check(list: library2.ListAlias<kotlin.String> /* = kotlin.collections.List<kotlin.String> */)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in library3.MyInterface) fun check(list: library2.ListAlias<kotlin.String> /* = kotlin.collections.List<kotlin.String> */)

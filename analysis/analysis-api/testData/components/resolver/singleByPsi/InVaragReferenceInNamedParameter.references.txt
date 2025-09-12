@@ -1,7 +1,11 @@
 KtNameReferenceExpression(87,88): 'a'
   KtSimpleNameReference:
-    vararg a: test.A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      vararg a: test.A
 
 KtCallExpression(82,104): 'some(a = arrayOf(A()))'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

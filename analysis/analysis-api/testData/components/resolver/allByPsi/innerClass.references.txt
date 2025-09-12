@@ -1,19 +1,29 @@
 KtNameReferenceExpression(8,9): 'r'
   KtSimpleNameReference:
-    package r
+    isImplicitReferenceToCompanion: false
+    symbols:
+      package r
 
 KtNameReferenceExpression(54,57): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(80,83): 'Int'
   KtSimpleNameReference:
-    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(86,90): 'Base'
   KtSimpleNameReference:
-    (in r.A.Base) constructor(x: kotlin.Int)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in r.A.Base) constructor(x: kotlin.Int)
 
 KtNameReferenceExpression(91,92): 'x'
   KtSimpleNameReference:
-    x: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      x: kotlin.Int

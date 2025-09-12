@@ -1,103 +1,155 @@
 KtNameReferenceExpression(129,136): 'MyClass'
   KtSimpleNameReference:
-    (in ROOT) class MyClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class MyClass
 
 KtNameReferenceExpression(137,146): 'Companion'
   KtSimpleNameReference:
-    (in MyClass) companion object
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) companion object
 
 KtNameReferenceExpression(152,159): 'MyClass'
   KtSimpleNameReference:
-    (in ROOT) class MyClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class MyClass
 
 KtCallExpression(168,177): 'MyClass()'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(168,175): 'MyClass'
   KtSimpleNameReference:
-    (in MyClass) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) constructor()
 
 KtNameReferenceExpression(198,205): 'MyClass'
   KtSimpleNameReference:
-    (in ROOT) class MyClass
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class MyClass
 
 KtCallExpression(228,244): 'foo(MyClass.bar)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(228,231): 'foo'
   KtSimpleNameReference:
-    (in ROOT) fun foo(a: MyClass)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun foo(a: MyClass)
 
 KtNameReferenceExpression(232,239): 'MyClass'
   KtSimpleNameReference:
-    (in MyClass) companion object
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in MyClass) companion object
 
 KtNameReferenceExpression(240,243): 'bar'
   KtSimpleNameReference:
-    (in ROOT) val MyClass2.Companion.bar: MyClass2
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) val MyClass2.Companion.bar: MyClass2
 
 KtCallExpression(249,257): 'foo(bar)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(249,252): 'foo'
   KtSimpleNameReference:
-    (in ROOT) fun foo(a: MyClass)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun foo(a: MyClass)
 
 KtNameReferenceExpression(253,256): 'bar'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(306,314): 'MyClass2'
   KtSimpleNameReference:
-    (in ROOT) class MyClass2
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class MyClass2
 
 KtNameReferenceExpression(315,324): 'Companion'
   KtSimpleNameReference:
-    (in MyClass2) companion object
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass2) companion object
 
 KtNameReferenceExpression(330,338): 'MyClass2'
   KtSimpleNameReference:
-    (in ROOT) class MyClass2
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class MyClass2
 
 KtCallExpression(347,357): 'MyClass2()'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(347,355): 'MyClass2'
   KtSimpleNameReference:
-    (in MyClass2) constructor()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass2) constructor()
 
 KtNameReferenceExpression(371,379): 'MyClass2'
   KtSimpleNameReference:
-    (in ROOT) class MyClass2
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class MyClass2
 
 KtCallExpression(403,421): 'foo2(MyClass2.bar)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(403,407): 'foo2'
   KtSimpleNameReference:
-    (in ROOT) fun foo2(a: MyClass2)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun foo2(a: MyClass2)
 
 KtNameReferenceExpression(408,416): 'MyClass2'
   KtSimpleNameReference:
-    (in MyClass2) companion object
+    isImplicitReferenceToCompanion: true
+    symbols:
+      (in MyClass2) companion object
 
 KtNameReferenceExpression(417,420): 'bar'
   KtSimpleNameReference:
-    (in ROOT) val MyClass2.Companion.bar: MyClass2
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) val MyClass2.Companion.bar: MyClass2
 
 KtCallExpression(426,435): 'foo2(bar)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(426,430): 'foo2'
   KtSimpleNameReference:
-    (in ROOT) fun foo2(a: MyClass2)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun foo2(a: MyClass2)
 
 KtNameReferenceExpression(431,434): 'bar'
   KtSimpleNameReference:
-    (in ROOT) val MyClass2.Companion.bar: MyClass2
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) val MyClass2.Companion.bar: MyClass2

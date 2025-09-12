@@ -1,3 +1,5 @@
 KtNameReferenceExpression(112,114): 'BB'
   KtSimpleNameReference:
-    (in foo.bar.baz.AA) class BB
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in foo.bar.baz.AA) class BB

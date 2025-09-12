@@ -1,3 +1,5 @@
 KtNameReferenceExpression(62,69): 'getName'
   KtSimpleNameReference:
-    (in JavaEnum) open fun getName(): kotlin.String!
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in JavaEnum) open fun getName(): kotlin.String!

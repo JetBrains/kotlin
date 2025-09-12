@@ -1,3 +1,5 @@
 KDocName(26,28): 'aa'
   KDocReference:
-    (in C) fun aa()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in C) fun aa()

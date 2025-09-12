@@ -1,3 +1,5 @@
 KtNameReferenceExpression(79,82): 'Foo'
   KtSimpleNameReference:
-    (in foo) object Foo
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in foo) object Foo

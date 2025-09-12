@@ -1,3 +1,5 @@
 KtNameReferenceExpression(60,69): 'JavaClass'
   KtSimpleNameReference:
-    (in JavaClass) {psi: PsiClassImpl} constructor <{psi: PsiTypeParameterImpl} TT : kotlin.Any!>()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in JavaClass) {psi: PsiClassImpl} constructor <{psi: PsiTypeParameterImpl} TT : kotlin.Any!>()

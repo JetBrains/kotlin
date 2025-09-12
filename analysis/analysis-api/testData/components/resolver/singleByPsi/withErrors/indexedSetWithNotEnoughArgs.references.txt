@@ -1,3 +1,5 @@
 KtNameReferenceExpression(93,94): 'c'
   KtSimpleNameReference:
-    c: C
+    isImplicitReferenceToCompanion: false
+    symbols:
+      c: C

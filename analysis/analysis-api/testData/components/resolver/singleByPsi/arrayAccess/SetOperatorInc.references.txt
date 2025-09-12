@@ -1,3 +1,5 @@
 KtArrayAccessExpression(205,209): 'a[2]'
   KtArrayAccessReference:
-    (in test.B) operator fun get(i: kotlin.Int): test.B
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test.B) operator fun get(i: kotlin.Int): test.B

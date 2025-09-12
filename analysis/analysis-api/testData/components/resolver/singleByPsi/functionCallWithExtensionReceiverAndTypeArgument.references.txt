@@ -1,3 +1,5 @@
 KtNameReferenceExpression(54,62): 'function'
   KtSimpleNameReference:
-    (in ROOT) fun <A, B> A.function(a: B)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <A, B> A.function(a: B)

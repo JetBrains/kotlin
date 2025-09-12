@@ -1,6 +1,10 @@
 KtNameReferenceExpression(33,34): 'i'
   KtSimpleNameReference:
-    (in <local>: test) var i: kotlin.Int
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: test) var i: kotlin.Int
+
   KtSimpleNameReference:
-    (in <local>: test) var i: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: test) var i: kotlin.Int

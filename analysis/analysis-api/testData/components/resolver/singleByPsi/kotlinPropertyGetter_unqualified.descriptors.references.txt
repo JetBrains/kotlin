@@ -1,6 +1,10 @@
 KtNameReferenceExpression(50,51): 'i'
   KtSimpleNameReference:
-    (in A) val i: kotlin.Int
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) val i: kotlin.Int
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

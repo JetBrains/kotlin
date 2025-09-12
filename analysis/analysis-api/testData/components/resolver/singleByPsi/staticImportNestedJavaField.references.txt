@@ -1,3 +1,5 @@
 KtNameReferenceExpression(89,92): 'bar'
   KtSimpleNameReference:
-    (in Dependency.Nested) var bar: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Dependency.Nested) var bar: kotlin.Int

@@ -1,6 +1,10 @@
 KtNameReferenceExpression(119,125): 'equals'
   KtSimpleNameReference:
-    (in MyClass) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in MyClass) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

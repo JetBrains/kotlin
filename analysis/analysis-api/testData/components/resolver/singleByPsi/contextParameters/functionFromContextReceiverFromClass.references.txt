@@ -1,3 +1,5 @@
 KtNameReferenceExpression(102,103): 'c'
   KtSimpleNameReference:
-    (in Container) fun c()
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in Container) fun c()

@@ -1,9 +1,13 @@
 module1 - main1.kt:
   KtNameReferenceExpression(121,124): 'foo'
     KtSimpleNameReference:
-      (in library.Common) open fun foo(): kotlin.String!
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in library.Common) open fun foo(): kotlin.String!
 
 module2 - main2.kt:
   KtNameReferenceExpression(129,132): 'bar'
     KtSimpleNameReference:
-      (in library.Common) open fun bar(): kotlin.Int
+      isImplicitReferenceToCompanion: false
+      symbols:
+        (in library.Common) open fun bar(): kotlin.Int

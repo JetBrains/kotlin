@@ -1,10 +1,16 @@
 KtNameReferenceExpression(79,82): 'Foo'
   KtSimpleNameReference:
-    (in ROOT) class Foo
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) class Foo
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtCallExpression(71,88): 'consume(Foo::foo)'
   KtInvokeFunctionReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

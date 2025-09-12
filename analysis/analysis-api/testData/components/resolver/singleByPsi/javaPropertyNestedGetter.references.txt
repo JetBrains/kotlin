@@ -1,3 +1,5 @@
 KtNameReferenceExpression(76,79): 'sub'
   KtSimpleNameReference:
-    (in JavaClass) open val sub: JavaSubClass!
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in JavaClass) open val sub: JavaSubClass!

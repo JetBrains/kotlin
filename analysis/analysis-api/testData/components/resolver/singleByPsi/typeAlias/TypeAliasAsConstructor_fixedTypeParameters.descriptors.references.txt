@@ -1,6 +1,10 @@
 KtNameReferenceExpression(134,141): 'MyAlias'
   KtSimpleNameReference:
-    (in test.MyClass) constructor <T>(t: test.Other)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in test.MyClass) constructor <T>(t: test.Other)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,3 +1,5 @@
 KtNameReferenceExpression(83,84): 'f'
   KtSimpleNameReference:
-    (in A) val f: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in A) val f: kotlin.Int

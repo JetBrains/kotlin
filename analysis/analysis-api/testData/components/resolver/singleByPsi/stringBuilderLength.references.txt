@@ -1,3 +1,5 @@
 KtNameReferenceExpression(47,53): 'length'
   KtSimpleNameReference:
-    (in java.lang.StringBuilder) {psi: null}override val length: kotlin.Int
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in java.lang.StringBuilder) {psi: null}override val length: kotlin.Int

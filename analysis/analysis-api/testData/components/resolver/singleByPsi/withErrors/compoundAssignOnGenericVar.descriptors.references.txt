@@ -1,9 +1,15 @@
 KtNameReferenceExpression(51,56): 'value'
   KtSimpleNameReference:
-    (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
-  
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
+
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

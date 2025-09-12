@@ -1,73 +1,111 @@
 KtNameReferenceExpression(157,158): 'E'
   KtSimpleNameReference:
-    (in <local>: Either.Left) out E
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: Either.Left) out E
 
 KtNameReferenceExpression(161,167): 'Either'
   KtSimpleNameReference:
-    (in ROOT) interface Either<out E, out A>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(168,169): 'E'
   KtSimpleNameReference:
-    (in <local>: Either.Left) out E
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: Either.Left) out E
 
 KtNameReferenceExpression(171,178): 'Nothing'
   KtSimpleNameReference:
-    (in kotlin) class Nothingprivate constructor
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Nothingprivate constructor
 
 KtNameReferenceExpression(219,220): 'A'
   KtSimpleNameReference:
-    (in <local>: Either.Right) out A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: Either.Right) out A
 
 KtNameReferenceExpression(223,229): 'Either'
   KtSimpleNameReference:
-    (in ROOT) interface Either<out E, out A>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(230,237): 'Nothing'
   KtSimpleNameReference:
-    (in kotlin) class Nothingprivate constructor
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in kotlin) class Nothingprivate constructor
 
 KtNameReferenceExpression(239,240): 'A'
   KtSimpleNameReference:
-    (in <local>: Either.Right) out A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: Either.Right) out A
 
 KtNameReferenceExpression(256,262): 'Either'
   KtSimpleNameReference:
-    (in ROOT) interface Either<out E, out A>
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) interface Either<out E, out A>
 
 KtNameReferenceExpression(263,264): 'E'
   KtSimpleNameReference:
-    (in <local>: getOrElse) E
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: getOrElse) E
 
 KtNameReferenceExpression(266,267): 'A'
   KtSimpleNameReference:
-    (in <local>: getOrElse) A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: getOrElse) A
 
 KtNameReferenceExpression(288,289): 'A'
   KtSimpleNameReference:
-    (in <local>: getOrElse) A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in <local>: getOrElse) A
 
 KtNameReferenceExpression(299,303): 'this'
   KtSimpleNameReference:
-    (in ROOT) fun <E, A> Either<E, A>.getOrElse(default: A): A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) fun <E, A> Either<E, A>.getOrElse(default: A): A
 
 KtNameReferenceExpression(314,318): 'Left'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(322,329): 'default'
   KtSimpleNameReference:
-    default: A
+    isImplicitReferenceToCompanion: false
+    symbols:
+      default: A
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(337,342): 'Right'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(346,351): 'value'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

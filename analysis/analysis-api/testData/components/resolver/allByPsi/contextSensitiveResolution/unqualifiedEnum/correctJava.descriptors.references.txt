@@ -1,24 +1,38 @@
 KtNameReferenceExpression(44,52): 'JavaEnum'
   KtSimpleNameReference:
-    (in ROOT) enum class JavaEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      (in ROOT) enum class JavaEnum
 
 KtNameReferenceExpression(62,70): 'javaEnum'
   KtSimpleNameReference:
-    javaEnum: JavaEnum
+    isImplicitReferenceToCompanion: false
+    symbols:
+      javaEnum: JavaEnum
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(78,83): 'FIRST'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
 KtNameReferenceExpression(93,99): 'SECOND'
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)
 
   SyntheticPropertyAccessorReference:
-    Nothing (Unresolved reference)
+    isImplicitReferenceToCompanion: false
+    symbols:
+      Nothing (Unresolved reference)

@@ -1,27 +1,37 @@
 <caret_1>:
   KDocName(53,55): 'xx'
     KDocReference:
-      xx: kotlin.String
+      isImplicitReferenceToCompanion: false
+      symbols:
+        xx: kotlin.String
 
 <caret_2>:
   KDocName(109,111): 'xx'
     KDocReference:
-      xx: kotlin.String
+      isImplicitReferenceToCompanion: false
+      symbols:
+        xx: kotlin.String
 
 <caret_3>:
   KDocName(154,156): 'xx'
     KDocReference:
-      0: xx: kotlin.String
-      1: (in <local>: A.foo) xx
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: xx: kotlin.String
+        1: (in <local>: A.foo) xx
 
 <caret_4>:
   KDocName(206,208): 'xx'
     KDocReference:
-      0: xx: kotlin.String
-      1: (in <local>: A.foo) xx
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: xx: kotlin.String
+        1: (in <local>: A.foo) xx
 
 <caret_5>:
   KDocName(263,265): 'xx'
     KDocReference:
-      0: xx: kotlin.String
-      1: (in <local>: A.foo) xx
+      isImplicitReferenceToCompanion: false
+      symbols:
+        0: xx: kotlin.String
+        1: (in <local>: A.foo) xx
