@@ -149,6 +149,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
 ): S {
     buffer.reset()
 
+    @Suppress("DEPRECATION")
     val serializer = if (originalStub is PsiFileStub<*>) {
         originalStub.type
     } else {
@@ -164,6 +165,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
     val deserializedStub = serializer.deserialize(stubInputStream, deserializedParentStub)
     assertEquals(-1, stubInputStream.read(), "The deserializer has to read the same amount of bytes as the serializer wrote")
     assertEquals(originalStub::class, deserializedStub::class, "The stub class must be the same")
+    @Suppress("DEPRECATION")
     assertEquals(originalStub.stubType, deserializedStub.stubType, "The stub type must be the same")
 
     for (originalChild in originalStub.childrenStubs) {
