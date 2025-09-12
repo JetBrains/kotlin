@@ -230,7 +230,8 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
-        return !(isKtFile(parent) || parent instanceof KtClassBody || parent.getParent() instanceof KtScript);
+        boolean inScript = parent != null && parent.getParent() instanceof KtScript;
+        return !(isKtFile(parent) || parent instanceof KtClassBody || inScript);
     }
 
     public boolean isAnonymous() {
