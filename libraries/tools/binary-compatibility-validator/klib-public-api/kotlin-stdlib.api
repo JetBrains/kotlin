@@ -13885,12 +13885,13 @@ open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { 
 open annotation class kotlin.js/JsExport : kotlin/Annotation { // kotlin.js/JsExport|null[0]
     constructor <init>() // kotlin.js/JsExport.<init>|<init>(){}[0]
 
-    open annotation class Default : kotlin/Annotation { // kotlin.js/JsExport.Default|null[0]
-        constructor <init>() // kotlin.js/JsExport.Default.<init>|<init>(){}[0]
-    }
-
     open annotation class Ignore : kotlin/Annotation { // kotlin.js/JsExport.Ignore|null[0]
         constructor <init>() // kotlin.js/JsExport.Ignore.<init>|<init>(){}[0]
+    }
+
+    // Targets: [js]
+    open annotation class Default : kotlin/Annotation { // kotlin.js/JsExport.Default|null[0]
+        constructor <init>() // kotlin.js/JsExport.Default.<init>|<init>(){}[0]
     }
 }
 
