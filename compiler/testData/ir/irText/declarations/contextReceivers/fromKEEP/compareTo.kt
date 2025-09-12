@@ -1,8 +1,6 @@
 // LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND: JS_IR
-
 // KT-61141: kotlin.Comparator instead of java.util.Comparator
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: NATIVE, JS_IR, WASM_JS
 
 data class Pair<A, B>(val first: A, val second: B)
 

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, WASM_JS
 
 // KT-61141: throws kotlin.Exception instead of java.lang.Exception
 // IGNORE_BACKEND: NATIVE
