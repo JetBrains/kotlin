@@ -13,10 +13,11 @@ import common.CLIENT_TMP_DIR
 import common.CompilerUtils
 import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationService
+import common.SERVER_TMP_CACHE_DIR
 import common.computeSha256
 import common.createTarArchiveStream
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -33,7 +34,16 @@ import model.CompilerMessage
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
+import model.MissingFilesRequest
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerMode
+import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
+import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import java.nio.file.Paths
+
 
 import java.io.File
 import java.nio.file.Files
@@ -41,13 +51,15 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.deleteRecursively
+import kotlin.io.path.name
 
 @OptIn(ExperimentalPathApi::class)
 class RemoteCompilationClient(
     val clientImpl: RemoteCompilationService,
     val logging: Boolean = false
 ) {
+
+    val fileChunkStrategy = FixedSizeChunkingStrategy()
 
     companion object {
 
@@ -99,7 +111,6 @@ class RemoteCompilationClient(
         val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
         var compilationResult: CompilationResult? = null
 
-        val fileChunkStrategy = FixedSizeChunkingStrategy()
 
         coroutineScope {
             // start consuming response
@@ -110,6 +121,7 @@ class RemoteCompilationClient(
                 requestChannel.close()
             }
 
+            // responding on server replies
             launch {
                 responseChannel.consumeAsFlow().collect {
                     when (it) {
@@ -140,16 +152,30 @@ class RemoteCompilationClient(
                         }
                         is FileChunk -> {
                             launch(Dispatchers.IO) {
-                                val moduleName = CompilerUtils.getModuleName(parsedArgs)
                                 fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
-                                    fileChunkStrategy.reconstruct(
-                                        fileChunks.getOrDefault(it.filePath, listOf()),
-                                        CLIENT_COMPILED_DIR.resolve(moduleName),
-                                        it.filePath,
-                                    )
+                                    val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
+                                    if (it.artifactType == ArtifactType.IC_CACHE && it.isDirectory) {
+                                        val clientPath = Paths.get(it.filePath)
+                                        fileChunkStrategy.reconstruct(
+                                            allFileChunks,
+                                            clientPath.parent,
+                                            clientPath.name
+                                        )
+                                    }
+                                    if (it.artifactType == ArtifactType.RESULT) {
+                                        val moduleName = CompilerUtils.getModuleName(parsedArgs)
+                                        fileChunkStrategy.reconstruct(
+                                            allFileChunks,
+                                            CLIENT_COMPILED_DIR.resolve(moduleName),
+                                            it.filePath,
+                                        )
+                                    }
                                 }
                             }
+                        }
+                        is MissingFilesRequest -> {
+                            requestTransferOfFiles(it.filePaths.map { fp -> File(fp) }, it.artifactType, requestChannel)
                         }
                         is CompilationResult -> {
                             compilationResult = it
@@ -162,6 +188,7 @@ class RemoteCompilationClient(
                 }
             }
 
+            // sending data to the server
             launch {
                 // as a first step we want to send compilation metadata
                 requestChannel.send(
@@ -175,34 +202,25 @@ class RemoteCompilationClient(
                     )
                 )
 
-                // then we will ask the server if a source file is present in the server cache
-                val sourceRequests = sourceFiles.map { file ->
-                    async(Dispatchers.IO) {
-                        FileTransferRequest(file.path, computeSha256(file), ArtifactType.SOURCE)
+                when (compilationOptions) {
+                    is IncrementalCompilationOptions -> {
+                        val srcChanges = compilationOptions.sourceChanges
+                        if (srcChanges is SourcesChanges.Known) {
+                            sendSourceChangesDirectlyWithoutRequest(srcChanges, requestChannel)
+                        }
+
+                        val cpChanges = compilationOptions.classpathChanges
+                        if (cpChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                            requestTransferOfClasspathSnapshotFiles(cpChanges.classpathSnapshotFiles, requestChannel)
+                        }
                     }
-                }
-                val dependencyRequests = dependencyFiles.map { file ->
-                    async(Dispatchers.IO) {
-                        FileTransferRequest(file.path, computeSha256(file), ArtifactType.DEPENDENCY)
-                    }
-                }
-                val pluginRequests = compilerPluginFiles.map { file ->
-                    async(Dispatchers.IO) {
-                        FileTransferRequest(file.path, computeSha256(file), ArtifactType.COMPILER_PLUGIN)
+                    is CompilationOptions -> {
+                        requestTransferOfFiles(sourceFiles, ArtifactType.SOURCE, requestChannel)
+                        requestTransferOfFiles(dependencyFiles, ArtifactType.DEPENDENCY, requestChannel)
+                        requestTransferOfFiles(compilerPluginFiles, ArtifactType.COMPILER_PLUGIN, requestChannel)
                     }
                 }
 
-                launch {
-                    sourceRequests.forEach { request ->
-                        launch { requestChannel.send(request.await()) }
-                    }
-                    dependencyRequests.forEach { request ->
-                        launch { requestChannel.send(request.await()) }
-                    }
-                    pluginRequests.forEach { request ->
-                        launch { requestChannel.send(request.await()) }
-                    }
-                }
 
             }
             responseJob.join()
@@ -213,4 +231,92 @@ class RemoteCompilationClient(
     suspend fun cleanup() {
         clientImpl.cleanup()
     }
+
+    private fun CoroutineScope.requestTransferOfClasspathSnapshotFiles(
+        classpathSnapshotFiles: ClasspathSnapshotFiles,
+        requestChannel: Channel<CompileRequest>
+    ) {
+        classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.forEach {
+            launch(Dispatchers.IO) {
+                requestChannel.send(
+                    FileTransferRequest(it.path, computeSha256(it), ArtifactType.CLASSPATH_ENTRY_SNAPSHOT)
+                )
+            }
+        }
+        launch(Dispatchers.IO) {
+            requestChannel.send(
+                FileTransferRequest(
+                    classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.absolutePath,
+                    computeSha256(classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile),
+                    ArtifactType.SHRUNK_CLASSPATH_SNAPSHOT
+                )
+            )
+        }
+    }
+
+    private fun CoroutineScope.sendSourceChangesDirectlyWithoutRequest(
+        sourcesChanges: SourcesChanges.Known,
+        requestChannel: Channel<CompileRequest>
+    ) {
+        sourcesChanges.modifiedFiles.forEach {
+            launch(Dispatchers.IO) {
+                fileChunkStrategy.chunk(
+                    it,
+                    isDirectory = Files.isDirectory(it.toPath()),
+                    ArtifactType.SOURCE,
+                    it.absolutePath
+                ).collect { chunk ->
+                    requestChannel.send(chunk)
+                }
+            }
+        }
+        // TODO question: do we need to somehow handle removal of files?
+    }
+
+    private fun CoroutineScope.requestTransferOfFiles(
+        files: List<File>,
+        artifactType: ArtifactType,
+        requestChannel: Channel<CompileRequest>
+    ) {
+        files.forEach { file ->
+            launch(Dispatchers.IO) {
+                requestChannel.send(FileTransferRequest(file.path, computeSha256(file), artifactType))
+            }
+        }
+    }
+}
+
+suspend fun main() {
+    val client = RemoteCompilationClient.getClient(RemoteCompilationServiceImplType.GRPC, "localhost", 8000)
+    client.compile(
+        "test",
+        listOf(),
+        IncrementalCompilationOptions(
+            sourceChanges = SourcesChanges.Known(
+                modifiedFiles = listOf(
+                    File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/core/CacheHandler.kt"),
+                    File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/core/InProcessCompilerService.kt")
+                ),
+                removedFiles = listOf(File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/core/Server.kt"))
+            ),
+            classpathChanges = ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(ClasspathSnapshotFiles(
+                    currentClasspathEntrySnapshotFiles = listOf(
+                        File("/Users/michal.svec/Desktop/kotlin/compiler/cli/build/kotlin/compileKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab"),
+                        File("/Users/michal.svec/Desktop/kotlin/compiler/cli/build/kotlin/compileKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream")
+                    ),
+                    classpathSnapshotDir = File("/Users/michal.svec/Desktop/kotlin/compiler/cli/build/kotlin/compileKotlin/classpath-snapshot")
+                )
+            ),
+            workingDir = CLIENT_TMP_DIR.toFile(),
+            compilerMode = CompilerMode.INCREMENTAL_COMPILER,
+            targetPlatform = CompileService.TargetPlatform.JVM,
+            reportCategories = emptyArray(),
+            reportSeverity = 0,
+            requestedCompilationResults = emptyArray(),
+            useJvmFirRunner = false,
+            rootProjectDir = null,
+            buildDir = null
+        )
+    )
+
 }

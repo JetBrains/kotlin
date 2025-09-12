@@ -27,6 +27,7 @@ message CompileResponseProto {
     FileChunkProto compiled_file_chunk = 2;
     FileTransferReplyProto file_transfer_reply = 3;
     CompilationResultProto compilation_result = 5;
+    MissingFilesRequestProto missing_files_request = 6;
   }
 }
 
@@ -81,6 +82,14 @@ enum ArtifactTypeProto {
   DEPENDENCY = 1;
   COMPILER_PLUGIN = 2;
   RESULT = 3;
+  CLASSPATH_ENTRY_SNAPSHOT = 4;
+  SHRUNK_CLASSPATH_SNAPSHOT = 5;
+  IC_CACHE = 6;
+}
+
+message MissingFilesRequestProto{
+  repeated string file_paths = 1;
+  ArtifactTypeProto artifact_type = 2;
 }
 
 enum CompilerModeProto {
