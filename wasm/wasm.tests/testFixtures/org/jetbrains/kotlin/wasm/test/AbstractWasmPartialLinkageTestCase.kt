@@ -231,6 +231,7 @@ internal object WasmCompilerInvocationTestBinaryRunner :
         val result = WasmVM.V8.run(
             entryFile = binaryArtifact.runnerFileName,
             jsFiles = binaryArtifact.jsFiles.map { it.absolutePath },
+            useNewExceptionHandling = true,
             workingDirectory = binaryArtifact.binariesDir
         )
         check("OK" == result.trim())

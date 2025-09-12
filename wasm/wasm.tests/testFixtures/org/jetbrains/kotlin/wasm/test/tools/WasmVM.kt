@@ -35,15 +35,20 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             toolArgs: List<String>,
-        ) =
-            tool.run(
+        ): String {
+            val args = arrayOf(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
-                entryFile,
+                entryFile
+            )
+            error("${tool.path} ${args.joinToString(" ")}")
+            return tool.run(
+                *args,
                 workingDirectory = workingDirectory,
             )
+        }
     }
 
     object SpiderMonkey : WasmVM(shortName = "SM", property = "javascript.engine.path.SpiderMonkey", entryPointIsJsFile = true) {
@@ -61,6 +66,26 @@ internal sealed class WasmVM(
                 "--module=$entryFile",
                 workingDirectory = workingDirectory,
             )
+    }
+
+    object StackSwitching : WasmVM("StackSwitching", property = "wasm.engine.path.StackSwitching", entryPointIsJsFile = false) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>,
+        ): String {
+            require(jsFiles.isEmpty())
+            require(useNewExceptionHandling)
+            return tool.run(
+                *toolArgs.toTypedArray(),
+                entryFile,
+                "-e",
+                "(invoke \"startTest\")",
+                workingDirectory = workingDirectory,
+            )
+        }
     }
 
     object WasmEdge : WasmVM(shortName = "WasmEdge", property = "wasm.engine.path.WasmEdge", entryPointIsJsFile = false) {
@@ -91,7 +116,7 @@ internal sealed class WasmVM(
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
-                *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
+                *arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref"),
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 entryFile,
                 workingDirectory = workingDirectory

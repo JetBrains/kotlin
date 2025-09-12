@@ -70,7 +70,8 @@ val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
     OsType(OsName.MAC, OsArch.X86_64),
-    OsType(OsName.MAC, OsArch.ARM64) -> "mac"
+    OsType(OsName.MAC, OsArch.ARM64),
+        -> "mac"
     OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
     OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
     else -> error("unsupported os type $currentOsType")
@@ -87,7 +88,8 @@ val wasmEdgeSuffix = when (currentOsType) {
     OsType(OsName.MAC, OsArch.X86_64) -> "darwin_x86_64@tar.gz"
     OsType(OsName.MAC, OsArch.ARM64) -> "darwin_arm64@tar.gz"
     OsType(OsName.WINDOWS, OsArch.X86_32),
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "windows@zip"
+    OsType(OsName.WINDOWS, OsArch.X86_64),
+        -> "windows@zip"
     else -> error("unsupported os type $currentOsType")
 }
 val wasmEdgeInnerSuffix = when (currentOsType.name) {
@@ -263,6 +265,10 @@ fun Test.setupWasmEdge() {
     jvmArgumentProviders.add { listOf("-Dwasm.engine.path.WasmEdge=${wasmEdgeDirectory.get().resolve("bin/wasmedge")}") }
 }
 
+fun Test.setupStackSwitching() {
+    systemProperty("wasm.engine.path.StackSwitching", "/Users/Veronika.Sirotkina/IdeaProjects/stack-switching/interpreter/wasm")
+}
+
 testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
@@ -271,7 +277,7 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWa
 
 fun Project.wasmProjectTest(
     taskName: String,
-    body: Test.() -> Unit = {}
+    body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
     return projectTest(
         taskName = taskName,
@@ -290,6 +296,7 @@ fun Project.wasmProjectTest(
         }
         setupSpiderMonkey()
         setupWasmEdge()
+        setupStackSwitching()
         useJUnitPlatform()
         setupWasmStdlib("js")
         setupWasmStdlib("wasi")
@@ -305,6 +312,15 @@ wasmProjectTest("test")
 wasmProjectTest("testFir") {
     dependsOn(generateTypeScriptTests)
     include("**/Fir*.class")
+}
+
+wasmProjectTest("testStackSwitching") {
+    dependsOn(generateTypeScriptTests)
+    include("**/Fir*.class")
+    exclude(
+        "**/*WasmJsSteppingTestGenerated.class",
+        "**/*WasmInvalidation*.class"
+    )
 }
 
 wasmProjectTest("testK1") {

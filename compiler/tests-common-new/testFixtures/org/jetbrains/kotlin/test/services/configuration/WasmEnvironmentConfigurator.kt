@@ -33,12 +33,16 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-class WasmEnvironmentConfiguratorJs(testServices: TestServices) : WasmEnvironmentConfigurator(testServices, WasmTarget.JS)
-class WasmEnvironmentConfiguratorWasi(testServices: TestServices) : WasmEnvironmentConfigurator(testServices, WasmTarget.WASI)
+class WasmEnvironmentConfiguratorJs(testServices: TestServices, useNewExceptionProposalGlobally: Boolean = true) :
+    WasmEnvironmentConfigurator(testServices, WasmTarget.JS, useNewExceptionProposalGlobally)
+
+class WasmEnvironmentConfiguratorWasi(testServices: TestServices, useNewExceptionProposalGlobally: Boolean = true) :
+    WasmEnvironmentConfigurator(testServices, WasmTarget.WASI, useNewExceptionProposalGlobally)
 
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
     private val wasmTarget: WasmTarget,
+    private val useNewExceptionProposalGlobally: Boolean = false
 ) : EnvironmentConfigurator(testServices) {
 
     override val directiveContainers: List<DirectivesContainer>
@@ -97,7 +101,7 @@ abstract class WasmEnvironmentConfigurator(
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapSourceEmbedding)
 
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, DISABLE_WASM_EXCEPTION_HANDLING in registeredDirectives)
-        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives)
+        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptionProposalGlobally || USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives)
 

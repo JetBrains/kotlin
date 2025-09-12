@@ -20,7 +20,7 @@ import java.io.File
 class WasmBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.V8, WasmVM.SpiderMonkey)
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.V8)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -133,21 +133,18 @@ class WasmBoxRunner(
             val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
             val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
-            val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
 
-            val exceptions = vmsToCheck
-                .mapNotNull { vm ->
-                    vm.runWithCaughtExceptions(
-                        debugMode = debugMode,
-                        useNewExceptionHandling = useNewExceptionProposal,
-                        failsIn = failsIn,
-                        entryFile = collectedJsArtifacts.entryPath,
-                        jsFilePaths = jsFilePaths,
-                        workingDirectory = dir,
-                    )
-                }
+            val vm = vmsToCheck.single()
+            val exceptions = vm.runWithCaughtExceptions(
+                debugMode = debugMode,
+                useNewExceptionHandling = true,
+                failsIn = failsIn,
+                entryFile = if (!vm.entryPointIsJsFile) "$baseFileName.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
+                jsFilePaths = jsFilePaths,
+                workingDirectory = dir,
+            )
 
-            return exceptions + when (mode) {
+            return listOfNotNull(exceptions) + when (mode) {
                 "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
                 "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
                 "dev" -> emptyList() // no additional checks required

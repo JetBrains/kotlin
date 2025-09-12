@@ -20,7 +20,7 @@ import java.io.File
 class WasiBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge)
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.StackSwitching)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -82,12 +82,10 @@ class WasiBoxRunner(
             val testFileText = originalFile.readText()
             val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
-            val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
-
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
-                    useNewExceptionHandling = useNewExceptionProposal,
+                    useNewExceptionHandling = true,
                     failsIn = failsIn,
                     entryFile = if (!vm.entryPointIsJsFile) "$baseFileName.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
