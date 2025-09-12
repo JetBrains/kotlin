@@ -161,6 +161,11 @@ fun main(args: Array<String>) {
             ) {
                 model()
             }
+            testClass<AbstractWasmJsKlibSyntheticAccessorTest>(
+                suiteTestClassName = "WasmJsSynthAccTestGenerated"
+            ) {
+                model()
+            }
         }
     }
 }
