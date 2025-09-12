@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -72,7 +73,12 @@ open class FirDeclarationsResolveTransformer(
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
-        val container = context.containers.getOrNull(context.containers.size - 2)
+        // TODO yuk... customize specifically in transformFunctionWithGivenSignature?
+        val container = if (isReplSnippetDeclaration == true) {
+            context.containers.getOrNull(context.containers.size - 3)
+        } else {
+            context.containers.getOrNull(context.containers.size - 2)
+        }
         return visibilityForApproximation(container?.symbol)
     }
 
@@ -1022,11 +1028,12 @@ open class FirDeclarationsResolveTransformer(
             val returnTypeRef = expressionType
                 ?.toFirResolvedTypeRef(newSource)
                 ?.run {
-                    if (context.containers.getOrNull(context.containers.size - 2) is FirReplSnippet)
+                    if (function.isReplSnippetDeclaration == true)
                         approximateDeclarationType(
                             session,
                             simpleFunction?.visibilityForApproximation(),
-                            isLocal = false, isInlineFunction = simpleFunction?.isInline == true
+                            isLocal = false,
+                            isInlineFunction = simpleFunction?.isInline == true,
                         )
                     else
                         approximateDeclarationType(

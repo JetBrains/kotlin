@@ -20,8 +20,8 @@ val res2 = Obj2.y
 
 // SNIPPET
 
-object IObj3 : BaseObjIface { val x = 3 }
-object Obj3 : BaseObjClass(13)
+object IObj3 : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>BaseObjIface<!> { val x = 3 }
+object Obj3 : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>BaseObjClass<!>(13)
 
 // SNIPPET
 
