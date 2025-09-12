@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
@@ -24,34 +25,43 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.io.path.readText
 
-abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
+abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironmentManagement() {
     abstract val knmTestSupport: KnmTestSupport
 
-    protected abstract fun doTest(testDirectoryPath: Path)
+    protected var environment: KotlinCoreEnvironment? = null
 
-    override fun setUp() {
-        super.setUp()
-
-        environment.projectEnvironment.environment.registerApplicationService(
-            KlibLoadingMetadataCache::class.java,
-            KlibLoadingMetadataCache()
-        )
-
-        environment.projectEnvironment.environment.registerFileType(
-            KlibMetaFileType, KlibMetaFileType.defaultExtension
-        )
-    }
-
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(
+    protected open fun initializeEnvironment() {
+        environment = KotlinCoreEnvironment.createForTests(
             ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
             KotlinTestUtils.newConfiguration(
                 ConfigurationKind.JDK_NO_RUNTIME,
                 TestJdkKind.MOCK_JDK,
             ),
             EnvironmentConfigFiles.METADATA_CONFIG_FILES,
+        ).also {
+            with(it.projectEnvironment.environment) {
+                registerApplicationServices()
+            }
+        }
+    }
+
+    override fun tearDown() {
+        environment = null
+        super.tearDown()
+    }
+
+    private fun CoreApplicationEnvironment.registerApplicationServices() {
+        registerApplicationService(
+            KlibLoadingMetadataCache::class.java,
+            KlibLoadingMetadataCache()
+        )
+
+        registerFileType(
+            KlibMetaFileType, KlibMetaFileType.defaultExtension
         )
     }
+
+    protected abstract fun doTest(testDirectoryPath: Path)
 
     fun runTest(testDirectory: String) {
         val testDirectoryPath = Paths.get(testDirectory)
@@ -59,6 +69,7 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
     }
 
     protected fun compileToKnmFiles(testDirectoryPath: Path): List<VirtualFile> {
+        initializeEnvironment()
         val (compilationOutputFile, outputType) = compileCommonMetadata(testDirectoryPath)
         return getKnmFiles(compilationOutputFile, outputType)
     }
@@ -96,11 +107,11 @@ abstract class AbstractDecompiledKnmFileTest : KotlinTestWithEnvironment() {
         return when (outputType) {
             OutputType.KLIB -> {
                 val path = rootFile.toPath()
-                val jarFileSystem = environment.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+                val jarFileSystem = environment!!.projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 jarFileSystem.refreshAndFindFileByPath(path.absolutePathString() + "!/")!!
             }
             OutputType.UNPACKED -> {
-                environment.projectEnvironment.environment.localFileSystem.findFileByIoFile(rootFile)!!
+                environment!!.projectEnvironment.environment.localFileSystem.findFileByIoFile(rootFile)!!
             }
         }
     }

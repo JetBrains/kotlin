@@ -27,7 +27,9 @@ abstract class AbstractAdditionalStubInfoKnmTest : AbstractDecompiledKnmFileTest
                     knmFiles.joinToString(separator = System.lineSeparator()) { it.path }
         )
 
-        val stub = stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
+        initializeEnvironment()
+
+        val stub = stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment!!.project))!!
         KotlinTestUtils.assertEqualsToFile(
             getExpectedFile(testDirectoryPath),
             extractAdditionalStubInfo(stub)

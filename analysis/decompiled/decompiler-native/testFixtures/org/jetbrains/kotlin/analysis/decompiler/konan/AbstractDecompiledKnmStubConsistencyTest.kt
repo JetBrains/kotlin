@@ -32,14 +32,14 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
 
     override fun doTest(testDirectoryPath: Path) {
         val files = compileToKnmFiles(testDirectoryPath)
-
+        initializeEnvironment()
         for (knmFile in files) {
             checkKnmStubConsistency(knmFile)
         }
     }
 
-    override fun setUp() {
-        super.setUp()
+    override fun initializeEnvironment() {
+        super.initializeEnvironment()
         BinaryFileTypeDecompilers.getInstance().addExplicitExtension(KlibMetaFileType, ClassFileDecompiler(), testRootDisposable)
         BinaryFileStubBuilders.INSTANCE.addExplicitExtension(KlibMetaFileType, ClassFileStubBuilder(), testRootDisposable)
         ClassFileDecompilers.getInstance().EP_NAME.point.registerExtension(
@@ -51,7 +51,8 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
 
     private fun checkKnmStubConsistency(knmFile: VirtualFile) {
         val decompiler = knmTestSupport.createDecompiler()
-        val stubTreeBinaryFile = decompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
+        val project = environment!!.project
+        val stubTreeBinaryFile = decompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, project))!!
         val expectedText = stubTreeBinaryFile.serializeToString()
 
         val fileViewProviderForDecompiledFile = decompiler.createFileViewProvider(
