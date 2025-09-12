@@ -98,7 +98,9 @@ public fun <T> createCleaner(resource: T, cleanupAction: (resource: T) -> Unit):
 internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner = CleanerImpl(
     createRetainedExternalRCRef {
         // TODO: Maybe if this fails with exception, it should be (optionally) reported.
-        cleanupAction(resource)
+        try {
+            cleanupAction(resource)
+        } catch (_: Throwable) { }
     }
 )
 
@@ -108,15 +110,3 @@ internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cle
 @ExportTypeInfo("theCleanerImplTypeInfo")
 @HasFinalizer
 private class CleanerImpl(private val cleanPtr: ExternalRCRef): Cleaner, kotlin.native.internal.Cleaner
-
-@ExportForCppRuntime("Kotlin_native_ref_executeCleanerAction")
-@OptIn(ExperimentalNativeApi::class)
-private fun executeCleanerAction(cleanerActionRef: ExternalRCRef) {
-    @Suppress("UNCHECKED_CAST")
-    val cleanerAction = dereferenceExternalRCRef(cleanerActionRef) as () -> Unit
-    releaseExternalRCRef(cleanerActionRef)
-    disposeExternalRCRef(cleanerActionRef)
-    try {
-        cleanerAction()
-    } catch (_: Throwable) { }
-}

@@ -361,7 +361,7 @@ RUNTIME_NORETURN OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable) {
     throw std::runtime_error("Not implemented for tests");
 }
 
-void Kotlin_native_ref_executeCleanerAction(kotlin::mm::RawExternalRCRef* cleanerAction) {
+void Kotlin_internal_executeAndRelease(kotlin::mm::RawExternalRCRef* cleanerAction) {
     throw std::runtime_error("Not implemented for tests");
 }
 

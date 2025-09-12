@@ -12781,9 +12781,6 @@ final fun kotlin.native.internal/ThrowNoWhenBranchMatchedException(): kotlin/Not
 final fun kotlin.native.internal/ThrowNullPointerException(): kotlin/Nothing // kotlin.native.internal/ThrowNullPointerException|ThrowNullPointerException(){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowRuntimeException(kotlin/String?): kotlin/Nothing // kotlin.native.internal/ThrowRuntimeException|ThrowRuntimeException(kotlin.String?){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/ThrowTypeCastException(kotlin/Any, kotlin/String): kotlin/Nothing // kotlin.native.internal/ThrowTypeCastException|ThrowTypeCastException(kotlin.Any;kotlin.String){}[0]
 
 // Targets: [native]
