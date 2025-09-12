@@ -2,7 +2,7 @@
 How to Publish
 
 1. Bump version parameter
-2. Prepare publication credentials for https://jetbrains.team/p/kt/packages/maven/kotlin-dependencies
+2. Prepare publication credentials for https://packages.jetbrains.team/maven/p/kt/kotlin-dependencies
 3. Execute `./gradlew -p dependencies/protobuf publish -PkotlinSpaceUsername=usr -PkotlinSpacePassword=token`
  */
 
