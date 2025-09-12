@@ -21,7 +21,7 @@ class Doo {
     }
 }
 
-const val BAZ1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Bar.BAR1 + 1<!>
+const val BAZ1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Bar.BAR1<!> + 1
 const val BAZ2 = Bar.BAR2 + 1
 const val BAZ3 = Bar.BAR3 + 1
 

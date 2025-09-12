@@ -5,16 +5,16 @@ enum class MyEnum {
     A
 }
 
-@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + MyEnum.A<!>)
+@AnnE("1" + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>MyEnum.A<!>)
 class Test
 
-@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + MyEnum::class<!>)
+@AnnE("1" + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>MyEnum::class<!>)
 class Test2
 
-@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + AnnE("23")<!>)
+@AnnE("1" + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>AnnE("23")<!>)
 class Test3
 
-@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + arrayOf("23", "34")<!>)
+@AnnE("1" + <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arrayOf("23", "34")<!>)
 class Test4
 
 /* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, classReference, collectionLiteral,

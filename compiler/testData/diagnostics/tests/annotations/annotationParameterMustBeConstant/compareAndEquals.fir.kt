@@ -11,8 +11,8 @@ fun foo() {
             <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1<!>,
             <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a2<!>,
             <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a3<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 > a2<!>,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 == a2<!>
+            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1<!> > a2,
+            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1<!> == a2
     ) val b = 1
 }
 

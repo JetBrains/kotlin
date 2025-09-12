@@ -15,15 +15,15 @@ const val e = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one()<!>
 const val f = ((1 + 2) * 3) / 4 % 5 - 1
 const val g = "string $f"
 const val h = "string" + g
-const val i = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one() + "one"<!>
-const val j = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>4 * ForConst.two()<!>
+const val i = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.one()<!> + "one"
+const val j = 4 * <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>ForConst.two()<!>
 val k = 3 - ForConst.two()
 const val l = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>k<!>
 const val m = "123".toString()
 const val n = "456".length
 val o = "789"
-const val p = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.toString()<!>
-const val q = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.length<!>
+const val p = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o<!>.toString()
+const val q = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o<!>.length
 
 class ForConst{
     companion object {

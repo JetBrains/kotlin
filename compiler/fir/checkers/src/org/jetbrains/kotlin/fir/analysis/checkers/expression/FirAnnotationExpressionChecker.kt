@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
@@ -52,7 +53,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         for (arg in argumentMapping.values) {
             val argExpression = (arg as? FirErrorExpression)?.expression ?: arg
             checkAnnotationArgumentWithSubElements(argExpression, context.session)
-                ?.let { reporter.reportOn(argExpression.source, it) }
+                ?.let { reporter.reportOn(it.second ?: argExpression.source, it.first) }
         }
 
         checkAnnotationsWithVersion(fqName, expression)
@@ -67,7 +68,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     private fun checkAnnotationArgumentWithSubElements(
         expression: FirExpression,
         session: FirSession,
-    ): KtDiagnosticFactory0? {
+    ): Pair<KtDiagnosticFactory0, AbstractKtSourceElement?>? {
 
         fun checkArgumentList(args: FirArgumentList): KtDiagnosticFactory0? {
             var usedNonConst = false
@@ -80,8 +81,8 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                         //DO NOTHING
                     }
                     else -> {
-                        if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
-                        reporter.reportOn(sourceForReport, err)
+                        if (err.first != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
+                        reporter.reportOn(err.second ?: sourceForReport, err.first)
                     }
                 }
             }
@@ -91,27 +92,34 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         }
 
         when (expression) {
-            is FirArrayLiteral -> return checkArgumentList(expression.argumentList)
+            is FirArrayLiteral -> {
+                val factory  = checkArgumentList(expression.argumentList) ?: return null
+                return Pair(factory , expression.source)
+            }
+
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = arg.unwrapArgument()
                     checkAnnotationArgumentWithSubElements(unwrappedArg, session)
-                        ?.let { reporter.reportOn(unwrappedArg.source, it) }
+                        ?.let { reporter.reportOn(it.second ?: unwrappedArg.source, it.first) }
                 }
             }
             else -> {
-                return when (computeConstantExpressionKind(expression, session, calledOnCheckerStage = true)) {
-                    ConstantArgumentKind.NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
-                    ConstantArgumentKind.ENUM_NOT_CONST -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
-                    ConstantArgumentKind.NOT_KCLASS_LITERAL -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
-                    ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-                    ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-                    ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR ->
+                // FIXME: propergate locations
+                val constantKind = computeConstantExpressionKind(expression, session, calledOnCheckerStage = true)
+                val factory =  when (constantKind) {
+                    is ConstantArgumentKind.NotConst -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
+                    is ConstantArgumentKind.EnumNotConst -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
+                    is ConstantArgumentKind.NotKClassLiteral -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
+                    is ConstantArgumentKind.KClassLiteralOfTypeParameterError -> FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
+                    is ConstantArgumentKind.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+                    ConstantArgumentKind.ValidConst, ConstantArgumentKind.ResolutionError ->
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
                         if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)
                         else null
-                }
+                } ?: return null
+                return Pair(factory, constantKind.violationSource)
             }
         }
         return null

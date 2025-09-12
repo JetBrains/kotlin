@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -44,7 +45,7 @@ fun canBeEvaluatedAtCompileTime(
     calledOnCheckerStage: Boolean,
 ): Boolean {
     val result = computeConstantExpressionKind(expression, session, calledOnCheckerStage)
-    return result == ConstantArgumentKind.VALID_CONST || allowErrors && result == ConstantArgumentKind.RESOLUTION_ERROR
+    return result == ConstantArgumentKind.ValidConst || allowErrors && result == ConstantArgumentKind.ResolutionError
 }
 
 /**
@@ -63,25 +64,37 @@ fun computeConstantExpressionKind(
     session: FirSession,
     calledOnCheckerStage: Boolean
 ): ConstantArgumentKind {
-    if (expression == null) return ConstantArgumentKind.RESOLUTION_ERROR
+    if (expression == null) return ConstantArgumentKind.ResolutionError
     return expression.accept(FirConstCheckVisitor(session, calledOnCheckerStage), null)
 }
 
-enum class ConstantArgumentKind {
-    VALID_CONST,
-    RESOLUTION_ERROR,
-    NOT_CONST,
-    ENUM_NOT_CONST,
-    NOT_KCLASS_LITERAL,
-    NOT_CONST_VAL_IN_CONST_EXPRESSION,
-    KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR;
+sealed class ConstantArgumentKind {
+    abstract val violationSource: AbstractKtSourceElement?
+
+    data object ValidConst : ConstantArgumentKind() {
+        override val violationSource: AbstractKtSourceElement? = null
+    }
+
+    data object ResolutionError : ConstantArgumentKind() {
+        override val violationSource:  AbstractKtSourceElement? = null
+    }
+
+    data class NotConst(override val violationSource:  AbstractKtSourceElement?) : ConstantArgumentKind()
+    data class EnumNotConst(override val violationSource:  AbstractKtSourceElement?) : ConstantArgumentKind()
+    data class NotKClassLiteral(override val violationSource:  AbstractKtSourceElement?) : ConstantArgumentKind()
+    data class NotConstValInConstExpression(override val violationSource:  AbstractKtSourceElement?) : ConstantArgumentKind()
+    data class KClassLiteralOfTypeParameterError(override val violationSource: AbstractKtSourceElement?) : ConstantArgumentKind()
+
+    val isValidConst: Boolean get() = this is ValidConst
 
     inline fun ifNotValidConst(action: (ConstantArgumentKind) -> Unit) {
-        if (this != VALID_CONST) {
+        if (!isValidConst) {
             action(this)
         }
     }
 }
+
+
 
 private class FirConstCheckVisitor(
     private val session: FirSession,
@@ -134,14 +147,14 @@ private class FirConstCheckVisitor(
     }
 
     override fun visitElement(element: FirElement, data: Nothing?): ConstantArgumentKind {
-        return ConstantArgumentKind.NOT_CONST
+        return ConstantArgumentKind.NotConst(element.source)
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Nothing?): ConstantArgumentKind {
         // Error expression already signalizes about some problem, and later we will report some diagnostic.
         // Depending on the context, we can count this as valid or as error expression.
         // So we delegate the final decision to the caller.
-        return ConstantArgumentKind.RESOLUTION_ERROR
+        return ConstantArgumentKind.ResolutionError
     }
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: Nothing?): ConstantArgumentKind {
@@ -154,11 +167,11 @@ private class FirConstCheckVisitor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConstantArgumentKind {
         if (typeOperatorCall.operation != FirOperation.AS) {
-            return ConstantArgumentKind.NOT_CONST
+            return ConstantArgumentKind.NotConst(typeOperatorCall.source)
         }
 
         if (!typeOperatorCall.argument.resolvedType.isSubtypeOf(typeOperatorCall.resolvedType, session)) {
-            return ConstantArgumentKind.NOT_CONST
+            return ConstantArgumentKind.NotConst(typeOperatorCall.source)
         }
 
         return typeOperatorCall.argument.accept(this, data)
@@ -166,7 +179,7 @@ private class FirConstCheckVisitor(
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): ConstantArgumentKind {
         if (!whenExpression.isProperlyExhaustive || !intrinsicConstEvaluation) {
-            return ConstantArgumentKind.NOT_CONST
+            return ConstantArgumentKind.NotConst(whenExpression.source)
         }
 
         whenExpression.subjectVariable?.initializer?.accept(this, data)?.ifNotValidConst { return it }
@@ -176,22 +189,24 @@ private class FirConstCheckVisitor(
                 else -> branch.condition.accept(this, data).ifNotValidConst { return it }
             }
             branch.result.statements.forEach { stmt ->
-                if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
+                if (stmt !is FirExpression) return ConstantArgumentKind.NotConst(stmt.source)
                 stmt.accept(this, data).ifNotValidConst { return it }
             }
         }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: Nothing?): ConstantArgumentKind {
-        return if (intrinsicConstEvaluation) ConstantArgumentKind.VALID_CONST else ConstantArgumentKind.NOT_CONST
+        return if (intrinsicConstEvaluation) ConstantArgumentKind.ValidConst else ConstantArgumentKind.NotConst(whenSubjectExpression.source)
     }
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): ConstantArgumentKind {
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Nothing?): ConstantArgumentKind {
+        //comparisonExpression.compareToCall.arguments.first().accept(this, data).ifNotValidConst {return it}
+        //comparisonExpression.compareToCall.arguments.get(1).accept(this, data).ifNotValidConst {return it}
         return comparisonExpression.compareToCall.accept(this, data)
     }
 
@@ -203,58 +218,61 @@ private class FirConstCheckVisitor(
             }
 
             if (!exp.hasAllowedCompileTimeType()) {
-                return ConstantArgumentKind.NOT_CONST
+                return ConstantArgumentKind.NotConst(exp.source)
             }
             exp.accept(this, data).ifNotValidConst { return it }
         }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): ConstantArgumentKind {
         if (equalityOperatorCall.operation == FirOperation.IDENTITY || equalityOperatorCall.operation == FirOperation.NOT_IDENTITY) {
-            return ConstantArgumentKind.NOT_CONST
+            return ConstantArgumentKind.NotConst(equalityOperatorCall.source)
         }
 
         for (exp in equalityOperatorCall.arguments) {
             if (exp is FirLiteralExpression && exp.value == null) {
-                return ConstantArgumentKind.NOT_CONST
+                return ConstantArgumentKind.NotConst(exp.source)
             }
 
             if (!exp.hasAllowedCompileTimeType() || exp.getExpandedType().isUnsignedType) {
-                return ConstantArgumentKind.NOT_CONST
+                return ConstantArgumentKind.NotConst(exp.source)
             }
 
             exp.accept(this, data).ifNotValidConst { return it }
         }
 
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?): ConstantArgumentKind {
-        if (!booleanOperatorExpression.leftOperand.resolvedType.isBoolean || !booleanOperatorExpression.rightOperand.resolvedType.isBoolean) {
-            return ConstantArgumentKind.NOT_CONST
+        if (!booleanOperatorExpression.leftOperand.resolvedType.isBoolean ) {
+            return ConstantArgumentKind.NotConst(booleanOperatorExpression.leftOperand.source)
+        }
+        if (!booleanOperatorExpression.rightOperand.resolvedType.isBoolean ) {
+            return ConstantArgumentKind.NotConst(booleanOperatorExpression.rightOperand.source)
         }
 
         booleanOperatorExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
         booleanOperatorExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?): ConstantArgumentKind {
         var coneType = getClassCall.argument.getExpandedType()
 
         if (coneType is ConeErrorType)
-            return ConstantArgumentKind.NOT_CONST
+            return ConstantArgumentKind.NotConst(getClassCall.source)
 
         while (coneType.classId == StandardClassIds.Array)
             coneType = (coneType.lowerBoundIfFlexible().typeArguments.first() as? ConeKotlinTypeProjection)?.type ?: break
 
         val argument = getClassCall.argument
         return when {
-            coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
-            argument is FirResolvedQualifier -> ConstantArgumentKind.VALID_CONST
-            argument is FirClassReferenceExpression -> ConstantArgumentKind.VALID_CONST
-            else -> ConstantArgumentKind.NOT_KCLASS_LITERAL
+            coneType is ConeTypeParameterType -> ConstantArgumentKind.KClassLiteralOfTypeParameterError(getClassCall.argument.source)
+            argument is FirResolvedQualifier -> ConstantArgumentKind.ValidConst
+            argument is FirClassReferenceExpression -> ConstantArgumentKind.ValidConst
+            else -> ConstantArgumentKind.NotKClassLiteral(getClassCall.source)
         }
     }
 
@@ -264,22 +282,22 @@ private class FirConstCheckVisitor(
         for (exp in varargArgumentsExpression.arguments) {
             exp.accept(this, data).ifNotValidConst { return it }
         }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Nothing?): ConstantArgumentKind {
         for (exp in arrayLiteral.arguments) {
             exp.accept(this, data).ifNotValidConst { return it }
         }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?): ConstantArgumentKind {
         val classSymbol = thisReceiverExpression.calleeReference.boundSymbol as? FirClassSymbol
         return if (classSymbol?.classKind == ClassKind.OBJECT) {
-            ConstantArgumentKind.VALID_CONST
+            ConstantArgumentKind.ValidConst
         } else {
-            ConstantArgumentKind.NOT_CONST
+           ConstantArgumentKind.NotConst(null)
         }
     }
 
@@ -287,16 +305,16 @@ private class FirConstCheckVisitor(
         propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?
     ): ConstantArgumentKind {
         val propertySymbol = propertyAccessExpression.calleeReference.toResolvedCallableSymbol()
-        if (propertySymbol in propertyStack.get()) return ConstantArgumentKind.NOT_CONST
+        if (propertySymbol in propertyStack.get()) return ConstantArgumentKind.NotConst(propertyAccessExpression.source)
         when (propertySymbol) {
             // Null symbol means some error occurred.
             // We use the same logic as in `visitErrorExpression`.
             // Better to report "UNRESOLVED_REFERENCE" later than some "NOT_CONST" diagnostic right now.
-            null -> return ConstantArgumentKind.RESOLUTION_ERROR
+            null -> return ConstantArgumentKind.ResolutionError
             is FirPropertySymbol -> {
                 val classKindOfParent = (propertySymbol.getReferencedClassSymbol() as? FirRegularClassSymbol)?.classKind
                 if (classKindOfParent == ClassKind.ENUM_CLASS) {
-                    return ConstantArgumentKind.ENUM_NOT_CONST
+                    return ConstantArgumentKind.EnumNotConst(propertyAccessExpression.source)
                 }
 
                 val isConstWithoutInitializer = propertySymbol.unwrapFakeOverrides().canBeEvaluated()
@@ -305,46 +323,53 @@ private class FirConstCheckVisitor(
                     propertySymbol.isConst || isConstWithoutInitializer -> {
                         val receivers = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
                         if (receivers.count { it != null } == 2) {
-                            return ConstantArgumentKind.NOT_CONST
+                            return ConstantArgumentKind.NotConst(propertyAccessExpression.source)
                         }
                         receivers.singleOrNull { it != null }?.accept(this, data)?.ifNotValidConst { return it }
                     }
-                    propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
-                    propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
+                    propertySymbol.isLocal -> return ConstantArgumentKind.NotConst(propertyAccessExpression.source)
+                    propertyAccessExpression.getExpandedType().classId == StandardClassIds.KClass -> return ConstantArgumentKind.NotKClassLiteral(propertyAccessExpression.source)
                 }
 
                 return when {
-                    isConstWithoutInitializer -> ConstantArgumentKind.VALID_CONST
+                    isConstWithoutInitializer -> ConstantArgumentKind.ValidConst
                     propertySymbol.isConst -> {
                         // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
                         // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
                         val initializer = propertySymbol.resolvedInitializer
-                        propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+
+                        // Don't propergate the constant kind that the initializer has, because we want the error to show up where it's
+                        // used not where it's defined. The initializer will eventually be visited anyway.
+                        return when (propertySymbol.visit { initializer?.accept(this, data) }) {
+                            ConstantArgumentKind.ValidConst -> ConstantArgumentKind.ValidConst
+                            ConstantArgumentKind.ResolutionError -> ConstantArgumentKind.ResolutionError
+                            else -> ConstantArgumentKind.NotConst(propertyAccessExpression.source)
+                        }
                     }
 
                     // if it called at checkers stage it's safe to call resolvedInitializer
                     // even if it will trigger BODY_RESOLVE phase, we don't violate phase contracts
                     calledOnCheckerStage -> when (propertySymbol.resolvedInitializer) {
                         is FirLiteralExpression -> when {
-                            propertySymbol.isVal -> ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION
-                            else -> ConstantArgumentKind.NOT_CONST
+                            propertySymbol.isVal -> ConstantArgumentKind.NotConstValInConstExpression(propertyAccessExpression.source)
+                            else ->ConstantArgumentKind.NotConst(null)
                         }
-                        is FirGetClassCall -> ConstantArgumentKind.NOT_KCLASS_LITERAL
-                        else -> ConstantArgumentKind.NOT_CONST
+                        is FirGetClassCall -> ConstantArgumentKind.NotKClassLiteral(propertyAccessExpression.source)
+                        else ->ConstantArgumentKind.NotConst(null)
                     }
 
-                    else -> ConstantArgumentKind.NOT_CONST
+                    else ->ConstantArgumentKind.NotConst(null)
                 }
             }
             is FirFieldSymbol -> {
                 if (propertySymbol.isStatic && propertySymbol.modality == Modality.FINAL && propertySymbol.hasConstantInitializer) {
-                    return ConstantArgumentKind.VALID_CONST
+                    return ConstantArgumentKind.ValidConst
                 }
             }
-            is FirEnumEntrySymbol -> return ConstantArgumentKind.VALID_CONST
+            is FirEnumEntrySymbol -> return ConstantArgumentKind.ValidConst
         }
 
-        return ConstantArgumentKind.NOT_CONST
+        return ConstantArgumentKind.NotConst(propertyAccessExpression.source)
     }
 
     override fun visitIntegerLiteralOperatorCall(
@@ -356,33 +381,33 @@ private class FirConstCheckVisitor(
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?): ConstantArgumentKind {
         val calleeReference = functionCall.calleeReference
         if (calleeReference is FirErrorNamedReference || calleeReference is FirResolvedErrorReference) {
-            return ConstantArgumentKind.RESOLUTION_ERROR
+            return ConstantArgumentKind.ResolutionError
         }
         if (functionCall.getExpandedType().classId == StandardClassIds.KClass) {
-            return ConstantArgumentKind.NOT_KCLASS_LITERAL
+            return ConstantArgumentKind.NotKClassLiteral(functionCall.source)
         }
 
-        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
+        if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NotConst(functionCall.source)
         return when (val symbol = calleeReference.resolvedSymbol) {
             is FirNamedFunctionSymbol -> visitNamedFunction(functionCall, symbol)
             is FirConstructorSymbol -> visitConstructorCall(functionCall, symbol)
-            else -> ConstantArgumentKind.NOT_CONST
+            else -> ConstantArgumentKind.NotConst(functionCall.source)
         }
     }
 
     private fun visitNamedFunction(functionCall: FirFunctionCall, symbol: FirNamedFunctionSymbol): ConstantArgumentKind {
         if (!symbol.canBeEvaluated() && !functionCall.isCompileTimeBuiltinCall()) {
-            return ConstantArgumentKind.NOT_CONST
+            return ConstantArgumentKind.NotConst(functionCall.source)
         }
 
-        for (exp in functionCall.arguments.plus(functionCall.dispatchReceiver).plus(functionCall.extensionReceiver)) {
+        for (exp in listOf(functionCall.dispatchReceiver, functionCall.extensionReceiver, *functionCall.arguments.toTypedArray())) {
             if (exp == null) continue
-            if (!exp.hasAllowedCompileTimeType()) return ConstantArgumentKind.NOT_CONST
+            if (!exp.hasAllowedCompileTimeType()) return ConstantArgumentKind.NotConst(exp.source)
 
             exp.accept(this, null).ifNotValidConst { return it }
         }
 
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     private fun visitConstructorCall(constructorCall: FirFunctionCall, symbol: FirConstructorSymbol): ConstantArgumentKind {
@@ -392,9 +417,9 @@ private class FirConstCheckVisitor(
                 constructorCall.arguments.forEach { argumentExpression ->
                     argumentExpression.accept(this, null).ifNotValidConst { return it }
                 }
-                ConstantArgumentKind.VALID_CONST
+                ConstantArgumentKind.ValidConst
             }
-            else -> ConstantArgumentKind.NOT_CONST
+            else ->ConstantArgumentKind.NotConst(null)
         }
     }
 
@@ -403,18 +428,18 @@ private class FirConstCheckVisitor(
     ): ConstantArgumentKind {
         val expressionType = qualifiedAccessExpression.getExpandedType()
         if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
-            return qualifiedAccessExpression.dispatchReceiver?.accept(this, data) ?: ConstantArgumentKind.VALID_CONST
+            return qualifiedAccessExpression.dispatchReceiver?.accept(this, data) ?: ConstantArgumentKind.ValidConst
         }
 
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?): ConstantArgumentKind {
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: Nothing?): ConstantArgumentKind {
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Nothing?): ConstantArgumentKind {
@@ -425,14 +450,14 @@ private class FirConstCheckVisitor(
         enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
         data: Nothing?,
     ): ConstantArgumentKind {
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitClassReferenceExpression(
         classReferenceExpression: FirClassReferenceExpression,
         data: Nothing?,
     ): ConstantArgumentKind {
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): ConstantArgumentKind {
@@ -442,9 +467,9 @@ private class FirConstCheckVisitor(
     override fun visitAnnotation(annotation: FirAnnotation, data: Nothing?): ConstantArgumentKind {
         for (argument in annotation.argumentMapping.mapping.values) {
             val argumentKind = argument.accept(this, data)
-            if (argumentKind != ConstantArgumentKind.VALID_CONST) return argumentKind
+            if (argumentKind != ConstantArgumentKind.ValidConst) return argumentKind
         }
-        return ConstantArgumentKind.VALID_CONST
+        return ConstantArgumentKind.ValidConst
     }
 
     // --- Utils ---

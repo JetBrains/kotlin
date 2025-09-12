@@ -36,23 +36,23 @@ const val toULong = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toULong()<!>
 
 const val toString = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toString()<!>
 
-const val stringPlus1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toString() + 2<!>
+const val stringPlus1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toString()<!> + 2
 const val stringPlus2 = "${1u} 2"
 const val stringPlus3 = "1" + 2u
-const val stringPlus4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"1" + 2u.toString()<!>
+const val stringPlus4 = "1" + <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>2u.toString()<!>
 
 const val compare1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u < 2u<!>
 const val compare2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u <= 2u<!>
 const val compare3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u > 2u<!>
 const val compare4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u >= 2u<!>
 
-const val equal1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u == 1u<!>
-const val equal2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>uint == 1u<!>
-const val equal3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u == uint<!>
+const val equal1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u<!> == 1u
+const val equal2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>uint<!> == 1u
+const val equal3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u<!> == uint
 
-const val notEqual1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u != 1u<!>
-const val notEqual2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>uint != 1u<!>
-const val notEqual3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u != uint<!>
+const val notEqual1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u<!> != 1u
+const val notEqual2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>uint<!> != 1u
+const val notEqual3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u<!> != uint
 
 /* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, const, equalityExpression, integerLiteral,
 propertyDeclaration, stringLiteral, unsignedLiteral */

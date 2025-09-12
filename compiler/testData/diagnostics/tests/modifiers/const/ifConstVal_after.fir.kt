@@ -21,8 +21,8 @@ const val withWhen3 = when(value) {
 const val multibranchIf = if (value == 100) 1 else if (value == 1000) 2 else 3
 
 val nonConstFlag = true
-const val errorConstIf = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>if (nonConstFlag) 1 else 2<!>
-const val errorBranch = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>if (flag) nonConstFlag else false<!>
+const val errorConstIf = if (<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConstFlag<!>) 1 else 2
+const val errorBranch = if (flag) <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConstFlag<!> else false
 
 /* GENERATED_FIR_TAGS: const, equalityExpression, ifExpression, integerLiteral, propertyDeclaration, stringLiteral,
 whenExpression, whenWithSubject */
