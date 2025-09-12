@@ -8,7 +8,7 @@ package test.time
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 
-fun testDefault(duration: Duration, vararg expected: String) {
+fun testDefaultParsing(duration: Duration, vararg expected: String) {
     fun testParsing(string: String, expectedDuration: Duration) {
         assertEquals(expectedDuration, Duration.parse(string), string)
         assertEquals(expectedDuration, Duration.parseOrNull(string), string)
