@@ -913,7 +913,7 @@ internal class CacheBuilder(
         for (library in sortedLibraries) {
             if (File(cacheDirectory, library.uniqueName.cachedName).listFilesOrEmpty().isNotEmpty())
                 continue
-            logger.info("Compiling ${library.uniqueName} to cache")
+            logger.lifecycle("Compiling ${library.uniqueName} to cache")
             val args = mutableListOf(
                 "-p", konanCacheKind.produce!!,
                 "-target", target
@@ -978,7 +978,7 @@ internal class CacheBuilder(
         ).unresolvedDependencies
         for (dependency in unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
-        logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
+        logger.lifecycle("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(
             "-p", konanCacheKind.produce!!,
             "-target", target
@@ -1015,6 +1015,14 @@ internal class CacheBuilder(
 
     fun buildCompilerArgs(resolvedConfiguration: LazyResolvedConfiguration): List<String> = mutableListOf<String>().apply {
         if (konanCacheKind != NativeCacheKind.NONE && !optimized && konanPropertiesService.cacheWorksFor(konanTarget)) {
+            val isFirstTime = rootCacheDirectory.listFilesOrEmpty().isEmpty()
+            if (isFirstTime) {
+                logger.lifecycle("Kotlin/Native: preparing cache for ${konanTarget.name}. This is only needed on the first build and may take a few minutes…")
+            } else {
+                logger.lifecycle("Kotlin/Native: preparing/validating cache for ${konanTarget.name}…")
+            }
+        }
+        if (konanCacheKind != NativeCacheKind.NONE && !optimized && konanPropertiesService.cacheWorksFor(konanTarget)) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()
             add("-Xcache-directory=${rootCacheDirectory.absolutePath}")
@@ -1030,6 +1038,7 @@ internal class CacheBuilder(
             }
             for (cacheDirectory in allCacheDirectories)
                 add("-Xcache-directory=$cacheDirectory")
+            logger.lifecycle("Kotlin/Native: cache ready for ${konanTarget.name}. Subsequent builds will be faster.")
         }
     }
 

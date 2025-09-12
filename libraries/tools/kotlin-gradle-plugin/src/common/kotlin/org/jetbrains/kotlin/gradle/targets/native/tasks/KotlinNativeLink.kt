@@ -455,6 +455,7 @@ constructor(
                             && !optimized
                             && konanPropertiesService.get().cacheWorksFor(konanTarget)
                         ) {
+                            logger.lifecycle("Kotlin/Native: the compiler may build dependency caches for ${konanTarget.name} on the first build. This can take a few minutes; subsequent builds will be faster…")
                             add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
                             add("-Xbackend-threads=${cacheSettings.threads}")
                             if (cacheSettings.icEnabled) {
