@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
@@ -24,8 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
-import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
+object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) {
     private val versionArgument = Name.identifier("version")
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -72,7 +73,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
                     SourceElementPositioningStrategies.DECLARATION_NAME
                 )
-            !declaration.isNonLocal ->
+            declaration.isLocalMember ->
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION,
@@ -172,7 +173,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             super.visitQualifiedAccessExpression(qualifiedAccessExpression, data)
 
             val dependOnSymbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return
-            val dependVersion = symbolVersions[dependOnSymbol] ?: return
+            val dependVersion = symbolVersions[dependOnSymbol]
 
             if (dependVersion greaterThan data) {
                 with(context) {
@@ -203,6 +204,10 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             anonymousObjectExpression.tooComplex()
         }
 
+        override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
+            anonymousFunctionExpression.tooComplex()
+        }
+
         fun FirElement.tooComplex() {
             reporter.reportOn(source, FirErrors.VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION, context)
         }
@@ -219,5 +224,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
         !this.lessThanOrEqual(other)
 
     private fun FirFunction.isCopyMethod(): Boolean =
-        nameOrSpecialName == StandardNames.DATA_CLASS_COPY && getContainingClassSymbol()?.isData == true
+        origin == FirDeclarationOrigin.Synthetic.DataClassMember
+                && nameOrSpecialName == StandardNames.DATA_CLASS_COPY
+                && getContainingClassSymbol()?.isData == true
 }

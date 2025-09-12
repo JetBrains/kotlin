@@ -29,12 +29,14 @@ data class D(
 
 fun foo(
     x: String,
-    @IntroducedAt("1") y: (String) -> String = { it },
-    @IntroducedAt("2") z: () -> String = { x },
+    y: (String) -> String,
+    @IntroducedAt("2") z: String = x,
     @IntroducedAt("2") s: String = "hello",
-    @IntroducedAt("1") u: (String) -> String = { <!INVALID_DEFAULT_VALUE_DEPENDENCY!>s<!> },
-    @IntroducedAt("1") v: String = <!INVALID_DEFAULT_VALUE_DEPENDENCY!>z<!>(),
+    @IntroducedAt("1") u: String = <!INVALID_DEFAULT_VALUE_DEPENDENCY!>s<!>,
+    @IntroducedAt("1") v: String = y(""),
 ) { }
+
+fun bar(@IntroducedAt("1") x: Int = 10, y: Int = <!INVALID_DEFAULT_VALUE_DEPENDENCY!>x<!>) {}
 
 /* GENERATED_FIR_TAGS: additiveExpression, annotationUseSiteTargetFile, classDeclaration, classReference, data,
 functionDeclaration, functionalType, integerLiteral, lambdaLiteral, multiplicativeExpression, primaryConstructor,

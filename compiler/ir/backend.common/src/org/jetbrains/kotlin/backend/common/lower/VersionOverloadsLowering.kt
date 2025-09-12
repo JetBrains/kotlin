@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
-import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -54,19 +53,19 @@ class VersionOverloadsLowering(
     fun generateVersionOverloads(target: IrFunction) {
         val irParent: IrDeclarationContainer = target.parent as? IrDeclarationContainer ?: return
 
-        val versionParamIndexes = when {
-            target is IrSimpleFunction && irParent is IrClass && irParent.isData && target.name == StandardNames.DATA_CLASS_COPY -> {
-                val primaryConstructor = irParent.declarations.filterIsInstance<IrConstructor>().single {
-                    it.isPrimary && it.origin != IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
-                }
-                // adjust the information from the primary constructor into that of 'copy'
-                getSortedVersionParameterIndexes(primaryConstructor).also {
-                    it.forEach { (_, params) -> params.indices.forEach { ix -> params[ix] += 1 } }
-                    it[null]?.add(0)
-                }
+        val targetIsCopy =
+            target is IrSimpleFunction && target.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER
+                    && target.name == StandardNames.DATA_CLASS_COPY
+                    && irParent is IrClass && irParent.isData
+
+        val versionParamIndexes = if (targetIsCopy) {
+            val primaryConstructor = irParent.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
+            // adjust the information from the primary constructor into that of 'copy'
+            getSortedVersionParameterIndexes(primaryConstructor).also {
+                it.forEach { (_, params) -> params.indices.forEach { ix -> params[ix] += 1 } }
+                it[null]?.add(0)
             }
-            else -> getSortedVersionParameterIndexes(target)
-        }
+        } else getSortedVersionParameterIndexes(target)
 
         if (versionParamIndexes.size < 2) return  // just a single version, nothing to do
 
@@ -109,9 +108,12 @@ class VersionOverloadsLowering(
         for ((version, params) in versionParamIndexes) {
             if (!first) {
                 container.declarations.add(generateWrapper(this, version, lastIncludedParameters))
+            } else {
+                first = false
             }
-            first = false
-            lastIncludedParameters.fill(false, params.first(), params.last() + 1)
+            for (paramIndex in params) {
+                lastIncludedParameters[paramIndex] = false
+            }
         }
     }
 
@@ -132,13 +134,14 @@ class VersionOverloadsLowering(
         includedParams: BooleanArray
     ): IrFunction {
         val builder = when (original) {
-            is IrConstructor -> { block -> buildConstructor { block(); isPrimary = false } }
+            is IrConstructor -> ::buildConstructor
             else -> ::buildFun
         }
         return builder {
             updateFrom(original)
             name = original.name
             origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
+            if (original is IrConstructor) isPrimary = false
         }.apply {
             parent = original.parent
             annotations = original.annotations.memoryOptimizedMapNotNull {
@@ -147,23 +150,24 @@ class VersionOverloadsLowering(
                 else
                     it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
             } memoryOptimizedPlus buildDeprecationCall(version)
-            copyTypeParametersFrom(original)
-            returnType = original.returnType.remapTypeParameters(original, this)
-            generateNewValueParameters(original, includedParams)
+            val newParameters = copyTypeParametersFrom(original)
+            val typeParameterSubstitution = original.typeParameters.zip(newParameters).toMap()
+            returnType = original.returnType.remapTypeParameters(original, this, typeParameterSubstitution)
+            generateNewValueParameters(original, includedParams, typeParameterSubstitution)
         }
     }
 
-    private fun IrFunction.generateNewValueParameters(original: IrFunction, includedParams: BooleanArray) {
+    private fun IrFunction.generateNewValueParameters(
+        original: IrFunction,
+        includedParams: BooleanArray,
+        typeParameterSubstitution: Map<IrTypeParameter, IrTypeParameter>
+    ) {
         val originalDefaults = mutableListOf<IrExpressionBody?>()
         parameters = original.parameters.mapIndexedNotNull { i, param ->
             if (!includedParams[i]) null
             else {
                 originalDefaults.push(param.defaultValue)
-                param.copyTo(
-                    this,
-                    defaultValue = null,
-                    type = param.type.remapTypeParameters(original, this),
-                )
+                param.copyTo(this, defaultValue = null, remapTypeMap = typeParameterSubstitution)
             }
         }
 
@@ -176,7 +180,10 @@ class VersionOverloadsLowering(
             param.defaultValue = factory.createExpressionBody(
                 startOffset = originalDefault.startOffset,
                 endOffset = originalDefault.endOffset,
-                expression = originalDefault.expression.deepCopyWithSymbols(this),
+                expression = originalDefault.expression.deepCopyWithSymbols(
+                    initialParent = this,
+                    createTypeRemapper = { IrTypeParameterRemapper(typeParameterSubstitution) }
+                ),
             ).transform(transformer, null)
         }
 
@@ -197,7 +204,6 @@ class VersionOverloadsLowering(
             .single { it.name.toString() == "HIDDEN" }.symbol
     }
 
-    @OptIn(InternalSymbolFinderAPI::class)
     fun buildDeprecationCall(version: MavenComparableVersion?): IrConstructorCall = IrConstructorCallImpl.fromSymbolOwner(
         SYNTHETIC_OFFSET,
         SYNTHETIC_OFFSET,

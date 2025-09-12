@@ -64008,12 +64008,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("lambda.kt")
-    public void testLambda() {
-      runTest("compiler/testData/codegen/box/versionOverloads/lambda.kt");
-    }
-
-    @Test
     @TestMetadata("simpleCall.kt")
     public void testSimpleCall() {
       runTest("compiler/testData/codegen/box/versionOverloads/simpleCall.kt");
