@@ -20,11 +20,17 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecompressed
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UKLIB_API_ELEMENTS_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
 
 internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, _, _ ->
@@ -89,6 +95,22 @@ internal fun createKlibArtifact(
     compilation.project.configurations.getByName(apiElementsName)
         .outgoing
         .registerKlibArtifact(packedArtifactFile, compilation.compilationName, classifier)
+
+    // FIXME: This code is spread between KotlinNativeKlibArtifact and CreateNonPackedKlibVariantsSideEffect. Fix this?
+    // FIXME: Is it part of the resolution contract that a secondary variant will be preferred when compatible over primary variant + transform?
+    val attribute = compilation.target.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
+    compilation.project.configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).outgoing.variants {
+        it.create(attribute) {
+            it.registerKlibArtifact(
+                compilation.compileTaskProvider.map { it.klibOutput.get() },
+                compilation.compilationName
+            )
+            it.attributes {
+                it.attribute(uklibStateAttribute, uklibStateDecompressed)
+                it.attribute(uklibViewAttribute, attribute)
+            }
+        }
+    }
 }
 
 internal fun Project.klibOutputDirectory(

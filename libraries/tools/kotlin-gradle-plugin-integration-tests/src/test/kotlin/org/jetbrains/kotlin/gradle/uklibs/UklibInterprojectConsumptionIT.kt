@@ -92,9 +92,10 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                     ":producer" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
-                                "artifactType" to "uklib",
+                                "artifactType" to "klib",
                                 "org.gradle.category" to "library",
                                 "org.gradle.usage" to "kotlin-uklib-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
                                 "org.jetbrains.kotlin.uklib" to "true",
                                 "org.jetbrains.kotlin.uklibState" to "decompressed",
                                 "org.jetbrains.kotlin.uklibView" to "ios_arm64",
@@ -123,9 +124,10 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                     ":producer" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
-                                "artifactType" to "uklib",
+                                "artifactType" to "klib",
                                 "org.gradle.category" to "library",
                                 "org.gradle.usage" to "kotlin-uklib-api",
+                                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
                                 "org.jetbrains.kotlin.uklib" to "true",
                                 "org.jetbrains.kotlin.uklibState" to "decompressed",
                                 "org.jetbrains.kotlin.uklibView" to "js_ir",
@@ -178,9 +180,11 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                     ":producer" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                             mutableMapOf(
-                                "artifactType" to "uklib",
+                                "artifactType" to "jar",
                                 "org.gradle.category" to "library",
+                                "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "kotlin-uklib-api",
+                                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
                                 "org.jetbrains.kotlin.uklib" to "true",
                                 "org.jetbrains.kotlin.uklibState" to "decompressed",
                                 "org.jetbrains.kotlin.uklibView" to "jvm",

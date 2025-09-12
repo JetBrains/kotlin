@@ -10,12 +10,16 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.internal.ExportKotlinProjectDataTask
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinShareableDataAsSecondaryVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
@@ -34,6 +38,12 @@ import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibManifest
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibManifestTrue
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibManifestArtifactType
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecompressed
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttributeWholeUklib
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 
 internal const val UKLIB_API_ELEMENTS_NAME = "uklibApiElements"
 internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
@@ -67,7 +77,10 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
     publishedCompilations: List<KGPUklibFragment>,
 ): List<DefaultKotlinUsageContext> {
-    val uklibApiElements = configurations.createConsumable(UKLIB_API_ELEMENTS_NAME) {
+    /**
+     * FIXME: We can still enter the transforms for interproject dependencies with missing files.
+     */
+    val uklibApiElements = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_API))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -76,38 +89,31 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
     }
 
-    val fragments = publishedCompilations.map { it.compilation to it.fragment.get() }
-    val manifest = mapOf(
-        FRAGMENTS to fragments.sortedBy {
-            // Make sure we have some stable order of fragments
-            it.second.identifier
-        }.map {
-            mapOf(
-                FRAGMENT_IDENTIFIER to it.second.identifier,
-                ATTRIBUTES to it.second.attributes
-                    // Make sure we have some stable order of attributes
-                    .sorted(),
-                CLASSPATH to it.first.output.classesDirs.files.map { it.path },
-            )
-        },
-    )
-    val uklibManifest = layout.buildDirectory.file("uklibManifest:${GsonBuilder().create().toJson(manifest)}")
-
-    uklibApiElements.outgoing.variants {
-        it.create("unpackedUKlibMetadata") {
-            it.artifact(
-                uklibManifest
-            ) {
-                it.type = uklibManifestArtifactType
-                it.extension = uklibManifestArtifactType
-            }
-            it.attributes {
-                it.attribute(isUklibManifest, isUklibManifestTrue)
-            }
+    val metadataCompilations = publishedCompilations.filter { it.compilation.platformType == KotlinPlatformType.common }
+    val serializeUklibManifest = project.locateOrRegisterTask<SerializeMetadataFragmentsOnlyUklibManifestForCompilation>(
+        "serializeUklibManifest"
+    ) { task ->
+        metadataCompilations.forEach {
+            task.metadataFragments.add(it.fragment)
+        }
+    }
+    val serializeUklibManifestForIde = project.locateOrRegisterTask<SerializeMetadataFragmentsOnlyUklibManifest>(
+        "serializeUklibManifestForIde"
+    ) { task ->
+        metadataCompilations.forEach {
+            task.metadataFragments.add(it.fragment)
         }
     }
 
-    val uklibRuntimeElements = configurations.createConsumable(UKLIB_RUNTIME_ELEMENTS_NAME) {
+    uklibApiElements.outgoing.variants.create("uklibInterprojectMetadata") {
+        it.attributes.attribute(uklibStateAttribute, uklibStateDecompressed)
+        it.attributes.attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+        it.artifact(serializeUklibManifest) {
+            it.extension = "uklibManifest"
+        }
+    }
+
+    val uklibRuntimeElements = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME).apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))

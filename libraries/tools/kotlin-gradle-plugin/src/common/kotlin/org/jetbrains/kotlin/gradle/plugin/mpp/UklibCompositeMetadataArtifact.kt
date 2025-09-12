@@ -99,21 +99,36 @@ private class UklibCompositeMetadataBinary(
     override val relativeFile: File
         get() = File("uklib-${moduleId.group}-${moduleId.name}-${moduleId.version}-${fragment.identifier}-${checksum}")
 
+    // FIXME: This doesn't really work for interproject dependencies? Or maybe we just don't need this?
     // Rely on unique transform path
     override val checksum: String
         get() = if (computeChecksum) {
-            md5.digest(fragment.file.path.encodeToByteArray())
+            val md5 = MessageDigest.getInstance("MD5")
+            md5.digest(fragment.files.single().path.encodeToByteArray())
                 .joinToString(separator = "") { byte -> "%02x".format(byte) }
         } else ""
+//        get() {
+//            if (!computeChecksum) return ""
+//            val metadataSlice = fragment.files.single()
+//            if (!metadataSlice.exists()) return ""
+//            val md5 = MessageDigest.getInstance("MD5")
+//            metadataSlice.inputStream().buffered(DEFAULT_BUFFER_SIZE).use {
+//                val chunk = ByteArray(DEFAULT_BUFFER_SIZE)
+//                while (true) {
+//                    val n = it.read(chunk)
+//                    if (n == -1) break
+//                }
+//                md5.update(chunk)
+//            }
+//            return md5.digest().joinToString(separator = "") { byte -> "%02x".format(byte) }
+//        }
 
     override fun copyTo(file: File): Boolean {
-        return fragment.file.copyRecursively(
+        val metadataSlice = fragment.files.single()
+        if (!metadataSlice.exists()) return false
+        return metadataSlice.copyRecursively(
             file,
             overwrite = true,
         )
-    }
-
-    private companion object {
-        val md5 = MessageDigest.getInstance("MD5")
     }
 }

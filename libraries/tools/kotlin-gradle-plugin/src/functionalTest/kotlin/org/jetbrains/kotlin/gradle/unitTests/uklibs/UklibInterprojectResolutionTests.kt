@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpModelIsUklibCompliantAndCreateKgpFragments
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.compilationResolution
@@ -80,22 +83,61 @@ class UklibInterprojectResolutionTests {
             }
         ).evaluate()
 
-        listOf(
-            consumer.multiplatformExtension.iosArm64(),
-            consumer.multiplatformExtension.jvm(),
-            consumer.multiplatformExtension.js(),
-        ).forEach {
+        fun assertResolveArtifactMatchesAttributes(
+            target: KotlinTarget,
+            attributes: Map<String, String>,
+        ) {
             assertEquals(
                 mapOf(
                     ":producer" to ResolvedComponentWithArtifacts(
+                        artifacts = mutableListOf(attributes),
                         configuration = "uklibApiElements",
-                        artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
-                it.compilationResolution().prettyPrinted,
-                it.name,
+                target.compilationResolution().prettyPrinted,
+                target.name,
             )
         }
+
+        assertResolveArtifactMatchesAttributes(
+            consumer.multiplatformExtension.iosArm64(),
+            mutableMapOf(
+                "artifactType" to "klib",
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "kotlin-uklib-api",
+                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                "org.jetbrains.kotlin.uklib" to "true",
+                "org.jetbrains.kotlin.uklibState" to "decompressed",
+                "org.jetbrains.kotlin.uklibView" to "ios_arm64",
+            ),
+        )
+
+        assertResolveArtifactMatchesAttributes(
+            consumer.multiplatformExtension.jvm(),
+            mutableMapOf(
+                "artifactType" to "jar",
+                "org.gradle.category" to "library",
+                "org.gradle.libraryelements" to "jar",
+                "org.gradle.usage" to "kotlin-uklib-api",
+                "org.jetbrains.kotlin.isMetadataJar" to "not-a-metadata-jar",
+                "org.jetbrains.kotlin.uklib" to "true",
+                "org.jetbrains.kotlin.uklibState" to "decompressed",
+                "org.jetbrains.kotlin.uklibView" to "jvm",
+            ),
+        )
+
+        assertResolveArtifactMatchesAttributes(
+            consumer.multiplatformExtension.js(),
+            mutableMapOf(
+                "artifactType" to "klib",
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "kotlin-uklib-api",
+                "org.jetbrains.kotlin.cinteropCommonizerArtifactType" to "klib",
+                "org.jetbrains.kotlin.uklib" to "true",
+                "org.jetbrains.kotlin.uklibState" to "decompressed",
+                "org.jetbrains.kotlin.uklibView" to "js_ir",
+            ),
+        )
 
         listOf(
             consumer.multiplatformExtension.sourceSets.iosMain.get().internal.resolvableMetadataConfiguration,

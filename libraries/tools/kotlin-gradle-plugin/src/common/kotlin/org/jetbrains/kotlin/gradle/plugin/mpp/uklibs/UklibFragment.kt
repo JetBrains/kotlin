@@ -18,5 +18,5 @@ internal data class UklibFragment(
     val attributes: Set<String>,
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    val file: File,
+    val files: List<File>,
 )

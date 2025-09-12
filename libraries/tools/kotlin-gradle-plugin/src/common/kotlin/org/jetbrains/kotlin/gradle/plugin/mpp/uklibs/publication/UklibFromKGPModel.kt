@@ -106,7 +106,7 @@ internal suspend fun KotlinMultiplatformExtension.validateKgpModelIsUklibComplia
                         attributes = metadataCompilation.metadataFragmentAttributes.map {
                             it.convertToStringForPublicationInUmanifest()
                         }.toSet(),
-                        file = it,
+                        files = listOf(it),
                     )
                 },
                 compilation = metadataCompilation,
@@ -161,7 +161,7 @@ private fun kgpUklibFragment(
             UklibFragment(
                 identifier = fragmentIdentifier,
                 attributes = setOf(fragmentAttribute),
-                file = it,
+                files = listOf(it),
             )
         },
         compilation = mainCompilation,

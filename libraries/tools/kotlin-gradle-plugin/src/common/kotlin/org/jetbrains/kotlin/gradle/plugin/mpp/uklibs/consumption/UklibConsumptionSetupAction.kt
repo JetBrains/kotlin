@@ -95,22 +95,22 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
 
             it.parameters.targetFragmentAttribute.set(uklibFragmentPlatformAttribute)
         }
-        dependencies.registerTransformForArtifactType(
-            InterprojectUklibManifestToPlatformCompilationTransform::class.java,
-            fromArtifactType = uklibManifestArtifactType,
-            toArtifactType = uklibManifestArtifactType,
-        ) {
-            with(it.from) {
-                attribute(uklibStateAttribute, uklibStateDecompressed)
-                attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
-            }
-            with(it.to) {
-                attribute(uklibStateAttribute, uklibStateDecompressed)
-                attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
-            }
-
-            it.parameters.targetFragmentAttribute.set(uklibFragmentPlatformAttribute)
-        }
+//        dependencies.registerTransformForArtifactType(
+//            InterprojectUklibManifestToPlatformCompilationTransform::class.java,
+//            fromArtifactType = uklibManifestArtifactType,
+//            toArtifactType = uklibManifestArtifactType,
+//        ) {
+//            with(it.from) {
+//                attribute(uklibStateAttribute, uklibStateDecompressed)
+//                attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+//            }
+//            with(it.to) {
+//                attribute(uklibStateAttribute, uklibStateDecompressed)
+//                attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
+//            }
+//
+//            it.parameters.targetFragmentAttribute.set(uklibFragmentPlatformAttribute)
+//        }
 
         /**
          * FIXME: Changing the requested Usage in jvm configurations will influence existing compatibility/disambiguation rules. Maybe
@@ -192,7 +192,7 @@ private fun Configuration.applyUklibAttributes(
         attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
         attribute(isMetadataJar, notMetadataJar)
         attribute(isUklib, isUklibTrue)
-        attribute(isUklibManifest, isUklibManifestTrue)
+//        attribute(isUklibManifest, isUklibManifestTrue)
     }
 }
 
@@ -201,10 +201,10 @@ private fun Project.registerCompressedUklibArtifact() {
         attribute(uklibStateAttribute, uklibStateCompressed)
         attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
     }
-    with(dependencies.artifactTypes.create(uklibManifestArtifactType).attributes) {
-        attribute(uklibStateAttribute, uklibStateDecompressed)
-        attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
-    }
+//    with(dependencies.artifactTypes.create(uklibManifestArtifactType).attributes) {
+//        attribute(uklibStateAttribute, uklibStateDecompressed)
+//        attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+//    }
 }
 
 private fun Project.allowUklibsToDecompress() {
@@ -227,7 +227,7 @@ private fun Project.allowMetadataConfigurationsToResolveUnzippedUklib(
             attribute(uklibStateAttribute, uklibStateDecompressed)
             attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
             attribute(isUklib, isUklibTrue)
-            attribute(isUklibManifest, isUklibTrue)
+//            attribute(isUklibManifest, isUklibTrue)
         }
     }
 }
@@ -429,6 +429,6 @@ internal val isUklibTrue = "true"
 internal val isUklibManifest = Attribute.of("org.jetbrains.kotlin.uklibManifest", String::class.java)
 internal val isUklibManifestTrue = "true"
 
-private val isMetadataJar = Attribute.of("org.jetbrains.kotlin.isMetadataJar", String::class.java)
+internal val isMetadataJar = Attribute.of("org.jetbrains.kotlin.isMetadataJar", String::class.java)
 private val isMetadataJarUnknown = "unknown"
-private val notMetadataJar = "not-a-metadata-jar"
+internal val notMetadataJar = "not-a-metadata-jar"
