@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.13.2")
-    implementation("org.antlr:antlr4-runtime:4.13.2")
+    antlr(libs.antlr)
+    implementation(libs.antlr.runtime)
 
     api(kotlinStdlib())
     api(project(":js:js.ast"))
