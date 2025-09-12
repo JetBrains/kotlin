@@ -912,7 +912,7 @@ class ControlFlowGraphBuilder private constructor(
 
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
         if (!property.memberShouldHaveGraph) return null
-        val lastNode = lastNode
+        val lastNode = lastNodeOrNull
         return enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
             createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
         }.also {

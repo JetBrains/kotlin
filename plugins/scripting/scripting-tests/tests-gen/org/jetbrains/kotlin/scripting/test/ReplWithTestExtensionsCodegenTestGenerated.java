@@ -49,6 +49,12 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   }
 
   @Test
+  @TestMetadata("class_references_top_level_mutating_properties.repl.kts")
+  public void testClass_references_top_level_mutating_properties_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_references_top_level_mutating_properties.repl.kts");
+  }
+
+  @Test
   @TestMetadata("class_uses_top_level_mutating_properties.repl.kts")
   public void testClass_uses_top_level_mutating_properties_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/class_uses_top_level_mutating_properties.repl.kts");
@@ -178,12 +184,6 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   @TestMetadata("resolve_annotations.repl.kts")
   public void testResolve_annotations_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/resolve_annotations.repl.kts");
-  }
-
-  @Test
-  @TestMetadata("sealed_hierarchies.repl.kts")
-  public void testSealed_hierarchies_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/sealed_hierarchies.repl.kts");
   }
 
   @Test

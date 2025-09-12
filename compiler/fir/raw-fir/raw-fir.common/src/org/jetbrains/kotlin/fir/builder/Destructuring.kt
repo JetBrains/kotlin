@@ -125,6 +125,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
             entry.extractAnnotationsTo(this, context.containerSymbol)
             if (!localEntries) {
+                dispatchReceiverType = currentDispatchReceiverType()
                 getter = FirDefaultPropertyGetter(
                     source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
                     moduleData = moduleData,

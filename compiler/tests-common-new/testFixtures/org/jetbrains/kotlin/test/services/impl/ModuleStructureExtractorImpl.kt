@@ -191,7 +191,7 @@ class ModuleStructureExtractorImpl(
                 }
                 ModuleStructureDirectives.SNIPPET -> {
                     fun snippetName() = "snippet_${"%03d".format(currentSnippetNumber)}"
-                    if (linesOfCurrentFile.all { it.isBlank() }) {
+                    if (currentModuleName == null) {
                         finishGlobalDirectives()
                     } else {
                         finishModule(lineNumber)
