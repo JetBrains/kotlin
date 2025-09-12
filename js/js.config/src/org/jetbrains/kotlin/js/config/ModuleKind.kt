@@ -4,10 +4,10 @@
  */
 package org.jetbrains.kotlin.js.config
 
-enum class ModuleKind {
-    PLAIN,
-    AMD,
-    COMMON_JS,
-    UMD,
-    ES
+enum class ModuleKind(val jsExtension: String, val dtsExtension: String) {
+    PLAIN(".js", ".d.ts"),
+    AMD(".js", ".d.ts"),
+    COMMON_JS(".js", ".d.ts"),
+    UMD(".js", ".d.ts"),
+    ES(".mjs", ".d.mts")
 }

@@ -14,18 +14,6 @@ import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import java.io.File
 import java.nio.file.Files
 
-val ModuleKind.jsExtension: String
-    get() = when (this) {
-        ModuleKind.ES -> ESM_EXTENSION
-        else -> REGULAR_EXTENSION
-    }
-
-val ModuleKind.dtsExtension: String
-    get() = when (this) {
-        ModuleKind.ES -> ESM_TS_DEFINITION_EXTENSION
-        else -> TS_DEFINITION_EXTENSION
-    }
-
 abstract class CompilationOutputs {
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
 
