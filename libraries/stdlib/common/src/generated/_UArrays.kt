@@ -3213,7 +3213,7 @@ public fun UShortArray.sortedArrayDescending(): UShortArray {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.sortedDescending(): List<UInt> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
@@ -3222,7 +3222,7 @@ public fun UIntArray.sortedDescending(): List<UInt> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.sortedDescending(): List<ULong> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
@@ -3231,7 +3231,7 @@ public fun ULongArray.sortedDescending(): List<ULong> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.sortedDescending(): List<UByte> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
@@ -3240,7 +3240,7 @@ public fun UByteArray.sortedDescending(): List<UByte> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.sortedDescending(): List<UShort> {
-    return copyOf().apply { sort() }.reversed()
+    return sortedArrayDescending().asList()
 }
 
 /**
