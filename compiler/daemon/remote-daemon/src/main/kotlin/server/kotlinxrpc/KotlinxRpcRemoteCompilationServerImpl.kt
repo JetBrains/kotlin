@@ -28,7 +28,6 @@ class KotlinxRpcRemoteCompilationServerImpl(
 ) : Server {
 
     val cacheHandler = CacheHandler()
-    val workspaceManager = WorkspaceManager()
     private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
     fun Application.module() {
@@ -44,7 +43,6 @@ class KotlinxRpcRemoteCompilationServerImpl(
                 registerService<RemoteCompilationService> {
                     RemoteCompilationServiceImpl(
                         cacheHandler,
-                        workspaceManager,
                         FixedSizeChunkingStrategy(),
                         InProcessCompilerService(),
                         logging
@@ -68,6 +66,6 @@ class KotlinxRpcRemoteCompilationServerImpl(
 
     override fun cleanup() {
         cacheHandler.cleanup()
-        workspaceManager.cleanup()
+        WorkspaceManager.cleanup()
     }
 }
