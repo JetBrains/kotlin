@@ -23,7 +23,6 @@ class GrpcRemoteCompilationServerImpl(
 
     private val fileChunkingStrategy = FixedSizeChunkingStrategy()
     private val cacheHandler = CacheHandler()
-    private val workspaceManager = WorkspaceManager()
 
     val server: io.grpc.Server =
         ServerBuilder
@@ -34,7 +33,6 @@ class GrpcRemoteCompilationServerImpl(
                         GrpcRemoteCompilationService(
                             RemoteCompilationServiceImpl(
                                 cacheHandler,
-                                workspaceManager,
                                 fileChunkingStrategy,
                                 InProcessCompilerService(),
                                 logging = logging,
@@ -62,6 +60,6 @@ class GrpcRemoteCompilationServerImpl(
 
     override fun cleanup() {
         cacheHandler.cleanup()
-        workspaceManager.cleanup()
+        WorkspaceManager.cleanup()
     }
 }
