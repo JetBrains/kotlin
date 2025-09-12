@@ -1,0 +1,370 @@
+KtFile: 'basicExampleWithEnumAndWhens.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,150): 'enum class Problem {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(97,150): '{'
+  null
+
+KtEnumEntry(103,114): 'CONNECTION,'
+  null
+
+KtEnumEntry(115,130): 'AUTHENTICATION,'
+  null
+
+KtEnumEntry(131,140): 'DATABASE,'
+  null
+
+KtEnumEntry(141,148): 'UNKNOWN'
+  null
+
+KtNamedFunction(152,332): 'fun message(problem: Problem): String = when (problem) {'
+  null
+
+KtParameterList(163,181): '(problem: Problem)'
+  null
+
+KtParameter(164,180): 'problem: Problem'
+  null
+
+KtTypeReference(173,180): 'Problem'
+  null
+
+KtUserType(173,180): 'Problem'
+  null
+
+KtNameReferenceExpression(173,180): 'Problem'
+  null
+
+KtTypeReference(183,189): 'String'
+  null
+
+KtUserType(183,189): 'String'
+  null
+
+KtNameReferenceExpression(183,189): 'String'
+  null
+
+KtWhenExpression(192,332): 'when (problem) {'
+  null
+
+KtNameReferenceExpression(198,205): 'problem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = problem
+          receiverType = null
+          returnType = Problem
+          symbol = problem: Problem
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(213,239): 'CONNECTION -> "connection"'
+  null
+
+KtWhenConditionWithExpression(213,223): 'CONNECTION'
+  null
+
+KtNameReferenceExpression(213,223): 'CONNECTION'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = CONNECTION
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CONNECTION
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.CONNECTION
+          contextParameters = []
+          callableId = /Problem.CONNECTION
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtStringTemplateExpression(227,239): '"connection"'
+  null
+
+KtLiteralStringTemplateEntry(228,238): 'connection'
+  null
+
+KtWhenEntry(244,278): 'AUTHENTICATION -> "authentication"'
+  null
+
+KtWhenConditionWithExpression(244,258): 'AUTHENTICATION'
+  null
+
+KtNameReferenceExpression(244,258): 'AUTHENTICATION'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = AUTHENTICATION
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = AUTHENTICATION
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.AUTHENTICATION
+          contextParameters = []
+          callableId = /Problem.AUTHENTICATION
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtStringTemplateExpression(262,278): '"authentication"'
+  null
+
+KtLiteralStringTemplateEntry(263,277): 'authentication'
+  null
+
+KtWhenEntry(283,305): 'DATABASE -> "database"'
+  null
+
+KtWhenConditionWithExpression(283,291): 'DATABASE'
+  null
+
+KtNameReferenceExpression(283,291): 'DATABASE'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = DATABASE
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = DATABASE
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.DATABASE
+          contextParameters = []
+          callableId = /Problem.DATABASE
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtStringTemplateExpression(295,305): '"database"'
+  null
+
+KtLiteralStringTemplateEntry(296,304): 'database'
+  null
+
+KtWhenEntry(310,330): 'UNKNOWN -> "unknown"'
+  null
+
+KtWhenConditionWithExpression(310,317): 'UNKNOWN'
+  null
+
+KtNameReferenceExpression(310,317): 'UNKNOWN'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = UNKNOWN
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = UNKNOWN
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.UNKNOWN
+          contextParameters = []
+          callableId = /Problem.UNKNOWN
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtStringTemplateExpression(321,330): '"unknown"'
+  null
+
+KtLiteralStringTemplateEntry(322,329): 'unknown'
+  null
+
+KtNamedFunction(334,501): 'fun problematic(x: String): Problem = when (x) {'
+  null
+
+KtParameterList(349,360): '(x: String)'
+  null
+
+KtParameter(350,359): 'x: String'
+  null
+
+KtTypeReference(353,359): 'String'
+  null
+
+KtUserType(353,359): 'String'
+  null
+
+KtNameReferenceExpression(353,359): 'String'
+  null
+
+KtTypeReference(362,369): 'Problem'
+  null
+
+KtUserType(362,369): 'Problem'
+  null
+
+KtNameReferenceExpression(362,369): 'Problem'
+  null
+
+KtWhenExpression(372,501): 'when (x) {'
+  null
+
+KtNameReferenceExpression(378,379): 'x'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = x: kotlin.String
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(387,413): '"connection" -> CONNECTION'
+  null
+
+KtWhenConditionWithExpression(387,399): '"connection"'
+  null
+
+KtStringTemplateExpression(387,399): '"connection"'
+  null
+
+KtLiteralStringTemplateEntry(388,398): 'connection'
+  null
+
+KtNameReferenceExpression(403,413): 'CONNECTION'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = CONNECTION
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CONNECTION
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.CONNECTION
+          contextParameters = []
+          callableId = /Problem.CONNECTION
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(418,452): '"authentication" -> AUTHENTICATION'
+  null
+
+KtWhenConditionWithExpression(418,434): '"authentication"'
+  null
+
+KtStringTemplateExpression(418,434): '"authentication"'
+  null
+
+KtLiteralStringTemplateEntry(419,433): 'authentication'
+  null
+
+KtNameReferenceExpression(438,452): 'AUTHENTICATION'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = AUTHENTICATION
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = AUTHENTICATION
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.AUTHENTICATION
+          contextParameters = []
+          callableId = /Problem.AUTHENTICATION
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(457,479): '"database" -> DATABASE'
+  null
+
+KtWhenConditionWithExpression(457,467): '"database"'
+  null
+
+KtStringTemplateExpression(457,467): '"database"'
+  null
+
+KtLiteralStringTemplateEntry(458,466): 'database'
+  null
+
+KtNameReferenceExpression(471,479): 'DATABASE'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = DATABASE
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = DATABASE
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.DATABASE
+          contextParameters = []
+          callableId = /Problem.DATABASE
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(484,499): 'else -> UNKNOWN'
+  null
+
+KtNameReferenceExpression(492,499): 'UNKNOWN'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = UNKNOWN
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = UNKNOWN
+          receiverType = null
+          returnType = Problem
+          symbol = /Problem.UNKNOWN
+          contextParameters = []
+          callableId = /Problem.UNKNOWN
+      simpleAccess = Read
+      typeArgumentsMapping = {}

@@ -1,0 +1,4508 @@
+KtFile: 'typeCast.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,702): 'sealed class SealedClass {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,84): 'sealed'
+  NO_CANDIDATES
+
+KtClassBody(103,702): '{'
+  NO_CANDIDATES
+
+KtClass(109,176): 'open class SealedInheritor1(val prop1: String = "1"): SealedClass()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(109,113): 'open'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(136,161): '(val prop1: String = "1")'
+  NO_CANDIDATES
+
+KtParameterList(136,161): '(val prop1: String = "1")'
+  NO_CANDIDATES
+
+KtParameter(137,160): 'val prop1: String = "1"'
+  NO_CANDIDATES
+
+KtTypeReference(148,154): 'String'
+  NO_CANDIDATES
+
+KtUserType(148,154): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(148,154): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(157,160): '"1"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(158,159): '1'
+  NO_CANDIDATES
+
+KtSuperTypeList(163,176): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(163,176): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(163,174): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(163,174): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(163,174): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(163,174): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(174,176): '()'
+  NO_CANDIDATES
+
+KtClass(181,238): 'class SealedInheritor2(val prop2: Int = 2): SealedClass()'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(203,223): '(val prop2: Int = 2)'
+  NO_CANDIDATES
+
+KtParameterList(203,223): '(val prop2: Int = 2)'
+  NO_CANDIDATES
+
+KtParameter(204,222): 'val prop2: Int = 2'
+  NO_CANDIDATES
+
+KtTypeReference(215,218): 'Int'
+  NO_CANDIDATES
+
+KtUserType(215,218): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(215,218): 'Int'
+  NO_CANDIDATES
+
+KtConstantExpression(221,222): '2'
+  NO_CANDIDATES
+
+KtSuperTypeList(225,238): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(225,238): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(225,236): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(225,236): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(225,236): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(225,236): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(236,238): '()'
+  NO_CANDIDATES
+
+KtClass(244,321): 'sealed class SealedSealedInheritor1(val prop3: Boolean = true): SealedClass()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(244,250): 'sealed'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(279,306): '(val prop3: Boolean = true)'
+  NO_CANDIDATES
+
+KtParameterList(279,306): '(val prop3: Boolean = true)'
+  NO_CANDIDATES
+
+KtParameter(280,305): 'val prop3: Boolean = true'
+  NO_CANDIDATES
+
+KtTypeReference(291,298): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(291,298): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(291,298): 'Boolean'
+  NO_CANDIDATES
+
+KtConstantExpression(301,305): 'true'
+  NO_CANDIDATES
+
+KtSuperTypeList(308,321): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(308,321): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(308,319): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(308,319): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(308,319): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(308,319): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(319,321): '()'
+  NO_CANDIDATES
+
+KtClass(327,376): 'class IndirectSealedInheritor: SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeList(358,376): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(358,374): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(358,374): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(358,374): 'SealedInheritor1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(374,376): '()'
+  NO_CANDIDATES
+
+KtClass(382,525): 'class Nested {'
+  NO_CANDIDATES
+
+KtClassBody(395,525): '{'
+  NO_CANDIDATES
+
+KtClass(405,451): 'class DeepSealedNestedInheritor: SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeList(438,451): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(438,451): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(438,449): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(438,449): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(438,449): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(438,449): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(449,451): '()'
+  NO_CANDIDATES
+
+KtClass(460,519): 'class DeepIndirectSealedNestedInheritor: SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeList(501,519): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(501,517): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(501,517): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(501,517): 'SealedInheritor1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(517,519): '()'
+  NO_CANDIDATES
+
+KtClass(531,601): 'inner class Inner(val innerProp: String = "inner prop"): SealedClass()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(531,536): 'inner'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(548,586): '(val innerProp: String = "inner prop")'
+  NO_CANDIDATES
+
+KtParameterList(548,586): '(val innerProp: String = "inner prop")'
+  NO_CANDIDATES
+
+KtParameter(549,585): 'val innerProp: String = "inner prop"'
+  NO_CANDIDATES
+
+KtTypeReference(564,570): 'String'
+  NO_CANDIDATES
+
+KtUserType(564,570): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(564,570): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(573,585): '"inner prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(574,584): 'inner prop'
+  NO_CANDIDATES
+
+KtSuperTypeList(588,601): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(588,601): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(588,599): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(588,599): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(588,599): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(588,599): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(599,601): '()'
+  NO_CANDIDATES
+
+KtClass(607,620): 'class Nested1'
+  NO_CANDIDATES
+
+KtClass(625,638): 'class Nested2'
+  NO_CANDIDATES
+
+KtClass(643,668): 'sealed class SealedNested'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(643,649): 'sealed'
+  NO_CANDIDATES
+
+KtObjectDeclaration(674,700): 'companion object Companion'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(674,683): 'companion'
+  NO_CANDIDATES
+
+KtNamedFunction(704,744): 'fun <T>consume(arg: T): Nothing = TODO()'
+  NO_CANDIDATES
+
+KtTypeParameterList(708,711): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(709,710): 'T'
+  NO_CANDIDATES
+
+KtParameterList(718,726): '(arg: T)'
+  NO_CANDIDATES
+
+KtParameter(719,725): 'arg: T'
+  NO_CANDIDATES
+
+KtTypeReference(724,725): 'T'
+  NO_CANDIDATES
+
+KtUserType(724,725): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(724,725): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(728,735): 'Nothing'
+  NO_CANDIDATES
+
+KtUserType(728,735): 'Nothing'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(728,735): 'Nothing'
+  NO_CANDIDATES
+
+KtCallExpression(738,744): 'TODO()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(738,742): 'TODO'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'>
+    isInBestCandidates = false
+
+KtValueArgumentList(742,744): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(746,933): 'fun testUnsafeTypeCast2(i: SealedClass) {'
+  NO_CANDIDATES
+
+KtParameterList(769,785): '(i: SealedClass)'
+  NO_CANDIDATES
+
+KtParameter(770,784): 'i: SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(773,784): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(773,784): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(773,784): 'SealedClass'
+  NO_CANDIDATES
+
+KtBlockExpression(786,933): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(792,813): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(792,793): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(794,796): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(797,813): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(797,813): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(797,813): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(818,825): 'i.prop1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(818,819): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(820,825): 'prop1'
+  NO_CANDIDATES
+
+KtCallExpression(826,836): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(826,834): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(834,836): '()'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(842,863): 'i as SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(842,843): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(844,846): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(847,863): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtUserType(847,863): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(847,863): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = dec
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(868,875): 'i.prop2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(868,869): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(870,875): 'prop2'
+  NO_CANDIDATES
+
+KtCallExpression(876,881): 'dec()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = dec
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(876,879): 'dec'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(879,881): '()'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(887,908): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(887,888): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(889,891): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(892,908): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(892,908): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(892,908): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(913,920): 'i.prop1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(913,914): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(915,920): 'prop1'
+  NO_CANDIDATES
+
+KtCallExpression(921,931): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(921,929): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(929,931): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(935,1391): 'fun testUnsafeTypeCast(i: SealedClass) {'
+  NO_CANDIDATES
+
+KtParameterList(957,973): '(i: SealedClass)'
+  NO_CANDIDATES
+
+KtParameter(958,972): 'i: SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(961,972): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(961,972): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(961,972): 'SealedClass'
+  NO_CANDIDATES
+
+KtBlockExpression(974,1391): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1).prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1)
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtParenthesizedExpression(980,1003): '(i as SealedInheritor1)'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(981,1002): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(981,982): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(983,985): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(986,1002): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(986,1002): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(986,1002): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1004,1009): 'prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1)
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1)
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(1010,1020): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1).prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1010,1018): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1).prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as SealedInheritor1).prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1018,1020): '()'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1026,1047): 'i as SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1026,1027): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1028,1030): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1031,1047): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtUserType(1031,1047): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1031,1047): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = dec
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(1052,1059): 'i.prop2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1052,1053): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1054,1059): 'prop2'
+  NO_CANDIDATES
+
+KtCallExpression(1060,1065): 'dec()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = dec
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1060,1063): 'dec'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i.prop2
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1063,1065): '()'
+  NO_CANDIDATES
+
+KtProperty(1071,1100): 'var v = i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1079,1100): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1079,1080): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1081,1083): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1084,1100): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1084,1100): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1084,1100): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(1105,1112): 'v.prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1105,1106): 'v'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var v: ERROR_TYPE
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1107,1112): 'prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(1113,1123): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1113,1121): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1121,1123): '()'
+  NO_CANDIDATES
+
+KtProperty(1129,1172): 'var v2: SealedClass = i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1137,1148): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(1137,1148): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1137,1148): 'SealedClass'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1151,1172): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1151,1152): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1153,1155): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1156,1172): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1156,1172): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1156,1172): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(1177,1185): 'v2.prop1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1177,1179): 'v2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = v2
+          receiverType = null
+          returnType = SealedClass
+          symbol = var v2: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1180,1185): 'prop1'
+  NO_CANDIDATES
+
+KtCallExpression(1186,1196): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1186,1194): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1194,1196): '()'
+  NO_CANDIDATES
+
+KtProperty(1202,1250): 'var v3: SealedInheritor1 = i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1210,1226): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1210,1226): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1210,1226): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1229,1250): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1229,1230): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1231,1233): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1234,1250): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1234,1250): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1234,1250): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(1255,1263): 'v3.prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1255,1257): 'v3'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = v3
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var v3: ERROR_TYPE
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1258,1263): 'prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(1264,1274): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1264,1272): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3.prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1272,1274): '()'
+  NO_CANDIDATES
+
+KtCallExpression(1280,1323): 'consume<SealedClass>(i as SealedInheritor1)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1280,1287): 'consume'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1287,1300): '<SealedClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(1288,1299): 'SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(1288,1299): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(1288,1299): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1288,1299): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(1300,1323): '(i as SealedInheritor1)'
+  NO_CANDIDATES
+
+KtValueArgument(1301,1322): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1301,1322): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1301,1302): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1303,1305): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1306,1322): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1306,1322): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1306,1322): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtCallExpression(1328,1388): 'consume<SealedClass.SealedInheritor1>(i as SealedInheritor1)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor1
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass.SealedInheritor1)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1328,1335): 'consume'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor1
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass.SealedInheritor1)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1335,1365): '<SealedClass.SealedInheritor1>'
+  NO_CANDIDATES
+
+KtTypeProjection(1336,1364): 'SealedClass.SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1336,1364): 'SealedClass.SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1336,1364): 'SealedClass.SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1336,1347): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1336,1347): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1348,1364): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(1365,1388): '(i as SealedInheritor1)'
+  NO_CANDIDATES
+
+KtValueArgument(1366,1387): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1366,1387): 'i as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1366,1367): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1368,1370): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1371,1387): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1371,1387): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1371,1387): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNamedFunction(1393,1934): 'fun testSafeTypeCast(i: SealedClass) {'
+  NO_CANDIDATES
+
+KtParameterList(1413,1429): '(i: SealedClass)'
+  NO_CANDIDATES
+
+KtParameter(1414,1428): 'i: SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(1417,1428): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(1417,1428): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1417,1428): 'SealedClass'
+  NO_CANDIDATES
+
+KtBlockExpression(1430,1934): '{'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtParenthesizedExpression(1436,1460): '(i as? SealedInheritor1)'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1437,1459): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1437,1438): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1439,1442): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1443,1459): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1443,1459): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1443,1459): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1462,1467): 'prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(1469,1479): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1469,1477): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (i as? SealedInheritor1)?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1477,1479): '()'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1485,1507): 'i as? SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1485,1486): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1487,1490): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1491,1507): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtUserType(1491,1507): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1491,1507): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = dec
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i?.prop2
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1512,1513): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1515,1520): 'prop2'
+  NO_CANDIDATES
+
+KtCallExpression(1522,1527): 'dec()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = dec
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i?.prop2
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1522,1525): 'dec'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i?.prop2
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i?.prop2
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1525,1527): '()'
+  NO_CANDIDATES
+
+KtProperty(1533,1563): 'var v = i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1541,1563): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1541,1542): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1543,1546): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1547,1563): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1547,1563): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1547,1563): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1568,1569): 'v'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = var v: ERROR_TYPE?
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1571,1576): 'prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(1578,1588): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1578,1586): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1586,1588): '()'
+  NO_CANDIDATES
+
+KtProperty(1594,1639): 'var v2: SealedClass? = i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1602,1614): 'SealedClass?'
+  NO_CANDIDATES
+
+KtNullableType(1602,1614): 'SealedClass?'
+  NO_CANDIDATES
+
+KtUserType(1602,1613): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1602,1613): 'SealedClass'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1617,1639): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1617,1618): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1619,1622): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1623,1639): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1623,1639): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1623,1639): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1644,1646): 'v2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = v2
+          receiverType = null
+          returnType = SealedClass?
+          symbol = var v2: SealedClass?
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1648,1653): 'prop1'
+  NO_CANDIDATES
+
+KtCallExpression(1655,1665): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1655,1663): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v2?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1663,1665): '()'
+  NO_CANDIDATES
+
+KtProperty(1671,1721): 'var v3: SealedInheritor1? = i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1679,1696): 'SealedInheritor1?'
+  NO_CANDIDATES
+
+KtNullableType(1679,1696): 'SealedInheritor1?'
+  NO_CANDIDATES
+
+KtUserType(1679,1695): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1679,1695): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1699,1721): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1699,1700): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1701,1704): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1705,1721): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1705,1721): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1705,1721): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = prop1
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1726,1728): 'v3'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = v3
+          receiverType = null
+          returnType = ERROR_TYPE?
+          symbol = var v3: ERROR_TYPE?
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1730,1735): 'prop1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(1737,1747): 'hashCode()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = hashCode
+          isSafeNavigation = false
+          type = ERROR_TYPE
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1737,1745): 'hashCode'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = /<Error class: unknown class>.<Error function>(): ERROR_TYPE
+          valueParameters = []
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error function>
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = v3?.prop1
+          isSafeNavigation = true
+          type = ERROR_TYPE?
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = <Error property>
+          receiverType = null
+          returnType = ERROR_TYPE
+          symbol = var <Error property>: ERROR_TYPE
+          contextParameters = []
+          callableId = /<Error class: unknown class>.<Error property>
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(1745,1747): '()'
+  NO_CANDIDATES
+
+KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as? SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass?
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass?)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1753,1760): 'consume'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as? SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass?
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass?)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1760,1774): '<SealedClass?>'
+  NO_CANDIDATES
+
+KtTypeProjection(1761,1773): 'SealedClass?'
+  NO_CANDIDATES
+
+KtTypeReference(1761,1773): 'SealedClass?'
+  NO_CANDIDATES
+
+KtNullableType(1761,1773): 'SealedClass?'
+  NO_CANDIDATES
+
+KtUserType(1761,1772): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1761,1772): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(1774,1798): '(i as? SealedInheritor1)'
+  NO_CANDIDATES
+
+KtValueArgument(1775,1797): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1775,1797): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1775,1776): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1777,1780): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1781,1797): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1781,1797): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1781,1797): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as? SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor1?
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass.SealedInheritor1?)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1803,1810): 'consume'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as? SealedInheritor1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor1?
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass.SealedInheritor1?)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1810,1841): '<SealedClass.SealedInheritor1?>'
+  NO_CANDIDATES
+
+KtTypeProjection(1811,1840): 'SealedClass.SealedInheritor1?'
+  NO_CANDIDATES
+
+KtTypeReference(1811,1840): 'SealedClass.SealedInheritor1?'
+  NO_CANDIDATES
+
+KtNullableType(1811,1840): 'SealedClass.SealedInheritor1?'
+  NO_CANDIDATES
+
+KtUserType(1811,1839): 'SealedClass.SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1811,1822): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1811,1822): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1823,1839): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(1841,1865): '(i as? SealedInheritor1)'
+  NO_CANDIDATES
+
+KtValueArgument(1842,1864): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1842,1864): 'i as? SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1842,1843): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1844,1847): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1848,1864): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1848,1864): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1848,1864): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as? SealedInheritor2 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor2?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor2?
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass.SealedInheritor2?)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1870,1877): 'consume'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        i as? SealedInheritor2 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor2?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor2?
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
+      typeArgumentsMapping = {
+        T -> (SealedClass.SealedInheritor2?)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consume>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1877,1908): '<SealedClass.SealedInheritor2?>'
+  NO_CANDIDATES
+
+KtTypeProjection(1878,1907): 'SealedClass.SealedInheritor2?'
+  NO_CANDIDATES
+
+KtTypeReference(1878,1907): 'SealedClass.SealedInheritor2?'
+  NO_CANDIDATES
+
+KtNullableType(1878,1907): 'SealedClass.SealedInheritor2?'
+  NO_CANDIDATES
+
+KtUserType(1878,1906): 'SealedClass.SealedInheritor2'
+  NO_CANDIDATES
+
+KtUserType(1878,1889): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1878,1889): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1890,1906): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtValueArgumentList(1908,1932): '(i as? SealedInheritor2)'
+  NO_CANDIDATES
+
+KtValueArgument(1909,1931): 'i as? SealedInheritor2'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1909,1931): 'i as? SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1909,1910): 'i'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = SealedClass
+          symbol = i: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1911,1914): 'as?'
+  NO_CANDIDATES
+
+KtTypeReference(1915,1931): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtUserType(1915,1931): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1915,1931): 'SealedInheritor2'
+  NO_CANDIDATES

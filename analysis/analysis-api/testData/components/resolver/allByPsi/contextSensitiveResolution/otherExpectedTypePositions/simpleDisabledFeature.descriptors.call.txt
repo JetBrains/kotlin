@@ -1,0 +1,128 @@
+KtFile: 'simpleDisabledFeature.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,131): 'fun foo(a: MyEnum) {}'
+  null
+
+KtParameterList(117,128): '(a: MyEnum)'
+  null
+
+KtParameter(118,127): 'a: MyEnum'
+  null
+
+KtTypeReference(121,127): 'MyEnum'
+  null
+
+KtUserType(121,127): 'MyEnum'
+  null
+
+KtNameReferenceExpression(121,127): 'MyEnum'
+  null
+
+KtBlockExpression(129,131): '{}'
+  null
+
+KtNamedFunction(133,248): 'fun main() {'
+  null
+
+KtParameterList(141,143): '()'
+  null
+
+KtBlockExpression(144,248): '{'
+  null
+
+KtProperty(151,167): 'val L = MyEnum.X'
+  null
+
+KtDotQualifiedExpression(159,167): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(159,165): 'MyEnum'
+  null
+
+KtNameReferenceExpression(166,167): 'X'
+  null
+
+KtProperty(173,191): 'val t1: MyEnum = X'
+  null
+
+KtTypeReference(181,187): 'MyEnum'
+  null
+
+KtUserType(181,187): 'MyEnum'
+  null
+
+KtNameReferenceExpression(181,187): 'MyEnum'
+  null
+
+KtNameReferenceExpression(190,191): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtProperty(196,214): 'val t2: MyEnum = L'
+  null
+
+KtTypeReference(204,210): 'MyEnum'
+  null
+
+KtUserType(204,210): 'MyEnum'
+  null
+
+KtNameReferenceExpression(204,210): 'MyEnum'
+  null
+
+KtNameReferenceExpression(213,214): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtProperty(219,246): 'val t3: MyEnum = UNRESOLVED'
+  null
+
+KtTypeReference(227,233): 'MyEnum'
+  null
+
+KtUserType(227,233): 'MyEnum'
+  null
+
+KtNameReferenceExpression(227,233): 'MyEnum'
+  null
+
+KtNameReferenceExpression(236,246): 'UNRESOLVED'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: UNRESOLVED>

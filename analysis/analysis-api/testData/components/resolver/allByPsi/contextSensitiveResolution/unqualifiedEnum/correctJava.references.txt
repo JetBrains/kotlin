@@ -1,0 +1,15 @@
+KtNameReferenceExpression(44,52): 'JavaEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class JavaEnum
+
+KtNameReferenceExpression(62,70): 'javaEnum'
+  KtSimpleNameReference:
+    javaEnum: JavaEnum
+
+KtNameReferenceExpression(78,83): 'FIRST'
+  KtSimpleNameReference:
+    (in JavaEnum) FIRST
+
+KtNameReferenceExpression(93,99): 'SECOND'
+  KtSimpleNameReference:
+    (in JavaEnum) SECOND

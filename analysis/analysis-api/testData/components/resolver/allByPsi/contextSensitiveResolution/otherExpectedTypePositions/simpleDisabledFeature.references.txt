@@ -1,0 +1,35 @@
+KtNameReferenceExpression(121,127): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(159,165): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(166,167): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(181,187): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(190,191): 'X'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(204,210): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(213,214): 'L'
+  KtSimpleNameReference:
+    (in <local>: main) val L: MyEnum
+
+KtNameReferenceExpression(227,233): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(236,246): 'UNRESOLVED'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,124 @@
+KtNameReferenceExpression(175,185): 'EnumValue1'
+  KtSimpleNameReference:
+    (in MyEnum) EnumValue1
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(204,210): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(253,259): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(264,268): 'Unit'
+  KtSimpleNameReference:
+    (in kotlin) object Unit
+
+KtCallExpression(276,293): 'lEnum(EnumValue1)'
+  KtInvokeFunctionReference:
+    (in kotlin.Function1) operator fun invoke(p1: P1): R
+
+KtNameReferenceExpression(276,281): 'lEnum'
+  KtSimpleNameReference:
+    lEnum: (arg: MyEnum) -> kotlin.Unit
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(282,292): 'EnumValue1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(298,315): 'lEnum(EnumValue2)'
+  KtInvokeFunctionReference:
+    (in kotlin.Function1) operator fun invoke(p1: P1): R
+
+KtNameReferenceExpression(298,303): 'lEnum'
+  KtSimpleNameReference:
+    lEnum: (arg: MyEnum) -> kotlin.Unit
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(304,314): 'EnumValue2'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(349,350): 'T'
+  KtSimpleNameReference:
+    (in <local>: receiveLambda) T
+
+KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(387,400): 'receiveLambda'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> receiveLambda(l: () -> T)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(401,407): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(411,421): 'EnumValue1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(428,441): 'receiveLambda'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> receiveLambda(l: () -> T)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(442,448): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(452,462): 'EnumValue3'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(469,482): 'receiveLambda'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> receiveLambda(l: () -> T)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(483,489): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(493,497): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

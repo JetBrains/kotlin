@@ -1,0 +1,1391 @@
+KtFile: 'tryCatchStatementsEnum.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,108): 'enum class MyEnum {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,82): 'enum'
+  NO_CANDIDATES
+
+KtClassBody(96,108): '{'
+  NO_CANDIDATES
+
+KtEnumEntry(102,104): 'X,'
+  NO_CANDIDATES
+
+KtEnumEntry(105,106): 'Y'
+  NO_CANDIDATES
+
+KtNamedFunction(110,131): 'fun foo(a: MyEnum) {}'
+  NO_CANDIDATES
+
+KtParameterList(117,128): '(a: MyEnum)'
+  NO_CANDIDATES
+
+KtParameter(118,127): 'a: MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(121,127): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(121,127): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(121,127): 'MyEnum'
+  NO_CANDIDATES
+
+KtBlockExpression(129,131): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(133,172): 'fun myRunWithMyEnum(b: () -> MyEnum) {}'
+  NO_CANDIDATES
+
+KtParameterList(152,169): '(b: () -> MyEnum)'
+  NO_CANDIDATES
+
+KtParameter(153,168): 'b: () -> MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(156,168): '() -> MyEnum'
+  NO_CANDIDATES
+
+KtFunctionType(156,168): '() -> MyEnum'
+  NO_CANDIDATES
+
+KtParameterList(156,158): '()'
+  NO_CANDIDATES
+
+KtTypeReference(162,168): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(162,168): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(162,168): 'MyEnum'
+  NO_CANDIDATES
+
+KtBlockExpression(170,172): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(173,210): 'fun <T> myRun(b: () -> T): T = TODO()'
+  NO_CANDIDATES
+
+KtTypeParameterList(177,180): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(178,179): 'T'
+  NO_CANDIDATES
+
+KtParameterList(186,198): '(b: () -> T)'
+  NO_CANDIDATES
+
+KtParameter(187,197): 'b: () -> T'
+  NO_CANDIDATES
+
+KtTypeReference(190,197): '() -> T'
+  NO_CANDIDATES
+
+KtFunctionType(190,197): '() -> T'
+  NO_CANDIDATES
+
+KtParameterList(190,192): '()'
+  NO_CANDIDATES
+
+KtTypeReference(196,197): 'T'
+  NO_CANDIDATES
+
+KtUserType(196,197): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(196,197): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(200,201): 'T'
+  NO_CANDIDATES
+
+KtUserType(200,201): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(200,201): 'T'
+  NO_CANDIDATES
+
+KtCallExpression(204,210): 'TODO()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(204,208): 'TODO'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(208,210): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(212,240): 'fun <X> id(x: X): X = TODO()'
+  NO_CANDIDATES
+
+KtTypeParameterList(216,219): '<X>'
+  NO_CANDIDATES
+
+KtTypeParameter(217,218): 'X'
+  NO_CANDIDATES
+
+KtParameterList(222,228): '(x: X)'
+  NO_CANDIDATES
+
+KtParameter(223,227): 'x: X'
+  NO_CANDIDATES
+
+KtTypeReference(226,227): 'X'
+  NO_CANDIDATES
+
+KtUserType(226,227): 'X'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(226,227): 'X'
+  NO_CANDIDATES
+
+KtTypeReference(230,231): 'X'
+  NO_CANDIDATES
+
+KtUserType(230,231): 'X'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(230,231): 'X'
+  NO_CANDIDATES
+
+KtCallExpression(234,240): 'TODO()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(234,238): 'TODO'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
+    isInBestCandidates = false
+
+KtValueArgumentList(238,240): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(242,1123): 'fun main(b: Boolean, i: Int) {'
+  NO_CANDIDATES
+
+KtParameterList(250,270): '(b: Boolean, i: Int)'
+  NO_CANDIDATES
+
+KtParameter(251,261): 'b: Boolean'
+  NO_CANDIDATES
+
+KtTypeReference(254,261): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(254,261): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(254,261): 'Boolean'
+  NO_CANDIDATES
+
+KtParameter(263,269): 'i: Int'
+  NO_CANDIDATES
+
+KtTypeReference(266,269): 'Int'
+  NO_CANDIDATES
+
+KtUserType(266,269): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(266,269): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(271,1123): '{'
+  NO_CANDIDATES
+
+KtProperty(277,293): 'val L = MyEnum.X'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(285,293): 'MyEnum.X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyEnum
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(285,291): 'MyEnum'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyEnum
+          symbol = <constructor>(): MyEnum
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(292,293): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyEnum
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(299,414): 'val m1: MyEnum = try {'
+  NO_CANDIDATES
+
+KtTypeReference(307,313): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(307,313): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(307,313): 'MyEnum'
+  NO_CANDIDATES
+
+KtTryExpression(316,414): 'try {'
+  NO_CANDIDATES
+
+KtBlockExpression(320,337): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(330,331): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = X
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(338,375): 'catch(e: Exception) {'
+  NO_CANDIDATES
+
+KtParameterList(343,357): '(e: Exception)'
+  NO_CANDIDATES
+
+KtParameter(344,356): 'e: Exception'
+  NO_CANDIDATES
+
+KtTypeReference(347,356): 'Exception'
+  NO_CANDIDATES
+
+KtUserType(347,356): 'Exception'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(347,356): 'Exception'
+  NO_CANDIDATES
+
+KtBlockExpression(358,375): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(368,369): 'Y'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Y
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = Y
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.Y
+          contextParameters = []
+          callableId = /MyEnum.Y
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(376,414): 'catch (t: Throwable) {'
+  NO_CANDIDATES
+
+KtParameterList(382,396): '(t: Throwable)'
+  NO_CANDIDATES
+
+KtParameter(383,395): 't: Throwable'
+  NO_CANDIDATES
+
+KtTypeReference(386,395): 'Throwable'
+  NO_CANDIDATES
+
+KtUserType(386,395): 'Throwable'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(386,395): 'Throwable'
+  NO_CANDIDATES
+
+KtBlockExpression(397,414): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(407,408): 'L'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(420,656): 'val m2: MyEnum = try {'
+  NO_CANDIDATES
+
+KtTypeReference(428,434): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(428,434): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(428,434): 'MyEnum'
+  NO_CANDIDATES
+
+KtTryExpression(437,656): 'try {'
+  NO_CANDIDATES
+
+KtBlockExpression(441,458): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(451,452): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = X
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(459,617): 'catch(e: Exception) {'
+  NO_CANDIDATES
+
+KtParameterList(464,478): '(e: Exception)'
+  NO_CANDIDATES
+
+KtParameter(465,477): 'e: Exception'
+  NO_CANDIDATES
+
+KtTypeReference(468,477): 'Exception'
+  NO_CANDIDATES
+
+KtUserType(468,477): 'Exception'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(468,477): 'Exception'
+  NO_CANDIDATES
+
+KtBlockExpression(479,617): '{'
+  NO_CANDIDATES
+
+KtTryExpression(489,611): 'try {'
+  NO_CANDIDATES
+
+KtBlockExpression(493,518): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(507,508): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = X
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(519,564): 'catch(e: Exception) {'
+  NO_CANDIDATES
+
+KtParameterList(524,538): '(e: Exception)'
+  NO_CANDIDATES
+
+KtParameter(525,537): 'e: Exception'
+  NO_CANDIDATES
+
+KtTypeReference(528,537): 'Exception'
+  NO_CANDIDATES
+
+KtUserType(528,537): 'Exception'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(528,537): 'Exception'
+  NO_CANDIDATES
+
+KtBlockExpression(539,564): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(553,554): 'Y'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Y
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = Y
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.Y
+          contextParameters = []
+          callableId = /MyEnum.Y
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(565,611): 'catch (t: Throwable) {'
+  NO_CANDIDATES
+
+KtParameterList(571,585): '(t: Throwable)'
+  NO_CANDIDATES
+
+KtParameter(572,584): 't: Throwable'
+  NO_CANDIDATES
+
+KtTypeReference(575,584): 'Throwable'
+  NO_CANDIDATES
+
+KtUserType(575,584): 'Throwable'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(575,584): 'Throwable'
+  NO_CANDIDATES
+
+KtBlockExpression(586,611): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(600,601): 'L'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(618,656): 'catch (t: Throwable) {'
+  NO_CANDIDATES
+
+KtParameterList(624,638): '(t: Throwable)'
+  NO_CANDIDATES
+
+KtParameter(625,637): 't: Throwable'
+  NO_CANDIDATES
+
+KtTypeReference(628,637): 'Throwable'
+  NO_CANDIDATES
+
+KtUserType(628,637): 'Throwable'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(628,637): 'Throwable'
+  NO_CANDIDATES
+
+KtBlockExpression(639,656): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(649,650): 'L'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(662,803): 'foo('
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyEnum
+              symbol = a: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(662,665): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyEnum
+              symbol = a: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(665,803): '('
+  NO_CANDIDATES
+
+KtValueArgument(675,797): 'try {'
+  NO_CANDIDATES
+
+KtTryExpression(675,797): 'try {'
+  NO_CANDIDATES
+
+KtBlockExpression(679,704): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(693,694): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = X
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(705,750): 'catch(e: Exception) {'
+  NO_CANDIDATES
+
+KtParameterList(710,724): '(e: Exception)'
+  NO_CANDIDATES
+
+KtParameter(711,723): 'e: Exception'
+  NO_CANDIDATES
+
+KtTypeReference(714,723): 'Exception'
+  NO_CANDIDATES
+
+KtUserType(714,723): 'Exception'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(714,723): 'Exception'
+  NO_CANDIDATES
+
+KtBlockExpression(725,750): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(739,740): 'Y'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Y
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = Y
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.Y
+          contextParameters = []
+          callableId = /MyEnum.Y
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(751,797): 'catch (t: Throwable) {'
+  NO_CANDIDATES
+
+KtParameterList(757,771): '(t: Throwable)'
+  NO_CANDIDATES
+
+KtParameter(758,770): 't: Throwable'
+  NO_CANDIDATES
+
+KtTypeReference(761,770): 'Throwable'
+  NO_CANDIDATES
+
+KtUserType(761,770): 'Throwable'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(761,770): 'Throwable'
+  NO_CANDIDATES
+
+KtBlockExpression(772,797): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(786,787): 'L'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(809,963): 'myRunWithMyEnum {'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<MyEnum>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRunWithMyEnum
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(809,824): 'myRunWithMyEnum'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<MyEnum>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRunWithMyEnum
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtLambdaArgument(825,963): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(825,963): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(825,963): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(835,957): 'try {'
+  NO_CANDIDATES
+
+KtTryExpression(835,957): 'try {'
+  NO_CANDIDATES
+
+KtBlockExpression(839,864): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(853,854): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = X
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(865,910): 'catch(e: Exception) {'
+  NO_CANDIDATES
+
+KtParameterList(870,884): '(e: Exception)'
+  NO_CANDIDATES
+
+KtParameter(871,883): 'e: Exception'
+  NO_CANDIDATES
+
+KtTypeReference(874,883): 'Exception'
+  NO_CANDIDATES
+
+KtUserType(874,883): 'Exception'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(874,883): 'Exception'
+  NO_CANDIDATES
+
+KtBlockExpression(885,910): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(899,900): 'Y'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Y
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = Y
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.Y
+          contextParameters = []
+          callableId = /MyEnum.Y
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(911,957): 'catch (t: Throwable) {'
+  NO_CANDIDATES
+
+KtParameterList(917,931): '(t: Throwable)'
+  NO_CANDIDATES
+
+KtParameter(918,930): 't: Throwable'
+  NO_CANDIDATES
+
+KtTypeReference(921,930): 'Throwable'
+  NO_CANDIDATES
+
+KtUserType(921,930): 'Throwable'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(921,930): 'Throwable'
+  NO_CANDIDATES
+
+KtBlockExpression(932,957): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(946,947): 'L'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(969,1121): 'myRun<MyEnum> {'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyEnum
+          symbol = /myRun(b: kotlin.Function0<T>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(969,974): 'myRun'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyEnum
+          symbol = /myRun(b: kotlin.Function0<T>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(974,982): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(975,981): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(975,981): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(975,981): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(975,981): 'MyEnum'
+  NO_CANDIDATES
+
+KtLambdaArgument(983,1121): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(983,1121): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(983,1121): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(993,1115): 'try {'
+  NO_CANDIDATES
+
+KtTryExpression(993,1115): 'try {'
+  NO_CANDIDATES
+
+KtBlockExpression(997,1022): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1011,1012): 'X'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = X
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = X
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.X
+          contextParameters = []
+          callableId = /MyEnum.X
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(1023,1068): 'catch(e: Exception) {'
+  NO_CANDIDATES
+
+KtParameterList(1028,1042): '(e: Exception)'
+  NO_CANDIDATES
+
+KtParameter(1029,1041): 'e: Exception'
+  NO_CANDIDATES
+
+KtTypeReference(1032,1041): 'Exception'
+  NO_CANDIDATES
+
+KtUserType(1032,1041): 'Exception'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1032,1041): 'Exception'
+  NO_CANDIDATES
+
+KtBlockExpression(1043,1068): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1057,1058): 'Y'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Y
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = Y
+          receiverType = null
+          returnType = MyEnum
+          symbol = /MyEnum.Y
+          contextParameters = []
+          callableId = /MyEnum.Y
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCatchClause(1069,1115): 'catch (t: Throwable) {'
+  NO_CANDIDATES
+
+KtParameterList(1075,1089): '(t: Throwable)'
+  NO_CANDIDATES
+
+KtParameter(1076,1088): 't: Throwable'
+  NO_CANDIDATES
+
+KtTypeReference(1079,1088): 'Throwable'
+  NO_CANDIDATES
+
+KtUserType(1079,1088): 'Throwable'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1079,1088): 'Throwable'
+  NO_CANDIDATES
+
+KtBlockExpression(1090,1115): '{'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1104,1105): 'L'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

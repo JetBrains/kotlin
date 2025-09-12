@@ -1,0 +1,67 @@
+KtNameReferenceExpression(157,158): 'E'
+  KtSimpleNameReference:
+    (in <local>: Either.Left) out E
+
+KtNameReferenceExpression(161,167): 'Either'
+  KtSimpleNameReference:
+    (in ROOT) interface Either<out E, out A>
+
+KtNameReferenceExpression(168,169): 'E'
+  KtSimpleNameReference:
+    (in <local>: Either.Left) out E
+
+KtNameReferenceExpression(171,178): 'Nothing'
+  KtSimpleNameReference:
+    (in kotlin) class Nothingprivate constructor
+
+KtNameReferenceExpression(219,220): 'A'
+  KtSimpleNameReference:
+    (in <local>: Either.Right) out A
+
+KtNameReferenceExpression(223,229): 'Either'
+  KtSimpleNameReference:
+    (in ROOT) interface Either<out E, out A>
+
+KtNameReferenceExpression(230,237): 'Nothing'
+  KtSimpleNameReference:
+    (in kotlin) class Nothingprivate constructor
+
+KtNameReferenceExpression(239,240): 'A'
+  KtSimpleNameReference:
+    (in <local>: Either.Right) out A
+
+KtNameReferenceExpression(256,262): 'Either'
+  KtSimpleNameReference:
+    (in ROOT) interface Either<out E, out A>
+
+KtNameReferenceExpression(263,264): 'E'
+  KtSimpleNameReference:
+    (in <local>: getOrElse) E
+
+KtNameReferenceExpression(266,267): 'A'
+  KtSimpleNameReference:
+    (in <local>: getOrElse) A
+
+KtNameReferenceExpression(288,289): 'A'
+  KtSimpleNameReference:
+    (in <local>: getOrElse) A
+
+KtNameReferenceExpression(299,303): 'this'
+  KtSimpleNameReference:
+    extension receiver with type Either<E, A>
+
+KtNameReferenceExpression(314,318): 'Left'
+  KtSimpleNameReference:
+    (in Either) data class Left<out E>(error: E) : Either<E, kotlin.Nothing>
+
+KtNameReferenceExpression(322,329): 'default'
+  KtSimpleNameReference:
+    default: A
+
+KtNameReferenceExpression(337,342): 'Right'
+  KtSimpleNameReference:
+    (in Either) data class Right<out A>(value: A) : Either<kotlin.Nothing, A>
+
+KtNameReferenceExpression(346,351): 'value'
+  KtSimpleNameReference:
+    (in Either.Right) val value: A

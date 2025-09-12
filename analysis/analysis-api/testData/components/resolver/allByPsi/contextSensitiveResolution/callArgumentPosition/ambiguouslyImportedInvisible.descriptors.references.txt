@@ -1,0 +1,71 @@
+KtNameReferenceExpression(38,39): 'b'
+  KtSimpleNameReference:
+    package b
+
+KtNameReferenceExpression(47,49): 'a1'
+  KtSimpleNameReference:
+    package a1
+
+KtNameReferenceExpression(59,61): 'a2'
+  KtSimpleNameReference:
+    package a2
+
+KtNameReferenceExpression(111,117): 'MyEnum'
+  KtSimpleNameReference:
+    (in b) enum class MyEnum
+
+KtCallExpression(140,146): 'foo(X)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(140,143): 'foo'
+  KtSimpleNameReference:
+    (in b) fun foo(a: b.MyEnum)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(144,145): 'X'
+  KtSimpleNameReference:
+    0: (in a1) private val X: b.MyEnum
+    1: (in a2) private val X: b.MyEnum
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(151,157): 'foo(Y)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(151,154): 'foo'
+  KtSimpleNameReference:
+    (in b) fun foo(a: b.MyEnum)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(155,156): 'Y'
+  KtSimpleNameReference:
+    0: (in a1) private val Y: kotlin.String
+    1: (in a2) private val Y: kotlin.String
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(162,168): 'foo(Z)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(162,165): 'foo'
+  KtSimpleNameReference:
+    (in b) fun foo(a: b.MyEnum)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(166,167): 'Z'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

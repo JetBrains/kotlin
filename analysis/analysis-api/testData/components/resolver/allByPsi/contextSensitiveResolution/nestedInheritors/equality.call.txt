@@ -1,0 +1,1393 @@
+KtFile: 'equality.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,192): 'sealed interface Settings {'
+  null
+
+KtDeclarationModifierList(78,84): 'sealed'
+  null
+
+KtClassBody(104,192): '{'
+  null
+
+KtObjectDeclaration(110,146): 'data object BasicSettings : Settings'
+  null
+
+KtDeclarationModifierList(110,114): 'data'
+  null
+
+KtSuperTypeList(138,146): 'Settings'
+  null
+
+KtSuperTypeEntry(138,146): 'Settings'
+  null
+
+KtTypeReference(138,146): 'Settings'
+  null
+
+KtUserType(138,146): 'Settings'
+  null
+
+KtNameReferenceExpression(138,146): 'Settings'
+  null
+
+KtObjectDeclaration(151,190): 'data object SpecificSettings : Settings'
+  null
+
+KtDeclarationModifierList(151,155): 'data'
+  null
+
+KtSuperTypeList(182,190): 'Settings'
+  null
+
+KtSuperTypeEntry(182,190): 'Settings'
+  null
+
+KtTypeReference(182,190): 'Settings'
+  null
+
+KtUserType(182,190): 'Settings'
+  null
+
+KtNameReferenceExpression(182,190): 'Settings'
+  null
+
+KtNamedFunction(194,223): 'fun work(message: String) { }'
+  null
+
+KtParameterList(202,219): '(message: String)'
+  null
+
+KtParameter(203,218): 'message: String'
+  null
+
+KtTypeReference(212,218): 'String'
+  null
+
+KtUserType(212,218): 'String'
+  null
+
+KtNameReferenceExpression(212,218): 'String'
+  null
+
+KtBlockExpression(220,223): '{ }'
+  null
+
+KtNamedFunction(225,476): 'fun usage(settings: Settings, basicSettings: Settings.BasicSettings) {'
+  null
+
+KtParameterList(234,293): '(settings: Settings, basicSettings: Settings.BasicSettings)'
+  null
+
+KtParameter(235,253): 'settings: Settings'
+  null
+
+KtTypeReference(245,253): 'Settings'
+  null
+
+KtUserType(245,253): 'Settings'
+  null
+
+KtNameReferenceExpression(245,253): 'Settings'
+  null
+
+KtParameter(255,292): 'basicSettings: Settings.BasicSettings'
+  null
+
+KtTypeReference(270,292): 'Settings.BasicSettings'
+  null
+
+KtUserType(270,292): 'Settings.BasicSettings'
+  null
+
+KtUserType(270,278): 'Settings'
+  null
+
+KtNameReferenceExpression(270,278): 'Settings'
+  null
+
+KtNameReferenceExpression(279,292): 'BasicSettings'
+  null
+
+KtBlockExpression(294,476): '{'
+  null
+
+KtIfExpression(300,344): 'if (settings == BasicSettings) work("Basic")'
+  null
+
+KtContainerNode(304,329): 'settings == BasicSettings'
+  null
+
+KtBinaryExpression(304,329): 'settings == BasicSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        BasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = settings
+          isSafeNavigation = false
+          type = Settings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(304,312): 'settings'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = settings
+          receiverType = null
+          returnType = Settings
+          symbol = settings: Settings
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(313,315): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        BasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = settings
+          isSafeNavigation = false
+          type = Settings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(316,329): 'BasicSettings'
+  null
+
+KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
+  null
+
+KtCallExpression(331,344): 'work("Basic")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(331,335): 'work'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(335,344): '("Basic")'
+  null
+
+KtValueArgument(336,343): '"Basic"'
+  null
+
+KtStringTemplateExpression(336,343): '"Basic"'
+  null
+
+KtLiteralStringTemplateEntry(337,342): 'Basic'
+  null
+
+KtIfExpression(350,405): 'if (basicSettings == SpecificSettings) work("Specific")'
+  null
+
+KtContainerNode(354,387): 'basicSettings == SpecificSettings'
+  null
+
+KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = Settings.BasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Settings.BasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(354,367): 'basicSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = basicSettings
+          receiverType = null
+          returnType = Settings.BasicSettings
+          symbol = basicSettings: Settings.BasicSettings
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(368,370): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = Settings.BasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Settings.BasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(371,387): 'SpecificSettings'
+  null
+
+KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
+  null
+
+KtCallExpression(389,405): 'work("Specific")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(389,393): 'work'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(393,405): '("Specific")'
+  null
+
+KtValueArgument(394,404): '"Specific"'
+  null
+
+KtStringTemplateExpression(394,404): '"Specific"'
+  null
+
+KtLiteralStringTemplateEntry(395,403): 'Specific'
+  null
+
+KtIfExpression(410,474): 'if (basicSettings == Settings.SpecificSettings) work("Specific")'
+  null
+
+KtContainerNode(414,456): 'basicSettings == Settings.SpecificSettings'
+  null
+
+KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        Settings.SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = Settings.BasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Settings.BasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(414,427): 'basicSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = basicSettings
+          receiverType = null
+          returnType = Settings.BasicSettings
+          symbol = basicSettings: Settings.BasicSettings
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(428,430): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        Settings.SpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = Settings.BasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Settings.BasicSettings.equals(<dispatch receiver>: Settings.BasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Settings.BasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(431,456): 'Settings.SpecificSettings'
+  null
+
+KtNameReferenceExpression(431,439): 'Settings'
+  null
+
+KtNameReferenceExpression(440,456): 'SpecificSettings'
+  null
+
+KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
+  null
+
+KtCallExpression(458,474): 'work("Specific")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(458,462): 'work'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(462,474): '("Specific")'
+  null
+
+KtValueArgument(463,473): '"Specific"'
+  null
+
+KtStringTemplateExpression(463,473): '"Specific"'
+  null
+
+KtLiteralStringTemplateEntry(464,472): 'Specific'
+  null
+
+KtClass(478,610): 'open class OpenSettings {'
+  null
+
+KtDeclarationModifierList(478,482): 'open'
+  null
+
+KtClassBody(502,610): '{'
+  null
+
+KtObjectDeclaration(508,554): 'data object OpenBasicSettings : OpenSettings()'
+  null
+
+KtDeclarationModifierList(508,512): 'data'
+  null
+
+KtSuperTypeList(540,554): 'OpenSettings()'
+  null
+
+KtSuperTypeCallEntry(540,554): 'OpenSettings()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = OpenSettings
+          symbol = <constructor>(): OpenSettings
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(540,552): 'OpenSettings'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = OpenSettings
+          symbol = <constructor>(): OpenSettings
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtTypeReference(540,552): 'OpenSettings'
+  null
+
+KtUserType(540,552): 'OpenSettings'
+  null
+
+KtNameReferenceExpression(540,552): 'OpenSettings'
+  null
+
+KtValueArgumentList(552,554): '()'
+  null
+
+KtObjectDeclaration(559,608): 'data object OpenSpecificSettings : OpenSettings()'
+  null
+
+KtDeclarationModifierList(559,563): 'data'
+  null
+
+KtSuperTypeList(594,608): 'OpenSettings()'
+  null
+
+KtSuperTypeCallEntry(594,608): 'OpenSettings()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = OpenSettings
+          symbol = <constructor>(): OpenSettings
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(594,606): 'OpenSettings'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = OpenSettings
+          symbol = <constructor>(): OpenSettings
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtTypeReference(594,606): 'OpenSettings'
+  null
+
+KtUserType(594,606): 'OpenSettings'
+  null
+
+KtNameReferenceExpression(594,606): 'OpenSettings'
+  null
+
+KtValueArgumentList(606,608): '()'
+  null
+
+KtNamedFunction(612,895): 'fun usageOpen(settings: OpenSettings, basicSettings: OpenSettings.OpenBasicSettings) {'
+  null
+
+KtParameterList(625,696): '(settings: OpenSettings, basicSettings: OpenSettings.OpenBasicSettings)'
+  null
+
+KtParameter(626,648): 'settings: OpenSettings'
+  null
+
+KtTypeReference(636,648): 'OpenSettings'
+  null
+
+KtUserType(636,648): 'OpenSettings'
+  null
+
+KtNameReferenceExpression(636,648): 'OpenSettings'
+  null
+
+KtParameter(650,695): 'basicSettings: OpenSettings.OpenBasicSettings'
+  null
+
+KtTypeReference(665,695): 'OpenSettings.OpenBasicSettings'
+  null
+
+KtUserType(665,695): 'OpenSettings.OpenBasicSettings'
+  null
+
+KtUserType(665,677): 'OpenSettings'
+  null
+
+KtNameReferenceExpression(665,677): 'OpenSettings'
+  null
+
+KtNameReferenceExpression(678,695): 'OpenBasicSettings'
+  null
+
+KtBlockExpression(697,895): '{'
+  null
+
+KtIfExpression(703,751): 'if (settings == OpenBasicSettings) work("Basic")'
+  null
+
+KtContainerNode(707,736): 'settings == OpenBasicSettings'
+  null
+
+KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        OpenBasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = settings
+          isSafeNavigation = false
+          type = OpenSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(707,715): 'settings'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = settings
+          receiverType = null
+          returnType = OpenSettings
+          symbol = settings: OpenSettings
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(716,718): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        OpenBasicSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = settings
+          isSafeNavigation = false
+          type = OpenSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(719,736): 'OpenBasicSettings'
+  null
+
+KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
+  null
+
+KtCallExpression(738,751): 'work("Basic")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(738,742): 'work'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Basic" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(742,751): '("Basic")'
+  null
+
+KtValueArgument(743,750): '"Basic"'
+  null
+
+KtStringTemplateExpression(743,750): '"Basic"'
+  null
+
+KtLiteralStringTemplateEntry(744,749): 'Basic'
+  null
+
+KtIfExpression(757,816): 'if (basicSettings == OpenSpecificSettings) work("Specific")'
+  null
+
+KtContainerNode(761,798): 'basicSettings == OpenSpecificSettings'
+  null
+
+KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = OpenSettings.OpenBasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /OpenSettings.OpenBasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(761,774): 'basicSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = basicSettings
+          receiverType = null
+          returnType = OpenSettings.OpenBasicSettings
+          symbol = basicSettings: OpenSettings.OpenBasicSettings
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(775,777): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = OpenSettings.OpenBasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /OpenSettings.OpenBasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(778,798): 'OpenSpecificSettings'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'OpenSpecificSettings'.>
+
+KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
+  null
+
+KtCallExpression(800,816): 'work("Specific")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(800,804): 'work'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(804,816): '("Specific")'
+  null
+
+KtValueArgument(805,815): '"Specific"'
+  null
+
+KtStringTemplateExpression(805,815): '"Specific"'
+  null
+
+KtLiteralStringTemplateEntry(806,814): 'Specific'
+  null
+
+KtIfExpression(821,893): 'if (basicSettings == OpenSettings.OpenSpecificSettings) work("Specific")'
+  null
+
+KtContainerNode(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
+  null
+
+KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        OpenSettings.OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = OpenSettings.OpenBasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /OpenSettings.OpenBasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(825,838): 'basicSettings'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = basicSettings
+          receiverType = null
+          returnType = OpenSettings.OpenBasicSettings
+          symbol = basicSettings: OpenSettings.OpenBasicSettings
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(839,841): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        OpenSettings.OpenSpecificSettings -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = basicSettings
+          isSafeNavigation = false
+          type = OpenSettings.OpenBasicSettings
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /OpenSettings.OpenBasicSettings.equals(<dispatch receiver>: OpenSettings.OpenBasicSettings, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /OpenSettings.OpenBasicSettings.equals
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(842,875): 'OpenSettings.OpenSpecificSettings'
+  null
+
+KtNameReferenceExpression(842,854): 'OpenSettings'
+  null
+
+KtNameReferenceExpression(855,875): 'OpenSpecificSettings'
+  null
+
+KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
+  null
+
+KtCallExpression(877,893): 'work("Specific")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(877,881): 'work'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "Specific" -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String
+          symbol = message: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /work(message: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.String
+              symbol = message: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /work
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(881,893): '("Specific")'
+  null
+
+KtValueArgument(882,892): '"Specific"'
+  null
+
+KtStringTemplateExpression(882,892): '"Specific"'
+  null
+
+KtLiteralStringTemplateEntry(883,891): 'Specific'
+  null

@@ -1,0 +1,19 @@
+KtNameReferenceExpression(128,134): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtCallExpression(157,166): 'foo(X, Y)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(157,160): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo(vararg a: MyEnum)
+
+KtNameReferenceExpression(161,162): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(164,165): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y

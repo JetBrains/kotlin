@@ -1,0 +1,622 @@
+KtFile: 'property.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(78,111): 'fun receiveMyClass(m: MyClass) {}'
+  null
+
+KtParameterList(96,108): '(m: MyClass)'
+  null
+
+KtParameter(97,107): 'm: MyClass'
+  null
+
+KtTypeReference(100,107): 'MyClass'
+  null
+
+KtUserType(100,107): 'MyClass'
+  null
+
+KtNameReferenceExpression(100,107): 'MyClass'
+  null
+
+KtBlockExpression(109,111): '{}'
+  null
+
+KtClass(113,293): 'sealed class MyClass {'
+  null
+
+KtDeclarationModifierList(113,119): 'sealed'
+  null
+
+KtClassBody(134,293): '{'
+  null
+
+KtObjectDeclaration(140,174): 'object NestedInheritor : MyClass()'
+  null
+
+KtSuperTypeList(165,174): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(165,174): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(165,172): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtTypeReference(165,172): 'MyClass'
+  null
+
+KtUserType(165,172): 'MyClass'
+  null
+
+KtNameReferenceExpression(165,172): 'MyClass'
+  null
+
+KtValueArgumentList(172,174): '()'
+  null
+
+KtObjectDeclaration(180,291): 'companion object {'
+  null
+
+KtDeclarationModifierList(180,189): 'companion'
+  null
+
+KtClassBody(197,291): '{'
+  null
+
+KtProperty(207,249): 'val myClassProp: MyClass = NestedInheritor'
+  null
+
+KtTypeReference(224,231): 'MyClass'
+  null
+
+KtUserType(224,231): 'MyClass'
+  null
+
+KtNameReferenceExpression(224,231): 'MyClass'
+  null
+
+KtNameReferenceExpression(234,249): 'NestedInheritor'
+  null
+
+KtProperty(258,285): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(274,280): 'String'
+  null
+
+KtUserType(274,280): 'String'
+  null
+
+KtNameReferenceExpression(274,280): 'String'
+  null
+
+KtStringTemplateExpression(283,285): '""'
+  null
+
+KtProperty(295,341): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  null
+
+KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(318,325): 'MyClass'
+  null
+
+KtNameReferenceExpression(326,341): 'NestedInheritor'
+  null
+
+KtNamedFunction(343,534): 'fun testIfElse(i: Int) {'
+  null
+
+KtParameterList(357,365): '(i: Int)'
+  null
+
+KtParameter(358,364): 'i: Int'
+  null
+
+KtTypeReference(361,364): 'Int'
+  null
+
+KtUserType(361,364): 'Int'
+  null
+
+KtNameReferenceExpression(361,364): 'Int'
+  null
+
+KtBlockExpression(366,534): '{'
+  null
+
+KtCallExpression(372,532): 'receiveMyClass('
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        if (i == 0) NestedInheritor
+                else if (i == 1) myClassProp
+                else if (i == 2) stringProp
+                else ClassMemberAlias -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass
+          symbol = m: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m
+              receiverType = null
+              returnType = MyClass
+              symbol = m: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveMyClass
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(372,386): 'receiveMyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        if (i == 0) NestedInheritor
+                else if (i == 1) myClassProp
+                else if (i == 2) stringProp
+                else ClassMemberAlias -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass
+          symbol = m: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m
+              receiverType = null
+              returnType = MyClass
+              symbol = m: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveMyClass
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(386,532): '('
+  null
+
+KtValueArgument(396,526): 'if (i == 0) NestedInheritor'
+  null
+
+KtIfExpression(396,526): 'if (i == 0) NestedInheritor'
+  null
+
+KtContainerNode(400,406): 'i == 0'
+  null
+
+KtBinaryExpression(400,406): 'i == 0'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(400,401): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(402,404): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+
+KtConstantExpression(405,406): '0'
+  null
+
+KtContainerNodeForControlStructureBody(408,423): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(408,423): 'NestedInheritor'
+  null
+
+KtContainerNodeForControlStructureBody(437,526): 'if (i == 1) myClassProp'
+  null
+
+KtIfExpression(437,526): 'if (i == 1) myClassProp'
+  null
+
+KtContainerNode(441,447): 'i == 1'
+  null
+
+KtBinaryExpression(441,447): 'i == 1'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(441,442): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(443,445): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+
+KtConstantExpression(446,447): '1'
+  null
+
+KtContainerNodeForControlStructureBody(449,460): 'myClassProp'
+  null
+
+KtNameReferenceExpression(449,460): 'myClassProp'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClassProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtContainerNodeForControlStructureBody(474,526): 'if (i == 2) stringProp'
+  null
+
+KtIfExpression(474,526): 'if (i == 2) stringProp'
+  null
+
+KtContainerNode(478,484): 'i == 2'
+  null
+
+KtBinaryExpression(478,484): 'i == 2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(478,479): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(480,482): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+
+KtConstantExpression(483,484): '2'
+  null
+
+KtContainerNodeForControlStructureBody(486,496): 'stringProp'
+  null
+
+KtNameReferenceExpression(486,496): 'stringProp'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = stringProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
+  null
+
+KtNameReferenceExpression(510,526): 'ClassMemberAlias'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = ClassMemberAlias
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = val ClassMemberAlias: MyClass.NestedInheritor
+          contextParameters = []
+          callableId = /ClassMemberAlias
+      simpleAccess = Read
+      typeArgumentsMapping = {}

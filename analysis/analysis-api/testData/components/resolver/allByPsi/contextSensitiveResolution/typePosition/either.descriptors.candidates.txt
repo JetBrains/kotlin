@@ -1,0 +1,305 @@
+KtFile: 'either.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,243): 'sealed interface Either<out E, out A> {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,84): 'sealed'
+  NO_CANDIDATES
+
+KtTypeParameterList(101,115): '<out E, out A>'
+  NO_CANDIDATES
+
+KtTypeParameter(102,107): 'out E'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(102,105): 'out'
+  NO_CANDIDATES
+
+KtTypeParameter(109,114): 'out A'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(109,112): 'out'
+  NO_CANDIDATES
+
+KtClassBody(116,243): '{'
+  NO_CANDIDATES
+
+KtClass(122,179): 'data class  Left<out E>(val error: E): Either<E, Nothing>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(122,126): 'data'
+  NO_CANDIDATES
+
+KtTypeParameterList(138,145): '<out E>'
+  NO_CANDIDATES
+
+KtTypeParameter(139,144): 'out E'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(139,142): 'out'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(145,159): '(val error: E)'
+  NO_CANDIDATES
+
+KtParameterList(145,159): '(val error: E)'
+  NO_CANDIDATES
+
+KtParameter(146,158): 'val error: E'
+  NO_CANDIDATES
+
+KtTypeReference(157,158): 'E'
+  NO_CANDIDATES
+
+KtUserType(157,158): 'E'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(157,158): 'E'
+  NO_CANDIDATES
+
+KtSuperTypeList(161,179): 'Either<E, Nothing>'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(161,179): 'Either<E, Nothing>'
+  NO_CANDIDATES
+
+KtTypeReference(161,179): 'Either<E, Nothing>'
+  NO_CANDIDATES
+
+KtUserType(161,179): 'Either<E, Nothing>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(161,167): 'Either'
+  NO_CANDIDATES
+
+KtTypeArgumentList(167,179): '<E, Nothing>'
+  NO_CANDIDATES
+
+KtTypeProjection(168,169): 'E'
+  NO_CANDIDATES
+
+KtTypeReference(168,169): 'E'
+  NO_CANDIDATES
+
+KtUserType(168,169): 'E'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(168,169): 'E'
+  NO_CANDIDATES
+
+KtTypeProjection(171,178): 'Nothing'
+  NO_CANDIDATES
+
+KtTypeReference(171,178): 'Nothing'
+  NO_CANDIDATES
+
+KtUserType(171,178): 'Nothing'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(171,178): 'Nothing'
+  NO_CANDIDATES
+
+KtClass(184,241): 'data class Right<out A>(val value: A): Either<Nothing, A>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(184,188): 'data'
+  NO_CANDIDATES
+
+KtTypeParameterList(200,207): '<out A>'
+  NO_CANDIDATES
+
+KtTypeParameter(201,206): 'out A'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(201,204): 'out'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(207,221): '(val value: A)'
+  NO_CANDIDATES
+
+KtParameterList(207,221): '(val value: A)'
+  NO_CANDIDATES
+
+KtParameter(208,220): 'val value: A'
+  NO_CANDIDATES
+
+KtTypeReference(219,220): 'A'
+  NO_CANDIDATES
+
+KtUserType(219,220): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(219,220): 'A'
+  NO_CANDIDATES
+
+KtSuperTypeList(223,241): 'Either<Nothing, A>'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(223,241): 'Either<Nothing, A>'
+  NO_CANDIDATES
+
+KtTypeReference(223,241): 'Either<Nothing, A>'
+  NO_CANDIDATES
+
+KtUserType(223,241): 'Either<Nothing, A>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(223,229): 'Either'
+  NO_CANDIDATES
+
+KtTypeArgumentList(229,241): '<Nothing, A>'
+  NO_CANDIDATES
+
+KtTypeProjection(230,237): 'Nothing'
+  NO_CANDIDATES
+
+KtTypeReference(230,237): 'Nothing'
+  NO_CANDIDATES
+
+KtUserType(230,237): 'Nothing'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(230,237): 'Nothing'
+  NO_CANDIDATES
+
+KtTypeProjection(239,240): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(239,240): 'A'
+  NO_CANDIDATES
+
+KtUserType(239,240): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(239,240): 'A'
+  NO_CANDIDATES
+
+KtNamedFunction(245,353): 'fun <E, A> Either<E, A>.getOrElse(default: A) = when (this) {'
+  NO_CANDIDATES
+
+KtTypeParameterList(249,255): '<E, A>'
+  NO_CANDIDATES
+
+KtTypeParameter(250,251): 'E'
+  NO_CANDIDATES
+
+KtTypeParameter(253,254): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(256,268): 'Either<E, A>'
+  NO_CANDIDATES
+
+KtUserType(256,268): 'Either<E, A>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(256,262): 'Either'
+  NO_CANDIDATES
+
+KtTypeArgumentList(262,268): '<E, A>'
+  NO_CANDIDATES
+
+KtTypeProjection(263,264): 'E'
+  NO_CANDIDATES
+
+KtTypeReference(263,264): 'E'
+  NO_CANDIDATES
+
+KtUserType(263,264): 'E'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(263,264): 'E'
+  NO_CANDIDATES
+
+KtTypeProjection(266,267): 'A'
+  NO_CANDIDATES
+
+KtTypeReference(266,267): 'A'
+  NO_CANDIDATES
+
+KtUserType(266,267): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(266,267): 'A'
+  NO_CANDIDATES
+
+KtParameterList(278,290): '(default: A)'
+  NO_CANDIDATES
+
+KtParameter(279,289): 'default: A'
+  NO_CANDIDATES
+
+KtTypeReference(288,289): 'A'
+  NO_CANDIDATES
+
+KtUserType(288,289): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(288,289): 'A'
+  NO_CANDIDATES
+
+KtWhenExpression(293,353): 'when (this) {'
+  NO_CANDIDATES
+
+KtThisExpression(299,303): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(299,303): 'this'
+  NO_CANDIDATES
+
+KtWhenEntry(311,329): 'is Left -> default'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(311,318): 'is Left'
+  NO_CANDIDATES
+
+KtTypeReference(314,318): 'Left'
+  NO_CANDIDATES
+
+KtUserType(314,318): 'Left'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(314,318): 'Left'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(322,329): 'default'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = default
+          receiverType = null
+          returnType = A
+          symbol = default: A
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(334,351): 'is Right -> value'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(334,342): 'is Right'
+  NO_CANDIDATES
+
+KtTypeReference(337,342): 'Right'
+  NO_CANDIDATES
+
+KtUserType(337,342): 'Right'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(337,342): 'Right'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(346,351): 'value'
+  NO_CANDIDATES

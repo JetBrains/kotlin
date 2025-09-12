@@ -1,0 +1,119 @@
+KtNameReferenceExpression(146,152): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(161,172): 'SealedClass'
+  KtSimpleNameReference:
+    (in SealedClass) constructor()
+
+KtNameReferenceExpression(210,225): 'SealedInheritor'
+  KtSimpleNameReference:
+    (in SealedClass.SealedInheritor) constructor(prop: kotlin.String)
+
+KtNameReferenceExpression(274,285): 'SealedClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class SealedClass
+
+KtNameReferenceExpression(288,294): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(314,322): 'instance'
+  KtSimpleNameReference:
+    instance: SealedClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(337,352): 'SealedInheritor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(356,364): 'instance'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(365,367): 'is'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(368,391): 'IndirectSealedInheritor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(395,403): 'instance'
+  KtSimpleNameReference:
+    instance: SealedClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(404,408): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(515,521): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(530,539): 'OpenClass'
+  KtSimpleNameReference:
+    (in OpenClass) constructor()
+
+KtNameReferenceExpression(588,614): 'SealedInheritorOfOpenClass'
+  KtSimpleNameReference:
+    (in OpenClass.SealedInheritorOfOpenClass) constructor(prop: kotlin.String)
+
+KtNameReferenceExpression(661,670): 'OpenClass'
+  KtSimpleNameReference:
+    (in ROOT) open class OpenClass
+
+KtNameReferenceExpression(673,679): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(699,707): 'instance'
+  KtSimpleNameReference:
+    instance: OpenClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(722,748): 'SealedInheritorOfOpenClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(752,760): 'instance'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(761,763): 'is'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(764,798): 'IndirectSealedInheritorOfOpenClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(802,810): 'instance'
+  KtSimpleNameReference:
+    instance: OpenClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(811,815): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

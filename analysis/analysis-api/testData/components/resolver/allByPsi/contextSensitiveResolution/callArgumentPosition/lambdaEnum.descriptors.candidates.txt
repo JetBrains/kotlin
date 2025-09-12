@@ -1,0 +1,582 @@
+KtFile: 'lambdaEnum.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,223): 'enum class MyEnum {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,82): 'enum'
+  NO_CANDIDATES
+
+KtClassBody(96,223): '{'
+  NO_CANDIDATES
+
+KtEnumEntry(102,113): 'EnumValue1,'
+  NO_CANDIDATES
+
+KtEnumEntry(114,125): 'EnumValue2;'
+  NO_CANDIDATES
+
+KtObjectDeclaration(131,221): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(131,140): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(148,221): '{'
+  NO_CANDIDATES
+
+KtProperty(158,185): 'val EnumValue3 = EnumValue1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(175,185): 'EnumValue1'
+  NO_CANDIDATES
+
+KtProperty(194,215): 'val prop: String = ""'
+  NO_CANDIDATES
+
+KtTypeReference(204,210): 'String'
+  NO_CANDIDATES
+
+KtUserType(204,210): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(204,210): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(213,215): '""'
+  NO_CANDIDATES
+
+KtNamedFunction(225,317): 'fun testLambda(lEnum: (arg: MyEnum) -> Unit) {'
+  NO_CANDIDATES
+
+KtParameterList(239,269): '(lEnum: (arg: MyEnum) -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(240,268): 'lEnum: (arg: MyEnum) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(247,268): '(arg: MyEnum) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(247,268): '(arg: MyEnum) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(247,260): '(arg: MyEnum)'
+  NO_CANDIDATES
+
+KtParameter(248,259): 'arg: MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(253,259): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(253,259): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(253,259): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(264,268): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(264,268): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(264,268): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(270,317): '{'
+  NO_CANDIDATES
+
+KtCallExpression(276,293): 'lEnum(EnumValue1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lEnum
+          isSafeNavigation = false
+          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(276,281): 'lEnum'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = lEnum
+          receiverType = null
+          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          symbol = lEnum: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(281,293): '(EnumValue1)'
+  NO_CANDIDATES
+
+KtValueArgument(282,292): 'EnumValue1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(282,292): 'EnumValue1'
+  NO_CANDIDATES
+
+KtCallExpression(298,315): 'lEnum(EnumValue2)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        EnumValue2 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lEnum
+          isSafeNavigation = false
+          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyEnum
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(298,303): 'lEnum'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = lEnum
+          receiverType = null
+          returnType = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          symbol = lEnum: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(303,315): '(EnumValue2)'
+  NO_CANDIDATES
+
+KtValueArgument(304,314): 'EnumValue2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(304,314): 'EnumValue2'
+  NO_CANDIDATES
+
+KtNamedFunction(319,354): 'fun <T>receiveLambda(l: () -> T) {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(323,326): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(324,325): 'T'
+  NO_CANDIDATES
+
+KtParameterList(339,351): '(l: () -> T)'
+  NO_CANDIDATES
+
+KtParameter(340,350): 'l: () -> T'
+  NO_CANDIDATES
+
+KtTypeReference(343,350): '() -> T'
+  NO_CANDIDATES
+
+KtFunctionType(343,350): '() -> T'
+  NO_CANDIDATES
+
+KtParameterList(343,345): '()'
+  NO_CANDIDATES
+
+KtTypeReference(349,350): 'T'
+  NO_CANDIDATES
+
+KtUserType(349,350): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(349,350): 'T'
+  NO_CANDIDATES
+
+KtBlockExpression(352,354): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(356,501): 'fun testReceivedLambda() {'
+  NO_CANDIDATES
+
+KtParameterList(378,380): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(381,501): '{'
+  NO_CANDIDATES
+
+KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { EnumValue1 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = l: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(387,400): 'receiveLambda'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { EnumValue1 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = l: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(400,408): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(401,407): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(401,407): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(401,407): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(401,407): 'MyEnum'
+  NO_CANDIDATES
+
+KtLambdaArgument(409,423): '{ EnumValue1 }'
+  NO_CANDIDATES
+
+KtLambdaExpression(409,423): '{ EnumValue1 }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(409,423): '{ EnumValue1 }'
+  NO_CANDIDATES
+
+KtBlockExpression(411,421): 'EnumValue1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(411,421): 'EnumValue1'
+  NO_CANDIDATES
+
+KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { EnumValue3 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = l: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(428,441): 'receiveLambda'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { EnumValue3 } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = l: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(441,449): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(442,448): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(442,448): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(442,448): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(442,448): 'MyEnum'
+  NO_CANDIDATES
+
+KtLambdaArgument(450,464): '{ EnumValue3 }'
+  NO_CANDIDATES
+
+KtLambdaExpression(450,464): '{ EnumValue3 }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(450,464): '{ EnumValue3 }'
+  NO_CANDIDATES
+
+KtBlockExpression(452,462): 'EnumValue3'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(452,462): 'EnumValue3'
+  NO_CANDIDATES
+
+KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { prop } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = l: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(469,482): 'receiveLambda'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { prop } -> (KaVariableSignature:
+          name = l
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = l: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = l
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = l: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiveLambda
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(482,490): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(483,489): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(483,489): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(483,489): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(483,489): 'MyEnum'
+  NO_CANDIDATES
+
+KtLambdaArgument(491,499): '{ prop }'
+  NO_CANDIDATES
+
+KtLambdaExpression(491,499): '{ prop }'
+  NO_CANDIDATES
+
+KtFunctionLiteral(491,499): '{ prop }'
+  NO_CANDIDATES
+
+KtBlockExpression(493,497): 'prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(493,497): 'prop'
+  NO_CANDIDATES

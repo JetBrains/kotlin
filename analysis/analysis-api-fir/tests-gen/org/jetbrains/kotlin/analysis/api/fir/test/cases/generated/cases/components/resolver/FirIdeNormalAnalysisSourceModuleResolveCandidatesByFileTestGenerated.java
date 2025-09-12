@@ -299,6 +299,622 @@ public class FirIdeNormalAnalysisSourceModuleResolveCandidatesByFileTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextSensitiveResolution {
+    @Test
+    public void testAllFilesPresentInContextSensitiveResolution() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Ambiguity {
+      @Test
+      public void testAllFilesPresentInAmbiguity() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("companion.kt")
+      public void testCompanion() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity/companion.kt");
+      }
+
+      @Test
+      @TestMetadata("local.kt")
+      public void testLocal() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity/local.kt");
+      }
+
+      @Test
+      @TestMetadata("samePackage.kt")
+      public void testSamePackage() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity/samePackage.kt");
+      }
+
+      @Test
+      @TestMetadata("starImport.kt")
+      public void testStarImport() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity/starImport.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CallArgumentPosition {
+      @Test
+      public void testAllFilesPresentInCallArgumentPosition() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("ambiguouslyImported.kt")
+      public void testAmbiguouslyImported() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/ambiguouslyImported.kt");
+      }
+
+      @Test
+      @TestMetadata("ambiguouslyImportedInvisible.kt")
+      public void testAmbiguouslyImportedInvisible() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/ambiguouslyImportedInvisible.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationArguments.kt")
+      public void testAnnotationArguments() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/annotationArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("anonymousFun.kt")
+      public void testAnonymousFun() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/anonymousFun.kt");
+      }
+
+      @Test
+      @TestMetadata("bound.kt")
+      public void testBound() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/bound.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/contextParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("defaultArg.kt")
+      public void testDefaultArg() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/defaultArg.kt");
+      }
+
+      @Test
+      @TestMetadata("expectedType.kt")
+      public void testExpectedType() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/expectedType.kt");
+      }
+
+      @Test
+      @TestMetadata("expectedTypeEnum.kt")
+      public void testExpectedTypeEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/expectedTypeEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("generic.kt")
+      public void testGeneric() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/generic.kt");
+      }
+
+      @Test
+      @TestMetadata("infixFun.kt")
+      public void testInfixFun() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/infixFun.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleImported.kt")
+      public void testInvisibleImported() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/invisibleImported.kt");
+      }
+
+      @Test
+      @TestMetadata("lambda.kt")
+      public void testLambda() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/lambda.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaEnum.kt")
+      public void testLambdaEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/lambdaEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaReceiver.kt")
+      public void testLambdaReceiver() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/lambdaReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaReceiverParametrized.kt")
+      public void testLambdaReceiverParametrized() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/lambdaReceiverParametrized.kt");
+      }
+
+      @Test
+      @TestMetadata("multipleOverloads.kt")
+      public void testMultipleOverloads() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/multipleOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("namedArg.kt")
+      public void testNamedArg() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/namedArg.kt");
+      }
+
+      @Test
+      @TestMetadata("noContextSensitiveResolutionShouldHappen.kt")
+      public void testNoContextSensitiveResolutionShouldHappen() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/noContextSensitiveResolutionShouldHappen.kt");
+      }
+
+      @Test
+      @TestMetadata("nonEnums.kt")
+      public void testNonEnums() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/nonEnums.kt");
+      }
+
+      @Test
+      @TestMetadata("operatorOverload.kt")
+      public void testOperatorOverload() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/operatorOverload.kt");
+      }
+
+      @Test
+      @TestMetadata("overload.kt")
+      public void testOverload() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/overload.kt");
+      }
+
+      @Test
+      @TestMetadata("pcla.kt")
+      public void testPcla() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/pcla.kt");
+      }
+
+      @Test
+      @TestMetadata("regularArg.kt")
+      public void testRegularArg() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/regularArg.kt");
+      }
+
+      @Test
+      @TestMetadata("regularArgEnum.kt")
+      public void testRegularArgEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/regularArgEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDisabledFeature.kt")
+      public void testSimpleDisabledFeature() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/simpleDisabledFeature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleGeneric.kt")
+      public void testSimpleGeneric() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/simpleGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleVarargs.kt")
+      public void testSimpleVarargs() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/simpleVarargs.kt");
+      }
+
+      @Test
+      @TestMetadata("varargs.kt")
+      public void testVarargs() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition/varargs.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NestedInheritors {
+      @Test
+      public void testAllFilesPresentInNestedInheritors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("equality.kt")
+      public void testEquality() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors/equality.kt");
+      }
+
+      @Test
+      @TestMetadata("guard.kt")
+      public void testGuard() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors/guard.kt");
+      }
+
+      @Test
+      @TestMetadata("inWhen.kt")
+      public void testInWhen() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors/inWhen.kt");
+      }
+
+      @Test
+      @TestMetadata("negatedIs.kt")
+      public void testNegatedIs() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors/negatedIs.kt");
+      }
+
+      @Test
+      @TestMetadata("property.kt")
+      public void testProperty() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors/property.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OtherExpectedTypePositions {
+      @Test
+      public void testAllFilesPresentInOtherExpectedTypePositions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("basicExampleWithEnumAndWhens.kt")
+      public void testBasicExampleWithEnumAndWhens() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/basicExampleWithEnumAndWhens.kt");
+      }
+
+      @Test
+      @TestMetadata("differentTrivialExpectedTypeMismatch.kt")
+      public void testDifferentTrivialExpectedTypeMismatch() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/differentTrivialExpectedTypeMismatch.kt");
+      }
+
+      @Test
+      @TestMetadata("differentTrivialExpectedTypePositions.kt")
+      public void testDifferentTrivialExpectedTypePositions() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/differentTrivialExpectedTypePositions.kt");
+      }
+
+      @Test
+      @TestMetadata("elvisOperator.kt")
+      public void testElvisOperator() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/elvisOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("elvisOperatorEnum.kt")
+      public void testElvisOperatorEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/elvisOperatorEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("equalityOperator.kt")
+      public void testEqualityOperator() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/equalityOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("equalityOperatorOnBoundedEnumTypeParameter.kt")
+      public void testEqualityOperatorOnBoundedEnumTypeParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/equalityOperatorOnBoundedEnumTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("equalityOperatorOnBoundedSealedTypeParameter.kt")
+      public void testEqualityOperatorOnBoundedSealedTypeParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/equalityOperatorOnBoundedSealedTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("explicitReturnTypes.kt")
+      public void testExplicitReturnTypes() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/explicitReturnTypes.kt");
+      }
+
+      @Test
+      @TestMetadata("extensions.kt")
+      public void testExtensions() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/extensions.kt");
+      }
+
+      @Test
+      @TestMetadata("functionalTypes.kt")
+      public void testFunctionalTypes() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/functionalTypes.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdasReturnStatements.kt")
+      public void testLambdasReturnStatements() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/lambdasReturnStatements.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdasReturnStatementsWithResolvedQualifiers.kt")
+      public void testLambdasReturnStatementsWithResolvedQualifiers() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/lambdasReturnStatementsWithResolvedQualifiers.kt");
+      }
+
+      @Test
+      @TestMetadata("notNullAssertion.kt")
+      public void testNotNullAssertion() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/notNullAssertion.kt");
+      }
+
+      @Test
+      @TestMetadata("notNullAssertionEnum.kt")
+      public void testNotNullAssertionEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/notNullAssertionEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("propInitializers.kt")
+      public void testPropInitializers() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/propInitializers.kt");
+      }
+
+      @Test
+      @TestMetadata("sameNamedEnumEntry.kt")
+      public void testSameNamedEnumEntry() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/sameNamedEnumEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDisabledFeature.kt")
+      public void testSimpleDisabledFeature() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/simpleDisabledFeature.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchStatements.kt")
+      public void testTryCatchStatements() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/tryCatchStatements.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchStatementsEnum.kt")
+      public void testTryCatchStatementsEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/tryCatchStatementsEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("whenIfLastStatement.kt")
+      public void testWhenIfLastStatement() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/whenIfLastStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("whenIfLastStatementEnum.kt")
+      public void testWhenIfLastStatementEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions/whenIfLastStatementEnum.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypePosition {
+      @Test
+      public void testAllFilesPresentInTypePosition() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("ambiguouslyImported.kt")
+      public void testAmbiguouslyImported() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/ambiguouslyImported.kt");
+      }
+
+      @Test
+      @TestMetadata("ambiguouslyImportedInvisible.kt")
+      public void testAmbiguouslyImportedInvisible() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/ambiguouslyImportedInvisible.kt");
+      }
+
+      @Test
+      @TestMetadata("either.kt")
+      public void testEither() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/either.kt");
+      }
+
+      @Test
+      @TestMetadata("eitherInDifferentPositions.kt")
+      public void testEitherInDifferentPositions() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/eitherInDifferentPositions.kt");
+      }
+
+      @Test
+      @TestMetadata("innerClassInGeneric.kt")
+      public void testInnerClassInGeneric() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/innerClassInGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("invisibleImported.kt")
+      public void testInvisibleImported() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/invisibleImported.kt");
+      }
+
+      @Test
+      @TestMetadata("isInIf.kt")
+      public void testIsInIf() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/isInIf.kt");
+      }
+
+      @Test
+      @TestMetadata("isInWhen.kt")
+      public void testIsInWhen() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/isInWhen.kt");
+      }
+
+      @Test
+      @TestMetadata("javaInterop.kt")
+      public void testJavaInterop() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/javaInterop.kt");
+      }
+
+      @Test
+      @TestMetadata("nonSealed.kt")
+      public void testNonSealed() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/nonSealed.kt");
+      }
+
+      @Test
+      @TestMetadata("nonTrivialTypes.kt")
+      public void testNonTrivialTypes() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/nonTrivialTypes.kt");
+      }
+
+      @Test
+      @TestMetadata("regularlyResolved.kt")
+      public void testRegularlyResolved() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/regularlyResolved.kt");
+      }
+
+      @Test
+      @TestMetadata("regularlyResolvedNoGenericArgument.kt")
+      public void testRegularlyResolvedNoGenericArgument() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/regularlyResolvedNoGenericArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedWithNonSealedSubclass.kt")
+      public void testSealedWithNonSealedSubclass() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/sealedWithNonSealedSubclass.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDisabledFeature.kt")
+      public void testSimpleDisabledFeature() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/simpleDisabledFeature.kt");
+      }
+
+      @Test
+      @TestMetadata("singleDefiniteExpectedType.kt")
+      public void testSingleDefiniteExpectedType() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/singleDefiniteExpectedType.kt");
+      }
+
+      @Test
+      @TestMetadata("typeCast.kt")
+      public void testTypeCast() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/typeCast.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameter.kt")
+      public void testTypeParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/typeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParametersComplex.kt")
+      public void testTypeParametersComplex() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/typeParametersComplex.kt");
+      }
+
+      @Test
+      @TestMetadata("unsupportedTypePosition.kt")
+      public void testUnsupportedTypePosition() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition/unsupportedTypePosition.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnqualifiedEnum {
+      @Test
+      public void testAllFilesPresentInUnqualifiedEnum() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("correctJava.kt")
+      public void testCorrectJava() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/correctJava.kt");
+      }
+
+      @Test
+      @TestMetadata("enumWithTheSameNameAsEntry.kt")
+      public void testEnumWithTheSameNameAsEntry() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/enumWithTheSameNameAsEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("incorrectJava.kt")
+      public void testIncorrectJava() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/incorrectJava.kt");
+      }
+
+      @Test
+      @TestMetadata("nested.kt")
+      public void testNested() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/nested.kt");
+      }
+
+      @Test
+      @TestMetadata("notInsideBranches.kt")
+      public void testNotInsideBranches() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/notInsideBranches.kt");
+      }
+
+      @Test
+      @TestMetadata("priority.kt")
+      public void testPriority() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/priority.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAlias.kt")
+      public void testTypeAlias() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/typeAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("unqualifiedEnum.kt")
+      public void testUnqualifiedEnum() {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum/unqualifiedEnum.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/imports")
   @TestDataPath("$PROJECT_ROOT")
   public class Imports {

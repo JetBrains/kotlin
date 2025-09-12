@@ -1,0 +1,43 @@
+KtNameReferenceExpression(166,173): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtNameReferenceExpression(220,227): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) open class MyClass
+
+KtCallExpression(230,236): 'TODO()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(230,234): 'TODO'
+  KtSimpleNameReference:
+    (in kotlin) inline fun TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(282,288): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(291,301): 'EnumValue1'
+  KtSimpleNameReference:
+    (in MyEnum) EnumValue1
+
+KtNameReferenceExpression(318,325): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) open class MyClass
+
+KtNameReferenceExpression(328,343): 'InheritorObject'
+  KtSimpleNameReference:
+    (in MyClass) object InheritorObject : MyClass()
+
+KtNameReferenceExpression(361,368): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) open class MyClass
+
+KtCallExpression(371,377): 'func()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(371,375): 'func'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

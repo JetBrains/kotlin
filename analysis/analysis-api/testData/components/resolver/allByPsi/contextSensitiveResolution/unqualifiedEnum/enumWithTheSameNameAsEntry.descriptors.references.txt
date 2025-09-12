@@ -1,0 +1,38 @@
+KtNameReferenceExpression(115,116): 'A'
+  KtSimpleNameReference:
+    (in ROOT) enum class A
+
+KtNameReferenceExpression(126,127): 'a'
+  KtSimpleNameReference:
+    a: A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(135,136): 'A'
+  KtSimpleNameReference:
+    (in ROOT) enum class A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(137,138): 'A'
+  KtSimpleNameReference:
+    (in A) A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(150,151): 'A'
+  KtSimpleNameReference:
+    (in ROOT) enum class A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(152,153): 'B'
+  KtSimpleNameReference:
+    (in A) B
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

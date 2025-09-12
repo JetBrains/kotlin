@@ -1,0 +1,47 @@
+KtNameReferenceExpression(33,34): 'b'
+  KtSimpleNameReference:
+    package b
+
+KtNameReferenceExpression(42,43): 'a'
+  KtSimpleNameReference:
+    package a
+
+KtNameReferenceExpression(93,99): 'MyEnum'
+  KtSimpleNameReference:
+    (in b) enum class MyEnum
+
+KtCallExpression(122,128): 'foo(X)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(122,125): 'foo'
+  KtSimpleNameReference:
+    (in b) fun foo(a: b.MyEnum)
+
+KtNameReferenceExpression(126,127): 'X'
+  KtSimpleNameReference:
+    (in b.MyEnum) X
+
+KtCallExpression(133,139): 'foo(Y)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(133,136): 'foo'
+  KtSimpleNameReference:
+    (in b) fun foo(a: b.MyEnum)
+
+KtNameReferenceExpression(137,138): 'Y'
+  KtSimpleNameReference:
+    (in b.MyEnum) Y
+
+KtCallExpression(144,150): 'foo(Z)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(144,147): 'foo'
+  KtSimpleNameReference:
+    (in b) fun foo(a: b.MyEnum)
+
+KtNameReferenceExpression(148,149): 'Z'
+  KtSimpleNameReference:
+    (in b.MyEnum) Z

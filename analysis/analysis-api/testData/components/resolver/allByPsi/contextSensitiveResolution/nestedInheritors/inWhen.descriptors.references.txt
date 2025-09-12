@@ -1,0 +1,335 @@
+KtNameReferenceExpression(130,137): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtNameReferenceExpression(165,172): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MyClass
+
+KtNameReferenceExpression(193,200): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(211,218): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MyClass
+
+KtCallExpression(226,333): 'receiveMyClass('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(226,240): 'receiveMyClass'
+  KtSimpleNameReference:
+    (in ROOT) fun receiveMyClass(m: MyClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(269,270): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(274,281): 'myClass'
+  KtSimpleNameReference:
+    myClass: MyClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(302,317): 'NestedInheritor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(352,359): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(371,378): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MyClass
+
+KtNameReferenceExpression(379,394): 'NestedInheritor'
+  KtSimpleNameReference:
+    (in MyClass) object NestedInheritor : MyClass()
+
+KtCallExpression(402,510): 'receiveMyClass('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(402,416): 'receiveMyClass'
+  KtSimpleNameReference:
+    (in ROOT) fun receiveMyClass(m: MyClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(445,446): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(450,458): 'subClass'
+  KtSimpleNameReference:
+    subClass: MyClass.NestedInheritor
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(479,494): 'NestedInheritor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(530,537): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(543,550): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(562,569): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MyClass
+
+KtNameReferenceExpression(570,585): 'NestedInheritor'
+  KtSimpleNameReference:
+    (in MyClass) object NestedInheritor : MyClass()
+
+KtCallExpression(593,735): 'receiveMyClass('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(593,607): 'receiveMyClass'
+  KtSimpleNameReference:
+    (in ROOT) fun receiveMyClass(m: MyClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(636,638): 'b1'
+  KtSimpleNameReference:
+    b1: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(642,650): 'subClass'
+  KtSimpleNameReference:
+    subClass: MyClass.NestedInheritor
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(663,665): 'b2'
+  KtSimpleNameReference:
+    b2: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(669,684): 'NestedInheritor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(705,719): 'OtherInheritor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(791,801): 'OtherClass'
+  KtSimpleNameReference:
+    (in OtherClass) constructor()
+
+KtNameReferenceExpression(819,823): 'Base'
+  KtSimpleNameReference:
+    (in OtherClass.Base) constructor()
+
+KtNameReferenceExpression(840,844): 'Base'
+  KtSimpleNameReference:
+    (in OtherClass.Base) constructor()
+
+KtNameReferenceExpression(863,873): 'OtherClass'
+  KtSimpleNameReference:
+    (in OtherClass) constructor()
+
+KtNameReferenceExpression(904,914): 'OtherClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class OtherClass
+
+KtNameReferenceExpression(934,941): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(947,954): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(967,977): 'OtherClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class OtherClass
+
+KtNameReferenceExpression(978,979): 'A'
+  KtSimpleNameReference:
+    (in OtherClass) class A : OtherClass.Base()
+
+KtNameReferenceExpression(992,1002): 'OtherClass'
+  KtSimpleNameReference:
+    (in ROOT) sealed class OtherClass
+
+KtNameReferenceExpression(1003,1004): 'B'
+  KtSimpleNameReference:
+    (in OtherClass) class B : OtherClass.Base()
+
+KtCallExpression(1012,1139): 'receiveOtherClass('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
+  KtSimpleNameReference:
+    (in ROOT) fun receiveOtherClass(m: OtherClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1058,1060): 'b1'
+  KtSimpleNameReference:
+    b1: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1064,1073): 'subClass1'
+  KtSimpleNameReference:
+    subClass1: OtherClass.A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1086,1088): 'b2'
+  KtSimpleNameReference:
+    b2: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1092,1101): 'subClass2'
+  KtSimpleNameReference:
+    subClass2: OtherClass.B
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1122,1123): 'C'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1206,1215): 'OpenClass'
+  KtSimpleNameReference:
+    (in OpenClass) constructor()
+
+KtNameReferenceExpression(1245,1254): 'OpenClass'
+  KtSimpleNameReference:
+    (in ROOT) open class OpenClass
+
+KtNameReferenceExpression(1273,1280): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(1293,1302): 'OpenClass'
+  KtSimpleNameReference:
+    (in ROOT) open class OpenClass
+
+KtCallExpression(1310,1432): 'receiveOpenClass('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
+  KtSimpleNameReference:
+    (in ROOT) fun receiveOpenClass(m: OpenClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1355,1356): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1360,1369): 'openClass'
+  KtSimpleNameReference:
+    openClass: OpenClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1390,1416): 'NestedInheritorOfOpenClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1449,1456): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(1468,1477): 'OpenClass'
+  KtSimpleNameReference:
+    (in ROOT) open class OpenClass
+
+KtNameReferenceExpression(1478,1504): 'NestedInheritorOfOpenClass'
+  KtSimpleNameReference:
+    (in OpenClass) object NestedInheritorOfOpenClass : OpenClass()
+
+KtCallExpression(1512,1633): 'receiveOpenClass('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
+  KtSimpleNameReference:
+    (in ROOT) fun receiveOpenClass(m: OpenClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1557,1558): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1562,1570): 'subClass'
+  KtSimpleNameReference:
+    subClass: OpenClass.NestedInheritorOfOpenClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,19 @@
+KtNameReferenceExpression(50,58): 'JavaEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class JavaEnum
+
+KtNameReferenceExpression(68,76): 'javaEnum'
+  KtSimpleNameReference:
+    javaEnum: JavaEnum
+
+KtCallExpression(84,91): 'first()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(84,89): 'first'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(101,107): 'second'
+  KtSimpleNameReference:
+    (in JavaEnum) var second: JavaEnum!

@@ -1,0 +1,255 @@
+KtNameReferenceExpression(121,127): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(162,168): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(196,197): 'T'
+  KtSimpleNameReference:
+    (in <local>: myRun) T
+
+KtNameReferenceExpression(200,201): 'T'
+  KtSimpleNameReference:
+    (in <local>: myRun) T
+
+KtCallExpression(204,210): 'TODO()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(204,208): 'TODO'
+  KtSimpleNameReference:
+    (in kotlin) inline fun TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(226,227): 'X'
+  KtSimpleNameReference:
+    (in <local>: id) X
+
+KtNameReferenceExpression(230,231): 'X'
+  KtSimpleNameReference:
+    (in <local>: id) X
+
+KtCallExpression(234,240): 'TODO()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(234,238): 'TODO'
+  KtSimpleNameReference:
+    (in kotlin) inline fun TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(254,261): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(277,283): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(284,285): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtCallExpression(291,364): 'myRunWithMyEnum {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
+  KtSimpleNameReference:
+    (in ROOT) fun myRunWithMyEnum(b: () -> MyEnum)
+
+KtNameReferenceExpression(321,322): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(330,346): '@myRunWithMyEnum'
+  KtSimpleNameReference:
+    (in <local>: main) fun(): MyEnum
+
+KtNameReferenceExpression(347,348): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(357,358): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtCallExpression(370,451): 'myRunWithMyEnum {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
+  KtSimpleNameReference:
+    (in ROOT) fun myRunWithMyEnum(b: () -> MyEnum)
+
+KtNameReferenceExpression(400,401): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
+  KtSimpleNameReference:
+    (in <local>: main) fun(): MyEnum
+
+KtCallExpression(426,431): 'id(X)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(426,428): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(429,430): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtCallExpression(440,445): 'id(Y)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(440,442): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(443,444): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtCallExpression(457,518): 'myRun<MyEnum> {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(457,462): 'myRun'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> myRun(b: () -> T): T
+
+KtNameReferenceExpression(463,469): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(485,486): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(494,500): '@myRun'
+  KtSimpleNameReference:
+    (in <local>: main) fun(): MyEnum
+
+KtNameReferenceExpression(501,502): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(511,512): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtCallExpression(523,607): 'foo('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(523,526): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo(a: MyEnum)
+
+KtCallExpression(536,601): 'myRun {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(536,541): 'myRun'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> myRun(b: () -> T): T
+
+KtNameReferenceExpression(560,561): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(569,575): '@myRun'
+  KtSimpleNameReference:
+    (in <local>: main) fun(): MyEnum
+
+KtNameReferenceExpression(576,577): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(590,591): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtNameReferenceExpression(620,626): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtCallExpression(629,682): 'myRun {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(629,634): 'myRun'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> myRun(b: () -> T): T
+
+KtNameReferenceExpression(649,650): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(658,664): '@myRun'
+  KtSimpleNameReference:
+    (in <local>: main.z) fun(): MyEnum
+
+KtNameReferenceExpression(665,666): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(675,676): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtCallExpression(688,741): 'myRun {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(688,693): 'myRun'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> myRun(b: () -> T): T
+
+KtNameReferenceExpression(708,709): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(717,723): '@myRun'
+  KtSimpleNameReference:
+    (in <local>: main) fun(): ERROR(CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y)
+
+KtNameReferenceExpression(724,725): 'X'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(734,735): 'Y'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(746,806): 'myRun {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(746,751): 'myRun'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> myRun(b: () -> T): T
+
+KtNameReferenceExpression(766,767): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Boolean
+
+KtLabelReferenceExpression(775,781): '@myRun'
+  KtSimpleNameReference:
+    (in <local>: main) fun(): MyEnum
+
+KtNameReferenceExpression(782,788): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(789,790): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(799,800): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y

@@ -1,0 +1,1024 @@
+KtFile: 'unsupportedTypePosition.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,171): 'sealed interface SealedInterface {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,84): 'sealed'
+  NO_CANDIDATES
+
+KtClassBody(111,171): '{'
+  NO_CANDIDATES
+
+KtClass(117,169): 'class NestedInheritor(prop: String): SealedInterface'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(138,152): '(prop: String)'
+  NO_CANDIDATES
+
+KtParameterList(138,152): '(prop: String)'
+  NO_CANDIDATES
+
+KtParameter(139,151): 'prop: String'
+  NO_CANDIDATES
+
+KtTypeReference(145,151): 'String'
+  NO_CANDIDATES
+
+KtUserType(145,151): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(145,151): 'String'
+  NO_CANDIDATES
+
+KtSuperTypeList(154,169): 'SealedInterface'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(154,169): 'SealedInterface'
+  NO_CANDIDATES
+
+KtTypeReference(154,169): 'SealedInterface'
+  NO_CANDIDATES
+
+KtUserType(154,169): 'SealedInterface'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(154,169): 'SealedInterface'
+  NO_CANDIDATES
+
+KtClass(173,797): 'sealed class SealedClass {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(173,179): 'sealed'
+  NO_CANDIDATES
+
+KtClassBody(198,797): '{'
+  NO_CANDIDATES
+
+KtClass(204,271): 'open class SealedInheritor1(val prop1: String = "1"): SealedClass()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(204,208): 'open'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(231,256): '(val prop1: String = "1")'
+  NO_CANDIDATES
+
+KtParameterList(231,256): '(val prop1: String = "1")'
+  NO_CANDIDATES
+
+KtParameter(232,255): 'val prop1: String = "1"'
+  NO_CANDIDATES
+
+KtTypeReference(243,249): 'String'
+  NO_CANDIDATES
+
+KtUserType(243,249): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(243,249): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(252,255): '"1"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(253,254): '1'
+  NO_CANDIDATES
+
+KtSuperTypeList(258,271): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(258,271): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(258,269): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(258,269): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(258,269): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(258,269): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(269,271): '()'
+  NO_CANDIDATES
+
+KtClass(276,333): 'class SealedInheritor2(val prop2: Int = 2): SealedClass()'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(298,318): '(val prop2: Int = 2)'
+  NO_CANDIDATES
+
+KtParameterList(298,318): '(val prop2: Int = 2)'
+  NO_CANDIDATES
+
+KtParameter(299,317): 'val prop2: Int = 2'
+  NO_CANDIDATES
+
+KtTypeReference(310,313): 'Int'
+  NO_CANDIDATES
+
+KtUserType(310,313): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(310,313): 'Int'
+  NO_CANDIDATES
+
+KtConstantExpression(316,317): '2'
+  NO_CANDIDATES
+
+KtSuperTypeList(320,333): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(320,333): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(320,331): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(320,331): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(320,331): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(320,331): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(331,333): '()'
+  NO_CANDIDATES
+
+KtClass(339,416): 'sealed class SealedSealedInheritor1(val prop3: Boolean = true): SealedClass()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(339,345): 'sealed'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(374,401): '(val prop3: Boolean = true)'
+  NO_CANDIDATES
+
+KtParameterList(374,401): '(val prop3: Boolean = true)'
+  NO_CANDIDATES
+
+KtParameter(375,400): 'val prop3: Boolean = true'
+  NO_CANDIDATES
+
+KtTypeReference(386,393): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(386,393): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(386,393): 'Boolean'
+  NO_CANDIDATES
+
+KtConstantExpression(396,400): 'true'
+  NO_CANDIDATES
+
+KtSuperTypeList(403,416): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(403,416): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(403,414): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(403,414): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(403,414): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(403,414): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(414,416): '()'
+  NO_CANDIDATES
+
+KtClass(422,471): 'class IndirectSealedInheritor: SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeList(453,471): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(453,471): 'SealedInheritor1()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(453,469): 'SealedInheritor1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(453,469): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(453,469): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(453,469): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(469,471): '()'
+  NO_CANDIDATES
+
+KtClass(477,620): 'class Nested {'
+  NO_CANDIDATES
+
+KtClassBody(490,620): '{'
+  NO_CANDIDATES
+
+KtClass(500,546): 'class DeepSealedNestedInheritor: SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeList(533,546): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(533,546): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(533,544): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(533,544): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(533,544): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(533,544): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(544,546): '()'
+  NO_CANDIDATES
+
+KtClass(555,614): 'class DeepIndirectSealedNestedInheritor: SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeList(596,614): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(596,614): 'SealedInheritor1()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(596,612): 'SealedInheritor1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1
+          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+          valueParameters = [
+            KaVariableSignature:
+              name = prop1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = prop1: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(596,612): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(596,612): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(596,612): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(612,614): '()'
+  NO_CANDIDATES
+
+KtClass(626,696): 'inner class Inner(val innerProp: String = "inner prop"): SealedClass()'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(626,631): 'inner'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(643,681): '(val innerProp: String = "inner prop")'
+  NO_CANDIDATES
+
+KtParameterList(643,681): '(val innerProp: String = "inner prop")'
+  NO_CANDIDATES
+
+KtParameter(644,680): 'val innerProp: String = "inner prop"'
+  NO_CANDIDATES
+
+KtTypeReference(659,665): 'String'
+  NO_CANDIDATES
+
+KtUserType(659,665): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(659,665): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(668,680): '"inner prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(669,679): 'inner prop'
+  NO_CANDIDATES
+
+KtSuperTypeList(683,696): 'SealedClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(683,696): 'SealedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(683,694): 'SealedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = SealedClass
+          symbol = <constructor>(): SealedClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(683,694): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(683,694): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(683,694): 'SealedClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(694,696): '()'
+  NO_CANDIDATES
+
+KtClass(702,715): 'class Nested1'
+  NO_CANDIDATES
+
+KtClass(720,733): 'class Nested2'
+  NO_CANDIDATES
+
+KtClass(738,763): 'sealed class SealedNested'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(738,744): 'sealed'
+  NO_CANDIDATES
+
+KtObjectDeclaration(769,795): 'companion object Companion'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(769,778): 'companion'
+  NO_CANDIDATES
+
+KtNamedFunction(799,948): 'fun testAs(instance: SealedClass) {'
+  NO_CANDIDATES
+
+KtParameterList(809,832): '(instance: SealedClass)'
+  NO_CANDIDATES
+
+KtParameter(810,831): 'instance: SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(820,831): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(820,831): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(820,831): 'SealedClass'
+  NO_CANDIDATES
+
+KtBlockExpression(833,948): '{'
+  NO_CANDIDATES
+
+KtProperty(839,890): 'val SealedInheritor1 = instance as SealedInheritor1'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(862,890): 'instance as SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(862,870): 'instance'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = instance
+          receiverType = null
+          returnType = SealedClass
+          symbol = instance: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(871,873): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(874,890): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(874,890): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(874,890): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtProperty(895,946): 'val SealedInheritor2 = instance as SealedInheritor2'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(918,946): 'instance as SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(918,926): 'instance'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = instance
+          receiverType = null
+          returnType = SealedClass
+          symbol = instance: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(927,929): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(930,946): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtUserType(930,946): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(930,946): 'SealedInheritor2'
+  NO_CANDIDATES
+
+KtNamedFunction(950,1075): 'fun testTypeAnnotation(arg: SealedClass) {'
+  NO_CANDIDATES
+
+KtParameterList(972,990): '(arg: SealedClass)'
+  NO_CANDIDATES
+
+KtParameter(973,989): 'arg: SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(978,989): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(978,989): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(978,989): 'SealedClass'
+  NO_CANDIDATES
+
+KtBlockExpression(991,1075): '{'
+  NO_CANDIDATES
+
+KtProperty(997,1029): 'val left: SealedInheritor1 = arg'
+  NO_CANDIDATES
+
+KtTypeReference(1007,1023): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1007,1023): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1007,1023): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1026,1029): 'arg'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass
+          symbol = arg: SealedClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(1034,1073): 'val i: SealedClass = SealedInheritor1()'
+  NO_CANDIDATES
+
+KtTypeReference(1041,1052): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(1041,1052): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1041,1052): 'SealedClass'
+  NO_CANDIDATES
+
+KtCallExpression(1055,1073): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1055,1071): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(1071,1073): '()'
+  NO_CANDIDATES
+
+KtClass(1077,1128): 'class SealedInheritor1Inheritor: SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeList(1110,1128): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(1110,1128): 'SealedInheritor1()'
+  NO_CANDIDATES
+
+KtConstructorCalleeExpression(1110,1126): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1110,1126): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1110,1126): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1110,1126): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(1126,1128): '()'
+  NO_CANDIDATES
+
+KtClass(1130,1164): 'class Generic<T: SealedInheritor1>'
+  NO_CANDIDATES
+
+KtTypeParameterList(1143,1164): '<T: SealedInheritor1>'
+  NO_CANDIDATES
+
+KtTypeParameter(1144,1163): 'T: SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1147,1163): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1147,1163): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1147,1163): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtClass(1166,1183): 'class Generic2<T>'
+  NO_CANDIDATES
+
+KtTypeParameterList(1180,1183): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(1181,1182): 'T'
+  NO_CANDIDATES
+
+KtNamedFunction(1185,1247): 'fun testTypeArg() {'
+  NO_CANDIDATES
+
+KtParameterList(1200,1202): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1203,1247): '{'
+  NO_CANDIDATES
+
+KtProperty(1209,1245): 'val i = Generic2<SealedInheritor1>()'
+  NO_CANDIDATES
+
+KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Generic2<ERROR CLASS: Symbol not found for SealedInheritor1>
+          symbol = <constructor>(): Generic2<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Symbol not found for SealedInheritor1)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): constructor<T>(): Generic2<T>>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1217,1225): 'Generic2'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Generic2<ERROR CLASS: Symbol not found for SealedInheritor1>
+          symbol = <constructor>(): Generic2<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Symbol not found for SealedInheritor1)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): constructor<T>(): Generic2<T>>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1225,1243): '<SealedInheritor1>'
+  NO_CANDIDATES
+
+KtTypeProjection(1226,1242): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1226,1242): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1226,1242): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1226,1242): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(1243,1245): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(1249,1289): 'fun <T : SealedClass> constraintFun() {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(1253,1270): '<T : SealedClass>'
+  NO_CANDIDATES
+
+KtTypeParameter(1254,1269): 'T : SealedClass'
+  NO_CANDIDATES
+
+KtTypeReference(1258,1269): 'SealedClass'
+  NO_CANDIDATES
+
+KtUserType(1258,1269): 'SealedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1258,1269): 'SealedClass'
+  NO_CANDIDATES
+
+KtParameterList(1284,1286): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1287,1289): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(1291,1353): 'fun testConstraint() {'
+  NO_CANDIDATES
+
+KtParameterList(1309,1311): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(1312,1353): '{'
+  NO_CANDIDATES
+
+KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /constraintFun(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /constraintFun
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Symbol not found for SealedInheritor1)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : SealedClass> constraintFun(): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1318,1331): 'constraintFun'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /constraintFun(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /constraintFun
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Symbol not found for SealedInheritor1)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : SealedClass> constraintFun(): Unit>
+    isInBestCandidates = true
+
+KtTypeArgumentList(1331,1349): '<SealedInheritor1>'
+  NO_CANDIDATES
+
+KtTypeProjection(1332,1348): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtTypeReference(1332,1348): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtUserType(1332,1348): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1332,1348): 'SealedInheritor1'
+  NO_CANDIDATES
+
+KtValueArgumentList(1349,1351): '()'
+  NO_CANDIDATES
+
+KtClass(1355,1405): 'class SubSealed : SealedInterface, NestedInheritor'
+  NO_CANDIDATES
+
+KtSuperTypeList(1373,1405): 'SealedInterface, NestedInheritor'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(1373,1388): 'SealedInterface'
+  NO_CANDIDATES
+
+KtTypeReference(1373,1388): 'SealedInterface'
+  NO_CANDIDATES
+
+KtUserType(1373,1388): 'SealedInterface'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1373,1388): 'SealedInterface'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(1390,1405): 'NestedInheritor'
+  NO_CANDIDATES
+
+KtTypeReference(1390,1405): 'NestedInheritor'
+  NO_CANDIDATES
+
+KtUserType(1390,1405): 'NestedInheritor'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1390,1405): 'NestedInheritor'
+  NO_CANDIDATES

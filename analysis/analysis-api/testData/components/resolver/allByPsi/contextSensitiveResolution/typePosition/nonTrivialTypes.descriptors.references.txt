@@ -1,0 +1,237 @@
+KtNameReferenceExpression(75,81): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(84,92): 'MySealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MySealed
+
+KtNameReferenceExpression(116,122): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(125,133): 'MySealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MySealed
+
+KtNameReferenceExpression(204,213): 'MyGeneric'
+  KtSimpleNameReference:
+    (in ROOT) interface MyGeneric<E1>
+
+KtNameReferenceExpression(214,216): 'E2'
+  KtSimpleNameReference:
+    (in <local>: MyGenericSealed) E2
+
+KtNameReferenceExpression(242,248): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(251,266): 'MyGenericSealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MyGenericSealed<E2> : MyGeneric<E2>
+
+KtNameReferenceExpression(267,273): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(298,304): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(307,322): 'MyGenericSealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MyGenericSealed<E2> : MyGeneric<E2>
+
+KtNameReferenceExpression(323,329): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(347,356): 'MyGeneric'
+  KtSimpleNameReference:
+    (in ROOT) interface MyGeneric<E1>
+
+KtNameReferenceExpression(357,360): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(367,379): 'CharSequence'
+  KtSimpleNameReference:
+    (in kotlin) interface CharSequence
+
+KtNameReferenceExpression(403,412): 'JavaClass'
+  KtSimpleNameReference:
+    (in ROOT) open class JavaClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(413,418): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(413,416): 'foo'
+  KtSimpleNameReference:
+    (in JavaClass) open fun foo(): MySealed!
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(433,437): 'Left'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(441,444): 'foo'
+  KtSimpleNameReference:
+    (in <local>: main) val foo: MySealed!
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(445,446): 'x'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(458,463): 'Right'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(467,470): 'foo'
+  KtSimpleNameReference:
+    (in <local>: main) val foo: MySealed!
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(471,472): 'y'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(583,585): 'mg'
+  KtSimpleNameReference:
+    mg: MyGeneric<kotlin.Any>
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(586,588): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(589,604): 'MyGenericSealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MyGenericSealed<E2> : MyGeneric<E2>
+
+KtNameReferenceExpression(605,611): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(623,625): 'mg'
+  KtSimpleNameReference:
+    mg: MyGeneric<kotlin.Any>
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(640,644): 'Left'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(648,650): 'mg'
+  KtSimpleNameReference:
+    mg: MyGeneric<kotlin.Any>
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(651,652): 'x'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(664,669): 'Right'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(673,675): 'mg'
+  KtSimpleNameReference:
+    mg: MyGeneric<kotlin.Any>
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(676,677): 'y'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(804,806): 'cs'
+  KtSimpleNameReference:
+    cs: kotlin.CharSequence
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(807,809): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(810,825): 'MyGenericSealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MyGenericSealed<E2> : MyGeneric<E2>
+
+KtNameReferenceExpression(826,832): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(844,846): 'cs'
+  KtSimpleNameReference:
+    cs: kotlin.CharSequence
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(861,865): 'Left'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(869,871): 'cs'
+  KtSimpleNameReference:
+    cs: kotlin.CharSequence
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(872,873): 'x'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(885,890): 'Right'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(894,896): 'cs'
+  KtSimpleNameReference:
+    cs: kotlin.CharSequence
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(897,898): 'y'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

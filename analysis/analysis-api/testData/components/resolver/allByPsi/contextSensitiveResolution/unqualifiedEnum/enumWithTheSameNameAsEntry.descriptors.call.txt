@@ -1,0 +1,103 @@
+KtFile: 'enumWithTheSameNameAsEntry.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(71,101): 'enum class A {'
+  null
+
+KtDeclarationModifierList(71,75): 'enum'
+  null
+
+KtClassBody(84,101): '{'
+  null
+
+KtEnumEntry(90,92): 'A,'
+  null
+
+KtEnumEntry(97,99): 'B,'
+  null
+
+KtNamedFunction(103,162): 'fun test(a: A) = when (a) {'
+  null
+
+KtParameterList(111,117): '(a: A)'
+  null
+
+KtParameter(112,116): 'a: A'
+  null
+
+KtTypeReference(115,116): 'A'
+  null
+
+KtUserType(115,116): 'A'
+  null
+
+KtNameReferenceExpression(115,116): 'A'
+  null
+
+KtWhenExpression(120,162): 'when (a) {'
+  null
+
+KtNameReferenceExpression(126,127): 'a'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = A
+          symbol = a: A
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(135,145): 'A.A -> "A"'
+  null
+
+KtWhenConditionWithExpression(135,138): 'A.A'
+  null
+
+KtDotQualifiedExpression(135,138): 'A.A'
+  null
+
+KtNameReferenceExpression(135,136): 'A'
+  null
+
+KtNameReferenceExpression(137,138): 'A'
+  null
+
+KtStringTemplateExpression(142,145): '"A"'
+  null
+
+KtLiteralStringTemplateEntry(143,144): 'A'
+  null
+
+KtWhenEntry(150,160): 'A.B -> "B"'
+  null
+
+KtWhenConditionWithExpression(150,153): 'A.B'
+  null
+
+KtDotQualifiedExpression(150,153): 'A.B'
+  null
+
+KtNameReferenceExpression(150,151): 'A'
+  null
+
+KtNameReferenceExpression(152,153): 'B'
+  null
+
+KtStringTemplateExpression(157,160): '"B"'
+  null
+
+KtLiteralStringTemplateEntry(158,159): 'B'
+  null

@@ -1,0 +1,28 @@
+KtNameReferenceExpression(120,124): 'Some'
+  KtSimpleNameReference:
+    (in ROOT) enum class Some
+
+KtNameReferenceExpression(137,142): 'Other'
+  KtSimpleNameReference:
+    (in ROOT) typealias Other = Some
+
+KtNameReferenceExpression(152,153): 'o'
+  KtSimpleNameReference:
+    o: Other /* = Some */
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(161,166): 'FIRST'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(176,182): 'SECOND'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

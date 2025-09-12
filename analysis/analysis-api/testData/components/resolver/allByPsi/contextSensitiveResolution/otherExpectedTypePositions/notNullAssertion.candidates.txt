@@ -1,0 +1,4073 @@
+KtFile: 'notNullAssertion.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(93,124): 'import kotlin.reflect.KProperty'
+  NO_CANDIDATES
+
+KtImportDirective(93,124): 'import kotlin.reflect.KProperty'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(100,124): 'kotlin.reflect.KProperty'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(100,114): 'kotlin.reflect'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(100,106): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(107,114): 'reflect'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(115,124): 'KProperty'
+  NO_CANDIDATES
+
+KtClass(126,349): 'open class MyClass {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(126,130): 'open'
+  NO_CANDIDATES
+
+KtClassBody(145,349): '{'
+  NO_CANDIDATES
+
+KtObjectDeclaration(151,185): 'object NestedInheritor : MyClass()'
+  NO_CANDIDATES
+
+KtSuperTypeList(176,185): 'MyClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(176,185): 'MyClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(176,183): 'MyClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(176,183): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(176,183): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(176,183): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(183,185): '()'
+  NO_CANDIDATES
+
+KtObjectDeclaration(191,347): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(191,200): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(208,347): '{'
+  NO_CANDIDATES
+
+KtProperty(218,254): 'val myClassProp: MyClass = MyClass()'
+  NO_CANDIDATES
+
+KtTypeReference(235,242): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(235,242): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(235,242): 'MyClass'
+  NO_CANDIDATES
+
+KtCallExpression(245,254): 'MyClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(245,252): 'MyClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(252,254): '()'
+  NO_CANDIDATES
+
+KtProperty(263,290): 'val stringProp: String = ""'
+  NO_CANDIDATES
+
+KtTypeReference(279,285): 'String'
+  NO_CANDIDATES
+
+KtUserType(279,285): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(279,285): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(288,290): '""'
+  NO_CANDIDATES
+
+KtNamedFunction(299,341): 'fun getNestedInheritor() = NestedInheritor'
+  NO_CANDIDATES
+
+KtParameterList(321,323): '()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(326,341): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNamedFunction(351,374): 'fun <T>receive(e: T) {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(355,358): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(356,357): 'T'
+  NO_CANDIDATES
+
+KtParameterList(365,371): '(e: T)'
+  NO_CANDIDATES
+
+KtParameter(366,370): 'e: T'
+  NO_CANDIDATES
+
+KtTypeReference(369,370): 'T'
+  NO_CANDIDATES
+
+KtUserType(369,370): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(369,370): 'T'
+  NO_CANDIDATES
+
+KtBlockExpression(372,374): '{}'
+  NO_CANDIDATES
+
+KtProperty(375,421): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(398,405): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(406,421): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNamedFunction(423,609): 'fun testNotNullAssertion() {'
+  NO_CANDIDATES
+
+KtParameterList(447,449): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(450,609): '{'
+  NO_CANDIDATES
+
+KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(456,463): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(463,472): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(464,471): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(464,471): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(464,471): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(464,471): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(472,491): '(NestedInheritor!!)'
+  NO_CANDIDATES
+
+KtValueArgument(473,490): 'NestedInheritor!!'
+  NO_CANDIDATES
+
+KtPostfixExpression(473,490): 'NestedInheritor!!'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(473,488): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(488,490): '!!'
+  NO_CANDIDATES
+
+KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClassProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(496,503): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClassProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(503,512): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(504,511): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(504,511): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(504,511): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(504,511): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(512,527): '(myClassProp!!)'
+  NO_CANDIDATES
+
+KtValueArgument(513,526): 'myClassProp!!'
+  NO_CANDIDATES
+
+KtPostfixExpression(513,526): 'myClassProp!!'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(513,524): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClassProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(524,526): '!!'
+  NO_CANDIDATES
+
+KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        stringProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(532,539): 'receive'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        stringProp!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
+    isInBestCandidates = true
+
+KtTypeArgumentList(539,548): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(540,547): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(540,547): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(540,547): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(540,547): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(548,562): '(stringProp!!)'
+  NO_CANDIDATES
+
+KtValueArgument(549,561): 'stringProp!!'
+  NO_CANDIDATES
+
+KtPostfixExpression(549,561): 'stringProp!!'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(549,559): 'stringProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = stringProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(559,561): '!!'
+  NO_CANDIDATES
+
+KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        getNestedInheritor()!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(567,574): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        getNestedInheritor()!! -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(574,583): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(575,582): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(575,582): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(575,582): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(575,582): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(583,607): '(getNestedInheritor()!!)'
+  NO_CANDIDATES
+
+KtValueArgument(584,606): 'getNestedInheritor()!!'
+  NO_CANDIDATES
+
+KtPostfixExpression(584,606): 'getNestedInheritor()!!'
+  NO_CANDIDATES
+
+KtCallExpression(584,604): 'getNestedInheritor()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(584,602): 'getNestedInheritor'
+  NO_CANDIDATES
+
+KtValueArgumentList(602,604): '()'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(604,606): '!!'
+  NO_CANDIDATES
+
+KtNamedFunction(611,917): 'fun testIndexAccess(): Int? {'
+  NO_CANDIDATES
+
+KtParameterList(630,632): '()'
+  NO_CANDIDATES
+
+KtTypeReference(634,638): 'Int?'
+  NO_CANDIDATES
+
+KtNullableType(634,638): 'Int?'
+  NO_CANDIDATES
+
+KtUserType(634,637): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(634,637): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(639,917): '{'
+  NO_CANDIDATES
+
+KtProperty(645,791): 'val map = mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
+  NO_CANDIDATES
+
+KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = kotlin/collections/mapOf(): kotlin.collections.Map<K, V>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <K, V> mapOf(): Map<K, V>'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        MyClass.myClassProp to 1 -> (KaVariableSignature:
+          name = pair
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = pair: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = kotlin/collections/mapOf(pair: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+          valueParameters = [
+            KaVariableSignature:
+              name = pair
+              receiverType = null
+              returnType = kotlin.Pair<MyClass, kotlin.Int>
+              symbol = pair: kotlin.Pair<K, V>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V>'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        MyClass.myClassProp to 1 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null),
+        MyClass.stringProp to 2 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null),
+        MyClass.NestedInheritor to 3 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null),
+        MyClass.getNestedInheritor() to 4 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+          valueParameters = [
+            KaVariableSignature:
+              name = pairs
+              receiverType = null
+              returnType = kotlin.Pair<MyClass, kotlin.Int>
+              symbol = vararg pairs: kotlin.Pair<K, V>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(655,660): 'mapOf'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = kotlin/collections/mapOf(): kotlin.collections.Map<K, V>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <K, V> mapOf(): Map<K, V>'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        MyClass.myClassProp to 1 -> (KaVariableSignature:
+          name = pair
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = pair: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = kotlin/collections/mapOf(pair: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+          valueParameters = [
+            KaVariableSignature:
+              name = pair
+              receiverType = null
+              returnType = kotlin.Pair<MyClass, kotlin.Int>
+              symbol = pair: kotlin.Pair<K, V>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V>'.>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        MyClass.myClassProp to 1 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null),
+        MyClass.stringProp to 2 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null),
+        MyClass.NestedInheritor to 3 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null),
+        MyClass.getNestedInheritor() to 4 -> (KaVariableSignature:
+          name = pairs
+          receiverType = null
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = vararg pairs: kotlin.Pair<K, V>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+          valueParameters = [
+            KaVariableSignature:
+              name = pairs
+              receiverType = null
+              returnType = kotlin.Pair<MyClass, kotlin.Int>
+              symbol = vararg pairs: kotlin.Pair<K, V>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/mapOf
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
+    isInBestCandidates = true
+
+KtTypeArgumentList(660,674): '<MyClass, Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(661,668): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(661,668): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(661,668): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(661,668): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeProjection(670,673): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(670,673): 'Int'
+  NO_CANDIDATES
+
+KtUserType(670,673): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(670,673): 'Int'
+  NO_CANDIDATES
+
+KtValueArgumentList(674,791): '(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
+  NO_CANDIDATES
+
+KtValueArgument(675,699): 'MyClass.myClassProp to 1'
+  NO_CANDIDATES
+
+KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (MyClass),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(675,682): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(683,694): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(695,697): 'to'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.Pair<MyClass, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (MyClass),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(698,699): '1'
+  NO_CANDIDATES
+
+KtValueArgument(702,725): 'MyClass.stringProp to 2'
+  NO_CANDIDATES
+
+KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.stringProp
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KaFunctionSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Pair<kotlin.String, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (kotlin.String),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(702,709): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(710,720): 'stringProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(721,723): 'to'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.stringProp
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KaFunctionSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Pair<kotlin.String, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (kotlin.String),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(724,725): '2'
+  NO_CANDIDATES
+
+KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
+  NO_CANDIDATES
+
+KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.NestedInheritor
+          isSafeNavigation = false
+          type = MyClass.NestedInheritor
+        signature = KaFunctionSignature:
+          receiverType = MyClass.NestedInheritor
+          returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (MyClass.NestedInheritor),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(727,734): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(735,750): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(751,753): 'to'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.NestedInheritor
+          isSafeNavigation = false
+          type = MyClass.NestedInheritor
+        signature = KaFunctionSignature:
+          receiverType = MyClass.NestedInheritor
+          returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (MyClass.NestedInheritor),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(754,755): '3'
+  NO_CANDIDATES
+
+KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
+  NO_CANDIDATES
+
+KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        4 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.getNestedInheritor()
+          isSafeNavigation = false
+          type = MyClass.NestedInheritor
+        signature = KaFunctionSignature:
+          receiverType = MyClass.NestedInheritor
+          returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (MyClass.NestedInheritor),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = /MyClass.Companion.getNestedInheritor
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(757,764): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(765,785): 'getNestedInheritor()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = /MyClass.Companion.getNestedInheritor
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(765,783): 'getNestedInheritor'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = /MyClass.Companion.getNestedInheritor
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(783,785): '()'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(786,788): 'to'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        4 -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = that: B
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.getNestedInheritor()
+          isSafeNavigation = false
+          type = MyClass.NestedInheritor
+        signature = KaFunctionSignature:
+          receiverType = MyClass.NestedInheritor
+          returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
+          symbol = kotlin/to(<extension receiver>: A, that: B): kotlin.Pair<A, B>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = that: B
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/to
+      typeArgumentsMapping = {
+        A -> (MyClass.NestedInheritor),
+        B -> (kotlin.Int)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(789,790): '4'
+  NO_CANDIDATES
+
+KtReturnExpression(796,819): 'return map[myClassProp]'
+  NO_CANDIDATES
+
+KtArrayAccessExpression(803,819): 'map[myClassProp]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClassProp -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/Map.get
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClassProp -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    isInBestCandidates = false
+
+KtNameReferenceExpression(803,806): 'map'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = map
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNode(806,819): '[myClassProp]'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(807,818): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClassProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtReturnExpression(824,846): 'return map[stringProp]'
+  NO_CANDIDATES
+
+KtArrayAccessExpression(831,846): 'map[stringProp]'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        stringProp -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/Map.get
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        stringProp -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(831,834): 'map'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = map
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNode(834,846): '[stringProp]'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(835,845): 'stringProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = stringProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtReturnExpression(851,878): 'return map[NestedInheritor]'
+  NO_CANDIDATES
+
+KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/Map.get
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    isInBestCandidates = false
+
+KtNameReferenceExpression(858,861): 'map'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = map
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNode(861,878): '[NestedInheritor]'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(862,877): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
+  NO_CANDIDATES
+
+KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        getNestedInheritor() -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/Map.get
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        getNestedInheritor() -> (KaVariableSignature:
+          name = key
+          receiverType = null
+          returnType = MyClass
+          symbol = key: K
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = map
+          isSafeNavigation = false
+          type = kotlin.collections.Map<MyClass, kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+          returnType = kotlin.Int?
+          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+          valueParameters = [
+            KaVariableSignature:
+              name = key
+              receiverType = null
+              returnType = MyClass
+              symbol = key: K
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/get
+      typeArgumentsMapping = {
+        K -> (MyClass),
+        V -> (kotlin.Int)
+      }
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): kotlin/collections/get>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(890,893): 'map'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = map
+          receiverType = null
+          returnType = kotlin.collections.Map<MyClass, kotlin.Int>
+          symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtContainerNode(893,915): '[getNestedInheritor()]'
+  NO_CANDIDATES
+
+KtCallExpression(894,914): 'getNestedInheritor()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(894,912): 'getNestedInheritor'
+  NO_CANDIDATES
+
+KtValueArgumentList(912,914): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(919,999): 'fun testCallableReference() {'
+  NO_CANDIDATES
+
+KtParameterList(944,946): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(947,999): '{'
+  NO_CANDIDATES
+
+KtProperty(953,997): 'val i150: KProperty<MyClass> = ::myClassProp'
+  NO_CANDIDATES
+
+KtTypeReference(963,981): 'KProperty<MyClass>'
+  NO_CANDIDATES
+
+KtUserType(963,981): 'KProperty<MyClass>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(963,972): 'KProperty'
+  NO_CANDIDATES
+
+KtTypeArgumentList(972,981): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(973,980): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(973,980): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(973,980): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(973,980): 'MyClass'
+  NO_CANDIDATES
+
+KtCallableReferenceExpression(984,997): '::myClassProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(986,997): 'myClassProp'
+  NO_CANDIDATES
+
+KtNamedFunction(1001,1101): 'operator fun MyClass.rangeTo(that: MyClass): ClosedFloatingPointRange<MyClass> {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1001,1009): 'operator'
+  NO_CANDIDATES
+
+KtTypeReference(1014,1021): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(1014,1021): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1014,1021): 'MyClass'
+  NO_CANDIDATES
+
+KtParameterList(1029,1044): '(that: MyClass)'
+  NO_CANDIDATES
+
+KtParameter(1030,1043): 'that: MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(1036,1043): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(1036,1043): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1036,1043): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(1046,1079): 'ClosedFloatingPointRange<MyClass>'
+  NO_CANDIDATES
+
+KtUserType(1046,1079): 'ClosedFloatingPointRange<MyClass>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1046,1070): 'ClosedFloatingPointRange'
+  NO_CANDIDATES
+
+KtTypeArgumentList(1070,1079): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(1071,1078): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(1071,1078): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(1071,1078): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1071,1078): 'MyClass'
+  NO_CANDIDATES
+
+KtBlockExpression(1080,1101): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(1086,1099): 'return null!!'
+  NO_CANDIDATES
+
+KtPostfixExpression(1093,1099): 'null!!'
+  NO_CANDIDATES
+
+KtConstantExpression(1093,1097): 'null'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(1097,1099): '!!'
+  NO_CANDIDATES
+
+KtNamedFunction(1102,1175): 'operator fun MyClass.contains(that: MyClass): Boolean {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(1102,1110): 'operator'
+  NO_CANDIDATES
+
+KtTypeReference(1115,1122): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(1115,1122): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1115,1122): 'MyClass'
+  NO_CANDIDATES
+
+KtParameterList(1131,1146): '(that: MyClass)'
+  NO_CANDIDATES
+
+KtParameter(1132,1145): 'that: MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(1138,1145): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(1138,1145): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1138,1145): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(1148,1155): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1148,1155): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1148,1155): 'Boolean'
+  NO_CANDIDATES
+
+KtBlockExpression(1156,1175): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(1162,1173): 'return true'
+  NO_CANDIDATES
+
+KtConstantExpression(1169,1173): 'true'
+  NO_CANDIDATES
+
+KtNamedFunction(1177,1286): 'fun testOverriden(a: Int) {'
+  NO_CANDIDATES
+
+KtParameterList(1194,1202): '(a: Int)'
+  NO_CANDIDATES
+
+KtParameter(1195,1201): 'a: Int'
+  NO_CANDIDATES
+
+KtTypeReference(1198,1201): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1198,1201): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1198,1201): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1203,1286): '{'
+  NO_CANDIDATES
+
+KtProperty(1209,1237): 'val a: MyClass = myClassProp'
+  NO_CANDIDATES
+
+KtTypeReference(1216,1223): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(1216,1223): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1216,1223): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1226,1237): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClassProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyClass
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/ClosedFloatingPointRange.contains(<dispatch receiver>: kotlin.ranges.ClosedFloatingPointRange<T>, value: T): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = MyClass
+              symbol = value: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/ClosedFloatingPointRange.contains
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: MyClass, that: MyClass): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = MyClass
+              symbol = that: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun MyClass.contains(that: MyClass): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = ERROR CLASS: Cannot infer argument for type parameter T?
+          symbol = element: T?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = ERROR CLASS: Cannot infer argument for type parameter T?
+              symbol = element: T?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Cannot infer argument for type parameter T),
+        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = MyClass?
+          symbol = element: T?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = MyClass?
+              symbol = element: T?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {
+        T -> (MyClass),
+        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Byte>, value: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Byte>.contains(value: Int): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = value: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Byte>, value: kotlin.Long): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = value: kotlin.Long
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Byte>.contains(value: Long): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = value: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Byte>, value: kotlin.Short): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = value: kotlin.Short
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Byte>.contains(value: Short): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = value: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Double>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Double>, value: kotlin.Float): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Float
+              symbol = value: kotlin.Float
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Double>.contains(value: Float): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = value: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Float>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Float>, value: kotlin.Double): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Double
+              symbol = value: kotlin.Double
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Float>.contains(value: Double): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = value: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Int>, value: kotlin.Byte): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = value: kotlin.Byte
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Int>.contains(value: Byte): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = value: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Int>, value: kotlin.Long): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = value: kotlin.Long
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Int>.contains(value: Long): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = value: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Int>, value: kotlin.Short): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = value: kotlin.Short
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Int>.contains(value: Short): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = value: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Long>, value: kotlin.Byte): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = value: kotlin.Byte
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Long>.contains(value: Byte): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Long>, value: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Long>.contains(value: Int): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = value: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Long>, value: kotlin.Short): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = value: kotlin.Short
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Long>.contains(value: Short): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = value: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Short>, value: kotlin.Byte): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = value: kotlin.Byte
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Short>.contains(value: Byte): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Short>, value: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Short>.contains(value: Int): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = value: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Short>, value: kotlin.Long): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = value: kotlin.Long
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Short>.contains(value: Long): Boolean>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1242,1243): 'a'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyClass
+          symbol = val a: MyClass
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(1244,1247): '!in'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = MyClass
+          symbol = value: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/ClosedFloatingPointRange.contains(<dispatch receiver>: kotlin.ranges.ClosedFloatingPointRange<T>, value: T): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = MyClass
+              symbol = value: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/ClosedFloatingPointRange.contains
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: MyClass, that: MyClass): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = MyClass
+              symbol = that: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun MyClass.contains(that: MyClass): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = ERROR CLASS: Cannot infer argument for type parameter T?
+          symbol = element: T?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = ERROR CLASS: Cannot infer argument for type parameter T?
+              symbol = element: T?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Cannot infer argument for type parameter T),
+        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>, R : OpenEndRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = MyClass?
+          symbol = element: T?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: R, element: T?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = MyClass?
+              symbol = element: T?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {
+        T -> (MyClass),
+        R -> (kotlin.ranges.ClosedFloatingPointRange<MyClass>)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>, R : ClosedRange<T>, Iterable<T>> R.contains(element: T?): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Byte>, value: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Byte>.contains(value: Int): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = value: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Byte>, value: kotlin.Long): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = value: kotlin.Long
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Byte>.contains(value: Long): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = value: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Byte>, value: kotlin.Short): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = value: kotlin.Short
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Byte>.contains(value: Short): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = value: kotlin.Float
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Double>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Double>, value: kotlin.Float): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Float
+              symbol = value: kotlin.Float
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Double>.contains(value: Float): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = value: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Float>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Float>, value: kotlin.Double): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Double
+              symbol = value: kotlin.Double
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Float>.contains(value: Double): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = value: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Int>, value: kotlin.Byte): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = value: kotlin.Byte
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Int>.contains(value: Byte): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = value: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Int>, value: kotlin.Long): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = value: kotlin.Long
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Int>.contains(value: Long): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = value: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Int>, value: kotlin.Short): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = value: kotlin.Short
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Int>.contains(value: Short): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = value: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Long>, value: kotlin.Byte): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = value: kotlin.Byte
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Long>.contains(value: Byte): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Long>, value: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Long>.contains(value: Int): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = value: kotlin.Short
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Long>, value: kotlin.Short): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = value: kotlin.Short
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Long>.contains(value: Short): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = value: kotlin.Byte
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Short>, value: kotlin.Byte): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = value: kotlin.Byte
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Short>.contains(value: Byte): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = value: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Short>, value: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Short>.contains(value: Int): Boolean>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = value: kotlin.Long
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp..NestedInheritor
+          isSafeNavigation = false
+          type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
+          returnType = kotlin.Boolean
+          symbol = kotlin/ranges/contains(<extension receiver>: kotlin.ranges.ClosedRange<kotlin.Short>, value: kotlin.Long): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = value: kotlin.Long
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/contains
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun ClosedRange<Short>.contains(value: Long): Boolean>
+    isInBestCandidates = false
+
+KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          symbol = /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = MyClass
+              symbol = that: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /rangeTo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.ranges.ClosedRange<MyClass>
+          symbol = kotlin/ranges/rangeTo(<extension receiver>: T, that: T): kotlin.ranges.ClosedRange<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = MyClass
+              symbol = that: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/rangeTo
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T>>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1248,1255): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1256,1267): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1267,1269): '..'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: MyClass
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          symbol = /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = MyClass
+              symbol = that: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /rangeTo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor -> (KaVariableSignature:
+          name = that
+          receiverType = null
+          returnType = MyClass
+          symbol = that: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass.myClassProp
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.ranges.ClosedRange<MyClass>
+          symbol = kotlin/ranges/rangeTo(<extension receiver>: T, that: T): kotlin.ranges.ClosedRange<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = that
+              receiverType = null
+              returnType = MyClass
+              symbol = that: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/ranges/rangeTo
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T>>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(1269,1284): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false

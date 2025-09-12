@@ -1,0 +1,249 @@
+KtFile: 'regularlyResolved.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,188): 'sealed interface MySealed {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,84): 'sealed'
+  NO_CANDIDATES
+
+KtClassBody(104,188): '{'
+  NO_CANDIDATES
+
+KtClass(110,145): 'class Left(val x: String): MySealed'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(120,135): '(val x: String)'
+  NO_CANDIDATES
+
+KtParameterList(120,135): '(val x: String)'
+  NO_CANDIDATES
+
+KtParameter(121,134): 'val x: String'
+  NO_CANDIDATES
+
+KtTypeReference(128,134): 'String'
+  NO_CANDIDATES
+
+KtUserType(128,134): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(128,134): 'String'
+  NO_CANDIDATES
+
+KtSuperTypeList(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtTypeReference(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtUserType(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(137,145): 'MySealed'
+  NO_CANDIDATES
+
+KtClass(150,186): 'class Right(val y: String): MySealed'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(161,176): '(val y: String)'
+  NO_CANDIDATES
+
+KtParameterList(161,176): '(val y: String)'
+  NO_CANDIDATES
+
+KtParameter(162,175): 'val y: String'
+  NO_CANDIDATES
+
+KtTypeReference(169,175): 'String'
+  NO_CANDIDATES
+
+KtUserType(169,175): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(169,175): 'String'
+  NO_CANDIDATES
+
+KtSuperTypeList(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtTypeReference(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtUserType(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(178,186): 'MySealed'
+  NO_CANDIDATES
+
+KtClass(190,226): 'interface Left {'
+  NO_CANDIDATES
+
+KtClassBody(205,226): '{'
+  NO_CANDIDATES
+
+KtProperty(211,224): 'val z: String'
+  NO_CANDIDATES
+
+KtTypeReference(218,224): 'String'
+  NO_CANDIDATES
+
+KtUserType(218,224): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(218,224): 'String'
+  NO_CANDIDATES
+
+KtNamedFunction(228,320): 'fun MySealed.getOrElse() = when (this) {'
+  NO_CANDIDATES
+
+KtTypeReference(232,240): 'MySealed'
+  NO_CANDIDATES
+
+KtUserType(232,240): 'MySealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(232,240): 'MySealed'
+  NO_CANDIDATES
+
+KtParameterList(250,252): '()'
+  NO_CANDIDATES
+
+KtWhenExpression(255,320): 'when (this) {'
+  NO_CANDIDATES
+
+KtThisExpression(261,265): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(261,265): 'this'
+  NO_CANDIDATES
+
+KtWhenEntry(273,285): 'is Left -> z'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(273,280): 'is Left'
+  NO_CANDIDATES
+
+KtTypeReference(276,280): 'Left'
+  NO_CANDIDATES
+
+KtUserType(276,280): 'Left'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(276,280): 'Left'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(284,285): 'z'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: MySealed
+              visibility: PUBLIC
+            type = MySealed
+          type = it(Left & MySealed)
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = z
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val z: kotlin.String
+          contextParameters = []
+          callableId = /Left.z
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(290,303): 'is Right -> y'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(290,298): 'is Right'
+  NO_CANDIDATES
+
+KtTypeReference(293,298): 'Right'
+  NO_CANDIDATES
+
+KtUserType(293,298): 'Right'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(293,298): 'Right'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(302,303): 'y'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: MySealed
+              visibility: PUBLIC
+            type = MySealed
+          type = MySealed.Right
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = y
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val y: kotlin.String
+          contextParameters = []
+          callableId = /MySealed.Right.y
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(308,318): 'else -> ""'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(316,318): '""'
+  NO_CANDIDATES

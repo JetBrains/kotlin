@@ -1,0 +1,1038 @@
+KtFile: 'tryCatchStatementsEnum.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,131): 'fun foo(a: MyEnum) {}'
+  null
+
+KtParameterList(117,128): '(a: MyEnum)'
+  null
+
+KtParameter(118,127): 'a: MyEnum'
+  null
+
+KtTypeReference(121,127): 'MyEnum'
+  null
+
+KtUserType(121,127): 'MyEnum'
+  null
+
+KtNameReferenceExpression(121,127): 'MyEnum'
+  null
+
+KtBlockExpression(129,131): '{}'
+  null
+
+KtNamedFunction(133,172): 'fun myRunWithMyEnum(b: () -> MyEnum) {}'
+  null
+
+KtParameterList(152,169): '(b: () -> MyEnum)'
+  null
+
+KtParameter(153,168): 'b: () -> MyEnum'
+  null
+
+KtTypeReference(156,168): '() -> MyEnum'
+  null
+
+KtFunctionType(156,168): '() -> MyEnum'
+  null
+
+KtParameterList(156,158): '()'
+  null
+
+KtTypeReference(162,168): 'MyEnum'
+  null
+
+KtUserType(162,168): 'MyEnum'
+  null
+
+KtNameReferenceExpression(162,168): 'MyEnum'
+  null
+
+KtBlockExpression(170,172): '{}'
+  null
+
+KtNamedFunction(173,210): 'fun <T> myRun(b: () -> T): T = TODO()'
+  null
+
+KtTypeParameterList(177,180): '<T>'
+  null
+
+KtTypeParameter(178,179): 'T'
+  null
+
+KtParameterList(186,198): '(b: () -> T)'
+  null
+
+KtParameter(187,197): 'b: () -> T'
+  null
+
+KtTypeReference(190,197): '() -> T'
+  null
+
+KtFunctionType(190,197): '() -> T'
+  null
+
+KtParameterList(190,192): '()'
+  null
+
+KtTypeReference(196,197): 'T'
+  null
+
+KtUserType(196,197): 'T'
+  null
+
+KtNameReferenceExpression(196,197): 'T'
+  null
+
+KtTypeReference(200,201): 'T'
+  null
+
+KtUserType(200,201): 'T'
+  null
+
+KtNameReferenceExpression(200,201): 'T'
+  null
+
+KtCallExpression(204,210): 'TODO()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(204,208): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(208,210): '()'
+  null
+
+KtNamedFunction(212,240): 'fun <X> id(x: X): X = TODO()'
+  null
+
+KtTypeParameterList(216,219): '<X>'
+  null
+
+KtTypeParameter(217,218): 'X'
+  null
+
+KtParameterList(222,228): '(x: X)'
+  null
+
+KtParameter(223,227): 'x: X'
+  null
+
+KtTypeReference(226,227): 'X'
+  null
+
+KtUserType(226,227): 'X'
+  null
+
+KtNameReferenceExpression(226,227): 'X'
+  null
+
+KtTypeReference(230,231): 'X'
+  null
+
+KtUserType(230,231): 'X'
+  null
+
+KtNameReferenceExpression(230,231): 'X'
+  null
+
+KtCallExpression(234,240): 'TODO()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(234,238): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(238,240): '()'
+  null
+
+KtNamedFunction(242,1123): 'fun main(b: Boolean, i: Int) {'
+  null
+
+KtParameterList(250,270): '(b: Boolean, i: Int)'
+  null
+
+KtParameter(251,261): 'b: Boolean'
+  null
+
+KtTypeReference(254,261): 'Boolean'
+  null
+
+KtUserType(254,261): 'Boolean'
+  null
+
+KtNameReferenceExpression(254,261): 'Boolean'
+  null
+
+KtParameter(263,269): 'i: Int'
+  null
+
+KtTypeReference(266,269): 'Int'
+  null
+
+KtUserType(266,269): 'Int'
+  null
+
+KtNameReferenceExpression(266,269): 'Int'
+  null
+
+KtBlockExpression(271,1123): '{'
+  null
+
+KtProperty(277,293): 'val L = MyEnum.X'
+  null
+
+KtDotQualifiedExpression(285,293): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(285,291): 'MyEnum'
+  null
+
+KtNameReferenceExpression(292,293): 'X'
+  null
+
+KtProperty(299,414): 'val m1: MyEnum = try {'
+  null
+
+KtTypeReference(307,313): 'MyEnum'
+  null
+
+KtUserType(307,313): 'MyEnum'
+  null
+
+KtNameReferenceExpression(307,313): 'MyEnum'
+  null
+
+KtTryExpression(316,414): 'try {'
+  null
+
+KtBlockExpression(320,337): '{'
+  null
+
+KtNameReferenceExpression(330,331): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCatchClause(338,375): 'catch(e: Exception) {'
+  null
+
+KtParameterList(343,357): '(e: Exception)'
+  null
+
+KtParameter(344,356): 'e: Exception'
+  null
+
+KtTypeReference(347,356): 'Exception'
+  null
+
+KtUserType(347,356): 'Exception'
+  null
+
+KtNameReferenceExpression(347,356): 'Exception'
+  null
+
+KtBlockExpression(358,375): '{'
+  null
+
+KtNameReferenceExpression(368,369): 'Y'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
+
+KtCatchClause(376,414): 'catch (t: Throwable) {'
+  null
+
+KtParameterList(382,396): '(t: Throwable)'
+  null
+
+KtParameter(383,395): 't: Throwable'
+  null
+
+KtTypeReference(386,395): 'Throwable'
+  null
+
+KtUserType(386,395): 'Throwable'
+  null
+
+KtNameReferenceExpression(386,395): 'Throwable'
+  null
+
+KtBlockExpression(397,414): '{'
+  null
+
+KtNameReferenceExpression(407,408): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtProperty(420,656): 'val m2: MyEnum = try {'
+  null
+
+KtTypeReference(428,434): 'MyEnum'
+  null
+
+KtUserType(428,434): 'MyEnum'
+  null
+
+KtNameReferenceExpression(428,434): 'MyEnum'
+  null
+
+KtTryExpression(437,656): 'try {'
+  null
+
+KtBlockExpression(441,458): '{'
+  null
+
+KtNameReferenceExpression(451,452): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCatchClause(459,617): 'catch(e: Exception) {'
+  null
+
+KtParameterList(464,478): '(e: Exception)'
+  null
+
+KtParameter(465,477): 'e: Exception'
+  null
+
+KtTypeReference(468,477): 'Exception'
+  null
+
+KtUserType(468,477): 'Exception'
+  null
+
+KtNameReferenceExpression(468,477): 'Exception'
+  null
+
+KtBlockExpression(479,617): '{'
+  null
+
+KtTryExpression(489,611): 'try {'
+  null
+
+KtBlockExpression(493,518): '{'
+  null
+
+KtNameReferenceExpression(507,508): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCatchClause(519,564): 'catch(e: Exception) {'
+  null
+
+KtParameterList(524,538): '(e: Exception)'
+  null
+
+KtParameter(525,537): 'e: Exception'
+  null
+
+KtTypeReference(528,537): 'Exception'
+  null
+
+KtUserType(528,537): 'Exception'
+  null
+
+KtNameReferenceExpression(528,537): 'Exception'
+  null
+
+KtBlockExpression(539,564): '{'
+  null
+
+KtNameReferenceExpression(553,554): 'Y'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
+
+KtCatchClause(565,611): 'catch (t: Throwable) {'
+  null
+
+KtParameterList(571,585): '(t: Throwable)'
+  null
+
+KtParameter(572,584): 't: Throwable'
+  null
+
+KtTypeReference(575,584): 'Throwable'
+  null
+
+KtUserType(575,584): 'Throwable'
+  null
+
+KtNameReferenceExpression(575,584): 'Throwable'
+  null
+
+KtBlockExpression(586,611): '{'
+  null
+
+KtNameReferenceExpression(600,601): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCatchClause(618,656): 'catch (t: Throwable) {'
+  null
+
+KtParameterList(624,638): '(t: Throwable)'
+  null
+
+KtParameter(625,637): 't: Throwable'
+  null
+
+KtTypeReference(628,637): 'Throwable'
+  null
+
+KtUserType(628,637): 'Throwable'
+  null
+
+KtNameReferenceExpression(628,637): 'Throwable'
+  null
+
+KtBlockExpression(639,656): '{'
+  null
+
+KtNameReferenceExpression(649,650): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(662,803): 'foo('
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyEnum
+              symbol = a: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(662,665): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                } -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MyEnum
+          symbol = a: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyEnum
+              symbol = a: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(665,803): '('
+  null
+
+KtValueArgument(675,797): 'try {'
+  null
+
+KtTryExpression(675,797): 'try {'
+  null
+
+KtBlockExpression(679,704): '{'
+  null
+
+KtNameReferenceExpression(693,694): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCatchClause(705,750): 'catch(e: Exception) {'
+  null
+
+KtParameterList(710,724): '(e: Exception)'
+  null
+
+KtParameter(711,723): 'e: Exception'
+  null
+
+KtTypeReference(714,723): 'Exception'
+  null
+
+KtUserType(714,723): 'Exception'
+  null
+
+KtNameReferenceExpression(714,723): 'Exception'
+  null
+
+KtBlockExpression(725,750): '{'
+  null
+
+KtNameReferenceExpression(739,740): 'Y'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
+
+KtCatchClause(751,797): 'catch (t: Throwable) {'
+  null
+
+KtParameterList(757,771): '(t: Throwable)'
+  null
+
+KtParameter(758,770): 't: Throwable'
+  null
+
+KtTypeReference(761,770): 'Throwable'
+  null
+
+KtUserType(761,770): 'Throwable'
+  null
+
+KtNameReferenceExpression(761,770): 'Throwable'
+  null
+
+KtBlockExpression(772,797): '{'
+  null
+
+KtNameReferenceExpression(786,787): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(809,963): 'myRunWithMyEnum {'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<MyEnum>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRunWithMyEnum
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(809,824): 'myRunWithMyEnum'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<MyEnum>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<MyEnum>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRunWithMyEnum
+      typeArgumentsMapping = {}
+
+KtLambdaArgument(825,963): '{'
+  null
+
+KtLambdaExpression(825,963): '{'
+  null
+
+KtFunctionLiteral(825,963): '{'
+  null
+
+KtBlockExpression(835,957): 'try {'
+  null
+
+KtTryExpression(835,957): 'try {'
+  null
+
+KtBlockExpression(839,864): '{'
+  null
+
+KtNameReferenceExpression(853,854): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCatchClause(865,910): 'catch(e: Exception) {'
+  null
+
+KtParameterList(870,884): '(e: Exception)'
+  null
+
+KtParameter(871,883): 'e: Exception'
+  null
+
+KtTypeReference(874,883): 'Exception'
+  null
+
+KtUserType(874,883): 'Exception'
+  null
+
+KtNameReferenceExpression(874,883): 'Exception'
+  null
+
+KtBlockExpression(885,910): '{'
+  null
+
+KtNameReferenceExpression(899,900): 'Y'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
+
+KtCatchClause(911,957): 'catch (t: Throwable) {'
+  null
+
+KtParameterList(917,931): '(t: Throwable)'
+  null
+
+KtParameter(918,930): 't: Throwable'
+  null
+
+KtTypeReference(921,930): 'Throwable'
+  null
+
+KtUserType(921,930): 'Throwable'
+  null
+
+KtNameReferenceExpression(921,930): 'Throwable'
+  null
+
+KtBlockExpression(932,957): '{'
+  null
+
+KtNameReferenceExpression(946,947): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(969,1121): 'myRun<MyEnum> {'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyEnum
+          symbol = /myRun(b: kotlin.Function0<T>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+
+KtNameReferenceExpression(969,974): 'myRun'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {
+                try {
+                    X
+                } catch(e: Exception) {
+                    Y
+                } catch (t: Throwable) {
+                    L
+                }
+            } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function0<MyEnum>
+          symbol = b: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyEnum
+          symbol = /myRun(b: kotlin.Function0<T>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function0<MyEnum>
+              symbol = b: kotlin.Function0<T>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+
+KtTypeArgumentList(974,982): '<MyEnum>'
+  null
+
+KtTypeProjection(975,981): 'MyEnum'
+  null
+
+KtTypeReference(975,981): 'MyEnum'
+  null
+
+KtUserType(975,981): 'MyEnum'
+  null
+
+KtNameReferenceExpression(975,981): 'MyEnum'
+  null
+
+KtLambdaArgument(983,1121): '{'
+  null
+
+KtLambdaExpression(983,1121): '{'
+  null
+
+KtFunctionLiteral(983,1121): '{'
+  null
+
+KtBlockExpression(993,1115): 'try {'
+  null
+
+KtTryExpression(993,1115): 'try {'
+  null
+
+KtBlockExpression(997,1022): '{'
+  null
+
+KtNameReferenceExpression(1011,1012): 'X'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
+
+KtCatchClause(1023,1068): 'catch(e: Exception) {'
+  null
+
+KtParameterList(1028,1042): '(e: Exception)'
+  null
+
+KtParameter(1029,1041): 'e: Exception'
+  null
+
+KtTypeReference(1032,1041): 'Exception'
+  null
+
+KtUserType(1032,1041): 'Exception'
+  null
+
+KtNameReferenceExpression(1032,1041): 'Exception'
+  null
+
+KtBlockExpression(1043,1068): '{'
+  null
+
+KtNameReferenceExpression(1057,1058): 'Y'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Y>
+
+KtCatchClause(1069,1115): 'catch (t: Throwable) {'
+  null
+
+KtParameterList(1075,1089): '(t: Throwable)'
+  null
+
+KtParameter(1076,1088): 't: Throwable'
+  null
+
+KtTypeReference(1079,1088): 'Throwable'
+  null
+
+KtUserType(1079,1088): 'Throwable'
+  null
+
+KtNameReferenceExpression(1079,1088): 'Throwable'
+  null
+
+KtBlockExpression(1090,1115): '{'
+  null
+
+KtNameReferenceExpression(1104,1105): 'L'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = L
+          receiverType = null
+          returnType = MyEnum
+          symbol = val L: MyEnum
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}

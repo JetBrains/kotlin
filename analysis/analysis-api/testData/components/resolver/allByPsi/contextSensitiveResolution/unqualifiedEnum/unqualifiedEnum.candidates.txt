@@ -1,0 +1,1030 @@
+KtFile: 'unqualifiedEnum.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(58,70): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(66,70): 'test'
+  NO_CANDIDATES
+
+KtImportList(70,70): ''
+  NO_CANDIDATES
+
+KtClass(72,119): 'enum class Sample {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(72,76): 'enum'
+  NO_CANDIDATES
+
+KtClassBody(90,119): '{'
+  NO_CANDIDATES
+
+KtEnumEntry(96,102): 'FIRST,'
+  NO_CANDIDATES
+
+KtEnumEntry(103,110): 'SECOND,'
+  NO_CANDIDATES
+
+KtEnumEntry(111,117): 'THIRD;'
+  NO_CANDIDATES
+
+KtNamedFunction(121,238): 'fun trivial(s: Sample): Int {'
+  NO_CANDIDATES
+
+KtParameterList(132,143): '(s: Sample)'
+  NO_CANDIDATES
+
+KtParameter(133,142): 's: Sample'
+  NO_CANDIDATES
+
+KtTypeReference(136,142): 'Sample'
+  NO_CANDIDATES
+
+KtUserType(136,142): 'Sample'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(136,142): 'Sample'
+  NO_CANDIDATES
+
+KtTypeReference(145,148): 'Int'
+  NO_CANDIDATES
+
+KtUserType(145,148): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(145,148): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(149,238): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(155,236): 'return when (s) {'
+  NO_CANDIDATES
+
+KtWhenExpression(162,236): 'when (s) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(168,169): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = test.Sample
+          symbol = s: test.Sample
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(181,191): 'FIRST -> 1'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(181,186): 'FIRST'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(181,186): 'FIRST'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = FIRST
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = FIRST
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.FIRST
+          contextParameters = []
+          callableId = test/Sample.FIRST
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(190,191): '1'
+  NO_CANDIDATES
+
+KtWhenEntry(200,211): 'SECOND -> 2'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(200,206): 'SECOND'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(200,206): 'SECOND'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = SECOND
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = SECOND
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.SECOND
+          contextParameters = []
+          callableId = test/Sample.SECOND
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(210,211): '2'
+  NO_CANDIDATES
+
+KtWhenEntry(220,230): 'THIRD -> 3'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(220,225): 'THIRD'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(220,225): 'THIRD'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = THIRD
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = THIRD
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.THIRD
+          contextParameters = []
+          callableId = test/Sample.THIRD
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(229,230): '3'
+  NO_CANDIDATES
+
+KtNamedFunction(240,392): 'fun shouldNotWork(s: Sample): Int {'
+  NO_CANDIDATES
+
+KtParameterList(257,268): '(s: Sample)'
+  NO_CANDIDATES
+
+KtParameter(258,267): 's: Sample'
+  NO_CANDIDATES
+
+KtTypeReference(261,267): 'Sample'
+  NO_CANDIDATES
+
+KtUserType(261,267): 'Sample'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(261,267): 'Sample'
+  NO_CANDIDATES
+
+KtTypeReference(270,273): 'Int'
+  NO_CANDIDATES
+
+KtUserType(270,273): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(270,273): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(274,392): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(280,390): 'return when {'
+  NO_CANDIDATES
+
+KtWhenExpression(287,390): 'when {'
+  NO_CANDIDATES
+
+KtWhenEntry(302,317): 's == FIRST -> 1'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(302,312): 's == FIRST'
+  NO_CANDIDATES
+
+KtBinaryExpression(302,312): 's == FIRST'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        FIRST -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = test.Sample
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(302,303): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = test.Sample
+          symbol = s: test.Sample
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(304,306): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        FIRST -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = test.Sample
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(307,312): 'FIRST'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = FIRST
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = FIRST
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.FIRST
+          contextParameters = []
+          callableId = test/Sample.FIRST
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(316,317): '1'
+  NO_CANDIDATES
+
+KtWhenEntry(326,342): 's == SECOND -> 2'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(326,337): 's == SECOND'
+  NO_CANDIDATES
+
+KtBinaryExpression(326,337): 's == SECOND'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        SECOND -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = test.Sample
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(326,327): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = test.Sample
+          symbol = s: test.Sample
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(328,330): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        SECOND -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = test.Sample
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(331,337): 'SECOND'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = SECOND
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = SECOND
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.SECOND
+          contextParameters = []
+          callableId = test/Sample.SECOND
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(341,342): '2'
+  NO_CANDIDATES
+
+KtWhenEntry(351,366): 's == THIRD -> 3'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(351,361): 's == THIRD'
+  NO_CANDIDATES
+
+KtBinaryExpression(351,361): 's == THIRD'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        THIRD -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = test.Sample
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(351,352): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = test.Sample
+          symbol = s: test.Sample
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(353,355): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        THIRD -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = test.Sample
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Enum.equals(<dispatch receiver>: kotlin.Enum<E>, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Enum.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(356,361): 'THIRD'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = THIRD
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = THIRD
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.THIRD
+          contextParameters = []
+          callableId = test/Sample.THIRD
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(365,366): '3'
+  NO_CANDIDATES
+
+KtWhenEntry(375,384): 'else -> 0'
+  NO_CANDIDATES
+
+KtConstantExpression(383,384): '0'
+  NO_CANDIDATES
+
+KtClass(394,669): 'class Container {'
+  NO_CANDIDATES
+
+KtClassBody(410,669): '{'
+  NO_CANDIDATES
+
+KtProperty(416,447): 'val SECOND = test.Sample.SECOND'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = test.Sample
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = SECOND
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.SECOND
+          contextParameters = []
+          callableId = test/Sample.SECOND
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(429,440): 'test.Sample'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(429,433): 'test'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(434,440): 'Sample'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(441,447): 'SECOND'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = test.Sample
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = SECOND
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.SECOND
+          contextParameters = []
+          callableId = test/Sample.SECOND
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(453,667): 'fun priority(s: Sample): Int {'
+  NO_CANDIDATES
+
+KtParameterList(465,476): '(s: Sample)'
+  NO_CANDIDATES
+
+KtParameter(466,475): 's: Sample'
+  NO_CANDIDATES
+
+KtTypeReference(469,475): 'Sample'
+  NO_CANDIDATES
+
+KtUserType(469,475): 'Sample'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(469,475): 'Sample'
+  NO_CANDIDATES
+
+KtTypeReference(478,481): 'Int'
+  NO_CANDIDATES
+
+KtUserType(478,481): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(478,481): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(482,667): '{'
+  NO_CANDIDATES
+
+KtProperty(492,521): 'val FIRST = test.Sample.THIRD'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = test.Sample
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = THIRD
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.THIRD
+          contextParameters = []
+          callableId = test/Sample.THIRD
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(504,515): 'test.Sample'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(504,508): 'test'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(509,515): 'Sample'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(516,521): 'THIRD'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = test.Sample
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = THIRD
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.THIRD
+          contextParameters = []
+          callableId = test/Sample.THIRD
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtReturnExpression(530,661): 'return when (s) {'
+  NO_CANDIDATES
+
+KtWhenExpression(537,661): 'when (s) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(543,544): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = test.Sample
+          symbol = s: test.Sample
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(560,570): 'FIRST -> 3'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(560,565): 'FIRST'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(560,565): 'FIRST'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = FIRST
+          receiverType = null
+          returnType = test.Sample
+          symbol = val FIRST: test.Sample
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(569,570): '3'
+  NO_CANDIDATES
+
+KtWhenEntry(583,594): 'SECOND -> 2'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(583,589): 'SECOND'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(583,589): 'SECOND'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = test/Container
+          type = test.Container
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = SECOND
+          receiverType = null
+          returnType = test.Sample
+          symbol = val SECOND: test.Sample
+          contextParameters = []
+          callableId = test/Container.SECOND
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(593,594): '2'
+  NO_CANDIDATES
+
+KtWhenEntry(607,629): 'test.Sample.FIRST -> 1'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(607,624): 'test.Sample.FIRST'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = test.Sample
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = FIRST
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.FIRST
+          contextParameters = []
+          callableId = test/Sample.FIRST
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(607,618): 'test.Sample'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(607,611): 'test'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(612,618): 'Sample'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Sample
+          symbol = <constructor>(): test.Sample
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(619,624): 'FIRST'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = test.Sample
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = FIRST
+          receiverType = null
+          returnType = test.Sample
+          symbol = test/Sample.FIRST
+          contextParameters = []
+          callableId = test/Sample.FIRST
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(628,629): '1'
+  NO_CANDIDATES
+
+KtWhenEntry(642,651): 'else -> 0'
+  NO_CANDIDATES
+
+KtConstantExpression(650,651): '0'
+  NO_CANDIDATES

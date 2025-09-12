@@ -1,0 +1,479 @@
+KtNameReferenceExpression(67,70): 'foo'
+  KtSimpleNameReference:
+    package foo
+
+KtNameReferenceExpression(114,120): 'Sealed'
+  KtSimpleNameReference:
+    (in foo.Sealed) constructor()
+
+KtNameReferenceExpression(147,150): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(154,160): 'Sealed'
+  KtSimpleNameReference:
+    (in foo.Sealed) constructor()
+
+KtNameReferenceExpression(183,189): 'Sealed'
+  KtSimpleNameReference:
+    (in foo.Sealed) constructor()
+
+KtNameReferenceExpression(216,219): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(223,229): 'Sealed'
+  KtSimpleNameReference:
+    (in foo.Sealed) constructor()
+
+KtNameReferenceExpression(261,267): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(268,274): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(278,284): 'Sealed'
+  KtSimpleNameReference:
+    (in foo.Sealed) constructor()
+
+KtNameReferenceExpression(322,328): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(331,334): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(343,344): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(352,353): 'A'
+  KtSimpleNameReference:
+    (in foo) object A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(366,367): 'B'
+  KtSimpleNameReference:
+    (in foo) class B
+
+KtNameReferenceExpression(377,378): 'C'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(391,392): 'D'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(405,411): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(456,462): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(465,468): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(477,478): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(486,492): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(493,494): 'A'
+  KtSimpleNameReference:
+    (in foo.Sealed) data object A : foo.Sealed()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(507,513): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(514,515): 'B'
+  KtSimpleNameReference:
+    (in foo.Sealed) data class B(x: kotlin.Int) : foo.Sealed()
+
+KtNameReferenceExpression(562,568): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(571,574): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(583,584): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(592,595): 'foo'
+  KtSimpleNameReference:
+    package foo
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(596,597): 'A'
+  KtSimpleNameReference:
+    (in foo) object A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(610,613): 'foo'
+  KtSimpleNameReference:
+    package foo
+
+KtNameReferenceExpression(614,615): 'B'
+  KtSimpleNameReference:
+    (in foo) class B
+
+KtNameReferenceExpression(656,662): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(665,668): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(675,676): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(677,679): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(680,681): 'A'
+  KtSimpleNameReference:
+    (in foo) object A
+
+KtNameReferenceExpression(716,722): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(725,728): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(735,736): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(737,739): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(740,741): 'B'
+  KtSimpleNameReference:
+    (in foo) class B
+
+KtNameReferenceExpression(777,783): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(786,789): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(796,797): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(798,800): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(801,807): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(808,809): 'A'
+  KtSimpleNameReference:
+    (in foo.Sealed) data object A : foo.Sealed()
+
+KtNameReferenceExpression(845,851): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(854,857): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(864,865): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(866,868): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(869,875): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(876,877): 'B'
+  KtSimpleNameReference:
+    (in foo.Sealed) data class B(x: kotlin.Int) : foo.Sealed()
+
+KtNameReferenceExpression(915,921): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(924,927): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(934,935): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(936,938): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(939,942): 'foo'
+  KtSimpleNameReference:
+    package foo
+
+KtNameReferenceExpression(943,944): 'A'
+  KtSimpleNameReference:
+    (in foo) object A
+
+KtNameReferenceExpression(982,988): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(991,994): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(1001,1002): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1003,1005): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1006,1009): 'foo'
+  KtSimpleNameReference:
+    package foo
+
+KtNameReferenceExpression(1010,1011): 'B'
+  KtSimpleNameReference:
+    (in foo) class B
+
+KtNameReferenceExpression(1043,1049): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(1052,1055): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(1062,1063): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1064,1066): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1067,1068): 'C'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1100,1106): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(1109,1112): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(1119,1120): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1121,1123): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1124,1125): 'D'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1164,1170): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(1173,1180): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(1183,1184): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1185,1187): '=='
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(1188,1189): 'A'
+  KtSimpleNameReference:
+    (in foo) object A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1213,1219): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(1222,1229): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(1232,1233): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1234,1236): '=='
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(1237,1243): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1244,1245): 'A'
+  KtSimpleNameReference:
+    (in foo.Sealed) data object A : foo.Sealed()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1271,1277): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(1280,1287): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(1290,1291): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1292,1294): '=='
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(1295,1298): 'foo'
+  KtSimpleNameReference:
+    package foo
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1299,1300): 'A'
+  KtSimpleNameReference:
+    (in foo) object A
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1320,1326): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+KtNameReferenceExpression(1329,1336): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(1339,1340): 's'
+  KtSimpleNameReference:
+    s: foo.Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(1341,1343): '=='
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(1344,1350): 'Sealed'
+  KtSimpleNameReference:
+    (in foo) sealed class Sealed
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1351,1352): 'C'
+  KtSimpleNameReference:
+    (in foo.Sealed) data object C : foo.Sealed()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

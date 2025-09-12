@@ -1,0 +1,174 @@
+KtFile: 'sameNamedEnumEntry.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class A {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(91,108): '{'
+  null
+
+KtEnumEntry(97,99): 'A,'
+  null
+
+KtEnumEntry(104,106): 'B,'
+  null
+
+KtNamedFunction(110,187): 'fun test(a: A) {'
+  null
+
+KtParameterList(118,124): '(a: A)'
+  null
+
+KtParameter(119,123): 'a: A'
+  null
+
+KtTypeReference(122,123): 'A'
+  null
+
+KtUserType(122,123): 'A'
+  null
+
+KtNameReferenceExpression(122,123): 'A'
+  null
+
+KtBlockExpression(125,187): '{'
+  null
+
+KtWhenExpression(131,185): 'when (a) {'
+  null
+
+KtNameReferenceExpression(137,138): 'a'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = A
+          symbol = a: A
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(150,160): 'A.A -> "A"'
+  null
+
+KtWhenConditionWithExpression(150,153): 'A.A'
+  null
+
+KtDotQualifiedExpression(150,153): 'A.A'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = A
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = A
+          receiverType = null
+          returnType = A
+          symbol = /A.A
+          contextParameters = []
+          callableId = /A.A
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(150,151): 'A'
+  null
+
+KtNameReferenceExpression(152,153): 'A'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = A
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = A
+          receiverType = null
+          returnType = A
+          symbol = /A.A
+          contextParameters = []
+          callableId = /A.A
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtStringTemplateExpression(157,160): '"A"'
+  null
+
+KtLiteralStringTemplateEntry(158,159): 'A'
+  null
+
+KtWhenEntry(169,179): 'A.B -> "B"'
+  null
+
+KtWhenConditionWithExpression(169,172): 'A.B'
+  null
+
+KtDotQualifiedExpression(169,172): 'A.B'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = A
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = B
+          receiverType = null
+          returnType = A
+          symbol = /A.B
+          contextParameters = []
+          callableId = /A.B
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(169,170): 'A'
+  null
+
+KtNameReferenceExpression(171,172): 'B'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = A
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = B
+          receiverType = null
+          returnType = A
+          symbol = /A.B
+          contextParameters = []
+          callableId = /A.B
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtStringTemplateExpression(176,179): '"B"'
+  null
+
+KtLiteralStringTemplateEntry(177,178): 'B'
+  null

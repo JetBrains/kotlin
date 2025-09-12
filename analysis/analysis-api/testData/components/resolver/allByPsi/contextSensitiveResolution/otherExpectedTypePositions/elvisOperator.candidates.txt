@@ -1,0 +1,856 @@
+KtFile: 'elvisOperator.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,301): 'open class MyClass {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,82): 'open'
+  NO_CANDIDATES
+
+KtClassBody(97,301): '{'
+  NO_CANDIDATES
+
+KtObjectDeclaration(103,137): 'object NestedInheritor : MyClass()'
+  NO_CANDIDATES
+
+KtSuperTypeList(128,137): 'MyClass()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(128,137): 'MyClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(128,135): 'MyClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(128,135): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(128,135): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(128,135): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(135,137): '()'
+  NO_CANDIDATES
+
+KtObjectDeclaration(143,299): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(143,152): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(160,299): '{'
+  NO_CANDIDATES
+
+KtProperty(170,206): 'val myClassProp: MyClass = MyClass()'
+  NO_CANDIDATES
+
+KtTypeReference(187,194): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(187,194): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(187,194): 'MyClass'
+  NO_CANDIDATES
+
+KtCallExpression(197,206): 'MyClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(197,204): 'MyClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(204,206): '()'
+  NO_CANDIDATES
+
+KtProperty(215,242): 'val stringProp: String = ""'
+  NO_CANDIDATES
+
+KtTypeReference(231,237): 'String'
+  NO_CANDIDATES
+
+KtUserType(231,237): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(231,237): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(240,242): '""'
+  NO_CANDIDATES
+
+KtNamedFunction(251,293): 'fun getNestedInheritor() = NestedInheritor'
+  NO_CANDIDATES
+
+KtParameterList(273,275): '()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(278,293): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNamedFunction(303,326): 'fun <T>receive(e: T) {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(307,310): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(308,309): 'T'
+  NO_CANDIDATES
+
+KtParameterList(317,323): '(e: T)'
+  NO_CANDIDATES
+
+KtParameter(318,322): 'e: T'
+  NO_CANDIDATES
+
+KtTypeReference(321,322): 'T'
+  NO_CANDIDATES
+
+KtUserType(321,322): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(321,322): 'T'
+  NO_CANDIDATES
+
+KtBlockExpression(324,326): '{}'
+  NO_CANDIDATES
+
+KtProperty(327,373): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(350,373): 'MyClass.NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(350,357): 'MyClass'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(358,373): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNamedFunction(375,735): 'fun testElvis() {'
+  NO_CANDIDATES
+
+KtParameterList(388,390): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(391,735): '{'
+  NO_CANDIDATES
+
+KtProperty(397,447): 'var i100: MyClass = NestedInheritor ?: myClassProp'
+  NO_CANDIDATES
+
+KtTypeReference(407,414): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(407,414): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(407,414): 'MyClass'
+  NO_CANDIDATES
+
+KtBinaryExpression(417,447): 'NestedInheritor ?: myClassProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(417,432): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(433,435): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(436,447): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClassProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(452,501): 'var i110: MyClass = NestedInheritor ?: stringProp'
+  NO_CANDIDATES
+
+KtTypeReference(462,469): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(462,469): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(462,469): 'MyClass'
+  NO_CANDIDATES
+
+KtBinaryExpression(472,501): 'NestedInheritor ?: stringProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(472,487): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(488,490): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(491,501): 'stringProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = stringProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(506,565): 'var i120: MyClass = NestedInheritor ?: getNestedInheritor()'
+  NO_CANDIDATES
+
+KtTypeReference(516,523): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(516,523): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(516,523): 'MyClass'
+  NO_CANDIDATES
+
+KtBinaryExpression(526,565): 'NestedInheritor ?: getNestedInheritor()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(526,541): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(542,544): '?:'
+  NO_CANDIDATES
+
+KtCallExpression(545,565): 'getNestedInheritor()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(545,563): 'getNestedInheritor'
+  NO_CANDIDATES
+
+KtValueArgumentList(563,565): '()'
+  NO_CANDIDATES
+
+KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor ?: myClassProp -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(571,578): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor ?: myClassProp -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(578,587): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(579,586): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(579,586): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(579,586): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(579,586): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(587,619): '(NestedInheritor ?: myClassProp)'
+  NO_CANDIDATES
+
+KtValueArgument(588,618): 'NestedInheritor ?: myClassProp'
+  NO_CANDIDATES
+
+KtBinaryExpression(588,618): 'NestedInheritor ?: myClassProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(588,603): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(604,606): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(607,618): 'myClassProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClassProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = myClassProp
+          receiverType = null
+          returnType = MyClass
+          symbol = val myClassProp: MyClass
+          contextParameters = []
+          callableId = /MyClass.Companion.myClassProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor ?: stringProp -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(624,631): 'receive'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor ?: stringProp -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
+    isInBestCandidates = true
+
+KtTypeArgumentList(631,640): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(632,639): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(632,639): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(632,639): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(632,639): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(640,671): '(NestedInheritor ?: stringProp)'
+  NO_CANDIDATES
+
+KtValueArgument(641,670): 'NestedInheritor ?: stringProp'
+  NO_CANDIDATES
+
+KtBinaryExpression(641,670): 'NestedInheritor ?: stringProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(641,656): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(657,659): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(660,670): 'stringProp'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = stringProp
+          isSafeNavigation = false
+          type = MyClass.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = stringProp
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val stringProp: kotlin.String
+          contextParameters = []
+          callableId = /MyClass.Companion.stringProp
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInheritor())'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(676,683): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyClass
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyClass
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(683,692): '<MyClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(684,691): 'MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(684,691): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(684,691): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(684,691): 'MyClass'
+  NO_CANDIDATES
+
+KtValueArgumentList(692,733): '(NestedInheritor ?: getNestedInheritor())'
+  NO_CANDIDATES
+
+KtValueArgument(693,732): 'NestedInheritor ?: getNestedInheritor()'
+  NO_CANDIDATES
+
+KtBinaryExpression(693,732): 'NestedInheritor ?: getNestedInheritor()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(693,708): 'NestedInheritor'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass.NestedInheritor
+          symbol = <constructor>(): MyClass.NestedInheritor
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(709,711): '?:'
+  NO_CANDIDATES
+
+KtCallExpression(712,732): 'getNestedInheritor()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(712,730): 'getNestedInheritor'
+  NO_CANDIDATES
+
+KtValueArgumentList(730,732): '()'
+  NO_CANDIDATES

@@ -1,0 +1,2697 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(51,102): 'import foo.*'
+  NO_CANDIDATES
+
+KtImportDirective(51,63): 'import foo.*'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(58,61): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(64,76): 'import foo.E'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(71,76): 'foo.E'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(71,74): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(75,76): 'E'
+  NO_CANDIDATES
+
+KtImportDirective(77,89): 'import foo.F'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(84,89): 'foo.F'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(84,87): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(88,89): 'F'
+  NO_CANDIDATES
+
+KtImportDirective(90,102): 'import bar.*'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(97,100): 'bar'
+  NO_CANDIDATES
+
+KtNamedFunction(104,298): 'fun sealed(s: Sealed): Int = when (s) {'
+  NO_CANDIDATES
+
+KtParameterList(114,125): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(115,124): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(118,124): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(118,124): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(118,124): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(127,130): 'Int'
+  NO_CANDIDATES
+
+KtUserType(127,130): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(127,130): 'Int'
+  NO_CANDIDATES
+
+KtWhenExpression(133,298): 'when (s) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(139,140): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(148,154): 'A -> 1'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(148,149): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(148,149): 'A'
+  NO_CANDIDATES
+
+KtConstantExpression(153,154): '1'
+  NO_CANDIDATES
+
+KtWhenEntry(159,168): 'is B -> 2'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(159,163): 'is B'
+  NO_CANDIDATES
+
+KtTypeReference(162,163): 'B'
+  NO_CANDIDATES
+
+KtUserType(162,163): 'B'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(162,163): 'B'
+  NO_CANDIDATES
+
+KtConstantExpression(167,168): '2'
+  NO_CANDIDATES
+
+KtWhenEntry(173,179): 'C -> 3'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(173,174): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(173,174): 'C'
+  NO_CANDIDATES
+
+KtConstantExpression(178,179): '3'
+  NO_CANDIDATES
+
+KtWhenEntry(184,193): 'is D -> 4'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(184,188): 'is D'
+  NO_CANDIDATES
+
+KtTypeReference(187,188): 'D'
+  NO_CANDIDATES
+
+KtUserType(187,188): 'D'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(187,188): 'D'
+  NO_CANDIDATES
+
+KtConstantExpression(192,193): '4'
+  NO_CANDIDATES
+
+KtWhenEntry(198,212): 'is String -> 5'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(198,207): 'is String'
+  NO_CANDIDATES
+
+KtTypeReference(201,207): 'String'
+  NO_CANDIDATES
+
+KtUserType(201,207): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(201,207): 'String'
+  NO_CANDIDATES
+
+KtConstantExpression(211,212): '5'
+  NO_CANDIDATES
+
+KtWhenEntry(217,232): 'CompanionA -> 6'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(217,227): 'CompanionA'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(217,227): 'CompanionA'
+  NO_CANDIDATES
+
+KtConstantExpression(231,232): '6'
+  NO_CANDIDATES
+
+KtWhenEntry(237,252): 'CompanionB -> 7'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(237,247): 'CompanionB'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(237,247): 'CompanionB'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionB
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val CompanionB: kotlin.Int
+          contextParameters = []
+          callableId = foo/CompanionB
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(251,252): '7'
+  NO_CANDIDATES
+
+KtWhenEntry(257,266): 'is E -> 8'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(257,261): 'is E'
+  NO_CANDIDATES
+
+KtTypeReference(260,261): 'E'
+  NO_CANDIDATES
+
+KtUserType(260,261): 'E'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(260,261): 'E'
+  NO_CANDIDATES
+
+KtConstantExpression(265,266): '8'
+  NO_CANDIDATES
+
+KtWhenEntry(271,280): 'is F -> 9'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(271,275): 'is F'
+  NO_CANDIDATES
+
+KtTypeReference(274,275): 'F'
+  NO_CANDIDATES
+
+KtUserType(274,275): 'F'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(274,275): 'F'
+  NO_CANDIDATES
+
+KtConstantExpression(279,280): '9'
+  NO_CANDIDATES
+
+KtWhenEntry(285,296): 'else -> 100'
+  NO_CANDIDATES
+
+KtConstantExpression(293,296): '100'
+  NO_CANDIDATES
+
+KtNamedFunction(300,554): 'fun sealedExplicit(s: Sealed): Int = when (s) {'
+  NO_CANDIDATES
+
+KtParameterList(318,329): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(319,328): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(322,328): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(322,328): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(322,328): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(331,334): 'Int'
+  NO_CANDIDATES
+
+KtUserType(331,334): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(331,334): 'Int'
+  NO_CANDIDATES
+
+KtWhenExpression(337,554): 'when (s) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(343,344): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(352,369): 'bar.Sealed.A -> 1'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(352,364): 'bar.Sealed.A'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(352,364): 'bar.Sealed.A'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(352,362): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(352,355): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(356,362): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(363,364): 'A'
+  NO_CANDIDATES
+
+KtConstantExpression(368,369): '1'
+  NO_CANDIDATES
+
+KtWhenEntry(374,394): 'is bar.Sealed.B -> 2'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(374,389): 'is bar.Sealed.B'
+  NO_CANDIDATES
+
+KtTypeReference(377,389): 'bar.Sealed.B'
+  NO_CANDIDATES
+
+KtUserType(377,389): 'bar.Sealed.B'
+  NO_CANDIDATES
+
+KtUserType(377,387): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtUserType(377,380): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(377,380): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(381,387): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(388,389): 'B'
+  NO_CANDIDATES
+
+KtConstantExpression(393,394): '2'
+  NO_CANDIDATES
+
+KtWhenEntry(399,424): 'is bar.Sealed.String -> 5'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(399,419): 'is bar.Sealed.String'
+  NO_CANDIDATES
+
+KtTypeReference(402,419): 'bar.Sealed.String'
+  NO_CANDIDATES
+
+KtUserType(402,419): 'bar.Sealed.String'
+  NO_CANDIDATES
+
+KtUserType(402,412): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtUserType(402,405): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(402,405): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(406,412): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(413,419): 'String'
+  NO_CANDIDATES
+
+KtConstantExpression(423,424): '5'
+  NO_CANDIDATES
+
+KtWhenEntry(429,455): 'bar.Sealed.CompanionA -> 6'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(429,450): 'bar.Sealed.CompanionA'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = bar.Sealed
+          isSafeNavigation = false
+          type = bar.Sealed.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionA
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = val CompanionA: bar.Sealed
+          contextParameters = []
+          callableId = bar/Sealed.Companion.CompanionA
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(429,439): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(429,432): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(433,439): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(440,450): 'CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = bar.Sealed
+          isSafeNavigation = false
+          type = bar.Sealed.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionA
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = val CompanionA: bar.Sealed
+          contextParameters = []
+          callableId = bar/Sealed.Companion.CompanionA
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(454,455): '6'
+  NO_CANDIDATES
+
+KtWhenEntry(460,486): 'bar.Sealed.CompanionB -> 7'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(460,481): 'bar.Sealed.CompanionB'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = bar.Sealed
+          isSafeNavigation = false
+          type = bar.Sealed.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionB
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = val CompanionB: bar.Sealed
+          contextParameters = []
+          callableId = bar/Sealed.Companion.CompanionB
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(460,470): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(460,463): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(464,470): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(471,481): 'CompanionB'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = bar.Sealed
+          isSafeNavigation = false
+          type = bar.Sealed.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionB
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = val CompanionB: bar.Sealed
+          contextParameters = []
+          callableId = bar/Sealed.Companion.CompanionB
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(485,486): '7'
+  NO_CANDIDATES
+
+KtWhenEntry(491,511): 'is bar.Sealed.E -> 8'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(491,506): 'is bar.Sealed.E'
+  NO_CANDIDATES
+
+KtTypeReference(494,506): 'bar.Sealed.E'
+  NO_CANDIDATES
+
+KtUserType(494,506): 'bar.Sealed.E'
+  NO_CANDIDATES
+
+KtUserType(494,504): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtUserType(494,497): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(494,497): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(498,504): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(505,506): 'E'
+  NO_CANDIDATES
+
+KtConstantExpression(510,511): '8'
+  NO_CANDIDATES
+
+KtWhenEntry(516,536): 'is bar.Sealed.F -> 9'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(516,531): 'is bar.Sealed.F'
+  NO_CANDIDATES
+
+KtTypeReference(519,531): 'bar.Sealed.F'
+  NO_CANDIDATES
+
+KtUserType(519,531): 'bar.Sealed.F'
+  NO_CANDIDATES
+
+KtUserType(519,529): 'bar.Sealed'
+  NO_CANDIDATES
+
+KtUserType(519,522): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(519,522): 'bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(523,529): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(530,531): 'F'
+  NO_CANDIDATES
+
+KtConstantExpression(535,536): '9'
+  NO_CANDIDATES
+
+KtWhenEntry(541,552): 'else -> 100'
+  NO_CANDIDATES
+
+KtConstantExpression(549,552): '100'
+  NO_CANDIDATES
+
+KtNamedFunction(556,764): 'fun topLevelExplicit(s: Sealed): Int = when (s) {'
+  NO_CANDIDATES
+
+KtParameterList(576,587): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(577,586): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(580,586): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(580,586): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(580,586): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(589,592): 'Int'
+  NO_CANDIDATES
+
+KtUserType(589,592): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(589,592): 'Int'
+  NO_CANDIDATES
+
+KtWhenExpression(595,764): 'when (s) {'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(601,602): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtWhenEntry(610,620): 'foo.A -> 1'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(610,615): 'foo.A'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(610,615): 'foo.A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(610,613): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(614,615): 'A'
+  NO_CANDIDATES
+
+KtConstantExpression(619,620): '1'
+  NO_CANDIDATES
+
+KtWhenEntry(625,638): 'is foo.B -> 2'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(625,633): 'is foo.B'
+  NO_CANDIDATES
+
+KtTypeReference(628,633): 'foo.B'
+  NO_CANDIDATES
+
+KtUserType(628,633): 'foo.B'
+  NO_CANDIDATES
+
+KtUserType(628,631): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(628,631): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(632,633): 'B'
+  NO_CANDIDATES
+
+KtConstantExpression(637,638): '2'
+  NO_CANDIDATES
+
+KtWhenEntry(643,664): 'is kotlin.String -> 5'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(643,659): 'is kotlin.String'
+  NO_CANDIDATES
+
+KtTypeReference(646,659): 'kotlin.String'
+  NO_CANDIDATES
+
+KtUserType(646,659): 'kotlin.String'
+  NO_CANDIDATES
+
+KtUserType(646,652): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(646,652): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(653,659): 'String'
+  NO_CANDIDATES
+
+KtConstantExpression(663,664): '5'
+  NO_CANDIDATES
+
+KtWhenEntry(669,688): 'foo.CompanionA -> 6'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(669,683): 'foo.CompanionA'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(669,683): 'foo.CompanionA'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(669,672): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(673,683): 'CompanionA'
+  NO_CANDIDATES
+
+KtConstantExpression(687,688): '6'
+  NO_CANDIDATES
+
+KtWhenEntry(693,712): 'foo.CompanionB -> 7'
+  NO_CANDIDATES
+
+KtWhenConditionWithExpression(693,707): 'foo.CompanionB'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(693,707): 'foo.CompanionB'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionB
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val CompanionB: kotlin.Int
+          contextParameters = []
+          callableId = foo/CompanionB
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(693,696): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(697,707): 'CompanionB'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionB
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val CompanionB: kotlin.Int
+          contextParameters = []
+          callableId = foo/CompanionB
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtConstantExpression(711,712): '7'
+  NO_CANDIDATES
+
+KtWhenEntry(717,730): 'is foo.E -> 8'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(717,725): 'is foo.E'
+  NO_CANDIDATES
+
+KtTypeReference(720,725): 'foo.E'
+  NO_CANDIDATES
+
+KtUserType(720,725): 'foo.E'
+  NO_CANDIDATES
+
+KtUserType(720,723): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(720,723): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(724,725): 'E'
+  NO_CANDIDATES
+
+KtConstantExpression(729,730): '8'
+  NO_CANDIDATES
+
+KtWhenEntry(735,748): 'is foo.F -> 9'
+  NO_CANDIDATES
+
+KtWhenConditionIsPattern(735,743): 'is foo.F'
+  NO_CANDIDATES
+
+KtTypeReference(738,743): 'foo.F'
+  NO_CANDIDATES
+
+KtUserType(738,743): 'foo.F'
+  NO_CANDIDATES
+
+KtUserType(738,741): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(738,741): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(742,743): 'F'
+  NO_CANDIDATES
+
+KtConstantExpression(747,748): '9'
+  NO_CANDIDATES
+
+KtWhenEntry(753,762): 'else -> 6'
+  NO_CANDIDATES
+
+KtConstantExpression(761,762): '6'
+  NO_CANDIDATES
+
+KtNamedFunction(766,824): 'fun cast1wrong(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(780,791): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(781,790): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(784,790): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(784,790): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(784,790): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(793,796): 'Int'
+  NO_CANDIDATES
+
+KtUserType(793,796): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(793,796): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(797,824): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(803,809): 's as A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(803,804): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(805,807): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(808,809): 'A'
+  NO_CANDIDATES
+
+KtUserType(808,809): 'A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(808,809): 'A'
+  NO_CANDIDATES
+
+KtReturnExpression(814,822): 'return 1'
+  NO_CANDIDATES
+
+KtConstantExpression(821,822): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(826,884): 'fun cast2wrong(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(840,851): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(841,850): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(844,850): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(844,850): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(844,850): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(853,856): 'Int'
+  NO_CANDIDATES
+
+KtUserType(853,856): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(853,856): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(857,884): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(863,869): 's as B'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(863,864): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(865,867): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(868,869): 'B'
+  NO_CANDIDATES
+
+KtUserType(868,869): 'B'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(868,869): 'B'
+  NO_CANDIDATES
+
+KtReturnExpression(874,882): 'return 2'
+  NO_CANDIDATES
+
+KtConstantExpression(881,882): '2'
+  NO_CANDIDATES
+
+KtNamedFunction(886,952): 'fun cast1sealed(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(901,912): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(902,911): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(905,911): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(905,911): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(905,911): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(914,917): 'Int'
+  NO_CANDIDATES
+
+KtUserType(914,917): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(914,917): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(918,952): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(924,937): 's as Sealed.A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(924,925): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(926,928): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(929,937): 'Sealed.A'
+  NO_CANDIDATES
+
+KtUserType(929,937): 'Sealed.A'
+  NO_CANDIDATES
+
+KtUserType(929,935): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(929,935): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(936,937): 'A'
+  NO_CANDIDATES
+
+KtReturnExpression(942,950): 'return 1'
+  NO_CANDIDATES
+
+KtConstantExpression(949,950): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(954,1020): 'fun cast2sealed(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(969,980): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(970,979): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(973,979): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(973,979): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(973,979): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(982,985): 'Int'
+  NO_CANDIDATES
+
+KtUserType(982,985): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(982,985): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(986,1020): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(992,1005): 's as Sealed.B'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(992,993): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(994,996): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(997,1005): 'Sealed.B'
+  NO_CANDIDATES
+
+KtUserType(997,1005): 'Sealed.B'
+  NO_CANDIDATES
+
+KtUserType(997,1003): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(997,1003): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1004,1005): 'B'
+  NO_CANDIDATES
+
+KtReturnExpression(1010,1018): 'return 2'
+  NO_CANDIDATES
+
+KtConstantExpression(1017,1018): '2'
+  NO_CANDIDATES
+
+KtNamedFunction(1022,1087): 'fun cast1topLevel(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(1039,1050): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1040,1049): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1043,1049): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1043,1049): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1043,1049): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1052,1055): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1052,1055): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1052,1055): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1056,1087): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1062,1072): 's as foo.A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1062,1063): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1064,1066): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1067,1072): 'foo.A'
+  NO_CANDIDATES
+
+KtUserType(1067,1072): 'foo.A'
+  NO_CANDIDATES
+
+KtUserType(1067,1070): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1067,1070): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1071,1072): 'A'
+  NO_CANDIDATES
+
+KtReturnExpression(1077,1085): 'return 1'
+  NO_CANDIDATES
+
+KtConstantExpression(1084,1085): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(1089,1154): 'fun cast2topLevel(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(1106,1117): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1107,1116): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1110,1116): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1110,1116): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1110,1116): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1119,1122): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1119,1122): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1119,1122): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1123,1154): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1129,1139): 's as foo.B'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1129,1130): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1131,1133): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1134,1139): 'foo.B'
+  NO_CANDIDATES
+
+KtUserType(1134,1139): 'foo.B'
+  NO_CANDIDATES
+
+KtUserType(1134,1137): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1134,1137): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1138,1139): 'B'
+  NO_CANDIDATES
+
+KtReturnExpression(1144,1152): 'return 2'
+  NO_CANDIDATES
+
+KtConstantExpression(1151,1152): '2'
+  NO_CANDIDATES
+
+KtNamedFunction(1156,1211): 'fun cast3ok(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(1167,1178): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1168,1177): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1171,1177): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1171,1177): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1171,1177): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1180,1183): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1180,1183): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1180,1183): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1184,1211): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1190,1196): 's as C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1190,1191): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1192,1194): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1195,1196): 'C'
+  NO_CANDIDATES
+
+KtUserType(1195,1196): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1195,1196): 'C'
+  NO_CANDIDATES
+
+KtReturnExpression(1201,1209): 'return 3'
+  NO_CANDIDATES
+
+KtConstantExpression(1208,1209): '3'
+  NO_CANDIDATES
+
+KtNamedFunction(1213,1268): 'fun cast4ok(s: Sealed): Int {'
+  NO_CANDIDATES
+
+KtParameterList(1224,1235): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1225,1234): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1228,1234): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1228,1234): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1228,1234): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1237,1240): 'Int'
+  NO_CANDIDATES
+
+KtUserType(1237,1240): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1237,1240): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(1241,1268): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(1247,1253): 's as D'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1247,1248): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1249,1251): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(1252,1253): 'D'
+  NO_CANDIDATES
+
+KtUserType(1252,1253): 'D'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1252,1253): 'D'
+  NO_CANDIDATES
+
+KtReturnExpression(1258,1266): 'return 4'
+  NO_CANDIDATES
+
+KtConstantExpression(1265,1266): '4'
+  NO_CANDIDATES
+
+KtNamedFunction(1270,1317): 'fun equality1wrong(s: Sealed): Boolean = s == A'
+  NO_CANDIDATES
+
+KtParameterList(1288,1299): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1289,1298): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1292,1298): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1292,1298): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1292,1298): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1301,1308): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1301,1308): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1301,1308): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1311,1317): 's == A'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1311,1312): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1313,1315): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1316,1317): 'A'
+  NO_CANDIDATES
+
+KtNamedFunction(1318,1373): 'fun equality1sealed(s: Sealed): Boolean = s == Sealed.A'
+  NO_CANDIDATES
+
+KtParameterList(1337,1348): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1338,1347): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1341,1347): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1341,1347): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1341,1347): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1350,1357): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1350,1357): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1350,1357): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1360,1373): 's == Sealed.A'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1360,1361): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1362,1364): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1365,1373): 'Sealed.A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1365,1371): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1372,1373): 'A'
+  NO_CANDIDATES
+
+KtNamedFunction(1374,1428): 'fun equality1topLevel(s: Sealed): Boolean = s == foo.A'
+  NO_CANDIDATES
+
+KtParameterList(1395,1406): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1396,1405): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1399,1405): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1399,1405): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1399,1405): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1408,1415): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1408,1415): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1408,1415): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1418,1428): 's == foo.A'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1418,1419): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1420,1422): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo.A -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1423,1428): 'foo.A'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1423,1426): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1427,1428): 'A'
+  NO_CANDIDATES
+
+KtNamedFunction(1430,1481): 'fun equality2ok(s: Sealed): Boolean = s == Sealed.C'
+  NO_CANDIDATES
+
+KtParameterList(1445,1456): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1446,1455): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1449,1455): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1449,1455): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1449,1455): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1458,1465): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1458,1465): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1458,1465): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1468,1481): 's == Sealed.C'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.C -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1468,1469): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1470,1472): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.C -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1473,1481): 'Sealed.C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1473,1479): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1480,1481): 'C'
+  NO_CANDIDATES
+
+KtNamedFunction(1483,1539): 'fun equality3wrong(s: Sealed): Boolean = s == CompanionA'
+  NO_CANDIDATES
+
+KtParameterList(1501,1512): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1502,1511): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1505,1511): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1505,1511): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1505,1511): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1514,1521): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1514,1521): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1514,1521): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1524,1539): 's == CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1524,1525): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1526,1528): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1529,1539): 'CompanionA'
+  NO_CANDIDATES
+
+KtNamedFunction(1540,1604): 'fun equality3sealed(s: Sealed): Boolean = s == Sealed.CompanionA'
+  NO_CANDIDATES
+
+KtParameterList(1559,1570): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1560,1569): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1563,1569): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1563,1569): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1563,1569): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1572,1579): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1572,1579): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1572,1579): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1582,1604): 's == Sealed.CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1582,1583): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1584,1586): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Sealed
+          isSafeNavigation = false
+          type = bar.Sealed.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionA
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = val CompanionA: bar.Sealed
+          contextParameters = []
+          callableId = bar/Sealed.Companion.CompanionA
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1587,1593): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1594,1604): 'CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Sealed
+          isSafeNavigation = false
+          type = bar.Sealed.Companion
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = CompanionA
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = val CompanionA: bar.Sealed
+          contextParameters = []
+          callableId = bar/Sealed.Companion.CompanionA
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(1605,1668): 'fun equality3topLevel(s: Sealed): Boolean = s == foo.CompanionA'
+  NO_CANDIDATES
+
+KtParameterList(1626,1637): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1627,1636): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1630,1636): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1630,1636): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1630,1636): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1639,1646): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1639,1646): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1639,1646): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1649,1668): 's == foo.CompanionA'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1649,1650): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1651,1653): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo.CompanionA -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1654,1668): 'foo.CompanionA'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1654,1657): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1658,1668): 'CompanionA'
+  NO_CANDIDATES
+
+KtNamedFunction(1670,1714): 'fun equality4ok(s: Sealed): Boolean = s == F'
+  NO_CANDIDATES
+
+KtParameterList(1685,1696): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1686,1695): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1689,1695): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1689,1695): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1689,1695): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1698,1705): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1698,1705): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1698,1705): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1708,1714): 's == F'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1708,1709): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1710,1712): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1713,1714): 'F'
+  NO_CANDIDATES
+
+KtNamedFunction(1715,1770): 'fun equality4sealed(s: Sealed): Boolean = s == Sealed.F'
+  NO_CANDIDATES
+
+KtParameterList(1734,1745): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1735,1744): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1738,1744): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1738,1744): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1738,1744): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1747,1754): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1747,1754): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1747,1754): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1757,1770): 's == Sealed.F'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1757,1758): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1759,1761): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Sealed.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1762,1770): 'Sealed.F'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1762,1768): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1769,1770): 'F'
+  NO_CANDIDATES
+
+KtNamedFunction(1771,1825): 'fun equality4topLevel(s: Sealed): Boolean = s == foo.F'
+  NO_CANDIDATES
+
+KtParameterList(1792,1803): '(s: Sealed)'
+  NO_CANDIDATES
+
+KtParameter(1793,1802): 's: Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1796,1802): 'Sealed'
+  NO_CANDIDATES
+
+KtUserType(1796,1802): 'Sealed'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1796,1802): 'Sealed'
+  NO_CANDIDATES
+
+KtTypeReference(1805,1812): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(1805,1812): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1805,1812): 'Boolean'
+  NO_CANDIDATES
+
+KtBinaryExpression(1815,1825): 's == foo.F'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(1815,1816): 's'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = bar.Sealed
+          symbol = s: bar.Sealed
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(1817,1819): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo.F -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = bar.Sealed
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(1820,1825): 'foo.F'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1820,1823): 'foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(1824,1825): 'F'
+  NO_CANDIDATES

@@ -1,0 +1,23 @@
+KtNameReferenceExpression(115,116): 'A'
+  KtSimpleNameReference:
+    (in ROOT) enum class A
+
+KtNameReferenceExpression(126,127): 'a'
+  KtSimpleNameReference:
+    a: A
+
+KtNameReferenceExpression(135,136): 'A'
+  KtSimpleNameReference:
+    (in ROOT) enum class A
+
+KtNameReferenceExpression(137,138): 'A'
+  KtSimpleNameReference:
+    (in A) A
+
+KtNameReferenceExpression(150,151): 'A'
+  KtSimpleNameReference:
+    (in ROOT) enum class A
+
+KtNameReferenceExpression(152,153): 'B'
+  KtSimpleNameReference:
+    (in A) B

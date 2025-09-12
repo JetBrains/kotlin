@@ -59,6 +59,76 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallByFileTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ContextSensitiveResolution {
+    @Test
+    public void testAllFilesPresentInContextSensitiveResolution() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Ambiguity {
+      @Test
+      public void testAllFilesPresentInAmbiguity() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CallArgumentPosition {
+      @Test
+      public void testAllFilesPresentInCallArgumentPosition() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/callArgumentPosition"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NestedInheritors {
+      @Test
+      public void testAllFilesPresentInNestedInheritors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/nestedInheritors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OtherExpectedTypePositions {
+      @Test
+      public void testAllFilesPresentInOtherExpectedTypePositions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/otherExpectedTypePositions"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypePosition {
+      @Test
+      public void testAllFilesPresentInTypePosition() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/typePosition"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum")
+    @TestDataPath("$PROJECT_ROOT")
+    public class UnqualifiedEnum {
+      @Test
+      public void testAllFilesPresentInUnqualifiedEnum() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/unqualifiedEnum"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/imports")
   @TestDataPath("$PROJECT_ROOT")
   public class Imports {

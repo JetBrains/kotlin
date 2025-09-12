@@ -1,0 +1,122 @@
+KtNameReferenceExpression(151,156): 'Outer'
+  KtSimpleNameReference:
+    (in ROOT) enum class Outer
+
+KtNameReferenceExpression(161,166): 'Inner'
+  KtSimpleNameReference:
+    (in ROOT) enum class Inner
+
+KtNameReferenceExpression(169,172): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(192,193): 'o'
+  KtSimpleNameReference:
+    o: Outer
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(205,210): 'FIRST'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(224,230): 'SECOND'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(240,241): 'i'
+  KtSimpleNameReference:
+    i: Inner
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(257,263): 'SECOND'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(281,286): 'THIRD'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(322,327): 'Outer'
+  KtSimpleNameReference:
+    (in ROOT) enum class Outer
+
+KtNameReferenceExpression(332,337): 'Inner'
+  KtSimpleNameReference:
+    (in ROOT) enum class Inner
+
+KtNameReferenceExpression(340,343): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(363,364): 'o'
+  KtSimpleNameReference:
+    o: Outer
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(376,381): 'FIRST'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(395,401): 'SECOND'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(430,433): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(465,466): 'i'
+  KtSimpleNameReference:
+    i: Inner
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(490,496): 'SECOND'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(522,527): 'THIRD'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(577,582): 'baz()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(577,580): 'baz'
+  KtSimpleNameReference:
+    (in <local>: bar) fun baz(): kotlin.Int
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

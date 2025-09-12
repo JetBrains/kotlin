@@ -1,0 +1,602 @@
+KtFile: 'elvisOperatorEnum.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(78,268): 'enum class MyEnum {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(78,82): 'enum'
+  NO_CANDIDATES
+
+KtClassBody(96,268): '{'
+  NO_CANDIDATES
+
+KtEnumEntry(102,110): 'Option1,'
+  NO_CANDIDATES
+
+KtEnumEntry(111,119): 'Option2,'
+  NO_CANDIDATES
+
+KtEnumEntry(120,128): 'Option3;'
+  NO_CANDIDATES
+
+KtObjectDeclaration(133,266): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(133,142): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(150,266): '{'
+  NO_CANDIDATES
+
+KtProperty(160,190): 'val enumProp: MyEnum = Option1'
+  NO_CANDIDATES
+
+KtTypeReference(174,180): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(174,180): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(174,180): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(183,190): 'Option1'
+  NO_CANDIDATES
+
+KtProperty(199,226): 'val stringProp: String = ""'
+  NO_CANDIDATES
+
+KtTypeReference(215,221): 'String'
+  NO_CANDIDATES
+
+KtUserType(215,221): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(215,221): 'String'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(224,226): '""'
+  NO_CANDIDATES
+
+KtNamedFunction(235,260): 'fun getOption() = Option1'
+  NO_CANDIDATES
+
+KtParameterList(248,250): '()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(253,260): 'Option1'
+  NO_CANDIDATES
+
+KtNamedFunction(270,293): 'fun <T>receive(e: T) {}'
+  NO_CANDIDATES
+
+KtTypeParameterList(274,277): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(275,276): 'T'
+  NO_CANDIDATES
+
+KtParameterList(284,290): '(e: T)'
+  NO_CANDIDATES
+
+KtParameter(285,289): 'e: T'
+  NO_CANDIDATES
+
+KtTypeReference(288,289): 'T'
+  NO_CANDIDATES
+
+KtUserType(288,289): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(288,289): 'T'
+  NO_CANDIDATES
+
+KtBlockExpression(291,293): '{}'
+  NO_CANDIDATES
+
+KtProperty(294,330): 'val EnumOptionAlias = MyEnum.Option1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(316,330): 'MyEnum.Option1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(316,322): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(323,330): 'Option1'
+  NO_CANDIDATES
+
+KtNamedFunction(332,742): 'fun testElvis() {'
+  NO_CANDIDATES
+
+KtParameterList(345,347): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(348,742): '{'
+  NO_CANDIDATES
+
+KtProperty(354,390): 'var i10: MyEnum = Option1 ?: Option2'
+  NO_CANDIDATES
+
+KtTypeReference(363,369): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(363,369): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(363,369): 'MyEnum'
+  NO_CANDIDATES
+
+KtBinaryExpression(372,390): 'Option1 ?: Option2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(372,379): 'Option1'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(380,382): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(383,390): 'Option2'
+  NO_CANDIDATES
+
+KtProperty(395,432): 'var i11: MyEnum? = Option1 ?: Option2'
+  NO_CANDIDATES
+
+KtTypeReference(404,411): 'MyEnum?'
+  NO_CANDIDATES
+
+KtNullableType(404,411): 'MyEnum?'
+  NO_CANDIDATES
+
+KtUserType(404,410): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(404,410): 'MyEnum'
+  NO_CANDIDATES
+
+KtBinaryExpression(414,432): 'Option1 ?: Option2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(414,421): 'Option1'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(422,424): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(425,432): 'Option2'
+  NO_CANDIDATES
+
+KtProperty(437,474): 'var i20: MyEnum = enumProp ?: Option2'
+  NO_CANDIDATES
+
+KtTypeReference(446,452): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(446,452): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(446,452): 'MyEnum'
+  NO_CANDIDATES
+
+KtBinaryExpression(455,474): 'enumProp ?: Option2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(455,463): 'enumProp'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(464,466): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(467,474): 'Option2'
+  NO_CANDIDATES
+
+KtProperty(479,519): 'var i30: MyEnum = enumProp ?: stringProp'
+  NO_CANDIDATES
+
+KtTypeReference(488,494): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(488,494): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(488,494): 'MyEnum'
+  NO_CANDIDATES
+
+KtBinaryExpression(497,519): 'enumProp ?: stringProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(497,505): 'enumProp'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(506,508): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(509,519): 'stringProp'
+  NO_CANDIDATES
+
+KtProperty(524,564): 'var i40: MyEnum = stringProp ?: enumProp'
+  NO_CANDIDATES
+
+KtTypeReference(533,539): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(533,539): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(533,539): 'MyEnum'
+  NO_CANDIDATES
+
+KtBinaryExpression(542,564): 'stringProp ?: enumProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(542,552): 'stringProp'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(553,555): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(556,564): 'enumProp'
+  NO_CANDIDATES
+
+KtProperty(569,610): 'var i50: MyEnum = getOption() ?: enumProp'
+  NO_CANDIDATES
+
+KtTypeReference(578,584): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(578,584): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(578,584): 'MyEnum'
+  NO_CANDIDATES
+
+KtBinaryExpression(587,610): 'getOption() ?: enumProp'
+  NO_CANDIDATES
+
+KtCallExpression(587,598): 'getOption()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(587,596): 'getOption'
+  NO_CANDIDATES
+
+KtValueArgumentList(596,598): '()'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(599,601): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(602,610): 'enumProp'
+  NO_CANDIDATES
+
+KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Option1 ?: Option2 -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyEnum
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(616,623): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Option1 ?: Option2 -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyEnum
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(623,631): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(624,630): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(624,630): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(624,630): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(624,630): 'MyEnum'
+  NO_CANDIDATES
+
+KtValueArgumentList(631,651): '(Option1 ?: Option2)'
+  NO_CANDIDATES
+
+KtValueArgument(632,650): 'Option1 ?: Option2'
+  NO_CANDIDATES
+
+KtBinaryExpression(632,650): 'Option1 ?: Option2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(632,639): 'Option1'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(640,642): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(643,650): 'Option2'
+  NO_CANDIDATES
+
+KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        enumProp ?: stringProp -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyEnum
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(656,663): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        enumProp ?: stringProp -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyEnum
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(663,671): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(664,670): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(664,670): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(664,670): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(664,670): 'MyEnum'
+  NO_CANDIDATES
+
+KtValueArgumentList(671,695): '(enumProp ?: stringProp)'
+  NO_CANDIDATES
+
+KtValueArgument(672,694): 'enumProp ?: stringProp'
+  NO_CANDIDATES
+
+KtBinaryExpression(672,694): 'enumProp ?: stringProp'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(672,680): 'enumProp'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(681,683): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(684,694): 'stringProp'
+  NO_CANDIDATES
+
+KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        enumProp ?: getOption() -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyEnum
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(700,707): 'receive'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        enumProp ?: getOption() -> (KaVariableSignature:
+          name = e
+          receiverType = null
+          returnType = MyEnum
+          symbol = e: T
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /receive(e: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = e
+              receiverType = null
+              returnType = MyEnum
+              symbol = e: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+    isInBestCandidates = true
+
+KtTypeArgumentList(707,715): '<MyEnum>'
+  NO_CANDIDATES
+
+KtTypeProjection(708,714): 'MyEnum'
+  NO_CANDIDATES
+
+KtTypeReference(708,714): 'MyEnum'
+  NO_CANDIDATES
+
+KtUserType(708,714): 'MyEnum'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(708,714): 'MyEnum'
+  NO_CANDIDATES
+
+KtValueArgumentList(715,740): '(enumProp ?: getOption())'
+  NO_CANDIDATES
+
+KtValueArgument(716,739): 'enumProp ?: getOption()'
+  NO_CANDIDATES
+
+KtBinaryExpression(716,739): 'enumProp ?: getOption()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(716,724): 'enumProp'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(725,727): '?:'
+  NO_CANDIDATES
+
+KtCallExpression(728,739): 'getOption()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(728,737): 'getOption'
+  NO_CANDIDATES
+
+KtValueArgumentList(737,739): '()'
+  NO_CANDIDATES

@@ -1,0 +1,327 @@
+KtNameReferenceExpression(124,125): 'X'
+  KtSimpleNameReference:
+    (in <local>: id) X
+
+KtNameReferenceExpression(128,129): 'X'
+  KtSimpleNameReference:
+    (in <local>: id) X
+
+KtCallExpression(132,138): 'TODO()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(132,136): 'TODO'
+  KtSimpleNameReference:
+    (in kotlin) inline fun TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(149,155): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(164,165): 'T'
+  KtSimpleNameReference:
+    (in <local>: foo) T
+
+KtNameReferenceExpression(181,187): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtNameReferenceExpression(188,189): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(199,200): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(201,203): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(204,205): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(218,219): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(220,222): '!='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(223,224): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(237,238): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(239,242): '==='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(243,244): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(257,258): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(259,262): '!=='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(263,264): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(277,278): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(279,281): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(282,283): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtNameReferenceExpression(467,468): 'X'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(469,471): '=='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(472,473): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtNameReferenceExpression(486,487): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtOperationReferenceExpression(488,490): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(491,492): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtNameReferenceExpression(695,696): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(697,699): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtCallExpression(700,705): 'id(X)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(700,702): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(703,704): 'X'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(718,719): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(720,722): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtCallExpression(723,728): 'id(L)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(723,725): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(726,727): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtNameReferenceExpression(753,754): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(755,757): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(758,759): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(774,775): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(776,778): '!='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(779,780): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtNameReferenceExpression(795,796): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(797,800): '==='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(801,802): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(817,818): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(819,822): '!=='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(823,824): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtNameReferenceExpression(839,840): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtOperationReferenceExpression(841,843): '=='
+  KtSimpleNameReference:
+    (in kotlin.Enum) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(844,845): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtNameReferenceExpression(869,870): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtNameReferenceExpression(882,883): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(898,899): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtNameReferenceExpression(901,902): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtNameReferenceExpression(934,935): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtNameReferenceExpression(947,948): 'X'
+  KtSimpleNameReference:
+    (in MyEnum) X
+
+KtNameReferenceExpression(963,964): 'Y'
+  KtSimpleNameReference:
+    (in MyEnum) Y
+
+KtNameReferenceExpression(966,967): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtNameReferenceExpression(991,992): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtCallExpression(1004,1009): 'id(X)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1004,1006): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(1007,1008): 'X'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1024,1029): 'id(Y)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1024,1026): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(1027,1028): 'Y'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1031,1036): 'id(L)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1031,1033): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(1034,1035): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum
+
+KtNameReferenceExpression(1087,1088): 'a'
+  KtSimpleNameReference:
+    a: T
+
+KtCallExpression(1100,1105): 'id(X)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1100,1102): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(1103,1104): 'X'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1120,1125): 'id(Y)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1120,1122): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(1123,1124): 'Y'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1127,1132): 'id(L)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1127,1129): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(1130,1131): 'L'
+  KtSimpleNameReference:
+    (in <local>: foo) val L: MyEnum

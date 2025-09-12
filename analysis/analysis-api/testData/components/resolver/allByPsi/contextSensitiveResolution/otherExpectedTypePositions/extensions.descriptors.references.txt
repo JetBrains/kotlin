@@ -1,0 +1,139 @@
+KtNameReferenceExpression(129,136): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+KtNameReferenceExpression(137,146): 'Companion'
+  KtSimpleNameReference:
+    (in MyClass) companion object
+
+KtNameReferenceExpression(152,159): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+KtCallExpression(168,177): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(168,175): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(198,205): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+KtCallExpression(228,244): 'foo(MyClass.bar)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(228,231): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo(a: MyClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(232,239): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(240,243): 'bar'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(249,257): 'foo(bar)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(249,252): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun foo(a: MyClass)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(253,256): 'bar'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(306,314): 'MyClass2'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass2
+
+KtNameReferenceExpression(315,324): 'Companion'
+  KtSimpleNameReference:
+    (in MyClass2) companion object
+
+KtNameReferenceExpression(330,338): 'MyClass2'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass2
+
+KtCallExpression(347,357): 'MyClass2()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(347,355): 'MyClass2'
+  KtSimpleNameReference:
+    (in MyClass2) constructor()
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(371,379): 'MyClass2'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass2
+
+KtCallExpression(403,421): 'foo2(MyClass2.bar)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(403,407): 'foo2'
+  KtSimpleNameReference:
+    (in ROOT) fun foo2(a: MyClass2)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(408,416): 'MyClass2'
+  KtSimpleNameReference:
+    (in MyClass2) companion object
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(417,420): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) val MyClass2.Companion.bar: MyClass2
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(426,435): 'foo2(bar)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(426,430): 'foo2'
+  KtSimpleNameReference:
+    (in ROOT) fun foo2(a: MyClass2)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(431,434): 'bar'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

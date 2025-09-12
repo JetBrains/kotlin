@@ -1,0 +1,229 @@
+KtFile: 'defaultArg.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,115): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,115): '{'
+  null
+
+KtEnumEntry(102,113): 'EnumValue1;'
+  null
+
+KtClass(117,244): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(117,121): 'open'
+  null
+
+KtClassBody(136,244): '{'
+  null
+
+KtObjectDeclaration(142,175): 'object InheritorObject: MyClass()'
+  null
+
+KtSuperTypeList(166,175): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(166,175): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(166,173): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtTypeReference(166,173): 'MyClass'
+  null
+
+KtUserType(166,173): 'MyClass'
+  null
+
+KtNameReferenceExpression(166,173): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(173,175): '()'
+  null
+
+KtObjectDeclaration(181,242): 'companion object {'
+  null
+
+KtDeclarationModifierList(181,190): 'companion'
+  null
+
+KtClassBody(198,242): '{'
+  null
+
+KtNamedFunction(208,236): 'fun func(): MyClass = TODO()'
+  null
+
+KtParameterList(216,218): '()'
+  null
+
+KtTypeReference(220,227): 'MyClass'
+  null
+
+KtUserType(220,227): 'MyClass'
+  null
+
+KtNameReferenceExpression(220,227): 'MyClass'
+  null
+
+KtCallExpression(230,236): 'TODO()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(230,234): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(234,236): '()'
+  null
+
+KtNamedFunction(246,382): 'fun defaultArgHolder1('
+  null
+
+KtParameterList(267,379): '('
+  null
+
+KtParameter(273,301): 'enumArg: MyEnum = EnumValue1'
+  null
+
+KtTypeReference(282,288): 'MyEnum'
+  null
+
+KtUserType(282,288): 'MyEnum'
+  null
+
+KtNameReferenceExpression(282,288): 'MyEnum'
+  null
+
+KtNameReferenceExpression(291,301): 'EnumValue1'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
+
+KtParameter(307,343): 'sealedArg: MyClass = InheritorObject'
+  null
+
+KtTypeReference(318,325): 'MyClass'
+  null
+
+KtUserType(318,325): 'MyClass'
+  null
+
+KtNameReferenceExpression(318,325): 'MyClass'
+  null
+
+KtNameReferenceExpression(328,343): 'InheritorObject'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
+
+KtParameter(349,377): 'sealedArg2: MyClass = func()'
+  null
+
+KtTypeReference(361,368): 'MyClass'
+  null
+
+KtUserType(361,368): 'MyClass'
+  null
+
+KtNameReferenceExpression(361,368): 'MyClass'
+  null
+
+KtCallExpression(371,377): 'func()'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
+
+KtNameReferenceExpression(371,375): 'func'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
+
+KtValueArgumentList(375,377): '()'
+  null
+
+KtBlockExpression(380,382): '{}'
+  null

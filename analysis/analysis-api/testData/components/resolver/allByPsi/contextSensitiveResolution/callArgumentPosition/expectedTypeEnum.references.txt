@@ -1,0 +1,55 @@
+KtNameReferenceExpression(131,132): 'X'
+  KtSimpleNameReference:
+    (in <local>: id) X
+
+KtNameReferenceExpression(135,136): 'X'
+  KtSimpleNameReference:
+    (in <local>: id) X
+
+KtNameReferenceExpression(139,140): 'x'
+  KtSimpleNameReference:
+    x: X
+
+KtNameReferenceExpression(162,163): 'T'
+  KtSimpleNameReference:
+    (in <local>: receive) T
+
+KtNameReferenceExpression(206,212): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtCallExpression(215,229): 'id(EnumValue1)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(215,217): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(218,228): 'EnumValue1'
+  KtSimpleNameReference:
+    (in MyEnum) EnumValue1
+
+KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(235,242): 'receive'
+  KtSimpleNameReference:
+    (in ROOT) fun <T> receive(arg: T)
+
+KtNameReferenceExpression(243,249): 'MyEnum'
+  KtSimpleNameReference:
+    (in ROOT) enum class MyEnum
+
+KtCallExpression(251,265): 'id(EnumValue1)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(251,253): 'id'
+  KtSimpleNameReference:
+    (in ROOT) fun <X> id(x: X): X
+
+KtNameReferenceExpression(254,264): 'EnumValue1'
+  KtSimpleNameReference:
+    (in MyEnum) EnumValue1

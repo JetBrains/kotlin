@@ -1,0 +1,51 @@
+KtNameReferenceExpression(128,134): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(137,145): 'MySealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MySealed
+
+KtNameReferenceExpression(169,175): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(178,186): 'MySealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MySealed
+
+KtNameReferenceExpression(222,228): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(237,245): 'MySealed'
+  KtSimpleNameReference:
+    (in ROOT) interface MySealed
+
+KtNameReferenceExpression(266,270): 'this'
+  KtSimpleNameReference:
+    extension receiver with type MySealed
+
+KtNameReferenceExpression(281,285): 'Left'
+  KtSimpleNameReference:
+    (in MySealed) class Left(x: kotlin.String) : MySealed
+
+KtNameReferenceExpression(289,290): 'x'
+  KtSimpleNameReference:
+    (in MySealed.Left) val x: kotlin.String
+
+KtNameReferenceExpression(298,303): 'Right'
+  KtSimpleNameReference:
+    (in MySealed) class Right(y: kotlin.String) : MySealed
+
+KtNameReferenceExpression(307,308): 'y'
+  KtSimpleNameReference:
+    (in MySealed.Right) val y: kotlin.String
+
+KtNameReferenceExpression(316,333): 'NonSealedSubclass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(337,338): 'z'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

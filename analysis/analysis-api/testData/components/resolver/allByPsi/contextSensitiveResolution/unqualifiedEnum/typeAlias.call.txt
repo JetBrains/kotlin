@@ -1,0 +1,131 @@
+KtFile: 'typeAlias.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,100): '// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType'
+  null
+
+KtDeclarationModifierList(58,62): 'enum'
+  null
+
+KtClassBody(74,100): '{'
+  null
+
+KtEnumEntry(80,86): 'FIRST,'
+  null
+
+KtEnumEntry(91,98): 'SECOND;'
+  null
+
+KtTypeAlias(102,124): 'typealias Other = Some'
+  null
+
+KtTypeReference(120,124): 'Some'
+  null
+
+KtUserType(120,124): 'Some'
+  null
+
+KtNameReferenceExpression(120,124): 'Some'
+  null
+
+KtNamedFunction(126,189): 'fun foo(o: Other) = when (o) {'
+  null
+
+KtParameterList(133,143): '(o: Other)'
+  null
+
+KtParameter(134,142): 'o: Other'
+  null
+
+KtTypeReference(137,142): 'Other'
+  null
+
+KtUserType(137,142): 'Other'
+  null
+
+KtNameReferenceExpression(137,142): 'Other'
+  null
+
+KtWhenExpression(146,189): 'when (o) {'
+  null
+
+KtNameReferenceExpression(152,153): 'o'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = o
+          receiverType = null
+          returnType = {Other=} Some
+          symbol = o: {Other=} Some
+          contextParameters = []
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtWhenEntry(161,171): 'FIRST -> 1'
+  null
+
+KtWhenConditionWithExpression(161,166): 'FIRST'
+  null
+
+KtNameReferenceExpression(161,166): 'FIRST'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = FIRST
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = FIRST
+          receiverType = null
+          returnType = Some
+          symbol = /Some.FIRST
+          contextParameters = []
+          callableId = /Some.FIRST
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtConstantExpression(170,171): '1'
+  null
+
+KtWhenEntry(176,187): 'SECOND -> 2'
+  null
+
+KtWhenConditionWithExpression(176,182): 'SECOND'
+  null
+
+KtNameReferenceExpression(176,182): 'SECOND'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = SECOND
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = SECOND
+          receiverType = null
+          returnType = Some
+          symbol = /Some.SECOND
+          contextParameters = []
+          callableId = /Some.SECOND
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtConstantExpression(186,187): '2'
+  null

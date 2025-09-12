@@ -1,0 +1,23 @@
+KtNameReferenceExpression(113,117): 'Some'
+  KtSimpleNameReference:
+    (in ROOT) enum class Some
+
+KtNameReferenceExpression(127,128): 's'
+  KtSimpleNameReference:
+    s: Some
+
+KtNameReferenceExpression(136,141): 'FIRST'
+  KtSimpleNameReference:
+    (in Some) FIRST
+
+KtNameReferenceExpression(145,151): 'SECOND'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(156,162): 'SECOND'
+  KtSimpleNameReference:
+    (in Some) SECOND
+
+KtNameReferenceExpression(166,171): 'FIRST'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
