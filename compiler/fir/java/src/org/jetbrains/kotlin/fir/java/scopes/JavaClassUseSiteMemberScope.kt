@@ -1,8 +1,3 @@
-/*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
@@ -1050,7 +1045,9 @@ class JavaClassUseSiteMemberScope(
             this is FirJavaClass -> superConeTypes.any { type ->
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
-            isInterface || origin.isBuiltIns -> false
+            isInterface -> false
+            symbol.classId == StandardClassIds.Any -> false
+            symbol.classId.asSingleFqName() in BuiltinSpecialProperties.TYPE_FQ_NAMES -> false
             else -> {
                 if (!session.languageVersionSettings.getFlag(JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib)) {
                     true
