@@ -47073,6 +47073,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("recursiveTypeAnnotationWithVarargStandalone.kt")
+      public void testRecursiveTypeAnnotationWithVarargStandalone() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/recursiveTypeAnnotationWithVarargStandalone.kt");
+      }
+
+      @Test
       @TestMetadata("strictfpOnClass.kt")
       public void testStrictfpOnClass() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/strictfpOnClass.kt");
