@@ -48974,6 +48974,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("recursiveTypeAnnotationWithVarargNoDefault.kt")
+      public void testRecursiveTypeAnnotationWithVarargNoDefault() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/recursiveTypeAnnotationWithVarargNoDefault.kt");
+      }
+
+      @Test
       @TestMetadata("strictfpOnClass.kt")
       public void testStrictfpOnClass() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/strictfpOnClass.kt");

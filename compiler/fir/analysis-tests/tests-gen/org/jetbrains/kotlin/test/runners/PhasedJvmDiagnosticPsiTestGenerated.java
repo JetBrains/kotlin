@@ -47228,6 +47228,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("recursiveTypeAnnotationWithVarargNoDefault.kt")
+      public void testRecursiveTypeAnnotationWithVarargNoDefault() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/recursiveTypeAnnotationWithVarargNoDefault.kt");
+      }
+
+      @Test
       @TestMetadata("strictfpOnClass.kt")
       public void testStrictfpOnClass() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/strictfpOnClass.kt");
