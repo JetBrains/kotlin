@@ -4,6 +4,7 @@
  */
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
@@ -77,6 +78,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
         }
     }
 
+    @OptIn(ExperimentalCompilerArgument::class)
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on missing -Xuse-fir-ic")
     @TestMetadata("jvm-module-1")

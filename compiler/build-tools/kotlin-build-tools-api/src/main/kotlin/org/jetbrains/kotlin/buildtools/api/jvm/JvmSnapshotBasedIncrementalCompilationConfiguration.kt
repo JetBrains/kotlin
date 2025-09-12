@@ -142,6 +142,7 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
          * This runner only works with Kotlin Language Version 2.0+ and is disabled by default.
          */
         @JvmField
+        @ExperimentalCompilerArgument
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**
