@@ -1916,6 +1916,8 @@ internal object KotlinToolingDiagnostics {
                             |The `kotlin-dsl` plugin relies on the Gradle-embedded Kotlin version. Using `kotlin-dsl` plugin together with a different Kotlin version (for example by using Kotlin Gradle plugin (`kotlin(jvm)`)) in the same module is not recommended.
                             |
                             |If you are writing a convention plugin (or a precompiled script plugin in general) it’s recommended to only use the `kotlin-dsl` plugin and use the embedded Kotlin version. If you are writing a binary plugin it’s recommended to not use the `kotlin-dsl` plugin and use the Kotlin Gradle plugin (`kotlin(jvm)`).
+                            |To upgrade the embedded Kotlin Language version a Gradle update is required. Please find the required Gradle version in the following table:
+                            |https://docs.gradle.org/current/userguide/compatibility.html#kotlin
                             |
                             |You can configure your module to use ${nonDeprecatedVersion.version} or higher overriding `kotlin-dsl` behavior using a following snippet:
                             |$configureSnippet
@@ -1925,7 +1927,7 @@ internal object KotlinToolingDiagnostics {
                     .solutions(
                         "Do not use `kotlin(jvm)` explicitly in this module and allow `kotlin-dsl` to auto-provide a compatible version on its own. If you prefer staying explicit, consider using the `embeddedKotlinVersion` constant.",
                         "Do not use `kotlin-dsl` in this module.",
-                        "Configure your module to use ${nonDeprecatedVersion.version} or higher overriding `kotlin-dsl` behavior.",
+                        "Configure your module to use ${nonDeprecatedVersion.version} or higher overriding `kotlin-dsl` behavior (unrecommended).",
                     )
                     .documentationLink(URI("https://kotl.in/gradle/kotlin-dsl-version-compatibility"))
             }
