@@ -9915,6 +9915,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
         }
 
         @Test
+        @TestMetadata("explicitFieldControlFlowGraph.kt")
+        public void testExplicitFieldControlFlowGraph() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldControlFlowGraph.kt");
+        }
+
+        @Test
         @TestMetadata("explicitFieldRefersToThePropertyInTheInitializer.kt")
         public void testExplicitFieldRefersToThePropertyInTheInitializer() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitFieldRefersToThePropertyInTheInitializer.kt");
