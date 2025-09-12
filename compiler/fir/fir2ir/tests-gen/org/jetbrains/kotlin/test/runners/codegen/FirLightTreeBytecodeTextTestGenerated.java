@@ -2288,6 +2288,18 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
     public void testKt57671_2() {
       runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_2.kt");
     }
+
+    @Test
+    @TestMetadata("kt79231_1.kt")
+    public void testKt79231_1() {
+      runTest("compiler/testData/codegen/bytecodeText/enum/kt79231_1.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79231_2.kt")
+    public void testKt79231_2() {
+      runTest("compiler/testData/codegen/bytecodeText/enum/kt79231_2.kt");
+    }
   }
 
   @Nested
