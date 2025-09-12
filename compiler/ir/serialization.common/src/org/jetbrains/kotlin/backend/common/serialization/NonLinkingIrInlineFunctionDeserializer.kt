@@ -85,7 +85,7 @@ class NonLinkingIrInlineFunctionDeserializer(
     class ModuleDeserializer(
         library: KotlinLibrary,
         detachedSymbolTable: SymbolTable,
-        irInterner: IrInterningService,
+        private val irInterner: IrInterningService,
         irBuiltIns: IrBuiltIns,
     ) {
         private val fileReader = IrLibraryFileFromBytes(InlinableFunsFileIrKlibBytesSource(library))
@@ -157,7 +157,7 @@ class NonLinkingIrInlineFunctionDeserializer(
                 val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
 
                 val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
-                val fileEntry = fileReader.deserializeFileEntry(fileEntryProto)
+                val fileEntry = fileReader.deserializeFileEntry(fileEntryProto, irInterner)
                 val file = IrFileImpl(
                     symbol = IrFileSymbolImpl(with(originalFunctionPackage.symbol) { runIf(hasDescriptor) { descriptor } }),
                     packageFqName = originalFunctionPackage.packageFqName,

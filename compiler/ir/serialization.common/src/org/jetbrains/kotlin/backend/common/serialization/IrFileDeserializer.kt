@@ -249,15 +249,15 @@ class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int)
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::string)
 
-fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile): IrFile {
-    val fileEntry = deserializeFileEntry(fileEntry(fileProto))
+fun IrLibraryFile.createFile(module: IrModuleFragment, fileProto: ProtoFile, irInterner: IrInterningService): IrFile {
+    val fileEntry = deserializeFileEntry(fileEntry(fileProto), irInterner)
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))
     val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(module.descriptor, fqName)
     val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
     return IrFileImpl(fileEntry, symbol, fqName, module)
 }
 
-internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry): IrFileEntry {
+internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry, irInterner: IrInterningService): IrFileEntry {
     val lineStartOffsets: IntArray
     if (fileEntryProto.lineStartOffsetDeltaCount > 0) {
         lineStartOffsets = IntArray(fileEntryProto.lineStartOffsetDeltaCount)
@@ -271,7 +271,7 @@ internal fun IrLibraryFile.deserializeFileEntry(fileEntryProto: ProtoFileEntry):
     }
 
     return NaiveSourceBasedFileEntryImpl(
-        name = deserializeFileEntryName(fileEntryProto),
+        name = irInterner.string(deserializeFileEntryName(fileEntryProto)),
         lineStartOffsets = lineStartOffsets,
         firstRelevantLineIndex = fileEntryProto.firstRelevantLineIndex
     )
