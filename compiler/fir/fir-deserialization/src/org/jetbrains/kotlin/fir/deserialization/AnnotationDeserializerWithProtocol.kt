@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.ClassId
@@ -127,7 +126,7 @@ abstract class AnnotationDeserializerWithProtocol(
         enumEntryProto: ProtoBuf.EnumEntry,
         nameResolver: NameResolver,
     ): List<FirAnnotation> =
-        enumEntryProto.loadAnnotationsFromProtocol(session, protocol.enumEntryAnnotation, -1, nameResolver)
+        enumEntryProto.loadAnnotationsFromProtocol(session, protocol.enumEntryAnnotation, null, nameResolver)
 
     override fun loadExtensionReceiverParameterAnnotations(
         containerSource: DeserializedContainerSource?,
@@ -157,8 +156,8 @@ abstract class AnnotationDeserializerWithProtocol(
         null
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
-        typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, -1, nameResolver)
+        typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, null, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        typeParameterProto.loadAnnotationsFromProtocol(session, protocol.typeParameterAnnotation, -1, nameResolver)
+        typeParameterProto.loadAnnotationsFromProtocol(session, protocol.typeParameterAnnotation, null, nameResolver)
 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.AnnotationDeserializer.CallableKind
 import org.jetbrains.kotlin.fir.deserialization.loadAnnotationsFromMetadata
-import org.jetbrains.kotlin.fir.deserialization.loadAnnotationsFromMetadataExperimental
+import org.jetbrains.kotlin.fir.deserialization.loadAnnotationsFromMetadataGuarded
 import org.jetbrains.kotlin.fir.deserialization.loadAnnotationsFromProtocol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -71,7 +71,7 @@ class JvmBinaryAnnotationDeserializer(
         // Note that HAS_ANNOTATIONS flag has incorrect value for inline classes in the old syntax (`inline class ...`).
         // For inline classes in the old syntax, JVM backend adds a `@JvmInline` annotation, but HAS_ANNOTATIONS flag is still false.
         // So, we disable the optimization that avoids loading annotations, for inline classes.
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             classProto.flags.takeUnless(Flags.IS_VALUE_CLASS::get),
             classProto.annotationList,
@@ -99,10 +99,10 @@ class JvmBinaryAnnotationDeserializer(
         loadAnnotationsFromMetadata(session, aliasProto.flags, aliasProto.annotationList, nameResolver)
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> =
-        typeProto.loadAnnotationsFromProtocol(session, JvmProtoBuf.typeAnnotation, -1, nameResolver)
+        typeProto.loadAnnotationsFromProtocol(session, JvmProtoBuf.typeAnnotation, null, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        typeParameterProto.loadAnnotationsFromProtocol(session, JvmProtoBuf.typeParameterAnnotation, -1, nameResolver)
+        typeParameterProto.loadAnnotationsFromProtocol(session, JvmProtoBuf.typeParameterAnnotation, null, nameResolver)
 
     override fun loadConstructorAnnotations(
         containerSource: DeserializedContainerSource?,
@@ -110,7 +110,7 @@ class JvmBinaryAnnotationDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             constructorProto.flags,
             constructorProto.annotationList,
@@ -128,7 +128,7 @@ class JvmBinaryAnnotationDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             functionProto.flags,
             functionProto.annotationList,
@@ -147,7 +147,7 @@ class JvmBinaryAnnotationDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             propertyProto.flags,
             propertyProto.annotationList,
@@ -188,7 +188,7 @@ class JvmBinaryAnnotationDeserializer(
             return emptyList()
         }
 
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             propertyProto.flags,
             propertyProto.backingFieldAnnotationList,
@@ -217,7 +217,7 @@ class JvmBinaryAnnotationDeserializer(
             return emptyList()
         }
 
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             propertyProto.flags,
             propertyProto.delegateFieldAnnotationList,
@@ -242,7 +242,7 @@ class JvmBinaryAnnotationDeserializer(
         typeTable: TypeTable,
         getterFlags: Int
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             getterFlags,
             propertyProto.getterAnnotationList,
@@ -261,7 +261,7 @@ class JvmBinaryAnnotationDeserializer(
         typeTable: TypeTable,
         setterFlags: Int
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             setterFlags,
             propertyProto.setterAnnotationList,
@@ -283,7 +283,7 @@ class JvmBinaryAnnotationDeserializer(
         kind: CallableKind,
         parameterIndex: Int,
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             valueParameterProto.flags,
             valueParameterProto.annotationList,
@@ -302,7 +302,7 @@ class JvmBinaryAnnotationDeserializer(
         enumEntryProto: ProtoBuf.EnumEntry,
         nameResolver: NameResolver,
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataExperimental(
+        loadAnnotationsFromMetadataGuarded(
             session,
             flags = null,
             enumEntryProto.annotationList,
@@ -326,7 +326,7 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotation> {
         when (callableProto) {
             is ProtoBuf.Function ->
-                loadAnnotationsFromMetadataExperimental(
+                loadAnnotationsFromMetadataGuarded(
                     session,
                     flags = null,
                     callableProto.extensionReceiverAnnotationList,
@@ -334,7 +334,7 @@ class JvmBinaryAnnotationDeserializer(
                     LanguageFeature.AnnotationsInMetadata,
                 )?.let { return it }
             is ProtoBuf.Property ->
-                loadAnnotationsFromMetadataExperimental(
+                loadAnnotationsFromMetadataGuarded(
                     session,
                     flags = null,
                     callableProto.extensionReceiverAnnotationList,
