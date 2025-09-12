@@ -297,7 +297,8 @@ open class ReturnTypeCalculatorWithJump(
                     "$symbol with origin ${declaration.origin} and return type ${declaration.returnTypeRef}"
         }
 
-        return resolveDeclaration(declaration)
+        resolveDeclaration(symbolForStatus.fir)
+        return declaration.returnTypeRef as FirResolvedTypeRef
     }
 
     @OptIn(PrivateForInline::class)
