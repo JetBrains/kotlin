@@ -53,11 +53,10 @@ class WasmDeserializerFacade(
 
     override fun shouldTransform(module: TestModule): Boolean {
         require(testServices.defaultsProvider.backendKind == outputKind)
-        return WasmEnvironmentConfigurator.isMainModule(module, testServices)
+        return true
     }
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
-        require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
