@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.dtsExtension
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest

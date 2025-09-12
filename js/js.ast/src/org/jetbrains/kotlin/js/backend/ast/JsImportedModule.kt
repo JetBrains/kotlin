@@ -29,9 +29,6 @@ class JsImportedModule @JvmOverloads constructor(
 const val REGULAR_EXTENSION = ".js"
 const val ESM_EXTENSION = ".mjs"
 
-const val TS_DEFINITION_EXTENSION = ".d.ts"
-const val ESM_TS_DEFINITION_EXTENSION = ".d.mts"
-
 fun JsImportedModule.getRequireName(isEsm: Boolean = false): String {
     return relativeRequirePath?.let {
         val extension = if (isEsm) ESM_EXTENSION else REGULAR_EXTENSION
