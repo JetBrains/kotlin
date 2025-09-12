@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.daemon.common.WallAndThreadAndMemoryTotalProfiler
 import org.jetbrains.kotlin.daemon.common.usedMemory
 import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalFirJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.disablePreciseJavaTrackingIfK2
@@ -171,7 +173,7 @@ class InProcessCompilerService(
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(daemonReporter) { _ ->
-                    val exitCode = compiler.exec(messageCollector, Services.Companion.EMPTY, k2PlatformArgs)
+                    val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
                     val perfString =
                         compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = PerformanceManager.DumpFormat.PlainText)
@@ -226,6 +228,13 @@ class InProcessCompilerService(
             }
         }
     }
+
+    private fun SourcesChanges.toChangedFiles(): ChangedFiles = when (this) {
+        is SourcesChanges.Unknown -> ChangedFiles.Unknown
+        is SourcesChanges.ToBeCalculated -> ChangedFiles.DeterminableFiles.ToBeComputed
+        is SourcesChanges.Known -> ChangedFiles.DeterminableFiles.Known(modifiedFiles, removedFiles)
+    }
+
 
     fun execIncrementalCompiler(
         k2jvmArgs: K2JVMCompilerArguments,
