@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.named
 
 @OptIn(ExperimentalWasmDsl::class)
-class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<Copy, Nothing>, ShouldRemapSourcePath {
+class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<Copy, Nothing> {
     private val project = subTarget.target.project
     private val target = subTarget.target
 

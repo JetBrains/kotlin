@@ -14,7 +14,7 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
-abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask, ShouldRemapSourcePath {
+abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
 
     @get:Inject
     abstract val fs: FileSystemOperations
