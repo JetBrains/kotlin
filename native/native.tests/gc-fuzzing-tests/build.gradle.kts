@@ -34,4 +34,19 @@ projectTests {
         }
         systemProperty("gcfuzzing.timelimit", project.findProperty("gcfuzzing.timelimit") ?: "1h")
     }
+
+    // CI-friendly task to run only the simpleFuzz test factory with a short timelimit
+    nativeTestTask(
+        "simpleFuzz",
+        tag = null,
+        allowParallelExecution = false,
+    ) {
+        workingDir = projectDir
+        // Keep the property overridable, but default to a short duration suitable for CI
+        systemProperty("gcfuzzing.timelimit", project.findProperty("gcfuzzing.timelimit") ?: "1m")
+        // Run only the simpleFuzz dynamic test factory
+        filter {
+            includeTestsMatching("org.jetbrains.kotlin.konan.test.gcfuzzing.GCFuzzingTest.simpleFuzz")
+        }
+    }
 }

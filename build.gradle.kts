@@ -872,6 +872,8 @@ tasks {
         dependsOn(":native:native.tests:codegen-box:check")
         dependsOn(":native:native.tests:driver:check")
         dependsOn(":native:native.tests:gc-fuzzing-tests:engine:check")
+        // Run a short GC fuzzing cycle on CI to catch regressions early
+        dependsOn(":native:native.tests:gc-fuzzing-tests:simpleFuzz")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
         dependsOn(":native:native.tests:litmus-tests:check")
