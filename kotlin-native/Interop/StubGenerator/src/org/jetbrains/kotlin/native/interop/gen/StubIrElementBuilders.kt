@@ -617,6 +617,13 @@ private val allowedFunctions = setOf(
         "posix_errno",
         "set_posix_errno",
         "dispatch_get_main_queue",
+        "init_sockets",
+        "CFBridgingRelease",
+        "CFBridgingRetain",
+        "CGPointMake",
+        "CGRectMake",
+        "CGSizeMake",
+        "UIEdgeInsetsInsetRect",
 )
 
 internal class FunctionStubBuilder(
