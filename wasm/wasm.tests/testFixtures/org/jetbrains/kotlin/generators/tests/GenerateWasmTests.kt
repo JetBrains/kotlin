@@ -164,5 +164,13 @@ fun main(args: Array<String>) {
                 model()
             }
         }
+        testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
+            testClass<AbstractWasmJsIrTextTest> {
+                model(
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
+            }
+        }
+
     }
 }
