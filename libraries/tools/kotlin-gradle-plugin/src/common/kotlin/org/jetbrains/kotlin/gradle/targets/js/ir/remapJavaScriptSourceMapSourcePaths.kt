@@ -9,7 +9,7 @@ import org.gradle.api.file.CopySpec
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import java.io.File
 
-fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: File) {
+internal fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: File) {
     eachFile {
         if (it.name.endsWith(".js.map") || it.name.endsWith(".mjs.map")) {
             it.filter(
