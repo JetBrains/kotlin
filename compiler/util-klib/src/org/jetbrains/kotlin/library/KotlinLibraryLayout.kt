@@ -56,48 +56,35 @@ interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
 }
 
 interface IrKotlinLibraryLayout : KotlinLibraryLayout {
-    val irDir
-        get() = File(componentDir, KLIB_IR_FOLDER_NAME)
-    val irDeclarations
-        get() = File(irDir, IR_DECLARATIONS_FILE_NAME)
-    val irTypes
-        get() = File(irDir, IR_TYPES_FILE_NAME)
-    val irSignatures
-        get() = File(irDir, IR_SIGNATURES_FILE_NAME)
-    val irStrings
-        get() = File(irDir, IR_STRINGS_FILE_NAME)
-    val irBodies
-        get() = File(irDir, IR_BODIES_FILE_NAME)
-    val irFiles
-        get() = File(irDir, IR_FILES_FILE_NAME)
-    val irDebugInfo
-        get() = File(irDir, IR_DEBUG_INFO_FILE_NAME)
-    // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
-    val irFileEntries
-        get() = File(irDir, IR_FILE_ENTRIES_FILE_NAME)
+    val mainIr: IrDirectory
+        get() = IrDirectory(File(componentDir, KLIB_IR_FOLDER_NAME))
 
     // This directory is similar to the main "ir" directory but contains only specially prepared copies of public inline functions,
     // instead of the entire IR.
     // Those may be read and inlined on the first stage of compilation, without the need to read the main, much bigger,
     // "ir" directory (see KT-75794).
-    val irOfInlineableFunsDir
-        get() = File(componentDir, KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME)
-    val irFilesOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_FILES_FILE_NAME)
-    val irDeclarationsOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_DECLARATIONS_FILE_NAME)
-    val irTypesOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_TYPES_FILE_NAME)
-    val irSignaturesOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_SIGNATURES_FILE_NAME)
-    val irStringsOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_STRINGS_FILE_NAME)
-    val irBodiesOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_BODIES_FILE_NAME)
-    val irDebugInfoOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_DEBUG_INFO_FILE_NAME)
-    val irFileEntriesOfInlineableFuns
-        get() = File(irOfInlineableFunsDir, IR_FILE_ENTRIES_FILE_NAME)
+    val inlineableFunsIr: IrDirectory
+        get() = IrDirectory(File(componentDir, KLIB_IR_INLINABLE_FUNCTIONS_DIR_NAME))
+
+    class IrDirectory(val dir: File) {
+        val irDeclarations
+            get() = File(dir, IR_DECLARATIONS_FILE_NAME)
+        val irTypes
+            get() = File(dir, IR_TYPES_FILE_NAME)
+        val irSignatures
+            get() = File(dir, IR_SIGNATURES_FILE_NAME)
+        val irStrings
+            get() = File(dir, IR_STRINGS_FILE_NAME)
+        val irBodies
+            get() = File(dir, IR_BODIES_FILE_NAME)
+        val irFiles
+            get() = File(dir, IR_FILES_FILE_NAME)
+        val irDebugInfo
+            get() = File(dir, IR_DEBUG_INFO_FILE_NAME)
+        // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
+        val irFileEntries
+            get() = File(dir, IR_FILE_ENTRIES_FILE_NAME)
+    }
 
     companion object {
         const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"

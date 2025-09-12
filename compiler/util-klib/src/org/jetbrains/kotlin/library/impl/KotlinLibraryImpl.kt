@@ -87,22 +87,22 @@ class MetadataLibraryImpl(
 class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibrary {
     override val hasMainIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
-            it.irDir.exists
+            it.mainIr.dir.exists
         }
     }
-    override val mainIr = IrDirectory(false)
+    override val mainIr = IrDirectory { mainIr }
 
     override val hasInlinableFunsIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
-            it.irOfInlineableFunsDir.exists
+            it.inlineableFunsIr.dir.exists
         }
     }
-    override val inlinableFunsIr = IrDirectory(true)
+    override val inlinableFunsIr = IrDirectory { inlineableFunsIr }
 
-    inner class IrDirectory(private val takeInlineableIrDir: Boolean) : IrLibrary.IrDirectory {
+    inner class IrDirectory(private val selectIrDir: IrKotlinLibraryLayout.() -> IrKotlinLibraryLayout.IrDirectory) : IrLibrary.IrDirectory {
         override val hasFileEntriesTable: Boolean by lazy {
             access.inPlace { it: IrKotlinLibraryLayout ->
-                (if (takeInlineableIrDir) it.irFileEntries else it.irFileEntriesOfInlineableFuns).exists
+                it.selectIrDir().irFileEntries.exists
             }
         }
 
@@ -128,42 +128,41 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
             combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
 
         private val combinedDeclarations: DeclarationIdMultiTableReader by lazy {
-            DeclarationIdMultiTableReader(access) { if (takeInlineableIrDir) irTypes else irTypesOfInlineableFuns }
-            DeclarationIdMultiTableReader(access) { if (takeInlineableIrDir) irDeclarations else irDeclarationsOfInlineableFuns }
+            DeclarationIdMultiTableReader(access) { selectIrDir().irDeclarations}
         }
 
         private val types: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { if (takeInlineableIrDir) irTypes else irTypesOfInlineableFuns }
+            IrMultiArrayReader(access) { selectIrDir().irTypes }
         }
 
         private val signatures: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { if (takeInlineableIrDir) irSignatures else irSignaturesOfInlineableFuns }
+            IrMultiArrayReader(access) { selectIrDir().irSignatures }
         }
 
         private val strings: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { if (takeInlineableIrDir) irStrings else irStringsOfInlineableFuns }
+            IrMultiArrayReader(access) { selectIrDir().irStrings }
         }
 
         private val bodies: IrMultiArrayReader by lazy {
-            IrMultiArrayReader(access) { if (takeInlineableIrDir) irBodies else irBodiesOfInlineableFuns }
+            IrMultiArrayReader(access) { selectIrDir().irBodies }
         }
 
         private val debugInfos: IrMultiArrayReader? by lazy {
-            if (access.inPlace { (if (takeInlineableIrDir) it.irDebugInfo else it.irDebugInfoOfInlineableFuns).exists })
-                IrMultiArrayReader(access) { if (takeInlineableIrDir) irDebugInfo else irDebugInfoOfInlineableFuns }
+            if (access.inPlace { it.selectIrDir().irDebugInfo.exists })
+                IrMultiArrayReader(access) { selectIrDir().irDebugInfo }
             else
                 null
         }
 
         private val fileEntries: IrMultiArrayReader? by lazy {
-            if (access.inPlace { (if (takeInlineableIrDir) it.irFileEntries else it.irFileEntriesOfInlineableFuns).exists })
-                IrMultiArrayReader(access) { if (takeInlineableIrDir) irFileEntries else irFileEntriesOfInlineableFuns }
+            if (access.inPlace { it.selectIrDir().irFileEntries.exists })
+                IrMultiArrayReader(access) { selectIrDir().irFileEntries }
             else
                 null
         }
 
         private val files: IrArrayReader by lazy {
-            IrArrayReader(access) { if (takeInlineableIrDir) irFiles else irFilesOfInlineableFuns }
+            IrArrayReader(access) { selectIrDir().irFiles }
         }
 
         override fun types(fileIndex: Int): ByteArray {
