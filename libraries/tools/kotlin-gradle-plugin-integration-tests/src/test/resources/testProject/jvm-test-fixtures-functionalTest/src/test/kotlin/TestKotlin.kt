@@ -1,2 +1,0 @@
-class TestKotlin
-internal class TestKotlinInternal
