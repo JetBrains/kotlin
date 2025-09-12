@@ -64,11 +64,12 @@ object FirConstPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             return
         }
 
-        val errorKind = when (computeConstantExpressionKind(initializer, context.session, calledOnCheckerStage = true)) {
-            ConstantArgumentKind.VALID_CONST, ConstantArgumentKind.RESOLUTION_ERROR -> return
-            ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+        val constantKind = computeConstantExpressionKind(initializer, context.session, calledOnCheckerStage = true)
+        val errorKind = when (constantKind) {
+            ConstantArgumentKind.ValidConst, ConstantArgumentKind.ResolutionError -> return
+            is ConstantArgumentKind.NotConstValInConstExpression -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }
-        reporter.reportOn(initializer.source, errorKind)
+        reporter.reportOn(constantKind.violationSource ?: initializer.source, errorKind)
     }
 }
