@@ -5,10 +5,10 @@
 open class A(val s: Any)
 
 val foo: Any
-    field = object : A(foo) {}
+    field = object : A(<!UNINITIALIZED_VARIABLE!>foo<!>) {}
 
 val bar: Any
-    field = object : A(baz) {}
+    field = object : A(<!UNINITIALIZED_VARIABLE!>baz<!>) {}
 
 val baz: Any
     field = object : A(bar) {}

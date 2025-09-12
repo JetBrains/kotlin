@@ -273,7 +273,12 @@ open class ReturnTypeCalculatorWithJump(
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
-        val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
+        val symbolForStatus = when {
+            declaration is FirBackingField -> declaration.propertySymbol
+            else -> declaration.symbol
+        }
+
+        val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(symbolForStatus)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef()
             else -> null
@@ -286,7 +291,8 @@ open class ReturnTypeCalculatorWithJump(
                     "$symbol with origin ${declaration.origin} and return type ${declaration.returnTypeRef}"
         }
 
-        return resolveDeclaration(declaration)
+        resolveDeclaration(symbolForStatus.fir)
+        return declaration.returnTypeRef as FirResolvedTypeRef
     }
 
     @OptIn(PrivateForInline::class)

@@ -185,7 +185,7 @@ internal class LLFirImplicitBodyTargetResolver(
             }
 
             is FirProperty -> {
-                if (target.isConst || target.returnTypeRef is FirImplicitTypeRef || target.backingField?.returnTypeRef is FirImplicitTypeRef) {
+                if (target.shouldBeResolvedOnImplicitTypePhase) {
                     resolve(target, BodyStateKeepers.PROPERTY)
                 }
             }
@@ -218,3 +218,9 @@ internal class LLFirImplicitBodyTargetResolver(
         LLFirDeclarationModificationService.bodyResolved(target, resolverPhase)
     }
 }
+
+/**
+ * Whether the property has something to resolve on the [FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] phase.
+ */
+internal val FirProperty.shouldBeResolvedOnImplicitTypePhase: Boolean
+    get() = isConst || returnTypeRef is FirImplicitTypeRef || backingField?.returnTypeRef is FirImplicitTypeRef
