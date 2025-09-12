@@ -10,8 +10,8 @@
 
 using namespace kotlin;
 
-// Defined in Cleaner.kt
-extern "C" void Kotlin_native_ref_executeCleanerAction(mm::RawExternalRCRef* cleanerAction);
+// Defined in RuntimeUtils.kt
+extern "C" void Kotlin_internal_executeAndRelease(mm::RawExternalRCRef* cleanerAction);
 
 namespace {
 
@@ -25,7 +25,7 @@ struct CleanerImpl {
 RUNTIME_NOTHROW void DisposeCleaner(KRef thiz) {
     try {
         mm::RawExternalRCRef* cleanerAction = reinterpret_cast<CleanerImpl*>(thiz)->cleanerStablePtr;
-        Kotlin_native_ref_executeCleanerAction(cleanerAction);
+        Kotlin_internal_executeAndRelease(cleanerAction);
     } catch (...) {
         // A trick to terminate with unhandled exception. This will print a stack trace
         // and write to iOS crash log.

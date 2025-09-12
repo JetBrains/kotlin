@@ -12901,6 +12901,9 @@ final fun kotlin.native.internal/checkProgressionStep(kotlin/Long): kotlin/Long 
 final fun kotlin.native.internal/createEmptyString(): kotlin/String // kotlin.native.internal/createEmptyString|createEmptyString(){}[0]
 
 // Targets: [native]
+final fun kotlin.native.internal/executeAndRelease(kotlin.native.internal/NativePtr) // kotlin.native.internal/executeAndRelease|executeAndRelease(kotlin.native.internal.NativePtr){}[0]
+
+// Targets: [native]
 final fun kotlin.native.internal/getCachedBooleanBox(kotlin/Boolean): kotlin/Boolean? // kotlin.native.internal/getCachedBooleanBox|getCachedBooleanBox(kotlin.Boolean){}[0]
 
 // Targets: [native]
