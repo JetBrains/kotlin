@@ -39,6 +39,14 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
     init {
         val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
         val buildIdService = BuildIdService.registerIfAbsent(project)
+        configureTaskProvider { taskProvider ->
+            project.maybeCreateBuildToolsApiConfiguration(
+                "$BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME-${taskProvider.name}",
+                taskProvider.flatMap { it.customCompilerVersion }.orElse(project.provider {
+                    project.kotlinExtensionOrNull?.compilerVersion?.get() ?: getKotlinPluginVersion(taskProvider.get().logger)
+                })
+            )
+        }
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -84,12 +92,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .value(explicitApiMode)
                 .finalizeValueOnRead()
             task.separateKmpCompilation.convention(propertiesProvider.separateKmpCompilation)
-            project.maybeCreateBuildToolsApiConfiguration(
-                "$BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME-${task.name}",
-                task.customCompilerVersion.orElse(project.provider {
-                    project.kotlinExtensionOrNull?.compilerVersion?.get() ?: getKotlinPluginVersion(task.logger)
-                })
-            )
         }
     }
 
