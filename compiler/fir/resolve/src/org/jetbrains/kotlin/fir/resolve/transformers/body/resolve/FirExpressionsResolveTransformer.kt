@@ -2073,10 +2073,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         replDeclarationReference: FirReplDeclarationReference,
         data: ResolutionMode,
     ): FirStatement {
+        // TODO jump to resolve declaration as part of $$eval function
         whileAnalysing(session, replDeclarationReference) {
             val symbol = replDeclarationReference.symbol
-            // TODO jump to resolve declaration as part of eval function
-            context.withScopesForClass(symbol.getContainingClassSymbol()!!.fir as FirClass, components) {
+            // TODO replace with repl symbol in FirReplDeclarationReference?
+            val classSymbol = symbol.getContainingClassSymbol()!!.fir as FirClass
+            context.withScopesForClass(classSymbol, components) {
                 when (symbol) {
                     is FirPropertySymbol -> {
                         val variable = symbol.fir

@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
@@ -1537,11 +1536,15 @@ open class PsiRawFirBuilder(
                                     is FirRegularClass,
                                     is FirTypeAlias,
                                         -> {
-                                        members.add(statement)
-                                        statement.isReplSnippetDeclaration = true
-                                        buildReplDeclarationReference {
-                                            source = statement.source
-                                            symbol = statement.symbol
+                                        if (statement is FirProperty && statement.isLocal) {
+                                            statement
+                                        } else {
+                                            members.add(statement)
+                                            statement.isReplSnippetDeclaration = true
+                                            buildReplDeclarationReference {
+                                                source = statement.source
+                                                symbol = statement.symbol
+                                            }
                                         }
                                     }
 
@@ -1577,7 +1580,16 @@ open class PsiRawFirBuilder(
                         addAll(initializer.body!!.statements)
                     }
                     is KtDestructuringDeclaration -> {
-                        val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
+                        val destructuringContainerVar = generateTemporaryVariable(
+                            baseModuleData,
+                            declaration.toFirSourceElement(),
+                            "destruct",
+                            declaration.initializer.toFirExpression(
+                                "Initializer required for destructuring declaration",
+                                sourceWhenInvalidExpression = declaration
+                            ),
+                            extractAnnotationsTo = { extractAnnotationsTo(it) }
+                        )
                         add(destructuringContainerVar)
 
                         addDestructuringVariables(
