@@ -47,6 +47,13 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CriToolchain {
+	public abstract fun createCriDeserializerRetrievalOperation ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriDeserializerRetrievalOperation;
+	public abstract fun createCriFileIdsToPathsDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriFileIdsToPathsDeserializationOperation;
+	public abstract fun createCriLookupsDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriLookupsDeserializationOperation;
+	public abstract fun createCriSubtypesDeserializationOperation ([B)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/CriSubtypesDeserializationOperation;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DeprecatedCompilerArgument : java/lang/annotation/Annotation {
 }
 
@@ -94,6 +101,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public abstract fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
+	public abstract fun getCri ()Lorg/jetbrains/kotlin/buildtools/api/CriToolchain;
 	public abstract fun getJs ()Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
 	public abstract fun getJvm ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
 	public abstract fun getNative ()Lorg/jetbrains/kotlin/buildtools/api/knative/NativePlatformToolchain;
