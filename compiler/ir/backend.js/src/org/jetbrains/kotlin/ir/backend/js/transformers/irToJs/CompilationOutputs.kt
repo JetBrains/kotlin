@@ -28,10 +28,10 @@ abstract class CompilationOutputs {
     open fun writeAll(artifactConfiguration: WebArtifactConfiguration): Collection<File> {
         val writtenFiles = createWrittenFilesContainer()
 
-        fun File.writeAsJsFile(out: CompilationOutputs) {
-            parentFile.mkdirs()
-            val jsMapFile = mapForJsFile
-            val jsFile = normalizedAbsoluteFile
+        fun writeOutputFiles(outputName: String, out: CompilationOutputs) {
+            val jsMapFile = artifactConfiguration.outputSourceMapFile(outputName).normalizedAbsoluteFile
+            val jsFile = artifactConfiguration.outputJsFile(outputName).normalizedAbsoluteFile
+            jsFile.parentFile.mkdirs()
 
             out.writeJsCode(jsFile, jsMapFile)
 
@@ -39,21 +39,20 @@ abstract class CompilationOutputs {
             writtenFiles += jsMapFile
 
             out.tsDefinitions.takeIf { artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.EACH_FILE }?.let {
-                val tsFile = jsFile.createDtsForJsFile(artifactConfiguration.moduleKind)
-                tsFile.writeText(listOf(it).toTypeScript(name, artifactConfiguration.moduleKind))
+                val tsFile = artifactConfiguration.outputDtsFile(outputName).normalizedAbsoluteFile
+                tsFile.writeText(listOf(it).toTypeScript(jsFile.name, artifactConfiguration.moduleKind))
                 writtenFiles += tsFile
             }
         }
 
         dependencies.forEach { (name, content) ->
-            artifactConfiguration.outputDirectory.resolve("$name${artifactConfiguration.moduleKind.jsExtension}").writeAsJsFile(content)
+            writeOutputFiles(name, content)
         }
 
-        val outputJsFile = artifactConfiguration.outputDirectory.resolve("${artifactConfiguration.outputName}${artifactConfiguration.moduleKind.jsExtension}")
-        outputJsFile.writeAsJsFile(this)
+        writeOutputFiles(artifactConfiguration.outputName, this)
 
         if (artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.MERGED) {
-            val dtsFile = outputJsFile.createDtsForJsFile(artifactConfiguration.moduleKind)
+            val dtsFile = artifactConfiguration.outputDtsFile().normalizedAbsoluteFile
             dtsFile.writeText(getFullTsDefinition(artifactConfiguration.moduleName, artifactConfiguration.moduleKind))
             writtenFiles += dtsFile
         }
@@ -76,12 +75,6 @@ abstract class CompilationOutputs {
 
     protected val File.normalizedAbsoluteFile
         get() = absoluteFile.normalize()
-
-    protected val File.mapForJsFile
-        get() = resolveSibling("$name.map").normalizedAbsoluteFile
-
-    protected fun File.createDtsForJsFile(moduleKind: ModuleKind) =
-        resolveSibling("$nameWithoutExtension${moduleKind.dtsExtension}").normalizedAbsoluteFile
 }
 
 private fun File.copyModificationTimeFrom(from: File) {

@@ -20,4 +20,29 @@ data class WebArtifactConfiguration(
     val outputName: String,
     val granularity: JsGenerationGranularity,
     val tsCompilationStrategy: TsCompilationStrategy,
-)
+) {
+    /**
+     * Returns the location of the generated JS file according to this configuration.
+     *
+     * @param outputName The name of the generated JS file without extension.
+     */
+    fun outputJsFile(outputName: String = this.outputName): File =
+        outputDirectory.resolve(outputName + moduleKind.jsExtension)
+
+    /**
+     * Returns the location of the generated source map file according to this configuration.
+     *
+     * @param outputName The name of the generated file without extension.
+     */
+    fun outputSourceMapFile(outputName: String = this.outputName): File =
+        outputDirectory.resolve(outputName + moduleKind.jsExtension + ".map")
+
+    /**
+     * Returns the location of the generated TypeScript definition file according to this configuration.
+     *
+     * @param outputName The name of the generated file without extension.
+     */
+    fun outputDtsFile(outputName: String = this.outputName): File =
+        outputDirectory.resolve(outputName + moduleKind.dtsExtension)
+}
+
