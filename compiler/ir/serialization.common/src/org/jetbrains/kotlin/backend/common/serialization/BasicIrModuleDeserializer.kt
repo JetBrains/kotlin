@@ -62,7 +62,8 @@ abstract class BasicIrModuleDeserializer(
                 val fileStream = klib.file(i).codedInputStream
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
-                val file = fileReader.createFile(moduleFragment, fileProto)
+                val file = fileReader.
+                createFile(moduleFragment, fileProto, linker.irInterner)
 
                 this += deserializeIrFile(fileProto, file, fileReader, i, delegate, allowErrorNodes)
 
