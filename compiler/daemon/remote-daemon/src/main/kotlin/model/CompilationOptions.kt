@@ -142,7 +142,7 @@ fun ClasspathChangesProto.toDomain(): ClasspathChanges {
             val filesProto = classpathSnapshotEnabled.classpathSnapshotFiles
             val snapshotFiles = ClasspathSnapshotFiles(
                 currentClasspathEntrySnapshotFiles = filesProto.currentClasspathEntrySnapshotFilesList.map { File(it) },
-                classpathSnapshotDir = File(filesProto.shrunkPreviousClasspathSnapshotFile) // TODO this is wrong
+                classpathSnapshotDir = File(filesProto.shrunkPreviousClasspathSnapshotFile).parentFile // TODO double check if this assigment is correct
             )
 
             when{
