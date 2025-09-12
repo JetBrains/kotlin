@@ -26,6 +26,8 @@ object BuiltinSpecialProperties {
         StandardNames.FqNames.atomicArray.child("size") to Name.identifier("length")
     )
 
+    val TYPE_FQ_NAMES: Set<FqName> = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.mapTo(mutableSetOf()) { it.key.parent() }
+
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
         PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.entries
             .map { Pair(it.key.shortName(), it.value) }

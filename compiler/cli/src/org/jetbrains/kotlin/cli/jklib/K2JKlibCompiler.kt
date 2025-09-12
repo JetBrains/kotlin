@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -561,8 +562,11 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                     Name.identifier("undefined"),
                     Name.identifier("isUndefined"),
                     Name.identifier("coerceToNull"),
-                ).forEach {
-                    symbolFinder.findMemberFunction(jsUtils, it)
+                ).forEach { name ->
+                    jsUtils.descriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                        .singleOrNull()
+                        ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+
                 }
             }
         }
