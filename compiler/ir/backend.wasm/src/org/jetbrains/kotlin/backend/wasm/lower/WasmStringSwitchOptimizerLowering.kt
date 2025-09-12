@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 
 private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
 
@@ -238,7 +238,7 @@ class WasmStringSwitchOptimizerLowering(
         var firstEqCall: IrCall? = null
         var isSimpleWhen = true //simple when is when without else block and commas
         val stringConstantToMatchedCase = mutableMapOf<String?, MatchedCase>()
-        visitedWhen.branches.forEachIndexed { branchIndex, branch ->
+        visitedWhen.branches.indexBasedForEachIndexed { branchIndex, branch ->
             if (!isElseBranch(branch)) {
                 val conditions = IrWhenUtils.matchConditions<IrCall>(context.irBuiltIns.ororSymbol, branch.condition) ?: return visitedWhen
                 if (conditions.isEmpty()) return visitedWhen

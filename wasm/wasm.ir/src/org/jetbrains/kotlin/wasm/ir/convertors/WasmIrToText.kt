@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.ir.convertors
 
+import org.jetbrains.kotlin.utils.indexBasedForEach
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.debug.DebugData
 import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
@@ -86,7 +87,7 @@ class WasmIrToText(
                 appendInstr(instruction)
             }
         } else {
-            instr.forEach(::appendInstr)
+            instr.indexBasedForEach(::appendInstr)
         }
     }
 
@@ -115,7 +116,7 @@ class WasmIrToText(
                 }
                 WasmOp.PSEUDO_COMMENT_GROUP_START -> {
                     newLine()
-                    commentText().lines().forEach { line ->
+                    commentText().lines().indexBasedForEach { line ->
                         newLine()
                         stringBuilder.append(";; ")
                         stringBuilder.append(line)
@@ -148,12 +149,12 @@ class WasmIrToText(
             indent++
 
         if (wasmInstr.operator in setOf(WasmOp.CALL_INDIRECT, WasmOp.TABLE_INIT)) {
-            wasmInstr.immediates.reversed().forEach {
+            wasmInstr.immediates.reversed().indexBasedForEach {
                 appendImmediate(it)
             }
             return
         }
-        wasmInstr.immediates.forEach {
+        wasmInstr.immediates.indexBasedForEach {
             appendImmediate(it)
         }
     }
@@ -181,11 +182,11 @@ class WasmIrToText(
             is WasmImmediate.LabelIdx -> appendElement(x.value.toString())
             is WasmImmediate.TagIdx -> appendElement(x.value.toString())
             is WasmImmediate.LabelIdxVector ->
-                x.value.forEach { appendElement(it.toString()) }
+                x.value.indexBasedForEach { appendElement(it.toString()) }
 
             is WasmImmediate.ElemIdx -> appendElement(x.value.id!!.toString())
 
-            is WasmImmediate.ValTypeVector -> sameLineList("result") { x.value.forEach { appendType(it) } }
+            is WasmImmediate.ValTypeVector -> sameLineList("result") { x.value.indexBasedForEach { appendType(it) } }
 
             is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> appendElement(x.value.owner.toString())
@@ -261,10 +262,10 @@ class WasmIrToText(
                 val parameters = type.type.owner.parameterTypes
                 val results = type.type.owner.resultTypes
                 if (parameters.isNotEmpty()) {
-                    sameLineList("param") { parameters.forEach { appendType(it) } }
+                    sameLineList("param") { parameters.indexBasedForEach { appendType(it) } }
                 }
                 if (results.isNotEmpty()) {
-                    sameLineList("result") { results.forEach { appendType(it) } }
+                    sameLineList("result") { results.indexBasedForEach { appendType(it) } }
                 }
             }
         }
@@ -278,7 +279,7 @@ class WasmIrToText(
     }
 
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
-        typeList.forEach { type ->
+        typeList.indexBasedForEach { type ->
             when (type) {
                 is WasmStructDeclaration ->
                     appendStructTypeDeclaration(type)
@@ -293,7 +294,7 @@ class WasmIrToText(
     fun appendWasmModule(module: WasmModule) {
         with(module) {
             newLineList("module") {
-                recGroups.forEach { recGroup ->
+                recGroups.indexBasedForEach { recGroup ->
                     if (recGroup.size > 1) {
                         newLineList("rec") { appendWasmTypeList(recGroup) }
                     } else {
@@ -301,7 +302,7 @@ class WasmIrToText(
                     }
                 }
 
-                importsInOrder.forEach {
+                importsInOrder.indexBasedForEach {
                     when (it) {
                         is WasmFunction.Imported -> appendImportedFunction(it)
                         is WasmMemory -> appendMemory(it)
@@ -311,15 +312,15 @@ class WasmIrToText(
                         else -> error("Unknown import kind ${it::class}")
                     }
                 }
-                definedFunctions.forEach { appendDefinedFunction(it) }
-                tables.forEach { appendTable(it) }
-                memories.forEach { appendMemory(it) }
-                globals.forEach { appendGlobal(it) }
-                exports.forEach { appendExport(it) }
-                elements.forEach { appendWasmElement(it) }
+                definedFunctions.indexBasedForEach { appendDefinedFunction(it) }
+                tables.indexBasedForEach { appendTable(it) }
+                memories.indexBasedForEach { appendMemory(it) }
+                globals.indexBasedForEach { appendGlobal(it) }
+                exports.indexBasedForEach { appendExport(it) }
+                elements.indexBasedForEach { appendWasmElement(it) }
                 startFunction?.let { appendStartFunction(it) }
-                data.forEach { appendData(it) }
-                tags.forEach { appendTag(it) }
+                data.indexBasedForEach { appendData(it) }
+                tags.indexBasedForEach { appendTag(it) }
                 debugInformationGenerator?.let { consumeDebugInformation(it.generateDebugInformation()) }
             }
         }
@@ -330,11 +331,11 @@ class WasmIrToText(
             appendModuleFieldReference(type)
             sameLineList("func") {
                 sameLineList("param") {
-                    type.parameterTypes.forEach { appendType(it) }
+                    type.parameterTypes.indexBasedForEach { appendType(it) }
                 }
                 if (type.resultTypes.isNotEmpty()) {
                     sameLineList("result") {
-                        type.resultTypes.forEach { appendType(it) }
+                        type.resultTypes.indexBasedForEach { appendType(it) }
                     }
                 }
             }
@@ -358,7 +359,7 @@ class WasmIrToText(
             appendModuleFieldReference(type)
             maybeSubType(type.superType?.owner) {
                 sameLineList("struct") {
-                    type.fields.forEach {
+                    type.fields.indexBasedForEach {
                         appendStructField(it)
                     }
                 }
@@ -395,13 +396,13 @@ class WasmIrToText(
         newLineList("func") {
             appendModuleFieldReference(function)
             sameLineList("type") { appendModuleFieldReference(function.type) }
-            function.locals.forEach { if (it.isParameter) appendLocal(it) }
+            function.locals.indexBasedForEach { if (it.isParameter) appendLocal(it) }
             if (function.type.owner.resultTypes.isNotEmpty()) {
                 sameLineList("result") {
-                    function.type.owner.resultTypes.forEach { appendType(it) }
+                    function.type.owner.resultTypes.indexBasedForEach { appendType(it) }
                 }
             }
-            function.locals.forEach { if (!it.isParameter) appendLocal(it) }
+            function.locals.indexBasedForEach { if (!it.isParameter) appendLocal(it) }
             appendInstrList(function.instructions)
         }
     }
@@ -519,7 +520,7 @@ class WasmIrToText(
             wasmTag.importPair?.appendImportPair()
 
             sameLineList("param") {
-                wasmTag.type.parameterTypes.forEach { appendType(it) }
+                wasmTag.type.parameterTypes.indexBasedForEach { appendType(it) }
             }
             assert(wasmTag.type.resultTypes.isEmpty()) { "must be as per spec" }
         }
@@ -597,7 +598,7 @@ class WasmIrToText(
 
     fun appendCatch(catch: WasmImmediate.Catch) {
         appendElement(catch.type.mnemonic)
-        catch.immediates.forEach(this::appendImmediate)
+        catch.immediates.indexBasedForEach(this::appendImmediate)
     }
 
     fun appendModuleFieldReference(field: WasmSymbolReadOnly<WasmNamedModuleField>) {

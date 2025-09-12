@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.indexBasedForEach
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
@@ -92,7 +94,7 @@ fun compileToLoweredIr(
         is MainModule.Klib -> sortedModuleDependencies.all
     }
 
-    allModules.forEach { it.patchDeclarationParents() }
+    allModules.indexBasedForEach { it.patchDeclarationParents() }
 
     irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
@@ -134,7 +136,7 @@ fun lowerPreservingTags(
     val phaserState = PhaserState()
     val wasmLowerings = getWasmLowerings(context.configuration, isIncremental)
 
-    wasmLowerings.forEachIndexed { i, lowering ->
+    wasmLowerings.indexBasedForEachIndexed { i, lowering ->
         controller.currentStage = i + 1
         modules.forEach { module ->
             lowering.invoke(context.phaseConfig, phaserState, context, module)
@@ -209,7 +211,7 @@ fun compileWasm(
         val jsModuleImports = mutableSetOf<String>()
         val jsFuns = mutableSetOf<JsCodeSnippet>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
-        wasmCompiledFileFragments.forEach { fragment ->
+        wasmCompiledFileFragments.indexBasedForEach { fragment ->
             jsModuleImports.addAll(fragment.jsModuleImports.values)
             jsFuns.addAll(fragment.jsFuns.values)
             jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)

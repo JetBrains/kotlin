@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.wasm.utils.StronglyConnectedComponents
+import org.jetbrains.kotlin.utils.indexBasedForEach
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.jetbrains.kotlin.wasm.ir.*
 
@@ -56,11 +57,11 @@ private fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
 
 fun createRecursiveTypeGroups(types: List<WasmTypeDeclaration>): List<RecursiveTypeGroup> {
     val componentFinder = StronglyConnectedComponents(::dependencyTypes)
-    types.forEach(componentFinder::visit)
+    types.indexBasedForEach(componentFinder::visit)
 
     val components = componentFinder.findComponents()
 
-    components.forEach { component ->
+    components.indexBasedForEach { component ->
         component.sortBy(::wasmTypeDeclarationOrderKey)
     }
 

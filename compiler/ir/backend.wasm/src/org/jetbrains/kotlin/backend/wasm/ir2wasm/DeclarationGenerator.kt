@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.utils.indexBasedForEachIndexed
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -324,7 +325,7 @@ class DeclarationGenerator(
         val initVTableGlobal = buildWasmExpression {
             val location = SourceLocation.NoLocation("Create instance of vtable struct")
             buildSpecialITableInit(metadata, this, location)
-            metadata.virtualMethods.forEachIndexed { i, method ->
+            metadata.virtualMethods.indexBasedForEachIndexed { i, method ->
                 if (method.function.modality != Modality.ABSTRACT) {
                     buildInstr(WasmOp.REF_FUNC, location, WasmImmediate.FuncIdx(wasmFileCodegenContext.referenceFunction(method.function.symbol)))
                 } else {
