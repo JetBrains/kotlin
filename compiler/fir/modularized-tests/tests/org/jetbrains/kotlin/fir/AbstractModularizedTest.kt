@@ -169,9 +169,9 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     protected fun runTestOnce(pass: Int) {
         beforePass(pass)
         val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
-        val root = File(testDataPath)
+        val root = File(testDataPath).normalize().absoluteFile
 
-        println("BASE PATH: ${root.absolutePath}")
+        println("BASE PATH: $root (exists=${root.exists()})")
 
         val additionalMessages = mutableListOf<String>()
 
