@@ -23,7 +23,10 @@ internal class LLFirReturnTypeCalculatorWithJump(
     implicitBodyResolveComputationSession: LLImplicitBodyResolveComputationSession,
 ) : ReturnTypeCalculatorWithJump(scopeSession, implicitBodyResolveComputationSession) {
     override fun resolveDeclaration(declaration: FirCallableDeclaration): FirResolvedTypeRef {
-        if (declaration.returnTypeRef !is FirImplicitTypeRef) {
+        val needsResolution = declaration.returnTypeRef is FirImplicitTypeRef
+                || declaration is FirProperty && declaration.backingField?.returnTypeRef is FirImplicitTypeRef
+
+        if (!needsResolution) {
             return declaration.symbol.resolvedReturnTypeRef
         }
 
