@@ -92,11 +92,7 @@ class WasmTypeTransformer(
 
         val klass = this.erasedUpperBound
         return if (klass.isExternal) {
-            if (klass.name.identifier != "JsStringRef") {
-                WasmExternRef
-            } else {
-                WasmRefType(WasmHeapType.Simple.Extern)
-            }
+            WasmExternRef
         } else if (isBuiltInWasmRefType(this)) {
             when (val name = klass.name.identifier) {
                 "anyref" -> WasmAnyRef
