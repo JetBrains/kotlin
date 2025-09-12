@@ -225,7 +225,6 @@ class PublishingHelpersTest : KGPBaseTest() {
                 *buildArguments,
                 "-Psigning.gnupg.keyName=BCCD3E18",
                 "-Psigning.gnupg.passphrase=testtesttest",
-                forwardBuildOutput = true
             ) {
                 assertOutputDoesNotContain("Configuration cache entry stored.")
                 assertOutputDoesNotContain("Plugin 'org.jetbrains.kotlin.jvm': external process started 'gpg")
@@ -239,7 +238,6 @@ class PublishingHelpersTest : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("For manual testing only: needs external GnuPG program and key setup (replace keyName and passphrase in test)")
     @DisplayName("Signing check works with configuration cache and without GPG signatory")
     internal fun signingCheckWorksWithConfigurationCacheAndWithoutGpg(gradleVersion: GradleVersion) {
         checkSigningConfigurationTest(gradleVersion) { buildArguments ->
@@ -251,9 +249,6 @@ class PublishingHelpersTest : KGPBaseTest() {
             }
             buildAndFail(
                 *buildArguments,
-                "-Psigning.gnupg.keyName=BCCD3E18",
-                "-Psigning.gnupg.passphrase=testtesttest",
-                forwardBuildOutput = true
             ) {
                 assertConfigurationCacheStored()
                 assertOutputContains("None of the keyservers contain the public key with id:")
