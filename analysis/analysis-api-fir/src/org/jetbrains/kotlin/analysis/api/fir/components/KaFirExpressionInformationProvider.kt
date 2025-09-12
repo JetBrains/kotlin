@@ -187,6 +187,9 @@ internal class KaFirExpressionInformationProvider(
         is KtClassBody ->
             false
 
+        is KtPackageDirective ->
+            false
+
         is KtImportDirective ->
             false
 
