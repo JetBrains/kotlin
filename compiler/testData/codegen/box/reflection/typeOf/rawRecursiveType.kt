@@ -10,7 +10,14 @@ import kotlin.reflect.typeOf
 import kotlin.test.assertEquals
 
 fun box(): String {
-    assertEquals("(a.A<(a.A<a.A<*, *>!, a.A<*, *>!>..a.A<*, *>?), (a.A<a.A<*, *>!, a.A<*, *>!>..a.A<*, *>?)>..a.A<*, *>?)", returnTypeOf { A.rawRecursive() }.toString())
+    val actual = returnTypeOf { A.rawRecursive() }.toString()
+    if (
+        // K1 version
+        actual != "(a.A<a.A<*, *>!, a.A<*, *>!>..a.A<*, *>?)" &&
+        // K2 version
+        actual != "(a.A<(a.A<a.A<*, *>!, a.A<*, *>!>..a.A<*, *>?), (a.A<a.A<*, *>!, a.A<*, *>!>..a.A<*, *>?)>..a.A<*, *>?)"
+    )
+        return "Fail: $actual"
 
     return "OK"
 }
