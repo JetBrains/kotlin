@@ -1050,8 +1050,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
             }
         }
+    }
 
-        // With .mjs extension
+
+    @DisplayName("path in source maps are remapped for custom outputFile in library with ES modules")
+    @GradleTest
+    fun testKotlinJsSourceMapCustomOutputFileInLibraryWithESM(gradleVersion: GradleVersion) {
         project("kotlin-multiplatform-browser-project", gradleVersion) {
             subProject("lib").buildScriptInjection {
                 kotlinMultiplatform.js {
@@ -1079,8 +1083,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(mapFilePath, "\"../../../../../lib/src/jsMain/kotlin/Lib.kt\"")
             }
         }
-
-
     }
 
     @DisplayName("source map is not generated when disabled")
