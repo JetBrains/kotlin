@@ -7,22 +7,29 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.dependencies.KotlinSourceSetDependencies
+import org.jetbrains.kotlin.gradle.dependencies.KotlinSourceSetDependenciesContributor
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.platformTargets
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import java.io.File
+import kotlin.test.assertEquals
 
 abstract class SourceSetDependenciesResolution {
     @get:Rule
     val tempFolder = TemporaryFolder()
 
     class SourceSetDependenciesDsl(
-        private val project: Project
+        val project: Project
     ) {
         val mavenRepositoryMock = MavenRepositoryMock()
 
@@ -60,6 +67,25 @@ abstract class SourceSetDependenciesResolution {
         configure: SourceSetDependenciesDsl.(Project) -> Unit
     ) {
         val repoRoot = tempFolder.newFolder()
+        val project = prepareProject(repoRoot, withProject, configure)
+
+        val actualResult = project.resolveAllSourceSetDependencies().sanitize()
+        val expectedFile = resourcesRoot
+            .resolve("dependenciesResolution")
+            .resolve(this.javaClass.simpleName)
+            .resolve(expectedFilePath)
+
+        KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), actualResult) {
+            // remove comment lines
+            it.replace("""\s+//.+""".toRegex(), "")
+        }
+    }
+
+    private fun prepareProject(
+        repoRoot: File,
+        withProject: ProjectInternal?,
+        configure: SourceSetDependenciesDsl.(Project) -> Unit,
+    ): Project {
         val project = withProject ?: buildProject {
             // Disable stdlib and kotlin-dom-api for default tests, as they just pollute dependencies dumps
             enableDefaultStdlibDependency(false)
@@ -76,16 +102,29 @@ abstract class SourceSetDependenciesResolution {
 
         project.evaluate()
 
-        val actualResult = project.resolveAllSourceSetDependencies().sanitize()
-        val expectedFile = resourcesRoot
-            .resolve("dependenciesResolution")
-            .resolve(this.javaClass.simpleName)
-            .resolve(expectedFilePath)
+        dsl.mavenRepositoryMock.publishMocks(project, repoRoot)
+        return project
+    }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), actualResult) {
-            // remove comment lines
-            it.replace("""\s+//.+""".toRegex(), "")
+    internal fun <T : KotlinSourceSetDependencies> testKotlinSourceSetDependenciesContributor(
+        contributor: KotlinSourceSetDependenciesContributor<T>,
+        expectedDependencies: Map<String, Any>,
+        withProject: ProjectInternal? = null,
+        configure: SourceSetDependenciesDsl.(Project) -> Unit
+    ) {
+        val repoRoot = tempFolder.newFolder()
+        val project = prepareProject(repoRoot, withProject, configure)
+        val res: Map<KotlinSourceSet, List<T>?> = project.future {
+            project.kotlinExtension.sourceSets.associateWith { contributor.invoke(it.internal) }
+        }.getOrThrow()
+
+        val dependencies = res.mapKeys { (key, _) -> key.name }.mapValues { (_, value) ->
+            value?.map { it.files }
         }
+        assertEquals(
+            expectedDependencies.prettyPrinted.toString(),
+            dependencies.prettyPrinted.toString()
+        )
     }
 
     private fun Project.resolveAllSourceSetDependencies(): String {

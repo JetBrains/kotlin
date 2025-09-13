@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -14,6 +16,7 @@ import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import java.io.File
 
 @InternalKotlinGradlePluginApi
@@ -109,3 +112,91 @@ internal val K2MultiplatformStructure.fragmentRefinesCompilerArgs: Array<String>
         "${edge.fromFragmentName}:${edge.toFragmentName}"
     }.toTypedArray()
 
+//internal abstract class K2MultiplatformStructureDumpTask : DefaultTask() {
+//    @get:Nested
+//    abstract val structure: Property<K2MultiplatformStructure>
+//
+//    @get:OutputFile
+//    abstract val output: RegularFileProperty
+//
+//    @TaskAction
+//    fun action() {
+//        val structure = structure.get()
+//        val output = output.get().asFile
+//        output.writeText(structure.toJson())
+//    }
+//}
+
+internal val ConfigureK2MultiplatformStructureDumpTasks = KotlinCompilationSideEffect { compilation ->
+    val project = compilation.project
+    println("Compilation ${compilation.name} of target ${compilation.target.name} of project ${project.path}")
+    println("Has task name: ${compilation.compileTaskProvider.name}")
+    compilation.compileTaskProvider.configure { task ->
+        println("Configure Task: ${task.name} of project ${project.path}")
+        if (task !is K2MultiplatformCompilationTask) return@configure
+        val k2StructureOutput = project.layout.buildDirectory.file("kgp-debug-data/compilations/${task.name}-k2-structure.json")
+        val classpathOutput = project.layout.buildDirectory.file("kgp-debug-data/compilations/${task.name}-classpath.txt")
+
+        task.outputs.files(k2StructureOutput)
+        task.doLast {
+            if (task is KotlinCompileTool) {
+                println("Writing libraries classpath to ${classpathOutput.get().asFile.absolutePath}")
+                classpathOutput.get().asFile.writeText(task.libraries.files.joinToString("\n"))
+            }
+
+            println("Writing K2MultiplatformStructure to ${k2StructureOutput.get().asFile.absolutePath}")
+            k2StructureOutput.get().asFile.writeText(task.multiplatformStructure.toJson())
+        }
+    }
+
+//    project.tasks.register(compilation.disambiguateName("K2MultiplatformStructureDump"), K2MultiplatformStructureDumpTask::class.java) {
+//        val compileTaskProvider = compilation.compileTaskProvider
+//        val structureProvider = compileTaskProvider.map { compileTask ->
+//            (compileTask as K2MultiplatformCompilationTask).multiplatformStructure
+//        }
+//        it.dependsOn(compileTaskProvider)
+//        it.structure.set(structureProvider)
+//        it.output.set(project.layout.buildDirectory.file("k2MultiplatformStructure/${compilation.disambiguatedName}.json"))
+//    }
+}
+
+private fun K2MultiplatformStructure.toJson(): String {
+    val root = JsonObject()
+
+    // Materialize defaultFragmentName if present
+    this.defaultFragmentName.orNull?.let { root.addProperty("defaultFragmentName", it) }
+
+    // Materialize fragments with sources and dependencies as lists of files
+    val fragmentsArray = com.google.gson.JsonArray()
+    for (fragment in this.fragments.get()) {
+        val fragmentObj = JsonObject()
+        fragmentObj.addProperty("fragmentName", fragment.fragmentName)
+
+        val sourcesArray = com.google.gson.JsonArray()
+        for (file in fragment.sources.files) {
+            sourcesArray.add(file.absolutePath)
+        }
+        fragmentObj.add("sources", sourcesArray)
+
+        val depsArray = com.google.gson.JsonArray()
+        for (file in fragment.dependencies.files) {
+            depsArray.add(file.absolutePath)
+        }
+        fragmentObj.add("dependencies", depsArray)
+
+        fragmentsArray.add(fragmentObj)
+    }
+    root.add("fragments", fragmentsArray)
+
+    // Materialize refines edges
+    val edgesArray = com.google.gson.JsonArray()
+    for (edge in this.refinesEdges.get()) {
+        val edgeObj = JsonObject()
+        edgeObj.addProperty("fromFragmentName", edge.fromFragmentName)
+        edgeObj.addProperty("toFragmentName", edge.toFragmentName)
+        edgesArray.add(edgeObj)
+    }
+    root.add("refinesEdges", edgesArray)
+
+    return GsonBuilder().setPrettyPrinting().create().toJson(root)
+}
