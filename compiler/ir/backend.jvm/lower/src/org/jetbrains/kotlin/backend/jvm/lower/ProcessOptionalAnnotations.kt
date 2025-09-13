@@ -52,7 +52,6 @@ class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileL
         if (classMetadata != null) {
             val descriptor = classMetadata.descriptor
             if (OptionalAnnotationUtil.shouldGenerateExpectClass(descriptor)) {
-                context.state.factory.packagePartRegistry.optionalAnnotations += descriptor
                 context.optionalAnnotations += classMetadata
             }
         }

@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.asJava.classes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.codegen.AnnotationCodegen;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.CodegenUtilKt;
-import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
@@ -28,6 +26,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import static org.jetbrains.kotlin.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
+import static org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME;
+import static org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineWithReified;
@@ -51,11 +51,15 @@ public class VisibilityUtil {
     ) {
         int flags = getCommonCallableFlags(functionDescriptor, deprecationResolver);
 
-        for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
-            flags |= flagAnnotation.getJvmFlag(functionDescriptor.getOriginal());
+        FunctionDescriptor original = functionDescriptor.getOriginal();
+        if (original.getAnnotations().hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)) {
+            flags |= Opcodes.ACC_STRICT;
+        }
+        if (original.getAnnotations().hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)) {
+            flags |= Opcodes.ACC_SYNCHRONIZED;
         }
 
-        if (functionDescriptor.getOriginal().isExternal()) {
+        if (original.isExternal()) {
             flags |= Opcodes.ACC_NATIVE;
         }
 
@@ -100,7 +104,7 @@ public class VisibilityUtil {
             FunctionDescriptor functionDescriptor,
             @NotNull DeprecationResolver deprecationResolver
     ) {
-        int flags = getVisibilityAccessFlag(functionDescriptor, OwnerKind.IMPLEMENTATION);
+        int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
         if (deprecationResolver.isDeprecatedHidden(functionDescriptor) || isInlineWithReified(functionDescriptor)) {
@@ -109,8 +113,8 @@ public class VisibilityUtil {
         return flags;
     }
 
-    private static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor, @Nullable OwnerKind kind) {
-        Integer specialCase = specialCaseVisibility(descriptor, kind);
+    private static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
+        Integer specialCase = specialCaseVisibility(descriptor);
         if (specialCase != null) {
             return specialCase;
         }
@@ -150,7 +154,7 @@ public class VisibilityUtil {
     }
 
     @Nullable
-    private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor, @Nullable OwnerKind kind) {
+    private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         DescriptorVisibility memberVisibility = memberDescriptor.getVisibility();
 
@@ -158,8 +162,7 @@ public class VisibilityUtil {
             return ACC_PUBLIC;
         }
 
-        if (memberDescriptor instanceof FunctionDescriptor &&
-            kind != null && isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor)) {
+        if (memberDescriptor instanceof FunctionDescriptor && isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor)) {
             return ACC_PRIVATE;
         }
 
@@ -184,7 +187,7 @@ public class VisibilityUtil {
         }
 
         if (memberDescriptor instanceof SyntheticJavaPropertyDescriptor) {
-            return getVisibilityAccessFlag(((SyntheticJavaPropertyDescriptor) memberDescriptor).getGetMethod(), null);
+            return getVisibilityAccessFlag(((SyntheticJavaPropertyDescriptor) memberDescriptor).getGetMethod());
         }
         if (memberDescriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) memberDescriptor).getCorrespondingProperty();
@@ -193,7 +196,7 @@ public class VisibilityUtil {
                                             ? ((SyntheticJavaPropertyDescriptor) property).getGetMethod()
                                             : ((SyntheticJavaPropertyDescriptor) property).getSetMethod();
                 assert method != null : "No get/set method in SyntheticJavaPropertyDescriptor: " + property;
-                return getVisibilityAccessFlag(method, null);
+                return getVisibilityAccessFlag(method);
             }
         }
 

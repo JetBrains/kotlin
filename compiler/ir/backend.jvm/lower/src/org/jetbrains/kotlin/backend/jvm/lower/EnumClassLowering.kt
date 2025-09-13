@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 private const val VALUES_HELPER_FUNCTION_NAME = "\$values"
 private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
+private const val VALUES_FIELD_NAME = "\$VALUES"
 
 @PhaseDescription(name = "EnumClass")
 internal class EnumClassLowering(private val context: JvmBackendContext) : ClassLoweringPass {
@@ -158,7 +158,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
         }
 
         private fun buildValuesField(valuesHelperFunction: IrFunction): IrField = irClass.addField {
-            name = Name.identifier(ImplementationBodyCodegen.ENUM_VALUES_FIELD_NAME)
+            name = Name.identifier(VALUES_FIELD_NAME)
             type = enumArrayType
             visibility = DescriptorVisibilities.PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES

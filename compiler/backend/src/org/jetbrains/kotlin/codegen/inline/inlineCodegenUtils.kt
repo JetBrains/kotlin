@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.codegen.inline
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -112,6 +110,26 @@ internal fun findVirtualFileImprecise(state: GenerationState, internalClassName:
     return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
 }
 
+fun classFileContainsMethod(classId: ClassId, state: GenerationState, method: Method): Boolean? {
+    val bytes = findVirtualFile(state, classId)?.contentsToByteArray() ?: return null
+    var found = false
+    ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+        override fun visitMethod(
+            access: Int,
+            name: String?,
+            descriptor: String?,
+            signature: String?,
+            exceptions: Array<out String>?
+        ): MethodVisitor? {
+            if (name == method.name && descriptor == method.descriptor) {
+                found = true
+            }
+            return super.visitMethod(access, name, descriptor, signature, exceptions)
+        }
+    }, ClassReader.SKIP_FRAMES)
+    return found
+}
+
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
     return OperatorNameConventions.INVOKE.asString() == name && owner.isNumberedFunctionInternalName()
 }
@@ -125,7 +143,7 @@ internal fun isAnonymousConstructorCall(internalName: String, methodName: String
 private fun isConstructor(methodName: String) = "<init>" == methodName
 
 internal fun isWhenMappingAccess(internalName: String, fieldName: String): Boolean =
-    fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
+    fieldName.startsWith("\$EnumSwitchMapping$") && internalName.endsWith("\$WhenMappings")
 
 internal fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean =
     JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
@@ -145,7 +163,7 @@ private fun isOldSamWrapper(internalName: String) =
     internalName.contains("\$sam$") && internalName.substringAfter("\$i$", "").run { length == 8 && toLongOrNull(16) != null }
 
 internal fun isSamWrapper(internalName: String) =
-    (internalName.endsWith(SAM_WRAPPER_SUFFIX) && internalName.contains("\$sam\$i\$")) || isOldSamWrapper(internalName)
+    (internalName.endsWith("$0") && internalName.contains("\$sam\$i\$")) || isOldSamWrapper(internalName)
 
 
 internal fun isSamWrapperConstructorCall(internalName: String, methodName: String) =

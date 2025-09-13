@@ -494,3 +494,13 @@ class IrExpressionLambdaImpl(
         invokeMethodReturnType = unboxedReturnType ?: function.returnType
     }
 }
+
+private enum class ValueKind {
+    GENERAL,
+    DEFAULT_PARAMETER,
+    DEFAULT_INLINE_PARAMETER,
+    DEFAULT_MASK,
+    METHOD_HANDLE_IN_DEFAULT,
+    READ_OF_INLINE_LAMBDA_FOR_INLINE_SUSPEND_PARAMETER,
+    READ_OF_OBJECT_FOR_INLINE_SUSPEND_PARAMETER
+}
