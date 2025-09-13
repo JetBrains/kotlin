@@ -2255,7 +2255,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
-        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by warning<PsiElement>()
+        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by error<PsiElement>()
         val INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION by error<PsiElement>()
         val INVALID_VERSIONING_ON_VARARG by error<PsiElement>()
         val INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER by error<PsiElement>()
