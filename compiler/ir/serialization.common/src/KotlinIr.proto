@@ -449,9 +449,7 @@ message IrDynamicOperatorExpression {
   repeated IrExpression argument = 3;
 }
 
-// TODO: we need an extension mechanism to accomodate new
-// IR operators in upcoming releases.
-message IrOperation {
+message IrOperationPre_2_4_0 {
   oneof operation {
     IrBlock block = 1;
     IrBreak break = 2;
@@ -511,9 +509,52 @@ enum IrTypeOperator {
   REINTERPRET_CAST = 11;
 }
 
-
 message IrExpression {
-  required IrOperation operation = 1;
+  oneof operation {
+    IrConst op_const = 5;
+    IrGetValue op_get_value = 6;
+    IrSetValue op_set_value = 7;
+    IrCall op_call = 8;
+    IrConstructorCall op_constructor_call = 9;
+    IrBlock op_block = 10;
+    IrReturnableBlock op_returnable_block = 11;
+    IrReturn op_return = 12;
+    IrWhen op_when = 13;
+    IrTypeOp op_type_op = 14;
+    IrGetField op_get_field = 15;
+    IrSetField op_set_field = 16;
+    IrGetObject op_get_object = 17;
+    IrGetClass op_get_class = 18;
+    IrClassReference op_class_reference = 19;
+    IrGetEnumValue op_get_enum_value = 20;
+    IrComposite op_composite = 21;
+    IrBreak op_break = 22;
+    IrContinue op_continue = 23;
+    IrWhile op_while = 24;
+    IrDoWhile op_do_while = 25;
+    IrDelegatingConstructorCall op_delegating_constructor_call = 26;
+    IrEnumConstructorCall op_enum_constructor_call = 27;
+    IrInstanceInitializerCall op_instance_initializer_call = 28;
+    IrStringConcat op_string_concat = 29;
+    IrThrow op_throw = 30;
+    IrTry op_try = 31;
+    IrVararg op_vararg = 32;
+    IrDynamicMemberExpression op_dynamic_member = 33;
+    IrDynamicOperatorExpression op_dynamic_operator = 34;
+    IrLocalDelegatedPropertyReference op_local_delegated_property_reference = 35;
+    IrFunctionExpression op_function_expression = 36;
+    // Error code
+    IrErrorExpression op_error_expression = 37;
+    IrErrorCallExpression op_error_call_expression = 38;
+    // Operations again
+    IrFunctionReference op_function_reference = 39;
+    IrPropertyReference op_property_reference = 40;
+    IrRichFunctionReference op_rich_function_reference = 41;
+    IrRichPropertyReference op_rich_property_reference = 42;
+    IrInlinedFunctionBlock op_inlined_function_block = 43;
+  }
+
+  optional IrOperationPre_2_4_0 operation_pre_2_4_0 = 1; // Was required before 2.4.0
   required int32 type = 2;
   required int64 coordinates = 3;
 }

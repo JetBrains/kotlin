@@ -8,13 +8,388 @@ public interface IrExpressionOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation operation = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConst op_const = 5;</code>
    */
-  boolean hasOperation();
+  boolean hasOpConst();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation operation = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConst op_const = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation getOperation();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConst getOpConst();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue op_get_value = 6;</code>
+   */
+  boolean hasOpGetValue();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue op_get_value = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue getOpGetValue();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue op_set_value = 7;</code>
+   */
+  boolean hasOpSetValue();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue op_set_value = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue getOpSetValue();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrCall op_call = 8;</code>
+   */
+  boolean hasOpCall();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrCall op_call = 8;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrCall getOpCall();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall op_constructor_call = 9;</code>
+   */
+  boolean hasOpConstructorCall();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall op_constructor_call = 9;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getOpConstructorCall();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock op_block = 10;</code>
+   */
+  boolean hasOpBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock op_block = 10;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getOpBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock op_returnable_block = 11;</code>
+   */
+  boolean hasOpReturnableBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock op_returnable_block = 11;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getOpReturnableBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn op_return = 12;</code>
+   */
+  boolean hasOpReturn();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn op_return = 12;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn getOpReturn();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen op_when = 13;</code>
+   */
+  boolean hasOpWhen();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen op_when = 13;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen getOpWhen();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp op_type_op = 14;</code>
+   */
+  boolean hasOpTypeOp();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp op_type_op = 14;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp getOpTypeOp();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField op_get_field = 15;</code>
+   */
+  boolean hasOpGetField();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField op_get_field = 15;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField getOpGetField();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField op_set_field = 16;</code>
+   */
+  boolean hasOpSetField();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField op_set_field = 16;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField getOpSetField();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject op_get_object = 17;</code>
+   */
+  boolean hasOpGetObject();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject op_get_object = 17;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject getOpGetObject();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass op_get_class = 18;</code>
+   */
+  boolean hasOpGetClass();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass op_get_class = 18;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass getOpGetClass();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference op_class_reference = 19;</code>
+   */
+  boolean hasOpClassReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference op_class_reference = 19;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference getOpClassReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue op_get_enum_value = 20;</code>
+   */
+  boolean hasOpGetEnumValue();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue op_get_enum_value = 20;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue getOpGetEnumValue();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite op_composite = 21;</code>
+   */
+  boolean hasOpComposite();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite op_composite = 21;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite getOpComposite();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak op_break = 22;</code>
+   */
+  boolean hasOpBreak();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak op_break = 22;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak getOpBreak();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue op_continue = 23;</code>
+   */
+  boolean hasOpContinue();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue op_continue = 23;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue getOpContinue();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile op_while = 24;</code>
+   */
+  boolean hasOpWhile();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile op_while = 24;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile getOpWhile();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile op_do_while = 25;</code>
+   */
+  boolean hasOpDoWhile();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile op_do_while = 25;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile getOpDoWhile();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall op_delegating_constructor_call = 26;</code>
+   */
+  boolean hasOpDelegatingConstructorCall();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall op_delegating_constructor_call = 26;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall getOpDelegatingConstructorCall();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall op_enum_constructor_call = 27;</code>
+   */
+  boolean hasOpEnumConstructorCall();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall op_enum_constructor_call = 27;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall getOpEnumConstructorCall();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall op_instance_initializer_call = 28;</code>
+   */
+  boolean hasOpInstanceInitializerCall();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall op_instance_initializer_call = 28;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall getOpInstanceInitializerCall();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat op_string_concat = 29;</code>
+   */
+  boolean hasOpStringConcat();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat op_string_concat = 29;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat getOpStringConcat();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow op_throw = 30;</code>
+   */
+  boolean hasOpThrow();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow op_throw = 30;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow getOpThrow();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTry op_try = 31;</code>
+   */
+  boolean hasOpTry();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTry op_try = 31;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTry getOpTry();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg op_vararg = 32;</code>
+   */
+  boolean hasOpVararg();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg op_vararg = 32;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg getOpVararg();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression op_dynamic_member = 33;</code>
+   */
+  boolean hasOpDynamicMember();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression op_dynamic_member = 33;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression getOpDynamicMember();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression op_dynamic_operator = 34;</code>
+   */
+  boolean hasOpDynamicOperator();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression op_dynamic_operator = 34;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression getOpDynamicOperator();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference op_local_delegated_property_reference = 35;</code>
+   */
+  boolean hasOpLocalDelegatedPropertyReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference op_local_delegated_property_reference = 35;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference getOpLocalDelegatedPropertyReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression op_function_expression = 36;</code>
+   */
+  boolean hasOpFunctionExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression op_function_expression = 36;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression getOpFunctionExpression();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression op_error_expression = 37;</code>
+   *
+   * <pre>
+   * Error code
+   * </pre>
+   */
+  boolean hasOpErrorExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression op_error_expression = 37;</code>
+   *
+   * <pre>
+   * Error code
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression getOpErrorExpression();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression op_error_call_expression = 38;</code>
+   */
+  boolean hasOpErrorCallExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression op_error_call_expression = 38;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression getOpErrorCallExpression();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference op_function_reference = 39;</code>
+   *
+   * <pre>
+   * Operations again
+   * </pre>
+   */
+  boolean hasOpFunctionReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference op_function_reference = 39;</code>
+   *
+   * <pre>
+   * Operations again
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference getOpFunctionReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference op_property_reference = 40;</code>
+   */
+  boolean hasOpPropertyReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference op_property_reference = 40;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference getOpPropertyReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference op_rich_function_reference = 41;</code>
+   */
+  boolean hasOpRichFunctionReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference op_rich_function_reference = 41;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference getOpRichFunctionReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference op_rich_property_reference = 42;</code>
+   */
+  boolean hasOpRichPropertyReference();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference op_rich_property_reference = 42;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference getOpRichPropertyReference();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock op_inlined_function_block = 43;</code>
+   */
+  boolean hasOpInlinedFunctionBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock op_inlined_function_block = 43;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getOpInlinedFunctionBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 operation_pre_2_4_0 = 1;</code>
+   *
+   * <pre>
+   * Was required before 2.4.0
+   * </pre>
+   */
+  boolean hasOperationPre240();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 operation_pre_2_4_0 = 1;</code>
+   *
+   * <pre>
+   * Was required before 2.4.0
+   * </pre>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 getOperationPre240();
 
   /**
    * <code>required int32 type = 2;</code>
