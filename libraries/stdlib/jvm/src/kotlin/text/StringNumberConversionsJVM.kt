@@ -57,7 +57,7 @@ public actual inline fun String?.toBoolean(): Boolean = java.lang.Boolean.parseB
 /**
  * Parses the string to a [Byte] number.
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Byte] value range (within `Byte.MIN_VALUE..Byte.MAX_VALUE`),
  * otherwise a [NumberFormatException] will be thrown.
  *
@@ -80,7 +80,7 @@ public actual inline fun String.toByte(radix: Int): Byte = java.lang.Byte.parseB
 /**
  * Parses the string to a [Short] number.
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Short] value range (within `Short.MIN_VALUE..Short.MAX_VALUE`),
  * otherwise a [NumberFormatException] will be thrown.
  *
@@ -102,7 +102,7 @@ public actual inline fun String.toShort(radix: Int): Short = java.lang.Short.par
 /**
  * Parses the string to an [Int] number.
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Int] value range (within `Int.MIN_VALUE..Int.MAX_VALUE`),
  * otherwise a [NumberFormatException] will be thrown.
  *
@@ -124,7 +124,7 @@ public actual inline fun String.toInt(radix: Int): Int = java.lang.Integer.parse
 /**
  * Parses the string to a [Long] number.
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Long] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
  * otherwise a [NumberFormatException] will be thrown.
  *
