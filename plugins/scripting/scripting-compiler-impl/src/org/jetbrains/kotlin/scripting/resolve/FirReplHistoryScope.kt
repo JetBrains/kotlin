@@ -51,9 +51,7 @@ class FirReplHistoryScope(
     }
 
     override fun getCallableNames(): Set<Name> = properties.keys + functions.keys
-    override fun getClassifierNames(): Set<Name> {
-        return classLikes.keys
-    }
+    override fun getClassifierNames(): Set<Name> = classLikes.keys
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirLocalScope? {
