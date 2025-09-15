@@ -48,7 +48,7 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
 
         // Currently there's a ton of diagnostic tests with incorrect Java code:
         // strictly speaking, compiling it with javac is not required for testing
-        // Kotlin code
+        // Kotlin code (UPD: it's required for testing kotlin-reflect now)
         if (DISABLE_JAVA_FACADE !in module.directives) {
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
             javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)
