@@ -20,13 +20,13 @@ private fun it(name: String, fn: () -> JsAny?): Unit =
 private fun xit(name: String, fn: () -> JsAny?): Unit =
     js("xit(name, fn)")
 
-private fun jsThrow(jsException: JsAny): Nothing =
+private fun jsThrow(jsException: JsUnshareableAny): Nothing =
     js("{ throw jsException; }")
 
-private fun throwableToJsError(message: String, stack: String): JsAny =
+private fun throwableToJsError(message: String, stack: String): JsUnshareableAny =
     js("{ const e = new Error(); e.message = message; e.stack = stack; return e; }")
 
-private fun Throwable.toJsError(): JsAny =
+private fun Throwable.toJsError(): JsUnshareableAny =
     throwableToJsError(message ?: "", stackTraceToString())
 
 /**

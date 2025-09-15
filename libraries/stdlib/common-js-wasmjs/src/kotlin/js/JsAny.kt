@@ -13,6 +13,14 @@ package kotlin.js
 public expect interface JsAny
 
 /**
+ * JavaScript values that are non-shared (in terms of "Shared-Everything Threads" Wasm proposal)
+ * even in the "-Xwasm-use-shared-objects" mode.
+ * Such types form a separate hierarchy not compatible with `JsAny`, although in "normal" mode all JS types are considered non-shared.
+ */
+@ExperimentalWasmJsInterop
+public expect interface JsUnshareableAny
+
+/**
  * Cast JsAny to other Js type without runtime check for WasmJs interop
  */
 @SinceKotlin("2.2")

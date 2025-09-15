@@ -12,15 +12,15 @@ import kotlin.internal.LowPriorityInOverloadResolution
  */
 @ExperimentalWasmJsInterop
 public actual external class Promise<out T : JsAny?>
-actual constructor(executor: (resolve: (T) -> Unit, reject: (JsAny) -> Unit) -> Unit) : JsAny {
+actual constructor(executor: (resolve: (T) -> Unit, reject: (JsUnshareableAny) -> Unit) -> Unit) : JsAny {
 
     @LowPriorityInOverloadResolution
     public actual fun <S : JsAny?> then(onFulfilled: ((T) -> S)?): Promise<S>
 
     @LowPriorityInOverloadResolution
-    public actual fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsAny) -> S)?): Promise<S>
+    public actual fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsUnshareableAny) -> S)?): Promise<S>
 
-    public actual fun <S : JsAny?> catch(onRejected: (JsAny) -> S): Promise<S>
+    public actual fun <S : JsAny?> catch(onRejected: (JsUnshareableAny) -> S): Promise<S>
 
     public actual fun finally(onFinally: () -> Unit): Promise<T>
 
@@ -28,7 +28,7 @@ actual constructor(executor: (resolve: (T) -> Unit, reject: (JsAny) -> Unit) -> 
         public actual fun <S : JsAny?> all(promise: JsArray<out Promise<S>>): Promise<JsArray<out S>>
         public actual fun <S : JsAny?> race(promise: JsArray<out Promise<S>>): Promise<S>
 
-        public actual fun reject(e: JsAny): Promise<Nothing>
+        public actual fun reject(e: JsUnshareableAny): Promise<Nothing>
 
         public actual fun <S : JsAny?> resolve(e: S): Promise<S>
         public actual fun <S : JsAny?> resolve(e: Promise<S>): Promise<S>

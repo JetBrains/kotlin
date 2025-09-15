@@ -71,5 +71,5 @@ internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
 internal actual val Throwable.stack: String get() = this.stack
 
 @OptIn(ExperimentalWasmJsInterop::class)
-internal fun createJsError(message: String?, cause: JsAny?): JsError =
+internal fun createJsError(message: String?, cause: JsUnshareableAny?): JsError =
     js("new Error(message, { cause })")

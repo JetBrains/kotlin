@@ -8,7 +8,7 @@ package kotlin.js
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
 @Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
-public expect class JsPromiseError : JsAny
+public expect class JsPromiseError : JsUnshareableAny
 
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")

@@ -27,11 +27,11 @@ public fun Any.asDynamic(): JsAny = this.toJsReference()
 @kotlin.internal.InlineOnly
 public fun String.asDynamic(): JsString = this.toJsString()
 
-private fun jsThrow(e: JsAny) {
+private fun jsThrow(e: JsUnshareableAny) : Nothing {
     js("throw e;")
 }
 
-private fun jsCatch(f: () -> Unit): JsAny? {
+private fun jsCatch(f: () -> Unit): JsUnshareableAny? {
     js("""
     let result = null;
     try { 
@@ -48,17 +48,6 @@ private fun jsCatch(f: () -> Unit): JsAny? {
  * if it was thrown from Kotlin, or null otherwise.
  */
 @ExperimentalWasmJsInterop
-public fun JsAny.toThrowableOrNull(): Throwable? {
-    val thisAny: Any = this
-    if (thisAny is Throwable) return thisAny
-    return null
-//    var result: Throwable? = null
-//    jsCatch {
-//        try {
-//            jsThrow(this)
-//        } catch (e: Throwable) {
-//            result = e
-//        }
-//    }
-//    return result
+public fun JsUnshareableAny.toThrowableOrNull(): Throwable? {
+    return (this as? JsError)?.kotlinException?.get()
 }

@@ -13,6 +13,9 @@ import kotlin.internal.LowPriorityInOverloadResolution
 @SinceKotlin("2.2")
 public actual typealias JsAny = Any
 
+@ExperimentalWasmJsInterop
+public actual typealias JsUnshareableAny = Any
+
 @SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
 @LowPriorityInOverloadResolution

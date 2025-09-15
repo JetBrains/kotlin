@@ -14,7 +14,7 @@ import kotlin.wasm.internal.ExternalInterfaceType
  * @param thrownValue value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
  */
 @ExperimentalWasmJsInterop
-public actual class JsException internal constructor(thrownValue: JsAny?) :
+public actual class JsException internal constructor(thrownValue: JsUnshareableAny?) :
     Throwable(
         message = getJsErrorMessage(thrownValue),
         cause = null,
@@ -24,27 +24,27 @@ public actual class JsException internal constructor(thrownValue: JsAny?) :
 }
 
 @ExperimentalWasmJsInterop
-public actual val JsException.thrownValue: JsAny? get() = if (thrownValueIsJsError) jsError else jsError.cause
+public actual val JsException.thrownValue: JsUnshareableAny? get() = if (thrownValueIsJsError) jsError else jsError.cause
 
 @OptIn(ExperimentalWasmJsInterop::class)
 @JsName("Error")
-internal external class JsError : JsAny {
+internal external class JsError : JsUnshareableAny {
     val message: String?
     var name: String
     val stack: ExternalInterfaceType
-    val cause: JsAny?
+    val cause: JsUnshareableAny?
     var kotlinException: JsReference<Throwable>?
 }
 
 internal const val DEFAULT_JS_EXCEPTION_MESSAGE = "Exception was thrown while running JavaScript code"
 
 @OptIn(ExperimentalWasmJsInterop::class)
-internal fun toJsError(thrownValue: JsAny?): JsError {
+internal fun toJsError(thrownValue: JsUnshareableAny?): JsError {
     return (thrownValue as? JsError) ?: createPlaceholderJsError(DEFAULT_JS_EXCEPTION_MESSAGE, thrownValue)
 }
 
 @OptIn(ExperimentalWasmJsInterop::class)
-internal fun createPlaceholderJsError(message: String?, cause: JsAny?): JsError =
+internal fun createPlaceholderJsError(message: String?, cause: JsUnshareableAny?): JsError =
     setPlaceholderStack(createJsError(message, cause))
 
 @OptIn(ExperimentalWasmJsInterop::class)
@@ -52,6 +52,6 @@ internal fun setPlaceholderStack(jsError: JsError): JsError =
     js("Object.assign(jsError, { stack: '' })")
 
 @OptIn(ExperimentalWasmJsInterop::class)
-internal fun getJsErrorMessage(thrownValue: JsAny?): String {
+internal fun getJsErrorMessage(thrownValue: JsUnshareableAny?): String {
     return (thrownValue as? JsError)?.message ?: DEFAULT_JS_EXCEPTION_MESSAGE
 }

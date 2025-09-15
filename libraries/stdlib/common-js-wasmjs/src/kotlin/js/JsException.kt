@@ -19,4 +19,4 @@ public expect class JsException : Throwable
  */
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
-public expect val JsException.thrownValue: JsAny?
+public expect val JsException.thrownValue: JsUnshareableAny?

@@ -7,7 +7,7 @@ package kotlin.js
 
 @SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
-public actual typealias JsPromiseError = JsAny
+public actual typealias JsPromiseError = JsUnshareableAny
 
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")

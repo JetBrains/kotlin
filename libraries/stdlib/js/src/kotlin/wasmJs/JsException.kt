@@ -15,5 +15,5 @@ public actual typealias JsException = Throwable
  * */
 @SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
-public actual inline val JsException.thrownValue: JsAny?
-    get() = unsafeCast<JsAny?>()
+public actual inline val JsException.thrownValue: JsUnshareableAny?
+    get() = unsafeCast<JsUnshareableAny?>()
