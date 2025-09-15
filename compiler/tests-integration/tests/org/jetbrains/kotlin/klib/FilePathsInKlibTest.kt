@@ -45,15 +45,16 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         }.load().apply { assertFalse(hasProblems) }.librariesStdlibFirst
 
         val lib = libs.last()
-        val fileSize = lib.fileCount()
+        val mainIr = lib.mainIr
+        val fileSize = mainIr.fileCount()
         val extReg = ExtensionRegistryLite.newInstance()
 
         val result = ArrayList<String>(fileSize)
 
         for (i in 0 until fileSize) {
-            val fileStream = lib.file(i).codedInputStream
+            val fileStream = mainIr.file(i).codedInputStream
             val fileProto = IrFile.parseFrom(fileStream, extReg)
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(lib, i))
+            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, i))
             val fileEntry = fileReader.fileEntry(fileProto)
             val fileName = fileReader.deserializeFileEntryName(fileEntry)
 
