@@ -52,7 +52,7 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()
