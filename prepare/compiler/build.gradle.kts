@@ -239,7 +239,9 @@ dependencies {
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
 
-    proguardLibraries("org.antlr:antlr4-runtime:4.13.2") { isTransitive = false }
+    // Used by JS parser
+    fatJarContents(libs.antlr.runtime) { isTransitive = false }
+    proguardLibraries(libs.antlr.runtime) { isTransitive = false }
 
     builtinsMetadata(kotlinStdlib())
 }
@@ -393,6 +395,7 @@ sourcesJar {
     }
 
     dependsOn(":compiler:fir:checkers:generateCheckersComponents", ":compiler:ir.tree:generateTree")
+    mustRunAfter(":js:js.parser:generateGrammarSource")
 }
 
 javadocJar()

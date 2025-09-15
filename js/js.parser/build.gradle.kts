@@ -45,5 +45,5 @@ tasks.generateGrammarSource {
 }
 
 tasks.compileKotlin {
-    dependsOn(tasks.generateGrammarSource)
+    mustRunAfter(tasks.generateGrammarSource)
 }
