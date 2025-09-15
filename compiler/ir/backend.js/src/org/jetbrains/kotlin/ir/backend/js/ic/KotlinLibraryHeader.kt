@@ -46,16 +46,17 @@ internal class KotlinLoadedLibraryHeader(
     }
 
     override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy(LazyThreadSafetyMode.NONE) {
+        val ir = library.mainIr
         buildMapUntil(sourceFiles.size) {
             val deserializer = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
                 private fun err(): Nothing = icError("Not supported")
                 override fun irDeclaration(index: Int): ByteArray = err()
                 override fun type(index: Int): ByteArray = err()
-                override fun signature(index: Int): ByteArray = library.signature(index, it)
-                override fun string(index: Int): ByteArray = library.string(index, it)
+                override fun signature(index: Int): ByteArray = ir.signature(index, it)
+                override fun string(index: Int): ByteArray = ir.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-                override fun fileEntry(index: Int): ByteArray? = library.fileEntry(index, it)
+                override fun fileEntry(index: Int): ByteArray? = ir.fileEntry(index, it)
             }), null, irInterner)
 
             put(sourceFiles[it], deserializer)
@@ -73,9 +74,10 @@ internal class KotlinLoadedLibraryHeader(
 
     private val sourceFiles by lazy(LazyThreadSafetyMode.NONE) {
         val extReg = ExtensionRegistryLite.newInstance()
-        val sources = (0 until library.fileCount()).map {
-            val fileProto = IrFile.parseFrom(library.file(it).codedInputStream, extReg)
-            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library, it))
+        val mainIr = library.mainIr
+        val sources = (0 until mainIr.fileCount()).map {
+            val fileProto = IrFile.parseFrom(mainIr.file(it).codedInputStream, extReg)
+            val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, it))
             val fileEntry = fileReader.fileEntry(fileProto)
             fileReader.deserializeFileEntryName(fileEntry)
         }

@@ -236,14 +236,14 @@ class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : Ir
     }
 }
 
-class IrKlibBytesSource(private val klib: IrLibrary, private val fileIndex: Int) : IrLibraryBytesSource() {
-    override fun irDeclaration(index: Int): ByteArray = klib.irDeclaration(index, fileIndex)
-    override fun type(index: Int): ByteArray = klib.type(index, fileIndex)
-    override fun signature(index: Int): ByteArray = klib.signature(index, fileIndex)
-    override fun string(index: Int): ByteArray = klib.string(index, fileIndex)
-    override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
-    override fun debugInfo(index: Int): ByteArray? = klib.debugInfo(index, fileIndex)
-    override fun fileEntry(index: Int): ByteArray? = klib.fileEntry(index, fileIndex)
+class IrKlibBytesSource(private val ir: IrLibrary.IrDirectory, private val fileIndex: Int) : IrLibraryBytesSource() {
+    override fun irDeclaration(index: Int): ByteArray = ir.irDeclaration(index, fileIndex)
+    override fun type(index: Int): ByteArray = ir.type(index, fileIndex)
+    override fun signature(index: Int): ByteArray = ir.signature(index, fileIndex)
+    override fun string(index: Int): ByteArray = ir.string(index, fileIndex)
+    override fun body(index: Int): ByteArray = ir.body(index, fileIndex)
+    override fun debugInfo(index: Int): ByteArray? = ir.debugInfo(index, fileIndex)
+    override fun fileEntry(index: Int): ByteArray? = ir.fileEntry(index, fileIndex)
 }
 
 fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
@@ -292,7 +292,7 @@ fun IrLibraryFile.fileEntry(protoFile: ProtoFile): FileEntry =
         protoFile.fileEntry
     }
 
-fun IrLibrary.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
+fun IrLibrary.IrDirectory.fileEntry(protoFile: ProtoFile, fileIndex: Int): FileEntry =
     if (protoFile.hasFileEntryId() && hasFileEntriesTable) {
         val fileEntry = fileEntry(protoFile.fileEntryId, fileIndex) ?: error("Invalid KLib: cannot read file entry by its index")
         ProtoFileEntry.parseFrom(fileEntry)
