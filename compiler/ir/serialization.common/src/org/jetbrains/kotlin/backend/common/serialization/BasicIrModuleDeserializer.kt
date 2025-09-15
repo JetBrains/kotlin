@@ -55,15 +55,14 @@ abstract class BasicIrModuleDeserializer(
     }
 
     override fun init(delegate: IrModuleDeserializer) {
-        val fileCount = klib.fileCount()
-
+        val mainIr = klib.mainIr
+        val fileCount = mainIr.fileCount()
         fileDeserializationStates = buildList {
             for (i in 0 until fileCount) {
-                val fileStream = klib.file(i).codedInputStream
+                val fileStream = mainIr.file(i).codedInputStream
                 val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
-                val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))
-                val file = fileReader.
-                createFile(moduleFragment, fileProto, linker.irInterner)
+                val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, i))
+                val file = fileReader.createFile(moduleFragment, fileProto, linker.irInterner)
 
                 this += deserializeIrFile(fileProto, file, fileReader, i, delegate, allowErrorNodes)
 

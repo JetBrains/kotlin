@@ -113,7 +113,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         output.appendLine("Has IR: ${library.hasMainIr}")
         val irInfo = KlibIrInfoLoader(library).loadIrInfo()
         irInfo?.preparedInlineFunctionCopyNumber?.let { output.appendLine("  Inlinable function copies: $it") }
-        output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
+        output.appendLine("Has FileEntries table: ${library.mainIr.hasFileEntriesTable}")
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Has ABI: ${library.hasAbi}")
         output.appendLine("Manifest properties:")
