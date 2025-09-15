@@ -50264,6 +50264,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
           }
 
           @Test
+          @TestMetadata("missingArgumentsInEffectDeclarations.kt")
+          public void testMissingArgumentsInEffectDeclarations() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/missingArgumentsInEffectDeclarations.kt");
+          }
+
+          @Test
           @TestMetadata("nestedConditionalEffects.kt")
           public void testNestedConditionalEffects() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/nestedConditionalEffects.kt");
