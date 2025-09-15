@@ -143,6 +143,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
     )
 
+    val SKIP_NEW_KOTLIN_REFLECT_COMPAT_CHECK by directive( // COMPAT stays for "compatibility"
+        description = "Skips the check that New kotlin-reflect dumps are the same to those of K1"
+    )
+
     val DUMP_SIGNATURES by directive(
         description = """
         Like $DUMP_KT_IR, but does not dump function bodies, and prints a rendered binary signature and a mangled name for each declaration

@@ -1,6 +1,9 @@
 // FIR_IDENTICAL
 // DONT_TARGET_EXACT_BACKEND: JS_IR
 
+// KT-42199
+// SKIP_NEW_KOTLIN_REFLECT_COMPAT_CHECK
+
 fun interface Foo : () -> Int
 
 fun id(foo: Foo): Any = foo

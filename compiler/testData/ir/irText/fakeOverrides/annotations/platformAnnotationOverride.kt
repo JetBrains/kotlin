@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
+// KT-81023
+// SKIP_NEW_KOTLIN_REFLECT_COMPAT_CHECK
+
 // FILE: Java1.java
 public class Java1 extends KotlinClass { }
 
