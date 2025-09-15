@@ -177,7 +177,7 @@ class CustomK2ReplTest {
             {
                 it.onSuccess { s ->
                     s.get().result.let { r ->
-                        @Suppress("UNCHECKED_CAST") val propx = r.scriptClass!!.declaredMemberProperties.first() as kotlin.reflect.KMutableProperty1<Any, Int>
+                        @Suppress("UNCHECKED_CAST") val propx = r.scriptClass!!.declaredMemberProperties.first { it.name == "x" } as kotlin.reflect.KMutableProperty1<Any, Int>
                         val x = propx.get(r.scriptInstance!!)
                         assertEquals(3, x)
                         propx.set(r.scriptInstance!!, 5)
@@ -188,8 +188,8 @@ class CustomK2ReplTest {
             {
                 it.onSuccess { s ->
                     s.get().result.let { r ->
-                        val funf = r.scriptClass!!.declaredMemberFunctions.first()
-                        val fret = funf.call() as Int
+                        val funf = r.scriptClass!!.declaredMemberFunctions.first { it.name == "f" }
+                        val fret = funf.call(r.scriptInstance!!) as Int
                         assertEquals(5, fret)
                     }
                     it
@@ -383,7 +383,7 @@ private fun checkEvaluatedSnippetsResultVals(
     val successResults = evaluationResults.valueOr { failure ->
         fail(
             "Evaluation failed:\n  ${failure.reports.joinToString("\n  ") {
-                    it.exception?.toString() ?: it.message
+                    it.exception?.stackTraceToString() ?: it.message
                 }}"
         )
     }
