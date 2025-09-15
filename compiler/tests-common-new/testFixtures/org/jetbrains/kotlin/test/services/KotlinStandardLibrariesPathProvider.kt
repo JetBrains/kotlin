@@ -140,6 +140,10 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
                 kotlinTestJarForTests()
             ).also { loader ->
                 reflectJarClassLoader = SoftReference(loader)
+                val useK1 = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                    .getMethod("getUseK1Implementation")
+                    .invoke(null)
+                check(useK1 == false)
             }
         }
     }
@@ -156,6 +160,10 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
                     kotlinTestJarForTests()
                 ).also { loader ->
                     k1ReflectJarClassLoader = SoftReference(loader)
+                    val useK1 = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                        .getMethod("getUseK1Implementation")
+                        .invoke(null)
+                    check(useK1 == true)
                 }
             }
         }
