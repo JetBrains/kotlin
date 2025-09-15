@@ -17,7 +17,12 @@ import java.io.File
 import java.io.IOException
 
 object TestGeneratorForJUnit4 : AbstractTestGenerator() {
-    override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult {
+    override fun generateAndSave(
+        testClass: TestGroup.TestClass,
+        dryRun: Boolean,
+        allowGenerationOnTeamCity: Boolean,
+        mainClassName: String?,
+    ): GenerationResult {
         val generatorInstance = TestGeneratorForJUnit4Instance(
             testClass.baseDir,
             testClass.suiteTestClassName,
@@ -25,7 +30,7 @@ object TestGeneratorForJUnit4 : AbstractTestGenerator() {
             testClass.testModels,
             mainClassName,
         )
-        return generatorInstance.generateAndSave(dryRun)
+        return generatorInstance.generateAndSave(dryRun, allowGenerationOnTeamCity)
     }
 }
 
@@ -79,12 +84,17 @@ private class TestGeneratorForJUnit4Instance(
     }
 
     @Throws(IOException::class)
-    fun generateAndSave(dryRun: Boolean): AbstractTestGenerator.GenerationResult {
+    fun generateAndSave(dryRun: Boolean, allowGenerationOnTeamCity: Boolean): AbstractTestGenerator.GenerationResult {
         val generatedCode = generate()
 
         val testSourceFile = File(testSourceFilePath)
         val changed = if (!dryRun) {
-            GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
+            GeneratorsFileUtil.writeFileIfContentChanged(
+                testSourceFile,
+                generatedCode,
+                logNotChanged = false,
+                forbidGenerationOnTeamcity = !allowGenerationOnTeamCity
+            )
         } else {
             GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
         }

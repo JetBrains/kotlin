@@ -63,7 +63,12 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
         println("@SuppressWarnings(\"all\")")
     }
 
-    override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult {
+    override fun generateAndSave(
+        testClass: TestGroup.TestClass,
+        dryRun: Boolean,
+        allowGenerationOnTeamCity: Boolean,
+        mainClassName: String?,
+    ): GenerationResult {
         val generatorInstance = TestGeneratorInstance(
             testClass.baseDir,
             testClass.suiteTestClassName,
@@ -71,7 +76,7 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
             testClass.testModels,
             mainClassName,
         )
-        return generatorInstance.generateAndSave(dryRun)
+        return generatorInstance.generateAndSave(dryRun, allowGenerationOnTeamCity)
     }
 
     private class TestGeneratorInstance(
@@ -95,12 +100,17 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
         }
 
         @Throws(IOException::class)
-        fun generateAndSave(dryRun: Boolean): GenerationResult {
+        fun generateAndSave(dryRun: Boolean, allowGenerationOnTeamCity: Boolean): GenerationResult {
             val generatedCode = generate()
 
             val testSourceFile = File(testSourceFilePath)
             val changed = if (!dryRun) {
-                GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
+                GeneratorsFileUtil.writeFileIfContentChanged(
+                    testSourceFile,
+                    generatedCode,
+                    logNotChanged = false,
+                    forbidGenerationOnTeamcity = !allowGenerationOnTeamCity
+                )
             } else {
                 GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
             }
