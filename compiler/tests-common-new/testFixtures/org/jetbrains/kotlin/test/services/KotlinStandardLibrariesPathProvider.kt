@@ -109,31 +109,33 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
      */
     abstract fun scriptingPluginFilesForTests(): Collection<File>
 
-    fun getRuntimeJarClassLoader(): ClassLoader = synchronized(this) {
-        var loader = runtimeJarClassLoader.get()
-        if (loader == null) {
-            loader = createClassLoader(
+    fun getRuntimeJarClassLoader(): ClassLoader {
+        runtimeJarClassLoader.get()?.let { return it }
+        synchronized(this) {
+            runtimeJarClassLoader.get()?.let { return it }
+            return createClassLoader(
                 runtimeJarForTests(),
                 scriptRuntimeJarForTests(),
                 kotlinTestJarForTests()
-            )
-            runtimeJarClassLoader = SoftReference(loader)
+            ).also { loader ->
+                runtimeJarClassLoader = SoftReference(loader)
+            }
         }
-        loader
     }
 
-    fun getRuntimeAndReflectJarClassLoader(): ClassLoader = synchronized(this) {
-        var loader = reflectJarClassLoader.get()
-        if (loader == null) {
-            loader = createClassLoader(
+    fun getRuntimeAndReflectJarClassLoader(): ClassLoader {
+        reflectJarClassLoader.get()?.let { return it }
+        synchronized(this) {
+            reflectJarClassLoader.get()?.let { return it }
+            return createClassLoader(
                 runtimeJarForTests(),
                 reflectJarForTests(),
                 scriptRuntimeJarForTests(),
                 kotlinTestJarForTests()
-            )
-            reflectJarClassLoader = SoftReference(loader)
+            ).also { loader ->
+                reflectJarClassLoader = SoftReference(loader)
+            }
         }
-        loader
     }
 }
 
