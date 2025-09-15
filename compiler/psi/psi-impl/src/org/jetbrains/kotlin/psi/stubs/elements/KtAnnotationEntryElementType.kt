@@ -2,82 +2,67 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi.stubs.elements
 
-package org.jetbrains.kotlin.psi.stubs.elements;
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableMap
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableMap
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.deserializeConstantValue
+import org.jetbrains.kotlin.psi.stubs.impl.serializeConstantValue
 
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.constant.ConstantValue;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtAnnotationEntry;
-import org.jetbrains.kotlin.psi.KtValueArgumentList;
-import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKt;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-
-public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnotationEntryStubImpl, KtAnnotationEntry> {
-
-    public KtAnnotationEntryElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtAnnotationEntry.class, KotlinAnnotationEntryStub.class);
+internal object KtAnnotationEntryElementType : KtStubElementType<KotlinAnnotationEntryStubImpl, KtAnnotationEntry>(
+    "ANNOTATION_ENTRY",
+    KtAnnotationEntry::class.java,
+    KotlinAnnotationEntryStub::class.java,
+) {
+    override fun createStub(psi: KtAnnotationEntry, parentStub: StubElement<*>?): KotlinAnnotationEntryStubImpl {
+        val shortName = psi.getShortName()
+        val resultName = shortName?.asString()
+        val valueArgumentList = psi.getValueArgumentList()
+        val hasValueArguments = valueArgumentList != null && !valueArgumentList.arguments.isEmpty()
+        return KotlinAnnotationEntryStubImpl(
+            parent = parentStub,
+            shortNameRef = StringRef.fromString(resultName),
+            hasValueArguments = hasValueArguments,
+            valueArguments = null,
+        )
     }
 
-    @NotNull
-    @Override
-    public KotlinAnnotationEntryStubImpl createStub(@NotNull KtAnnotationEntry psi, StubElement parentStub) {
-        Name shortName = psi.getShortName();
-        String resultName = shortName != null ? shortName.asString() : null;
-        KtValueArgumentList valueArgumentList = psi.getValueArgumentList();
-        boolean hasValueArguments = valueArgumentList != null && !valueArgumentList.getArguments().isEmpty();
-        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, StringRef.fromString(resultName), hasValueArguments, null);
+    override fun serialize(stub: KotlinAnnotationEntryStubImpl, dataStream: StubOutputStream) {
+        dataStream.writeName(stub.shortName)
+        dataStream.writeBoolean(stub.hasValueArguments)
+        dataStream.writeNullableMap(
+            map = stub.valueArguments,
+            keyWriter = { writeName(it.asString()) },
+            valueWriter = { serializeConstantValue(it, this) },
+        )
     }
 
-    @Override
-    public void serialize(@NotNull KotlinAnnotationEntryStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getShortName());
-        dataStream.writeBoolean(stub.getHasValueArguments());
-        Map<Name, ConstantValue<?>> arguments = stub.getValueArguments();
-        dataStream.writeVarInt(arguments != null ? arguments.size() + 1 : 0);
-        if (arguments != null) {
-            for (Map.Entry<Name, ConstantValue<?>> valueEntry : arguments.entrySet()) {
-                dataStream.writeName(valueEntry.getKey().asString());
-                ConstantValue<?> value = valueEntry.getValue();
-                KotlinConstantValueKt.serializeConstantValue(value, dataStream);
-            }
-        }
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinAnnotationEntryStubImpl {
+        val shortNameRef = dataStream.readName()
+        val hasValueArguments = dataStream.readBoolean()
+        val valueArguments = dataStream.readNullableMap(
+            keyReader = { Name.identifier(dataStream.readNameString()!!) },
+            valueReader = { deserializeConstantValue(this)!! },
+        )
+
+        return KotlinAnnotationEntryStubImpl(
+            parentStub,
+            shortNameRef,
+            hasValueArguments,
+            valueArguments,
+        )
     }
 
-    @NotNull
-    @Override
-    public KotlinAnnotationEntryStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        StringRef text = dataStream.readName();
-        boolean hasValueArguments = dataStream.readBoolean();
-        int valueArgCount = dataStream.readVarInt();
-        Map<Name, ConstantValue<?>> args = new LinkedHashMap<>();
-        for (int i = 0; i < valueArgCount - 1; i++) {
-            args.put(Name.identifier(Objects.requireNonNull(dataStream.readNameString())),
-                     KotlinConstantValueKt.deserializeConstantValue(dataStream));
-        }
-        return new KotlinAnnotationEntryStubImpl(
-                (StubElement<?>) parentStub,
-                text,
-                hasValueArguments,
-                args.isEmpty() ? (valueArgCount == 0 ? null : Collections.emptyMap()) : args
-        );
-    }
-
-    @Override
-    public void indexStub(@NotNull KotlinAnnotationEntryStubImpl stub, @NotNull IndexSink sink) {
-        StubIndexService.getInstance().indexAnnotation(stub, sink);
+    override fun indexStub(stub: KotlinAnnotationEntryStubImpl, sink: IndexSink) {
+        StubIndexService.getInstance().indexAnnotation(stub, sink)
     }
 }

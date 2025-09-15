@@ -81,4 +81,38 @@ object StubUtils {
 
     @JvmStatic
     internal fun StubInputStream.readFqName(): FqName = FqName(readNameString()!!)
+
+    @JvmStatic
+    internal inline fun <K : Any, V : Any> StubOutputStream.writeNullableMap(
+        map: Map<K, V>?,
+        keyWriter: StubOutputStream.(K) -> Unit,
+        valueWriter: StubOutputStream.(V) -> Unit,
+    ) {
+        val nullableSize = map?.size?.plus(1) ?: 0 // +1 since 0 is reserved for null value
+        writeVarInt(nullableSize)
+
+        map?.forEach { entry ->
+            keyWriter(entry.key)
+            valueWriter(entry.value)
+        }
+    }
+
+    @JvmStatic
+    internal fun <K : Any, V : Any> StubInputStream.readNullableMap(
+        keyReader: StubInputStream.() -> K,
+        valueReader: StubInputStream.() -> V,
+    ): Map<K, V>? = when (val nullableSize = readVarInt()) {
+        0 -> null
+        else -> when (val size = nullableSize - 1) { // -1 since 0 is reserved for null value
+            0 -> emptyMap()
+            1 -> mapOf(keyReader() to valueReader())
+            else -> buildMap(size) {
+                repeat(size) {
+                    val key = keyReader()
+                    val value = valueReader()
+                    put(key, value)
+                }
+            }
+        }
+    }
 }

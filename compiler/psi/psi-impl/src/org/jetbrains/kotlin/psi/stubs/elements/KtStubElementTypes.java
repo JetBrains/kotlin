@@ -33,7 +33,7 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtTypeParameterList> TYPE_PARAMETER_LIST =
             new KtPlaceHolderStubElementType<>("TYPE_PARAMETER_LIST", KtTypeParameterList.class);
 
-    KtAnnotationEntryElementType ANNOTATION_ENTRY = new KtAnnotationEntryElementType("ANNOTATION_ENTRY");
+    KtAnnotationEntryElementType ANNOTATION_ENTRY = KtAnnotationEntryElementType.INSTANCE;
     KtPlaceHolderStubElementType<KtAnnotation> ANNOTATION =
             new KtPlaceHolderStubElementType<>("ANNOTATION", KtAnnotation.class);
 
