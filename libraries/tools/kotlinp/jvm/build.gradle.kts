@@ -40,7 +40,6 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "testFixtures" { projectDefault() }
-    "test" { generatedTestDir() }
 }
 
 projectTests {
@@ -50,7 +49,7 @@ projectTests {
 
     testTask(jUnitMode = JUnitMode.JUnit5)
 
-    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")
+    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()

@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.kotlinp.jvm.test
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
 fun main(args: Array<String>) {
-    System.setProperty("java.awt.headless", "true")
+    val testsRoot = args[0]
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("libraries/tools/kotlinp/jvm/tests-gen", "libraries/tools/kotlinp/jvm/testData") {
+        testGroup(testsRoot, "libraries/tools/kotlinp/jvm/testData") {
             testClass<AbstractK1KotlinpTest> {
                 model("")
             }
