@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JvmAbiConsistencyHandler
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.configuration.commonServicesConfigurationForCodegenAndDebugTest
 import org.jetbrains.kotlin.test.configuration.configureModernJavaWhenNeeded
-import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationType
 
 open class AbstractJvmAbiConsistencyTest :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR),
