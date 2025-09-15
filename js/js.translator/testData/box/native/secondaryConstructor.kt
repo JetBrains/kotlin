@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS
 package foo
 
 external class A {

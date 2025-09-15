@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: WASM_JS
 // ES_MODULES
 // FILE: bar.kt
 @file:JsModule("./interfaces.mjs")
