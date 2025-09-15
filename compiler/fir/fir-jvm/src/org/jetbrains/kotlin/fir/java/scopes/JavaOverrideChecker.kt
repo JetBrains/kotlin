@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -182,19 +183,30 @@ class JavaOverrideChecker internal constructor(
 
     private fun Collection<FirTypeParameterRef>.buildErasure() = associate {
         val symbol = it.symbol
-        val firstBound = symbol.fir.bounds.firstOrNull() // Note that in Java type parameter typed arguments always erased to first bound
+        symbol to symbol.findFirstBoundForErasure(hashSetOf())
+    }
+
+    private fun FirTypeParameterSymbol.findFirstBoundForErasure(visited: MutableSet<FirTypeParameterSymbol>): ConeKotlinType {
+        val alreadyVisited = this in visited
+        visited += this
+        val firstBound = fir.bounds.firstOrNull()
         if (firstBound == null) {
             errorWithAttachment("Bound element is not found") {
-                withFirEntry("typeParameterRef", it)
-                val firTypeParameter = it.symbol.fir
+                withFirEntry("typeParameterRef", fir)
+                val firTypeParameter = fir
                 withFirEntry("typeParameter", firTypeParameter)
                 withFirEntry("containingDeclaration", firTypeParameter.containingDeclarationSymbol.fir)
             }
         }
-
-        symbol to firstBound.toConeKotlinTypeProbablyFlexible(
-            session, javaTypeParameterStack, it.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        val firstBoundType = firstBound.toConeKotlinTypeProbablyFlexible(
+            session, javaTypeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         )
+        val unwrapped = firstBoundType.unwrapLowerBound()
+        return if (!alreadyVisited && unwrapped is ConeTypeParameterType) {
+            unwrapped.lookupTag.symbol.findFirstBoundForErasure(visited)
+        } else {
+            firstBoundType
+        }
     }
 
     private fun FirTypeRef?.isTypeParameterDependent(): Boolean =

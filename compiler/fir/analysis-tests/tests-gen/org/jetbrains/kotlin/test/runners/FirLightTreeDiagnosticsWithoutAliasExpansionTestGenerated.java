@@ -9446,6 +9446,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       }
 
       @Test
+      @TestMetadata("recursiveTypeParameterInJava.kt")
+      public void testRecursiveTypeParameterInJava() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/recursiveTypeParameterInJava.kt");
+      }
+
+      @Test
       @TestMetadata("serializableString.kt")
       public void testSerializableString() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/serializableString.kt");
