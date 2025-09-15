@@ -7,6 +7,7 @@ plugins {
     id("jps-compatible")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 val shadows by configurations.creating
@@ -18,16 +19,16 @@ dependencies {
     api(project(":tools:kotlinp"))
     implementation(libs.intellij.asm)
 
-    testApi(intellijCore())
+    testFixturesApi(intellijCore())
 
-    testCompileOnly(project(":kotlin-metadata"))
-    testCompileOnly(project(":kotlin-metadata-jvm"))
+    testFixturesCompileOnly(project(":kotlin-metadata"))
+    testFixturesCompileOnly(project(":kotlin-metadata-jvm"))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(project(":kotlin-metadata-jvm"))
 
@@ -38,10 +39,8 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "testFixtures" { projectDefault() }
+    "test" { generatedTestDir() }
 }
 
 projectTests {
@@ -51,7 +50,7 @@ projectTests {
 
     testTask(jUnitMode = JUnitMode.JUnit5)
 
-    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt", doNotSetFixturesSourceSetDependency = true)
+    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")
 
     withJvmStdlibAndReflect()
     withScriptRuntime()
