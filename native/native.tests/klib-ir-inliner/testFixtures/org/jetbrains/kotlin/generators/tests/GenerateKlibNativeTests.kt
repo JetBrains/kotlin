@@ -33,13 +33,14 @@ import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSynt
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
-fun main() {
+fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     val k1BoxTestDir = listOf("multiplatform/k1")
+    val testsRoot = args[0]
 
-    generateTestGroupSuiteWithJUnit5 {
+    generateTestGroupSuiteWithJUnit5(args) {
         // irText tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/ir/irText") {
+        testGroup(testsRoot, "compiler/testData/ir/irText") {
             testClass<AbstractLightTreeNativeIrTextTest> {
                 model()
             }
@@ -49,7 +50,7 @@ fun main() {
         }
 
         // New frontend test infrastructure tests
-        testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
+        testGroup(testsRoot = testsRoot, testDataRoot = "compiler/testData/diagnostics") {
             testClass<AbstractPsiNativeDiagnosticsTest>(
                 suiteTestClassName = "PsiOldFrontendNativeDiagnosticsTestGenerated",
             ) {
@@ -92,56 +93,56 @@ fun main() {
         }
 
         // Dump KLIB metadata tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-metadata") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/dump-metadata") {
             testClass<AbstractNativeKlibDumpMetadataTest> {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB IR tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-ir") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/dump-ir") {
             testClass<AbstractNativeKlibDumpIrTest> {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB IR signatures tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
             testClass<AbstractNativeKlibDumpIrSignaturesTest> {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB metadata signatures tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
             testClass<AbstractNativeKlibDumpMetadataSignaturesTest> {
                 model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
         }
 
         // Header klib comparison tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/comparison") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/header-klibs/comparison") {
             testClass<AbstractNativeHeaderKlibComparisonTest> {
                 model(extension = null, recursive = false)
             }
         }
 
         // Header klib compilation tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/compilation") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/header-klibs/compilation") {
             testClass<AbstractNativeHeaderKlibCompilationTest> {
                 model(extension = null, recursive = false)
             }
         }
 
         // KLIB evolution tests.
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/evolution") {
+        testGroup(testsRoot, "compiler/testData/klib/evolution") {
             testClass<AbstractNativeKlibEvolutionTest> {
                 model(recursive = false)
             }
         }
 
         // Codegen/box tests for IR Inliner at 1st phase, invoked before K2 Klib Serializer
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/codegen") {
+        testGroup(testsRoot, "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(
@@ -163,7 +164,7 @@ fun main() {
         }
 
         // Codegen/box tests for synthetic accessor tests
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+        testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeKlibSyntheticAccessorsBoxTestGenerated",
                 annotations = listOf(
@@ -176,7 +177,7 @@ fun main() {
         }
 
         // KLIB synthetic accessor tests.
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+        testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeKlibSyntheticAccessorTest>(
                 annotations = listOf(
                     *klibSyntheticAccessors(),
@@ -188,7 +189,7 @@ fun main() {
         }
 
         // KLIB cross-compilation tests.
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
+        testGroup(testsRoot, "native/native.tests/testData/klib/cross-compilation/identity") {
             testClass<AbstractKlibCrossCompilationIdentityTest> {
                 model()
             }
@@ -196,10 +197,8 @@ fun main() {
                 model()
             }
         }
-    }
 
-    generateTestGroupSuiteWithJUnit5 {
-        testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/dump-abi/content") {
+        testGroup(testsRoot, "compiler/testData/klib/dump-abi/content") {
             testClass<AbstractNativeLibraryAbiReaderTest> {
                 model()
             }

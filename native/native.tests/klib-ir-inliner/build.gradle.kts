@@ -25,7 +25,6 @@ sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
-        generatedTestDir()
     }
     "testFixtures" { projectDefault() }
 }
@@ -58,9 +57,12 @@ projectTests {
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
+    // this is part of making tests cacheable
+    withJvmStdlibAndReflect()
+    withTestJar()
 }
 
 testsJar {}
