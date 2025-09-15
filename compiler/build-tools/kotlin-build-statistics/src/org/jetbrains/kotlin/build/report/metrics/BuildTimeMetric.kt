@@ -242,3 +242,5 @@ object SAVE_CLASSPATH_ENTRY_SNAPSHOT : GradleBuildTimeMetric(
     name = "SAVE_CLASSPATH_ENTRY_SNAPSHOT"
 )
 
+
+class DynamicCompilerMetrics(parent: GradleBuildTimeMetric? = null, name: String) : GradleBuildTimeMetric(parent, name, name) {}

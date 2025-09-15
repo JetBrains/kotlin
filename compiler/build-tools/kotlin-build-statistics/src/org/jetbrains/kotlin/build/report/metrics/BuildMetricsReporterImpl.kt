@@ -45,10 +45,6 @@ open class BuildMetricsReporterImpl<B : BuildTimeMetric, P : BuildPerformanceMet
         myBuildTimes.addTimeNs(time, durationNs)
     }
 
-    override fun addDynamicTimeMetricNs(time: String, parent: B, durationNs: Long) {
-        myBuildTimes.addDynamicTimeNs(DynamicBuildTimeKey(time, parent), durationNs)
-    }
-
     override fun addMetric(metric: P, value: Long) {
         myBuildMetrics.addLong(metric, value)
     }
