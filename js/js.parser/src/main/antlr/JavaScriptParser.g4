@@ -404,7 +404,7 @@ singleExpressionImpl
     | <assoc = right> singleExpressionImpl assignmentOperator singleExpressionImpl # AssignmentOperatorExpression
     | Import '(' singleExpressionImpl ')'                                      # ImportExpression
     | singleExpressionImpl templateStringLiteral                               # TemplateStringExpression // ECMAScript 6
-    | yieldStatement                                                       # YieldExpression          // ECMAScript 6
+    | (Yield | YieldStar) ({this.notLineTerminator()}? expressionSequence)?    # YieldExpression          // ECMAScript 6
     | This                                                                 # ThisExpression
     | identifier                                                           # IdentifierExpression
     | Super                                                                # SuperExpression

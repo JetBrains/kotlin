@@ -11,6 +11,12 @@ import com.google.gwt.dev.js.rhino.JavaScriptException
 import com.google.gwt.dev.js.rhino.TokenStream
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.Token
+import org.antlr.v4.runtime.tree.ErrorNode
+import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.ParseTreeVisitor
+import org.antlr.v4.runtime.tree.RuleNode
+import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
@@ -46,7 +52,9 @@ object JsAntlrParser {
         val mapper = JsAstMapper(scope, fileName)
         val expr = try {
             val expression = parser.singleExpression()
-            if (parser.currentToken.type != TokenStream.EOF) {
+            val dumpVisitor = DumpParserContextVisitor()
+            expression.accept(dumpVisitor)
+            if (parser.currentToken.type != Token.EOF) {
                 accumulatingReporter.hasErrors = true
             }
             expression
@@ -64,7 +72,9 @@ object JsAntlrParser {
             // Re-create parser to reset lexer and stream state back to the initial offset and to pass the real reporter instance
             val parser = initializeParser(fileName, code, 0, startPosition, reporter)
             val statements = parser.statementList()
+            val dumpVisitor = DumpParserContextVisitor()
             statements.statement().map {
+                it.accept(dumpVisitor)
                 mapper.mapStatement(it)
             }
         }
@@ -112,6 +122,7 @@ object JsAntlrParser {
 
     private class AccumulatingReporter : ErrorReporter {
         var hasErrors = false
+        val errors = mutableListOf<Error>()
         val warnings = mutableListOf<Warning>()
 
         override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
@@ -120,8 +131,58 @@ object JsAntlrParser {
 
         override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
             hasErrors = true
+            errors += Error(message, startPosition, endPosition)
         }
 
+        class Error(val message: String, val startPosition: CodePosition, val endPosition: CodePosition)
         class Warning(val message: String, val startPosition: CodePosition, val endPosition: CodePosition)
+    }
+
+    private class DumpParserContextVisitor : ParseTreeVisitor<Unit> {
+        private var indent: Int = 0
+        val result = StringBuilder()
+
+        override fun visit(tree: ParseTree?) {
+            tree?.accept(this)
+        }
+
+        override fun visitChildren(node: RuleNode?) {
+            if (node == null) return
+            appendIndent(node)
+            indent++
+            for (i in 0 until node.childCount) {
+                node.getChild(i).accept(this)
+            }
+            indent--
+        }
+
+        override fun visitTerminal(node: TerminalNode?) {
+            if (node == null) return
+            val text = node.text.replace("\n", "\\n")
+            if (text.isNotBlank()) {
+                appendIndent(node, text)
+            }
+        }
+
+        override fun visitErrorNode(node: ErrorNode?) {
+            if (node == null) return
+            appendIndent(node, "ERROR: ${node.text}")
+        }
+
+        private fun appendIndent(node: ParseTree, leafText: String? = null) {
+            repeat(indent) { result.append("  ") } // 2 spaces per level
+            val className = node.javaClass.simpleName.removeSuffix("Context")
+            if (leafText != null) {
+                result.appendLine("$className ($leafText)")
+            } else {
+                result.appendLine(className)
+            }
+        }
+
+        fun dump(tree: ParseTree): String {
+            result.clear()
+            visit(tree)
+            return result.toString()
+        }
     }
 }
