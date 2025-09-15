@@ -121,11 +121,11 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>, 
                     dynamicBuildTimesMap[buildTime]?.forEach { (name, timeMs) ->
                         println("$name: ${formatTime(timeMs)}")
                     }
-                    buildTime.children()?.forEach { printBuildTime(it) }
+                    allBuildTimeMetricsMap[buildTime]?.forEach { printBuildTime(it) }
                 }
             } else {
                 //Skip formatting if parent metric does not set
-                buildTime.children()?.forEach { printBuildTime(it) }
+                allBuildTimeMetricsMap[buildTime]?.forEach { printBuildTime(it) }
             }
         }
 
