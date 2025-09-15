@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
     ReplaceWith(
         "BinaryenPlugin",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin"
-    )
+    ),
+    level = DeprecationLevel.ERROR
 )
 @ExperimentalWasmDsl
 abstract class BinaryenPlugin internal constructor() : Plugin<Project> {

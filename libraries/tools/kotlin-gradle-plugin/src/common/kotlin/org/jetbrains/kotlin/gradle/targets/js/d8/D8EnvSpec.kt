@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 @ExperimentalWasmDsl
 @Deprecated(
     "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec' instead. Scheduled for removal in Kotlin 2.4.",
-    ReplaceWith("D8EnvSpec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec")
+    ReplaceWith("D8EnvSpec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec"),
+    level = DeprecationLevel.ERROR
 )
 abstract class D8EnvSpec : EnvSpec<D8Env>() {
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @OptIn(ExperimentalWasmDsl::class)
 open class BinaryenExtension(
     rootProject: Project,
