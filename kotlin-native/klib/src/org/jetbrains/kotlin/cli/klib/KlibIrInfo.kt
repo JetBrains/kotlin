@@ -22,7 +22,7 @@ internal class KlibIrInfo(
 
 internal class KlibIrInfoLoader(private val library: KotlinLibrary) {
     fun loadIrInfo(): KlibIrInfo? {
-        if (!library.hasIrOfInlineableFuns) return null
+        if (!library.hasInlinableFunsIr) return null
 
         val fileStream = library.irFileOfInlineableFuns().codedInputStream
         val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())

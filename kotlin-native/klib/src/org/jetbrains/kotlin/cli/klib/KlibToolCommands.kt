@@ -44,7 +44,7 @@ internal sealed class KlibToolCommand(
     abstract fun execute()
 
     protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
-        if (!library.hasIr) {
+        if (!library.hasMainIr) {
             output.logError("Library ${library.libraryFile} is an IR-less library")
             return false
         }
@@ -110,7 +110,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         nonEmptyPackageFQNs.forEach { packageFQN ->
             output.appendLine("  $packageFQN")
         }
-        output.appendLine("Has IR: ${library.hasIr}")
+        output.appendLine("Has IR: ${library.hasMainIr}")
         val irInfo = KlibIrInfoLoader(library).loadIrInfo()
         irInfo?.preparedInlineFunctionCopyNumber?.let { output.appendLine("  Inlinable function copies: $it") }
         output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
@@ -207,7 +207,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
 
         if (!checkLibraryHasIr(library)) return
 
-        if (!library.hasIrOfInlineableFuns) {
+        if (!library.hasInlinableFunsIr) {
             output.appendLine("// No inlinable functions in ${library.libraryFile}")
             return
         }

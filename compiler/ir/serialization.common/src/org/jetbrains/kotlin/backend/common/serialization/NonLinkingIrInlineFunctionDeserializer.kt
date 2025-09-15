@@ -63,7 +63,7 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         val library = deserializedContainerSource.klib
         val moduleDeserializer = moduleDeserializers.getOrPut(library) {
-            runIf(library.hasIrOfInlineableFuns) {
+            runIf(library.hasInlinableFunsIr) {
                 ModuleDeserializer(
                     library = library,
                     detachedSymbolTable = detachedSymbolTable,
