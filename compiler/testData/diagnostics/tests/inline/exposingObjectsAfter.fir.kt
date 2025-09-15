@@ -5,7 +5,7 @@
 class C {
     private companion object Companion
     private object Obj
-    <!UNSUPPORTED_FEATURE!>typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion<!>
+    typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion
 
     inline fun foo() {
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
@@ -23,7 +23,7 @@ class C {
 class C2 {
     protected companion object Companion
     protected object Obj
-    <!UNSUPPORTED_FEATURE!>typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion<!>
+    typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion
 
     inline fun foo() {
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Companion<!>
