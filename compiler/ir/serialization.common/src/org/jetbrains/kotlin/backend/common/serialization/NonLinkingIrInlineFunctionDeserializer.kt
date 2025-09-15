@@ -88,7 +88,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         private val irInterner: IrInterningService,
         irBuiltIns: IrBuiltIns,
     ) {
-        private val fileReader = IrLibraryFileFromBytes(InlinableFunsFileIrKlibBytesSource(library))
+        private val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(library.inlinableFunsIr, 0))
 
         private val dummyFileSymbol = IrFileImpl(
             fileEntry = object : IrFileEntry {
@@ -143,7 +143,7 @@ class NonLinkingIrInlineFunctionDeserializer(
          * if the declaration happens to have multiple inline functions.
          */
         val reversedSignatureIndex: Map<IdSignature, Int> = run {
-            val fileStream = library.irFileOfInlineableFuns().codedInputStream
+            val fileStream = library.inlinableFunsIr.file(0).codedInputStream
             val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
             fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
         }
@@ -169,15 +169,5 @@ class NonLinkingIrInlineFunctionDeserializer(
 
                 function
             }
-    }
-
-    class InlinableFunsFileIrKlibBytesSource(private val klib: IrLibrary) : IrLibraryBytesSource() {
-        override fun irDeclaration(index: Int): ByteArray = klib.irDeclarationOfInlineableFuns(index)
-        override fun type(index: Int): ByteArray = klib.typeOfInlineableFuns(index)
-        override fun signature(index: Int): ByteArray = klib.signatureOfInlineableFuns(index)
-        override fun string(index: Int): ByteArray = klib.stringOfInlineableFuns(index)
-        override fun body(index: Int): ByteArray = klib.bodyOfInlineableFuns(index)
-        override fun debugInfo(index: Int): ByteArray? = klib.debugInfoOfInlineableFuns(index)
-        override fun fileEntry(index: Int): ByteArray = klib.fileEntryOfInlineableFuns(index)
     }
 }

@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
 class FileWithFqName(val filePath: String, val fqName: String)
 
 fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
-    val fileProtos = Array<ProtoFile>(fileCount()) {
-        ProtoFile.parseFrom(file(it).codedInputStream, ExtensionRegistryLite.newInstance())
+    val fileProtos = Array<ProtoFile>(mainIr.fileCount()) {
+        ProtoFile.parseFrom(mainIr.file(it).codedInputStream, ExtensionRegistryLite.newInstance())
     }
     return fileProtos.mapIndexed { index, proto ->
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, index))
+        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, index))
         val fileEntry = fileReader.fileEntry(proto)
         FileWithFqName(
                 fileReader.deserializeFileEntryName(fileEntry),
@@ -41,12 +41,12 @@ fun KotlinLibrary.getFilesWithFqNames(): List<FileWithFqName> {
 }
 
 fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
-    val fileProtos = Array<ProtoFile>(fileCount()) {
-        ProtoFile.parseFrom(file(it).codedInputStream, ExtensionRegistryLite.newInstance())
+    val fileProtos = Array<ProtoFile>(mainIr.fileCount()) {
+        ProtoFile.parseFrom(mainIr.file(it).codedInputStream, ExtensionRegistryLite.newInstance())
     }
     val filePathToIndexAndReader = fileProtos.withIndex().associate {
-        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(this, it.index))
-        val fileEntry = fileEntry(it.value, it.index)
+        val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(mainIr, it.index))
+        val fileEntry = mainIr.fileEntry(it.value, it.index)
         fileReader.deserializeFileEntryName(fileEntry) to (it.index to fileReader)
     }
     return filePaths.map { filePath ->
