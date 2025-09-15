@@ -24,4 +24,9 @@ enum class TargetBackend(
     JVM_IR_WITH_IR_EVALUATOR(true);
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
+
+    fun isTransitivelyCompatibleWith(backend: TargetBackend): Boolean {
+        if (this == backend) return true
+        return compatibleWithTargetBackend?.isTransitivelyCompatibleWith(backend) ?: false
+    }
 }
