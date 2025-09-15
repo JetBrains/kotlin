@@ -32,14 +32,6 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
         collector.collectMetric(time.readableString, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
-    override fun addDynamicTimeMetricNs(
-        time: String,
-        parent: GradleBuildTimeMetric,
-        durationNs: Long,
-    ) {
-        collector.collectMetric(time, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
-    }
-
     override fun addMetric(metric: GradleBuildPerformanceMetric, value: Long) {
         collector.collectMetric(metric.readableString, metric.type.toMetricsReporterType(), value)
     }
