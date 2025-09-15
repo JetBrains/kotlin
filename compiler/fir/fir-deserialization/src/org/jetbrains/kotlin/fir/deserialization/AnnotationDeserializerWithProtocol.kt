@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 abstract class AnnotationDeserializerWithProtocol(
     private val session: FirSession,
     protected val protocol: SerializerExtensionProtocol
-) : AnnotationDeserializer {
+) : AnnotationDeserializer() {
     override fun inheritAnnotationInfo(parent: AnnotationDeserializer) {}
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation> {

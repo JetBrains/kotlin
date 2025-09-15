@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-interface AnnotationDeserializer {
+abstract class AnnotationDeserializer {
     enum class CallableKind {
         PROPERTY,
         PROPERTY_GETTER,
@@ -23,42 +23,42 @@ interface AnnotationDeserializer {
         OTHERS,
     }
 
-    fun inheritAnnotationInfo(parent: AnnotationDeserializer)
+    abstract fun inheritAnnotationInfo(parent: AnnotationDeserializer)
 
-    fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation>
+    abstract fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotation>
 
-    fun loadTypeAliasAnnotations(aliasProto: ProtoBuf.TypeAlias, nameResolver: NameResolver): List<FirAnnotation>
+    abstract fun loadTypeAliasAnnotations(aliasProto: ProtoBuf.TypeAlias, nameResolver: NameResolver): List<FirAnnotation>
 
-    fun loadFunctionAnnotations(
+    abstract fun loadFunctionAnnotations(
         containerSource: DeserializedContainerSource?,
         functionProto: ProtoBuf.Function,
         nameResolver: NameResolver,
-        typeTable: TypeTable
+        typeTable: TypeTable,
     ): List<FirAnnotation>
 
-    fun loadPropertyAnnotations(
+    abstract fun loadPropertyAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         containingClassProto: ProtoBuf.Class?,
         nameResolver: NameResolver,
-        typeTable: TypeTable
+        typeTable: TypeTable,
     ): List<FirAnnotation>
 
-    fun loadPropertyBackingFieldAnnotations(
+    abstract fun loadPropertyBackingFieldAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         typeTable: TypeTable,
     ): List<FirAnnotation>
 
-    fun loadPropertyDelegatedFieldAnnotations(
+    abstract fun loadPropertyDelegatedFieldAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         typeTable: TypeTable,
     ): List<FirAnnotation>
 
-    fun loadPropertyGetterAnnotations(
+    abstract fun loadPropertyGetterAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
@@ -66,22 +66,22 @@ interface AnnotationDeserializer {
         getterFlags: Int,
     ): List<FirAnnotation>
 
-    fun loadPropertySetterAnnotations(
+    abstract fun loadPropertySetterAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         nameResolver: NameResolver,
         typeTable: TypeTable,
-        setterFlags: Int
+        setterFlags: Int,
     ): List<FirAnnotation>
 
-    fun loadConstructorAnnotations(
+    abstract fun loadConstructorAnnotations(
         containerSource: DeserializedContainerSource?,
         constructorProto: ProtoBuf.Constructor,
         nameResolver: NameResolver,
-        typeTable: TypeTable
+        typeTable: TypeTable,
     ): List<FirAnnotation>
 
-    fun loadValueParameterAnnotations(
+    abstract fun loadValueParameterAnnotations(
         containerSource: DeserializedContainerSource?,
         callableProto: MessageLite,
         valueParameterProto: ProtoBuf.ValueParameter,
@@ -89,16 +89,16 @@ interface AnnotationDeserializer {
         nameResolver: NameResolver,
         typeTable: TypeTable,
         kind: CallableKind,
-        parameterIndex: Int
+        parameterIndex: Int,
     ): List<FirAnnotation>
 
-    fun loadEnumEntryAnnotations(
+    abstract fun loadEnumEntryAnnotations(
         classId: ClassId,
         enumEntryProto: ProtoBuf.EnumEntry,
         nameResolver: NameResolver,
     ): List<FirAnnotation>
 
-    fun loadExtensionReceiverParameterAnnotations(
+    abstract fun loadExtensionReceiverParameterAnnotations(
         containerSource: DeserializedContainerSource?,
         callableProto: MessageLite,
         nameResolver: NameResolver,
@@ -106,15 +106,15 @@ interface AnnotationDeserializer {
         kind: CallableKind,
     ): List<FirAnnotation>
 
-    fun loadAnnotationPropertyDefaultValue(
+    abstract fun loadAnnotationPropertyDefaultValue(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
         expectedPropertyType: FirTypeRef,
         nameResolver: NameResolver,
-        typeTable: TypeTable
+        typeTable: TypeTable,
     ): FirExpression?
 
-    fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation>
+    abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation>
 
-    fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation>
+    abstract fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation>
 }

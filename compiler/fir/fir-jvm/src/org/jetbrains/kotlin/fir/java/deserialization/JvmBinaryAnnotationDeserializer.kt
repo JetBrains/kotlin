@@ -47,7 +47,7 @@ class JvmBinaryAnnotationDeserializer(
     private val kotlinBinaryClass: KotlinJvmBinaryClass,
     kotlinClassFinder: KotlinClassFinder,
     private val byteContent: ByteArray?
-) : AnnotationDeserializer {
+) : AnnotationDeserializer() {
     private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
         session.loadMemberAnnotations(kotlinBinaryClass, byteContent, kotlinClassFinder)
     }
