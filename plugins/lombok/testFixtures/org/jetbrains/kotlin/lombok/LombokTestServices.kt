@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok
 
 import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
@@ -23,7 +24,7 @@ import java.io.File
 
 class LombokAdditionalSourceFileProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        const val COMMON_SOURCE_PATH = "plugins/lombok/testData/common.kt"
+        private const val COMMON_SOURCE_PATH = "plugins/lombok/testData/common.kt"
     }
 
     override fun produceAdditionalFiles(
@@ -32,7 +33,7 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         if (ENABLE_LOMBOK !in module.directives) return emptyList()
-        return listOf(File(COMMON_SOURCE_PATH).toTestFile())
+        return listOf(ForTestCompileRuntime.transformTestDataPath(COMMON_SOURCE_PATH).toTestFile())
     }
 }
 
