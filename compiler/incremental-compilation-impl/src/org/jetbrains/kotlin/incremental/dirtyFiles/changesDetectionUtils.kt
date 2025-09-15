@@ -23,7 +23,7 @@ internal fun getClasspathChanges(
     changedFiles: DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
-    reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     abiSnapshots: Map<String, AbiSnapshot>,
     withSnapshot: Boolean,
     caches: IncrementalCacheCommon,

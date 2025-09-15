@@ -110,11 +110,11 @@ internal object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildTime]s as different callers may want to
-     * record different [BuildTime]s (because the [BuildTime.parent]s are different).
+     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildMetric]s as different callers may want to
+     * record different [BuildMetric]s (because the [BuildMetric.parent]s are different).
      */
     class MetricsReporter(
-        private val metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>? = null,
+        private val metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>? = null,
         private val getLookupSymbols: GradleBuildTimeMetric? = null,
         private val findReferencedClasses: GradleBuildTimeMetric? = null,
         private val findTransitivelyReferencedClasses: GradleBuildTimeMetric? = null

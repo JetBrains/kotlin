@@ -23,4 +23,4 @@ class RemoteBuildReporter<B : BuildTimeMetric, P : BuildPerformanceMetric>(
 }
 
 object DoNothingBuildReporter :
-    BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>(DoNothingICReporter, DoNothingBuildMetricsReporter)
+    BuildReporter<BuildTimeMetric, BuildPerformanceMetric>(DoNothingICReporter, DoNothingBuildMetricsReporter)

@@ -37,8 +37,6 @@ data class BuildMetricsValue(
     val value: Long
 ): Serializable
 
-
-//TODO
 enum class CompilationPerformanceMetrics {
     COMPILER_INITIALIZATION,
     CODE_ANALYSIS,

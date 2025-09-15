@@ -125,7 +125,7 @@ internal object ClasspathChangesComputer {
     private fun computeClassChanges(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>,
-        metrics: BuildMetricsReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>
+        metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
     ): ProgramSymbolSet {
         val (currentKotlinClassSnapshots, currentJavaClassSnapshots) = currentClassSnapshots.partition { it is KotlinClassSnapshot }
         val (previousKotlinClassSnapshots, previousJavaClassSnapshots) = previousClassSnapshots.partition { it is KotlinClassSnapshot }

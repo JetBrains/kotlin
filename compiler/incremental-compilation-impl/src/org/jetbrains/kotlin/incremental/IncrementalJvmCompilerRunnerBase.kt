@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -39,7 +39,7 @@ import java.io.File
  */
 abstract class IncrementalJvmCompilerRunnerBase(
     workingDir: File,
-    reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     buildHistoryFile: File?, // part of build history implementation is in abstract runner, so this stays
     outputDirs: Collection<File>?,
     kotlinSourceFilesExtensions: Set<String>,
