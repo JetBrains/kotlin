@@ -26,6 +26,9 @@ import java.io.File
 import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 abstract class KotlinStandardLibrariesPathProvider : TestService {
     companion object {
@@ -34,6 +37,9 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
 
         @Volatile
         private var reflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
+
+        @Volatile
+        private var k1ReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         private fun createClassLoader(vararg files: File): ClassLoader {
             val urls: MutableList<URL> = ArrayList(2)
@@ -134,6 +140,23 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
                 kotlinTestJarForTests()
             ).also { loader ->
                 reflectJarClassLoader = SoftReference(loader)
+            }
+        }
+    }
+
+    fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader {
+        k1ReflectJarClassLoader.get()?.let { return it }
+        synchronized(this) {
+            k1ReflectJarClassLoader.get()?.let { return it }
+            withSystemProperty("kotlin.reflect.jvm.useK1Implementation", "true") {
+                return createClassLoader(
+                    runtimeJarForTests(),
+                    reflectJarForTests(),
+                    scriptRuntimeJarForTests(),
+                    kotlinTestJarForTests()
+                ).also { loader ->
+                    k1ReflectJarClassLoader = SoftReference(loader)
+                }
             }
         }
     }
@@ -268,4 +291,20 @@ fun CompilerConfiguration.configureStandardLibs(
         KotlinStandardLibrariesPathProvider::reflectJarForTests,
         arguments
     )
+}
+
+@OptIn(ExperimentalContracts::class)
+private inline fun <T> withSystemProperty(key: String, value: String, body: () -> T): T {
+    contract { callsInPlace(body, InvocationKind.EXACTLY_ONCE) }
+    val old = System.getProperty(key)
+    System.setProperty(key, value)
+    try {
+        return body()
+    } finally {
+        if (old == null) {
+            System.clearProperty(key)
+        } else {
+            System.setProperty(key, old)
+        }
+    }
 }
