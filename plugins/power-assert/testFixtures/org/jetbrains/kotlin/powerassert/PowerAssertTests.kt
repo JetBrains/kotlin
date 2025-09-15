@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.powerassert
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
@@ -88,9 +89,9 @@ class AdditionalSourceFilesProvider(testServices: TestServices) : AdditionalSour
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         return buildList {
-            add(File("plugins/power-assert/testData/helpers/InfixDispatch.kt").toTestFile())
-            add(File("plugins/power-assert/testData/helpers/InfixExtension.kt").toTestFile())
-            add(File("plugins/power-assert/testData/helpers/utils.kt").toTestFile())
+            add(ForTestCompileRuntime.transformTestDataPath("plugins/power-assert/testData/helpers/InfixDispatch.kt").toTestFile())
+            add(ForTestCompileRuntime.transformTestDataPath("plugins/power-assert/testData/helpers/InfixExtension.kt").toTestFile())
+            add(ForTestCompileRuntime.transformTestDataPath("plugins/power-assert/testData/helpers/utils.kt").toTestFile())
         }
     }
 }
