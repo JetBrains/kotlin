@@ -25,6 +25,7 @@ object KotlinUsages {
     internal const val KOTLIN_UKLIB_API = "kotlin-uklib-api"
     internal const val KOTLIN_UKLIB_RUNTIME = "kotlin-uklib-runtime"
     internal const val KOTLIN_UKLIB_METADATA = "kotlin-uklib-metadata"
+    internal const val KOTLIN_UKLIB_IDE_METADATA = "kotlin-uklib-ide-metadata"
 
     // This type is required to distinguish metadata jar configuration from a psm secondary variant.
     // At the same time, disambiguation and compatibility rules should count them as equivalent

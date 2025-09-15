@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalWasmDsl::class)

@@ -103,7 +103,7 @@ class UklibDeserializationTests {
                 TestFragment(
                     it.identifier,
                     it.attributes,
-                    it.file.resolve("file").readText(),
+                    it.files.single().resolve("file").readText(),
                 )
             }.prettyPrinted, mutableListOf<TestFragment>(
                 TestFragment(

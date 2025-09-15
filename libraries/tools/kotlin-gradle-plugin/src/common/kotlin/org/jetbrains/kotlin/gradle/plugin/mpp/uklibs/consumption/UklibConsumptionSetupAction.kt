@@ -404,6 +404,6 @@ internal class SelectBestMatchingVariantForKmpResolutionUsage : AttributeDisambi
 internal val isUklib = Attribute.of("org.jetbrains.kotlin.uklib", String::class.java)
 internal val isUklibTrue = "true"
 
-private val isMetadataJar = Attribute.of("org.jetbrains.kotlin.isMetadataJar", String::class.java)
+internal val isMetadataJar = Attribute.of("org.jetbrains.kotlin.isMetadataJar", String::class.java)
 private val isMetadataJarUnknown = "unknown"
-private val notMetadataJar = "not-a-metadata-jar"
+internal val notMetadataJar = "not-a-metadata-jar"

@@ -760,7 +760,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 }
 
-private fun BuildResult.assertNoCompileTasksGotExecuted() {
+internal fun BuildResult.assertNoCompileTasksGotExecuted() {
     val compileTaskRegex = Regex(".*[cC]ompile.*")
     val compileTasks = tasks.filter { task -> task.path.matches(compileTaskRegex) }
     if (compileTasks.isNotEmpty()) {

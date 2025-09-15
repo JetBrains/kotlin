@@ -20,11 +20,18 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecompressed
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UKLIB_API_ELEMENTS_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
 
 internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, _, _ ->
@@ -89,6 +96,25 @@ internal fun createKlibArtifact(
     compilation.project.configurations.getByName(apiElementsName)
         .outgoing
         .registerKlibArtifact(packedArtifactFile, compilation.compilationName, classifier)
+
+    when (compilation.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
+            val uklibAttribute = compilation.target.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
+            compilation.project.configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).outgoing.variants {
+                val variant = it.maybeCreate(uklibAttribute)
+                variant.registerKlibArtifact(
+                    klibProducingTask.map { it.klibOutput },
+                    compilation.compilationName,
+                    classifier,
+                )
+                variant.attributes {
+                    it.attribute(uklibStateAttribute, uklibStateDecompressed)
+                    it.attribute(uklibViewAttribute, uklibAttribute)
+                }
+            }
+        }
+        KmpPublicationStrategy.StandardKMPPublication -> {}
+    }
 }
 
 internal fun Project.klibOutputDirectory(

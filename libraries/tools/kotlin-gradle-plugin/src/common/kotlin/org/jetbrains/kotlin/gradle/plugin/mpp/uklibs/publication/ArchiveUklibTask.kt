@@ -9,20 +9,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
 import org.jetbrains.kotlin.gradle.utils.getFile
-import java.io.File
+
 
 @DisableCachingByDefault(because = "This task only compresses Uklib into an archive")
 internal abstract class ArchiveUklibTask : DefaultTask() {
@@ -42,7 +36,6 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
         // FIXME: use streams instead tmp files KT-75395
         project.layout.buildDirectory.dir("kotlin/uklibs_tmp")
     )
-
 
     data class UklibWithDuplicateAttributes(
         val duplicates: Map<UklibAttributes, Set<FragmentIdentifier>>
@@ -67,7 +60,7 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
          */
         val compiledFragments = fragments.get().filter { fragment ->
             val isMetadata = fragment.attributes.count() > 1
-            val isASkippedMetadataCompilation = isMetadata && !fragment.file.exists()
+            val isASkippedMetadataCompilation = isMetadata && !fragment.files.single().exists()
             !isASkippedMetadataCompilation
         }
 

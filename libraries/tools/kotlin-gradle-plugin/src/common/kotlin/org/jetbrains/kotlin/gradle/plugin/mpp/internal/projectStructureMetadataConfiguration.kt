@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttributeIdeMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
@@ -55,6 +58,28 @@ internal fun InternalKotlinSourceSet.projectStructureMetadataResolvedConfigurati
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_PSM_METADATA))
         attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinUsages.KOTLIN_PSM_METADATA)
     }
+}
+
+internal suspend fun Project.interprojectUklibManifestView(): FileCollection? {
+    when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+        KmpPublicationStrategy.StandardKMPPublication -> return null
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {}
+    }
+    val files = objects.fileCollection()
+    project.multiplatformExtension.awaitSourceSets().forEach {
+        if (!it.internal.isSharedSourceSet()) return@forEach
+        files.from(it.internal.interprojectUklibManifestView())
+    }
+    return files
+}
+
+private fun InternalKotlinSourceSet.interprojectUklibManifestView(): FileCollection {
+    return resolvableMetadataConfiguration.incoming.artifactView {
+        it.isLenient = true
+        it.attributes {
+            it.attribute(uklibViewAttribute, uklibViewAttributeIdeMetadata)
+        }
+    }.files
 }
 
 internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(): List<FileCollection> {

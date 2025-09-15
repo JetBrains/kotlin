@@ -13,21 +13,25 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklib
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isUklibTrue
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.*
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 
 internal const val UKLIB_API_ELEMENTS_NAME = "uklibApiElements"
 internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
+private const val UKLIB_IDE_METADATA_ELEMENTS_NAME = "uklibIdeMetadataElements"
 
 internal const val UKLIB_JAVA_API_ELEMENTS_STUB_NAME = "javaApiElements"
 internal const val UKLIB_JAVA_RUNTIME_ELEMENTS_STUB_NAME = "javaRuntimeElements"
@@ -54,11 +58,23 @@ internal suspend fun Project.createUklibOutgoingVariantsAndPublication(): List<D
     return uklibUsages
 }
 
+internal fun Project.locateOrRegisterUklibManifestSerializationForIde(): TaskProvider<SerializeMetadataFragmentsOnlyUklibManifest>? {
+    return when (project.kotlinPropertiesProvider.kmpPublicationStrategy) {
+        KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> project.locateOrRegisterTask<SerializeMetadataFragmentsOnlyUklibManifest>(
+            "serializeUklibManifestForIde"
+        )
+        KmpPublicationStrategy.StandardKMPPublication -> null
+    }
+}
+
 private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
     publishedCompilations: List<KGPUklibFragment>,
 ): List<DefaultKotlinUsageContext> {
-    configurations.createConsumable(UKLIB_API_ELEMENTS_NAME) {
+    /**
+     * FIXME: We can still enter the transforms for interproject dependencies with missing files.
+     */
+    val uklibApiElements = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME).apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_API))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
@@ -66,13 +82,54 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         }
         inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
     }
-    configurations.createConsumable(UKLIB_RUNTIME_ELEMENTS_NAME) {
+
+    val metadataCompilations = publishedCompilations.filter { it.compilation.platformType == KotlinPlatformType.common }
+    val serializeUklibManifest = project.locateOrRegisterTask<SerializeMetadataFragmentsOnlyUklibManifestWithCompilationDependencies>(
+        "serializeUklibManifest"
+    ) { task ->
+        metadataCompilations.forEach {
+            task.metadataFragments.add(it.fragment)
+        }
+    }
+    val serializeUklibManifestForIde = locateOrRegisterUklibManifestSerializationForIde() ?: error("...")
+    serializeUklibManifestForIde.configure { task ->
+        metadataCompilations.forEach {
+            task.metadataFragments.add(it.fragment)
+        }
+    }
+    uklibApiElements.outgoing.variants.create("uklibIdeMetadata") {
+        it.attributes.attribute(uklibStateAttribute, uklibStateDecompressed)
+        it.attributes.attribute(uklibViewAttribute, uklibViewAttributeIdeMetadata)
+        it.artifact(serializeUklibManifestForIde) {
+            it.extension = uklibManifestArtifactType
+        }
+    }
+
+    uklibApiElements.outgoing.variants.create("uklibInterprojectMetadata") {
+        it.attributes.attribute(uklibStateAttribute, uklibStateDecompressed)
+        it.attributes.attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+        it.artifact(serializeUklibManifest) {
+            it.extension = uklibManifestArtifactType
+        }
+    }
+
+    val uklibRuntimeElements = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME).apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attribute(isUklib, isUklibTrue)
         }
         inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
+    }
+
+    /**
+     * These will be used as the fallback when the secondary platform variant is not available in interproject dependency
+     */
+    uklibApiElements.outgoing.variants.create("fallback") {
+        it.attributes.attribute(uklibStateAttribute, uklibStateDecompressed)
+    }
+    uklibRuntimeElements.outgoing.variants.create("fallback") {
+        it.attributes.attribute(uklibStateAttribute, uklibStateDecompressed)
     }
 
     project.artifacts.add(UKLIB_API_ELEMENTS_NAME, archiveTask) {
@@ -148,6 +205,10 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     }
 
     return variants
+}
+
+private fun Project.exposeUmanifestsForInterprojectIdeResolution() {
+
 }
 
 private fun Configuration.inheritCompilationDependenciesFromPublishedCompilations(

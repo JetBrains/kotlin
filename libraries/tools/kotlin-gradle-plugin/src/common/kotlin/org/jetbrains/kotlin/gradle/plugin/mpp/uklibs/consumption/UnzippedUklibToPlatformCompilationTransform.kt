@@ -47,6 +47,6 @@ internal abstract class UnzippedUklibToPlatformCompilationTransform :
             error("Matched multiple fragments from ${unzippedUklib}, but was expecting to find exactly one. Found fragments: $platformFragments")
         }
 
-        outputs.dir(platformFragments.singleOrNull()!!.file)
+        outputs.dir(platformFragments.singleOrNull()!!.files.single())
     }
 }

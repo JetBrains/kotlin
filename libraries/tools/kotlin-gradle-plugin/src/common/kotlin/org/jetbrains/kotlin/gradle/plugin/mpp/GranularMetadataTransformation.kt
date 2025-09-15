@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.consumeRootModuleCoordi
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -301,16 +302,19 @@ internal class GranularMetadataTransformation(
         }
 
         val moduleVersion = dependency.selected.moduleVersion
-        return MetadataDependencyResolution.ChooseVisibleSourceSets(
-            dependency = dependency.selected,
-            projectStructureMetadata = null,
-            allVisibleSourceSetNames = allVisibleFragments.map {
-                it.identifier
-            }.toSet(),
-            visibleSourceSetNamesExcludingDependsOn = fragmentsVisibleByThisSourceSet.map {
-                it.identifier
-            }.toSet(),
-            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toSet(),
+        val isProjectDependency = dependency.selected.id is ProjectComponentIdentifier
+        val metadataProvider: MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider
+        if (isProjectDependency) {
+            metadataProvider = ProjectMetadataProvider(
+                uklibDependency.module.fragments.associate {
+                    it.identifier to SourceSetMetadataOutputs(
+                        params.objects.fileCollection().from(
+                            it.files
+                        )
+                    )
+                }
+            )
+        } else {
             metadataProvider = ArtifactMetadataProvider(
                 UklibCompositeMetadataArtifact(
                     UklibCompositeMetadataArtifact.ModuleId(
@@ -322,6 +326,19 @@ internal class GranularMetadataTransformation(
                     params.computeTransformedLibraryChecksum,
                 )
             )
+        }
+
+        return MetadataDependencyResolution.ChooseVisibleSourceSets(
+            dependency = dependency.selected,
+            projectStructureMetadata = null,
+            allVisibleSourceSetNames = allVisibleFragments.map {
+                it.identifier
+            }.toSet(),
+            visibleSourceSetNamesExcludingDependsOn = fragmentsVisibleByThisSourceSet.map {
+                it.identifier
+            }.toSet(),
+            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toSet(),
+            metadataProvider = metadataProvider,
         )
     }
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.utils.createConsumable
 
 internal val UklibPublicationSetupAction = KotlinProjectSetupAction {
     val kotlinSoftwareComponent = project.multiplatformExtension.rootSoftwareComponent
