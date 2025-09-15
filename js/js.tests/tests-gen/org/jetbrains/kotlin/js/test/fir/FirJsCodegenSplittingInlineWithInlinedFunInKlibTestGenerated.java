@@ -397,6 +397,18 @@ public class FirJsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extend
       }
 
       @Test
+      @TestMetadata("recursiveAnnotationWithVarargAndDefaultValue.kt")
+      public void testRecursiveAnnotationWithVarargAndDefaultValue() {
+        runTest("compiler/testData/codegen/box/annotations/recursiveAnnotationWithVarargAndDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("recursiveAnnotationWithVarargAndWithoutDefaultValue.kt")
+      public void testRecursiveAnnotationWithVarargAndWithoutDefaultValue() {
+        runTest("compiler/testData/codegen/box/annotations/recursiveAnnotationWithVarargAndWithoutDefaultValue.kt");
+      }
+
+      @Test
       @TestMetadata("resolveWithLowPriorityAnnotation.kt")
       public void testResolveWithLowPriorityAnnotation() {
         runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
