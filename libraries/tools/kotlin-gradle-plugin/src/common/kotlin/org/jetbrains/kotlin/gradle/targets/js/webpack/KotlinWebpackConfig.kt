@@ -119,13 +119,37 @@ data class KotlinWebpackConfig(
 
         internal val mutableStatics: MutableList<Static> = mutableListOf()
 
+        /**
+         * Adds a static directory to the devServer configuration.
+         *
+         * Use this to instruct webpack-dev-server that the given [directory] should be
+         * included as a static asset source. When [watch] is true, the directory is
+         * watched for changes and the dev server will reflect updates automatically.
+         *
+         * This maps to the `devServer.static` option in the generated webpack config.
+         *
+         * @param directory path to a directory to be served as static content.
+         * @param watch whether the directory should be watched for changes (default: false).
+         *
+         * https://webpack.js.org/configuration/dev-server/#devserverstatic
+         */
         fun static(directory: String, watch: Boolean = false) {
             mutableStatics.add(Static(directory, watch))
         }
 
+        /**
+         * Snapshot of all static entries configured via [static].
+         */
         val statics: List<Static>
             get() = mutableStatics.toList()
 
+        /**
+         * - actually encoded, combined from user input from [static] and [mutableStatics].
+         * - 'static' serialized name is to match webpack json config
+         * - The type is [Any], because it can be either a [String] or a [Static] instance.
+         *
+         * https://webpack.js.org/configuration/dev-server/#devserverstatic
+         */
         @Suppress("DEPRECATION")
         @get:SerializedName("static")
         internal val actualStatic: List<Any>?
@@ -168,7 +192,10 @@ data class KotlinWebpackConfig(
             val changeOrigin: Boolean? = null,
         ) : Serializable
 
-        data class Static(
+        /**
+         * https://webpack.js.org/configuration/dev-server/#devserverstatic
+         */
+        class Static(
             val directory: String,
             val watch: Boolean = false,
         ) {
@@ -181,7 +208,7 @@ data class KotlinWebpackConfig(
                     val obj = JsonObject()
                     obj.addProperty(
                         "directory",
-                        src.directory.quoteRawJs()
+                        src.directory.quoteRawJsRelativePath()
                     )
                     obj.addProperty("watch", src.watch)
                     return obj
@@ -272,7 +299,7 @@ data class KotlinWebpackConfig(
         if (devServer != null) {
 
             appendLine("// dev server")
-            appendLine("config.devServer = ${json(devServer!!).unquoteRawJs()};")
+            appendLine("config.devServer = ${json(devServer!!).unquoteRawJsRelativePath()};")
             appendLine()
         }
 
@@ -419,11 +446,46 @@ data class KotlinWebpackConfig(
     }.toString()
 }
 
-internal fun String.quoteRawJs(): String {
+/**
+ * Marks a string value as a raw JavaScript expression to be embedded into the
+ * generated webpack.config.js.
+ *
+ * Gson can only produce JSON (strings, numbers, objects, arrays). However, the
+ * file we generate is an executable JavaScript file, and in some places we need
+ * to emit JavaScript expressions rather than quoted JSON strings. This helper
+ * wraps the receiver string with a special marker understood by [unquoteRawJsRelativePath].
+ *
+ * The typical flow is:
+ * - Kotlin objects are serialized to JSON using Gson.
+ * - Certain string fields that must become JS expressions are pre-wrapped using
+ *   [quoteRawJsRelativePath].
+ * - After serialization, the resulting JSON text is post-processed with
+ *   [unquoteRawJsRelativePath] to replace the markers with actual JS code.
+ *
+ * Note: The current implementation is used for path-like values that will be
+ * converted into `require('path').resolve(__dirname, "…")` calls by
+ * [unquoteRawJsRelativePath]. The string inside the marker should therefore represent a
+ * path relative to the webpack config directory.
+ */
+internal fun String.quoteRawJsRelativePath(): String {
     return "__RAW_JS__($this)__"
 }
 
-private fun String.unquoteRawJs(): String {
+/**
+ * Replaces special markers produced by [quoteRawJsRelativePath] in a JSON string with real
+ * JavaScript expressions suitable for webpack.config.js.
+ *
+ * Specifically, occurrences of a quoted marker
+ * "__RAW_JS__(<value>)__" in the serialized JSON are replaced with
+ * `require('path').resolve(__dirname, "<value>")` so that the final output is
+ * an executable JS expression instead of a plain string.
+ *
+ * This is applied to the JSON produced by Gson right before writing the
+ * webpack configuration file to disk. It allows parts of the configuration to
+ * contain dynamic, executable JavaScript where needed, while still leveraging
+ * Gson for the bulk of the serialization.
+ */
+private fun String.unquoteRawJsRelativePath(): String {
     return replace("\"__RAW_JS__\\((.*?)\\)__\"".toRegex()) { match ->
         "require('path').resolve(__dirname, \"" + match.groupValues[1] + "\")"
     }
