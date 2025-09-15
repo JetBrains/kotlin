@@ -5,6 +5,7 @@ plugins {
     id("jps-compatible")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -54,12 +55,15 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5)
 
     testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+
+    testData(project.isolated, "testData")
 }
