@@ -21,6 +21,6 @@ public class Foo
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val oo: String =
+    val oo: String = access$o($this = this)
         /* ACCESSOR use-site */ access$o($this = this)
     /* ACCESSOR use-site */ access$k($this = this)

@@ -21,7 +21,7 @@ internal inline fun executorFunctional(noinline block: Function0<Int>): Int
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val param: Int =
+    val param: Int = access$<get-privateVal>$tAKt()
         /* ACCESSOR use-site */ access$<get-privateVal>$tAKt()
-    val block: Function0<Int> =
+    val block: Function0<Int> = access$<get-privateValFunctional>$tAKt()
         /* ACCESSOR use-site */ access$<get-privateValFunctional>$tAKt()
