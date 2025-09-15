@@ -24560,6 +24560,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("publishedFunInterface.kt")
+      public void testPublishedFunInterface() {
+        runTest("compiler/testData/diagnostics/tests/inline/publishedFunInterface.kt");
+      }
+
+      @Test
       @TestMetadata("recursion.kt")
       public void testRecursion() {
         runTest("compiler/testData/diagnostics/tests/inline/recursion.kt");
