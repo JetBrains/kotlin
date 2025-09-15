@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -50,7 +49,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -59,12 +57,15 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.isError
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -1133,7 +1134,14 @@ class FirCallCompletionResultsWriterTransformer(
         whenExpression: FirWhenExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        return transformSyntheticCall(whenExpression, data).apply {
+        return transformSyntheticCallWithDataFlowTypeRefining(
+            whenExpression, data
+        ) {
+            when {
+                isProperlyExhaustive -> branches.map { it.result.resultType }
+                else -> null
+            }
+        }.apply {
             replaceReturnTypeIfNotExhaustive(session)
         }
     }
@@ -1142,20 +1150,81 @@ class FirCallCompletionResultsWriterTransformer(
         tryExpression: FirTryExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        return transformSyntheticCall(tryExpression, data)
+        return transformSyntheticCallWithDataFlowTypeRefining(
+            tryExpression, data
+        ) {
+            buildList {
+                add(tryBlock.resultType)
+                catches.mapTo(this) { it.block.resultType }
+            }
+        }
     }
 
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        return transformSyntheticCall(checkNotNullCall, data)
+        return transformSyntheticCallWithDataFlowTypeRefining(
+            checkNotNullCall,
+            data
+        ) {
+            listOf(argumentList.arguments[0].resultType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+        }
+    }
+
+    /**
+     * Transforms synthetic call as usual plus adding RefinedTypeForDataFlowTypeAttribute if branches have more precise types
+     * than the inferred expression type.
+     *
+     * It might happen because we add equality constraint with the expected type to preserve K1 semantics.
+     * See [org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter.isSyntheticFunctionCallThatShouldUseEqualityConstraint]
+     */
+    private inline fun <reified D> transformSyntheticCallWithDataFlowTypeRefining(
+        syntheticCall: D,
+        data: ExpectedArgumentType?,
+        computeBranchTypes: D.() -> List<ConeKotlinType>?,
+    ): D where D : FirResolvable, D : FirExpression {
+        // Having this variable before `transformSyntheticCall` is crucial because after there would be no candidate left
+        val wasExpectedTypeAddedAsEqualityForSyntheticCall = syntheticCall.wasExpectedTypeAddedAsEqualityForSyntheticCall()
+        return transformSyntheticCall(syntheticCall, data).apply {
+            if (wasExpectedTypeAddedAsEqualityForSyntheticCall &&
+                LanguageFeature.EqualityConstraintForOperatorsUnderAssignments.isEnabled()
+            ) {
+                computeBranchTypes()?.let { branchTypes -> addRefinedTypeForDataFlow(branchTypes) }
+            }
+        }
+    }
+
+    private fun FirResolvable.wasExpectedTypeAddedAsEqualityForSyntheticCall(): Boolean =
+        candidate()?.wasExpectedTypeAddedAsEqualityForSyntheticCall == true
+
+    /**
+     * Adds RefinedTypeForDataFlowTypeAttribute if CST of the branch types differs from the current type.
+     */
+    private fun FirExpression.addRefinedTypeForDataFlow(branchTypes: List<ConeKotlinType>): Unit = context(session.typeContext) {
+        val currentType = resultType
+        if (currentType.isUnitOrFlexibleUnit) return
+        if (branchTypes.any { type -> type.contains { it.isError() } }) return
+
+        val refinedTypeForDataFlow = NewCommonSuperTypeCalculator.commonSuperType(branchTypes) as ConeKotlinType
+
+        if (!refinedTypeForDataFlow.isUnitOrFlexibleUnit &&
+            currentType != refinedTypeForDataFlow &&
+            // the refined type doesn't contradict the expression type
+            AbstractTypeChecker.isSubtypeOf(session.typeContext, refinedTypeForDataFlow, currentType)
+        ) {
+            resultType = currentType.withAttributes(
+                currentType.attributes.add(RefinedTypeForDataFlowTypeAttribute(refinedTypeForDataFlow))
+            )
+        }
     }
 
     override fun transformElvisExpression(
         elvisExpression: FirElvisExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
+        // We don't call transformSyntheticCallWithDataFlowTypeRefining for elvis because currently they're being
+        // treated very specially at FirControlFlowStatementsResolveTransformer.transformElvisExpression
         return transformSyntheticCall(elvisExpression, data)
     }
 

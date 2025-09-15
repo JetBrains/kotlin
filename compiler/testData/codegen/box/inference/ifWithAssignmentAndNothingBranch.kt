@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-78127
 
 fun <T : Any> materialize(): T {

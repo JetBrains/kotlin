@@ -452,6 +452,11 @@ enum class LanguageFeature(
     AllowCallingJavaOpenSealedClassConstructor(sinceVersion = KOTLIN_2_3, "KT-78879"),
     ImprovedExhaustivenessChecksIn23(sinceVersion = KOTLIN_2_3, "KT-80602"),
 
+    // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes.
+    // I'd consider removing it after 2.5 (KT-81144 for removal tracking)
+    // Also remove org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.isInsideAssignmentRhs with this one
+    EqualityConstraintForOperatorsUnderAssignments(KOTLIN_2_3, "KT-77008"),
+
     // 2.4
 
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),

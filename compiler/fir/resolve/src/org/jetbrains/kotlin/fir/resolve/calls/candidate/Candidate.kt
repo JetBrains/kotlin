@@ -347,6 +347,14 @@ class Candidate(
         return ConeSimpleLeafResolutionAtom(newExpression, allowUnresolvedExpression = false)
     }
 
+    // This thing is mostly for a common fast-path optimization and should not affect the semantics once it's set to `true`
+    var wasExpectedTypeAddedAsEqualityForSyntheticCall: Boolean = false
+        private set
+
+    fun markWasExpectedTypeAddedAsEqualityForSyntheticCall() {
+        wasExpectedTypeAddedAsEqualityForSyntheticCall = true
+    }
+
     // ---------------------------------------- Backing field ----------------------------------------
 
     var hasVisibleBackingField: Boolean = false
