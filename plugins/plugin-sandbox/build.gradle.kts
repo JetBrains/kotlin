@@ -34,7 +34,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
     testFixturesApi(project(":compiler:fir:plugin-utils"))
-    testFixturesImplementation(projectTests(":tools:kotlinp-jvm"))
+    testFixturesImplementation(testFixtures(project(":tools:kotlinp-jvm")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
