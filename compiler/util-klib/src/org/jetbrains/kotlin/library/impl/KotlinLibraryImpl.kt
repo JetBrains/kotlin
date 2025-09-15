@@ -85,7 +85,7 @@ class MetadataLibraryImpl(
 }
 
 class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibrary {
-    override val hasIr by lazy {
+    override val hasMainIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
             it.irDir.exists
         }
@@ -180,7 +180,7 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
         return fileEntries?.tableItemBytes(fileIndex)
     }
 
-    override val hasIrOfInlineableFuns by lazy {
+    override val hasInlinableFunsIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
             it.irOfInlineableFunsDir.exists
         }
