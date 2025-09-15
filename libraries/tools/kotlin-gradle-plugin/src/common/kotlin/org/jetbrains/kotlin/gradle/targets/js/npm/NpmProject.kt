@@ -120,7 +120,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         nodeJs.executable.get()
     }
 
-    @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.ERROR)
     fun useTool(
         exec: ExecSpec,
         tool: String,
