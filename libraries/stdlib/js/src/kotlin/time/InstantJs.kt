@@ -7,10 +7,8 @@ package kotlin.time
 
 import kotlin.js.Date
 
-@ExperimentalTime
 internal actual fun systemClockNow(): Instant =
     Instant.fromEpochMilliseconds(Date().getTime().toLong())
 
-@ExperimentalTime
 internal actual fun serializedInstant(instant: Instant): Any =
     throw UnsupportedOperationException("Serialization is supported only in Kotlin/JVM")

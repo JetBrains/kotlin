@@ -5,7 +5,6 @@
 
 package kotlin.time
 
-@ExperimentalTime
 internal actual fun systemClockNow(): Instant =
     Instant.fromEpochMilliseconds(Date().getTime().toLong())
 
@@ -13,6 +12,5 @@ private external class Date {
     fun getTime(): Double
 }
 
-@ExperimentalTime
 internal actual fun serializedInstant(instant: Instant): Any =
     throw UnsupportedOperationException("Serialization is supported only in Kotlin/JVM")

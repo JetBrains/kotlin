@@ -15,8 +15,8 @@ package kotlin.time
  *
  * @sample samples.time.Clocks.timeSourceAsClock
  */
-@SinceKotlin("2.2")
-@ExperimentalTime
+@SinceKotlin("2.3")
+@WasExperimental(ExperimentalTime::class)
 @kotlin.jvm.JvmName("fromTimeSource")
 public fun TimeSource.asClock(origin: Instant): Clock = object : Clock {
     private val startMark: TimeMark = markNow()
