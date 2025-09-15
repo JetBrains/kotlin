@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class ICData(val icData: List<SerializedIrFile>)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
-    override val hasIr get() = true
+    override val hasMainIr get() = true
     override val hasFileEntriesTable get() = true
 
     private inline fun Array<DeclarationIdTableReader?>.itemBytes(fileIndex: Int, key: DeclarationId, factory: () -> DeclarationIdTableReader): ByteArray {
@@ -108,7 +108,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
 
     // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
-    override val hasIrOfInlineableFuns: Boolean get() = false
+    override val hasInlinableFunsIr: Boolean get() = false
     override fun irFileOfInlineableFuns(): ByteArray = shouldNotBeCalled()
     override fun irDeclarationOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
     override fun typeOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()

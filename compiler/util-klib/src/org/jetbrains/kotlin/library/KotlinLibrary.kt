@@ -100,7 +100,7 @@ interface MetadataLibrary {
 }
 
 interface IrLibrary {
-    val hasIr: Boolean
+    val hasMainIr: Boolean
     val hasFileEntriesTable: Boolean
     fun irDeclaration(index: Int, fileIndex: Int): ByteArray
     fun type(index: Int, fileIndex: Int): ByteArray
@@ -120,7 +120,7 @@ interface IrLibrary {
     fun fileEntries(fileIndex: Int): ByteArray?
 
     // Those duplicated structures store prepared copies of inlinable functions, see KT-75794.
-    val hasIrOfInlineableFuns: Boolean
+    val hasInlinableFunsIr: Boolean
     fun irFileOfInlineableFuns(): ByteArray
     fun irDeclarationOfInlineableFuns(index: Int): ByteArray
     fun typeOfInlineableFuns(index: Int): ByteArray
@@ -218,4 +218,4 @@ val KotlinLibrary.metadataVersion: MetadataVersion?
     }
 
 val KotlinLibrary.hasAbi: Boolean
-    get() = hasIr || irProviderName != null
+    get() = hasMainIr || irProviderName != null

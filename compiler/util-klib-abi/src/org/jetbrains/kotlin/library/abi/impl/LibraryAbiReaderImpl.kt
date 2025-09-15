@@ -57,7 +57,7 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
     private val library: KotlinLibrary = try {
         ToolingSingleFileKlibResolveStrategy.tryResolve(KFile(libraryFile.absolutePath), DummyLogger)?.apply {
             check(uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
-            check(hasIr) { "Library does not have IR" }
+            check(hasMainIr) { "Library does not have IR" }
         }
     } catch (e: Exception) {
         throw malformedLibrary(libraryFile, e)
