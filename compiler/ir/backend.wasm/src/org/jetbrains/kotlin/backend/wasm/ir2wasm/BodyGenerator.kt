@@ -1528,7 +1528,12 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, init.getSourceLocation())
+        val location = if (declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
+            SourceLocation.NoLocation("Temporary variable")
+        } else {
+            init.getSourceLocation()
+        }
+        body.buildSetLocal(varName, location)
     }
 
     // Return true if function is recognized as intrinsic.
