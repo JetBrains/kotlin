@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
-import java.io.Serializable
-
-sealed class BuildTimeMetric constructor(parent: BuildTimeMetric?, readableString: String, name: String) :
-    BuildTime<BuildTimeMetric>(parent, readableString, name) {
+sealed class BuildTimeMetric(parent: BuildTimeMetric?, readableString: String, name: String) :
+    BuildMetric<BuildTimeMetric>(parent, readableString, name) {
 
     constructor(readableString: String, name: String) : this(null, readableString, name)
 }
@@ -241,6 +239,3 @@ object SAVE_CLASSPATH_ENTRY_SNAPSHOT : GradleBuildTimeMetric(
     "Save classpath entry snapshot",
     name = "SAVE_CLASSPATH_ENTRY_SNAPSHOT"
 )
-
-
-class DynamicCompilerMetrics(parent: GradleBuildTimeMetric? = null, name: String) : GradleBuildTimeMetric(parent, name, name) {}

@@ -21,9 +21,11 @@ internal abstract class BuildCloseFusStatisticsBuildService @Inject constructor(
 
     internal interface Parameter : InternalGradleBuildFusStatisticsService.Parameter {
         val configurationMetrics: ListProperty<Metric>
+        val buildId: Property<String>
     }
 
     private val log = Logging.getLogger(this.javaClass)
+    private val buildId: String = parameters.buildId.get()
 
     override fun getExecutionTimeMetrics(): Provider<List<Metric>> {
         return providersFactor.provider {
@@ -40,6 +42,6 @@ internal abstract class BuildCloseFusStatisticsBuildService @Inject constructor(
 
     override fun close() {
         log.debug("InternalGradleBuildFusStatisticsService is closed for $buildId build")
-        writeDownFusMetrics(log, parameters.configurationMetrics.orNull)
+        writeDownFusMetrics(buildId, log, parameters.configurationMetrics.orNull)
     }
 }

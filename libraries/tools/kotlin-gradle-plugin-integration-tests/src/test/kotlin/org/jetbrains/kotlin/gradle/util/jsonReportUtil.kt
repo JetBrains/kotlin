@@ -26,7 +26,7 @@ data class BuildOperationRecordImpl(
     override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long, // Measured by System.currentTimeMillis(),
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    override val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
     override val didWork: Boolean,
     override val skipMessage: String?,
     override val icLogLines: List<String>,
@@ -77,7 +77,7 @@ internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
                 val regex = "name=(.+), parent=([^,)]+)".toRegex()
                 val (_, name, parentStr) = regex.find(keyStr)?.groupValues
                     ?: error("Could not deserialize org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey")
-                val parent = getAllMetricsByType(BuildTimeMetric::class).find { it.name == parentStr } ?: return null
+                val parent = allBuildTimeMetrics.find { it.name == parentStr } ?: return null
                 DynamicBuildTimeKey(name, parent)
             }
         })

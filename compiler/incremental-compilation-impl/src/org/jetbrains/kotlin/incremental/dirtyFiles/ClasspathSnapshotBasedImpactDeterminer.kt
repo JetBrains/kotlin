@@ -26,7 +26,7 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
     private val classpathChanges: ClasspathChanges,
 
     private val lazyClasspathSnapshot: LazyClasspathSnapshot,
-    private val reporter: BuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ) : ImpactedFilesDeterminer {
 
     override fun determineChangedAndImpactedSymbols(): ChangesEither {

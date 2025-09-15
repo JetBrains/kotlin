@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.daemon.common.*
 
 fun getBuildReporter(
     servicesFacade: CompilerServicesFacadeBase,
     compilationResults: CompilationResults,
     compilationOptions: IncrementalCompilationOptions
-): RemoteBuildReporter<GradleBuildTimeMetric, GradleBuildPerformanceMetric> {
+): RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric> {
     val root = compilationOptions.rootProjectDir
     val reporters = ArrayList<RemoteICReporter>()
 

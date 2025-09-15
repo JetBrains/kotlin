@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.build.report.metrics
 import java.io.Serializable
 import kotlin.reflect.KClass
 
-sealed class BuildTime<T : BuildTime<T>>(open val parent: T?, val readableString: String, val name: String) : Serializable {
+sealed class BuildMetric<T : BuildMetric<T>>(open val parent: T?, val readableString: String, val name: String) : Serializable {
     /**
      * Internal collection of child metrics.
      *
@@ -24,13 +24,27 @@ sealed class BuildTime<T : BuildTime<T>>(open val parent: T?, val readableString
      * mutable collection and thus shares the same thread-safety limitations.
      */
     fun children(): List<T> = children
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other is BuildMetric<*>) {
+            return this.name == other.name
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
 }
 
-fun <T : BuildTime<T>> getAllMetricsByType(buildTimeClass: KClass<T>): List<T> =
+fun <T : BuildMetric<T>> getAllMetricsByType(buildTimeClass: KClass<T>): List<T> =
     buildTimeClass.sealedSubclasses.mapNotNull { it.objectInstance }.flatMap { it.children() + it }
 
+fun getAllMetrics() = BuildMetric::class.sealedSubclasses.mapNotNull { it.objectInstance }.flatMap { it.children() + it }
 
+val allBuildTimeMetrics
+    get() = getAllMetricsByType(BuildTimeMetric::class)
 
-fun getAllMetrics() = BuildTime::class.sealedSubclasses.mapNotNull { it.objectInstance }.flatMap { it.children() + it }
-
-val allBuildTimeMetricsMap = getAllMetricsByType(BuildTimeMetric::class).groupBy { it.parent }
+val allBuildPerformanceMetrics = getAllMetricsByType(BuildPerformanceMetric::class)
+val allBuildTimeMetricsMap = allBuildTimeMetrics.groupBy { it.parent }

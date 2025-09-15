@@ -7,32 +7,14 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-sealed class BuildPerformanceMetric constructor(
+sealed class BuildPerformanceMetric(
     parent: BuildPerformanceMetric?,
     readableString: String,
     val type: ValueType,
     name: String,
-) : BuildTime<BuildPerformanceMetric>(parent, readableString, name), Serializable {
+) : BuildMetric<BuildPerformanceMetric>(parent, readableString, name), Serializable {
 
     constructor(readableString: String, type: ValueType, name: String) : this(null, readableString, type, name)
-
-    /**
-     * Creates a child performance metric and registers it in this metric's children.
-     *
-     * Thread-safety: Not thread-safe. This method mutates the underlying children list
-     * of BuildTime which is not a thread-safe collection. If accessed from multiple
-     * threads, external synchronization is required.
-     */
-    fun createChild(readableString: String, type: ValueType, name: String): BuildPerformanceMetric {
-        return ChildPerformanceMetric(this, readableString, type, name).also { children.add(it) }
-    }
-
-    internal class ChildPerformanceMetric internal constructor(
-        parent: BuildPerformanceMetric,
-        readableString: String,
-        type: ValueType,
-        name: String,
-    ) : BuildPerformanceMetric(parent, readableString, type, name)
 }
 
 sealed class JpsBuildPerformanceMetric(parent: JpsBuildPerformanceMetric? = null, readableString: String, type: ValueType, name: String) :

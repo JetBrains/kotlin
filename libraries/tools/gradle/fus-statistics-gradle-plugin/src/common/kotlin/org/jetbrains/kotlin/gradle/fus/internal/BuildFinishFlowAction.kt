@@ -27,11 +27,12 @@ internal abstract class FusBuildFinishFlowManager @Inject constructor(
             project.objects.newInstance(FusBuildFinishFlowManager::class.java)
     }
 
-    fun subscribeForBuildFinish(fusService: Provider<BuildFlowFusStatisticsBuildService>) {
+    fun subscribeForBuildFinish(fusService: Provider<BuildFlowFusStatisticsBuildService>, buildUid: Provider<String>) {
         flowScope.always(
             BuildFinishFlowAction::class.java
         ) {
             it.parameters.configurationTimeMetrics.addAll(fusService.get().getConfigurationReportedMetrics())
+            it.parameters.buildId.set(buildUid)
         }
     }
 }
@@ -43,11 +44,14 @@ class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
 
         @get:Input
         val configurationTimeMetrics: ListProperty<Metric>
+
+        @get:Input
+        val buildId: Property<String>
     }
 
     private val log = Logging.getLogger(this.javaClass)
 
     override fun execute(parameters: Parameters) {
-        parameters.customFusServiceProperty.orNull?.writeDownFusMetrics(log, parameters.configurationTimeMetrics.orNull)
+        parameters.customFusServiceProperty.orNull?.writeDownFusMetrics(parameters.buildId.get(), log, parameters.configurationTimeMetrics.orNull)
     }
 }
