@@ -910,6 +910,46 @@ public class FirJsTypeScriptExportTestGenerated extends AbstractFirJsTypeScriptE
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/suspend-functions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Suspend_functions {
+    @Test
+    public void testAllFilesPresentInSuspend_functions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/suspend-functions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/suspend-functions-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Suspend_functions_in_exported_file {
+    @Test
+    public void testAllFilesPresentInSuspend_functions_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/suspend-functions-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/tuples")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Tuples {
+    @Test
+    public void testAllFilesPresentInTuples() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/tuples"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/tuples-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Tuples_in_exported_file {
+    @Test
+    public void testAllFilesPresentInTuples_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/tuples-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/visibility")
   @TestDataPath("$PROJECT_ROOT")
   public class Visibility {
