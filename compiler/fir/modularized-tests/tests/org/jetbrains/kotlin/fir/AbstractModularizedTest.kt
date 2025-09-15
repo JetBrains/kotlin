@@ -10,11 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +22,7 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
 
 data class ModuleData(
+    val rootPath: String,
     val name: String,
     val timestamp: Long,
     val rawOutputDir: String,
@@ -37,16 +34,16 @@ data class ModuleData(
     val optInAnnotations: List<String>,
     val rawModularJdkRoot: String?,
     val rawJdkHome: String?,
-    val isCommon: Boolean
+    val isCommon: Boolean,
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
 
-    val classpath = rawClasspath.map { it.fixPath() }
-    val sources = rawSources.map { it.fixPath() }
-    val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(), it.packagePrefix) }
-    val friendDirs = rawFriendDirs.map { it.fixPath() }
-    val jdkHome = rawJdkHome?.fixPath()
-    val modularJdkRoot = rawModularJdkRoot?.fixPath()
+    val classpath = rawClasspath.map { it.fixPath(rootPath) }
+    val sources = rawSources.map { it.fixPath(rootPath) }
+    val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(rootPath), it.packagePrefix) }
+    val friendDirs = rawFriendDirs.map { it.fixPath(rootPath) }
+    val jdkHome = rawJdkHome?.fixPath(rootPath)
+    val modularJdkRoot = rawModularJdkRoot?.fixPath(rootPath)
 
     /**
      * Raw compiler arguments, as it was passed to original module build
@@ -56,16 +53,12 @@ data class ModuleData(
 
 data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: String?)
 
-internal fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
+internal fun String.fixPath(rootPath: String): File = File(rootPath, this.removePrefix("/"))
 
-private val ROOT_PATH_PREFIX: String = System.getProperty("fir.bench.prefix", "/")
-private val OUTPUT_DIR_REGEX_FILTER: String = System.getProperty("fir.bench.filter", ".*")
-private val MODULE_NAME_FILTER: String? = System.getProperty("fir.bench.filter.name")
-private val MODULE_NAME_REGEX_OUT: String? = System.getProperty("fir.bench.filter.out.name")
-private val CONTAINS_SOURCES_REGEX_FILTER: String? = System.getProperty("fir.bench.filter.contains.sources")
-internal val ENABLE_SLOW_ASSERTIONS: Boolean = System.getProperty("fir.bench.enable.slow.assertions") == "true"
+abstract class AbstractModularizedTest(val config: ModularizedTestConfig) {
 
-abstract class AbstractModularizedTest : KtUsefulTestCase() {
+    val isUnderTeamcity: Boolean = System.getenv("TEAMCITY_VERSION") != null
+
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
     private lateinit var reportDate: Date
 
@@ -80,18 +73,18 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     }
 
     private fun detectReportDate(): Date {
-        val provided = System.getProperty("fir.bench.report.timestamp") ?: return Date()
-        return Date(provided.toLong())
+        return config.reportTimestamp?.let { Date(it) } ?: Date()
     }
 
-    override fun setUp() {
-        super.setUp()
-        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = ENABLE_SLOW_ASSERTIONS
+    protected val enableSlowAssertions: Boolean
+        get() = config.enableSlowAssertions
+
+    open fun setUp() {
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = config.enableSlowAssertions
         reportDate = detectReportDate()
     }
 
-    override fun tearDown() {
-        super.tearDown()
+    open fun tearDown() {
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
 
@@ -102,23 +95,23 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     protected fun runTestOnce(pass: Int) {
         beforePass(pass)
-        val testDataPath = System.getProperty("fir.bench.jps.dir") ?: "/Users/jetbrains/jps"
+        val testDataPath = config.jpsDir ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 
         println("BASE PATH: ${root.absolutePath}")
 
         val additionalMessages = mutableListOf<String>()
 
-        val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
-        val moduleName = MODULE_NAME_FILTER
-        val moduleNameRegexOutFilter = MODULE_NAME_REGEX_OUT?.toRegex()
-        val containsSourcesFilter = CONTAINS_SOURCES_REGEX_FILTER?.toRegex()
+        val filterRegex = config.outputDirRegexFilter.toRegex()
+        val moduleName = config.moduleNameFilter
+        val moduleNameRegexOutFilter = config.moduleNameRegexOut?.toRegex()
+        val containsSourcesFilter = config.containsSourcesRegexFilter?.toRegex()
         val files = root.listFiles() ?: emptyArray()
         val modules = files.filter {
             it.extension == "xml" && (moduleNameRegexOutFilter == null || !it.name.matches(moduleNameRegexOutFilter))
         }
             .sortedBy { it.lastModified() }
-            .flatMap { loadModuleDumpFile(it) }
+            .flatMap { loadModuleDumpFile(it, config) }
             .sortedBy { it.timestamp }
             .also { additionalMessages += "Discovered ${it.size} modules" }
             .filter { it.rawOutputDir.matches(filterRegex) }
@@ -135,9 +128,9 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             .filter { !it.isCommon }
             .also { additionalMessages += "Filtered by common flag to ${it.size} modules" }
 
-        if (modules.isEmpty() && IS_UNDER_TEAMCITY) {
+        if (modules.isEmpty() && isUnderTeamcity) {
             println("------------------------ Flakiness diagnostic ------------------------")
-            println("No modules found for pattern `$OUTPUT_DIR_REGEX_FILTER` in `$testDataPath`")
+            println("No modules found for pattern `${config.outputDirRegexFilter}` in `$testDataPath`")
             println("TestData root exists: ${root.exists()}")
             println(files.joinToString(prefix = "Content of testdata root:\n", separator = "\n") { it.absolutePath })
             println()
@@ -163,27 +156,7 @@ internal fun K2JVMCompilerArguments.jvmTargetIfSupported(): JvmTarget? {
     return null
 }
 
-fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
-    val file = File(path)
-    val paths = PathUtil.kotlinPathsForDistDirectoryForTests
-    return when {
-        file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
-            paths.jar(KotlinPaths.Jar.SerializationPlugin)
-        file.name.startsWith("kotlin-sam-with-receiver") -> paths.jar(KotlinPaths.Jar.SamWithReceiver)
-        file.name.startsWith("kotlin-allopen") -> paths.jar(KotlinPaths.Jar.AllOpenPlugin)
-        file.name.startsWith("kotlin-noarg") -> paths.jar(KotlinPaths.Jar.NoArgPlugin)
-        file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
-        file.name.startsWith("kotlin-compose-compiler-plugin") -> {
-            // compose plugin is not a part of the dist yet, so we have to go an extra mile to get it
-            System.getProperty("fir.bench.compose.plugin.classpath")?.split(File.pathSeparator)?.firstOrNull()?.let(::File)
-        }
-        // Assuming that the rest is the custom compiler plugins, that cannot be kept stable with the new compiler, so we're skipping them
-        // If the module is compillable without it - fine, otherwise at least it will hopefully be a stable failure.
-        else -> null
-    }
-}
-
-internal fun loadModuleDumpFile(file: File): List<ModuleData> {
+internal fun loadModuleDumpFile(file: File, config: ModularizedTestConfig): List<ModuleData> {
     val modules = mutableListOf<ModuleData>()
     var arguments: CommonCompilerArguments? = null
 
@@ -199,7 +172,7 @@ internal fun loadModuleDumpFile(file: File): List<ModuleData> {
                         modules.forEach { it.arguments = arguments }
                     }
                     "module" -> {
-                        val m = readModule(xr)
+                        val m = readModule(xr, config)
                         m.arguments = arguments
                         modules += m
                     }
@@ -213,7 +186,7 @@ internal fun loadModuleDumpFile(file: File): List<ModuleData> {
     return modules
 }
 
-private fun readModule(xr: XMLStreamReader): ModuleData {
+private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): ModuleData {
     // reader is positioned at START_ELEMENT <module>
     val outputDir = xr.getAttributeValue(null, "outputDir") ?: ""
     val moduleName = xr.getAttributeValue(null, "name") ?: ""
@@ -270,6 +243,7 @@ private fun readModule(xr: XMLStreamReader): ModuleData {
             }
             XMLStreamConstants.END_ELEMENT -> if (xr.localName == "module") {
                 return ModuleData(
+                    config.rootPathPrefix,
                     moduleName,
                     timestamp,
                     outputDir,
